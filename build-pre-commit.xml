@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project name="StepupMiddleware-pre-commit" default="build">
+<project name="StepupGateway-pre-commit" default="build">
 
     <target name="build"
             depends="prepare-environment,php-lint,phpmd,phpcs,phpunit"/>

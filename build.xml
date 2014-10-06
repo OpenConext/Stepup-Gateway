@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project name="StepupMiddleware-ci" default="build">
+<project name="StepupGateway-ci" default="build">
         <target name="build"
             depends="php-lint-ci,phpmd-ci,phpcs-ci,phpcpd-ci,phpunit-ci"/>
 
