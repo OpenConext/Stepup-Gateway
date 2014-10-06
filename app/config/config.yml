@@ -60,3 +60,17 @@ swiftmailer:
     username:  "%mailer_user%"
     password:  "%mailer_password%"
     spool:     { type: memory }
+
+nelmio_security:
+    # Content Security Policy
+    csp:
+        # Keep people from posting fake security reports (security through obscurity)
+        report_uri: /nelmio/csp/report/5dfbe9b445699acac9aa29de802dd6e20815f6e1
+        # Log to security channel
+        report_logger_service: monolog.logger.security
+        # Content types: default, script, object, style, img, media, frame, font, connect
+        default: [ self ]
+    signed_cookie:
+        names: ['*']
+    encrypted_cookie:
+        names: ['*']

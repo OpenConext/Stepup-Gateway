@@ -1,0 +1,4 @@
+nelmio_security_report:
+    path: /nelmio/csp/report/5dfbe9b445699acac9aa29de802dd6e20815f6e1
+    defaults: { _controller: nelmio_security.csp_reporter_controller:indexAction }
+    methods: [POST]

@@ -20,7 +20,8 @@
         "sensio/distribution-bundle": "~3.0",
         "sensio/framework-extra-bundle": "~3.0",
         "incenteev/composer-parameter-handler": "~2.0",
-        "behat/mink-goutte-driver": "1.0.9"
+        "behat/mink-goutte-driver": "1.0.9",
+        "nelmio/security-bundle": "~1.4"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3",
