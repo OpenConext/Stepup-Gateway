@@ -1,5 +1,6 @@
 /web/bundles/
 /web/app_dev.php
+/web/app_dev.php.dist
 /app/bootstrap.php.cache
 /app/cache/*
 /app/config/parameters.yml
