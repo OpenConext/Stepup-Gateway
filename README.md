@@ -1,7 +1,7 @@
 Step-up Gateway
 ===============
 
-[![Build Status](https://travis-ci.org/SURFnet/Stepup-Gateway.svg)](https://travis-ci.org/SURFnet/Stepup-Gateway) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/SURFnet/Stepup-Gateway/badges/quality-score.png?b=develop)](https://scrutinizer-ci.com/g/SURFnet/Stepup-Gateway/?branch=develop) [![SensioLabs Insight](https://insight.sensiolabs.com/projects/TODO/mini.png)](https://insight.sensiolabs.com/projects/TODO)
+[![Build Status](https://travis-ci.org/SURFnet/Stepup-Gateway.svg)](https://travis-ci.org/SURFnet/Stepup-Gateway) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/SURFnet/Stepup-Gateway/badges/quality-score.png?b=develop)](https://scrutinizer-ci.com/g/SURFnet/Stepup-Gateway/?branch=develop) [![SensioLabs Insight](https://insight.sensiolabs.com/projects/6204fffb-6333-4f78-9620-5a5bb09dfab2/mini.png)](https://insight.sensiolabs.com/projects/6204fffb-6333-4f78-9620-5a5bb09dfab2)
 
 ## Requirements
 
