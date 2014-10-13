@@ -12,3 +12,5 @@
 /bin/
 /composer.phar
 /cache.properties
+/app/SymfonyRequirements.php
+/app/check.php
