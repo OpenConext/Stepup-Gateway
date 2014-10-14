@@ -9,7 +9,6 @@
 !app/logs/.gitkeep
 /build/
 /vendor/
-/bin/
 /composer.phar
 /cache.properties
 /app/SymfonyRequirements.php
