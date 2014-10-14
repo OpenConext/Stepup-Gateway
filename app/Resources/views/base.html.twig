@@ -1,13 +1,58 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8" />
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        {% block stylesheets %}{% endblock %}
-        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
-    </head>
-    <body>
-        {% block body %}{% endblock %}
-        {% block javascripts %}{% endblock %}
-    </body>
-</html>
+{% extends 'MopaBootstrapBundle::base.html.twig' %}
+{% from 'MopaBootstrapBundle::flash.html.twig' import session_flash %}
+
+{% block title %}{{ 'app.name'|trans }}{% endblock title %}
+{% block head_style %}
+    {% stylesheets
+    '@SurfnetStepupGatewayBundle/Resources/public/less/style.less' filter='less'
+    %}
+    <link href="{{ asset_url }}" type="text/css" rel="stylesheet" media="screen" />
+    {% endstylesheets %}
+{% endblock head_style %}
+
+{% block navbar %}
+    {#{{ mopa_bootstrap_navbar('frontendNavbar') }}#}
+{% endblock navbar %}
+
+    {% block header %}
+    {% endblock header %}
+
+        {% block page_header %}
+            {#<div class="page-header"></div>#}
+        {% endblock page_header %}
+
+        {% block flashes %}
+            {% if app.session.flashbag.peekAll|length > 0 %}
+                <div class="row-fluid">
+                    <div id="flash" class="span12">
+                        {{ session_flash() }}
+                    </div>
+                </div>
+            {% endif %}
+        {% endblock flashes %}
+
+        {% block content_row %}
+            {% block content %}
+            {% endblock content %}
+        {% endblock content_row %}
+
+        {% block footer %}
+            <div class="row-fluid">
+                <div class="span8 offset2">
+                    <hr>
+                    <ul class="nav nav-pills">
+                        <li><a href="/{#{{ path("landing") }}#}">Home</a></li>
+                    </ul>
+                </div>
+            </div>
+        {% endblock footer %}
+
+{% block foot_script %}
+    {% javascripts
+    '@SurfnetStepupGatewayBundle/Resources/public/js/jquery-1.11.1.min.js'
+    %}
+    <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+{% endblock foot_script %}
+{% block foot_script_additional %}
+{% endblock foot_script_additional %}
