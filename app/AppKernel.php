@@ -34,6 +34,7 @@ class AppKernel extends Kernel
             new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
             new Surfnet\StepupGatewayBundle\SurfnetStepupGatewayBundle(),
             new Nelmio\SecurityBundle\NelmioSecurityBundle(),
+            new Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {
