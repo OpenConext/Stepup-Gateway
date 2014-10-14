@@ -1,3 +1,0 @@
-welcome:
-    path:     /
-    defaults: { _controller: SurfnetStepupGatewayBundle:Welcome:welcome }
