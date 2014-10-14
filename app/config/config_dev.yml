@@ -40,7 +40,7 @@ nelmio_security:
         style: [ self, unsafe-inline ]
 
 jms_translation:
-    locales: [nl]
+    locales: %locales%
     configs:
         default:
             dirs: [%kernel.root_dir%/../src, %kernel.root_dir%]
