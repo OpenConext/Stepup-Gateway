@@ -16,11 +16,11 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupGatewayApiBundle\Controller;
+namespace Surfnet\StepupGateway\ApiBundle\Controller;
 
 use Surfnet\MessageBirdApiClient\Messaging\SendMessageResult;
-use Surfnet\StepupGatewayApiBundle\Command\SendSmsCommand;
-use Surfnet\StepupGatewayApiBundle\Service\SmsService;
+use Surfnet\StepupGateway\ApiBundle\Command\SendSmsCommand;
+use Surfnet\StepupGateway\ApiBundle\Service\SmsService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

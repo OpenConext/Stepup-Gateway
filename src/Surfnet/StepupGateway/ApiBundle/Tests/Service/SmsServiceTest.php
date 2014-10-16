@@ -16,11 +16,11 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupGatewayApiBundle\Tests\Service;
+namespace Surfnet\StepupGateway\ApiBundle\Tests\Service;
 
 use Mockery as m;
-use Surfnet\StepupGatewayApiBundle\Command\SendSmsCommand;
-use Surfnet\StepupGatewayApiBundle\Service\SmsService;
+use Surfnet\StepupGateway\ApiBundle\Command\SendSmsCommand;
+use Surfnet\StepupGateway\ApiBundle\Service\SmsService;
 
 class SmsServiceTest extends \PHPUnit_Framework_TestCase
 {

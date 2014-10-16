@@ -16,12 +16,12 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupGatewayApiBundle\Service;
+namespace Surfnet\StepupGateway\ApiBundle\Service;
 
 use Surfnet\MessageBirdApiClient\Messaging\Message;
 use Surfnet\MessageBirdApiClient\Messaging\SendMessageResult;
 use Surfnet\MessageBirdApiClientBundle\Service\MessagingService;
-use Surfnet\StepupGatewayApiBundle\Command\SendSmsCommand;
+use Surfnet\StepupGateway\ApiBundle\Command\SendSmsCommand;
 
 class SmsService
 {

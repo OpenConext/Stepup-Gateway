@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupGatewayApiBundle\Command;
+namespace Surfnet\StepupGateway\ApiBundle\Command;
 
 use Symfony\Component\Validator\Constraints as Assert;
 

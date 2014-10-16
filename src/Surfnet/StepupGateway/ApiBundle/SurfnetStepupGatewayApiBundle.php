@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupGatewayApiBundle;
+namespace Surfnet\StepupGateway\ApiBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
