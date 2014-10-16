@@ -23,6 +23,18 @@ use Symfony\Component\Validator\Constraints as Assert;
 class SendSmsCommand
 {
     /**
+     * @Assert\NotBlank(message="send_sms.requester.institution.must_be_set")
+     * @var string
+     */
+    public $requesterInstitution;
+
+    /**
+     * @Assert\NotBlank(message="send_sms.requester.identity.must_be_set")
+     * @var string
+     */
+    public $requesterIdentity;
+
+    /**
      * Either:
      *
      * The telephone number of the recipient, consisting of the country code (e.g. '31' for The Netherlands),

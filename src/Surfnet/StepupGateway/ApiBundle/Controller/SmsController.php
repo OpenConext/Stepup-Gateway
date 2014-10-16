@@ -36,12 +36,28 @@ class SmsController extends Controller
      */
     public function sendAction(Request $request)
     {
-        $json = json_decode($request->getContent(), true);
-
+        $object = json_decode($request->getContent(), true);
         $command = new SendSmsCommand();
-        $command->originator = 'dummy';
-        $command->recipient = isset($json['message']['recipient']) ? $json['message']['recipient'] : null;
-        $command->body = isset($json['message']['body']) ? $json['message']['body'] : null;
+
+        if (isset($object['requester']['institution'])) {
+            $command->requesterInstitution = $object['requester']['institution'];
+        }
+
+        if (isset($object['requester']['identity'])) {
+            $command->requesterIdentity = $object['requester']['identity'];
+        }
+
+        if (isset($object['message']['originator'])) {
+            $command->originator = $object['message']['originator'];
+        }
+
+        if (isset($object['message']['recipient'])) {
+            $command->recipient = $object['message']['recipient'];
+        }
+
+        if (isset($object['message']['body'])) {
+            $command->body = $object['message']['body'];
+        }
 
         /** @var ValidatorInterface $validator */
         $validator = $this->get('validator');
