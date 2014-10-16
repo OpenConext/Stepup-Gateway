@@ -111,3 +111,8 @@ services:
     twig.extension.text: # Required by JMSTranslationBundle
         class: Twig_Extensions_Extension_Text
         tags: [{ name: twig.extension }]
+
+surfnet_message_bird_api_client:
+    authorization: %messagebird_authorization%
+    messaging:
+        originator: %messagebird_messaging_originator%

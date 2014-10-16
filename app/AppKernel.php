@@ -36,6 +36,7 @@ class AppKernel extends Kernel
             new Nelmio\SecurityBundle\NelmioSecurityBundle(),
             new Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle(),
             new Mopa\Bundle\BootstrapBundle\MopaBootstrapBundle(),
+            new Surfnet\MessageBirdApiClientBundle\SurfnetMessageBirdApiClientBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

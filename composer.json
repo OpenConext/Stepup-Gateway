@@ -28,7 +28,8 @@
         "twbs/bootstrap": "~3.2.0",
         "fortawesome/font-awesome": "~4.2.0",
         "jms/translation-bundle": "~1.1.0",
-        "jms/di-extra-bundle": "~1.4.0"
+        "jms/di-extra-bundle": "~1.4.0",
+        "surfnet/messagebird-api-client-bundle": "~1.0"
 },
     "require-dev": {
         "sensio/generator-bundle": "~2.3",

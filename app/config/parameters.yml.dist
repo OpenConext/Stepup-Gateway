@@ -20,3 +20,6 @@ parameters:
     debug_toolbar:          true
     debug_redirects:        false
     use_assetic_controller: true
+
+    messagebird_authorization: AccessKey your_api_key
+    messagebird_messaging_originator: SURFnet
