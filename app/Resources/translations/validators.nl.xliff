@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:jms="urn:jms:translation" version="1.2">
+  <file date="2014-10-15T16:02:40Z" source-language="en" target-language="nl" datatype="plaintext" original="not.available">
+    <header>
+      <tool tool-id="JMSTranslationBundle" tool-name="JMSTranslationBundle" tool-version="1.1.0-DEV"/>
+      <note>The source node in most cases contains the sample message as written by the developer. If it looks like a dot-delimitted string such as "form.label.firstname", then the developer has not provided a default message.</note>
+    </header>
+    <body>
+      <trans-unit id="2c5671c09bf8a258496ad2d63f461495ac8d42bf" resname="send_sms.body.must_be_set">
+        <source>send_sms.body.must_be_set</source>
+        <target>SMS-bericht mag niet leeg zijn.</target>
+      </trans-unit>
+      <trans-unit id="12aea166c2043107862036883e1413dc2af4e175" resname="send_sms.originator.must_be_alphanumerical">
+        <source>send_sms.originator.must_be_alphanumerical</source>
+        <target>De afzender van het SMS-bericht moet alfanumeriek zijn.</target>
+      </trans-unit>
+      <trans-unit id="16a2992e76083ebd5ec915fc26663ece29337d93" resname="send_sms.originator.must_be_set">
+        <source>send_sms.originator.must_be_set</source>
+        <target>De afzender van het SMS-bericht mag niet leeg zijn.</target>
+      </trans-unit>
+      <trans-unit id="5c2b3ec12b14c231947008367d98c0a11dfcb002" resname="send_sms.recipient.must_be_set">
+        <source>send_sms.recipient.must_be_set</source>
+        <target>De ontvanger van het SMS-bericht mag niet leeg zijn.</target>
+      </trans-unit>
+      <trans-unit id="e05a460a9e6bf3654940a380a593bdcd7ed35e72" resname="send_sms.recipient.must_consist_of_numbers">
+        <source>send_sms.recipient.must_consist_of_numbers</source>
+        <target>De ontvanger van het SMS-bericht mag enkel uit getallen bestaan.</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

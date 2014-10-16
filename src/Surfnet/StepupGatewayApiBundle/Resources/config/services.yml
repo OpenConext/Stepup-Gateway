@@ -1,0 +1,5 @@
+services:
+    surfnet_gateway_api.service.sms:
+        class: Surfnet\StepupGatewayApiBundle\Service\SmsService
+        arguments:
+            - @surfnet_message_bird_api_client.messaging
