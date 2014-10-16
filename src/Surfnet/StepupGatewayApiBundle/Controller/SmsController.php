@@ -65,25 +65,19 @@ class SmsController extends Controller
     private function createJsonResponseFromSendMessageResult(SendMessageResult $result)
     {
         if ($result->isSuccess()) {
-            return new JsonResponse(
-                [
-                    'status' => 'OK',
-                ]
-            );
+            return new JsonResponse(['status' => 'OK']);
         }
 
+        $errors = array_map(function ($error) {
+            return sprintf('%s (#%d)', $error['description'], $error['code']);
+        }, $result->getRawErrors());
+
         if ($result->isMessageInvalid()) {
-            return new JsonResponse(
-                ['errors' => $result->getErrors()],
-                400
-            );
+            return new JsonResponse(['errors' => $errors], 400);
         }
 
         // Invalid access key or server error
-        return new JsonResponse(
-            ['errors' => $result->getErrors()],
-            500
-        );
+        return new JsonResponse(['errors' => $errors], 500);
     }
 
     /**
