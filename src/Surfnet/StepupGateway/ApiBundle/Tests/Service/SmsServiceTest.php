@@ -24,19 +24,17 @@ use Surfnet\StepupGateway\ApiBundle\Service\SmsService;
 
 class SmsServiceTest extends \PHPUnit_Framework_TestCase
 {
-    const MESSAGING_SERVICE = 'Surfnet\MessageBirdApiClientBundle\Service\MessagingService';
-    const MESSAGE = 'Surfnet\MessageBirdApiClient\Messaging\Message';
-    const SEND_MESSAGE_RESULT = 'Surfnet\MessageBirdApiClient\Messaging\SendMessageResult';
-
     public function testItSendsMessages()
     {
-        $result = m::mock(self::SEND_MESSAGE_RESULT)
+        $result = m::mock('Surfnet\MessageBirdApiClient\Messaging\SendMessageResult')
             ->shouldReceive('isSuccess')->andReturn(true)
             ->getMock();
 
         $service = new SmsService(
-            m::mock(self::MESSAGING_SERVICE)
-                ->shouldReceive('send')->with(m::type(self::MESSAGE))->andReturn($result)
+            m::mock('Surfnet\MessageBirdApiClientBundle\Service\MessagingService')
+                ->shouldReceive('send')
+                    ->with(m::type('Surfnet\MessageBirdApiClient\Messaging\Message'))
+                    ->andReturn($result)
                 ->getMock(),
             m::mock('Psr\Log\LoggerInterface')->shouldIgnoreMissing()
         );
