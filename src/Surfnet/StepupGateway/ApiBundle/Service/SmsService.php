@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupGateway\ApiBundle\Service;
 
+use Psr\Log\LoggerInterface;
 use Surfnet\MessageBirdApiClient\Messaging\Message;
 use Surfnet\MessageBirdApiClient\Messaging\SendMessageResult;
 use Surfnet\MessageBirdApiClientBundle\Service\MessagingService;
@@ -31,11 +32,18 @@ class SmsService
     private $messagingService;
 
     /**
-     * @param MessagingService $messagingService
+     * @var LoggerInterface
      */
-    public function __construct(MessagingService $messagingService)
+    private $logger;
+
+    /**
+     * @param MessagingService $messagingService
+     * @param LoggerInterface $logger
+     */
+    public function __construct(MessagingService $messagingService, LoggerInterface $logger)
     {
         $this->messagingService = $messagingService;
+        $this->logger = $logger;
     }
 
     /**
@@ -44,8 +52,14 @@ class SmsService
      */
     public function send(SendSmsCommand $command)
     {
+        $this->logger->notice('Sending OTP per SMS.');
+
         $message = new Message($command->recipient, $command->body);
         $result = $this->messagingService->send($message);
+
+        if (!$result->isSuccess()) {
+            $this->logger->warning('Sending OTP per SMS failed.');
+        }
 
         return $result;
     }

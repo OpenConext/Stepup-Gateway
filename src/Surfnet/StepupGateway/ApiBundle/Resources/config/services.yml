@@ -3,3 +3,4 @@ services:
         class: Surfnet\StepupGateway\ApiBundle\Service\SmsService
         arguments:
             - @surfnet_message_bird_api_client.messaging
+            - @logger

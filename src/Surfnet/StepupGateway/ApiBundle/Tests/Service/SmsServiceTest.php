@@ -30,12 +30,15 @@ class SmsServiceTest extends \PHPUnit_Framework_TestCase
 
     public function testItSendsMessages()
     {
-        $result = m::mock(self::SEND_MESSAGE_RESULT);
+        $result = m::mock(self::SEND_MESSAGE_RESULT)
+            ->shouldReceive('isSuccess')->andReturn(true)
+            ->getMock();
 
         $service = new SmsService(
             m::mock(self::MESSAGING_SERVICE)
                 ->shouldReceive('send')->with(m::type(self::MESSAGE))->andReturn($result)
-                ->getMock()
+                ->getMock(),
+            m::mock('Psr\Log\LoggerInterface')->shouldIgnoreMissing()
         );
 
         $command = new SendSmsCommand();
