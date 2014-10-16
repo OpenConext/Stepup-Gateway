@@ -9,7 +9,15 @@
 >
     <testsuites>
         <testsuite name="Project Test Suite">
-            <directory>../src/Tests</directory>
+            <directory suffix="Test.php">../src</directory>
         </testsuite>
     </testsuites>
+    <filter>
+        <whitelist>
+            <directory>../src</directory>
+            <exclude>
+                <directory suffix="Test.php">../src</directory>
+            </exclude>
+        </whitelist>
+    </filter>
 </phpunit>

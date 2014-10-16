@@ -9,7 +9,7 @@
     <exclude-pattern>src/*/*Bundle/Tests</exclude-pattern>
     <exclude-pattern>src/*/Bundle/*Bundle/Resources</exclude-pattern>
     <exclude-pattern>src/*/Bundle/*Bundle/Tests</exclude-pattern>
-    <exclude-pattern>src/Tests/*</exclude-pattern>
+    <exclude-pattern>*/Tests/*</exclude-pattern>
 
     <!-- This is the rule we inherit from. If you want to exlude some specific rules, see the docs on how to do that -->
     <rule ref="PSR2"/>
