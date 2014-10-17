@@ -4,7 +4,7 @@
 {% block title %}{{ 'app.name'|trans }}{% endblock title %}
 {% block head_style %}
     {% stylesheets
-    '@SurfnetStepupGatewayBundle/Resources/public/less/style.less' filter='less'
+    '../app/Resources/public/less/style.less' filter='less'
     %}
     <link href="{{ asset_url }}" type="text/css" rel="stylesheet" media="screen" />
     {% endstylesheets %}
@@ -49,7 +49,7 @@
 
 {% block foot_script %}
     {% javascripts
-    '@SurfnetStepupGatewayBundle/Resources/public/js/jquery-1.11.1.min.js'
+    '../app/Resources/public/js/jquery-1.11.1.min.js'
     %}
     <script type="text/javascript" src="{{ asset_url }}"></script>
     {% endjavascripts %}

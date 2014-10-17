@@ -4,7 +4,7 @@ imports:
 
 framework:
     #esi:             ~
-    #translator:      { fallback: "%locale%" }
+    translator:      { fallback: "%default_locale%" }
     secret:          "%secret%"
     router:
         resource: "%kernel.root_dir%/config/routing.yml"
@@ -36,7 +36,7 @@ twig:
 assetic:
     debug:          "%kernel.debug%"
     use_controller: false
-    bundles:        [MopaBootstrapBundle, SurfnetStepupGatewayBundle]
+    bundles:        [MopaBootstrapBundle, SurfnetStepupGatewayApiBundle]
     #java: /usr/bin/java
     node: "/usr/bin/node"
     node_paths: ["/usr/lib/node_modules"]
@@ -111,3 +111,6 @@ services:
     twig.extension.text: # Required by JMSTranslationBundle
         class: Twig_Extensions_Extension_Text
         tags: [{ name: twig.extension }]
+
+surfnet_message_bird_api_client:
+    authorization: %messagebird_authorization%

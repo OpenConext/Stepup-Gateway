@@ -26,24 +26,24 @@
 	"enablePhpLint": true,
 	"enablePhpMessDetector": true,
 	"phpMdExcludePatterns": [
-		"src\/Tests\/*"
+		"*\/Tests\/*"
 	],
 	"enablePhpCodeSniffer": true,
 	"phpCodeSnifferCodingStyle": "PSR2",
 	"phpCsExcludeSymfony": true,
 	"phpCsExcludeCustomPatterns": [
-		"src\/Tests\/*"
+		"*\/Tests\/*"
 	],
 	"phpCsExcludePatterns": [
 		"src\/*\/*Bundle\/Resources",
 		"src\/*\/*Bundle\/Tests",
 		"src\/*\/Bundle\/*Bundle\/Resources",
 		"src\/*\/Bundle\/*Bundle\/Tests",
-		"src\/Tests\/*"
+		"*\/Tests\/*"
 	],
 	"enablePhpCopyPasteDetection": true,
 	"phpCpdExcludePatterns": [
-		"src\/Tests\/*"
+		"*\/Tests\/*"
 	],
 	"enablePhpSecurityChecker": false,
 	"phpSrcPath": [

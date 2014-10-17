@@ -16,8 +16,8 @@
  * limitations under the License.
  */
 
-use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Config\Loader\LoaderInterface;
+use Symfony\Component\HttpKernel\Kernel;
 
 class AppKernel extends Kernel
 {
@@ -32,10 +32,11 @@ class AppKernel extends Kernel
             new Symfony\Bundle\AsseticBundle\AsseticBundle(),
             new Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
             new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
-            new Surfnet\StepupGatewayBundle\SurfnetStepupGatewayBundle(),
+            new Surfnet\StepupGateway\ApiBundle\SurfnetStepupGatewayApiBundle(),
             new Nelmio\SecurityBundle\NelmioSecurityBundle(),
             new Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle(),
             new Mopa\Bundle\BootstrapBundle\MopaBootstrapBundle(),
+            new Surfnet\MessageBirdApiClientBundle\SurfnetMessageBirdApiClientBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

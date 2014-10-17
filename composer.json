@@ -3,8 +3,8 @@
     "license": "Apache-2.0",
     "description": "The SURFnet Step-up Gateway sits between a SAML Service Provider and Identity Provider and can provide a certain Level of Assurance by performing second-factor authentication.",
     "autoload": {
-        "psr-4": {
-            "Surfnet\\StepupGatewayBundle\\": "src"
+        "psr-0": {
+            "Surfnet\\StepupGateway\\": "src"
         }
     },
     "minimum-stability": "stable",
@@ -28,8 +28,10 @@
         "twbs/bootstrap": "~3.2.0",
         "fortawesome/font-awesome": "~4.2.0",
         "jms/translation-bundle": "~1.1.0",
-        "jms/di-extra-bundle": "~1.4.0"
-},
+        "jms/di-extra-bundle": "~1.4.0",
+        "surfnet/messagebird-api-client-bundle": "~2.0",
+        "mockery/mockery": "~0.9.0"
+    },
     "require-dev": {
         "sensio/generator-bundle": "~2.3",
         "ibuildings/qa-tools": "~1.1,>=1.1.27",

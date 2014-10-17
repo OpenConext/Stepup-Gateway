@@ -50,7 +50,7 @@
             <arg path="src"/>
             <arg value="xml"/>
             <arg value="phpmd.xml"/>
-            <arg value="--exclude src/Tests/*"/>
+            <arg value="--exclude */Tests/*"/>
         </exec>
     </target>
 
@@ -69,7 +69,7 @@
     <target name="phpcpd-ci" description="Find duplicate code using PHPCPD">
         <exec executable="vendor/bin/phpcpd" failonerror="false">
             <arg value="--exclude"/>
-            <arg value="src/Tests/*"/>
+            <arg value="*/Tests/*"/>
             <arg path="src"/>
         </exec>
     </target>
