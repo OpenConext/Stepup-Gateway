@@ -54,7 +54,7 @@ class SmsService
     {
         $this->logger->notice('Sending OTP per SMS.');
 
-        $message = new Message($command->recipient, $command->body);
+        $message = new Message($command->originator, $command->recipient, $command->body);
         $result = $this->messagingService->send($message);
 
         if (!$result->isSuccess()) {
