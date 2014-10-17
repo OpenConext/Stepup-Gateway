@@ -114,3 +114,8 @@ services:
 
 surfnet_message_bird_api_client:
     authorization: %messagebird_authorization%
+
+surfnet_yubikey_api_client:
+    credentials:
+        client_id: %yubikey_client_id%
+        client_secret: %yubikey_client_secret%
