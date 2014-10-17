@@ -40,7 +40,7 @@ class SmsServiceTest extends \PHPUnit_Framework_TestCase
         );
 
         $command = new SendSmsCommand();
-        $command->originator = 'SURFnet bv';
+        $command->originator = 'SURFnetbv';
         $command->recipient = '31612345678';
         $command->body = 'Lorem ipsum dolor sit amet.';
 

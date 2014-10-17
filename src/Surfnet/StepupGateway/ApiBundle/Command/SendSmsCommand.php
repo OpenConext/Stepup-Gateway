@@ -45,7 +45,7 @@ class SendSmsCommand
      * Example values would thus be 31612345678 and SURFnet.
      *
      * @Assert\NotBlank(message="send_sms.originator.must_be_set")
-     * @Assert\Regex(pattern="~^(\d+|[a-z\d ]{1,11})$~", message="send_sms.originator.must_be_alphanumerical")
+     * @Assert\Regex(pattern="~^(\d+|[a-z\d ]{1,11})$~i", message="send_sms.originator.must_be_alphanumerical")
      * @var string
      */
     public $originator;
