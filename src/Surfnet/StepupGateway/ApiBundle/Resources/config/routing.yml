@@ -3,3 +3,9 @@ sms_send:
     defaults:  { _controller: SurfnetStepupGatewayApiBundle:Sms:send }
     methods:   [POST]
     condition: "request.headers.get('Content-Type') == 'application/json' && request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
+
+yubikey_verify:
+    path:      /verify-yubikey
+    defaults:  { _controller: SurfnetStepupGatewayApiBundle:Yubikey:verify }
+    methods:   [POST]
+    condition: "request.headers.get('Content-Type') == 'application/json' && request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
