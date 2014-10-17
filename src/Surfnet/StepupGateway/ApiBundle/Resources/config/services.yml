@@ -5,6 +5,12 @@ services:
             - @surfnet_message_bird_api_client.messaging
             - @logger
 
+    surfnet_gateway_api.service.yubikey:
+        class: Surfnet\StepupGateway\ApiBundle\Service\YubikeyService
+        arguments:
+            - @surfnet_yubikey_api_client.verification_service
+            - @logger
+
     surfnet_gateway_api.listener.json_response_http_exception:
         class: Surfnet\StepupGateway\ApiBundle\EventListener\JsonResponseHttpErrorListener
         tags:

@@ -30,7 +30,8 @@
         "jms/translation-bundle": "~1.1.0",
         "jms/di-extra-bundle": "~1.4.0",
         "surfnet/messagebird-api-client-bundle": "~2.0",
-        "mockery/mockery": "~0.9.0"
+        "mockery/mockery": "~0.9.0",
+        "surfnet/yubikey-api-client-bundle": "~1.2"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3",
