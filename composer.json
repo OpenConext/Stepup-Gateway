@@ -30,13 +30,20 @@
         "jms/translation-bundle": "~1.1.0",
         "jms/di-extra-bundle": "~1.4.0",
         "surfnet/messagebird-api-client-bundle": "~2.0",
-        "mockery/mockery": "~0.9.0"
+        "mockery/mockery": "~0.9.0",
+        "simplesamlphp/saml2": "dev-master"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3",
         "ibuildings/qa-tools": "~1.1,>=1.1.27",
         "liip/rmt": "1.1.*"
     },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/SURFnet/saml2"
+        }
+    ],
     "scripts": {
         "post-install-cmd": [
             "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",
