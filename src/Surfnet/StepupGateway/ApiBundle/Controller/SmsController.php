@@ -64,7 +64,7 @@ class SmsController extends Controller
         $violations = $validator->validate($command);
 
         if ($violations->count() > 0) {
-            return $this->createJsonResponseFromViolations($violations, 400);
+            return $this->createJsonResponseFromViolations($violations);
         }
 
         /** @var SmsService $smsService */
@@ -98,10 +98,9 @@ class SmsController extends Controller
 
     /**
      * @param ConstraintViolationListInterface $violations
-     * @param int $statusCode
      * @return JsonResponse
      */
-    private function createJsonResponseFromViolations(ConstraintViolationListInterface $violations, $statusCode)
+    private function createJsonResponseFromViolations(ConstraintViolationListInterface $violations)
     {
         $errors = [];
 
@@ -110,6 +109,6 @@ class SmsController extends Controller
             $errors[] = sprintf('%s: %s', $violation->getPropertyPath(), $violation->getMessage());
         }
 
-        return new JsonResponse(['errors' => $errors], $statusCode);
+        return new JsonResponse(['errors' => $errors], 400);
     }
 }
