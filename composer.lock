@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "1572f14dad843f2d903db4237c3cd79f",
+    "hash": "a85d7f8ee5198932fa344b80d806175b",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -1937,16 +1937,16 @@
         },
         {
             "name": "surfnet/yubikey-api-client-bundle",
-            "version": "1.1.0",
+            "version": "1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SURFnet/yubikey-api-client-bundle.git",
-                "reference": "24335913ea202e7ed0d57a77ee5bfb90efb52e4b"
+                "reference": "48d45963096b9cf39c3ed3406734088702d45969"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SURFnet/yubikey-api-client-bundle/zipball/24335913ea202e7ed0d57a77ee5bfb90efb52e4b",
-                "reference": "24335913ea202e7ed0d57a77ee5bfb90efb52e4b",
+                "url": "https://api.github.com/repos/SURFnet/yubikey-api-client-bundle/zipball/48d45963096b9cf39c3ed3406734088702d45969",
+                "reference": "48d45963096b9cf39c3ed3406734088702d45969",
                 "shasum": ""
             },
             "require": {
@@ -1979,7 +1979,7 @@
                 "yubico",
                 "yubikey"
             ],
-            "time": "2014-10-17 09:25:39"
+            "time": "2014-10-17 12:04:06"
         },
         {
             "name": "swiftmailer/swiftmailer",
