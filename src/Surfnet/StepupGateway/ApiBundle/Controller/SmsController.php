@@ -21,7 +21,6 @@ namespace Surfnet\StepupGateway\ApiBundle\Controller;
 use Surfnet\MessageBirdApiClient\Messaging\SendMessageResult;
 use Surfnet\StepupGateway\ApiBundle\Command\SendSmsCommand;
 use Surfnet\StepupGateway\ApiBundle\Service\SmsService;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\ConstraintViolationInterface;
@@ -94,21 +93,5 @@ class SmsController extends Controller
 
         // Invalid access key or server error
         return new JsonResponse(['errors' => $errors], 500);
-    }
-
-    /**
-     * @param ConstraintViolationListInterface $violations
-     * @return JsonResponse
-     */
-    private function createJsonResponseFromViolations(ConstraintViolationListInterface $violations)
-    {
-        $errors = [];
-
-        foreach ($violations as $violation) {
-            /** @var ConstraintViolationInterface $violation */
-            $errors[] = sprintf('%s: %s', $violation->getPropertyPath(), $violation->getMessage());
-        }
-
-        return new JsonResponse(['errors' => $errors], 400);
     }
 }
