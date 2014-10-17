@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "71569a7fcb8b24c42f67aa0fbcf8d8bd",
+    "hash": "64ba97ded480a79afc0ac1d8ff5ddae0",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -1891,16 +1891,16 @@
         },
         {
             "name": "surfnet/messagebird-api-client-bundle",
-            "version": "1.1.0",
+            "version": "2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SURFnet/messagebird-api-client-bundle.git",
-                "reference": "d8ccc7660646b7bef3fee8dcc2a724beb18c5646"
+                "reference": "716160fdae463881cd5511987f940069a1654d96"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SURFnet/messagebird-api-client-bundle/zipball/d8ccc7660646b7bef3fee8dcc2a724beb18c5646",
-                "reference": "d8ccc7660646b7bef3fee8dcc2a724beb18c5646",
+                "url": "https://api.github.com/repos/SURFnet/messagebird-api-client-bundle/zipball/716160fdae463881cd5511987f940069a1654d96",
+                "reference": "716160fdae463881cd5511987f940069a1654d96",
                 "shasum": ""
             },
             "require": {
@@ -1933,7 +1933,7 @@
                 "sms",
                 "surfnet"
             ],
-            "time": "2014-10-16 10:00:31"
+            "time": "2014-10-17 07:25:17"
         },
         {
             "name": "swiftmailer/swiftmailer",
