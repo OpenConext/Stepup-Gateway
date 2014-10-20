@@ -21,7 +21,7 @@ namespace Surfnet\StepupBundle\Exception;
 /**
  * Thrown when a client provided invalid input to the application.
  */
-class BadRequestException extends \DomainException
+class BadRequestException extends \RuntimeException
 {
     /**
      * @var string[]
