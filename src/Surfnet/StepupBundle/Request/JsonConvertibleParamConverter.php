@@ -18,7 +18,6 @@
 
 namespace Surfnet\StepupBundle\Request;
 
-use ReflectionClass;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Request\ParamConverter\ParamConverterInterface;
 use Surfnet\StepupBundle\Exception\BadRequestException;
@@ -103,7 +102,7 @@ class JsonConvertibleParamConverter implements ParamConverterInterface
             return null;
         }
 
-        return (new ReflectionClass($class))->implementsInterface(__NAMESPACE__ . '\\JsonConvertible');
+        return (new $class) instanceof JsonConvertible;
     }
 
     /**
