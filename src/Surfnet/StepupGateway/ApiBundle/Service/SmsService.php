@@ -23,6 +23,7 @@ use Surfnet\MessageBirdApiClient\Messaging\Message;
 use Surfnet\MessageBirdApiClient\Messaging\SendMessageResult;
 use Surfnet\MessageBirdApiClientBundle\Service\MessagingService;
 use Surfnet\StepupGateway\ApiBundle\Command\SendSmsCommand;
+use Surfnet\StepupGateway\ApiBundle\Dto\Requester;
 
 class SmsService
 {
@@ -48,9 +49,10 @@ class SmsService
 
     /**
      * @param SendSmsCommand $command
+     * @param Requester $requester
      * @return SendMessageResult
      */
-    public function send(SendSmsCommand $command)
+    public function send(SendSmsCommand $command, Requester $requester)
     {
         $this->logger->notice('Sending OTP per SMS.');
 

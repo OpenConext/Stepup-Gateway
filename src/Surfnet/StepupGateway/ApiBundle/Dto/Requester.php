@@ -16,12 +16,22 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupGateway\ApiBundle\Command;
+namespace Surfnet\StepupGateway\ApiBundle\Dto;
 
-class VerifyYubikeyCommand
+use Surfnet\StepupBundle\Request\JsonConvertible;
+use Symfony\Component\Validator\Constraints as Assert;
+
+class Requester implements JsonConvertible
 {
     /**
+     * @Assert\NotBlank(message="requester.institution.must_be_set")
      * @var string
      */
-    public $otp;
+    public $institution;
+
+    /**
+     * @Assert\NotBlank(message="requester.identity.must_be_set")
+     * @var string
+     */
+    public $identity;
 }

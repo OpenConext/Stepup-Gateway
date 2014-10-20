@@ -1,50 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:jms="urn:jms:translation" version="1.2">
-  <file date="2014-10-17T14:16:14Z" source-language="en" target-language="nl" datatype="plaintext" original="not.available">
+  <file date="2014-10-20T16:45:17Z" source-language="en" target-language="nl" datatype="plaintext" original="not.available">
     <header>
       <tool tool-id="JMSTranslationBundle" tool-name="JMSTranslationBundle" tool-version="1.1.0-DEV"/>
       <note>The source node in most cases contains the sample message as written by the developer. If it looks like a dot-delimitted string such as "form.label.firstname", then the developer has not provided a default message.</note>
     </header>
     <body>
-      <trans-unit id="2c5671c09bf8a258496ad2d63f461495ac8d42bf" resname="send_sms.body.must_be_set">
-        <source>send_sms.body.must_be_set</source>
-        <target>SMS-bericht mag niet leeg zijn.</target>
-      </trans-unit>
-      <trans-unit id="12aea166c2043107862036883e1413dc2af4e175" resname="send_sms.originator.must_be_alphanumerical">
-        <source>send_sms.originator.must_be_alphanumerical</source>
-        <target>De afzender van het SMS-bericht moet alfanumeriek zijn.</target>
-      </trans-unit>
-      <trans-unit id="16a2992e76083ebd5ec915fc26663ece29337d93" resname="send_sms.originator.must_be_set">
-        <source>send_sms.originator.must_be_set</source>
-        <target>De afzender van het SMS-bericht mag niet leeg zijn.</target>
-      </trans-unit>
-      <trans-unit id="5c2b3ec12b14c231947008367d98c0a11dfcb002" resname="send_sms.recipient.must_be_set">
-        <source>send_sms.recipient.must_be_set</source>
-        <target>De ontvanger van het SMS-bericht mag niet leeg zijn.</target>
-      </trans-unit>
-      <trans-unit id="e05a460a9e6bf3654940a380a593bdcd7ed35e72" resname="send_sms.recipient.must_consist_of_numbers">
-        <source>send_sms.recipient.must_consist_of_numbers</source>
-        <target>De ontvanger van het SMS-bericht mag enkel uit getallen bestaan.</target>
-      </trans-unit>
-      <trans-unit id="35791e170554509e114b741c6cc8e8e2467f6de9" resname="send_sms.requester.identity.must_be_set">
-        <source>send_sms.requester.identity.must_be_set</source>
-        <target>De identiteit van de aanvrager moet bekend zijn.</target>
-      </trans-unit>
-      <trans-unit id="1cb767b66985c43330b55a7a0cd312c945f04906" resname="send_sms.requester.institution.must_be_set">
-        <source>send_sms.requester.institution.must_be_set</source>
-        <target>Het aanvragend instituut moet bekend zijn.</target>
-      </trans-unit>
-      <trans-unit id="4d57e2533600b8559a1f8acba1a718ea0a674db2" resname="verify_yubikey.otp.must_be_set">
-        <source>verify_yubikey.otp.must_be_set</source>
+      <trans-unit id="c47695eb1433ea19b361b7b49bd346bedca0f0d2" resname="otp.value.must_be_set">
+        <source>otp.value.must_be_set</source>
         <target>Het Yubikey OTP moet ingevuld zijn.</target>
       </trans-unit>
-      <trans-unit id="555b06d42c229e5770f79f436ff38e25a75c5e02" resname="verify_yubikey.requester.identity.must_be_set">
-        <source>verify_yubikey.requester.identity.must_be_set</source>
+      <trans-unit id="e597d35ab4e8b2fa441d182850c2b690b30f43a5" resname="requester.identity.must_be_set">
+        <source>requester.identity.must_be_set</source>
         <target>De identiteit van de aanvrager moet bekend zijn.</target>
       </trans-unit>
-      <trans-unit id="17edf6cb39684a64a5655657750e33c2e6fe38be" resname="verify_yubikey.requester.institution.must_be_set">
-        <source>verify_yubikey.requester.institution.must_be_set</source>
+      <trans-unit id="9f5a1c75a004dcc9b6c61d73855df32fb0b5d80c" resname="requester.institution.must_be_set">
+        <source>requester.institution.must_be_set</source>
         <target>Het aanvragend instituut moet bekend zijn.</target>
+      </trans-unit>
+      <trans-unit id="9993d3622b1b044d2292852cbf2bbc35b25745e0" resname="sms_message.body.must_be_set">
+        <source>sms_message.body.must_be_set</source>
+        <target>SMS-bericht mag niet leeg zijn.</target>
+      </trans-unit>
+      <trans-unit id="6dc9a4e68657f445f65d37629a2fa4347c0de3d2" resname="sms_message.originator.must_be_alphanumerical">
+        <source>sms_message.originator.must_be_alphanumerical</source>
+        <target>De afzender van het SMS-bericht moet alfanumeriek zijn.</target>
+      </trans-unit>
+      <trans-unit id="3dd48295cc0a76647725bcb96564cdfc7665095e" resname="sms_message.originator.must_be_set">
+        <source>sms_message.originator.must_be_set</source>
+        <target>De afzender van het SMS-bericht mag niet leeg zijn.</target>
+      </trans-unit>
+      <trans-unit id="eaeee37c955d38f330b87975c891d4b346ae8b62" resname="sms_message.recipient.must_be_set">
+        <source>sms_message.recipient.must_be_set</source>
+        <target>De ontvanger van het SMS-bericht mag niet leeg zijn.</target>
+      </trans-unit>
+      <trans-unit id="365b549b98686b9cace3ae029d14948f0de5beaf" resname="sms_message.recipient.must_consist_of_numbers">
+        <source>sms_message.recipient.must_consist_of_numbers</source>
+        <target>De ontvanger van het SMS-bericht mag enkel uit getallen bestaan.</target>
       </trans-unit>
     </body>
   </file>

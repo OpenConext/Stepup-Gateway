@@ -20,55 +20,29 @@ namespace Surfnet\StepupGateway\ApiBundle\Controller;
 
 use Surfnet\MessageBirdApiClient\Messaging\SendMessageResult;
 use Surfnet\StepupGateway\ApiBundle\Command\SendSmsCommand;
+use Surfnet\StepupGateway\ApiBundle\Dto\Requester;
+use Surfnet\StepupGateway\ApiBundle\Dto\SmsMessage;
 use Surfnet\StepupGateway\ApiBundle\Service\SmsService;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Validator\ConstraintViolationInterface;
-use Symfony\Component\Validator\ConstraintViolationListInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class SmsController extends Controller
 {
     /**
-     * @param Request $request
+     * @param SmsMessage $message
+     * @param Requester $requester
      * @return JsonResponse
      */
-    public function sendAction(Request $request)
+    public function sendAction(SmsMessage $message, Requester $requester)
     {
-        $object = json_decode($request->getContent(), true);
         $command = new SendSmsCommand();
-
-        if (isset($object['requester']['institution'])) {
-            $command->requesterInstitution = $object['requester']['institution'];
-        }
-
-        if (isset($object['requester']['identity'])) {
-            $command->requesterIdentity = $object['requester']['identity'];
-        }
-
-        if (isset($object['message']['originator'])) {
-            $command->originator = $object['message']['originator'];
-        }
-
-        if (isset($object['message']['recipient'])) {
-            $command->recipient = $object['message']['recipient'];
-        }
-
-        if (isset($object['message']['body'])) {
-            $command->body = $object['message']['body'];
-        }
-
-        /** @var ValidatorInterface $validator */
-        $validator = $this->get('validator');
-        $violations = $validator->validate($command);
-
-        if ($violations->count() > 0) {
-            return $this->createJsonResponseFromViolations($violations);
-        }
+        $command->originator = $message->originator;
+        $command->recipient = $message->recipient;
+        $command->body = $message->body;
 
         /** @var SmsService $smsService */
         $smsService = $this->get('surfnet_gateway_api.service.sms');
-        $result = $smsService->send($command);
+        $result = $smsService->send($command, $requester);
 
         return $this->createJsonResponseFromSendMessageResult($result);
     }

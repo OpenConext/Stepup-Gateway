@@ -20,6 +20,7 @@ namespace Surfnet\StepupGateway\ApiBundle\Service;
 
 use Psr\Log\LoggerInterface;
 use Surfnet\StepupGateway\ApiBundle\Command\VerifyYubikeyCommand;
+use Surfnet\StepupGateway\ApiBundle\Dto\Requester;
 use Surfnet\YubikeyApiClient\Otp;
 use Surfnet\YubikeyApiClient\Service\OtpVerificationResult;
 use Surfnet\YubikeyApiClientBundle\Service\VerificationService;
@@ -48,9 +49,10 @@ class YubikeyService
 
     /**
      * @param VerifyYubikeyCommand $command
+     * @param Requester $requester
      * @return OtpVerificationResult
      */
-    public function verify(VerifyYubikeyCommand $command)
+    public function verify(VerifyYubikeyCommand $command, Requester $requester)
     {
         $this->logger->notice('Verifying Yubikey OTP.');
 
