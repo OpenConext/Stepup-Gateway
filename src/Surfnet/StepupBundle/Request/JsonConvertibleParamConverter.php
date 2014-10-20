@@ -52,12 +52,14 @@ class JsonConvertibleParamConverter implements ParamConverterInterface
         $json = $request->getContent();
         $object = json_decode($json, true);
 
-        if (isset($object[$name]) && is_array($object[$name])) {
-            $object = $object[$name];
-        } else {
-            $object = [];
+        if (!isset($object[$name]) || !is_array($object[$name])) {
+            throw new BadRequestException(
+                sprintf("JSON could not be reconstituted into valid object; missing parameter '%s'", $name),
+                [sprintf("Missing parameter '%s'", $name)]
+            );
         }
 
+        $object = $object[$name];
         $convertedObject = new $class;
 
         $errors = [];
