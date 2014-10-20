@@ -14,4 +14,5 @@ services:
     surfnet_gateway_api.listener.json_response_http_exception:
         class: Surfnet\StepupGateway\ApiBundle\EventListener\JsonResponseHttpErrorListener
         tags:
+            - { name: kernel.event_listener, event: kernel.exception, method: onKernelException }
             - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse }
