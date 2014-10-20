@@ -22,7 +22,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Request\ParamConverter\ParamConverterInterface;
 use Surfnet\StepupBundle\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationInterface;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -61,13 +60,13 @@ class JsonConvertibleParamConverter implements ParamConverterInterface
 
         $convertedObject = new $class;
 
-        $unknownProperties = [];
+        $errors = [];
 
         foreach ($object as $key => $value) {
             $properlyCasedKey = lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $key))));
 
             if (!property_exists($convertedObject, $properlyCasedKey)) {
-                $unknownProperties[$properlyCasedKey] = $value;
+                $errors[] = sprintf("Unknown property '%s.%s'", $name, $key);
 
                 continue;
             }
@@ -77,17 +76,10 @@ class JsonConvertibleParamConverter implements ParamConverterInterface
 
         $violations = $this->validator->validate($convertedObject);
 
-        foreach ($unknownProperties as $property => $value) {
-            $message = sprintf("Unknown property '%s'", $unknownProperties);
-            $violation = new ConstraintViolation($message, $message, [], $convertedObject, $property, $value);
-
-            $violations->add($violation);
-        }
-
         if ($violations->count() > 0) {
             throw new BadRequestException(
                 'JSON could not be reconstituted into valid object.',
-                $this->mapViolationsToErrorStrings($violations, $name)
+                array_merge($this->mapViolationsToErrorStrings($violations, $name), $errors)
             );
         }
 
