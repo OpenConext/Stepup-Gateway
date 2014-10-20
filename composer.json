@@ -4,6 +4,7 @@
     "description": "The SURFnet Step-up Gateway sits between a SAML Service Provider and Identity Provider and can provide a certain Level of Assurance by performing second-factor authentication.",
     "autoload": {
         "psr-0": {
+            "Surfnet\\StepupBundle\\": "src",
             "Surfnet\\StepupGateway\\": "src"
         }
     },

@@ -38,6 +38,7 @@ class AppKernel extends Kernel
             new Mopa\Bundle\BootstrapBundle\MopaBootstrapBundle(),
             new Surfnet\MessageBirdApiClientBundle\SurfnetMessageBirdApiClientBundle(),
             new Surfnet\YubikeyApiClientBundle\SurfnetYubikeyApiClientBundle(),
+            new Surfnet\StepupBundle\SurfnetStepupBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {
