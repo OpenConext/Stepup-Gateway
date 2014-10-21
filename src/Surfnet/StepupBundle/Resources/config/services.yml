@@ -1,0 +1,12 @@
+services:
+    surfnet_stepup.json_convertible_param_converter:
+        class: Surfnet\StepupBundle\Request\JsonConvertibleParamConverter
+        arguments:
+            - @validator
+        tags:
+            - { name: request.param_converter, priority: -1, converter: surfnet_stepup.json_convertible }
+
+    surfnet_stepup.listener.bad_json_request_exception_listener:
+        class: Surfnet\StepupBundle\EventListener\BadJsonRequestExceptionListener
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception, method: onKernelException }
