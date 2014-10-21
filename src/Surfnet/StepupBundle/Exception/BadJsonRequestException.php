@@ -18,6 +18,8 @@
 
 namespace Surfnet\StepupBundle\Exception;
 
+use Symfony\Component\Validator\ConstraintViolationListInterface;
+
 /**
  * Thrown when a client provided invalid input to the application.
  */
@@ -27,6 +29,31 @@ class BadJsonRequestException extends \RuntimeException
      * @var string[]
      */
     private $errors;
+
+    /**
+     * @param string $message
+     * @param ConstraintViolationListInterface $violations
+     * @param string $violationsRoot The name of the object that was validated.
+     * @param string[] $errors
+     * @param int $code
+     * @param \Exception $previous
+     * @return self
+     */
+    public static function createForViolationsAndErrors(
+        $message,
+        ConstraintViolationListInterface $violations,
+        $violationsRoot,
+        array $errors,
+        $code = 0,
+        \Exception $previous = null
+    ) {
+        return new self(
+            $message,
+            array_merge(self::mapViolationsToErrorStrings($violations, $violationsRoot), $errors),
+            $code,
+            $previous
+        );
+    }
 
     /**
      * @param string $message
@@ -47,5 +74,22 @@ class BadJsonRequestException extends \RuntimeException
     public function getErrors()
     {
         return $this->errors;
+    }
+
+    /**
+     * @param ConstraintViolationListInterface $violations
+     * @param string $root
+     * @return array
+     */
+    private static function mapViolationsToErrorStrings(ConstraintViolationListInterface $violations, $root)
+    {
+        $errors = [];
+
+        foreach ($violations as $violation) {
+            /** @var ConstraintViolationInterface $violation */
+            $errors[] = sprintf('%s.%s: %s', $root, $violation->getPropertyPath(), $violation->getMessage());
+        }
+
+        return $errors;
     }
 }

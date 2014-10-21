@@ -79,9 +79,11 @@ class JsonConvertibleParamConverter implements ParamConverterInterface
         $violations = $this->validator->validate($convertedObject);
 
         if (count($errors) + count($violations) > 0) {
-            throw new BadJsonRequestException(
+            throw BadJsonRequestException::createForViolationsAndErrors(
                 'JSON could not be reconstituted into valid object.',
-                array_merge($this->mapViolationsToErrorStrings($violations, $name), $errors)
+                $violations,
+                $name,
+                $errors
             );
         }
 
@@ -97,22 +99,5 @@ class JsonConvertibleParamConverter implements ParamConverterInterface
         }
 
         return is_subclass_of($class, 'Surfnet/StepupBundle/Request/JsonConvertible');
-    }
-
-    /**
-     * @param ConstraintViolationListInterface $violations
-     * @param string $root
-     * @return array
-     */
-    private function mapViolationsToErrorStrings(ConstraintViolationListInterface $violations, $root)
-    {
-        $errors = [];
-
-        foreach ($violations as $violation) {
-            /** @var ConstraintViolationInterface $violation */
-            $errors[] = sprintf('%s.%s: %s', $root, $violation->getPropertyPath(), $violation->getMessage());
-        }
-
-        return $errors;
     }
 }
