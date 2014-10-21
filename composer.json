@@ -4,7 +4,7 @@
     "description": "The SURFnet Step-up Gateway sits between a SAML Service Provider and Identity Provider and can provide a certain Level of Assurance by performing second-factor authentication.",
     "autoload": {
         "psr-4": {
-            "Surfnet\\": "src"
+            "Surfnet\\": "src\\Surfnet"
         }
     },
     "minimum-stability": "stable",
@@ -65,6 +65,7 @@
     "extra": {
         "symfony-app-dir": "app",
         "symfony-web-dir": "web",
+        "symfony-assets-install": "symlink",
         "incenteev-parameters": {
             "file": "app/config/parameters.yml"
         }
