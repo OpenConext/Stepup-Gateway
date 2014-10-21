@@ -53,10 +53,7 @@ class JsonConvertibleParamConverter implements ParamConverterInterface
         $object = json_decode($json, true);
 
         if (!isset($object[$name]) || !is_array($object[$name])) {
-            throw new BadJsonRequestException(
-                [sprintf("Missing parameter '%s'", $name)],
-                sprintf("JSON could not be reconstituted into valid object; missing parameter '%s'", $name)
-            );
+            throw new BadJsonRequestException([sprintf("Missing parameter '%s'", $name)]);
         }
 
         $object = $object[$name];
@@ -79,12 +76,7 @@ class JsonConvertibleParamConverter implements ParamConverterInterface
         $violations = $this->validator->validate($convertedObject);
 
         if (count($errors) + count($violations) > 0) {
-            throw BadJsonRequestException::createForViolationsAndErrors(
-                $violations,
-                $name,
-                $errors,
-                'JSON could not be reconstituted into valid object.'
-            );
+            throw BadJsonRequestException::createForViolationsAndErrors($violations, $name, $errors);
         }
 
         $request->attributes->set($name, $convertedObject);
