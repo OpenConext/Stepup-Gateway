@@ -5,9 +5,7 @@
         <md:KeyDescriptor xmlns:ds="http://www.w3.org/2000/09/xmldsig#" use="signing">
             <ds:KeyInfo>
                 <ds:X509Data>
-                    <ds:X509Certificate>
-                        {{ metadata.idpCertificate }}
-                    </ds:X509Certificate>
+                    <ds:X509Certificate>{{ metadata.idpCertificate }}</ds:X509Certificate>
                 </ds:X509Data>
             </ds:KeyInfo>
         </md:KeyDescriptor>

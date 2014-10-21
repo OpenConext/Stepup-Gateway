@@ -118,10 +118,12 @@ class MetadataFactory
      */
     private function getCertificateData($publicKeyFile)
     {
-        $certificateData = \SAML2_Utilities_File::getFileContents($publicKeyFile);
-        preg_match(\SAML2_Utilities_Certificate::CERTIFICATE_PATTERN, $certificateData, $matches);
+        $certificate = \SAML2_Utilities_File::getFileContents($publicKeyFile);
+        preg_match(\SAML2_Utilities_Certificate::CERTIFICATE_PATTERN, $certificate, $matches);
 
-        return str_replace(array("\n"), '', $matches[1]);
+        $certificateData = str_replace(array(' ', "\n"), '', $matches[1]);
+//var_dump($certificateData);die;
+        return $certificateData;
     }
 
     /**
