@@ -19,7 +19,6 @@
 namespace Surfnet\StepupGateway\ApiBundle\Controller;
 
 use Surfnet\MessageBirdApiClient\Messaging\SendMessageResult;
-use Surfnet\StepupGateway\ApiBundle\Command\SendSmsCommand;
 use Surfnet\StepupGateway\ApiBundle\Dto\Requester;
 use Surfnet\StepupGateway\ApiBundle\Dto\SmsMessage;
 use Surfnet\StepupGateway\ApiBundle\Service\SmsService;
@@ -35,14 +34,9 @@ class SmsController extends Controller
      */
     public function sendAction(SmsMessage $message, Requester $requester)
     {
-        $command = new SendSmsCommand();
-        $command->originator = $message->originator;
-        $command->recipient = $message->recipient;
-        $command->body = $message->body;
-
         /** @var SmsService $smsService */
         $smsService = $this->get('surfnet_gateway_api.service.sms');
-        $result = $smsService->send($command, $requester);
+        $result = $smsService->send($message, $requester);
 
         return $this->createJsonResponseFromSendMessageResult($result);
     }

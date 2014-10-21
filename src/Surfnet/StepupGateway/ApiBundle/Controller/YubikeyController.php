@@ -18,7 +18,6 @@
 
 namespace Surfnet\StepupGateway\ApiBundle\Controller;
 
-use Surfnet\StepupGateway\ApiBundle\Command\VerifyYubikeyCommand;
 use Surfnet\StepupGateway\ApiBundle\Dto\Otp;
 use Surfnet\StepupGateway\ApiBundle\Dto\Requester;
 use Surfnet\StepupGateway\ApiBundle\Service\YubikeyService;
@@ -35,12 +34,9 @@ class YubikeyController extends Controller
      */
     public function verifyAction(Otp $otp, Requester $requester)
     {
-        $command = new VerifyYubikeyCommand();
-        $command->otp = $otp->value;
-
         /** @var YubikeyService $yubikeyService */
         $yubikeyService = $this->get('surfnet_gateway_api.service.yubikey');
-        $result = $yubikeyService->verify($command, $requester);
+        $result = $yubikeyService->verify($otp, $requester);
 
         return $this->createJsonResponseFromVerifyYubikeyResult($result);
     }

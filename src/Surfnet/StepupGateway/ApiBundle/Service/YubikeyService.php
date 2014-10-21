@@ -19,7 +19,7 @@
 namespace Surfnet\StepupGateway\ApiBundle\Service;
 
 use Psr\Log\LoggerInterface;
-use Surfnet\StepupGateway\ApiBundle\Command\VerifyYubikeyCommand;
+use Surfnet\StepupGateway\ApiBundle\Dto\Otp as OtpDto;
 use Surfnet\StepupGateway\ApiBundle\Dto\Requester;
 use Surfnet\YubikeyApiClient\Otp;
 use Surfnet\YubikeyApiClient\Service\OtpVerificationResult;
@@ -48,19 +48,19 @@ class YubikeyService
     }
 
     /**
-     * @param VerifyYubikeyCommand $command
+     * @param OtpDto $otp
      * @param Requester $requester
      * @return OtpVerificationResult
      */
-    public function verify(VerifyYubikeyCommand $command, Requester $requester)
+    public function verify(OtpDto $otp, Requester $requester)
     {
         $this->logger->notice('Verifying Yubikey OTP.');
 
-        if (!Otp::isValid($command->otp)) {
+        if (!Otp::isValid($otp->value)) {
             return new OtpVerificationResult(OtpVerificationResult::ERROR_BAD_OTP);
         }
 
-        $otp = Otp::fromString($command->otp);
+        $otp = Otp::fromString($otp->value);
         $result = $this->verificationService->verify($otp);
 
         if (!$result->isSuccessful()) {
