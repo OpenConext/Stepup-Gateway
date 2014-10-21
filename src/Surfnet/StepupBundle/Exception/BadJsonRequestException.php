@@ -36,7 +36,7 @@ class BadJsonRequestException extends \RuntimeException
      * @param string $violationsRoot The name of the object that was validated.
      * @param string[] $errors
      * @param int $code
-     * @param \Exception $previous
+     * @param \Exception|null $previous
      * @return self
      */
     public static function createForViolationsAndErrors(
@@ -59,7 +59,7 @@ class BadJsonRequestException extends \RuntimeException
      * @param string $message
      * @param string[] $errors
      * @param int $code
-     * @param \Exception $previous
+     * @param \Exception|null $previous
      */
     public function __construct($message, array $errors, $code = 0, \Exception $previous = null)
     {
