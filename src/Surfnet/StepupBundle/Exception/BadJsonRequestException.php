@@ -35,23 +35,17 @@ class BadJsonRequestException extends \RuntimeException
      * @param ConstraintViolationListInterface $violations
      * @param string $violationsRoot The name of the object that was validated.
      * @param string[] $errors
-     * @param int $code
-     * @param \Exception|null $previous
      * @return self
      */
     public static function createForViolationsAndErrors(
         $message,
         ConstraintViolationListInterface $violations,
         $violationsRoot,
-        array $errors,
-        $code = 0,
-        \Exception $previous = null
+        array $errors
     ) {
         return new self(
             $message,
-            array_merge(self::mapViolationsToErrorStrings($violations, $violationsRoot), $errors),
-            $code,
-            $previous
+            array_merge(self::mapViolationsToErrorStrings($violations, $violationsRoot), $errors)
         );
     }
 
