@@ -18,20 +18,20 @@
 
 namespace Surfnet\StepupBundle\EventListener;
 
-use Surfnet\StepupBundle\Exception\BadRequestException;
+use Surfnet\StepupBundle\Exception\BadJsonRequestException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 
 /**
- * Converts BadRequestExceptions into JsonResponses with status code 400 Bad Request.
+ * Converts BadJsonRequestExceptions into JsonResponses with status code 400 Bad Request.
  */
-class BadRequestExceptionListener
+class BadJsonRequestExceptionListener
 {
     public function onKernelException(GetResponseForExceptionEvent $event)
     {
         $exception = $event->getException();
 
-        if (!$exception instanceof BadRequestException) {
+        if (!$exception instanceof BadJsonRequestException) {
             return null;
         }
 

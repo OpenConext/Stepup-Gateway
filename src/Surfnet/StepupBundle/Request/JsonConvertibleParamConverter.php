@@ -20,7 +20,7 @@ namespace Surfnet\StepupBundle\Request;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Request\ParamConverter\ParamConverterInterface;
-use Surfnet\StepupBundle\Exception\BadRequestException;
+use Surfnet\StepupBundle\Exception\BadJsonRequestException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\ConstraintViolationInterface;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
@@ -53,7 +53,7 @@ class JsonConvertibleParamConverter implements ParamConverterInterface
         $object = json_decode($json, true);
 
         if (!isset($object[$name]) || !is_array($object[$name])) {
-            throw new BadRequestException(
+            throw new BadJsonRequestException(
                 sprintf("JSON could not be reconstituted into valid object; missing parameter '%s'", $name),
                 [sprintf("Missing parameter '%s'", $name)]
             );
@@ -79,7 +79,7 @@ class JsonConvertibleParamConverter implements ParamConverterInterface
         $violations = $this->validator->validate($convertedObject);
 
         if ($violations->count() > 0) {
-            throw new BadRequestException(
+            throw new BadJsonRequestException(
                 'JSON could not be reconstituted into valid object.',
                 array_merge($this->mapViolationsToErrorStrings($violations, $name), $errors)
             );
