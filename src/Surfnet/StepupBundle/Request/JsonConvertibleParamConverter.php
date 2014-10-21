@@ -54,8 +54,8 @@ class JsonConvertibleParamConverter implements ParamConverterInterface
 
         if (!isset($object[$name]) || !is_array($object[$name])) {
             throw new BadJsonRequestException(
-                sprintf("JSON could not be reconstituted into valid object; missing parameter '%s'", $name),
-                [sprintf("Missing parameter '%s'", $name)]
+                [sprintf("Missing parameter '%s'", $name)],
+                sprintf("JSON could not be reconstituted into valid object; missing parameter '%s'", $name)
             );
         }
 
@@ -80,10 +80,10 @@ class JsonConvertibleParamConverter implements ParamConverterInterface
 
         if (count($errors) + count($violations) > 0) {
             throw BadJsonRequestException::createForViolationsAndErrors(
-                'JSON could not be reconstituted into valid object.',
                 $violations,
                 $name,
-                $errors
+                $errors,
+                'JSON could not be reconstituted into valid object.'
             );
         }
 

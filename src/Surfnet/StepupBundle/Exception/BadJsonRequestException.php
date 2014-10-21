@@ -31,32 +31,36 @@ class BadJsonRequestException extends \RuntimeException
     private $errors;
 
     /**
-     * @param string $message
      * @param ConstraintViolationListInterface $violations
      * @param string $violationsRoot The name of the object that was validated.
      * @param string[] $errors
+     * @param string $message
      * @return self
      */
     public static function createForViolationsAndErrors(
-        $message,
         ConstraintViolationListInterface $violations,
         $violationsRoot,
-        array $errors
+        array $errors,
+        $message = 'JSON could not be reconstituted into valid object.'
     ) {
         return new self(
-            $message,
-            array_merge(self::mapViolationsToErrorStrings($violations, $violationsRoot), $errors)
+            array_merge(self::mapViolationsToErrorStrings($violations, $violationsRoot), $errors),
+            $message
         );
     }
 
     /**
-     * @param string $message
      * @param string[] $errors
+     * @param string $message
      * @param int $code
      * @param \Exception|null $previous
      */
-    public function __construct($message, array $errors, $code = 0, \Exception $previous = null)
-    {
+    public function __construct(
+        array $errors,
+        $message = 'JSON could not be reconstituted into valid object.',
+        $code = 0,
+        \Exception $previous = null
+    ) {
         parent::__construct($message, $code, $previous);
 
         $this->errors = $errors;
