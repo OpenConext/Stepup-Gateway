@@ -43,10 +43,9 @@ class BadJsonRequestException extends \RuntimeException
         array $errors,
         $message = 'JSON could not be reconstituted into valid object.'
     ) {
-        return new self(
-            array_merge(self::mapViolationsToErrorStrings($violations, $violationsRoot), $errors),
-            $message
-        );
+        $allErrors = array_merge(self::mapViolationsToErrorStrings($violations, $violationsRoot), $errors);
+
+        return new self($allErrors, $message);
     }
 
     /**
