@@ -3,8 +3,8 @@
     "license": "Apache-2.0",
     "description": "The SURFnet Step-up Gateway sits between a SAML Service Provider and Identity Provider and can provide a certain Level of Assurance by performing second-factor authentication.",
     "autoload": {
-        "psr-0": {
-            "Surfnet\\StepupGateway\\": "src"
+        "psr-4": {
+            "Surfnet\\": "src"
         }
     },
     "minimum-stability": "stable",
