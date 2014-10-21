@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:jms="urn:jms:translation" version="1.2">
-  <file date="2014-10-20T16:45:17Z" source-language="en" target-language="nl" datatype="plaintext" original="not.available">
+  <file date="2014-10-21T09:37:43Z" source-language="en" target-language="nl" datatype="plaintext" original="not.available">
     <header>
       <tool tool-id="JMSTranslationBundle" tool-name="JMSTranslationBundle" tool-version="1.1.0-DEV"/>
       <note>The source node in most cases contains the sample message as written by the developer. If it looks like a dot-delimitted string such as "form.label.firstname", then the developer has not provided a default message.</note>
@@ -8,19 +8,35 @@
     <body>
       <trans-unit id="c47695eb1433ea19b361b7b49bd346bedca0f0d2" resname="otp.value.must_be_set">
         <source>otp.value.must_be_set</source>
-        <target>Het Yubikey OTP moet ingevuld zijn.</target>
+        <target>Het Yubikey-OTP moet ingevuld zijn.</target>
+      </trans-unit>
+      <trans-unit id="ca59d062e8bde4b6a3bcadee1e4e929ee941dea9" resname="otp.value.must_be_string">
+        <source>otp.value.must_be_string</source>
+        <target>Het Yubikey-OTP moet tekst zijn.</target>
       </trans-unit>
       <trans-unit id="e597d35ab4e8b2fa441d182850c2b690b30f43a5" resname="requester.identity.must_be_set">
         <source>requester.identity.must_be_set</source>
         <target>De identiteit van de aanvrager moet bekend zijn.</target>
       </trans-unit>
+      <trans-unit id="8f65354b9147294030909054a4dc6e0c24ffc668" resname="requester.identity.must_be_string">
+        <source>requester.identity.must_be_string</source>
+        <target>De identiteit van de aanvrager moet tekst zijn.</target>
+      </trans-unit>
       <trans-unit id="9f5a1c75a004dcc9b6c61d73855df32fb0b5d80c" resname="requester.institution.must_be_set">
         <source>requester.institution.must_be_set</source>
         <target>Het aanvragend instituut moet bekend zijn.</target>
       </trans-unit>
+      <trans-unit id="08fe42f7aa42b8d84898c5bfbe64c92ecdd313f1" resname="requester.institution.must_be_string">
+        <source>requester.institution.must_be_string</source>
+        <target>Het aanvragend instituut moet tekst zijn.</target>
+      </trans-unit>
       <trans-unit id="9993d3622b1b044d2292852cbf2bbc35b25745e0" resname="sms_message.body.must_be_set">
         <source>sms_message.body.must_be_set</source>
         <target>SMS-bericht mag niet leeg zijn.</target>
+      </trans-unit>
+      <trans-unit id="57f79eb950d7d7f5ab54c79306b7a625554721d3" resname="sms_message.body.must_be_string">
+        <source>sms_message.body.must_be_string</source>
+        <target>Het SMS-bericht moet tekst zijn.</target>
       </trans-unit>
       <trans-unit id="6dc9a4e68657f445f65d37629a2fa4347c0de3d2" resname="sms_message.originator.must_be_alphanumerical">
         <source>sms_message.originator.must_be_alphanumerical</source>

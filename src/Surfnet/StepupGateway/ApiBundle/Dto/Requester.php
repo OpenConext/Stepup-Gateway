@@ -25,12 +25,14 @@ class Requester implements JsonConvertible
 {
     /**
      * @Assert\NotBlank(message="requester.institution.must_be_set")
+     * @Assert\Type(type="string", message="requester.institution.must_be_string")
      * @var string
      */
     public $institution;
 
     /**
      * @Assert\NotBlank(message="requester.identity.must_be_set")
+     * @Assert\Type(type="string", message="requester.identity.must_be_string")
      * @var string
      */
     public $identity;

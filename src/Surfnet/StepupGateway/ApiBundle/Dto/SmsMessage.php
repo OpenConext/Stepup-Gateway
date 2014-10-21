@@ -53,6 +53,7 @@ class SmsMessage implements JsonConvertible
 
     /**
      * @Assert\NotBlank(message="sms_message.body.must_be_set")
+     * @Assert\Type(type="string", message="sms_message.body.must_be_string")
      * @var string
      */
     public $body;
