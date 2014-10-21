@@ -71,7 +71,7 @@ class JsonConvertibleParamConverterTest extends \PHPUnit_Framework_TestCase
         $foo->camelCased = 'yeah';
 
         $request = $this->createJsonRequest((object) ['foo' => ['bar' => 'baz', 'camel_cased' => 'yeah']]);
-        $request->attributes = m::mock()
+        $request->attributes = m::mock('Symfony\Component\HttpFoundation\ParameterBag')
             ->shouldReceive('set')->once()->with('foo', $this->looseComparison($foo))
             ->getMock();
 
