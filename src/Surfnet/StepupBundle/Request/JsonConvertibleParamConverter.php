@@ -78,7 +78,7 @@ class JsonConvertibleParamConverter implements ParamConverterInterface
 
         $violations = $this->validator->validate($convertedObject);
 
-        if ($violations->count() > 0) {
+        if (count($errors) + count($violations) > 0) {
             throw new BadJsonRequestException(
                 'JSON could not be reconstituted into valid object.',
                 array_merge($this->mapViolationsToErrorStrings($violations, $name), $errors)
