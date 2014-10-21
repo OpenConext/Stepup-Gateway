@@ -37,6 +37,7 @@ class AppKernel extends Kernel
             new Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle(),
             new Mopa\Bundle\BootstrapBundle\MopaBootstrapBundle(),
             new Surfnet\MessageBirdApiClientBundle\SurfnetMessageBirdApiClientBundle(),
+            new Surfnet\SamlBundle\SurfnetSamlBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

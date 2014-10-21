@@ -114,3 +114,16 @@ services:
 
 surfnet_message_bird_api_client:
     authorization: %messagebird_authorization%
+
+surfnet_saml:
+    metadata:
+        default:
+            entity_id_route: surfnet_saml_metadata
+            service_provider:
+                enabled: true
+                assertion_consumer_route: surfnet_saml_serviceprovider_consume_assertion
+            identity_provider:
+                enabled: true
+                sso_route: surfnet_saml_identityprovider_sso
+            public_key: %saml_metadata_publickey%
+            private_key: %saml_metadata_privatekey%
