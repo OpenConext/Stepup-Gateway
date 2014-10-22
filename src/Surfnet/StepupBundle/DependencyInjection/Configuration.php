@@ -46,6 +46,10 @@ class Configuration implements ConfigurationInterface
                                     )
                                 ->end()
                             ->end()
+                            ->booleanNode('expose_via_response')
+                                ->info('When true, exposes the request ID via the response')
+                                ->defaultValue(false)
+                            ->end()
                         ->end()
                     ->end()
                 ->end();

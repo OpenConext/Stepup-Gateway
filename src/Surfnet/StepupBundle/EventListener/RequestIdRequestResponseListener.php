@@ -19,13 +19,14 @@
 namespace Surfnet\StepupBundle\EventListener;
 
 use Surfnet\StepupBundle\Request\RequestId;
+use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 
 /**
  * When receiving a kernel request, reads the request ID from the X-Stepup-Request-Id header, if present, and sets it on
  * a RequestId instance.
  */
-class RequestIdRequestListener
+class RequestIdRequestResponseListener
 {
     /**
      * @var string
@@ -38,21 +39,32 @@ class RequestIdRequestListener
     private $requestId;
 
     /**
+     * @var bool
+     */
+    private $exposeViaResponse;
+
+    /**
      * @param RequestId $requestId
      * @param string $headerName
+     * @param bool $exposeViaResponse
      */
-    public function __construct(RequestId $requestId, $headerName)
+    public function __construct(RequestId $requestId, $headerName, $exposeViaResponse)
     {
         if (!is_string($headerName)) {
             throw new \InvalidArgumentException('Header name must be string.');
         }
 
+        if (!is_boolean($exposeViaResponse)) {
+            throw new \InvalidArgumentException('$exposeViaResponse must be boolean');
+        }
+
         $this->headerName = $headerName;
         $this->requestId = $requestId;
+        $this->exposeViaResponse = $exposeViaResponse;
     }
 
     /**
-     * If present, reads the request ID from the X-Stepup-Request-Id header and sets it on a RequestId instance.
+     * If present, reads the request ID from the appropriate header and sets it on a RequestId instance.
      *
      * @param GetResponseEvent $event
      */
@@ -65,5 +77,19 @@ class RequestIdRequestListener
         }
 
         $this->requestId->set($headers->get($this->headerName, null, true));
+    }
+
+    /**
+     * If enabled, sets the request ID on the appropriate response header.
+     *
+     * @param FilterResponseEvent $event
+     */
+    public function onKernelResponse(FilterResponseEvent $event)
+    {
+        if (!$this->exposeViaResponse) {
+            return;
+        }
+
+        $event->getResponse()->headers->set($this->headerName, $this->requestId->get());
     }
 }

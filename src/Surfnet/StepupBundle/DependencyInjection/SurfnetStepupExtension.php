@@ -32,6 +32,7 @@ class SurfnetStepupExtension extends Extension
         $config = $processor->processConfiguration(new Configuration(), $config);
 
         $container->setParameter('request_id.header', $config['request_id']['header']);
+        $container->setParameter('request_id.expose_via_response', $config['request_id']['expose_via_response']);
 
         $loader = new YamlFileLoader(
             $container,

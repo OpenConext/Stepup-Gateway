@@ -20,10 +20,12 @@ services:
         public: false
         class: Surfnet\StepupBundle\Request\RandomRequestIdGenerator
 
-    surfnet_stepup.listener.request_id_request_listener:
+    surfnet_stepup.listener.request_id_request_response_listener:
         public: false
-        class: Surfnet\StepupBundle\EventListener\RequestIdRequestListener
+        class: Surfnet\StepupBundle\EventListener\RequestIdRequestResponseListener
         arguments:
             - %request_id.header%
+            - %request_id.expose_via_response%
         tags:
             - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
+            - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse }
