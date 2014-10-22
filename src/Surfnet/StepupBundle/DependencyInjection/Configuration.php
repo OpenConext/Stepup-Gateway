@@ -36,6 +36,7 @@ class Configuration implements ConfigurationInterface
                     ->arrayNode('request_id')
                         ->children()
                             ->scalarNode('header')
+                                ->info('Denotes on which request and response headers the request ID can be found')
                                 ->defaultValue('X-Stepup-Request-Id')
                                 ->validate()
                                     ->ifTrue(function ($headerName) {
