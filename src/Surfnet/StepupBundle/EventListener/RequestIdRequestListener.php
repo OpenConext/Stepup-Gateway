@@ -28,15 +28,26 @@ use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 class RequestIdRequestListener
 {
     /**
+     * @var string
+     */
+    private $headerName;
+
+    /**
      * @var RequestId
      */
     private $requestId;
 
     /**
      * @param RequestId $requestId
+     * @param string $headerName
      */
-    public function __construct(RequestId $requestId)
+    public function __construct(RequestId $requestId, $headerName)
     {
+        if (!is_string($headerName)) {
+            throw new \InvalidArgumentException('Header name must be string.');
+        }
+
+        $this->headerName = $headerName;
         $this->requestId = $requestId;
     }
 
@@ -49,10 +60,10 @@ class RequestIdRequestListener
     {
         $headers = $event->getRequest()->headers;
 
-        if (!$headers->has('X-Stepup-Request-Id')) {
+        if (!$headers->has($this->headerName)) {
             return;
         }
 
-        $this->requestId->set($headers->get('X-Stepup-Request-Id', null, true));
+        $this->requestId->set($headers->get($this->headerName, null, true));
     }
 }

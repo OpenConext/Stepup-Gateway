@@ -23,5 +23,7 @@ services:
     surfnet_stepup.listener.request_id_request_listener:
         public: false
         class: Surfnet\StepupBundle\EventListener\RequestIdRequestListener
+        arguments:
+            - %request_id.header%
         tags:
             - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
