@@ -22,6 +22,6 @@ class RandomRequestIdGenerator implements RequestIdGenerator
 {
     public function generateRequestId()
     {
-        return md5(uniqid());
+        return md5(openssl_random_pseudo_bytes(50));
     }
 }
