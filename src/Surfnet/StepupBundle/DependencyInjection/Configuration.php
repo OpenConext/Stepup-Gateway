@@ -16,10 +16,22 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupBundle\Tests\Request;
+namespace Surfnet\StepupBundle\DependencyInjection;
 
-class Foo
+use Symfony\Component\Config\Definition\Builder\TreeBuilder;
+use Symfony\Component\Config\Definition\ConfigurationInterface;
+
+/**
+ * @codeCoverageIgnore
+ */
+class Configuration implements ConfigurationInterface
 {
-    public $bar;
-    public $camelCased;
+    public function getConfigTreeBuilder()
+    {
+        $treeBuilder = new TreeBuilder;
+
+        $treeBuilder->root('surfnet_bundle');
+
+        return $treeBuilder;
+    }
 }

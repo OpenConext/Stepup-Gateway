@@ -10,3 +10,30 @@ services:
         class: Surfnet\StepupBundle\EventListener\BadJsonRequestExceptionListener
         tags:
             - { name: kernel.event_listener, event: kernel.exception, method: onKernelException }
+
+    surfnet_stepup.request.request_id:
+        class: Surfnet\StepupBundle\Request\RequestId
+        arguments:
+            - @surfnet_stepup.request.request_id_generator
+
+    surfnet_stepup.request.request_id_generator:
+        public: false
+        class: Surfnet\StepupBundle\Request\RandomRequestIdGenerator
+
+    surfnet_stepup.listener.request_id_request_response_listener:
+        class: Surfnet\StepupBundle\EventListener\RequestIdRequestResponseListener
+        arguments:
+            - @surfnet_stepup.request.request_id
+        tags:
+            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
+            - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse }
+
+    surfnet_stepup.guzzle.request_id_injector:
+        class: Surfnet\StepupBundle\Guzzle\Subscriber\GuzzleRequestIdInjector
+        arguments:
+            - @surfnet_stepup.request.request_id
+
+    surfnet_setup.monolog.request_id_processor:
+        class: Surfnet\StepupBundle\Monolog\Processor\RequestIdProcessor
+        arguments:
+            - @surfnet_stepup.request.request_id

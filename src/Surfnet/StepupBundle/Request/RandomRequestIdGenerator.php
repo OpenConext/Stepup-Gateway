@@ -16,10 +16,12 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupBundle\Tests\Request;
+namespace Surfnet\StepupBundle\Request;
 
-class Foo
+class RandomRequestIdGenerator implements RequestIdGenerator
 {
-    public $bar;
-    public $camelCased;
+    public function generateRequestId()
+    {
+        return md5(openssl_random_pseudo_bytes(50));
+    }
 }

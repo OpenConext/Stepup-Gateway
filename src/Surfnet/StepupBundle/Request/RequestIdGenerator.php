@@ -16,10 +16,15 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupBundle\Tests\Request;
+namespace Surfnet\StepupBundle\Request;
 
-class Foo
+/**
+ * Generates a request ID that should be unique across several million invocations.
+ */
+interface RequestIdGenerator
 {
-    public $bar;
-    public $camelCased;
+    /**
+     * @return string
+     */
+    public function generateRequestId();
 }

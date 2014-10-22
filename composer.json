@@ -11,6 +11,7 @@
     "minimum-stability": "stable",
     "require": {
         "php": ">=5.4",
+        "ext-openssl": "*",
         "symfony/symfony": "~2.5",
         "doctrine/dbal": "~2.2,>=2.2.3",
         "doctrine/orm": "~2.2,>=2.2.3",
