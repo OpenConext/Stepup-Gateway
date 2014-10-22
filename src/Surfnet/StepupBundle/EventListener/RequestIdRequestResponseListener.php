@@ -34,32 +34,21 @@ class RequestIdRequestResponseListener
     private $requestId;
 
     /**
-     * @var string
-     */
-    private $headerName;
-
-    /**
      * @var bool
      */
     private $exposeViaResponse;
 
     /**
      * @param RequestId $requestId
-     * @param string $headerName
      * @param bool $exposeViaResponse
      */
-    public function __construct(RequestId $requestId, $headerName, $exposeViaResponse)
+    public function __construct(RequestId $requestId, $exposeViaResponse)
     {
-        if (!is_string($headerName)) {
-            throw new \InvalidArgumentException('Header name must be string.');
-        }
-
         if (!is_bool($exposeViaResponse)) {
             throw new \InvalidArgumentException('$exposeViaResponse must be boolean');
         }
 
         $this->requestId = $requestId;
-        $this->headerName = $headerName;
         $this->exposeViaResponse = $exposeViaResponse;
     }
 
@@ -72,11 +61,11 @@ class RequestIdRequestResponseListener
     {
         $headers = $event->getRequest()->headers;
 
-        if (!$headers->has($this->headerName)) {
+        if (!$headers->has('X-Stepup-Request-Id')) {
             return;
         }
 
-        $this->requestId->set($headers->get($this->headerName, null, true));
+        $this->requestId->set($headers->get('X-Stepup-Request-Id', null, true));
     }
 
     /**
@@ -90,6 +79,6 @@ class RequestIdRequestResponseListener
             return;
         }
 
-        $event->getResponse()->headers->set($this->headerName, $this->requestId->get());
+        $event->getResponse()->headers->set('X-Stepup-Request-Id', $this->requestId->get());
     }
 }

@@ -17,18 +17,11 @@ class GuzzleRequestIdInjector implements SubscriberInterface
     private $requestId;
 
     /**
-     * @var string
-     */
-    private $headerName;
-
-    /**
      * @param RequestId $requestId
-     * @param string $headerName
      */
-    public function __construct(RequestId $requestId, $headerName)
+    public function __construct(RequestId $requestId)
     {
         $this->requestId = $requestId;
-        $this->headerName = $headerName;
     }
 
     public function getEvents()
@@ -41,6 +34,6 @@ class GuzzleRequestIdInjector implements SubscriberInterface
      */
     public function addRequestIdHeader(BeforeEvent $event)
     {
-        $event->getRequest()->addHeader($this->headerName, $this->requestId->get());
+        $event->getRequest()->addHeader('X-Stepup-Request-Id', $this->requestId->get());
     }
 }

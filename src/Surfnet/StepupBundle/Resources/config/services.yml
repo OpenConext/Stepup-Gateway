@@ -24,7 +24,6 @@ services:
         class: Surfnet\StepupBundle\EventListener\RequestIdRequestResponseListener
         arguments:
             - @surfnet_stepup.request.request_id
-            - %request_id.header%
             - %request_id.expose_via_response%
         tags:
             - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
