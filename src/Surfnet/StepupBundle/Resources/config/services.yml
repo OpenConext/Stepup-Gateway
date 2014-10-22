@@ -29,7 +29,7 @@ services:
             - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
             - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse }
 
-    surfnet_setup.guzzle.request_id_injector:
+    surfnet_stepup.guzzle.request_id_injector:
         class: Surfnet\StepupBundle\Guzzle\Subscriber\GuzzleRequestIdInjector
         arguments:
             - @surfnet_stepup.request.request_id
