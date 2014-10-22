@@ -34,6 +34,7 @@ class Configuration implements ConfigurationInterface
             ->root('surfnet_bundle')
                 ->children()
                     ->arrayNode('request_id')
+                        ->addDefaultsIfNotSet()
                         ->children()
                             ->scalarNode('header')
                                 ->info('Denotes on which request and response headers the request ID can be found')
