@@ -54,7 +54,7 @@ class RequestIdRequestResponseListener
             throw new \InvalidArgumentException('Header name must be string.');
         }
 
-        if (!is_boolean($exposeViaResponse)) {
+        if (!is_bool($exposeViaResponse)) {
             throw new \InvalidArgumentException('$exposeViaResponse must be boolean');
         }
 
