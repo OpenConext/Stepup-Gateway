@@ -30,19 +30,7 @@ class Configuration implements ConfigurationInterface
     {
         $treeBuilder = new TreeBuilder;
 
-        $treeBuilder
-            ->root('surfnet_bundle')
-                ->children()
-                    ->arrayNode('request_id')
-                        ->addDefaultsIfNotSet()
-                        ->children()
-                            ->booleanNode('expose_via_response')
-                                ->info('When true, exposes the request ID via the response')
-                                ->defaultValue(false)
-                            ->end()
-                        ->end()
-                    ->end()
-                ->end();
+        $treeBuilder->root('surfnet_bundle');
 
         return $treeBuilder;
     }

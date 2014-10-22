@@ -36,22 +36,11 @@ class RequestIdRequestResponseListener
     private $requestId;
 
     /**
-     * @var bool
-     */
-    private $exposeViaResponse;
-
-    /**
      * @param RequestId $requestId
-     * @param bool $exposeViaResponse
      */
-    public function __construct(RequestId $requestId, $exposeViaResponse)
+    public function __construct(RequestId $requestId)
     {
-        if (!is_bool($exposeViaResponse)) {
-            throw new \InvalidArgumentException('$exposeViaResponse must be boolean');
-        }
-
         $this->requestId = $requestId;
-        $this->exposeViaResponse = $exposeViaResponse;
     }
 
     /**
@@ -77,10 +66,6 @@ class RequestIdRequestResponseListener
      */
     public function onKernelResponse(FilterResponseEvent $event)
     {
-        if (!$this->exposeViaResponse) {
-            return;
-        }
-
         $event->getResponse()->headers->set(self::HEADER_NAME, $this->requestId->get());
     }
 }
