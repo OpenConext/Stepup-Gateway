@@ -4,6 +4,7 @@ namespace Surfnet\StepupBundle\Guzzle\Subscriber;
 
 use GuzzleHttp\Event\BeforeEvent;
 use GuzzleHttp\Event\SubscriberInterface;
+use Surfnet\StepupBundle\EventListener\RequestIdRequestResponseListener;
 use Surfnet\StepupBundle\Request\RequestId;
 
 /**
@@ -34,6 +35,6 @@ class GuzzleRequestIdInjector implements SubscriberInterface
      */
     public function addRequestIdHeader(BeforeEvent $event)
     {
-        $event->getRequest()->addHeader('X-Stepup-Request-Id', $this->requestId->get());
+        $event->getRequest()->addHeader(RequestIdRequestResponseListener::HEADER_NAME, $this->requestId->get());
     }
 }

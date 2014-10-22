@@ -28,6 +28,8 @@ use Symfony\Component\HttpKernel\Event\GetResponseEvent;
  */
 class RequestIdRequestResponseListener
 {
+    const HEADER_NAME = 'X-Stepup-Request-Id';
+
     /**
      * @var RequestId
      */
@@ -61,11 +63,11 @@ class RequestIdRequestResponseListener
     {
         $headers = $event->getRequest()->headers;
 
-        if (!$headers->has('X-Stepup-Request-Id')) {
+        if (!$headers->has(self::HEADER_NAME)) {
             return;
         }
 
-        $this->requestId->set($headers->get('X-Stepup-Request-Id', null, true));
+        $this->requestId->set($headers->get(self::HEADER_NAME, null, true));
     }
 
     /**
@@ -79,6 +81,6 @@ class RequestIdRequestResponseListener
             return;
         }
 
-        $event->getResponse()->headers->set('X-Stepup-Request-Id', $this->requestId->get());
+        $event->getResponse()->headers->set(self::HEADER_NAME, $this->requestId->get());
     }
 }
