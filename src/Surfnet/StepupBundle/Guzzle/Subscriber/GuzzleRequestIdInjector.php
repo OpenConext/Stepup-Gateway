@@ -43,7 +43,7 @@ class GuzzleRequestIdInjector implements SubscriberInterface
 
     public function getEvents()
     {
-        return ['before' => 'addRequestIdHeader'];
+        return ['before' => ['addRequestIdHeader']];
     }
 
     /**
