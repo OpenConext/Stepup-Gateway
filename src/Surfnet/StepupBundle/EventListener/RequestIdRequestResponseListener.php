@@ -29,14 +29,14 @@ use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 class RequestIdRequestResponseListener
 {
     /**
-     * @var string
-     */
-    private $headerName;
-
-    /**
      * @var RequestId
      */
     private $requestId;
+
+    /**
+     * @var string
+     */
+    private $headerName;
 
     /**
      * @var bool
@@ -58,8 +58,8 @@ class RequestIdRequestResponseListener
             throw new \InvalidArgumentException('$exposeViaResponse must be boolean');
         }
 
-        $this->headerName = $headerName;
         $this->requestId = $requestId;
+        $this->headerName = $headerName;
         $this->exposeViaResponse = $exposeViaResponse;
     }
 
