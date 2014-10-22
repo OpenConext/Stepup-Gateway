@@ -12,22 +12,11 @@ class RequestIdProcessor
     private $requestId;
 
     /**
-     * @var string
-     */
-    private $extraFieldName;
-
-    /**
      * @param RequestId $requestId
-     * @param string $extraFieldName
      */
-    public function __construct(RequestId $requestId, $extraFieldName)
+    public function __construct(RequestId $requestId)
     {
-        if (!is_string($extraFieldName)) {
-            throw new \InvalidArgumentException('Field name must be string.');
-        }
-
         $this->requestId = $requestId;
-        $this->extraFieldName = $extraFieldName;
     }
 
 
@@ -39,7 +28,7 @@ class RequestIdProcessor
      */
     public function __invoke(array $record)
     {
-        $record['extra'][$this->extraFieldName] = $this->requestId->get();
+        $record['extra']['request_id'] = $this->requestId->get();
 
         return $record;
     }
