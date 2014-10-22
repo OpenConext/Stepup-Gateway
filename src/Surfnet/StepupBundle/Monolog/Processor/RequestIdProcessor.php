@@ -19,7 +19,6 @@ class RequestIdProcessor
         $this->requestId = $requestId;
     }
 
-
     /**
      * Adds the request ID onto the record's extra data.
      *
