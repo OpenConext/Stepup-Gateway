@@ -21,7 +21,6 @@ services:
         class: Surfnet\StepupBundle\Request\RandomRequestIdGenerator
 
     surfnet_stepup.listener.request_id_request_response_listener:
-        public: false
         class: Surfnet\StepupBundle\EventListener\RequestIdRequestResponseListener
         arguments:
             - @surfnet_stepup.request.request_id
