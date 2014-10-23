@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "87db9485b6bb137e2f87e671ac343bd4",
+    "hash": "e50f442f6f8d493ed2fe4c41909ab0ad",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -780,6 +780,47 @@
                 "icon"
             ],
             "time": "2014-08-26 16:36:44"
+        },
+        {
+            "name": "graylog2/gelf-php",
+            "version": "1.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/bzikarsky/gelf-php.git",
+                "reference": "b6f306e1b36b718aaf03b59563f4d6389e92cead"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/bzikarsky/gelf-php/zipball/b6f306e1b36b718aaf03b59563f4d6389e92cead",
+                "reference": "b6f306e1b36b718aaf03b59563f4d6389e92cead",
+                "shasum": ""
+            },
+            "require": {
+                "php": "~5.3",
+                "psr/log": "~1.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.3",
+                "squizlabs/php_codesniffer": "~1.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Gelf\\": "src/Gelf"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Benjamin Zikarsky",
+                    "email": "benjamin@zikarsky.de"
+                }
+            ],
+            "description": "A php implementation to send log-messages to a GELF compatible backend like Graylog2.",
+            "time": "2014-10-23 05:32:34"
         },
         {
             "name": "guzzlehttp/guzzle",
