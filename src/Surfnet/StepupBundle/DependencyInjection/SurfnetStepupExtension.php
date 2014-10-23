@@ -31,6 +31,8 @@ class SurfnetStepupExtension extends Extension
         $processor = new Processor();
         $config = $processor->processConfiguration(new Configuration(), $config);
 
+        $container->setParameter('logging.application_name', $config['logging']['application_name']);
+
         $loader = new YamlFileLoader(
             $container,
             new FileLocator(__DIR__ . '/../Resources/config')

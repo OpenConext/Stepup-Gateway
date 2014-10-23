@@ -30,7 +30,25 @@ class Configuration implements ConfigurationInterface
     {
         $treeBuilder = new TreeBuilder;
 
-        $treeBuilder->root('surfnet_bundle');
+        $treeBuilder
+            ->root('surfnet_bundle')
+            ->children()
+                ->arrayNode('logging')
+                    ->isRequired()
+                    ->children()
+                        ->scalarNode('application_name')
+                            ->info('This is the application name that is included with each log message')
+                            ->isRequired()
+                            ->validate()
+                                ->ifTrue(function ($name) {
+                                    return !is_string($name);
+                                })
+                                ->thenInvalid('surfnet_bundle.logging.application_name must be string')
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end();
 
         return $treeBuilder;
     }

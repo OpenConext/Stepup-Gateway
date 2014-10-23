@@ -40,6 +40,18 @@ services:
         tags:
             - { name: monolog.processor }
 
+    surfnet_stepup.monolog.application_name_processor:
+        class: Surfnet\StepupBundle\Monolog\Processor\ApplicationNameProcessor
+        arguments: [%logging.application_name%]
+        tags:
+            - { name: monolog.processor }
+
+    surfnet_stepup.monolog.server_name_processor:
+        class: Surfnet\StepupBundle\Monolog\Processor\ServerNameProcessor
+        arguments: [ @request_stack ]
+        tags:
+            - { name: monolog.processor }
+
     surfnet_stepup.monolog.full_message_exception_gelf_message_formatter:
         class: Surfnet\StepupBundle\Monolog\Formatter\FullMessageExceptionGelfMessageFormatter
         arguments:
