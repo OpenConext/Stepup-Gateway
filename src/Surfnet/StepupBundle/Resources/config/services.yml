@@ -37,3 +37,12 @@ services:
         class: Surfnet\StepupBundle\Monolog\Processor\RequestIdProcessor
         arguments:
             - @surfnet_stepup.request.request_id
+
+    surfnet_stepup.monolog.full_message_exception_gelf_message_formatter:
+        class: Surfnet\StepupBundle\Monolog\Formatter\FullMessageExceptionGelfMessageFormatter
+        arguments:
+            - @surfnet_stepup.monolog.gelf_message_formatter
+
+    surfnet_stepup.monolog.gelf_message_formatter:
+        public: false
+        class: Monolog\Formatter\GelfMessageFormatter
