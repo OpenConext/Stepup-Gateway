@@ -33,7 +33,7 @@ services:
         arguments:
             - @surfnet_stepup.request.request_id
 
-    surfnet_setup.monolog.request_id_processor:
+    surfnet_stepup.monolog.request_id_processor:
         class: Surfnet\StepupBundle\Monolog\Processor\RequestIdProcessor
         arguments:
             - @surfnet_stepup.request.request_id
