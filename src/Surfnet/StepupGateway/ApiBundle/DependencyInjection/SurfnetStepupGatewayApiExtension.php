@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupGateway\ApiBundle\DependencyInjection;
 
+use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
@@ -27,10 +28,16 @@ class SurfnetStepupGatewayApiExtension extends Extension
 {
     public function load(array $config, ContainerBuilder $container)
     {
+        $processor = new Processor();
+        $config = $processor->processConfiguration(new Configuration(), $config);
+
         $loader = new YamlFileLoader(
             $container,
             new FileLocator(__DIR__ . '/../Resources/config')
         );
         $loader->load('services.yml');
+
+        $entryPoint = $container->getDefinition('surfnet_gateway_api.security.json_basic_auth_entry_point');
+        $entryPoint->replaceArgument(0, $config['http_basic_realm']);
     }
 }

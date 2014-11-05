@@ -2,7 +2,8 @@ security:
     firewalls:
         api:
             pattern: ^/api/
-            http_basic: { realm: "Secure Gateway API" }
+            http_basic: ~
+            entry_point: surfnet_gateway_api.security.json_basic_auth_entry_point
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
