@@ -10,3 +10,8 @@ services:
         arguments:
             - @surfnet_yubikey_api_client.verification_service
             - @logger
+
+    surfnet_gateway_api.security.json_basic_auth_entry_point:
+        class: Surfnet\StepupGateway\ApiBundle\Security\Http\EntryPoint\JsonBasicAuthenticationEntryPoint
+        arguments:
+            - ~ # HTTP Basic realm string, see extension
