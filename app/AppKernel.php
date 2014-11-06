@@ -22,6 +22,7 @@ use Symfony\Component\HttpKernel\Kernel;
 class AppKernel extends Kernel
 {
     public function registerBundles()
+
     {
         $bundles = array(
             new Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
@@ -37,6 +38,7 @@ class AppKernel extends Kernel
             new Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle(),
             new Mopa\Bundle\BootstrapBundle\MopaBootstrapBundle(),
             new Surfnet\MessageBirdApiClientBundle\SurfnetMessageBirdApiClientBundle(),
+            new Surfnet\YubikeyApiClientBundle\SurfnetYubikeyApiClientBundle(),
             new Surfnet\SamlBundle\SurfnetSamlBundle(),
         );
 
@@ -51,7 +53,6 @@ class AppKernel extends Kernel
 
         return $bundles;
     }
-
     public function registerContainerConfiguration(LoaderInterface $loader)
     {
         $loader->load(__DIR__.'/config/config_'.$this->getEnvironment().'.yml');

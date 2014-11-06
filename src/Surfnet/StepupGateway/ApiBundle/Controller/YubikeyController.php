@@ -18,25 +18,23 @@
 
 namespace Surfnet\StepupGateway\ApiBundle\Controller;
 
-use Surfnet\MessageBirdApiClient\Messaging\SendMessageResult;
-use Surfnet\StepupGateway\ApiBundle\Command\SendSmsCommand;
-use Surfnet\StepupGateway\ApiBundle\Service\SmsService;
+use Surfnet\StepupGateway\ApiBundle\Command\VerifyYubikeyCommand;
+use Surfnet\StepupGateway\ApiBundle\Service\YubikeyService;
+use Surfnet\YubikeyApiClient\Service\OtpVerificationResult;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Validator\ConstraintViolationInterface;
-use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class SmsController extends Controller
+class YubikeyController extends Controller
 {
     /**
      * @param Request $request
      * @return JsonResponse
      */
-    public function sendAction(Request $request)
+    public function verifyAction(Request $request)
     {
         $object = json_decode($request->getContent(), true);
-        $command = new SendSmsCommand();
+        $command = new VerifyYubikeyCommand();
 
         if (isset($object['requester']['institution'])) {
             $command->requesterInstitution = $object['requester']['institution'];
@@ -46,16 +44,8 @@ class SmsController extends Controller
             $command->requesterIdentity = $object['requester']['identity'];
         }
 
-        if (isset($object['message']['originator'])) {
-            $command->originator = $object['message']['originator'];
-        }
-
-        if (isset($object['message']['recipient'])) {
-            $command->recipient = $object['message']['recipient'];
-        }
-
-        if (isset($object['message']['body'])) {
-            $command->body = $object['message']['body'];
+        if (isset($object['otp'])) {
+            $command->otp = $object['otp'];
         }
 
         /** @var ValidatorInterface $validator */
@@ -66,32 +56,38 @@ class SmsController extends Controller
             return $this->createJsonResponseFromViolations($violations);
         }
 
-        /** @var SmsService $smsService */
-        $smsService = $this->get('surfnet_gateway_api.service.sms');
-        $result = $smsService->send($command);
+        /** @var YubikeyService $yubikeyService */
+        $yubikeyService = $this->get('surfnet_gateway_api.service.yubikey');
+        $result = $yubikeyService->verify($command);
 
-        return $this->createJsonResponseFromSendMessageResult($result);
+        return $this->createJsonResponseFromVerifyYubikeyResult($result);
     }
 
     /**
-     * @param SendMessageResult $result
+     * @param OtpVerificationResult $result
      * @return JsonResponse
      */
-    private function createJsonResponseFromSendMessageResult(SendMessageResult $result)
+    private function createJsonResponseFromVerifyYubikeyResult(OtpVerificationResult $result)
     {
-        if ($result->isSuccess()) {
+        if ($result->isSuccessful()) {
             return new JsonResponse(['status' => 'OK']);
         }
 
-        $errors = array_map(function ($error) {
-            return sprintf('%s (#%d)', $error['description'], $error['code']);
-        }, $result->getRawErrors());
-
-        if ($result->isMessageInvalid()) {
-            return new JsonResponse(['errors' => $errors], 400);
+        switch ($result->getError()) {
+            case 'BAD_OTP':
+            case 'REPLAYED_OTP':
+                // Bad OTP means user/client entered invalid OTP
+                // REPLAYED_OTP can mean the user/client entered OTP and immediately pressed RETURN, causing the
+                // form to be submitted twice.
+                $statusCode = 400;
+                break;
+            default:
+                // Other errors are Yubico server errors.
+                $statusCode = 502;
         }
 
-        // Invalid access key or server error
-        return new JsonResponse(['errors' => $errors], 500);
+        $errorMessage = sprintf('Yubikey verification failed (%s)', $result->getError());
+
+        return new JsonResponse(['errors' => [$errorMessage]], $statusCode);
     }
 }
