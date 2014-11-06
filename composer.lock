@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "87540196b7efd5e3d5e1e2772687e021",
+    "hash": "1fccf95b6ba80c0c3890fb0925e300e1",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -605,12 +605,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/migrations.git",
-                "reference": "1a9dffa64e33fdc10f4b4c3f5d7230b74d4a1021"
+                "reference": "f4fe9d9cc21a711d89d91d29c4a4e7945289cdd0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/migrations/zipball/1a9dffa64e33fdc10f4b4c3f5d7230b74d4a1021",
-                "reference": "1a9dffa64e33fdc10f4b4c3f5d7230b74d4a1021",
+                "url": "https://api.github.com/repos/doctrine/migrations/zipball/f4fe9d9cc21a711d89d91d29c4a4e7945289cdd0",
+                "reference": "f4fe9d9cc21a711d89d91d29c4a4e7945289cdd0",
                 "shasum": ""
             },
             "require": {
@@ -655,7 +655,7 @@
                 "database",
                 "migrations"
             ],
-            "time": "2014-08-18 18:03:07"
+            "time": "2014-10-30 14:49:25"
         },
         {
             "name": "doctrine/orm",
@@ -1779,17 +1779,17 @@
         },
         {
             "name": "sensio/distribution-bundle",
-            "version": "v3.0.6",
+            "version": "v3.0.8",
             "target-dir": "Sensio/Bundle/DistributionBundle",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sensiolabs/SensioDistributionBundle.git",
-                "reference": "e20461e4f8e1afd68f36cf90bdccc06f7aa6a6c2"
+                "reference": "bc5e96bb4faf6bee7121085951d11b89488952f5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sensiolabs/SensioDistributionBundle/zipball/e20461e4f8e1afd68f36cf90bdccc06f7aa6a6c2",
-                "reference": "e20461e4f8e1afd68f36cf90bdccc06f7aa6a6c2",
+                "url": "https://api.github.com/repos/sensiolabs/SensioDistributionBundle/zipball/bc5e96bb4faf6bee7121085951d11b89488952f5",
+                "reference": "bc5e96bb4faf6bee7121085951d11b89488952f5",
                 "shasum": ""
             },
             "require": {
@@ -1797,7 +1797,7 @@
                 "sensiolabs/security-checker": "~2.0",
                 "symfony/class-loader": "~2.2",
                 "symfony/form": "~2.2",
-                "symfony/framework-bundle": "~2.4",
+                "symfony/framework-bundle": "~2.3",
                 "symfony/process": "~2.2",
                 "symfony/validator": "~2.2",
                 "symfony/yaml": "~2.2"
@@ -1828,7 +1828,7 @@
                 "configuration",
                 "distribution"
             ],
-            "time": "2014-09-24 14:47:46"
+            "time": "2014-11-03 21:16:34"
         },
         {
             "name": "sensio/framework-extra-bundle",
@@ -1988,16 +1988,16 @@
         },
         {
             "name": "simplesamlphp/xmlseclibs",
-            "version": "1.3.1",
+            "version": "v1.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/simplesamlphp/xmlseclibs.git",
-                "reference": "9c40e9ebd753af89062fe972d4ec0d3e4a5569d9"
+                "reference": "734e80899ade295b979de08553161cad63c2dd98"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/simplesamlphp/xmlseclibs/zipball/9c40e9ebd753af89062fe972d4ec0d3e4a5569d9",
-                "reference": "9c40e9ebd753af89062fe972d4ec0d3e4a5569d9",
+                "url": "https://api.github.com/repos/simplesamlphp/xmlseclibs/zipball/734e80899ade295b979de08553161cad63c2dd98",
+                "reference": "734e80899ade295b979de08553161cad63c2dd98",
                 "shasum": ""
             },
             "replace": {
@@ -2089,12 +2089,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/SURFnet/Stepup-bundle.git",
-                "reference": "bcefde2d2aea12aa801bf84a2f3113fd6b537d05"
+                "reference": "65b119e15fb7584b883e6b44857243f2a29b8e94"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SURFnet/Stepup-bundle/zipball/bcefde2d2aea12aa801bf84a2f3113fd6b537d05",
-                "reference": "bcefde2d2aea12aa801bf84a2f3113fd6b537d05",
+                "url": "https://api.github.com/repos/SURFnet/Stepup-bundle/zipball/65b119e15fb7584b883e6b44857243f2a29b8e94",
+                "reference": "65b119e15fb7584b883e6b44857243f2a29b8e94",
                 "shasum": ""
             },
             "require": {
@@ -2130,7 +2130,53 @@
                 "suaas",
                 "surfnet"
             ],
-            "time": "2014-11-03 11:04:45"
+            "time": "2014-11-03 12:11:13"
+        },
+        {
+            "name": "surfnet/stepup-saml-bundle",
+            "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/SURFnet/Stepup-saml-bundle.git",
+                "reference": "b21f0fc40da7c870ffacbaabe6b6bedc324d38f9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/SURFnet/Stepup-saml-bundle/zipball/b21f0fc40da7c870ffacbaabe6b6bedc324d38f9",
+                "reference": "b21f0fc40da7c870ffacbaabe6b6bedc324d38f9",
+                "shasum": ""
+            },
+            "require": {
+                "ext-openssl": "*",
+                "php": "~5.4",
+                "simplesamlphp/saml2": "dev-master",
+                "symfony/framework-bundle": "~2.5"
+            },
+            "require-dev": {
+                "ibuildings/qa-tools": "~1.1",
+                "liip/rmt": "~1.1",
+                "mockery/mockery": "~0.9",
+                "psr/log": "~1.0"
+            },
+            "type": "symfony-bundle",
+            "autoload": {
+                "psr-4": {
+                    "Surfnet\\SamlBundle\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "description": "A Symfony2 bundle that integrates the simplesamlphp\\saml2 library with Symfony",
+            "keywords": [
+                "SAML2",
+                "saml",
+                "simplesamlphp",
+                "stepup",
+                "surfnet"
+            ],
+            "time": "2014-11-06 16:09:38"
         },
         {
             "name": "surfnet/yubikey-api-client-bundle",
@@ -2581,25 +2627,31 @@
         },
         {
             "name": "twig/extensions",
-            "version": "v1.1.0",
+            "version": "v1.2.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/fabpot/Twig-extensions.git",
-                "reference": "c0ab818595338dd5569369bfce2552d02cec5d50"
+                "url": "https://github.com/twigphp/Twig-extensions.git",
+                "reference": "8cf4b9fe04077bd54fc73f4fde83347040c3b8cd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fabpot/Twig-extensions/zipball/c0ab818595338dd5569369bfce2552d02cec5d50",
-                "reference": "c0ab818595338dd5569369bfce2552d02cec5d50",
+                "url": "https://api.github.com/repos/twigphp/Twig-extensions/zipball/8cf4b9fe04077bd54fc73f4fde83347040c3b8cd",
+                "reference": "8cf4b9fe04077bd54fc73f4fde83347040c3b8cd",
                 "shasum": ""
             },
             "require": {
                 "twig/twig": "~1.12"
             },
+            "require-dev": {
+                "symfony/translation": "~2.3"
+            },
+            "suggest": {
+                "symfony/translation": "Allow the time_diff output to be translated"
+            },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.1.x-dev"
+                    "dev-master": "1.2.x-dev"
                 }
             },
             "autoload": {
@@ -2614,18 +2666,16 @@
             "authors": [
                 {
                     "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com",
-                    "homepage": "http://fabien.potencier.org",
-                    "role": "Lead Developer"
+                    "email": "fabien@symfony.com"
                 }
             ],
             "description": "Common additional features for Twig that do not directly belong in core",
-            "homepage": "https://github.com/fabpot/Twig-extensions",
+            "homepage": "http://twig.sensiolabs.org/doc/extensions/index.html",
             "keywords": [
                 "i18n",
                 "text"
             ],
-            "time": "2014-07-05 10:01:35"
+            "time": "2014-10-30 14:30:03"
         },
         {
             "name": "twig/twig",
@@ -3278,16 +3328,16 @@
         },
         {
             "name": "instaclick/php-webdriver",
-            "version": "1.4.0",
+            "version": "1.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/instaclick/php-webdriver.git",
-                "reference": "3cf130283b054b50119f887e11b9b5a648d785a9"
+                "reference": "a57b2bcd9467e217134a2248b261b8b3a90ccea0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/instaclick/php-webdriver/zipball/3cf130283b054b50119f887e11b9b5a648d785a9",
-                "reference": "3cf130283b054b50119f887e11b9b5a648d785a9",
+                "url": "https://api.github.com/repos/instaclick/php-webdriver/zipball/a57b2bcd9467e217134a2248b261b8b3a90ccea0",
+                "reference": "a57b2bcd9467e217134a2248b261b8b3a90ccea0",
                 "shasum": ""
             },
             "require": {
@@ -3321,7 +3371,7 @@
                 {
                     "name": "Anthon Pang",
                     "email": "apang@softwaredevelopment.ca",
-                    "role": "developer"
+                    "role": "Fork Maintainer"
                 }
             ],
             "description": "PHP WebDriver for Selenium 2",
@@ -3332,24 +3382,25 @@
                 "webdriver",
                 "webtest"
             ],
-            "time": "2014-05-08 04:19:19"
+            "time": "2014-05-12 21:03:05"
         },
         {
             "name": "liip/rmt",
-            "version": "1.1.4",
+            "version": "1.1.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/liip/RMT.git",
-                "reference": "27672a72b06f434dc4889baf3603e8b4f3ba1582"
+                "reference": "444e48c6e41ee191421855fca7c205ff77a6f8fc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/liip/RMT/zipball/27672a72b06f434dc4889baf3603e8b4f3ba1582",
-                "reference": "27672a72b06f434dc4889baf3603e8b4f3ba1582",
+                "url": "https://api.github.com/repos/liip/RMT/zipball/444e48c6e41ee191421855fca7c205ff77a6f8fc",
+                "reference": "444e48c6e41ee191421855fca7c205ff77a6f8fc",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3",
+                "sensiolabs/security-checker": "~2.0",
                 "symfony/console": "~2.0",
                 "symfony/process": "~2.0",
                 "symfony/yaml": "~2.0",
@@ -3390,7 +3441,7 @@
                 "vcs tag",
                 "version"
             ],
-            "time": "2014-09-11 14:05:56"
+            "time": "2014-10-28 10:33:21"
         },
         {
             "name": "pdepend/pdepend",
@@ -3717,16 +3768,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "4.3.3",
+            "version": "4.3.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "5a0bc4dcbb7340c0a9a9bc3507854a67c564edc4"
+                "reference": "23e4e0310f037aae873cc81b8658dbbb82878f71"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/5a0bc4dcbb7340c0a9a9bc3507854a67c564edc4",
-                "reference": "5a0bc4dcbb7340c0a9a9bc3507854a67c564edc4",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/23e4e0310f037aae873cc81b8658dbbb82878f71",
+                "reference": "23e4e0310f037aae873cc81b8658dbbb82878f71",
                 "shasum": ""
             },
             "require": {
@@ -3737,7 +3788,7 @@
                 "ext-spl": "*",
                 "php": ">=5.3.3",
                 "phpunit/php-code-coverage": "~2.0",
-                "phpunit/php-file-iterator": "~1.3.1",
+                "phpunit/php-file-iterator": "~1.3.2",
                 "phpunit/php-text-template": "~1.2",
                 "phpunit/php-timer": "~1.0.2",
                 "phpunit/phpunit-mock-objects": "~2.3",
@@ -3787,7 +3838,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2014-10-16 16:53:00"
+            "time": "2014-10-22 11:43:12"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
@@ -3962,16 +4013,16 @@
         },
         {
             "name": "sebastian/environment",
-            "version": "1.1.0",
+            "version": "1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/environment.git",
-                "reference": "6288ebbf6fa3ed2b2ff2d69c356fbaaf4f0971a7"
+                "reference": "0d9bf79554d2a999da194a60416c15cf461eb67d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/environment/zipball/6288ebbf6fa3ed2b2ff2d69c356fbaaf4f0971a7",
-                "reference": "6288ebbf6fa3ed2b2ff2d69c356fbaaf4f0971a7",
+                "url": "https://api.github.com/repos/sebastianbergmann/environment/zipball/0d9bf79554d2a999da194a60416c15cf461eb67d",
+                "reference": "0d9bf79554d2a999da194a60416c15cf461eb67d",
                 "shasum": ""
             },
             "require": {
@@ -3983,7 +4034,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.1.x-dev"
+                    "dev-master": "1.2.x-dev"
                 }
             },
             "autoload": {
@@ -4008,7 +4059,7 @@
                 "environment",
                 "hhvm"
             ],
-            "time": "2014-10-07 09:23:16"
+            "time": "2014-10-22 06:38:05"
         },
         {
             "name": "sebastian/exporter",
@@ -4324,55 +4375,6 @@
             "time": "2014-09-25 03:33:46"
         },
         {
-            "name": "symfony/icu",
-            "version": "v1.2.2",
-            "target-dir": "Symfony/Component/Icu",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/Icu.git",
-                "reference": "d4d85d6055b87f394d941b45ddd3a9173e1e3d2a"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Icu/zipball/d4d85d6055b87f394d941b45ddd3a9173e1e3d2a",
-                "reference": "d4d85d6055b87f394d941b45ddd3a9173e1e3d2a",
-                "shasum": ""
-            },
-            "require": {
-                "ext-intl": "*",
-                "lib-icu": ">=4.4",
-                "php": ">=5.3.3",
-                "symfony/intl": "~2.3"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "Symfony\\Component\\Icu\\": ""
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Symfony Community",
-                    "homepage": "http://symfony.com/contributors"
-                },
-                {
-                    "name": "Bernhard Schussek",
-                    "email": "bschussek@gmail.com"
-                }
-            ],
-            "description": "Contains an excerpt of the ICU data and classes to load it.",
-            "homepage": "http://symfony.com",
-            "keywords": [
-                "icu",
-                "intl"
-            ],
-            "time": "2014-07-25 09:58:17"
-        },
-        {
             "name": "theseer/fdomdocument",
             "version": "1.6.0",
             "source": {
@@ -4479,7 +4481,8 @@
         "doctrine/migrations": 20,
         "mopa/bootstrap-bundle": 10,
         "surfnet/stepup-bundle": 20,
-        "simplesamlphp/saml2": 20
+        "simplesamlphp/saml2": 20,
+        "surfnet/stepup-saml-bundle": 20
     },
     "prefer-stable": false,
     "platform": {

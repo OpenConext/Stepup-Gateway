@@ -16,20 +16,18 @@
  * limitations under the License.
  */
 
-namespace Surfnet\SamlBundle\Signing;
+namespace Surfnet\StepupGateway\GatewayBundle\Controller;
 
-/**
- * Simple DTO
- */
-class KeyPair
+use Surfnet\SamlBundle\Http\XMLResponse;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+
+class MetadataController extends Controller
 {
-    /**
-     * @var string
-     */
-    public $publicKeyFile;
+    public function metadataAction()
+    {
+        /** @var \Surfnet\SamlBundle\Metadata\MetadataFactory $metadataFactory */
+        $metadataFactory = $this->get('surfnet_saml.metadata_factory');
 
-    /**
-     * @var string
-     */
-    public $privateKeyFile;
+        return new XMLResponse($metadataFactory->generate());
+    }
 }

@@ -24,11 +24,21 @@ parameters:
     messagebird_authorization: AccessKey your_api_key
     messagebird_messaging_originator: SURFnet
 
-    saml_metadata_publickey: #%kernel.root_dir%/../src/Surfnet/SamlBundle/Resources/keys/development_publickey.cer
-    saml_metadata_privatekey: #%kernel.root_dir%/../src/Surfnet/SamlBundle/Resources/keys/development_privatekey.pem
-
     yubikey_client_id: 12345
     yubikey_client_secret: YubiSecret
 
     selfservice_api_password: ~
     registration_authority_api_password: ~
+
+    saml_sp_publickey:
+    saml_sp_privatekey:
+
+    saml_idp_publickey:
+    saml_idp_privatekey:
+
+    saml_metadata_publickey:
+    saml_metadata_privatekey:
+
+    saml_remote_idp_entity_id:
+    saml_remote_idp_sso_url:
+    saml_remote_idp_certificate:

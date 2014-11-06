@@ -40,6 +40,7 @@ class AppKernel extends Kernel
             new Surfnet\MessageBirdApiClientBundle\SurfnetMessageBirdApiClientBundle(),
             new Surfnet\YubikeyApiClientBundle\SurfnetYubikeyApiClientBundle(),
             new Surfnet\StepupBundle\SurfnetStepupBundle(),
+            new Surfnet\StepupGateway\GatewayBundle\SurfnetStepupGatewayGatewayBundle(),
             new Surfnet\SamlBundle\SurfnetSamlBundle(),
         );
 

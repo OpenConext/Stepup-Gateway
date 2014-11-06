@@ -16,22 +16,28 @@
  * limitations under the License.
  */
 
-namespace Surfnet\SamlBundle\Http;
+namespace Surfnet\StepupGateway\GatewayBundle\Entity;
 
-use Symfony\Component\HttpFoundation\Response;
+use Surfnet\SamlBundle\Entity\EntityRepository as Repository;
+use Surfnet\SamlBundle\Entity\ServiceProvider;
 
-/**
- * Custom Response type for XML. Enforces that we use application/xml as per
- * {@link https://www.ietf.org/rfc/rfc3023.txt RFC3023} (section 3)
- */
-class XMLResponse extends Response
+class EntityRepository implements Repository
 {
-    public function __construct($content = '', $status = 200, $headers = array())
+    /**
+     * @param string $entityId
+     * @return ServiceProvider
+     */
+    public function getServiceProvider($entityId)
     {
-        parent::__construct($content, $status, $headers);
+        // TODO: Implement getServiceProvider() method.
+    }
 
-        if ($this->headers->get('Content-Type') !== 'application/xml') {
-            $this->headers->set('Content-Type', 'application/xml');
-        }
+    /**
+     * @param string $entityId
+     * @return bool
+     */
+    public function hasServiceProvider($entityId)
+    {
+        // TODO: Implement hasServiceProvider() method.
     }
 }

@@ -16,15 +16,30 @@
  * limitations under the License.
  */
 
-namespace Surfnet\SamlBundle\Controller;
+namespace Surfnet\StepupGateway\GatewayBundle\Controller;
 
+use Surfnet\SamlBundle\SAML2\AuthnRequestFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
-class ServiceProviderController extends Controller
+class IdentityProviderController extends Controller
 {
-    public function consumeAssertionAction(Request $request)
+    public function ssoAction()
+    {
+        $this->get('logger')->warning('TEST');
+
+
+        $request = AuthnRequestFactory::createNewRequest(
+            $this->get('surfnet_saml.hosted.service_provider'),
+            $this->get('surfnet_saml.remote.idp')
+        );
+
+        /** @var \Surfnet\SamlBundle\Http\RedirectBinding $redirectBinding */
+        $redirectBinding = $this->get('surfnet_saml.http.redirect_binding');
+        return $redirectBinding->createRedirectResponseFor($request);
+    }
+
+    public function proxySsoAction()
     {
         throw new HttpException(418, 'Not Yet Implemented');
     }

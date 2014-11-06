@@ -1,0 +1,3 @@
+services:
+    saml.entity_repository:
+        class: Surfnet\StepupGateway\GatewayBundle\Entity\EntityRepository

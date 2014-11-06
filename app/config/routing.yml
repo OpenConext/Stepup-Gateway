@@ -1,6 +1,6 @@
-surfnet_saml:
-    resource: "@SurfnetSamlBundle/Resources/config/routing.yml"
-    prefix:   /authentication
+surfnet_stepup_gateway_gateway:
+    resource: "@SurfnetStepupGatewayGatewayBundle/Resources/config/routing.yml"
+    prefix:   /
 
 nelmio_security_report:
     path: /csp/report

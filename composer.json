@@ -33,7 +33,8 @@
         "mockery/mockery": "~0.9.0",
         "surfnet/yubikey-api-client-bundle": "~1.2",
         "surfnet/stepup-bundle": "dev-develop",
-        "simplesamlphp/saml2": "dev-master"
+        "simplesamlphp/saml2": "dev-master",
+        "surfnet/stepup-saml-bundle": "dev-develop"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3",

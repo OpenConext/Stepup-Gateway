@@ -16,16 +16,27 @@
  * limitations under the License.
  */
 
-namespace Surfnet\SamlBundle\Controller;
+namespace Surfnet\StepupGateway\GatewayBundle\Controller;
 
+use Surfnet\SamlBundle\Http\XMLResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 
-class IdentityProviderController extends Controller
+class ServiceProviderController extends Controller
 {
-    public function ssoAction(Request $request)
+    public function consumeAssertionAction(Request $request)
     {
-        throw new HttpException(418, 'Not Yet Implemented');
+        /** @var \Surfnet\SamlBundle\Http\PostBinding $postBinding */
+        $postBinding = $this->get('surfnet_saml.http.post_binding');
+        $assertion = $postBinding->processResponse(
+            $request,
+            $this->get('surfnet_saml.remote.idp'),
+            $this->get('surfnet_saml.hosted.service_provider')
+        );
+
+        $response = new \SAML2_Response();
+        $response->setAssertions([$assertion]);
+
+        return new XMLResponse($assertion->toXML()->ownerDocument->saveXML());
     }
 }
