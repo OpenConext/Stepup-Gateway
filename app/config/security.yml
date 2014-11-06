@@ -1,12 +1,28 @@
 security:
-    providers:
-        in_memory:
-            memory: ~
-
     firewalls:
+        api:
+            pattern: ^/api/
+            http_basic: ~
+            entry_point: surfnet_gateway_api.security.json_basic_auth_entry_point
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
-
         default:
             anonymous: ~
+
+    access_control:
+        - { path: ^/api/, roles: ROLE_API_CLIENT }
+
+    providers:
+        in_memory:
+            memory:
+                users:
+                    ss:
+                        password: %selfservice_api_password%
+                        roles: 'ROLE_API_CLIENT'
+                    ra:
+                        password: %registration_authority_api_password%
+                        roles: 'ROLE_API_CLIENT'
+
+    encoders:
+        Symfony\Component\Security\Core\User\User: plaintext
