@@ -16,24 +16,13 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupGateway\ApiBundle\Command;
+namespace Surfnet\StepupGateway\ApiBundle\Dto;
 
+use Surfnet\StepupBundle\Request\JsonConvertible;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class SendSmsCommand
+class SmsMessage implements JsonConvertible
 {
-    /**
-     * @Assert\NotBlank(message="send_sms.requester.institution.must_be_set")
-     * @var string
-     */
-    public $requesterInstitution;
-
-    /**
-     * @Assert\NotBlank(message="send_sms.requester.identity.must_be_set")
-     * @var string
-     */
-    public $requesterIdentity;
-
     /**
      * Either:
      *
@@ -44,8 +33,8 @@ class SendSmsCommand
      *
      * Example values would thus be 31612345678 and SURFnet.
      *
-     * @Assert\NotBlank(message="send_sms.originator.must_be_set")
-     * @Assert\Regex(pattern="~^(\d+|[a-z\d ]{1,11})$~i", message="send_sms.originator.must_be_alphanumerical")
+     * @Assert\NotBlank(message="sms_message.originator.must_be_set")
+     * @Assert\Regex(pattern="~^(\d+|[a-z\d ]{1,11})$~i", message="sms_message.originator.must_be_alphanumerical")
      * @var string
      */
     public $originator;
@@ -56,14 +45,15 @@ class SendSmsCommand
      *
      * An example value would thus be 31612345678.
      *
-     * @Assert\NotBlank(message="send_sms.recipient.must_be_set")
-     * @Assert\Regex(pattern="~^\d+$~", message="send_sms.recipient.must_consist_of_numbers")
+     * @Assert\NotBlank(message="sms_message.recipient.must_be_set")
+     * @Assert\Regex(pattern="~^\d+$~", message="sms_message.recipient.must_consist_of_numbers")
      * @var string
      */
     public $recipient;
 
     /**
-     * @Assert\NotBlank(message="send_sms.body.must_be_set")
+     * @Assert\NotBlank(message="sms_message.body.must_be_set")
+     * @Assert\Type(type="string", message="sms_message.body.must_be_string")
      * @var string
      */
     public $body;

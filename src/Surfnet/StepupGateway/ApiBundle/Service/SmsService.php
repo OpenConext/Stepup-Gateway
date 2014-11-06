@@ -22,7 +22,8 @@ use Psr\Log\LoggerInterface;
 use Surfnet\MessageBirdApiClient\Messaging\Message;
 use Surfnet\MessageBirdApiClient\Messaging\SendMessageResult;
 use Surfnet\MessageBirdApiClientBundle\Service\MessagingService;
-use Surfnet\StepupGateway\ApiBundle\Command\SendSmsCommand;
+use Surfnet\StepupGateway\ApiBundle\Dto\Requester;
+use Surfnet\StepupGateway\ApiBundle\Dto\SmsMessage;
 
 class SmsService
 {
@@ -47,14 +48,15 @@ class SmsService
     }
 
     /**
-     * @param SendSmsCommand $command
+     * @param SmsMessage $message
+     * @param Requester $requester
      * @return SendMessageResult
      */
-    public function send(SendSmsCommand $command)
+    public function send(SmsMessage $message, Requester $requester)
     {
         $this->logger->notice('Sending OTP per SMS.');
 
-        $message = new Message($command->originator, $command->recipient, $command->body);
+        $message = new Message($message->originator, $message->recipient, $message->body);
         $result = $this->messagingService->send($message);
 
         if (!$result->isSuccess()) {

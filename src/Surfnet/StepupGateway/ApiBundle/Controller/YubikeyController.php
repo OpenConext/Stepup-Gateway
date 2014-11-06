@@ -18,47 +18,25 @@
 
 namespace Surfnet\StepupGateway\ApiBundle\Controller;
 
-use Surfnet\StepupGateway\ApiBundle\Command\VerifyYubikeyCommand;
+use Surfnet\StepupGateway\ApiBundle\Dto\Otp;
+use Surfnet\StepupGateway\ApiBundle\Dto\Requester;
 use Surfnet\StepupGateway\ApiBundle\Service\YubikeyService;
 use Surfnet\YubikeyApiClient\Service\OtpVerificationResult;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class YubikeyController extends Controller
 {
     /**
-     * @param Request $request
+     * @param Otp $otp
+     * @param Requester $requester
      * @return JsonResponse
      */
-    public function verifyAction(Request $request)
+    public function verifyAction(Otp $otp, Requester $requester)
     {
-        $object = json_decode($request->getContent(), true);
-        $command = new VerifyYubikeyCommand();
-
-        if (isset($object['requester']['institution'])) {
-            $command->requesterInstitution = $object['requester']['institution'];
-        }
-
-        if (isset($object['requester']['identity'])) {
-            $command->requesterIdentity = $object['requester']['identity'];
-        }
-
-        if (isset($object['otp'])) {
-            $command->otp = $object['otp'];
-        }
-
-        /** @var ValidatorInterface $validator */
-        $validator = $this->get('validator');
-        $violations = $validator->validate($command);
-
-        if ($violations->count() > 0) {
-            return $this->createJsonResponseFromViolations($violations);
-        }
-
         /** @var YubikeyService $yubikeyService */
         $yubikeyService = $this->get('surfnet_gateway_api.service.yubikey');
-        $result = $yubikeyService->verify($command);
+        $result = $yubikeyService->verify($otp, $requester);
 
         return $this->createJsonResponseFromVerifyYubikeyResult($result);
     }

@@ -119,3 +119,20 @@ surfnet_yubikey_api_client:
     credentials:
         client_id: %yubikey_client_id%
         client_secret: %yubikey_client_secret%
+
+surfnet_stepup:
+    logging:
+        application_name: gw
+
+monolog:
+    handlers:
+        graylog2:
+            type: fingers_crossed
+            action_level: ERROR
+            passthru_level: NOTICE
+            handler: graylog2_gelf
+
+        graylog2_gelf: # Nested into graylog2
+            type: gelf
+            publisher: { hostname: g2-dev.stepup.coin.surf.net }
+            formatter: surfnet_stepup.monolog.full_message_exception_gelf_message_formatter

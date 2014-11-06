@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "1878023f57f6357d87bb8e697d44f272",
+    "hash": "87540196b7efd5e3d5e1e2772687e021",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -780,6 +780,47 @@
                 "icon"
             ],
             "time": "2014-08-26 16:36:44"
+        },
+        {
+            "name": "graylog2/gelf-php",
+            "version": "1.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/bzikarsky/gelf-php.git",
+                "reference": "b6f306e1b36b718aaf03b59563f4d6389e92cead"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/bzikarsky/gelf-php/zipball/b6f306e1b36b718aaf03b59563f4d6389e92cead",
+                "reference": "b6f306e1b36b718aaf03b59563f4d6389e92cead",
+                "shasum": ""
+            },
+            "require": {
+                "php": "~5.3",
+                "psr/log": "~1.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.3",
+                "squizlabs/php_codesniffer": "~1.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Gelf\\": "src/Gelf"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Benjamin Zikarsky",
+                    "email": "benjamin@zikarsky.de"
+                }
+            ],
+            "description": "A php implementation to send log-messages to a GELF compatible backend like Graylog2.",
+            "time": "2014-10-23 05:32:34"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -1934,6 +1975,55 @@
                 "surfnet"
             ],
             "time": "2014-10-17 07:25:17"
+        },
+        {
+            "name": "surfnet/stepup-bundle",
+            "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/SURFnet/Stepup-bundle.git",
+                "reference": "bcefde2d2aea12aa801bf84a2f3113fd6b537d05"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/SURFnet/Stepup-bundle/zipball/bcefde2d2aea12aa801bf84a2f3113fd6b537d05",
+                "reference": "bcefde2d2aea12aa801bf84a2f3113fd6b537d05",
+                "shasum": ""
+            },
+            "require": {
+                "ext-openssl": "*",
+                "graylog2/gelf-php": "~1.1",
+                "guzzlehttp/guzzle": "~4",
+                "monolog/monolog": "~1.11",
+                "php": "~5.4",
+                "sensio/framework-extra-bundle": "~3",
+                "symfony/config": "~2",
+                "symfony/dependency-injection": "~2",
+                "symfony/http-kernel": "~2",
+                "symfony/validator": "~2"
+            },
+            "require-dev": {
+                "ibuildings/qa-tools": "~1.1",
+                "liip/rmt": "1.1.*",
+                "mockery/mockery": "0.9.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Surfnet\\StepupBundle\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "description": "A Symfony2 bundle that holds shared code and framework integration for all Step-up applications.",
+            "keywords": [
+                "stepup",
+                "suaas",
+                "surfnet"
+            ],
+            "time": "2014-11-03 11:04:45"
         },
         {
             "name": "surfnet/yubikey-api-client-bundle",
@@ -4485,7 +4575,8 @@
     "stability-flags": {
         "symfony/symfony": 20,
         "doctrine/migrations": 20,
-        "mopa/bootstrap-bundle": 10
+        "mopa/bootstrap-bundle": 10,
+        "surfnet/stepup-bundle": 20
     },
     "prefer-stable": false,
     "platform": {
