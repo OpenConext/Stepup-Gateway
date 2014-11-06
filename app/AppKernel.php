@@ -39,6 +39,7 @@ class AppKernel extends Kernel
             new Mopa\Bundle\BootstrapBundle\MopaBootstrapBundle(),
             new Surfnet\MessageBirdApiClientBundle\SurfnetMessageBirdApiClientBundle(),
             new Surfnet\YubikeyApiClientBundle\SurfnetYubikeyApiClientBundle(),
+            new Surfnet\StepupBundle\SurfnetStepupBundle(),
             new Surfnet\SamlBundle\SurfnetSamlBundle(),
         );
 
