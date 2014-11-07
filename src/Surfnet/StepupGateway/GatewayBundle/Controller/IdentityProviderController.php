@@ -26,9 +26,6 @@ class IdentityProviderController extends Controller
 {
     public function ssoAction()
     {
-        $this->get('logger')->warning('TEST');
-
-
         $request = AuthnRequestFactory::createNewRequest(
             $this->get('surfnet_saml.hosted.service_provider'),
             $this->get('surfnet_saml.remote.idp')
