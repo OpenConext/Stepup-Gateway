@@ -142,5 +142,5 @@ monolog:
             path: %kernel.logs_dir%/%kernel.environment%.log
         graylog:
             type: gelf
-            publisher: { hostname: g2-dev.stepup.coin.surf.net }
+            publisher: { hostname: %graylog_hostname% }
             formatter: surfnet_stepup.monolog.full_message_exception_gelf_message_formatter
