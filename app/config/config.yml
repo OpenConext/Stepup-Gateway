@@ -126,13 +126,21 @@ surfnet_stepup:
 
 monolog:
     handlers:
-        graylog2:
-            type: fingers_crossed
-            action_level: ERROR
-            passthru_level: NOTICE
-            handler: graylog2_gelf
-
-        graylog2_gelf: # Nested into graylog2
+        main:
+            type: group
+            members:
+                - main_graylog
+                - main_logfile
+        main_graylog:
+            type: buffer
+            handler: graylog
+            level: NOTICE
+        main_logfile:
+            type: stream
+            handler: logfile
+            level: NOTICE
+            path: %kernel.logs_dir%/%kernel.environment%.log
+        graylog:
             type: gelf
-            publisher: { hostname: g2-dev.stepup.coin.surf.net }
+            publisher: { hostname: %graylog_hostname% }
             formatter: surfnet_stepup.monolog.full_message_exception_gelf_message_formatter

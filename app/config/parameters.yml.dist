@@ -29,3 +29,5 @@ parameters:
 
     selfservice_api_password: ~
     registration_authority_api_password: ~
+
+    graylog_hostname: graylog.host.tld
