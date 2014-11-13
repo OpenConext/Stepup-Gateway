@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "1fccf95b6ba80c0c3890fb0925e300e1",
+    "hash": "751ca8385edf8fb09c9e1fb76eceae35",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -1936,12 +1936,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/SURFnet/saml2.git",
-                "reference": "2f1bf7be72fa505b7dcd581077b85d40f62ac2f9"
+                "reference": "6c8a505a9c7002f1dd2320c608e95b1519d85874"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SURFnet/saml2/zipball/2f1bf7be72fa505b7dcd581077b85d40f62ac2f9",
-                "reference": "2f1bf7be72fa505b7dcd581077b85d40f62ac2f9",
+                "url": "https://api.github.com/repos/SURFnet/saml2/zipball/6c8a505a9c7002f1dd2320c608e95b1519d85874",
+                "reference": "6c8a505a9c7002f1dd2320c608e95b1519d85874",
                 "shasum": ""
             },
             "require": {
@@ -1984,7 +1984,7 @@
             "support": {
                 "source": "https://github.com/SURFnet/saml2/tree/master"
             },
-            "time": "2014-10-17 07:17:23"
+            "time": "2014-11-13 10:41:40"
         },
         {
             "name": "simplesamlphp/xmlseclibs",
@@ -2134,16 +2134,16 @@
         },
         {
             "name": "surfnet/stepup-saml-bundle",
-            "version": "dev-develop",
+            "version": "dev-feature/attribute-parsing",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SURFnet/Stepup-saml-bundle.git",
-                "reference": "b21f0fc40da7c870ffacbaabe6b6bedc324d38f9"
+                "reference": "af14fe2ca7e0812a6b8397840acaef09f17f1bb8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SURFnet/Stepup-saml-bundle/zipball/b21f0fc40da7c870ffacbaabe6b6bedc324d38f9",
-                "reference": "b21f0fc40da7c870ffacbaabe6b6bedc324d38f9",
+                "url": "https://api.github.com/repos/SURFnet/Stepup-saml-bundle/zipball/af14fe2ca7e0812a6b8397840acaef09f17f1bb8",
+                "reference": "af14fe2ca7e0812a6b8397840acaef09f17f1bb8",
                 "shasum": ""
             },
             "require": {
@@ -2176,7 +2176,7 @@
                 "stepup",
                 "surfnet"
             ],
-            "time": "2014-11-06 16:09:38"
+            "time": "2014-11-13 14:15:27"
         },
         {
             "name": "surfnet/yubikey-api-client-bundle",

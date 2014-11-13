@@ -138,7 +138,6 @@ monolog:
             formatter: surfnet_stepup.monolog.full_message_exception_gelf_message_formatter
 
 surfnet_saml:
-    entity_repository: saml.entity_repository
     hosted:
         service_provider:
             enabled: true
@@ -147,6 +146,7 @@ surfnet_saml:
             private_key: %saml_sp_privatekey%
         identity_provider:
             enabled: true
+            service_provider_repository: saml.entity_repository
             sso_route: gateway_identityprovider_sso
             public_key: %saml_idp_publickey%
             private_key: %saml_idp_privatekey%
