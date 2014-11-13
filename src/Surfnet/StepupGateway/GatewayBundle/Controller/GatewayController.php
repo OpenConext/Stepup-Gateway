@@ -26,6 +26,11 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
+/**
+ *
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class GatewayController extends Controller
 {
     public function ssoAction(Request $httpRequest)
