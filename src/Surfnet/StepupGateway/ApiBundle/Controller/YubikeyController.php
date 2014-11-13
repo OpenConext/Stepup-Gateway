@@ -44,8 +44,8 @@ class YubikeyController extends Controller
             $command->requesterIdentity = $object['requester']['identity'];
         }
 
-        if (isset($object['otp'])) {
-            $command->otp = $object['otp'];
+        if (isset($object['otp']['value'])) {
+            $command->otp = $object['otp']['value'];
         }
 
         /** @var ValidatorInterface $validator */
