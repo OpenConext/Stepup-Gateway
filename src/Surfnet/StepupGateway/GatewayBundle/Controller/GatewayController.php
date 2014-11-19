@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Controller;
 
+use SAML2_Assertion;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Surfnet\SamlBundle\SAML2\AuthnRequest;
 use Surfnet\SamlBundle\SAML2\AuthnRequestFactory;
@@ -78,7 +79,7 @@ class GatewayController extends Controller
         $postBinding = $this->get('surfnet_saml.http.post_binding');
 
         // @todo try, catch (log, failed response)
-        /** @var \SAML2_Assertion $assertion */
+        /** @var SAML2_Assertion $assertion */
         $assertion   = $postBinding->processResponse(
             $request,
             $this->get('surfnet_saml.remote.idp'),
@@ -93,15 +94,29 @@ class GatewayController extends Controller
 
         if (!$assertion->getSubjectConfirmation()[0]->SubjectConfirmationData->InResponseTo === $state['gateway_request_id']) {
             // @todo handle gracefully with return button to SP
-            throw new BadRequestHttpException('Unknown SAML message response to id');
+            throw new BadRequestHttpException(
+                'Unknown SAMLResponse InResponseTo [TEMPORARY - WILL BE PAGE WITH BUTTON TO GO BACK TO SP]'
+            );
         }
 
-        $newAssertion = new \SAML2_Assertion();
+        $translatedAssertion = $this->translateAssertion($assertion);
+
+        $newAssertion = new SAML2_Assertion();
+
+        // @todo EPTI formatting
+
         $newAssertion->setAttributes($assertion->getAttributes());
         $newAssertion->setIssuer($identityProvider->get('entityId')); // @todo fix!
+
+        // signing
         $newAssertion->setSignatureKey(
             $this->loadPrivateKey($identityProvider->getPrivateKey(\SAML2_Configuration_PrivateKey::NAME_DEFAULT))
         );
+
+        $keyLoader = new \SAML2_Certificate_KeyLoader();
+        $keyLoader->loadCertificateFile($identityProvider->getCertificateFile());
+        $publicKey = $keyLoader->getKeys()->getOnlyElement();
+        $newAssertion->setCertificates([$publicKey->getCertificate()]);
 
         // SubjectConfirmation
             $confirmation = new \SAML2_XML_saml_SubjectConfirmation();
@@ -115,7 +130,7 @@ class GatewayController extends Controller
             $confirmation->SubjectConfirmationData = $confirmationData;
         $newAssertion->setSubjectConfirmation([$confirmation]);
         $newAssertion->setNameId([
-            'Value' => $assertion->getAttributes()['urn:oid:1.3.6.1.4.1.5923.1.1.1.10'][0],
+            'Value' => $translatedAssertion->getAttribute('eduPersonTargetedID'),
             'Format' => 'urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified'
         ]);
         $newAssertion->setValidAudiences([$state['original_sp']]);
@@ -130,19 +145,6 @@ class GatewayController extends Controller
                     (empty($authority) ? [$this->get('surfnet_saml.remote.idp')->getEntityId()] : $authority),
                     [$this->get('surfnet_saml.hosted.service_provider')->getEntityId()]
                 ));
-
-        // signature
-        $privateKey = $identityProvider->getPrivateKey(\SAML2_Configuration_PrivateKey::NAME_DEFAULT);
-        $loadedKey = (new \SAML2_Certificate_PrivateKeyLoader())->loadPrivateKey($privateKey);
-        $key = new \XMLSecurityKey(\XMLSecurityKey::RSA_SHA256, ['type' => 'private']);
-        $key->loadKey($loadedKey->getKeyAsString());
-
-        $keyLoader = new \SAML2_Certificate_KeyLoader();
-        $keyLoader->loadCertificateFile($identityProvider->getCertificateFile());
-        $publicKey = $keyLoader->getKeys()->getOnlyElement();
-
-        $newAssertion->setCertificates([$publicKey->getCertificate()]);
-        $newAssertion->setSignatureKey($key);
 
         // add to response
         $response = new \SAML2_Response();
@@ -170,5 +172,17 @@ class GatewayController extends Controller
         $key->loadKey($privateKey->getKeyAsString());
 
         return $key;
+    }
+
+    /**
+     * @param SAML2_Assertion $assertion
+     * @return \Surfnet\SamlBundle\SAML2\Response\AssertionAdapter
+     */
+    private function translateAssertion(SAML2_Assertion $assertion)
+    {
+        /** @var \Surfnet\SamlBundle\SAML2\Attribute\AttributeDictionary $dictionary */
+        $dictionary = $this->get('surfnet_saml.saml.attribute_dictionary');
+
+        return $dictionary->translate($assertion);
     }
 }
