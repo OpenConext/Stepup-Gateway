@@ -103,7 +103,8 @@ class GatewayController extends Controller
 
         // @todo EPTI formatting
 
-        $newAssertion->setAttributes($assertion->getAttributes());
+        $newAttributes = $this->extractAndConvertAttributes($assertion);
+        $newAssertion->setAttributes($newAttributes);
         $newAssertion->setIssuer($identityProvider->get('entityId')); // @todo fix!
 
         // signing
@@ -182,5 +183,33 @@ class GatewayController extends Controller
         $dictionary = $this->get('surfnet_saml.saml.attribute_dictionary');
 
         return $dictionary->translate($assertion);
+    }
+
+    private function extractAndConvertAttributes(SAML2_Assertion $assertion)
+    {
+        /** @var \Surfnet\SamlBundle\SAML2\Attribute\AttributeDefinition $eptiDefinition */
+        $eptiDefinition = $this->get('saml.attribute.eduPersonTargetedID');
+        $attributes = $assertion->getAttributes();
+
+        $eptiKey = false;
+        if (array_key_exists($eptiDefinition->getUrnMace(), $attributes)) {
+            $eptiKey = $eptiDefinition->getUrnMace();
+        } elseif (array_key_exists($eptiDefinition->getUrnOid(), $attributes)) {
+            $eptiKey = $eptiDefinition->getUrnOid();
+        }
+
+        if ($eptiKey === false) {
+            return $attributes;
+        }
+
+        // @see https://github.com/OpenConext/OpenConext-engineblock/blob/f12d660ddd295668dae1d52a837b2ed2cfc39340
+        //      /library/EngineBlock/Corto/Filter/Command/AddEduPersonTargettedId.php#L36
+        $document = new \DOMDocument();
+        $document->loadXML('<base />');
+        \SAML2_Utils::addNameId($document->documentElement, $assertion->getNameId());
+
+        $attributes[$eptiKey] = [$document->documentElement->childNodes];
+
+        return $attributes;
     }
 }
