@@ -150,6 +150,7 @@ class GatewayController extends Controller
         $response->setAssertions([$newAssertion]);
         $response->setIssuer($identityProvider->get('entityId'));
         $response->setDestination('https://ss-dev.stepup.coin.surf.net/app_dev.php/authentication/consume-assertion');
+        $response->setInResponseTo($state['original_id']);
 
         return [
             'acu' => 'https://ss-dev.stepup.coin.surf.net/app_dev.php/authentication/consume-assertion',
