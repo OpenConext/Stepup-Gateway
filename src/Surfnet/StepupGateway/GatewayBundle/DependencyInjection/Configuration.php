@@ -16,30 +16,25 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupGateway\ApiBundle\DependencyInjection;
+namespace Surfnet\StepupGateway\GatewayBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
+/**
+ * This is the class that validates and merges configuration from your app/config files
+ *
+ * To learn more see {@link http://symfony.com/doc/current/cookbook/bundles/extension.html#cookbook-bundles-extension-config-class}
+ */
 class Configuration implements ConfigurationInterface
 {
+    /**
+     * {@inheritdoc}
+     */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder;
-
-        $treeBuilder
-            ->root('surfnet_stepup_gateway_api')
-                ->children()
-                    ->scalarNode('http_basic_realm')
-                        ->defaultValue('Secure Gateway API')
-                        ->validate()
-                            ->ifTrue(function ($realm) {
-                                return !is_string($realm) || empty($realm);
-                            })
-                            ->thenInvalid("Invalid HTTP Basic realm '%s'. Must be string and non-empty.")
-                        ->end()
-                    ->end()
-                ->end();
+        $treeBuilder = new TreeBuilder();
+        /*$rootNode = */$treeBuilder->root('surfnet_stepup_gateway_gateway');
 
         return $treeBuilder;
     }

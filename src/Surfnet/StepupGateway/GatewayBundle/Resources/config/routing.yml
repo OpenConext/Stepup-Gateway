@@ -1,0 +1,19 @@
+gateway_saml_metadata:
+    path:     /authentication/metadata
+    methods:  [GET]
+    defaults: { _controller: SurfnetStepupGatewayGatewayBundle:Metadata:metadata}
+
+gateway_serviceprovider_consume_assertion:
+    path:     /authentication/consume-assertion
+    methods:  [POST]
+    defaults: { _controller: SurfnetStepupGatewayGatewayBundle:Gateway:consumeAssertion }
+
+gateway_identityprovider_sso:
+    path:     /authentication/single-sign-on
+    methods:  [GET, POST]
+    defaults: { _controller: SurfnetStepupGatewayGatewayBundle:Gateway:sso }
+
+gateway_identityprovider_sso_proxy:
+    path:     /authentication/single-sign-on/{idpKey}
+    methods:  [POST]
+    defaults: { _controller: SurfnetStepupGatewayGatewayBundle:Gateway:proxySso }

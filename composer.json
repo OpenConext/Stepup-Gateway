@@ -3,12 +3,11 @@
     "license": "Apache-2.0",
     "description": "The SURFnet Step-up Gateway sits between a SAML Service Provider and Identity Provider and can provide a certain Level of Assurance by performing second-factor authentication.",
     "autoload": {
-        "psr-0": {
-            "Surfnet\\StepupGateway\\": "src"
+        "psr-4": {
+            "Surfnet\\": "src\\Surfnet"
         }
     },
     "minimum-stability": "stable",
-    "repositories": [{"type":"vcs","url":"https://github.com/rjkip/symfony"}],
     "require": {
         "php": ">=5.4",
         "symfony/symfony": "dev-bugfix/default-entry-point as 2.5.5",
@@ -33,13 +32,22 @@
         "surfnet/messagebird-api-client-bundle": "~2.0",
         "mockery/mockery": "~0.9.0",
         "surfnet/yubikey-api-client-bundle": "~1.2",
-        "surfnet/stepup-bundle": "dev-develop"
+        "surfnet/stepup-bundle": "dev-develop",
+        "simplesamlphp/saml2": "dev-master",
+        "surfnet/stepup-saml-bundle": "dev-develop"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3",
         "ibuildings/qa-tools": "~1.1,>=1.1.27",
         "liip/rmt": "1.1.*"
     },
+    "repositories": [
+        {"type": "vcs", "url": "https://github.com/rjkip/symfony"},
+        {
+            "type": "vcs",
+            "url": "https://github.com/SURFnet/saml2"
+        }
+    ],
     "scripts": {
         "post-install-cmd": [
             "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",
@@ -61,6 +69,7 @@
     "extra": {
         "symfony-app-dir": "app",
         "symfony-web-dir": "web",
+        "symfony-assets-install": "symlink",
         "incenteev-parameters": {
             "file": "app/config/parameters.yml"
         }
