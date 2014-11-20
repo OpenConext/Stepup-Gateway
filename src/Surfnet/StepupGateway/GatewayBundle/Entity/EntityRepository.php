@@ -26,8 +26,6 @@ class EntityRepository implements Repository
     /**
      * @param string $entityId
      * @return ServiceProvider
-     *
-     *
      */
     public function getServiceProvider($entityId)
     {

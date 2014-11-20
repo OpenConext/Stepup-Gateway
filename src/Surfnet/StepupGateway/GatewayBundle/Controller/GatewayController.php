@@ -45,7 +45,7 @@ class GatewayController extends Controller
 
         $proxyRequest->setScoping([$originalRequest->getServiceProvider()]);
 
-        /** @var \Symfony\Component\HttpFoundation\Session\Session $session */
+        /** @var \Symfony\Component\HttpFoundation\Session\SessionInterface $session */
         $session = $this->get('session');
         $session->set(
             'surfnet/gateway/request',
@@ -86,7 +86,7 @@ class GatewayController extends Controller
 
         /** @var \Surfnet\SamlBundle\Entity\IdentityProvider $identityProvider */
         $identityProvider = $this->get('surfnet_saml.hosted.identity_provider');
-        /** @var \Symfony\Component\HttpFoundation\Session\Session $session */
+        /** @var \Symfony\Component\HttpFoundation\Session\SessionInterface $session */
         $session = $this->get('session');
         $state   = $session->get('surfnet/gateway/request');
 
