@@ -28,6 +28,9 @@ class LoaResolutionService
      */
     private $loas = [];
 
+    /**
+     * @var bool
+     */
     private $locked = false;
 
     /**
@@ -35,6 +38,7 @@ class LoaResolutionService
      */
     public function addLoa(Loa $loa)
     {
+        // @see lock()
         if ($this->locked) {
             throw new LogicException("Cannot add another Loa when the LoaResolutionService is locked");
         }
@@ -51,6 +55,10 @@ class LoaResolutionService
         $this->loas[] = $loa;
     }
 
+    /**
+     * We should not be able to add more loa's ourselves at runtime, hence this rather crude mechanism. It is called by
+     * the DIC after the configured LOAs have been added.
+     */
     public function lock()
     {
         $this->locked = true;

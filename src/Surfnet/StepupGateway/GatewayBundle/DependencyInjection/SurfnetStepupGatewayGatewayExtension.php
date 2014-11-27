@@ -55,5 +55,6 @@ class SurfnetStepupGatewayGatewayExtension extends Extension
         $loaService->addMethodCall('addLoa', [$loa1]);
         $loaService->addMethodCall('addLoa', [$loa2]);
         $loaService->addMethodCall('addLoa', [$loa3]);
+        $loaService->addMethodCall('lock');
     }
 }
