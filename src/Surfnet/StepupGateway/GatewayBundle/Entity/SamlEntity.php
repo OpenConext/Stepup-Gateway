@@ -1,0 +1,89 @@
+<?php
+
+/**
+ * Copyright 2014 SURFnet bv
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+namespace Surfnet\StepupGateway\GatewayBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+use GuzzleHttp;
+use Surfnet\SamlBundle\Entity\ServiceProvider;
+use Surfnet\StepupGateway\GatewayBundle\Exception\RuntimeException;
+
+/**
+ * @ORM\Entity(repositoryClass="Surfnet\StepupGateway\GatewayBundle\Entity\SamlEntityRepository")
+ * @ORM\Table()
+ */
+class SamlEntity
+{
+    /**
+     * Constants denoting the type of SamlEntity. Also used in the gateway to make that distinction
+     */
+    const TYPE_IDP = 'idp';
+    const TYPE_SP = 'sp';
+
+    /**
+     * @ORM\Id
+     * @ORM\Column
+     *
+     * @var string
+     */
+    private $entityId;
+
+    /**
+     * @ORM\Column
+     *
+     * @var string
+     */
+    private $type;
+
+    /**
+     * @ORM\Column(type="text")
+     *
+     * @var string the configuration as json string
+     */
+    private $configuration;
+
+    public function toServiceProvider()
+    {
+        if (!$this->type === self::TYPE_SP) {
+            throw new RuntimeException(sprintf(
+                'Cannot cast a SAMLEntity to a ServiceProvider if it is not of the type "%s", current type: "%s"',
+                self::TYPE_SP,
+                $this->type
+            ));
+        }
+
+        $decodedConfiguration = $this->decodeConfiguration();
+
+        // index based will be supported later on
+        $configuration['assertionConsumerUrl'] = reset($decodedConfiguration['acs']);
+        $configuration['certificateData'] = $decodedConfiguration['public_key'];
+        $configuration['entityId'] = $this->entityId;
+
+        return new ServiceProvider($configuration);
+    }
+
+    /**
+     * Returns the decoded configuration
+     *
+     * @return array
+     */
+    private function decodeConfiguration()
+    {
+        return GuzzleHttp\json_decode($this->configuration, true);
+    }
+}
