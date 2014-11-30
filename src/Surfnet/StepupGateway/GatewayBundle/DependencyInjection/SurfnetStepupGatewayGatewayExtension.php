@@ -52,9 +52,6 @@ class SurfnetStepupGatewayGatewayExtension extends Extension
         $loa2 = new Definition('Surfnet\StepupGateway\GatewayBundle\Value\Loa', [Loa::LOA_2, $loaDefinitions['loa2']]);
         $loa3 = new Definition('Surfnet\StepupGateway\GatewayBundle\Value\Loa', [Loa::LOA_3, $loaDefinitions['loa3']]);
 
-        $loaService->addMethodCall('addLoa', [$loa1]);
-        $loaService->addMethodCall('addLoa', [$loa2]);
-        $loaService->addMethodCall('addLoa', [$loa3]);
-        $loaService->addMethodCall('lock');
+        $loaService->addArgument([$loa1, $loa2, $loa3]);
     }
 }

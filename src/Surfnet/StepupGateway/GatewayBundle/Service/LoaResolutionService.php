@@ -28,21 +28,18 @@ class LoaResolutionService
      */
     private $loas = [];
 
-    /**
-     * @var bool
-     */
-    private $locked = false;
+    public function __construct(array $loaDefinitions)
+    {
+        foreach ($loaDefinitions as $definition) {
+            $this->addLoaDefinition($definition);
+        }
+    }
 
     /**
      * @param Loa $loa
      */
-    public function addLoa(Loa $loa)
+    private function addLoaDefinition(Loa $loa)
     {
-        // @see lock()
-        if ($this->locked) {
-            throw new LogicException("Cannot add another Loa when the LoaResolutionService is locked");
-        }
-
         foreach ($this->loas as $existingLoa) {
             if ($existingLoa->equals($loa)) {
                 throw new LogicException(sprintf(
@@ -53,14 +50,5 @@ class LoaResolutionService
         }
 
         $this->loas[] = $loa;
-    }
-
-    /**
-     * We should not be able to add more loa's ourselves at runtime, hence this rather crude mechanism. It is called by
-     * the DIC after the configured LOAs have been added.
-     */
-    public function lock()
-    {
-        $this->locked = true;
     }
 }
