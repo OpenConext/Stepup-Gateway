@@ -1,3 +1,5 @@
 services:
     saml.entity_repository:
-        class: Surfnet\StepupGateway\GatewayBundle\Entity\EntityRepository
+        class: Surfnet\StepupGateway\GatewayBundle\Service\SamlEntityService
+        arguments:
+            - @gateway.repository.saml_entity

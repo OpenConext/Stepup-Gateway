@@ -75,7 +75,11 @@ doctrine:
             gateway:
                 connection: gateway
                 naming_strategy: doctrine.orm.naming_strategy.underscore
-                mappings: []
+                mappings:
+                    SurfnetStepupGatewayGatewayBundle:
+                        mapping: true
+                        type: annotation
+                        is_bundle: true
             deploy:
                 connection: deploy
                 naming_strategy: doctrine.orm.naming_strategy.underscore
