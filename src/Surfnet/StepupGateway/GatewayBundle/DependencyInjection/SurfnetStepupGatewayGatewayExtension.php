@@ -43,7 +43,7 @@ class SurfnetStepupGatewayGatewayExtension extends Extension
     private function defineLoas($loaDefinitions, ContainerBuilder $container)
     {
         if (!$container->hasDefinition('gateway.service.loa_resolution')) {
-            throw new InvalidConfigurationException("Required service gateway.service.loa_resolution does not exist");
+            throw new InvalidConfigurationException('Required service gateway.service.loa_resolution does not exist');
         }
 
         $loaService = $container->getDefinition('gateway.service.loa_resolution');
