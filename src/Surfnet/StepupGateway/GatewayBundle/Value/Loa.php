@@ -18,7 +18,8 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Value;
 
-use LogicException;
+use DomainException;
+use InvalidArgumentException;
 
 /**
  * Value object representing the different LOAs that can be configured
@@ -50,7 +51,7 @@ class Loa
     {
         $possibleLevels = [self::LOA_1, self::LOA_2, self::LOA_3];
         if (!in_array($level, $possibleLevels)) {
-            throw new LogicException(sprintf(
+            throw new DomainException(sprintf(
                 'Unknown loa level "%s", known levels: "%s"',
                 $level,
                 implode('", "', $possibleLevels)
@@ -58,7 +59,7 @@ class Loa
         }
 
         if (!is_string($identifier)) {
-            throw new LogicException(sprintf(
+            throw new InvalidArgumentException(sprintf(
                 'Loa identifier must be a string, "%s" given',
                 is_object($identifier) ? get_class($identifier) : gettype($identifier)
             ));
@@ -86,6 +87,10 @@ class Loa
         return $this->level >= $loa->level;
     }
 
+    /**
+     * @param Loa $loa
+     * @return bool
+     */
     public function equals(Loa $loa)
     {
         return $this->level === $loa->level
