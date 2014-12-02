@@ -133,6 +133,25 @@ class ProxyStateHandler
     }
 
     /**
+     * @param string $serviceProvider
+     * @return $this
+     */
+    public function generateSessionIndex($serviceProvider)
+    {
+        $this->set('session_index', md5($serviceProvider . openssl_random_pseudo_bytes(40)));
+
+        return $this;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getSessionIndex()
+    {
+        return $this->get('session_index');
+    }
+
+    /**
      * @param string $key
      * @param string $value
      */

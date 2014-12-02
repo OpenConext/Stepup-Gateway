@@ -11,3 +11,12 @@ services:
         class: Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler
         arguments:
             - @session
+
+    gateway.service.response_proxy:
+        class: Surfnet\StepupGateway\GatewayBundle\Service\ProxyResponseService
+        arguments:
+            - @surfnet_saml.hosted.identity_provider
+            - @surfnet_saml.remote.idp
+            - @gateway.proxy.state_handler
+            - @surfnet_saml.saml.attribute_dictionary
+            - @saml.attribute.eduPersonTargetedID
