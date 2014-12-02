@@ -3,3 +3,6 @@ services:
         class: Surfnet\StepupGateway\GatewayBundle\Service\SamlEntityService
         arguments:
             - @gateway.repository.saml_entity
+
+    gateway.service.loa_resolution:
+        class: Surfnet\StepupGateway\GatewayBundle\Service\LoaResolutionService

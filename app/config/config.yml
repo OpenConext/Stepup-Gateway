@@ -172,3 +172,9 @@ surfnet_saml:
             entity_id: %saml_remote_idp_entity_id%
             sso_url: %saml_remote_idp_sso_url%
             certificate: %saml_remote_idp_certificate%
+
+surfnet_stepup_gateway_gateway:
+    loa_definition:
+        loa1: "https://gateway/authentication/loa1"
+        loa2: "https://gateway/authentication/loa2"
+        loa3: "https://gateway/authentication/loa3"

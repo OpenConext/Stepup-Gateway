@@ -34,7 +34,45 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();
-        /*$rootNode = */$treeBuilder->root('surfnet_stepup_gateway_gateway');
+        $rootNode = $treeBuilder->root('surfnet_stepup_gateway_gateway');
+
+        $rootNode
+            ->children()
+                ->arrayNode('loa_definition')
+                    ->children()
+                        ->scalarNode('loa1')
+                            ->example('https://gateway.tld/authentication/loa1')
+                            ->isRequired()
+                            ->validate()
+                            ->ifTrue(function ($value) {
+                                return !is_string($value);
+                            })
+                                ->thenInvalid('Loa definition for "loa1" must be a string')
+                            ->end()
+                        ->end()
+                        ->scalarNode('loa2')
+                            ->example('https://gateway.tld/authentication/loa2')
+                            ->isRequired()
+                            ->validate()
+                            ->ifTrue(function ($value) {
+                                return !is_string($value);
+                            })
+                                ->thenInvalid('Loa definition for "loa2" must be a string')
+                            ->end()
+                        ->end()
+                        ->scalarNode('loa3')
+                            ->example('https://gateway.tld/authentication/loa3')
+                            ->isRequired()
+                            ->validate()
+                            ->ifTrue(function ($value) {
+                                return !is_string($value);
+                            })
+                                ->thenInvalid('Loa definition for "loa3" must be a string')
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end();
 
         return $treeBuilder;
     }
