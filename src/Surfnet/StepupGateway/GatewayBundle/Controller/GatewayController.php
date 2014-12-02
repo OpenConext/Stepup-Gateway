@@ -45,17 +45,14 @@ class GatewayController extends Controller
 
         $proxyRequest->setScoping([$originalRequest->getServiceProvider()]);
 
-        /** @var \Symfony\Component\HttpFoundation\Session\SessionInterface $session */
-        $session = $this->get('session');
-        $session->set(
-            'surfnet/gateway/request',
-            [
-                'original_id' => $originalRequest->getRequestId(),
-                'original_sp' => $originalRequest->getServiceProvider(),
-                'original_relay' => $httpRequest->get(AuthnRequest::PARAMETER_RELAY_STATE, ''),
-                'gateway_request_id' => $proxyRequest->getRequestId()
-            ]
-        );
+        /** @var \Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler $stateHandler */
+        $stateHandler = $this->get('gateway.proxy.state_handler');
+        $stateHandler
+            ->setRequestId($originalRequest->getRequestId())
+            ->setRequestServiceProvider($originalRequest->getServiceProvider())
+            ->setRelayState($httpRequest->get(AuthnRequest::PARAMETER_RELAY_STATE, ''))
+            ->setRequestAuthnContextClassRef($originalRequest->getRequestedAuthenticationContext())
+            ->setGatewayRequestId($proxyRequest->getRequestId());
 
         return $redirectBinding->createRedirectResponseFor($proxyRequest);
     }
@@ -86,11 +83,13 @@ class GatewayController extends Controller
 
         /** @var \Surfnet\SamlBundle\Entity\IdentityProvider $identityProvider */
         $identityProvider = $this->get('surfnet_saml.hosted.identity_provider');
-        /** @var \Symfony\Component\HttpFoundation\Session\SessionInterface $session */
-        $session = $this->get('session');
-        $state   = $session->get('surfnet/gateway/request');
+        /** @var \Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler $stateHandler */
+        $stateHandler = $this->get('gateway.proxy.state_handler');
+        /** @var \Surfnet\StepupGateway\GatewayBundle\Service\SamlEntityService $samlEntityRepository */
+        $samlEntityRepository = $this->get('saml.entity_repository');
+        $serviceProvider = $samlEntityRepository->getServiceProvider($stateHandler->getRequestServiceProvider());
 
-        if (!$assertion->getSubjectConfirmation()[0]->SubjectConfirmationData->InResponseTo === $state['gateway_request_id']) {
+        if (!$assertion->getSubjectConfirmation()[0]->SubjectConfirmationData->InResponseTo === $stateHandler->getGatewayRequestId()) {
             // @todo handle gracefully with return button to SP
             throw new BadRequestHttpException(
                 'Unknown SAMLResponse InResponseTo [TEMPORARY - WILL BE PAGE WITH BUTTON TO GO BACK TO SP]'
@@ -101,11 +100,9 @@ class GatewayController extends Controller
 
         $newAssertion = new SAML2_Assertion();
 
-        // @todo EPTI formatting
-
         $newAttributes = $this->extractAndConvertAttributes($assertion);
         $newAssertion->setAttributes($newAttributes);
-        $newAssertion->setIssuer($identityProvider->get('entityId')); // @todo fix!
+        $newAssertion->setIssuer($identityProvider->getEntityId());
 
         // signing
         $newAssertion->setSignatureKey(
@@ -121,9 +118,9 @@ class GatewayController extends Controller
             $confirmation = new \SAML2_XML_saml_SubjectConfirmation();
             $confirmation->Method = \SAML2_Const::CM_BEARER;
                 $confirmationData = new \SAML2_XML_saml_SubjectConfirmationData();
-                $confirmationData->InResponseTo = $state['original_id'];
+                $confirmationData->InResponseTo = $stateHandler->getRequestId();
                 // @todo fix hardcoded
-                $confirmationData->Recipient = 'https://ss-dev.stepup.coin.surf.net/app_dev.php/authentication/consume-assertion';
+                $confirmationData->Recipient = $serviceProvider->getAssertionConsumerUrl();
                     $notOnOrAfter = $assertion->getSubjectConfirmation()[0]->SubjectConfirmationData->NotOnOrAfter;
                 $confirmationData->NotOnOrAfter = $notOnOrAfter;
             $confirmation->SubjectConfirmationData = $confirmationData;
@@ -132,7 +129,7 @@ class GatewayController extends Controller
             'Value' => $translatedAssertion->getAttribute('eduPersonTargetedID'),
             'Format' => 'urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified'
         ]);
-        $newAssertion->setValidAudiences([$state['original_sp']]);
+        $newAssertion->setValidAudiences([$stateHandler->getRequestServiceProvider()]);
 
         // AuthnStatement
             $newAssertion->setAuthnInstant($assertion->getAuthnInstant());
@@ -149,13 +146,13 @@ class GatewayController extends Controller
         $response = new \SAML2_Response();
         $response->setAssertions([$newAssertion]);
         $response->setIssuer($identityProvider->get('entityId'));
-        $response->setDestination('https://ss-dev.stepup.coin.surf.net/app_dev.php/authentication/consume-assertion');
-        $response->setInResponseTo($state['original_id']);
+        $response->setDestination($serviceProvider->getAssertionConsumerUrl());
+        $response->setInResponseTo($stateHandler->getRequestId());
 
         return [
-            'acu' => 'https://ss-dev.stepup.coin.surf.net/app_dev.php/authentication/consume-assertion',
+            'acu' => $serviceProvider->getAssertionConsumerUrl(),
             'response' => base64_encode($response->toUnsignedXML()->ownerDocument->saveXML()),
-            'relayState' => $state['original_relay']
+            'relayState' => $stateHandler->getRelayState()
         ];
     }
 

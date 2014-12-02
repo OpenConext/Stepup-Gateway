@@ -6,3 +6,8 @@ services:
 
     gateway.service.loa_resolution:
         class: Surfnet\StepupGateway\GatewayBundle\Service\LoaResolutionService
+
+    gateway.proxy.state_handler:
+        class: Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler
+        arguments:
+            - @session
