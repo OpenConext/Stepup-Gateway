@@ -152,6 +152,25 @@ class ProxyStateHandler
     }
 
     /**
+     * @param string $assertionAsXmlString
+     * @return $this
+     */
+    public function saveAssertion($assertionAsXmlString)
+    {
+        $this->set('response_assertion', $assertionAsXmlString);
+
+        return $this;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getAssertion()
+    {
+        return $this->get('response_assertion');
+    }
+
+    /**
      * @param string $key
      * @param string $value
      */

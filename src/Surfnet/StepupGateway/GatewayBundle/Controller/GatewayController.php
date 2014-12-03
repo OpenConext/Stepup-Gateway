@@ -33,7 +33,7 @@ class GatewayController extends Controller
 {
     public function ssoAction(Request $httpRequest)
     {
-        $this->get('logger')->info('Received AuthnRequest, started processing');
+        $this->get('logger')->notice('Received AuthnRequest, started processing');
 
         /** @var \Surfnet\SamlBundle\Http\RedirectBinding $redirectBinding */
         $redirectBinding = $this->get('surfnet_saml.http.redirect_binding');
@@ -44,7 +44,7 @@ class GatewayController extends Controller
             return $this->render('unprocessableRequest');
         }
 
-        $this->get('logger')->info(sprintf(
+        $this->get('logger')->notice(sprintf(
             'AuthnRequest processing complete, received AuthnRequest from "%s", request ID: "%s"',
             $originalRequest->getServiceProvider(),
             $originalRequest->getRequestId()
@@ -67,7 +67,7 @@ class GatewayController extends Controller
             ->setRequestAuthnContextClassRef($originalRequest->getRequestedAuthenticationContext())
             ->setGatewayRequestId($proxyRequest->getRequestId());
 
-        $this->get('logger')->info(sprintf(
+        $this->get('logger')->notice(sprintf(
             'Sending Proxy AuthnRequest with request ID: "%s" for original AuthnRequest "%s"',
             $proxyRequest->getRequestId(),
             $originalRequest->getRequestId()
@@ -87,7 +87,7 @@ class GatewayController extends Controller
      */
     public function consumeAssertionAction(Request $request)
     {
-        $this->get('logger')->info('Received SAMLResponse, attempting to process for Proxy Response');
+        $this->get('logger')->notice('Received SAMLResponse, attempting to process for Proxy Response');
 
         /** @var \Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler $stateHandler */
         $stateHandler = $this->get('gateway.proxy.state_handler');
@@ -123,26 +123,57 @@ class GatewayController extends Controller
 
         $adaptedAssertion = new AssertionAdapter($assertion);
         if (!$adaptedAssertion->inResponseToMatches($stateHandler->getGatewayRequestId())) {
+            $knownResponse = $stateHandler->getGatewayRequestId();
+            $message = $knownResponse ? sprintf('expected InResponseTo: "%s"', $knownResponse) : 'no request was sent';
 
-            // @todo logging, error out. End of the line here.
+            $this->get('logger')->critical(sprintf(
+                'Received Response with unexpected InResponseTo: "%s", %s',
+                $adaptedAssertion->getInResponseTo(),
+                $message
+            ));
 
-            return $this->render('mismatchedInResponseTo');
+            return $this->render('unrecoverableError');
         }
 
+        $stateHandler->saveAssertion($assertion->toXML()->ownerDocument->saveXML());
+
         //@todo here we do the LOA detection and do the actual LOA checking
+        $requiredLoa = $stateHandler->getRequestAuthContextClassRef();
+        if ($requiredLoa) {
+            //@todo > use StepUpService to resolve LOA and get redirecting
+        }
 
-        // @todo serialize Assertion to XML and store in state
+        return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:respond');
+    }
 
-        // @todo move to respond action
+    public function respondAction()
+    {
+        $this->get('logger')->notice('Creating Reponse');
+
+        /** @var \Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler $stateHandler */
+        $stateHandler = $this->get('gateway.proxy.state_handler');
+        $assertion = $this->reconstitueAssertion();
+        /** @var \Surfnet\StepupGateway\GatewayBundle\Service\SamlEntityService $samlEntityRepository */
+        $samlEntityRepository = $this->get('saml.entity_repository');
+        $serviceProvider      = $samlEntityRepository->getServiceProvider($stateHandler->getRequestServiceProvider());
+
         /** @var \Surfnet\StepupGateway\GatewayBundle\Service\ProxyResponseService $proxyResponseService */
         $proxyResponseService = $this->get('gateway.service.response_proxy');
-        $response = $proxyResponseService->createProxyResponse($assertion, $serviceProvider);
+        $response             = $proxyResponseService->createProxyResponse($assertion, $serviceProvider);
+
+        $this->get('logger')->notice(
+            sprintf(
+                'Responding to request "%s" with response based on response from the remote IdP with response "%s"',
+                $stateHandler->getRequestId(),
+                $response->getId()
+            )
+        );
 
         return $this->render(
             'consumeAssertion',
             [
-                'acu' => $serviceProvider->getAssertionConsumerUrl(),
-                'response' => base64_encode($response->toUnsignedXML()->ownerDocument->saveXML()),
+                'acu'        => $serviceProvider->getAssertionConsumerUrl(),
+                'response'   => base64_encode($response->toUnsignedXML()->ownerDocument->saveXML()),
                 'relayState' => $stateHandler->getRelayState()
             ]
         );
@@ -160,6 +191,16 @@ class GatewayController extends Controller
     private function getResponseAsXML(\SAML2_Response $response)
     {
         return base64_encode($response->toUnsignedXML()->ownerDocument->saveXML());
+    }
+
+    private function reconstitueAssertion()
+    {
+        /** @var \Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler $stateHandler */
+        $stateHandler      = $this->get('gateway.proxy.state_handler');
+        $assertionAsXML    = $stateHandler->getAssertion();
+        $assertionDocument = new \DOMDocument();
+        $assertionDocument->loadXML($assertionAsXML);
+        return new SAML2_Assertion($assertionDocument->documentElement);
     }
 
     /**
