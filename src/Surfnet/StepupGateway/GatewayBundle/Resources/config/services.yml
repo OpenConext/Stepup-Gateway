@@ -12,11 +12,20 @@ services:
         arguments:
             - @session
 
+    gateway.proxy.response_builder:
+        class: Surfnet\StepupGateway\GatewayBundle\Saml\ResponseBuilder
+
     gateway.service.response_proxy:
         class: Surfnet\StepupGateway\GatewayBundle\Service\ProxyResponseService
         arguments:
             - @surfnet_saml.hosted.identity_provider
             - @surfnet_saml.remote.idp
             - @gateway.proxy.state_handler
+            - @gateway.service.assertion_signing
             - @surfnet_saml.saml.attribute_dictionary
             - @saml.attribute.eduPersonTargetedID
+
+    gateway.service.assertion_signing:
+        class: Surfnet\StepupGateway\GatewayBundle\Saml\AssertionSigningService
+        arguments:
+            - @surfnet_saml.hosted.identity_provider

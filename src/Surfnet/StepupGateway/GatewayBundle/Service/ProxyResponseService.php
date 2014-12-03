@@ -25,6 +25,7 @@ use Surfnet\SamlBundle\Entity\ServiceProvider;
 use Surfnet\SamlBundle\SAML2\Attribute\AttributeDefinition;
 use Surfnet\SamlBundle\SAML2\Attribute\AttributeDictionary;
 use Surfnet\StepupGateway\GatewayBundle\Saml\AssertionAdapter;
+use Surfnet\StepupGateway\GatewayBundle\Saml\AssertionSigningService;
 use Surfnet\StepupGateway\GatewayBundle\Saml\Exception\UnknownInResponseToException;
 use Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler;
 
@@ -58,18 +59,28 @@ class ProxyResponseService
      */
     private $eptiAttribute;
 
+    /**
+     * @var \DateTime
+     */
     private $currentTime;
+
+    /**
+     * @var \Surfnet\StepupGateway\GatewayBundle\Saml\AssertionSigningService
+     */
+    private $assertionSigningService;
 
     public function __construct(
         IdentityProvider $hostedIdentityProvider,
         IdentityProvider $remoteIdentityProvider,
         ProxyStateHandler $proxyStateHandler,
+        AssertionSigningService $assertionSigningService,
         AttributeDictionary $attributeDictionary,
         AttributeDefinition $eptiAttribute
     ) {
         $this->hostedIdentityProvider    = $hostedIdentityProvider;
         $this->remoteIdentityProvider    = $remoteIdentityProvider;
         $this->proxyStateHandler         = $proxyStateHandler;
+        $this->assertionSigningService   = $assertionSigningService;
         $this->attributeDictionary       = $attributeDictionary;
         $this->eptiAttribute             = $eptiAttribute;
 
@@ -78,11 +89,6 @@ class ProxyResponseService
 
     public function createProxyResponse(SAML2_Assertion $assertion, ServiceProvider $targetServiceProvider)
     {
-        $adaptedAssertion = new AssertionAdapter($assertion);
-        if (!$adaptedAssertion->inResponseToMatches($this->proxyStateHandler->getGatewayRequestId())) {
-            throw new UnknownInResponseToException($adaptedAssertion->getInResponseTo());
-        }
-
         $attributes = $this->extractAttributes($assertion);
         $translatedAssertion = $this->attributeDictionary->translate($assertion);
 
@@ -93,7 +99,7 @@ class ProxyResponseService
         $newAssertion->setIssuer($this->hostedIdentityProvider->getEntityId());
         $newAssertion->setIssueInstant($this->getTimestamp());
 
-        $this->addSignatureTo($newAssertion);
+        $this->assertionSigningService->signAssertion($newAssertion);
         $this->addSubjectConfirmationFor($newAssertion, $targetServiceProvider);
 
         $newAssertion->setNameId([
@@ -141,15 +147,6 @@ class ProxyResponseService
         $attributes[$eptiKey] = [$document->documentElement->childNodes];
 
         return $attributes;
-    }
-
-    /**
-     * @param SAML2_Assertion $newAssertion
-     */
-    private function addSignatureTo(SAML2_Assertion $newAssertion)
-    {
-        $newAssertion->setSignatureKey($this->loadPrivateKey());
-        $newAssertion->setCertificates([$this->getPublicCertificate()]);
     }
 
     /**
@@ -203,7 +200,6 @@ class ProxyResponseService
     private function createNewAuthnResponse(SAML2_Assertion $newAssertion, ServiceProvider $targetServiceProvider)
     {
         $response = new \SAML2_Response();
-        $response->setIssuer($this->hostedIdentityProvider->getEntityId());
         $response->setAssertions([$newAssertion]);
         $response->setIssuer($this->hostedIdentityProvider->getEntityId());
         $response->setIssueInstant($this->getTimestamp());
@@ -211,34 +207,6 @@ class ProxyResponseService
         $response->setInResponseTo($this->proxyStateHandler->getRequestId());
 
         return $response;
-    }
-
-    /**
-     * @return \XMLSecurityKey
-     */
-    private function loadPrivateKey()
-    {
-        $key = $this->hostedIdentityProvider->getPrivateKey(\SAML2_Configuration_PrivateKey::NAME_DEFAULT);
-        $keyLoader  = new \SAML2_Certificate_PrivateKeyLoader();
-        $privateKey = $keyLoader->loadPrivateKey($key);
-
-        $xmlSecurityKey = new \XMLSecurityKey(\XMLSecurityKey::RSA_SHA256, ['type' => 'private']);
-        $xmlSecurityKey->loadKey($privateKey->getKeyAsString());
-
-        return $xmlSecurityKey;
-    }
-
-    /**
-     * @return string
-     */
-    private function getPublicCertificate()
-    {
-        $keyLoader = new \SAML2_Certificate_KeyLoader();
-        $keyLoader->loadCertificateFile($this->hostedIdentityProvider->getCertificateFile());
-        /** @var \SAML2_Certificate_X509 $publicKey */
-        $publicKey = $keyLoader->getKeys()->getOnlyElement();
-
-        return $publicKey->getCertificate();
     }
 
     /**
