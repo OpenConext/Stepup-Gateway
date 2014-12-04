@@ -59,12 +59,10 @@ class ResponseBuilder
             throw new LogicException(sprintf('Trying to set invalid Response Status'));
         }
 
-        $this->response->setStatus([$status]);
+        $this->response->setStatus(['Code' => $status]);
 
         return $this;
     }
-
-//    public function addAssertion(array $attributes = [],)
 
     public function get()
     {

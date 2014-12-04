@@ -24,9 +24,7 @@ use Surfnet\SamlBundle\Entity\IdentityProvider;
 use Surfnet\SamlBundle\Entity\ServiceProvider;
 use Surfnet\SamlBundle\SAML2\Attribute\AttributeDefinition;
 use Surfnet\SamlBundle\SAML2\Attribute\AttributeDictionary;
-use Surfnet\StepupGateway\GatewayBundle\Saml\AssertionAdapter;
 use Surfnet\StepupGateway\GatewayBundle\Saml\AssertionSigningService;
-use Surfnet\StepupGateway\GatewayBundle\Saml\Exception\UnknownInResponseToException;
 use Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler;
 
 /**
@@ -38,11 +36,6 @@ class ProxyResponseService
      * @var \Surfnet\SamlBundle\Entity\IdentityProvider
      */
     private $hostedIdentityProvider;
-
-    /**
-     * @var \Surfnet\SamlBundle\Entity\IdentityProvider
-     */
-    private $remoteIdentityProvider;
 
     /**
      * @var \Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler
@@ -71,14 +64,12 @@ class ProxyResponseService
 
     public function __construct(
         IdentityProvider $hostedIdentityProvider,
-        IdentityProvider $remoteIdentityProvider,
         ProxyStateHandler $proxyStateHandler,
         AssertionSigningService $assertionSigningService,
         AttributeDictionary $attributeDictionary,
         AttributeDefinition $eptiAttribute
     ) {
         $this->hostedIdentityProvider    = $hostedIdentityProvider;
-        $this->remoteIdentityProvider    = $remoteIdentityProvider;
         $this->proxyStateHandler         = $proxyStateHandler;
         $this->assertionSigningService   = $assertionSigningService;
         $this->attributeDictionary       = $attributeDictionary;
@@ -186,7 +177,7 @@ class ProxyResponseService
         $authority = $assertion->getAuthenticatingAuthority();
         $newAssertion->setAuthenticatingAuthority(
             array_merge(
-                (empty($authority) ? [$this->remoteIdentityProvider->getEntityId()] : $authority),
+                (empty($authority) ? [] : $authority),
                 [$this->hostedIdentityProvider->getEntityId()]
             )
         );

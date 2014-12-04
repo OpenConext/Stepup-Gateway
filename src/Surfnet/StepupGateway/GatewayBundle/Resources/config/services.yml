@@ -15,11 +15,17 @@ services:
     gateway.proxy.response_builder:
         class: Surfnet\StepupGateway\GatewayBundle\Saml\ResponseBuilder
 
+    gateway.proxy.response_context:
+        class: Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext
+        arguments:
+            - @surfnet_saml.hosted.identity_provider
+            - @saml.entity_repository
+            - @gateway.proxy.state_handler
+
     gateway.service.response_proxy:
         class: Surfnet\StepupGateway\GatewayBundle\Service\ProxyResponseService
         arguments:
             - @surfnet_saml.hosted.identity_provider
-            - @surfnet_saml.remote.idp
             - @gateway.proxy.state_handler
             - @gateway.service.assertion_signing
             - @surfnet_saml.saml.attribute_dictionary
@@ -29,3 +35,8 @@ services:
         class: Surfnet\StepupGateway\GatewayBundle\Saml\AssertionSigningService
         arguments:
             - @surfnet_saml.hosted.identity_provider
+
+    gateway.service.stepup_authentication:
+        class: Surfnet\StepupGateway\GatewayBundle\Service\StepUpAuthenticationService
+        arguments:
+            - @gateway.service.loa_resolution

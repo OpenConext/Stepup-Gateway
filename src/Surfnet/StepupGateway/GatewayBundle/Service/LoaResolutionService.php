@@ -36,6 +36,21 @@ class LoaResolutionService
     }
 
     /**
+     * @param string $loaIdentifier
+     * @return bool
+     */
+    public function hasLoa($loaIdentifier)
+    {
+        foreach ($this->loas as $loa) {
+            if ($loa->isIdentifiedBy($loaIdentifier)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * @param Loa $loa
      */
     private function addLoaDefinition(Loa $loa)
