@@ -20,11 +20,12 @@ namespace Surfnet\StepupGateway\GatewayBundle\Saml;
 
 use DateTime;
 use DateTimeZone;
+use DOMDocument;
 use SAML2_Assertion;
 use Surfnet\SamlBundle\Entity\IdentityProvider;
 use Surfnet\SamlBundle\Entity\ServiceProvider;
-use Surfnet\SamlBundle\Entity\ServiceProviderRepository;
 use Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler;
+use Surfnet\StepupGateway\GatewayBundle\Service\SamlEntityService;
 
 class ResponseContext
 {
@@ -34,9 +35,9 @@ class ResponseContext
     private $hostedIdentityProvider;
 
     /**
-     * @var ServiceProviderRepository
+     * @var SamlEntityService
      */
-    private $serviceProviderRepository;
+    private $samlEntityService;
 
     /**
      * @var ProxyStateHandler
@@ -55,13 +56,13 @@ class ResponseContext
 
     public function __construct(
         IdentityProvider $identityProvider,
-        ServiceProviderRepository $serviceProviderRepository,
+        SamlEntityService $samlEntityService,
         ProxyStateHandler $stateHandler
     ) {
         $this->hostedIdentityProvider = $identityProvider;
-        $this->serviceProviderRepository = $serviceProviderRepository;
-        $this->stateHandler = $stateHandler;
-        $this->generationTime = new DateTime('now', new DateTimeZone('UTC'));
+        $this->samlEntityService      = $samlEntityService;
+        $this->stateHandler           = $stateHandler;
+        $this->generationTime         = new DateTime('now', new DateTimeZone('UTC'));
     }
 
     /**
@@ -137,7 +138,7 @@ class ResponseContext
 
         $serviceProviderId = $this->stateHandler->getRequestServiceProvider();
 
-        return $this->targetServiceProvider = $this->serviceProviderRepository->getServiceProvider($serviceProviderId);
+        return $this->targetServiceProvider = $this->samlEntityService->getServiceProvider($serviceProviderId);
     }
 
     /**
@@ -153,6 +154,18 @@ class ResponseContext
      */
     public function saveAssertion(SAML2_Assertion $assertion)
     {
+        // we pluck the NameId to make it easier to access it without having to reconstitute the assertion
+        $nameId = $assertion->getNameId();
+        if (!empty($nameId['Value'])) {
+            $this->stateHandler->saveIdentityNameId($nameId['Value']);
+        }
+
+        // same for the entityId of the authenticating Authority
+        $authenticatingAuthorities = $assertion->getAuthenticatingAuthority();
+        if (!empty($authenticatingAuthorities)) {
+            $this->stateHandler->setAuthenticatingIdp(reset($authenticatingAuthorities));
+        }
+
         $this->stateHandler->saveAssertion($assertion->toXML()->ownerDocument->saveXML());
     }
 
@@ -162,9 +175,41 @@ class ResponseContext
     public function reconstituteAssertion()
     {
         $assertionAsXML    = $this->stateHandler->getAssertion();
-        $assertionDocument = new \DOMDocument();
+        $assertionDocument = new DOMDocument();
         $assertionDocument->loadXML($assertionAsXML);
 
         return new SAML2_Assertion($assertionDocument->documentElement);
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getIdentityNameId()
+    {
+        return $this->stateHandler->getIdentityNameId();
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getAuthenticatingIdp()
+    {
+        return $this->stateHandler->getAuthenticatingIdp();
+    }
+
+    /**
+     * @param string $secondFactorId
+     */
+    public function saveSelectedSecondFactor($secondFactorId)
+    {
+        $this->stateHandler->setSelectedSecondFactorId($secondFactorId);
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getSelectedSecondFactor()
+    {
+        return $this->stateHandler->getSelectedSecondFactorId();
     }
 }

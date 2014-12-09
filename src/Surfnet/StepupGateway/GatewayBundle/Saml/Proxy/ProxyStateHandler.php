@@ -171,6 +171,63 @@ class ProxyStateHandler
     }
 
     /**
+     * @param $nameId
+     * @return $this
+     */
+    public function saveIdentityNameId($nameId)
+    {
+        $this->set('name_id', $nameId);
+
+        return $this;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getIdentityNameId()
+    {
+        return $this->get('name_id');
+    }
+
+    /**
+     * @param string $idpEntityId
+     * @return $this
+     */
+    public function setAuthenticatingIdp($idpEntityId)
+    {
+        $this->set('authenticating_idp', $idpEntityId);
+
+        return $this;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getAuthenticatingIdp()
+    {
+        return $this->get('authenticating_idp');
+    }
+
+    /**
+     * @param string $secondFactorId
+     * @return $this
+     */
+    public function setSelectedSecondFactorId($secondFactorId)
+    {
+        $this->set('selected_second_factor', $secondFactorId);
+
+        return $this;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getSelectedSecondFactorId()
+    {
+        return $this->get('selected_second_factor');
+    }
+
+    /**
      * @param string $key
      * @param string $value
      */

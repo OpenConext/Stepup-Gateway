@@ -20,6 +20,7 @@ namespace Surfnet\StepupGateway\GatewayBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use GuzzleHttp;
+use Surfnet\SamlBundle\Entity\IdentityProvider;
 use Surfnet\SamlBundle\Entity\ServiceProvider;
 use Surfnet\StepupGateway\GatewayBundle\Exception\RuntimeException;
 
@@ -57,6 +58,9 @@ class SamlEntity
      */
     private $configuration;
 
+    /**
+     * @return ServiceProvider
+     */
     public function toServiceProvider()
     {
         if (!$this->type === self::TYPE_SP) {
@@ -71,8 +75,9 @@ class SamlEntity
 
         // index based will be supported later on
         $configuration['assertionConsumerUrl'] = reset($decodedConfiguration['acs']);
-        $configuration['certificateData'] = $decodedConfiguration['public_key'];
-        $configuration['entityId'] = $this->entityId;
+        $configuration['certificateData']      = $decodedConfiguration['public_key'];
+        $configuration['entityId']             = $this->entityId;
+        $configuration['configuredLoas']       = $decodedConfiguration['loa'];
 
         return new ServiceProvider($configuration);
     }

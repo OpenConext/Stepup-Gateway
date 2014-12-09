@@ -18,6 +18,10 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Service;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Surfnet\SamlBundle\Entity\ServiceProvider;
+use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactorRepository;
+
 class StepUpAuthenticationService
 {
     /**
@@ -25,45 +29,87 @@ class StepUpAuthenticationService
      */
     private $loaResolutionService;
 
+    /**
+     * @var SamlEntityService
+     */
+    private $samlEntityService;
+
+    /**
+     * @var \Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactorRepository
+     */
+    private $secondFactorRepository;
+
     public function __construct(
-        LoaResolutionService $loaResolutionService
+        LoaResolutionService $loaResolutionService,
+        SamlEntityService $samlEntityService,
+        SecondFactorRepository $secondFactorRepository
     ) {
         $this->loaResolutionService = $loaResolutionService;
+        $this->samlEntityService = $samlEntityService;
+        $this->secondFactorRepository = $secondFactorRepository;
     }
 
     /**
-     * @param $loaDefinition
-     * @return bool
+     * @param string          $identityNameId
+     * @param string          $requestedLoa
+     * @param ServiceProvider $serviceProvider
+     * @param string          $authenticatingIdp
+     * @return \Doctrine\Common\Collections\ArrayCollection
      */
-    public function canLoaBeGiven($loaDefinition)
-    {
-        if (!$this->doesLoaExist($loaDefinition)) {
-            return false;
+    public function determineViableSecondFactors(
+        $identityNameId,
+        $requestedLoa,
+        ServiceProvider $serviceProvider,
+        $authenticatingIdp
+    ) {
+        $loaCandidates = new ArrayCollection();
+
+        if ($requestedLoa) {
+            $loaCandidates->add($requestedLoa);
         }
 
-        if (!$this->canIdentityProvideLoa($loaDefinition)) {
-            return false;
+        $spConfiguredLoas = $serviceProvider->get('configuredLoas');
+
+        $loaCandidates->add($spConfiguredLoas['__default__']);
+        if (array_key_exists($authenticatingIdp, $spConfiguredLoas)) {
+            $loaCandidates->add($spConfiguredLoas[$authenticatingIdp]);
         }
 
-        return true;
+        $highestLoa = $this->resolveHighestLoa($loaCandidates);
+        if (!$highestLoa) {
+            return new ArrayCollection();
+        }
+
+        return $this->secondFactorRepository->getAllMatchingFor($highestLoa, $identityNameId);
     }
 
     /**
-     * @param $loaDefinition
-     * @return bool
+     * @param ArrayCollection $loaCandidates
+     * @return null|\Surfnet\StepupGateway\GatewayBundle\Value\Loa
      */
-    public function doesLoaExist($loaDefinition)
+    private function resolveHighestLoa(ArrayCollection $loaCandidates)
     {
-        return $this->loaResolutionService->hasLoa($loaDefinition);
-    }
+        $actualLoas = new ArrayCollection();
+        foreach ($loaCandidates as $loaDefinition) {
+            $loa = $this->loaResolutionService->getLoa($loaDefinition);
+            if ($loa) {
+                $actualLoas->add($loa);
+            }
+        }
 
-    /**
-     * @param $loaDefinition
-     * @return bool
-     */
-    public function canIdentityProvideLoa($loaDefinition)
-    {
-        //@todo stub for now, replace with repository call later
-        return true;
+        if (!count($actualLoas)) {
+            return null;
+        }
+
+        /** @var \Surfnet\StepupGateway\GatewayBundle\Value\Loa $highest */
+        $highest = $actualLoas->first();
+        foreach ($actualLoas as $loa) {
+            // if the current highest loa cannot satisfy the next loa, that must be of a higher level...
+            if (!$highest->canSatisfyLoa($loa)) {
+                $highest = $loa;
+            }
+        }
+
+        return $highest;
     }
 }

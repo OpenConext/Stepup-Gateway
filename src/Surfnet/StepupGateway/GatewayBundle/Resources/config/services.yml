@@ -40,3 +40,4 @@ services:
         class: Surfnet\StepupGateway\GatewayBundle\Service\StepUpAuthenticationService
         arguments:
             - @gateway.service.loa_resolution
+            - @gateway.repository.second_factor

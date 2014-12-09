@@ -17,3 +17,13 @@ gateway_identityprovider_sso_proxy:
     path:     /authentication/single-sign-on/{idpKey}
     methods:  [POST]
     defaults: { _controller: SurfnetStepupGatewayGatewayBundle:Gateway:proxySso }
+
+gateway_verify_second_factor_yubikey:
+    path:     /verify-second-factor/yubikey
+    methods:  [GET,POST]
+    defaults: { _controller: SurfnetStepupGatewayGatewayBundle:SecondFactor:verifyYubikeySecondFactor }
+
+gateway_verify_second_factor_sms:
+    path:     /verify-second-factor/sms
+    methods:  [GET,POST]
+    defaults: { _controller: SurfnetStepupGatewayGatewayBundle:SecondFactor:verifySmsSecondFactor }

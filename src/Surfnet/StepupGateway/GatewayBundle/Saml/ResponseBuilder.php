@@ -53,12 +53,20 @@ class ResponseBuilder
         return $this;
     }
 
-    public function setResponseStatus($status)
+    public function setResponseStatus($status, $subStatus = null)
     {
         if (!$this->isValidResponseStatus($status)) {
             throw new LogicException(sprintf('Trying to set invalid Response Status'));
         }
 
+        if ($subStatus && !$this->isValidResponseSubStatus($subStatus)) {
+            throw new LogicException(sprintf('Trying to set invalid Response SubStatus'));
+        }
+
+        $status = ['Code' => $status];
+        if ($subStatus) {
+            $status['SubCode'] = $subStatus;
+        }
         $this->response->setStatus(['Code' => $status]);
 
         return $this;
@@ -82,6 +90,13 @@ class ResponseBuilder
             SAML2_Const::STATUS_SUCCESS,            // weeee!
             SAML2_Const::STATUS_REQUESTER,          // Something is wrong with the AuthnRequest
             SAML2_Const::STATUS_RESPONDER           // Something went wrong with the Response
+        ]);
+    }
+
+    private function isValidResponseSubStatus($subStatus)
+    {
+        return in_array($subStatus, [
+            SAML2_Const::STATUS_REQUEST_UNSUPPORTED
         ]);
     }
 }

@@ -24,9 +24,65 @@ class SecondFactorController extends Controller
 {
     public function selectSecondFactorForVerificationAction()
     {
-        // @todo note token-selection expansion, get token from repo, determine redirect
+        $logger = $this->get('logger');
 
-        // @todo just stub
+        $logger->notice('Determining which second factor to use...');
+
+        $context = $this->getResponseContext();
+        $secondFactorCollection = $this
+            ->getStepupService()
+            ->determineViableSecondFactors(
+                $context->getIdentityNameId(),
+                $context->getRequiredLoa(),
+                $context->getServiceProvider(),
+                $context->getAuthenticatingIdp()
+            );
+
+        if (count($secondFactorCollection) === 0) {
+            $logger->notice('No second factors can give the determined LOA');
+
+            return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:sendLoaCannotBeGiven');
+        }
+
+        // will be replaced by a second factor selection screen once we support multiple
+        /** @var \Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor $secondFactor */
+        $secondFactor = $secondFactorCollection->first();
+
+        $logger->notice(sprintf(
+            'Found "%d" second factors, using second factor of type "%s"',
+            count($secondFactorCollection),
+            $secondFactor->secondFactorType
+        ));
+
+        $context->saveSelectedSecondFactor($secondFactor->secondFactorId);
+
+        $route = 'gateway_verify_second_factor_' . strtolower($secondFactor->secondFactorType);
+        return $this->redirect($this->generateUrl($route));
+    }
+
+    public function verifyYubiKeySecondFactor()
+    {
         return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:respond');
+    }
+
+    public function verifySmsSecondFactor()
+    {
+        return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:respond');
+    }
+
+    /**
+     * @return \Surfnet\StepupGateway\GatewayBundle\Service\StepupAuthenticationService
+     */
+    private function getStepupService()
+    {
+        return $this->get('gateway.service.stepup_authentication');
+    }
+
+    /**
+     * @return \Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext
+     */
+    private function getResponseContext()
+    {
+        return $this->get('gateway.proxy.response_context');
     }
 }
