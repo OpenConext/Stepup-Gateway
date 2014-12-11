@@ -42,11 +42,7 @@
         "liip/rmt": "1.1.*"
     },
     "repositories": [
-        {"type": "vcs", "url": "https://github.com/rjkip/symfony"},
-        {
-            "type": "vcs",
-            "url": "https://github.com/SURFnet/saml2"
-        }
+        {"type": "vcs", "url": "https://github.com/rjkip/symfony"}
     ],
     "scripts": {
         "post-install-cmd": [

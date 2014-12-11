@@ -20,6 +20,7 @@ namespace Surfnet\StepupGateway\GatewayBundle\Value;
 
 use DomainException;
 use InvalidArgumentException;
+use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor;
 
 /**
  * Value object representing the different LOAs that can be configured
@@ -76,6 +77,15 @@ class Loa
     public function isIdentifiedBy($identifier)
     {
         return $this->identifier === $identifier;
+    }
+
+    /**
+     * @param int $level
+     * @return bool
+     */
+    public function levelIsLowerOrEqualTo($level)
+    {
+        return $this->level <= $level;
     }
 
     /**
