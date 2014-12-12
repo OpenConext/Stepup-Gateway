@@ -178,3 +178,14 @@ surfnet_stepup_gateway_gateway:
         loa1: %gateway_loa_loa1%
         loa2: %gateway_loa_loa2%
         loa3: %gateway_loa_loa3%
+
+jms_translation:
+    locales: %locales%
+    configs:
+        default:
+            dirs: [%kernel.root_dir%/../src, %kernel.root_dir%]
+            output_dir: %kernel.root_dir%/Resources/translations
+            ignored_domains: []
+            excluded_names: ['*TestCase.php', '*Test.php']
+            excluded_dirs: [cache, data, logs, Tests]
+            extractors: []
