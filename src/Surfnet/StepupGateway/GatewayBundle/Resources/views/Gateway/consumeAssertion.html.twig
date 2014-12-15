@@ -1,7 +1,15 @@
 {% extends '::base.html.twig' %}
 {% block head_style %}
+    {% stylesheets
+        '@SurfnetStepupGatewayGatewayBundle/Resources/public/css/hiddensubmit.css' %}
+    <link href="{{ asset_url }}" type="text/css" rel="stylesheet" media="screen"/>
+    {% endstylesheets %}
 {% endblock head_style %}
 {% block head_script %}
+    {% javascripts
+    '@SurfnetStepupGatewayGatewayBundle/Resources/public/js/submitonload.js'%}
+    <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
 {% endblock head_script %}
 
 {% block body %}
@@ -14,14 +22,9 @@
     {% if relayState|length > 0 %}
         <input type="hidden" name="RelayState" value="{{ relayState|escape }}" />
     {% endif %}
-        <input type="submit" style="display:none;" />
+        <input type="submit" class="hidden" />
     <noscript>
         <input type="submit" value="Submit"/>
     </noscript>
     </form>
-    <script>
-        window.onload = function () {
-            document.forms[0].submit();
-        }
-    </script>
 {% endblock %}
