@@ -32,7 +32,6 @@ monolog:
 assetic:
     use_controller: "%use_assetic_controller%"
 
-
 nelmio_security:
     csp:
         img: [ self, 'data:' ]
