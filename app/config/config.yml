@@ -23,7 +23,7 @@ framework:
         handler_id:  ~
         name:        sess_gateway
         cookie_httponly: true
-        cookie_secure: true
+        cookie_secure: false
     fragments:       ~
     http_method_override: true
 
