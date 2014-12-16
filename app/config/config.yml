@@ -17,7 +17,7 @@ framework:
         #assets_version: SomeVersionScheme
     default_locale:  "%default_locale%"
     trusted_hosts:   ~
-    trusted_proxies: ~
+    trusted_proxies: "%trusted_proxies%"
     session:
         # handler_id set to null will use default session handler from php.ini
         handler_id:  ~
@@ -36,7 +36,7 @@ twig:
 assetic:
     debug:          "%kernel.debug%"
     use_controller: false
-    bundles:        [MopaBootstrapBundle, SurfnetStepupGatewayApiBundle]
+    bundles:        [MopaBootstrapBundle, SurfnetStepupGatewayApiBundle, SurfnetStepupGatewayGatewayBundle]
     #java: /usr/bin/java
     node: "/usr/bin/node"
     node_paths: ["/usr/lib/node_modules"]
@@ -178,3 +178,14 @@ surfnet_stepup_gateway_gateway:
         loa1: %gateway_loa_loa1%
         loa2: %gateway_loa_loa2%
         loa3: %gateway_loa_loa3%
+
+jms_translation:
+    locales: %locales%
+    configs:
+        default:
+            dirs: [%kernel.root_dir%/../src, %kernel.root_dir%]
+            output_dir: %kernel.root_dir%/Resources/translations
+            ignored_domains: []
+            excluded_names: ['*TestCase.php', '*Test.php']
+            excluded_dirs: [cache, data, logs, Tests]
+            extractors: []

@@ -32,20 +32,8 @@ monolog:
 assetic:
     use_controller: "%use_assetic_controller%"
 
-
 nelmio_security:
     csp:
         img: [ self, 'data:' ]
         script: [ self, unsafe-inline ]
         style: [ self, unsafe-inline ]
-
-jms_translation:
-    locales: %locales%
-    configs:
-        default:
-            dirs: [%kernel.root_dir%/../src, %kernel.root_dir%]
-            output_dir: %kernel.root_dir%/Resources/translations
-            ignored_domains: []
-            excluded_names: ['*TestCase.php', '*Test.php']
-            excluded_dirs: [cache, data, logs, Tests]
-            extractors: []
