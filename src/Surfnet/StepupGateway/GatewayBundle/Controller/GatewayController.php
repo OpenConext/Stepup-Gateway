@@ -109,7 +109,7 @@ class GatewayController extends Controller
 
         $responseContext = $this->getResponseContext();
         try {
-            /** @var \SAMl2_Assertion $assertion */
+            /** @var \SAML2_Assertion $assertion */
             $assertion = $this->get('surfnet_saml.http.post_binding')->processResponse(
                 $request,
                 $this->get('surfnet_saml.remote.idp'),
@@ -144,7 +144,7 @@ class GatewayController extends Controller
             return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:respond');
         }
 
-        return $this->forward('SurfnetStepupGatewayGatewayBundle:SecondFactor:selectSecondFactorForVerificationAction');
+        return $this->forward('SurfnetStepupGatewayGatewayBundle:SecondFactor:selectSecondFactorForVerification');
     }
 
     public function respondAction()
@@ -157,8 +157,11 @@ class GatewayController extends Controller
         $proxyResponseService = $this->get('gateway.service.response_proxy');
         $response             = $proxyResponseService->createProxyResponse(
             $responseContext->reconstituteAssertion(),
-            $responseContext->getServiceProvider()
+            $responseContext->getServiceProvider(),
+            $responseContext->isSecondFactorVerified() ? $responseContext->getRequiredLoa() : null
         );
+
+        $responseContext->responseSent();
 
         $this->get('logger')->notice(sprintf(
             'Responding to request "%s" with response based on response from the remote IdP with response "%s"',

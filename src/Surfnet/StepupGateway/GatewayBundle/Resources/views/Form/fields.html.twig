@@ -1,0 +1,32 @@
+
+{% extends 'MopaBootstrapBundle:Form:fields.html.twig' %}
+
+{% block anchor_widget %}
+    {% spaceless %}
+        {% if label is empty %}
+            {% set label = name|humanize %}
+        {% endif %}
+        <a href="{{ path(route) }}" {{ block('button_attributes') }}>
+            {% if icon is not empty %}
+                {{ mopa_bootstrap_icon(icon, icon_inverted|default(false)) }}
+            {% endif %}
+            {{ label|trans({}, translation_domain) }}</a>
+    {% endspaceless %}
+{% endblock anchor_widget %}
+
+{% block anchor_row %}
+    {% spaceless %}
+        {% if button_offset is defined and button_offset is not empty %}
+            {% set attr = attr|merge({'for': id, 'class': button_offset }) %}
+            <div class="form-group">
+                <div {% for attrname, attrvalue in attr %} {{attrname}}="{{attrvalue}}"{% endfor %}>
+                {{ form_widget(form) }}
+            </div>
+            </div>
+        {% else %}
+            <div>
+                {{ form_widget(form) }}
+            </div>
+        {% endif %}
+    {% endspaceless %}
+{% endblock anchor_row %}

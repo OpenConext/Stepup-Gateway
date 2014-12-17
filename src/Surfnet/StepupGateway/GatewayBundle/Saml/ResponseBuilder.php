@@ -67,7 +67,7 @@ class ResponseBuilder
         if ($subStatus) {
             $status['SubCode'] = $subStatus;
         }
-        $this->response->setStatus(['Code' => $status]);
+        $this->response->setStatus($status);
 
         return $this;
     }

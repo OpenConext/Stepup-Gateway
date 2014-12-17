@@ -1,7 +1,10 @@
 {% extends 'MopaBootstrapBundle::base.html.twig' %}
 {% from 'MopaBootstrapBundle::flash.html.twig' import session_flash %}
 
-{% block title %}{{ 'app.name'|trans }}{% endblock title %}
+{% block title %}
+    {%  if block('page_title') is not empty %}{{ block('page_title') }} &mdash; {% endif %}
+    {{ 'app.name'|trans }}
+{% endblock title %}
 {% block head_style %}
     {% stylesheets
     '../app/Resources/public/less/style.less' filter='less'
@@ -18,7 +21,10 @@
     {% endblock header %}
 
         {% block page_header %}
-            {#<div class="page-header"></div>#}
+            <div class="page-header clearfix">
+                <img src="/images/surfnet.jpg" class="pull-right" alt="SURFnet">
+                <h1>{{ 'app.name'|trans }}</h1>
+            </div>
         {% endblock page_header %}
 
         {% block flashes %}
@@ -37,14 +43,6 @@
         {% endblock content_row %}
 
         {% block footer %}
-            <div class="row-fluid">
-                <div class="span8 offset2">
-                    <hr>
-                    <ul class="nav nav-pills">
-                        <li><a href="/{#{{ path("landing") }}#}">Home</a></li>
-                    </ul>
-                </div>
-            </div>
         {% endblock footer %}
 
 {% block foot_script %}

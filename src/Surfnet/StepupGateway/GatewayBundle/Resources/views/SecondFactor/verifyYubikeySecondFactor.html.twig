@@ -1,0 +1,20 @@
+{% extends "::base.html.twig" %}
+
+{% block page_title %}{{ 'ra.registration.yubikey.title.enter_challenge'|trans }}{% endblock %}
+
+{% block content %}
+    <h2>{{ block('page_title') }}</h2>
+
+    <p>{{ 'gateway.second_factor.yubikey.text.help_user_enter_challenge'|trans }}</p>
+
+    <ol>
+        <li>{{ 'gateway.second_factor.yubikey.text.connect_yubikey_to_pc'|trans }}</li>
+        <li>{{ 'gateway.second_factor.yubikey.text.ensure_form_field_focus'|trans }}</li>
+        <li>{{ 'gateway.second_factor.yubikey.text.press_once_form_auto_submitted'|trans }}</li>
+    </ol>
+
+    <hr>
+
+    {{ form(form) }}
+
+{% endblock %}

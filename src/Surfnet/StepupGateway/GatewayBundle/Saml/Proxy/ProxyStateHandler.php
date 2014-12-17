@@ -209,7 +209,7 @@ class ProxyStateHandler
     }
 
     /**
-     * @param string $secondFactorId
+     * @param string|null $secondFactorId
      * @return $this
      */
     public function setSelectedSecondFactorId($secondFactorId)
@@ -228,8 +228,27 @@ class ProxyStateHandler
     }
 
     /**
+     * @param bool $verified
+     * @return $this
+     */
+    public function setSecondFactorVerified($verified)
+    {
+        $this->set('selected_second_factor_verified', $verified);
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSecondFactorVerified()
+    {
+        return $this->get('selected_second_factor_verified') === true;
+    }
+
+    /**
      * @param string $key
-     * @param string $value
+     * @param mixed $value Any scalar
      */
     private function set($key, $value)
     {
@@ -238,7 +257,7 @@ class ProxyStateHandler
 
     /**
      * @param string $key
-     * @return string|null
+     * @return mixed|null Any scalar
      */
     private function get($key)
     {

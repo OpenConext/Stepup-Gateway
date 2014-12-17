@@ -116,6 +116,13 @@ services:
         class: Twig_Extensions_Extension_Text
         tags: [{ name: twig.extension }]
 
+mopa_bootstrap:
+    form:
+        show_legend: false
+        templating: SurfnetStepupGatewayGatewayBundle:Form:fields.html.twig
+    icons:
+        icon_set: fontawesome4
+
 surfnet_message_bird_api_client:
     authorization: %messagebird_authorization%
 
