@@ -41,9 +41,6 @@
         "ibuildings/qa-tools": "~1.1,>=1.1.27",
         "liip/rmt": "1.1.*"
     },
-    "repositories": [
-        {"type": "vcs", "url": "https://github.com/rjkip/symfony"}
-    ],
     "scripts": {
         "post-install-cmd": [
             "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",
