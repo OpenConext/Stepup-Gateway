@@ -142,6 +142,19 @@ class StepUpAuthenticationService
     }
 
     /**
+     * Returns whether the given LoA identifier identifies the minimum LoA, intrinsic to being authenticated via an IdP.
+     *
+     * @param string $loa
+     * @return bool
+     */
+    public function isIntrinsicLoa($loa)
+    {
+        $loa = $this->loaResolutionService->getLoa($loa);
+
+        return $loa ? $loa->levelIsLowerOrEqualTo(1) : null;
+    }
+
+    /**
      * @param VerifyYubikeyOtpCommand $command
      * @return YubikeyOtpVerificationResult
      */
