@@ -43,9 +43,35 @@ services:
             - @saml.entity_repository
             - @gateway.repository.second_factor
             - @surfnet_gateway_api.service.yubikey
+            - @gateway.service.sms_second_factor
+
+    gateway.service.sms_second_factor:
+        class: Surfnet\StepupGateway\GatewayBundle\Service\SmsSecondFactorService
+        arguments:
             - @surfnet_gateway_api.service.sms
+            - @gateway.sms.challenge_store
+            - @translator
+            - 'SURFnet'
+
+    gateway.sms.challenge_store:
+        class: Surfnet\StepupGateway\GatewayBundle\Service\SmsSecondFactor\SessionChallengeStore
+        arguments:
+            - @session
+            - 'Surfnet/Gateway/SecondFactor/Sms:challenge'
 
     # Forms
+    gateway.form.type.anchor:
+        class: Surfnet\StepupGateway\GatewayBundle\Form\Type\AnchorType
+        tags: [{ name: form.type, alias: anchor }]
+
     gateway.form.verify_yubikey:
         class: Surfnet\StepupGateway\GatewayBundle\Form\Type\VerifyYubikeyOtpType
         tags: [{ name: form.type, alias: gateway_verify_yubikey_otp }]
+
+    gateway.form.send_sms_challenge:
+        class: Surfnet\StepupGateway\GatewayBundle\Form\Type\SendSmsChallengeType
+        tags: [{ name: form.type, alias: gateway_send_sms_challenge }]
+
+    gateway.form.verify_sms_challenge:
+        class: Surfnet\StepupGateway\GatewayBundle\Form\Type\VerifySmsChallengeType
+        tags: [{ name: form.type, alias: gateway_verify_sms_challenge }]

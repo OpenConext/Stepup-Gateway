@@ -19,6 +19,8 @@
 namespace Surfnet\StepupGateway\GatewayBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Surfnet\StepupGateway\GatewayBundle\Command\SendSmsChallengeCommand;
+use Surfnet\StepupGateway\GatewayBundle\Command\VerifySmsChallengeCommand;
 use Surfnet\StepupGateway\GatewayBundle\Command\VerifyYubikeyOtpCommand;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\FormError;
@@ -108,8 +110,75 @@ class SecondFactorController extends Controller
         return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:respond');
     }
 
-    public function verifySmsSecondFactor()
+    /**
+     * @Template
+     * @param Request $request
+     * @return array|Response
+     */
+    public function verifySmsSecondFactorAction(Request $request)
     {
+        $selectedSecondFactor = $this->getResponseContext()->getSelectedSecondFactor();
+
+        if (!$selectedSecondFactor) {
+            throw new BadRequestHttpException('Cannot verify possession of an unknown second factor.');
+        }
+
+        $logger = $this->get('logger');
+        $logger->notice('Verifying possession of SMS second factor, sending challenge per SMS');
+
+        $command = new SendSmsChallengeCommand();
+        $command->secondFactorId = $selectedSecondFactor;
+
+        $form = $this->createForm('gateway_send_sms_challenge', $command)->handleRequest($request);
+
+        if (!$form->isValid()) {
+            $phoneNumber = $this->getStepupService()->getSecondFactorIdentifier($selectedSecondFactor);
+
+            return ['phoneNumber' => $phoneNumber, 'form' => $form->createView()];
+        }
+
+        if (!$this->getStepupService()->sendSmsChallenge($command)) {
+            $form->addError(new FormError('gateway.form.send_sms_challenge.sms_sending_failed'));
+
+            $phoneNumber = $this->getStepupService()->getSecondFactorIdentifier($selectedSecondFactor);
+
+            return ['phoneNumber' => $phoneNumber, 'form' => $form->createView()];
+        }
+
+        return $this->redirect($this->generateUrl('gateway_verify_second_factor_sms_verify_challenge'));
+    }
+
+    /**
+     * @Template
+     * @param Request $request
+     * @return array|Response
+     */
+    public function verifySmsSecondFactorChallengeAction(Request $request)
+    {
+        $selectedSecondFactor = $this->getResponseContext()->getSelectedSecondFactor();
+
+        if (!$selectedSecondFactor) {
+            throw new BadRequestHttpException('Cannot verify possession of an unknown second factor.');
+        }
+
+        $logger = $this->get('logger');
+        $logger->notice('Verifying possession of SMS second factor, sending challenge per SMS');
+
+        $command = new VerifySmsChallengeCommand();
+        $form = $this->createForm('gateway_verify_sms_challenge', $command)->handleRequest($request);
+
+        if (!$form->isValid()) {
+            return ['form' => $form->createView()];
+        }
+
+        if (!$this->getStepupService()->verifySmsChallenge($command)) {
+            $form->addError(new FormError('gateway.form.send_sms_challenge.sms_challenge_incorrect'));
+
+            return ['form' => $form->createView()];
+        }
+
+        $this->getResponseContext()->markSecondFactorVerified();
+
         return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:respond');
     }
 

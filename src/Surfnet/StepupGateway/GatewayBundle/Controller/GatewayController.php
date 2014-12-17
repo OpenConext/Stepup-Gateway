@@ -144,6 +144,12 @@ class GatewayController extends Controller
             return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:respond');
         }
 
+        /** @var \Surfnet\StepupGateway\GatewayBundle\Service\StepUpAuthenticationService $stepupService */
+        $stepupService = $this->get('gateway.service.stepup_authentication');
+        if ($stepupService->isIntrinsicLoa($requiredLoa)) {
+            return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:respond');
+        }
+
         return $this->forward('SurfnetStepupGatewayGatewayBundle:SecondFactor:selectSecondFactorForVerification');
     }
 

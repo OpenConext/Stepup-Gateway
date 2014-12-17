@@ -24,6 +24,9 @@ use Surfnet\StepupGateway\ApiBundle\Dto\Otp as ApiOtp;
 use Surfnet\StepupGateway\ApiBundle\Dto\Requester;
 use Surfnet\StepupGateway\ApiBundle\Service\SmsService;
 use Surfnet\StepupGateway\ApiBundle\Service\YubikeyService;
+use Surfnet\StepupGateway\GatewayBundle\Command\SendSmsChallengeCommand;
+use Surfnet\StepupGateway\GatewayBundle\Command\SendSmsCommand;
+use Surfnet\StepupGateway\GatewayBundle\Command\VerifySmsChallengeCommand;
 use Surfnet\StepupGateway\GatewayBundle\Command\VerifyYubikeyOtpCommand;
 use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor;
 use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactorRepository;
@@ -56,7 +59,7 @@ class StepUpAuthenticationService
     private $yubikeyService;
 
     /**
-     * @var SmsService
+     * @var SmsSecondFactorService
      */
     private $smsService;
 
@@ -65,7 +68,7 @@ class StepUpAuthenticationService
         SamlEntityService $samlEntityService,
         SecondFactorRepository $secondFactorRepository,
         YubikeyService $yubikeyService,
-        SmsService $smsService
+        SmsSecondFactorService $smsService
     ) {
         $this->loaResolutionService = $loaResolutionService;
         $this->samlEntityService = $samlEntityService;
@@ -139,6 +142,19 @@ class StepUpAuthenticationService
     }
 
     /**
+     * Returns whether the given LoA identifier identifies the minimum LoA, intrinsic to being authenticated via an IdP.
+     *
+     * @param string $loa
+     * @return bool
+     */
+    public function isIntrinsicLoa($loa)
+    {
+        $loa = $this->loaResolutionService->getLoa($loa);
+
+        return $loa ? $loa->levelIsLowerOrEqualTo(1) : null;
+    }
+
+    /**
      * @param VerifyYubikeyOtpCommand $command
      * @return YubikeyOtpVerificationResult
      */
@@ -170,5 +186,42 @@ class StepUpAuthenticationService
         }
 
         return new YubikeyOtpVerificationResult(YubikeyOtpVerificationResult::RESULT_PUBLIC_ID_MATCHED, $otp->publicId);
+    }
+
+    /**
+     * @param string $secondFactorId
+     * @return string
+     */
+    public function getSecondFactorIdentifier($secondFactorId)
+    {
+        /** @var SecondFactor $secondFactor */
+        $secondFactor = $this->secondFactorRepository->findOneBySecondFactorId($secondFactorId);
+
+        return $secondFactor->secondFactorIdentifier;
+    }
+
+    /**
+     * @param SendSmsChallengeCommand $command
+     * @return bool
+     */
+    public function sendSmsChallenge(SendSmsChallengeCommand $command)
+    {
+        /** @var SecondFactor $secondFactor */
+        $secondFactor = $this->secondFactorRepository->findOneBySecondFactorId($command->secondFactorId);
+
+        $command->phoneNumber = $secondFactor->secondFactorIdentifier;
+        $command->identityId = $secondFactor->identityId;
+        $command->institution = $secondFactor->institution;
+
+        return $this->smsService->sendChallenge($command);
+    }
+
+    /**
+     * @param VerifySmsChallengeCommand $command
+     * @return bool
+     */
+    public function verifySmsChallenge(VerifySmsChallengeCommand $command)
+    {
+        return $this->smsService->verifyChallenge($command);
     }
 }
