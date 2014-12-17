@@ -18,7 +18,13 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Controller;
 
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Surfnet\StepupGateway\GatewayBundle\Command\VerifyYubikeyOtpCommand;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class SecondFactorController extends Controller
 {
@@ -60,8 +66,45 @@ class SecondFactorController extends Controller
         return $this->redirect($this->generateUrl($route));
     }
 
-    public function verifyYubiKeySecondFactor()
+    /**
+     * @Template
+     * @param Request $request
+     * @return array|Response
+     */
+    public function verifyYubiKeySecondFactorAction(Request $request)
     {
+        $selectedSecondFactor = $this->getResponseContext()->getSelectedSecondFactor();
+
+        if (!$selectedSecondFactor) {
+            throw new BadRequestHttpException('Cannot verify possession of an unknown second factor.');
+        }
+
+        $logger = $this->get('logger');
+        $logger->notice('Verifying possession of Yubikey second factor');
+
+        $command = new VerifyYubikeyOtpCommand();
+        $command->secondFactorId = $selectedSecondFactor;
+
+        $form = $this->createForm('gateway_verify_yubikey_otp', $command)->handleRequest($request);
+
+        if (!$form->isValid()) {
+            return ['form' => $form->createView()];
+        }
+
+        $result = $this->getStepupService()->verifyYubikeyOtp($command);
+
+        if ($result->didOtpVerificationFail()) {
+            $form->addError(new FormError('gateway.form.verify_yubikey.otp_verification_failed'));
+
+            return ['form' => $form->createView()];
+        } elseif (!$result->didPublicIdMatch()) {
+            $form->addError(new FormError('gateway.form.verify_yubikey.public_id_mismatch'));
+
+            return ['form' => $form->createView()];
+        }
+
+        $this->getResponseContext()->markSecondFactorVerified();
+
         return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:respond');
     }
 

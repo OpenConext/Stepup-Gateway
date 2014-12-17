@@ -22,13 +22,14 @@ use Doctrine\ORM\Mapping as ORM;
 use Surfnet\StepupGateway\GatewayBundle\Value\Loa;
 
 /**
- * @ORM\Entity(repositoryClass="Surfnet\StepupMiddleware\GatewayBundle\Entity\SecondFactorRepository")
+ * @ORM\Entity(repositoryClass="Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactorRepository")
  * @ORM\Table
  */
 class SecondFactor
 {
     private static $loaLevelTypeMap = [
-        'a' => 1
+        'sms' => 2,
+        'yubikey' => 3,
     ];
 
     /**

@@ -78,7 +78,13 @@ class ProxyResponseService
         $this->currentTime = new \DateTime('now', new \DateTimeZone('UTC'));
     }
 
-    public function createProxyResponse(SAML2_Assertion $assertion, ServiceProvider $targetServiceProvider)
+    /**
+     * @param SAML2_Assertion $assertion
+     * @param ServiceProvider $targetServiceProvider
+     * @param string|null $loa
+     * @return \SAML2_Response
+     */
+    public function createProxyResponse(SAML2_Assertion $assertion, ServiceProvider $targetServiceProvider, $loa = null)
     {
         $attributes = $this->extractAttributes($assertion);
         $translatedAssertion = $this->attributeDictionary->translate($assertion);
@@ -101,6 +107,10 @@ class ProxyResponseService
         $newAssertion->setValidAudiences([$this->proxyStateHandler->getRequestServiceProvider()]);
 
         $this->addAuthenticationStatementTo($newAssertion, $assertion);
+
+        if ($loa) {
+            $newAssertion->setAuthnContextClassRef($loa);
+        }
 
         return $this->createNewAuthnResponse($newAssertion, $targetServiceProvider);
     }

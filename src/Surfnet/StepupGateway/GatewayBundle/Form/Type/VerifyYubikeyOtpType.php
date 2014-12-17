@@ -26,22 +26,17 @@ class VerifyYubikeyOtpType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add(
-            'otp',
-            'text',
-            [
-                'label'                => /** @Ignore */
-                    false,
-                'required'             => true,
-                'widget_addon_prepend' => [
-                    'icon' => 'key'
-                ],
-                'attr'                 => [
-                    'autofocus'    => true,
-                    'autocomplete' => 'off',
-                ]
+        $builder->add('otp', 'text', [
+            'label' => /** @Ignore */ false,
+            'required' => true,
+            'widget_addon_prepend' => [
+                'icon' => 'key'
+            ],
+            'attr' => [
+                'autofocus'    => true,
+                'autocomplete' => 'off',
             ]
-        );
+        ]);
     }
 
     public function setDefaultOptions(OptionsResolverInterface $resolver)
@@ -53,6 +48,6 @@ class VerifyYubikeyOtpType extends AbstractType
 
     public function getName()
     {
-        return 'gateway_verify_yubikey';
+        return 'gateway_verify_yubikey_otp';
     }
 }

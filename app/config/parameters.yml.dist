@@ -47,7 +47,7 @@ parameters:
     saml_remote_idp_sso_url:
     saml_remote_idp_certificate:
 
-    gateway_loa_loa1: https://gw-dev.stepup.coin.surf.net/authentication/loa1
-    gateway_loa_loa2: https://gw-dev.stepup.coin.surf.net/authentication/loa2
-    gateway_loa_loa3: https://gw-dev.stepup.coin.surf.net/authentication/loa3
+    gateway_loa_loa1: https://gateway.tld/authentication/loa1
+    gateway_loa_loa2: https://gateway.tld/authentication/loa2
+    gateway_loa_loa3: https://gateway.tld/authentication/loa3
 

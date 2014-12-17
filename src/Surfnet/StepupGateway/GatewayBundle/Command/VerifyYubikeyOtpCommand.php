@@ -31,16 +31,7 @@ class VerifyYubikeyOtpCommand
     public $otp;
 
     /**
-     * The requesting identity's ID (not name ID).
-     *
      * @var string
      */
-    public $identity;
-
-    /**
-     * The requesting identity's institution.
-     *
-     * @var string
-     */
-    public $institution;
+    public $secondFactorId;
 }

@@ -198,11 +198,12 @@ class ResponseContext
     }
 
     /**
-     * @param string $secondFactorId
+     * @param string|null $secondFactorId
      */
     public function saveSelectedSecondFactor($secondFactorId)
     {
         $this->stateHandler->setSelectedSecondFactorId($secondFactorId);
+        $this->stateHandler->setSecondFactorVerified(false);
     }
 
     /**
@@ -211,5 +212,27 @@ class ResponseContext
     public function getSelectedSecondFactor()
     {
         return $this->stateHandler->getSelectedSecondFactorId();
+    }
+
+    public function markSecondFactorVerified()
+    {
+        $this->stateHandler->setSecondFactorVerified(true);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSecondFactorVerified()
+    {
+        return $this->stateHandler->getSelectedSecondFactorId() && $this->stateHandler->isSecondFactorVerified();
+    }
+
+    /**
+     * Resets some state after the response is sent (e.g. resets which second factor was selected and whether it was
+     * verified).
+     */
+    public function responseSent()
+    {
+        $this->saveSelectedSecondFactor(null);
     }
 }

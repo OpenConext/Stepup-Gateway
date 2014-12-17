@@ -20,8 +20,19 @@ namespace Surfnet\StepupGateway\GatewayBundle\Service;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Surfnet\SamlBundle\Entity\ServiceProvider;
+use Surfnet\StepupGateway\ApiBundle\Dto\Otp as ApiOtp;
+use Surfnet\StepupGateway\ApiBundle\Dto\Requester;
+use Surfnet\StepupGateway\ApiBundle\Service\SmsService;
+use Surfnet\StepupGateway\ApiBundle\Service\YubikeyService;
+use Surfnet\StepupGateway\GatewayBundle\Command\VerifyYubikeyOtpCommand;
+use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor;
 use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactorRepository;
+use Surfnet\StepupGateway\GatewayBundle\Service\StepUp\YubikeyOtpVerificationResult;
+use Surfnet\YubikeyApiClient\Otp;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class StepUpAuthenticationService
 {
     /**
@@ -35,18 +46,32 @@ class StepUpAuthenticationService
     private $samlEntityService;
 
     /**
-     * @var \Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactorRepository
+     * @var SecondFactorRepository
      */
     private $secondFactorRepository;
+
+    /**
+     * @var YubikeyService
+     */
+    private $yubikeyService;
+
+    /**
+     * @var SmsService
+     */
+    private $smsService;
 
     public function __construct(
         LoaResolutionService $loaResolutionService,
         SamlEntityService $samlEntityService,
-        SecondFactorRepository $secondFactorRepository
+        SecondFactorRepository $secondFactorRepository,
+        YubikeyService $yubikeyService,
+        SmsService $smsService
     ) {
         $this->loaResolutionService = $loaResolutionService;
         $this->samlEntityService = $samlEntityService;
         $this->secondFactorRepository = $secondFactorRepository;
+        $this->yubikeyService = $yubikeyService;
+        $this->smsService = $smsService;
     }
 
     /**
@@ -111,5 +136,39 @@ class StepUpAuthenticationService
         }
 
         return $highest;
+    }
+
+    /**
+     * @param VerifyYubikeyOtpCommand $command
+     * @return YubikeyOtpVerificationResult
+     */
+    public function verifyYubikeyOtp(VerifyYubikeyOtpCommand $command)
+    {
+        /** @var SecondFactor $secondFactor */
+        $secondFactor = $this->secondFactorRepository->findOneBySecondFactorId($command->secondFactorId);
+
+        $requester = new Requester();
+        $requester->identity = $secondFactor->identityId;
+        $requester->institution = $secondFactor->institution;
+
+        $otp = new ApiOtp();
+        $otp->value = $command->otp;
+
+        $result = $this->yubikeyService->verify($otp, $requester);
+
+        if (!$result->isSuccessful()) {
+            return new YubikeyOtpVerificationResult(YubikeyOtpVerificationResult::RESULT_OTP_VERIFICATION_FAILED, null);
+        }
+
+        $otp = Otp::fromString($command->otp);
+
+        if ($otp->publicId !== $secondFactor->secondFactorIdentifier) {
+            return new YubikeyOtpVerificationResult(
+                YubikeyOtpVerificationResult::RESULT_PUBLIC_ID_DID_NOT_MATCH,
+                $otp->publicId
+            );
+        }
+
+        return new YubikeyOtpVerificationResult(YubikeyOtpVerificationResult::RESULT_PUBLIC_ID_MATCHED, $otp->publicId);
     }
 }

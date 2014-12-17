@@ -36,10 +36,19 @@ class SecondFactorRepository extends EntityRepository
         $matches = new ArrayCollection();
         foreach ($secondFactors as $secondFactor) {
             if ($secondFactor->canSatisfy($highestLoa)) {
-                $matches->add($highestLoa);
+                $matches->add($secondFactor);
             }
         }
 
         return $matches;
+    }
+
+    /**
+     * @param string $secondFactorId
+     * @return null|SecondFactor
+     */
+    public function findOneBySecondFactorId($secondFactorId)
+    {
+        return $this->findOneBy(['secondFactorId' => $secondFactorId]);
     }
 }
