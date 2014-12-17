@@ -1,11 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:jms="urn:jms:translation" version="1.2">
-  <file date="2014-12-10T14:25:18Z" source-language="en" target-language="en_GB" datatype="plaintext" original="not.available">
+  <file date="2014-12-17T14:52:32Z" source-language="en" target-language="en_GB" datatype="plaintext" original="not.available">
     <header>
       <tool tool-id="JMSTranslationBundle" tool-name="JMSTranslationBundle" tool-version="1.1.0-DEV"/>
       <note>The source node in most cases contains the sample message as written by the developer. If it looks like a dot-delimitted string such as "form.label.firstname", then the developer has not provided a default message.</note>
     </header>
     <body>
+      <trans-unit id="27fb111de86b2817bdca71ce2c4c3c184435d321" resname="gateway.verify_sms_challenge_command.challenge.may_not_be_empty">
+        <source>gateway.verify_sms_challenge_command.challenge.may_not_be_empty</source>
+        <target state="new">gateway.verify_sms_challenge_command.challenge.may_not_be_empty</target>
+      </trans-unit>
+      <trans-unit id="2553bc923a582e7fe41c75a1565eddd51c4c9634" resname="gateway.verify_sms_challenge_command.challenge.must_be_string">
+        <source>gateway.verify_sms_challenge_command.challenge.must_be_string</source>
+        <target state="new">gateway.verify_sms_challenge_command.challenge.must_be_string</target>
+      </trans-unit>
+      <trans-unit id="d7d536e4daf0156dcf5724414c59214bae223843" resname="gateway.verify_yubikey_command.otp.may_not_be_empty">
+        <source>gateway.verify_yubikey_command.otp.may_not_be_empty</source>
+        <target state="new">gateway.verify_yubikey_command.otp.may_not_be_empty</target>
+      </trans-unit>
+      <trans-unit id="74bc02993b9c4ef6e72edd80971c386fae1e2b00" resname="gateway.verify_yubikey_command.otp.must_be_string">
+        <source>gateway.verify_yubikey_command.otp.must_be_string</source>
+        <target state="new">gateway.verify_yubikey_command.otp.must_be_string</target>
+      </trans-unit>
       <trans-unit id="c47695eb1433ea19b361b7b49bd346bedca0f0d2" resname="otp.value.must_be_set">
         <source>otp.value.must_be_set</source>
         <target>The Yubikey OTP must be set.</target>

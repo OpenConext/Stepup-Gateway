@@ -18,15 +18,28 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Command;
 
+use Surfnet\StepupRa\RaBundle\VettingProcedure;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class VerifySmsChallengeCommand
+class SendSmsChallengeCommand
 {
     /**
-     * @Assert\NotBlank(message="gateway.verify_sms_challenge_command.challenge.may_not_be_empty")
-     * @Assert\Type(type="string", message="gateway.verify_sms_challenge_command.challenge.must_be_string")
-     *
      * @var string
      */
-    public $challenge;
+    public $secondFactorId;
+
+    /**
+     * @var string Filled by the StepUpAuthenticationService
+     */
+    public $phoneNumber;
+
+    /**
+     * @var string Filled by the StepUpAuthenticationService
+     */
+    public $identityId;
+
+    /**
+     * @var string Filled by the StepUpAuthenticationService
+     */
+    public $institution;
 }

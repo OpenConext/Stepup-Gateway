@@ -1,0 +1,33 @@
+{% extends "::base.html.twig" %}
+
+{% block page_title %}{{ 'gateway.second_factor.sms.send_challenge.title'|trans }}{% endblock %}
+
+{% block content %}
+    <h2>{{ block('page_title') }}</h2>
+
+    <p>{{ 'gateway.second_factor.sms.text.help_user_enter_phone_number'|trans }}</p>
+
+    <ol>
+        <li>{{ 'gateway.second_factor.sms.text.ensure_phone_has_signal'|trans }}</li>
+        <li>{{ 'gateway.second_factor.sms.text.enter_phone_number_below'|trans }}</li>
+        <li>{{ 'gateway.second_factor.sms.text.after_pressing_proceed'|trans }}</li>
+    </ol>
+
+    <hr>
+
+    <div class="form-gateway-send-sms-challenge">
+
+        <table class="table table-bordered table-hover">
+            <tbody>
+            <tr>
+                <th scope="row">{{ 'gateway.form.gateway_send_sms_challenge.label.phone_number'|trans }}</th>
+                <td>+{{ phoneNumber }}</td>
+            </tr>
+            </tbody>
+        </table>
+
+        {{ form(form) }}
+
+    </div>
+
+{% endblock %}

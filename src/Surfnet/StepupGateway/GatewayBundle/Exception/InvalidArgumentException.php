@@ -16,17 +16,19 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupGateway\GatewayBundle\Command;
+namespace Surfnet\StepupGateway\GatewayBundle\Exception;
 
-use Symfony\Component\Validator\Constraints as Assert;
+use InvalidArgumentException as CoreInvalidArgumentException;
 
-class VerifySmsChallengeCommand
+class InvalidArgumentException extends CoreInvalidArgumentException
 {
-    /**
-     * @Assert\NotBlank(message="gateway.verify_sms_challenge_command.challenge.may_not_be_empty")
-     * @Assert\Type(type="string", message="gateway.verify_sms_challenge_command.challenge.must_be_string")
-     *
-     * @var string
-     */
-    public $challenge;
+    public static function invalidType($expectedType, $parameter, $value)
+    {
+        return new self(sprintf(
+            'Invalid Argument, parameter "%s" should be of type "%s", "%s" given',
+            $parameter,
+            $expectedType,
+            is_object($value) ? get_class($value) : gettype($value)
+        ));
+    }
 }

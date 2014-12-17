@@ -1,15 +1,166 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:jms="urn:jms:translation" version="1.2">
-  <file date="2014-12-10T14:18:15Z" source-language="en" target-language="nl_NL" datatype="plaintext" original="not.available">
+  <file date="2014-12-17T15:00:02Z" source-language="en" target-language="nl_NL" datatype="plaintext" original="not.available">
     <header>
       <tool tool-id="JMSTranslationBundle" tool-name="JMSTranslationBundle" tool-version="1.1.0-DEV"/>
       <note>The source node in most cases contains the sample message as written by the developer. If it looks like a dot-delimitted string such as "form.label.firstname", then the developer has not provided a default message.</note>
     </header>
     <body>
       <trans-unit id="0c3112826a8c897ac0b6a3d3a8432059b74dd996" resname="app.name">
-        <jms:reference-file line="4">Resources/views/base.html.twig</jms:reference-file>
+        <jms:reference-file line="6">Resources/views/base.html.twig</jms:reference-file>
+        <jms:reference-file line="26">Resources/views/base.html.twig</jms:reference-file>
         <source>app.name</source>
         <target>Step-up Gateway</target>
+      </trans-unit>
+      <trans-unit id="1aa7637939b9d85db5e1b5bb89ebb0dedbc01f7e" resname="gateway.error.click_to_go_back_to_sp">
+        <jms:reference-file line="9">views/Gateway/unprocessableResponse.html.twig</jms:reference-file>
+        <source>gateway.error.click_to_go_back_to_sp</source>
+        <target state="new">gateway.error.click_to_go_back_to_sp</target>
+      </trans-unit>
+      <trans-unit id="ed87648c28535e13d23c12e59d392bcfce791d21" resname="gateway.error.unprocessable_response">
+        <jms:reference-file line="7">views/Gateway/unprocessableResponse.html.twig</jms:reference-file>
+        <source>gateway.error.unprocessable_response</source>
+        <target state="new">gateway.error.unprocessable_response</target>
+      </trans-unit>
+      <trans-unit id="c52023939303136235bfd62d2df21bd984c4106e" resname="gateway.error.unrecoverable_error">
+        <jms:reference-file line="7">views/Gateway/unrecoverableError.html.twig</jms:reference-file>
+        <source>gateway.error.unrecoverable_error</source>
+        <target state="new">gateway.error.unrecoverable_error</target>
+      </trans-unit>
+      <trans-unit id="216da4e667c1127a830eadcac98926f5bd508efb" resname="gateway.form.gateway_send_sms_challenge.button.send_challenge">
+        <jms:reference-file line="30">Form/Type/SendSmsChallengeType.php</jms:reference-file>
+        <source>gateway.form.gateway_send_sms_challenge.button.send_challenge</source>
+        <target state="new">gateway.form.gateway_send_sms_challenge.button.send_challenge</target>
+      </trans-unit>
+      <trans-unit id="7039a04e477c52544533b4969fb09c19f34d1452" resname="gateway.form.gateway_send_sms_challenge.label.phone_number">
+        <jms:reference-file line="23">views/SecondFactor/verifySmsSecondFactor.html.twig</jms:reference-file>
+        <source>gateway.form.gateway_send_sms_challenge.label.phone_number</source>
+        <target state="new">gateway.form.gateway_send_sms_challenge.label.phone_number</target>
+      </trans-unit>
+      <trans-unit id="b8020a5c4b1ce8f6a3cfa6854588499b9a6168ef" resname="gateway.form.send_sms_challenge.sms_sending_failed">
+        <jms:reference-file line="8">Resources/views/translations.html.twig</jms:reference-file>
+        <source>gateway.form.send_sms_challenge.sms_sending_failed</source>
+        <target state="new">gateway.form.send_sms_challenge.sms_sending_failed</target>
+      </trans-unit>
+      <trans-unit id="949d225017cfbb80ae094b1af62b758c4ab1cd2c" resname="gateway.form.verify_sms_challenge.button.resend_challenge">
+        <jms:reference-file line="41">Form/Type/VerifySmsChallengeType.php</jms:reference-file>
+        <source>gateway.form.verify_sms_challenge.button.resend_challenge</source>
+        <target state="new">gateway.form.verify_sms_challenge.button.resend_challenge</target>
+      </trans-unit>
+      <trans-unit id="c112fb5c4f9e2eca7afdf9e31f1eb7c17078b647" resname="gateway.form.verify_sms_challenge.button.verify_challenge">
+        <jms:reference-file line="37">Form/Type/VerifySmsChallengeType.php</jms:reference-file>
+        <source>gateway.form.verify_sms_challenge.button.verify_challenge</source>
+        <target state="new">gateway.form.verify_sms_challenge.button.verify_challenge</target>
+      </trans-unit>
+      <trans-unit id="1b12b51928c9eb9c6922fd0c910502698f0865f5" resname="gateway.form.verify_sms_challenge.text.challenge">
+        <jms:reference-file line="30">Form/Type/VerifySmsChallengeType.php</jms:reference-file>
+        <source>gateway.form.verify_sms_challenge.text.challenge</source>
+        <target>gateway.form.verify_sms_challenge.text.challenge</target>
+      </trans-unit>
+      <trans-unit id="69e4a91f05f1619fc6326ff78659255bc0d4f7ce" resname="gateway.form.verify_yubikey.otp_verification_failed">
+        <jms:reference-file line="4">Resources/views/translations.html.twig</jms:reference-file>
+        <source>gateway.form.verify_yubikey.otp_verification_failed</source>
+        <target state="new">gateway.form.verify_yubikey.otp_verification_failed</target>
+      </trans-unit>
+      <trans-unit id="ff41865a3ee14ef7455ab11e77851280932ec1bb" resname="gateway.form.verify_yubikey.public_id_mismatch">
+        <jms:reference-file line="5">Resources/views/translations.html.twig</jms:reference-file>
+        <source>gateway.form.verify_yubikey.public_id_mismatch</source>
+        <target state="new">gateway.form.verify_yubikey.public_id_mismatch</target>
+      </trans-unit>
+      <trans-unit id="53c1b4469c10803f2e6bfb5fd31afb68c7f9556f" resname="gateway.gateway.consume_assertion.title">
+        <jms:reference-file line="15">views/Gateway/consumeAssertion.html.twig</jms:reference-file>
+        <source>gateway.gateway.consume_assertion.title</source>
+        <target state="new">gateway.gateway.consume_assertion.title</target>
+      </trans-unit>
+      <trans-unit id="189f85b546ea29bc943a11a82d0e270276518e9d" resname="gateway.gateway.unprocessable_response.title">
+        <jms:reference-file line="3">views/Gateway/unprocessableResponse.html.twig</jms:reference-file>
+        <source>gateway.gateway.unprocessable_response.title</source>
+        <target state="new">gateway.gateway.unprocessable_response.title</target>
+      </trans-unit>
+      <trans-unit id="c3f04b0a835ab720ff87379b1edce78727cac5b4" resname="gateway.gateway.unrecoverable_error.title">
+        <jms:reference-file line="3">views/Gateway/unrecoverableError.html.twig</jms:reference-file>
+        <source>gateway.gateway.unrecoverable_error.title</source>
+        <target state="new">gateway.gateway.unrecoverable_error.title</target>
+      </trans-unit>
+      <trans-unit id="1c41e8d2b8040894426471450740d39af284d440" resname="gateway.second_factor.sms.challenge_body">
+        <jms:reference-file line="72">GatewayBundle/Service/SmsSecondFactorService.php</jms:reference-file>
+        <source>gateway.second_factor.sms.challenge_body</source>
+        <target>Uw SMS-code: %challenge%</target>
+      </trans-unit>
+      <trans-unit id="fecb0bb6d9524901050c51767a3cf1eceb80da04" resname="gateway.second_factor.sms.send_challenge.title">
+        <jms:reference-file line="3">views/SecondFactor/verifySmsSecondFactor.html.twig</jms:reference-file>
+        <source>gateway.second_factor.sms.send_challenge.title</source>
+        <target state="new">gateway.second_factor.sms.send_challenge.title</target>
+      </trans-unit>
+      <trans-unit id="fbc134b1f4a8c33e94e122042462cd21c853204a" resname="gateway.second_factor.sms.text.after_pressing_proceed">
+        <jms:reference-file line="13">views/SecondFactor/verifySmsSecondFactor.html.twig</jms:reference-file>
+        <source>gateway.second_factor.sms.text.after_pressing_proceed</source>
+        <target state="new">gateway.second_factor.sms.text.after_pressing_proceed</target>
+      </trans-unit>
+      <trans-unit id="d80ea1ea4e3e600845fc1d86d0851f446f7a8908" resname="gateway.second_factor.sms.text.ensure_phone_has_signal">
+        <jms:reference-file line="11">views/SecondFactor/verifySmsSecondFactor.html.twig</jms:reference-file>
+        <source>gateway.second_factor.sms.text.ensure_phone_has_signal</source>
+        <target state="new">gateway.second_factor.sms.text.ensure_phone_has_signal</target>
+      </trans-unit>
+      <trans-unit id="125a385345b59621d0a18ef5608a775eb04b5f25" resname="gateway.second_factor.sms.text.enter_challenge_below">
+        <jms:reference-file line="11">views/SecondFactor/verifySmsSecondFactorChallenge.html.twig</jms:reference-file>
+        <source>gateway.second_factor.sms.text.enter_challenge_below</source>
+        <target state="new">gateway.second_factor.sms.text.enter_challenge_below</target>
+      </trans-unit>
+      <trans-unit id="ec779fbef77a977056e89b312c908f6fb0b519b5" resname="gateway.second_factor.sms.text.enter_phone_number_below">
+        <jms:reference-file line="12">views/SecondFactor/verifySmsSecondFactor.html.twig</jms:reference-file>
+        <source>gateway.second_factor.sms.text.enter_phone_number_below</source>
+        <target state="new">gateway.second_factor.sms.text.enter_phone_number_below</target>
+      </trans-unit>
+      <trans-unit id="b709c9885083cad3cea28a08aa1cf07d43fa186f" resname="gateway.second_factor.sms.text.help_user_enter_challenge">
+        <jms:reference-file line="8">views/SecondFactor/verifySmsSecondFactorChallenge.html.twig</jms:reference-file>
+        <source>gateway.second_factor.sms.text.help_user_enter_challenge</source>
+        <target state="new">gateway.second_factor.sms.text.help_user_enter_challenge</target>
+      </trans-unit>
+      <trans-unit id="ae96304b72fa22655facaecca34b948409c3deaa" resname="gateway.second_factor.sms.text.help_user_enter_phone_number">
+        <jms:reference-file line="8">views/SecondFactor/verifySmsSecondFactor.html.twig</jms:reference-file>
+        <source>gateway.second_factor.sms.text.help_user_enter_phone_number</source>
+        <target state="new">gateway.second_factor.sms.text.help_user_enter_phone_number</target>
+      </trans-unit>
+      <trans-unit id="a215b416978f2c35a0ffd4be8576c8a0bdf64718" resname="gateway.second_factor.sms.text.retry_if_not_received">
+        <jms:reference-file line="12">views/SecondFactor/verifySmsSecondFactorChallenge.html.twig</jms:reference-file>
+        <source>gateway.second_factor.sms.text.retry_if_not_received</source>
+        <target state="new">gateway.second_factor.sms.text.retry_if_not_received</target>
+      </trans-unit>
+      <trans-unit id="c9ecf89d8bcda5d83b5a78f10fda52522011fcc7" resname="gateway.second_factor.sms.verify_challenge.title.page">
+        <jms:reference-file line="3">views/SecondFactor/verifySmsSecondFactorChallenge.html.twig</jms:reference-file>
+        <source>gateway.second_factor.sms.verify_challenge.title.page</source>
+        <target state="new">gateway.second_factor.sms.verify_challenge.title.page</target>
+      </trans-unit>
+      <trans-unit id="be12899784c0176e20b93e0030a2144365add26d" resname="gateway.second_factor.yubikey.text.connect_yubikey_to_pc">
+        <jms:reference-file line="11">views/SecondFactor/verifyYubikeySecondFactor.html.twig</jms:reference-file>
+        <source>gateway.second_factor.yubikey.text.connect_yubikey_to_pc</source>
+        <target state="new">gateway.second_factor.yubikey.text.connect_yubikey_to_pc</target>
+      </trans-unit>
+      <trans-unit id="6204e24e7c7b389809232589df868be2b511cdf5" resname="gateway.second_factor.yubikey.text.ensure_form_field_focus">
+        <jms:reference-file line="12">views/SecondFactor/verifyYubikeySecondFactor.html.twig</jms:reference-file>
+        <source>gateway.second_factor.yubikey.text.ensure_form_field_focus</source>
+        <target state="new">gateway.second_factor.yubikey.text.ensure_form_field_focus</target>
+      </trans-unit>
+      <trans-unit id="1445676eeee2335e0d37dad8c7d7bf883ea69c40" resname="gateway.second_factor.yubikey.text.help_user_enter_challenge">
+        <jms:reference-file line="8">views/SecondFactor/verifyYubikeySecondFactor.html.twig</jms:reference-file>
+        <source>gateway.second_factor.yubikey.text.help_user_enter_challenge</source>
+        <target state="new">gateway.second_factor.yubikey.text.help_user_enter_challenge</target>
+      </trans-unit>
+      <trans-unit id="2845155cc34878dd2e86f19ca5ea1b01c2039d01" resname="gateway.second_factor.yubikey.text.press_once_form_auto_submitted">
+        <jms:reference-file line="13">views/SecondFactor/verifyYubikeySecondFactor.html.twig</jms:reference-file>
+        <source>gateway.second_factor.yubikey.text.press_once_form_auto_submitted</source>
+        <target state="new">gateway.second_factor.yubikey.text.press_once_form_auto_submitted</target>
+      </trans-unit>
+      <trans-unit id="46afcd414845fe64dedd737b959f7cd327b85a63" resname="gateway.submit.click_to_go_back_to_sp">
+        <jms:reference-file line="15">views/Gateway/unprocessableResponse.html.twig</jms:reference-file>
+        <source>gateway.submit.click_to_go_back_to_sp</source>
+        <target state="new">gateway.submit.click_to_go_back_to_sp</target>
+      </trans-unit>
+      <trans-unit id="ee8b15d139dd5ba69eb2bfbc1c540b03894bafd7" resname="ra.registration.yubikey.title.enter_challenge">
+        <jms:reference-file line="3">views/SecondFactor/verifyYubikeySecondFactor.html.twig</jms:reference-file>
+        <source>ra.registration.yubikey.title.enter_challenge</source>
+        <target state="new">ra.registration.yubikey.title.enter_challenge</target>
       </trans-unit>
     </body>
   </file>
