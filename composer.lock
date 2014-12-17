@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "19a317e54db05b86df2060c4db2a7968",
+    "hash": "3200f01b3d32e8183fc77cd632e9a09a",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -2452,16 +2452,16 @@
         },
         {
             "name": "symfony/symfony",
-            "version": "dev-bugfix/default-entry-point",
+            "version": "v2.6.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/rjkip/symfony.git",
-                "reference": "32dec855a439091c58e8270bc0a04b29888ad79c"
+                "url": "https://github.com/symfony/symfony.git",
+                "reference": "d805dfd67950848ec0338b4acd75777b340977b7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rjkip/symfony/zipball/32dec855a439091c58e8270bc0a04b29888ad79c",
-                "reference": "32dec855a439091c58e8270bc0a04b29888ad79c",
+                "url": "https://api.github.com/repos/symfony/symfony/zipball/d805dfd67950848ec0338b4acd75777b340977b7",
+                "reference": "d805dfd67950848ec0338b4acd75777b340977b7",
                 "shasum": ""
             },
             "require": {
@@ -2522,10 +2522,10 @@
                 "doctrine/doctrine-bundle": "~1.2",
                 "doctrine/orm": "~2.2,>=2.2.3",
                 "egulias/email-validator": "~1.2",
-                "ircmaxell/password-compat": "1.0.*",
+                "ircmaxell/password-compat": "~1.0",
                 "monolog/monolog": "~1.11",
                 "ocramius/proxy-manager": ">=0.3.1,<0.6-dev",
-                "propel/propel1": "1.6.*"
+                "propel/propel1": "~1.6"
             },
             "type": "library",
             "extra": {
@@ -2545,17 +2545,18 @@
                     "src/Symfony/Component/Intl/Resources/stubs/functions.php"
                 ]
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
             "authors": [
                 {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
-                },
-                {
                     "name": "Symfony Community",
                     "homepage": "http://symfony.com/contributors"
+                },
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
                 }
             ],
             "description": "The Symfony PHP framework",
@@ -2563,10 +2564,7 @@
             "keywords": [
                 "framework"
             ],
-            "support": {
-                "source": "https://github.com/rjkip/symfony/tree/bugfix/default-entry-point"
-            },
-            "time": "2014-11-05 14:49:45"
+            "time": "2014-12-03 16:40:43"
         },
         {
             "name": "twbs/bootstrap",
@@ -4369,6 +4367,158 @@
             "time": "2014-09-25 03:33:46"
         },
         {
+            "name": "symfony/config",
+            "version": "v2.5.8",
+            "target-dir": "Symfony/Component/Config",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/Config.git",
+                "reference": "92f0b4c625b8c42d394b53f879d2795d84bb8c4f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/Config/zipball/92f0b4c625b8c42d394b53f879d2795d84bb8c4f",
+                "reference": "92f0b4c625b8c42d394b53f879d2795d84bb8c4f",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3",
+                "symfony/filesystem": "~2.3"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.5-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Symfony\\Component\\Config\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Symfony Community",
+                    "homepage": "http://symfony.com/contributors"
+                },
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                }
+            ],
+            "description": "Symfony Config Component",
+            "homepage": "http://symfony.com",
+            "time": "2014-12-02 20:15:53"
+        },
+        {
+            "name": "symfony/dependency-injection",
+            "version": "v2.5.8",
+            "target-dir": "Symfony/Component/DependencyInjection",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/DependencyInjection.git",
+                "reference": "b4afda3c24867a17f93237ac1fcce917cc9d7695"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/DependencyInjection/zipball/b4afda3c24867a17f93237ac1fcce917cc9d7695",
+                "reference": "b4afda3c24867a17f93237ac1fcce917cc9d7695",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "require-dev": {
+                "symfony/config": "~2.2",
+                "symfony/expression-language": "~2.4",
+                "symfony/yaml": "~2.0"
+            },
+            "suggest": {
+                "symfony/config": "",
+                "symfony/proxy-manager-bridge": "Generate service proxies to lazy load them",
+                "symfony/yaml": ""
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.5-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Symfony\\Component\\DependencyInjection\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Symfony Community",
+                    "homepage": "http://symfony.com/contributors"
+                },
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                }
+            ],
+            "description": "Symfony DependencyInjection Component",
+            "homepage": "http://symfony.com",
+            "time": "2014-12-02 21:48:32"
+        },
+        {
+            "name": "symfony/filesystem",
+            "version": "v2.5.8",
+            "target-dir": "Symfony/Component/Filesystem",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/Filesystem.git",
+                "reference": "e5fc05a3a1dbb4ea0bed80fe7bd21ba3cab88c42"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/Filesystem/zipball/e5fc05a3a1dbb4ea0bed80fe7bd21ba3cab88c42",
+                "reference": "e5fc05a3a1dbb4ea0bed80fe7bd21ba3cab88c42",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.5-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Symfony\\Component\\Filesystem\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Symfony Community",
+                    "homepage": "http://symfony.com/contributors"
+                },
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                }
+            ],
+            "description": "Symfony Filesystem Component",
+            "homepage": "http://symfony.com",
+            "time": "2014-12-02 20:15:53"
+        },
+        {
             "name": "theseer/fdomdocument",
             "version": "1.6.0",
             "source": {
@@ -4461,17 +4611,9 @@
             "time": "2013-12-21 17:10:13"
         }
     ],
-    "aliases": [
-        {
-            "alias": "2.5.5",
-            "alias_normalized": "2.5.5.0",
-            "version": "dev-bugfix/default-entry-point",
-            "package": "symfony/symfony"
-        }
-    ],
+    "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "symfony/symfony": 20,
         "doctrine/migrations": 20,
         "mopa/bootstrap-bundle": 10,
         "surfnet/stepup-bundle": 20,
