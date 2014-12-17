@@ -1,7 +1,10 @@
 {% extends 'MopaBootstrapBundle::base.html.twig' %}
 {% from 'MopaBootstrapBundle::flash.html.twig' import session_flash %}
 
-{% block title %}{{ 'app.name'|trans }}{% endblock title %}
+{% block title %}
+    {%  if block('page_title') is not empty %}{{ block('page_title') }} &mdash; {% endif %}
+    {{ 'app.name'|trans }}
+{% endblock title %}
 {% block head_style %}
     {% stylesheets
     '../app/Resources/public/less/style.less' filter='less'
