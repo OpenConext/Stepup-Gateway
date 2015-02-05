@@ -90,6 +90,7 @@ class SecondFactorController extends Controller
         $form = $this->createForm('gateway_verify_yubikey_otp', $command)->handleRequest($request);
 
         if (!$form->isValid()) {
+            // OTP field is rendered empty in the template.
             return ['form' => $form->createView()];
         }
 
@@ -98,10 +99,12 @@ class SecondFactorController extends Controller
         if ($result->didOtpVerificationFail()) {
             $form->addError(new FormError('gateway.form.verify_yubikey.otp_verification_failed'));
 
+            // OTP field is rendered empty in the template.
             return ['form' => $form->createView()];
         } elseif (!$result->didPublicIdMatch()) {
             $form->addError(new FormError('gateway.form.verify_yubikey.public_id_mismatch'));
 
+            // OTP field is rendered empty in the template.
             return ['form' => $form->createView()];
         }
 
