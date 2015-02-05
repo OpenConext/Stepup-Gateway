@@ -15,6 +15,11 @@
 
     <hr>
 
-    {{ form(form) }}
+    {{ form_start(form) }}
+    {{ form_errors(form) }}
+
+    {{ form_row(form.otp, { value: '' }) }}
+
+    {{ form_end(form) }}
 
 {% endblock %}
