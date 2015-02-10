@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "5f04c72a99a5b107f8608f05bc0eb4e3",
+    "hash": "511b1d0714dfbb22f6e11849b417f6fd",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -2083,12 +2083,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/SURFnet/Stepup-bundle.git",
-                "reference": "8be67228322d4fc4e55b57b44e12ae17e1f2cd8d"
+                "reference": "6590f5a7052c767485dfa341b0ccd9d9364f0a52"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SURFnet/Stepup-bundle/zipball/8be67228322d4fc4e55b57b44e12ae17e1f2cd8d",
-                "reference": "8be67228322d4fc4e55b57b44e12ae17e1f2cd8d",
+                "url": "https://api.github.com/repos/SURFnet/Stepup-bundle/zipball/6590f5a7052c767485dfa341b0ccd9d9364f0a52",
+                "reference": "6590f5a7052c767485dfa341b0ccd9d9364f0a52",
                 "shasum": ""
             },
             "require": {
@@ -2124,7 +2124,7 @@
                 "suaas",
                 "surfnet"
             ],
-            "time": "2015-02-05 15:01:37"
+            "time": "2015-02-09 16:30:55"
         },
         {
             "name": "surfnet/stepup-saml-bundle",
@@ -2452,23 +2452,23 @@
         },
         {
             "name": "symfony/symfony",
-            "version": "v2.6.1",
+            "version": "v2.6.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/symfony.git",
-                "reference": "d805dfd67950848ec0338b4acd75777b340977b7"
+                "reference": "23b647f1e4eeb24a457d3c47f5f5046377d5a3bf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/symfony/zipball/d805dfd67950848ec0338b4acd75777b340977b7",
-                "reference": "d805dfd67950848ec0338b4acd75777b340977b7",
+                "url": "https://api.github.com/repos/symfony/symfony/zipball/23b647f1e4eeb24a457d3c47f5f5046377d5a3bf",
+                "reference": "23b647f1e4eeb24a457d3c47f5f5046377d5a3bf",
                 "shasum": ""
             },
             "require": {
-                "doctrine/common": "~2.2",
+                "doctrine/common": "~2.3",
                 "php": ">=5.3.3",
                 "psr/log": "~1.0",
-                "twig/twig": "~1.12"
+                "twig/twig": "~1.12,>=1.12.3"
             },
             "replace": {
                 "symfony/browser-kit": "self.version",
@@ -2524,7 +2524,7 @@
                 "egulias/email-validator": "~1.2",
                 "ircmaxell/password-compat": "~1.0",
                 "monolog/monolog": "~1.11",
-                "ocramius/proxy-manager": ">=0.3.1,<0.6-dev",
+                "ocramius/proxy-manager": "~0.4|~1.0",
                 "propel/propel1": "~1.6"
             },
             "type": "library",
@@ -2564,7 +2564,7 @@
             "keywords": [
                 "framework"
             ],
-            "time": "2014-12-03 16:40:43"
+            "time": "2015-02-02 18:02:30"
         },
         {
             "name": "twbs/bootstrap",
