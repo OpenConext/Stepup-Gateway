@@ -2083,12 +2083,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/SURFnet/Stepup-bundle.git",
-                "reference": "6590f5a7052c767485dfa341b0ccd9d9364f0a52"
+                "reference": "8bcadae4f4da17157ad0eec99525d6600c3aace2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SURFnet/Stepup-bundle/zipball/6590f5a7052c767485dfa341b0ccd9d9364f0a52",
-                "reference": "6590f5a7052c767485dfa341b0ccd9d9364f0a52",
+                "url": "https://api.github.com/repos/SURFnet/Stepup-bundle/zipball/8bcadae4f4da17157ad0eec99525d6600c3aace2",
+                "reference": "8bcadae4f4da17157ad0eec99525d6600c3aace2",
                 "shasum": ""
             },
             "require": {
@@ -2124,7 +2124,7 @@
                 "suaas",
                 "surfnet"
             ],
-            "time": "2015-02-09 16:30:55"
+            "time": "2015-02-10 10:10:30"
         },
         {
             "name": "surfnet/stepup-saml-bundle",
@@ -2272,32 +2272,33 @@
         },
         {
             "name": "symfony/assetic-bundle",
-            "version": "v2.5.0",
+            "version": "v2.6.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/AsseticBundle.git",
-                "reference": "90ea7fb66d6d5245fd4afc16e4c8070214254fec"
+                "reference": "422b0add2110f0cf9bc7a873a386ea053f4a89f0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/AsseticBundle/zipball/90ea7fb66d6d5245fd4afc16e4c8070214254fec",
-                "reference": "90ea7fb66d6d5245fd4afc16e4c8070214254fec",
+                "url": "https://api.github.com/repos/symfony/AsseticBundle/zipball/422b0add2110f0cf9bc7a873a386ea053f4a89f0",
+                "reference": "422b0add2110f0cf9bc7a873a386ea053f4a89f0",
                 "shasum": ""
             },
             "require": {
                 "kriswallsmith/assetic": "~1.2",
                 "php": ">=5.3.0",
-                "symfony/console": "~2.1",
-                "symfony/framework-bundle": "~2.1",
-                "symfony/yaml": "~2.1"
+                "symfony/console": "~2.3",
+                "symfony/dependency-injection": "~2.3",
+                "symfony/framework-bundle": "~2.3",
+                "symfony/yaml": "~2.3"
             },
             "require-dev": {
                 "kriswallsmith/spork": "~0.2",
                 "patchwork/jsqueeze": "~1.0",
-                "symfony/class-loader": "~2.1",
-                "symfony/css-selector": "~2.1",
-                "symfony/dom-crawler": "~2.1",
-                "symfony/twig-bundle": "~2.1"
+                "symfony/class-loader": "~2.3",
+                "symfony/css-selector": "~2.3",
+                "symfony/dom-crawler": "~2.3",
+                "symfony/twig-bundle": "~2.3"
             },
             "suggest": {
                 "kriswallsmith/spork": "to be able to dump assets in parallel",
@@ -2332,7 +2333,7 @@
                 "compression",
                 "minification"
             ],
-            "time": "2014-10-15 12:03:38"
+            "time": "2015-01-27 12:45:16"
         },
         {
             "name": "symfony/monolog-bundle",

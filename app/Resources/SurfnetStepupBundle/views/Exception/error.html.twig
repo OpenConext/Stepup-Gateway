@@ -1,0 +1,13 @@
+{% extends '::base.html.twig' %}
+
+{% block page_title %}{{ 'gateway.error.title'|trans({'status_code': statusCode, 'status_text': statusText}) }}{% endblock %}
+
+{% block content %}
+    <h2>{{ block('page_title') }}</h2>
+
+    <p>{{ 'gateway.error.text.an_error_occurred'|trans({'status_code': statusCode, 'status_text': statusText}) }}</p>
+
+    <hr>
+    <p>{{ 'gateway.error.text.your_art_code'|trans }}: <span class="art">#{{ art }}</span></p>
+    <p>{{ 'gateway.error.text.what_were_you_doing_well_fix_it'|trans }}</p>
+{% endblock %}

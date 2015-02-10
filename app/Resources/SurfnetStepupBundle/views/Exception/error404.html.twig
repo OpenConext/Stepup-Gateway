@@ -1,0 +1,13 @@
+{% extends '::base.html.twig' %}
+
+{% block page_title %}{{ 'gateway.error.page_not_found.title'|trans }}{% endblock %}
+
+{% block content %}
+    <h2>{{ block('page_title') }}</h2>
+
+    <p>{{ 'gateway.error.text.page_not_found'|trans }}</p>
+
+    <hr>
+    <p>{{ 'gateway.error.text.your_art_code'|trans }}: <span class="art">#{{ art }}</span></p>
+    <p>{{ 'gateway.error.text.if_you_think_this_is_incorrect_report'|trans }}</p>
+{% endblock %}
