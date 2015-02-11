@@ -177,9 +177,6 @@ class ProxyResponseService
     {
         $newAssertion->setAuthnInstant($assertion->getAuthnInstant());
 
-        $sessionNotOnOrAfter = $this->determineSessionNotOnOrAfter($assertion->getSessionNotOnOrAfter());
-        $newAssertion->setSessionNotOnOrAfter($sessionNotOnOrAfter);
-
         // @see https://www.pivotaltracker.com/story/show/79506808
         $newAssertion->setAuthnContextClassRef('https://gw-dev.stepup.coin.surf.net/assurance/LOA1');
 
@@ -222,20 +219,5 @@ class ProxyResponseService
         }
 
         return $time->getTimestamp();
-    }
-
-    /**
-     * @param int $sessionNotOnOrAfter
-     * @return int
-     */
-    private function determineSessionNotOnOrAfter($sessionNotOnOrAfter)
-    {
-        $inEightHours = $this->getTimestamp('PT8H');
-
-        if ($inEightHours < $sessionNotOnOrAfter) {
-            return $inEightHours;
-        }
-
-        return $sessionNotOnOrAfter;
     }
 }
