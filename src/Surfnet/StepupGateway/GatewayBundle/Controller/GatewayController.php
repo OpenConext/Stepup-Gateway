@@ -64,7 +64,7 @@ class GatewayController extends Controller
             ->setRelayState($httpRequest->get(AuthnRequest::PARAMETER_RELAY_STATE, ''));
 
         // check if the requested loa is supported
-        $requiredLoa = $originalRequest->getRequestedAuthenticationContext();
+        $requiredLoa = $originalRequest->getAuthenticationContextClassRef();
         if ($requiredLoa && !$this->get('gateway.service.loa_resolution')->hasLoa($requiredLoa)) {
             $logger->info(sprintf(
                 'Requested required LOA "%s" does not exist, sending response with status Requester Error',
@@ -75,7 +75,7 @@ class GatewayController extends Controller
             $this->renderSamlResponse('consumeAssertion', $response);
         }
 
-        $stateHandler->setRequestAuthnContextClassRef($originalRequest->getRequestedAuthenticationContext());
+        $stateHandler->setRequestAuthnContextClassRef($originalRequest->getAuthenticationContextClassRef());
 
         $proxyRequest = AuthnRequestFactory::createNewRequest(
             $this->get('surfnet_saml.hosted.service_provider'),
