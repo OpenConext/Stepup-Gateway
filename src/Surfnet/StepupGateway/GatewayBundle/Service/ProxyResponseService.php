@@ -179,7 +179,6 @@ class ProxyResponseService
 
         $sessionNotOnOrAfter = $this->determineSessionNotOnOrAfter($assertion->getSessionNotOnOrAfter());
         $newAssertion->setSessionNotOnOrAfter($sessionNotOnOrAfter);
-        $newAssertion->setSessionIndex($this->proxyStateHandler->getSessionIndex());
 
         // @see https://www.pivotaltracker.com/story/show/79506808
         $newAssertion->setAuthnContextClassRef('https://gw-dev.stepup.coin.surf.net/assurance/LOA1');
