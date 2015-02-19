@@ -72,7 +72,7 @@ class GatewayController extends Controller
             ));
 
             $response = $this->createRequesterFailureResponse();
-            $this->renderSamlResponse('consumeAssertion', $response);
+            return $this->renderSamlResponse('consumeAssertion', $response);
         }
 
         $stateHandler->setRequestAuthnContextClassRef($originalRequest->getAuthenticationContextClassRef());
