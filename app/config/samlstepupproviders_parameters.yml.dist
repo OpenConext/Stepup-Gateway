@@ -1,0 +1,15 @@
+parameters:
+    gssp_routes_sso: gssp_verify
+    gssp_routes_consume_assertion: gssp_consume_assertion
+    gssp_routes_metadata: gssp_saml_metadata
+    gssp_tiqr_enabled: true
+    gssp_tiqr_allowed_sps:
+    gssp_tiqr_sp_publickey:
+    gssp_tiqr_sp_privatekey:
+    gssp_tiqr_idp_publickey:
+    gssp_tiqr_idp_privatekey:
+    gssp_tiqr_metadata_publickey:
+    gssp_tiqr_metadata_privatekey:
+    gssp_tiqr_remote_entityid:
+    gssp_tiqr_remote_ssourl:
+    gssp_tiqr_remote_certificate:
