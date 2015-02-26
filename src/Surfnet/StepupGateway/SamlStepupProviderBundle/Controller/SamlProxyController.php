@@ -20,28 +20,42 @@ namespace Surfnet\StepupGateway\SamlStepupProviderBundle\Controller;
 
 use Surfnet\SamlBundle\Http\XMLResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class SamlProxyController extends Controller
 {
+    /**
+     * @param string $provider
+     */
     public function singleSignOnAction($provider)
     {
-        throw new HttpException(418, sprintf('SSO for "%s" Not Yet Implemented', $provider));
+        $provider = $this->getProvider($provider);
+
+        throw new HttpException(418, sprintf('SSO for "%s" Not Yet Implemented', $provider->getName()));
     }
 
+    /**
+     * @param string $provider
+     */
     public function consumeAssertionAction($provider)
     {
-        throw new HttpException(418, sprintf('Consume Assertion for "%s" Not Yet Implemented', $provider));
+        $provider = $this->getProvider($provider);
+
+        throw new HttpException(418, sprintf('Consume Assertion for "%s" Not Yet Implemented', $provider->getName()));
     }
 
+    /**
+     * @param string $provider
+     * @return XMLResponse
+     */
     public function metadataAction($provider)
     {
         $provider = $this->getProvider($provider);
 
         /** @var \Surfnet\SamlBundle\Metadata\MetadataFactory $metadataFactory */
         $factory = $this->get('gssp.provider.' . $provider->getName() . '.metadata.factory');
+
         return new XMLResponse($factory->generate());
     }
 
