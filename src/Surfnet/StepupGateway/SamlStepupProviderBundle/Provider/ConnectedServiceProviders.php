@@ -18,7 +18,9 @@
 
 namespace Surfnet\StepupGateway\SamlStepupProviderBundle\Provider;
 
+use Surfnet\StepupGateway\GatewayBundle\Service\SamlEntityService;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Exception\InvalidArgumentException;
+use Surfnet\StepupGateway\SamlStepupProviderBundle\Exception\UnknownProviderException;
 
 /**
  * @todo discuss (im)mutability
@@ -27,8 +29,14 @@ final class ConnectedServiceProviders
 {
     private $connected;
 
-    public function __construct()
+    /**
+     * @var \Surfnet\StepupGateway\GatewayBundle\Service\SamlEntityService
+     */
+    private $samlEntityService;
+
+    public function __construct(SamlEntityService $samlEntityService)
     {
+        $this->samlEntityService = $samlEntityService;
         $this->connected = [];
     }
 
@@ -50,10 +58,27 @@ final class ConnectedServiceProviders
      */
     public function isConnected($serviceProvider)
     {
+
+        if (!is_string($serviceProvider)) {
+            throw InvalidArgumentException::invalidType('string', 'serviceProvider', $serviceProvider);
+        }
+        return in_array($serviceProvider, $this->connected);
+    }
+
+    /**
+     * @param string $serviceProvider
+     * @return \Surfnet\SamlBundle\Entity\ServiceProvider
+     */
+    public function getConfigurationOf($serviceProvider)
+    {
         if (!is_string($serviceProvider)) {
             throw InvalidArgumentException::invalidType('string', 'serviceProvider', $serviceProvider);
         }
 
-        return in_array($serviceProvider, $this->connected);
+        if (!$this->isConnected($serviceProvider)) {
+            throw UnknownProviderException::create($serviceProvider, $this->connected);
+        }
+
+        return $this->samlEntityService->getServiceProvider($serviceProvider);
     }
 }
