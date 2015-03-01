@@ -35,7 +35,7 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
- * @SuppressWarnings(PHPMD.CouplingBetweeObjects)
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class SamlProxyController extends Controller
 {

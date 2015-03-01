@@ -20,6 +20,7 @@ namespace Surfnet\StepupGateway\SamlStepupProviderBundle\Saml;
 
 use DateInterval;
 use DateTime;
+use DateTimeZone;
 use SAML2_Assertion;
 use SAML2_Const;
 use SAML2_Response;
@@ -29,6 +30,9 @@ use Surfnet\SamlBundle\Entity\IdentityProvider;
 use Surfnet\SamlBundle\Entity\ServiceProvider;
 use Surfnet\StepupGateway\GatewayBundle\Saml\AssertionSigningService;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class ProxyResponseFactory
 {
     /**
@@ -47,7 +51,7 @@ class ProxyResponseFactory
     private $assertionSigningService;
 
     /**
-     * @var DateTime
+     * @var \DateTime
      */
     private $currentTime;
 
@@ -60,7 +64,7 @@ class ProxyResponseFactory
         $this->stateHandler            = $stateHandler;
         $this->assertionSigningService = $assertionSigningService;
 
-        $this->currentTime = new DateTime('now', new \DateTimeZone('UTC'));
+        $this->currentTime = new DateTime('now', new DateTimeZone('UTC'));
     }
 
     /**
