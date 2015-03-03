@@ -80,7 +80,7 @@ class SamlProxyController extends Controller
             throw new AccessDeniedHttpException();
         }
 
-        /** @var \Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler $stateHandler */
+        /** @var StateHandler $stateHandler */
         $stateHandler = $provider->getStateHandler();
         $stateHandler
             ->generateSessionIndex($originalRequest->getServiceProvider())
