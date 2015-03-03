@@ -58,7 +58,6 @@ class GatewayController extends Controller
         /** @var \Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler $stateHandler */
         $stateHandler = $this->get('gateway.proxy.state_handler');
         $stateHandler
-            ->generateSessionIndex($originalRequest->getServiceProvider())
             ->setRequestId($originalRequest->getRequestId())
             ->setRequestServiceProvider($originalRequest->getServiceProvider())
             ->setRelayState($httpRequest->get(AuthnRequest::PARAMETER_RELAY_STATE, ''));
@@ -72,7 +71,7 @@ class GatewayController extends Controller
             ));
 
             $response = $this->createRequesterFailureResponse();
-            $this->renderSamlResponse('consumeAssertion', $response);
+            return $this->renderSamlResponse('consumeAssertion', $response);
         }
 
         $stateHandler->setRequestAuthnContextClassRef($originalRequest->getAuthenticationContextClassRef());
