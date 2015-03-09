@@ -27,7 +27,7 @@ class ProxyStateHandler
     /**
      * @var \Symfony\Component\HttpFoundation\Session\SessionInterface
      */
-    protected $session;
+    private $session;
 
     /**
      * @param SessionInterface $session
