@@ -68,7 +68,7 @@ class Configuration implements ConfigurationInterface
                             ->ifTrue(function ($v) {
                                 return !is_string($v) || strlen($v) === 0;
                             })
-                            ->thenInvalid('SSO route must be a non-empty string')
+                            ->thenInvalid('Consume assertion route must be a non-empty string')
                         ->end()
                     ->end()
                     ->scalarNode('metadata')
@@ -77,7 +77,7 @@ class Configuration implements ConfigurationInterface
                             ->ifTrue(function ($v) {
                                 return !is_string($v) || strlen($v) === 0;
                             })
-                            ->thenInvalid('SSO route must be a non-empty string')
+                            ->thenInvalid('Metadata route must be a non-empty string')
                         ->end()
                     ->end()
                 ->end()
