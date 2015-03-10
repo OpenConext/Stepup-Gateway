@@ -38,7 +38,11 @@ twig:
 assetic:
     debug:          "%kernel.debug%"
     use_controller: false
-    bundles:        [MopaBootstrapBundle, SurfnetStepupGatewayApiBundle, SurfnetStepupGatewayGatewayBundle]
+    bundles:
+     - MopaBootstrapBundle
+     - SurfnetStepupGatewayApiBundle
+     - SurfnetStepupGatewayGatewayBundle
+     - SurfnetStepupGatewaySamlStepupProviderBundle
     #java: /usr/bin/java
     node: "/usr/bin/node"
     node_paths: ["/usr/lib/node_modules"]
