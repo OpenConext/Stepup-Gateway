@@ -60,7 +60,7 @@ class SurfnetStepupGatewaySamlStepupProviderExtension extends Extension
         ContainerBuilder $container
     ) {
         if ($container->has('gssp.provider.' . $provider)) {
-            throw new InvalidConfigurationException(sprintf('Cannot at the same provider: "%s" twice', $provider));
+            throw new InvalidConfigurationException(sprintf('Cannot create the same provider "%s" twice', $provider));
         }
 
         $this->createHostedDefinitions($provider, $configuration['hosted'], $routes, $container);
