@@ -122,8 +122,8 @@ class SamlProxyController extends Controller
             /** @var \SAML2_Assertion $assertion */
             $assertion = $this->get('surfnet_saml.http.post_binding')->processResponse(
                 $httpRequest,
-                $this->get('surfnet_saml.remote.idp'),
-                $this->get('surfnet_saml.hosted.service_provider')
+                $provider->getRemoteIdentityProvider(),
+                $provider->getServiceProvider()
             );
         } catch (Exception $exception) {
             /** @var \Monolog\Logger $logger */
