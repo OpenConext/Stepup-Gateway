@@ -171,7 +171,7 @@ class SamlProxyController extends Controller
     {
         $provider = $this->getProvider($provider);
 
-        /** @var \Surfnet\SamlBundle\Metadata\MetadataFactory $metadataFactory */
+        /** @var \Surfnet\SamlBundle\Metadata\MetadataFactory $factory */
         $factory = $this->get('gssp.provider.' . $provider->getName() . '.metadata.factory');
 
         return new XMLResponse($factory->generate());
