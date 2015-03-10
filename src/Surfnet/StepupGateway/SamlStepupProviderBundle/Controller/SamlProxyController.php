@@ -224,7 +224,7 @@ class SamlProxyController extends Controller
     public function render($view, array $parameters = array(), Response $response = null)
     {
         return parent::render(
-            'SurfnetStepupGatewaySamlStepupProviderBundle:Gateway:' . $view . '.html.twig',
+            'SurfnetStepupGatewaySamlStepupProviderBundle:SamlProxy:' . $view . '.html.twig',
             $parameters,
             $response
         );
