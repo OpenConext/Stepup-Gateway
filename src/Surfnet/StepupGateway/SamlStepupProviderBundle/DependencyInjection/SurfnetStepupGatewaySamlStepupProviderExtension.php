@@ -90,11 +90,14 @@ class SurfnetStepupGatewaySamlStepupProviderExtension extends Extension
         $assertionSigningService->setPublic('false');
         $container->setDefinition('gssp.provider.' . $provider . '.assertion_signing', $assertionSigningService);
 
-        $proxyResponseFactory = new Definition('Surfnet\StepupGateway\GatewayBundle\Service', [
-            new Reference('gssp.provider.' . $provider . '.hosted.idp'),
-            new Reference('gssp.provider.' . $provider . '.statehandler'),
-            new Reference('gssp.provider.' . $provider . '.assertion_signing')
-        ]);
+        $proxyResponseFactory = new Definition(
+            'Surfnet\StepupGateway\SamlStepupProviderBundle\Saml\ProxyResponseFactory',
+            [
+                new Reference('gssp.provider.' . $provider . '.hosted.idp'),
+                new Reference('gssp.provider.' . $provider . '.statehandler'),
+                new Reference('gssp.provider.' . $provider . '.assertion_signing')
+            ]
+        );
         $container->setDefinition('gssp.provider.' . $provider . '.response_proxy', $proxyResponseFactory);
 
         $container
