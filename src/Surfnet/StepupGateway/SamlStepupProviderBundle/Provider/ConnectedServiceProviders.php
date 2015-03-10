@@ -22,9 +22,6 @@ use Surfnet\StepupGateway\GatewayBundle\Service\SamlEntityService;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Exception\InvalidArgumentException;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Exception\UnknownProviderException;
 
-/**
- * @todo discuss (im)mutability
- */
 final class ConnectedServiceProviders
 {
     private $connected;
