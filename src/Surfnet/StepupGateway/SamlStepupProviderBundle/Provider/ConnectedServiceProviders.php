@@ -34,22 +34,13 @@ final class ConnectedServiceProviders
      */
     private $samlEntityService;
 
-    public function __construct(SamlEntityService $samlEntityService)
+    public function __construct(SamlEntityService $samlEntityService, array $connectedServiceProviders)
     {
         $this->samlEntityService = $samlEntityService;
-        $this->connected = [];
-    }
 
-    /**
-     * @param string $serviceProvider
-     */
-    public function connectServiceProvider($serviceProvider)
-    {
-        if (!is_string($serviceProvider)) {
-            throw InvalidArgumentException::invalidType('string', 'serviceProvider', $serviceProvider);
+        foreach ($connectedServiceProviders as $serviceProvider) {
+            $this->connectServiceProvider($serviceProvider);
         }
-
-        $this->connected[] = $serviceProvider;
     }
 
     /**
@@ -58,10 +49,10 @@ final class ConnectedServiceProviders
      */
     public function isConnected($serviceProvider)
     {
-
         if (!is_string($serviceProvider)) {
             throw InvalidArgumentException::invalidType('string', 'serviceProvider', $serviceProvider);
         }
+
         return in_array($serviceProvider, $this->connected);
     }
 
@@ -80,5 +71,17 @@ final class ConnectedServiceProviders
         }
 
         return $this->samlEntityService->getServiceProvider($serviceProvider);
+    }
+
+    /**
+     * @param string $serviceProvider
+     */
+    private function connectServiceProvider($serviceProvider)
+    {
+        if (!is_string($serviceProvider)) {
+            throw InvalidArgumentException::invalidType('string', 'serviceProvider', $serviceProvider);
+        }
+
+        $this->connected[] = $serviceProvider;
     }
 }
