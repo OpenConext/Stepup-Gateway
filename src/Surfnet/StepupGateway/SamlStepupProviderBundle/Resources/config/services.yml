@@ -8,8 +8,16 @@ services:
             - @saml.entity_repository
             - []
 
+    gssp.session:
+        class: Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag
+        factory: ['@session', 'getBag']
+        arguments: ['gssp']
+
     gssp.session.namespaced_attribute_bag:
+        public: false
         class: Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag
         arguments:
             - '__gssp__'
             - '/'
+        calls:
+            - [setName, ['gssp']]

@@ -32,7 +32,6 @@ class StateHandlerSessionPass implements CompilerPassInterface
     {
         $container
             ->getDefinition('session')
-            ->addMethodCall('registerBag', [new Reference('gssp.session.namespaced_attribute_bag')])
-            ->addMethodCall('start');
+            ->addMethodCall('registerBag', [new Reference('gssp.session.namespaced_attribute_bag')]);
     }
 }
