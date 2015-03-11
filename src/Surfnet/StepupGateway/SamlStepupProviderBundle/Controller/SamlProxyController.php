@@ -95,7 +95,7 @@ class SamlProxyController extends Controller
         $proxyRequest->setScoping([$originalRequest->getServiceProvider()]);
         $stateHandler->setGatewayRequestId($proxyRequest->getRequestId());
 
-        $this->get('logger')->notice(sprintf(
+        $logger->notice(sprintf(
             'Sending Proxy AuthnRequest with request ID: "%s" for original AuthnRequest "%s" to GSSP "%s" at "%s"',
             $proxyRequest->getRequestId(),
             $originalRequest->getRequestId(),
@@ -115,8 +115,10 @@ class SamlProxyController extends Controller
     {
         $provider = $this->getProvider($provider);
         $stateHandler = $provider->getStateHandler();
+        /** @var \Monolog\Logger $logger */
+        $logger = $this->get('logger');
 
-        $this->get('logger')->notice('Received SAMLResponse, attempting to process for Proxy Response');
+        $logger->notice('Received SAMLResponse, attempting to process for Proxy Response');
 
         try {
             /** @var \SAML2_Assertion $assertion */
@@ -126,8 +128,6 @@ class SamlProxyController extends Controller
                 $provider->getServiceProvider()
             );
         } catch (Exception $exception) {
-            /** @var \Monolog\Logger $logger */
-            $logger = $this->get('logger');
             $logger->error(sprintf('Could not process received Response, error: "%s"', $exception->getMessage()));
 
             $response = $this->createResponseFailureResponse($provider);
@@ -138,7 +138,7 @@ class SamlProxyController extends Controller
         $adaptedAssertion = new AssertionAdapter($assertion);
         $expectedResponse = $stateHandler->getGatewayRequestId();
         if (!$adaptedAssertion->inResponseToMatches($expectedResponse)) {
-            $this->get('logger')->critical(sprintf(
+            $logger->critical(sprintf(
                 'Received Response with unexpected InResponseTo: "%s", %s',
                 $adaptedAssertion->getInResponseTo(),
                 ($expectedResponse ? 'expected "' . $expectedResponse . '"' : ' no response expected')
@@ -147,14 +147,14 @@ class SamlProxyController extends Controller
             return $this->render('unrecoverableError');
         }
 
-        $this->get('logger')->notice('Creating Response for original request "%s" based on response "%s"');
+        $logger->notice('Creating Response for original request "%s" based on response "%s"');
 
         /** @var \Surfnet\StepupGateway\SamlStepupProviderBundle\Saml\ProxyResponseFactory $proxyResponseFactory */
         $targetServiceProvider = $this->getServiceProvider($provider->getStateHandler()->getRequestServiceProvider());
         $proxyResponseFactory = $this->get('gssp.provider.' . $provider->getName() . '.response_proxy');
         $response             = $proxyResponseFactory->createProxyResponse($assertion, $targetServiceProvider);
 
-        $this->get('logger')->notice(sprintf(
+        $logger->notice(sprintf(
             'Responding to request "%s" with response based on response from the remote IdP with response "%s"',
             $provider->getStateHandler()->getRequestId(),
             $response->getId()
