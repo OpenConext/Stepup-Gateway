@@ -34,7 +34,7 @@
         "surfnet/yubikey-api-client-bundle": "~1.2",
         "simplesamlphp/saml2": "dev-master",
         "surfnet/stepup-bundle": "dev-develop",
-        "surfnet/stepup-saml-bundle": "dev-feature/log-debug-signature-verification"
+        "surfnet/stepup-saml-bundle": "dev-develop"
     },
     "repositories": [
         {
