@@ -29,6 +29,7 @@ class SecondFactor
 {
     private static $loaLevelTypeMap = [
         'sms' => 2,
+        'tqir' => 2,
         'yubikey' => 3,
     ];
 
