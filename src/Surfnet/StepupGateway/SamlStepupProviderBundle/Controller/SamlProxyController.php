@@ -36,6 +36,8 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ *
+ * Should be refactored, {@see https://www.pivotaltracker.com/story/show/90169776}
  */
 class SamlProxyController extends Controller
 {
@@ -92,6 +94,14 @@ class SamlProxyController extends Controller
             $provider->getRemoteIdentityProvider()
         );
 
+        // if a Specific subject is given to authenticate we should proxy that and verify in the response
+        // that that subject indeed was authenticated
+        $nameId = $originalRequest->getNameId();
+        if ($nameId) {
+            $proxyRequest->setSubject($nameId, $originalRequest->getNameIdFormat());
+            $stateHandler->setSubject($nameId);
+        }
+
         $proxyRequest->setScoping([$originalRequest->getServiceProvider()]);
         $stateHandler->setGatewayRequestId($proxyRequest->getRequestId());
 
@@ -145,6 +155,15 @@ class SamlProxyController extends Controller
             ));
 
             return $this->render('unrecoverableError');
+        }
+
+        $authenticatedNameId = $assertion->getNameId();
+        if ($stateHandler->getSubject() !== $authenticatedNameId['Value']) {
+            return $this->renderSamlResponse(
+                'recoverableError',
+                $provider->getStateHandler(),
+                $this->createAuthnFailedResponse($provider)
+            );
         }
 
         $logger->notice('Creating Response for original request "%s" based on response "%s"');
@@ -240,10 +259,45 @@ class SamlProxyController extends Controller
     }
 
     /**
+     * Response that indicates that an error occurred in the responder (the gateway). Used to indicate that we could
+     * not process the response we received from the upstream GSSP
+     *
      * @param Provider $provider
      * @return SAML2_Response
      */
     private function createResponseFailureResponse(Provider $provider)
+    {
+        $response = $this->createResponse($provider);
+        $response->setStatus(['Code' => SAML2_Const::STATUS_RESPONDER]);
+
+        return $response;
+    }
+
+    /**
+     * Response that indicates that the authentication could not be performed correctly. In this context it means
+     * that the upstream GSSP did not responsd with the same NameID as we request to authenticate in the AuthnRequest
+     *
+     * @param Provider $provider
+     * @return SAML2_Response
+     */
+    private function createAuthnFailedResponse(Provider $provider)
+    {
+        $response = $this->createResponse($provider);
+        $response->setStatus([
+            'Code'    => SAML2_Const::STATUS_RESPONDER,
+            'SubCode' => SAML2_Const::STATUS_AUTHN_FAILED
+        ]);
+
+        return $response;
+    }
+
+    /**
+     * Creates a standard response with default status Code (success)
+     *
+     * @param Provider $provider
+     * @return SAML2_Response
+     */
+    private function createResponse(Provider $provider)
     {
         $serviceProvider = $this->getServiceProvider($provider->getStateHandler()->getRequestServiceProvider());
 
@@ -252,7 +306,6 @@ class SamlProxyController extends Controller
         $response->setIssuer($provider->getIdentityProvider()->getEntityId());
         $response->setIssueInstant((new DateTime('now'))->getTimestamp());
         $response->setInResponseTo($provider->getStateHandler()->getRequestId());
-        $response->setStatus(['Code' => SAML2_Const::STATUS_RESPONDER]);
 
         return $response;
     }

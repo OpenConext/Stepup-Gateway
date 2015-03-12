@@ -39,6 +39,25 @@ class StateHandler extends ProxyStateHandler
         $this->provider = $provider;
     }
 
+    /**
+     * @param string $subject
+     * @return $this
+     */
+    public function setSubject($subject)
+    {
+        $this->set('subject', $subject);
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSubject()
+    {
+        return $this->get('subject');
+    }
+
     public function clear()
     {
         $this->attributeBag->remove($this->provider);
