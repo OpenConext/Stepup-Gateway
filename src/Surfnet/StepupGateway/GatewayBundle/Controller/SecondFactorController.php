@@ -22,6 +22,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Surfnet\StepupGateway\GatewayBundle\Command\SendSmsChallengeCommand;
 use Surfnet\StepupGateway\GatewayBundle\Command\VerifySmsChallengeCommand;
 use Surfnet\StepupGateway\GatewayBundle\Command\VerifyYubikeyOtpCommand;
+use Surfnet\StepupGateway\GatewayBundle\Exception\RuntimeException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
@@ -66,6 +67,75 @@ class SecondFactorController extends Controller
 
         $route = 'gateway_verify_second_factor_' . strtolower($secondFactor->secondFactorType);
         return $this->redirect($this->generateUrl($route));
+    }
+
+    public function verifyTiqrSecondFactorAction()
+    {
+        $logger = $this->get('logger');
+        $logger->info('Received request to verify Tiqr Second Factor');
+
+        $selectedSecondFactor = $this->getResponseContext()->getSelectedSecondFactor();
+        if (!$selectedSecondFactor) {
+            throw new BadRequestHttpException('Cannot verify possession of an unknown second factor.');
+        }
+
+        $logger->info(sprintf(
+            'Selected Tiqr Second Factor "%s" for verfication, forwarding to Saml handling',
+            $selectedSecondFactor
+        ));
+
+        /** @var \Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorService $secondFactorService */
+        $secondFactorService = $this->get('gateway.service.second_factor_service');
+        /** @var \Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor $secondFactor */
+        $secondFactor = $secondFactorService->findByUuid($selectedSecondFactor);
+        if (!$secondFactor) {
+            $logger->critical(
+                'Requested verification of Tiqr second factor "%s", however that Second Factor no longer exists',
+                $selectedSecondFactor
+            );
+
+            throw new RuntimeException('Verification of selected second factor that no longer exists');
+        }
+
+        return $this->forward(
+            'SurfnetStepupGatewaySamlStepupProviderBundle:SamlProxy:sendSecondFactorVerificationAuthnRequest',
+            [
+                'provider' => 'tiqr',
+                'subjectNameId' => $secondFactor->secondFactorIdentifier
+            ]
+        );
+    }
+
+    public function tiqrSecondFactorVerifiedAction()
+    {
+        $logger = $this->get('logger');
+        $context = $this->getResponseContext();
+
+        $logger->info('Attempting to mark Tiqr Second Factor as verified');
+
+        $selectedSecondFactor = $context->getSelectedSecondFactor();
+        if (!$selectedSecondFactor) {
+            throw new BadRequestHttpException('Cannot verify possession of an unknown second factor.');
+        }
+
+        /** @var \Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor $secondFactor */
+        $secondFactor = $this->get('gateway.service.second_factor_service')->findByUuid($selectedSecondFactor);
+        if (!$secondFactor) {
+            $logger->critical(
+                'Verification of Tiqr Second Factor "%s" succeeded, however that Second Factor no longer exists',
+                $selectedSecondFactor
+            );
+
+            throw new RuntimeException('Verification of selected second factor that no longer exists');
+        }
+
+        $context->markSecondFactorVerified();
+        $logger->info(sprintf(
+            'Marked Tiqr Second Factor "%s" as verified, forwarding to Saml Proxy to respond',
+            $selectedSecondFactor
+        ));
+
+        return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:respond');
     }
 
     /**

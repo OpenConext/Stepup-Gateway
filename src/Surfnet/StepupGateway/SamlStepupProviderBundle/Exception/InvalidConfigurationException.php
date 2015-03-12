@@ -16,28 +16,10 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupGateway\GatewayBundle\Service;
+namespace Surfnet\StepupGateway\SamlStepupProviderBundle\Exception;
 
-use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactorRepository;
+use LogicException;
 
-class SecondFactorService
+class InvalidConfigurationException extends LogicException
 {
-    /**
-     * @var SecondFactorRepository
-     */
-    private $repository;
-
-    public function __construct(SecondFactorRepository $repository)
-    {
-        $this->repository = $repository;
-    }
-
-    /**
-     * @param $uuid
-     * @return null|\Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor
-     */
-    public function findByUuid($uuid)
-    {
-        return $this->repository->findOneBySecondFactorId($uuid);
-    }
 }

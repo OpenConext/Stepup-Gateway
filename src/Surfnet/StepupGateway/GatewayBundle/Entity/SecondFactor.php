@@ -29,6 +29,7 @@ class SecondFactor
 {
     private static $loaLevelTypeMap = [
         'sms' => 2,
+        'tiqr' => 2,
         'yubikey' => 3,
     ];
 
@@ -71,7 +72,7 @@ class SecondFactor
     /**
      * @var string
      *
-     * @ORM\Column(length=100)
+     * @ORM\Column(length=255)
      */
     public $secondFactorIdentifier;
 

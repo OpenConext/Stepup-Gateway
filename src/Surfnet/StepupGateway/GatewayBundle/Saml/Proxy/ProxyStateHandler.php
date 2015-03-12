@@ -231,7 +231,7 @@ class ProxyStateHandler
      * @param string $key
      * @param mixed $value Any scalar
      */
-    private function set($key, $value)
+    protected function set($key, $value)
     {
         $this->session->set(self::SESSION_PATH . $key, $value);
     }
@@ -240,7 +240,7 @@ class ProxyStateHandler
      * @param string $key
      * @return mixed|null Any scalar
      */
-    private function get($key)
+    protected function get($key)
     {
         return $this->session->get(self::SESSION_PATH . $key);
     }

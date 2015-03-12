@@ -1,3 +1,7 @@
+surfnet_stepup_gateway_saml_stepup_provider:
+    resource: "@SurfnetStepupGatewaySamlStepupProviderBundle/Resources/config/routing.yml"
+    prefix:   /
+
 surfnet_stepup_gateway_gateway:
     resource: "@SurfnetStepupGatewayGatewayBundle/Resources/config/routing.yml"
     prefix:   /

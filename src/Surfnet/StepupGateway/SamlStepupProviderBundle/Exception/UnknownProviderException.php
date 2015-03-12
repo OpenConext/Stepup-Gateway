@@ -16,28 +16,18 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupGateway\GatewayBundle\Service;
+namespace Surfnet\StepupGateway\SamlStepupProviderBundle\Exception;
 
-use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactorRepository;
+use RuntimeException;
 
-class SecondFactorService
+class UnknownProviderException extends RuntimeException
 {
-    /**
-     * @var SecondFactorRepository
-     */
-    private $repository;
-
-    public function __construct(SecondFactorRepository $repository)
+    public static function create($unknownProvider, array $knownProviders)
     {
-        $this->repository = $repository;
-    }
-
-    /**
-     * @param $uuid
-     * @return null|\Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor
-     */
-    public function findByUuid($uuid)
-    {
-        return $this->repository->findOneBySecondFactorId($uuid);
+        return new static(sprintf(
+            'Unknown Generic SAML Stepup Provider requested "%s", known providers: "%s"',
+            is_object($unknownProvider) ? '(object)' . get_class($unknownProvider) : $unknownProvider,
+            implode('", "', $knownProviders)
+        ));
     }
 }

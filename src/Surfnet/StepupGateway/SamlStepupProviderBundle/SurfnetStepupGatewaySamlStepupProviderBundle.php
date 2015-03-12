@@ -16,28 +16,16 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupGateway\GatewayBundle\Service;
+namespace Surfnet\StepupGateway\SamlStepupProviderBundle;
 
-use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactorRepository;
+use Surfnet\StepupGateway\SamlStepupProviderBundle\DependencyInjection\Compiler\StateHandlerSessionPass;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-class SecondFactorService
+class SurfnetStepupGatewaySamlStepupProviderBundle extends Bundle
 {
-    /**
-     * @var SecondFactorRepository
-     */
-    private $repository;
-
-    public function __construct(SecondFactorRepository $repository)
+    public function build(ContainerBuilder $container)
     {
-        $this->repository = $repository;
-    }
-
-    /**
-     * @param $uuid
-     * @return null|\Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor
-     */
-    public function findByUuid($uuid)
-    {
-        return $this->repository->findOneBySecondFactorId($uuid);
+        $container->addCompilerPass(new StateHandlerSessionPass());
     }
 }

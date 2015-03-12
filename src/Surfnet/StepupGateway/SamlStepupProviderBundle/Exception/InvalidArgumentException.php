@@ -16,28 +16,21 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupGateway\GatewayBundle\Service;
+namespace Surfnet\StepupGateway\SamlStepupProviderBundle\Exception;
 
-use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactorRepository;
+use InvalidArgumentException as CoreInvalidArgumentException;
 
-class SecondFactorService
+class InvalidArgumentException extends CoreInvalidArgumentException
 {
-    /**
-     * @var SecondFactorRepository
-     */
-    private $repository;
-
-    public function __construct(SecondFactorRepository $repository)
+    public static function invalidType($expectedType, $parameter, $value)
     {
-        $this->repository = $repository;
-    }
-
-    /**
-     * @param $uuid
-     * @return null|\Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor
-     */
-    public function findByUuid($uuid)
-    {
-        return $this->repository->findOneBySecondFactorId($uuid);
+        return new self(
+            sprintf(
+                'Invalid Argument, parameter "%s" should be of type "%s", "%s" given',
+                $parameter,
+                $expectedType,
+                is_object($value) ? get_class($value) : gettype($value)
+            )
+        );
     }
 }

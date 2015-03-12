@@ -1,0 +1,23 @@
+services:
+    gssp.provider_repository:
+        class: Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\ProviderRepository
+
+    gssp.connected_service_providers:
+        class: Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\ConnectedServiceProviders
+        arguments:
+            - @saml.entity_repository
+            - []
+
+    gssp.session:
+        class: Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag
+        factory: ['@session', 'getBag']
+        arguments: ['gssp']
+
+    gssp.session.namespaced_attribute_bag:
+        public: false
+        class: Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag
+        arguments:
+            - '__gssp__'
+            - '/'
+        calls:
+            - [setName, ['gssp']]
