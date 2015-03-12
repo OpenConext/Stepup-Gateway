@@ -64,8 +64,55 @@ class SecondFactorController extends Controller
 
         $context->saveSelectedSecondFactor($secondFactor->secondFactorId);
 
-        $route = 'gateway_verify_second_factor_' . strtolower($secondFactor->secondFactorType);
+        $route = 'gateway_verify_second_factor_tiqr';// . strtolower($secondFactor->secondFactorType);
         return $this->redirect($this->generateUrl($route));
+    }
+
+    public function verifyTiqrSecondFactorAction()
+    {
+        $logger = $this->get('logger');
+        $logger->info('Received request to verify Tiqr Second Factor');
+
+        $selectedSecondFactor = $this->getResponseContext()->getSelectedSecondFactor();
+
+        if (!$selectedSecondFactor) {
+            throw new BadRequestHttpException('Cannot verify possession of an unknown second factor.');
+        }
+
+        $logger->info(sprintf(
+            'Selected Tiqr Second Factor "%s" for verfication, forwarding to Saml handling',
+            $selectedSecondFactor
+        ));
+
+        return $this->forward(
+            'SurfnetStepupGatewaySamlStepupProviderBundle:SamlProxy:sendSecondFactorVerificationAuthnRequest',
+            [
+                'provider' => 'tiqr',
+                'subjectNameId' => $selectedSecondFactor
+            ]
+        );
+    }
+
+    public function tiqrSecondFactorVerifiedAction()
+    {
+        $logger = $this->get('logger');
+        $context = $this->getResponseContext();
+
+        $logger->info('Attempting to mark Tiqr Second Factor as verified');
+
+        $selectedSecondFactor = $context->getSelectedSecondFactor();
+
+        if (!$selectedSecondFactor) {
+            throw new BadRequestHttpException('Cannot verify possession of an unknown second factor.');
+        }
+
+        $context->markSecondFactorVerified();
+        $logger->info(sprintf(
+            'Marked Tiqr Second Factor "%s" as verified, forwarding to Saml Proxy to respond',
+            $selectedSecondFactor
+        ));
+
+        return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:respond');
     }
 
     /**

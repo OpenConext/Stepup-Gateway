@@ -32,3 +32,8 @@ gateway_verify_second_factor_sms_verify_challenge:
     path:     /verify-second-factor/sms/verify-challenge
     methods:  [GET,POST]
     defaults: { _controller: SurfnetStepupGatewayGatewayBundle:SecondFactor:verifySmsSecondFactorChallenge }
+
+gateway_verify_second_factor_tiqr:
+    path:     /verify-second-factor/tiqr
+    methods:  [GET]
+    defaults: { _controller: SurfnetStepupGatewayGatewayBundle:SecondFactor:verifyTiqrSecondFactor }

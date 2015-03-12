@@ -36,6 +36,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.NPathComplexity)
  *
  * Should be refactored, {@see https://www.pivotaltracker.com/story/show/90169776}
  */
@@ -121,6 +122,36 @@ class SamlProxyController extends Controller
         return $redirectBinding->createRedirectResponseFor($proxyRequest);
     }
 
+    public function sendSecondFactorVerificationAuthnRequestAction($provider, $subjectNameId)
+    {
+        $provider = $this->getProvider($provider);
+        $stateHandler = $provider->getStateHandler();
+
+        $authnRequest = AuthnRequestFactory::createNewRequest(
+            $provider->getServiceProvider(),
+            $provider->getRemoteIdentityProvider()
+        );
+        $authnRequest->setSubject($subjectNameId);
+
+        $stateHandler
+            ->setGatewayRequestId($authnRequest->getRequestId())
+            ->setSubject($subjectNameId)
+            ->markRequestAsSecondFactorVerification();
+
+        $this->get('logger')->notice(sprintf(
+            'Sending AuthnRequest to verify Second Factor with request ID: "%s" to GSSP "%s" at "%s" for subject "%s"',
+            $authnRequest->getRequestId(),
+            $provider->getName(),
+            $provider->getRemoteIdentityProvider()->getSsoUrl(),
+            $subjectNameId
+        ));
+
+        /** @var \Surfnet\SamlBundle\Http\RedirectBinding $redirectBinding */
+        $redirectBinding = $this->get('surfnet_saml.http.redirect_binding');
+
+        return $redirectBinding->createRedirectResponseFor($authnRequest);
+    }
+
     /**
      * @param string  $provider
      * @param Request $httpRequest
@@ -133,7 +164,8 @@ class SamlProxyController extends Controller
         /** @var \Monolog\Logger $logger */
         $logger = $this->get('logger');
 
-        $logger->notice('Received SAMLResponse, attempting to process for Proxy Response');
+        $action = $stateHandler->hasSubject() ? 'Second Factor Verification' : 'Proxy Response';
+        $logger->notice(sprintf('Received SAMLResponse, attempting to process for %s', $action));
 
         try {
             /** @var \SAML2_Assertion $assertion */
@@ -147,7 +179,7 @@ class SamlProxyController extends Controller
 
             $response = $this->createResponseFailureResponse($provider);
 
-            return $this->renderSamlResponse('unprocessableResponse', $provider->getStateHandler(), $response);
+            return $this->renderSamlResponse('unprocessableResponse', $stateHandler, $response);
         }
 
         $adaptedAssertion = new AssertionAdapter($assertion);
@@ -168,30 +200,38 @@ class SamlProxyController extends Controller
             $logger->critical(sprintf(
                 'Requested Subject NameID "%s" and Response NameID "%s" do not match',
                 $stateHandler->getSubject(),
-                $authenticatedNameId
+                $authenticatedNameId['Value']
             ));
 
             return $this->renderSamlResponse(
                 'recoverableError',
-                $provider->getStateHandler(),
+                $stateHandler,
                 $this->createAuthnFailedResponse($provider)
             );
+        }
+
+        if ($stateHandler->secondFactorVerificationRequested()) {
+            $logger->notice(
+                'Second Factor verification was requested and was successful, forwarding to SecondFactor handling'
+            );
+
+            return $this->forward('SurfnetStepupGatewayGatewayBundle:SecondFactor:tiqrSecondFactorVerified');
         }
 
         $logger->notice('Creating Response for original request "%s" based on response "%s"');
 
         /** @var \Surfnet\StepupGateway\SamlStepupProviderBundle\Saml\ProxyResponseFactory $proxyResponseFactory */
-        $targetServiceProvider = $this->getServiceProvider($provider->getStateHandler()->getRequestServiceProvider());
+        $targetServiceProvider = $this->getServiceProvider($stateHandler->getRequestServiceProvider());
         $proxyResponseFactory = $this->get('gssp.provider.' . $provider->getName() . '.response_proxy');
         $response             = $proxyResponseFactory->createProxyResponse($assertion, $targetServiceProvider);
 
         $logger->notice(sprintf(
             'Responding to request "%s" with response based on response from the remote IdP with response "%s"',
-            $provider->getStateHandler()->getRequestId(),
+            $stateHandler->getRequestId(),
             $response->getId()
         ));
 
-        return $this->renderSamlResponse('consumeAssertion', $provider->getStateHandler(), $response);
+        return $this->renderSamlResponse('consumeAssertion', $stateHandler, $response);
     }
 
     /**
