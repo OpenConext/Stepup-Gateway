@@ -1,9 +1,9 @@
 {# Store hidden translation keys here so they will be picked up by JMSTranslationBundle #}
 
 {# Yubikey OTP verification controller action #}
-{{ 'gateway.form.verify_yubikey.otp_verification_failed'|trans }}
-{{ 'gateway.form.verify_yubikey.public_id_mismatch'|trans }}
+{{ 'gateway.form.verify_yubikey.otp_verification_failed'|trans({}, 'validators') }}
+{{ 'gateway.form.verify_yubikey.public_id_mismatch'|trans({}, 'validators') }}
 
 {# SMS verification #}
-{{ 'gateway.form.send_sms_challenge.sms_sending_failed'|trans }}
-{{ 'gateway.form.send_sms_challenge.sms_challenge_incorrect'|trans }}
+{{ 'gateway.form.send_sms_challenge.sms_sending_failed'|trans({}, 'validators') }}
+{{ 'gateway.form.send_sms_challenge.sms_challenge_incorrect'|trans({}, 'validators') }}
