@@ -18,32 +18,26 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Service;
 
-use Surfnet\StepupGateway\GatewayBundle\Command\VerifySmsChallengeCommand;
-use Surfnet\StepupGateway\GatewayBundle\Command\VerifyYubikeyOtpCommand;
+use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactorRepository;
 
 class SecondFactorService
 {
-    private $smsService;
-    private $yubikeyService;
+    /**
+     * @var SecondFactorRepository
+     */
+    private $repository;
 
-    public function __construct($yubikeyService, $smsService)
+    public function __construct(SecondFactorRepository $repository)
     {
-        $this->yubikeyService = $yubikeyService;
-        $this->smsService     = $smsService;
+        $this->repository = $repository;
     }
 
-    public function sendSmsOtp()
+    /**
+     * @param $uuid
+     * @return null|\Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor
+     */
+    public function findByUuid($uuid)
     {
-
-    }
-
-    public function verifySmsOtp(VerifySmsChallengeCommand $command)
-    {
-
-    }
-
-    public function verifyYubikeyOtp(VerifyYubikeyOtpCommand $command)
-    {
-
+        return $this->repository->findOneBySecondFactorId($uuid);
     }
 }

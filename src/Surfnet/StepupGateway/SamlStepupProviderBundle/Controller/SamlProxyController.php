@@ -203,6 +203,12 @@ class SamlProxyController extends Controller
                 $authenticatedNameId['Value']
             ));
 
+            if ($stateHandler->secondFactorVerificationRequested()) {
+                // the error should go to the original requesting service provider
+                $targetServiceProvider = $this->get('gateway.proxy.response_context')->getServiceProvider();
+                $stateHandler->setRequestServiceProvider($targetServiceProvider->getEntityId());
+            }
+
             return $this->renderSamlResponse(
                 'recoverableError',
                 $stateHandler,

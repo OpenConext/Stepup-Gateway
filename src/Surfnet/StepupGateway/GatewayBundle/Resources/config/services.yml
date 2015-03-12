@@ -22,6 +22,11 @@ services:
             - @saml.entity_repository
             - @gateway.proxy.state_handler
 
+    gateway.service.second_factor_service:
+        class: Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorService
+        arguments:
+            - @gateway.repository.second_factor
+
     gateway.service.response_proxy:
         class: Surfnet\StepupGateway\GatewayBundle\Service\ProxyResponseService
         arguments:
