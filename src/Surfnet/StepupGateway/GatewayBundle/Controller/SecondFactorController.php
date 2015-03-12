@@ -64,7 +64,7 @@ class SecondFactorController extends Controller
 
         $context->saveSelectedSecondFactor($secondFactor->secondFactorId);
 
-        $route = 'gateway_verify_second_factor_tiqr';// . strtolower($secondFactor->secondFactorType);
+        $route = 'gateway_verify_second_factor_' . strtolower($secondFactor->secondFactorType);
         return $this->redirect($this->generateUrl($route));
     }
 
