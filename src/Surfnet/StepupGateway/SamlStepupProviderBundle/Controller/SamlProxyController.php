@@ -77,7 +77,12 @@ class SamlProxyController extends Controller
          */
         $connectedServiceProviders = $this->get('gssp.connected_service_providers');
         if (!$connectedServiceProviders->isConnected($originalRequest->getServiceProvider())) {
-            $logger->warn('Received AuthnRequest from SP "%s", while SP is not allowed to use this for SSO');
+            $logger->warn(
+                sprintf(
+                    'Received AuthnRequest from SP "%s", while SP is not allowed to use this for SSO',
+                    $originalRequest->getServiceProvider()
+                )
+            );
 
             throw new AccessDeniedHttpException();
         }
