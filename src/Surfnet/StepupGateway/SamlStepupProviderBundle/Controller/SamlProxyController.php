@@ -158,7 +158,14 @@ class SamlProxyController extends Controller
         }
 
         $authenticatedNameId = $assertion->getNameId();
-        if ($stateHandler->getSubject() !== $authenticatedNameId['Value']) {
+        $isSubjectRequested = $stateHandler->hasSubject();
+        if ($isSubjectRequested && ($stateHandler->getSubject() !== $authenticatedNameId['Value'])) {
+            $logger->critical(sprintf(
+                'Requested Subject NameID "%s" and Response NameID "%s" do not match',
+                $stateHandler->getSubject(),
+                $authenticatedNameId
+            ));
+
             return $this->renderSamlResponse(
                 'recoverableError',
                 $provider->getStateHandler(),

@@ -58,6 +58,29 @@ class StateHandler extends ProxyStateHandler
         return $this->get('subject');
     }
 
+    /**
+     * @return bool
+     */
+    public function hasSubject()
+    {
+        return (bool) $this->getSubject();
+    }
+
+    public function markRequestAsSecondFactorVerification()
+    {
+        $this->set('is_second_factor_verification', true);
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function secondFactorVerificationRequested()
+    {
+        return (bool) $this->get('is_second_factor_verification');
+    }
+
     public function clear()
     {
         $this->attributeBag->remove($this->provider);
