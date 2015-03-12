@@ -22,6 +22,6 @@ surfnet_stepup_gateway_saml_stepup_provider:
                     public_key: %gssp_tiqr_metadata_publickey%
                     private_key: %gssp_tiqr_metadata_privatekey%
             remote:
-                entity_id: %gssp_tiqr_remote_entityid%
-                sso_url: %gssp_tiqr_remote_ssourl%
+                entity_id: %gssp_tiqr_remote_entity_id%
+                sso_url: %gssp_tiqr_remote_sso_url%
                 certificate: %gssp_tiqr_remote_certificate%
