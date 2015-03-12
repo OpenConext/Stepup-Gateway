@@ -34,7 +34,7 @@
         "surfnet/yubikey-api-client-bundle": "~1.2",
         "surfnet/stepup-bundle": "dev-develop",
         "simplesamlphp/saml2": "dev-master",
-        "surfnet/stepup-saml-bundle": "dev-feature/update-saml2-lib"
+        "surfnet/stepup-saml-bundle": "dev-feature/add-request-nameid-support"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3",
