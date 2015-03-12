@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "ab7580afd986d4b255bb2db9440167f7",
+    "hash": "6932fb44e2c5eb3dd2d3bc3cf4db6e88",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -2135,16 +2135,16 @@
         },
         {
             "name": "surfnet/stepup-saml-bundle",
-            "version": "dev-feature/add-request-nameid-support",
+            "version": "dev-develop",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SURFnet/Stepup-saml-bundle.git",
-                "reference": "084251d68215efb9a2f9aabd19ee531b4d08dfb8"
+                "reference": "50cab10b59172fa2fed701be3824f81f4e0fe69f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SURFnet/Stepup-saml-bundle/zipball/084251d68215efb9a2f9aabd19ee531b4d08dfb8",
-                "reference": "084251d68215efb9a2f9aabd19ee531b4d08dfb8",
+                "url": "https://api.github.com/repos/SURFnet/Stepup-saml-bundle/zipball/50cab10b59172fa2fed701be3824f81f4e0fe69f",
+                "reference": "50cab10b59172fa2fed701be3824f81f4e0fe69f",
                 "shasum": ""
             },
             "require": {
@@ -2177,7 +2177,7 @@
                 "stepup",
                 "surfnet"
             ],
-            "time": "2015-03-11 14:59:46"
+            "time": "2015-03-12 11:07:50"
         },
         {
             "name": "surfnet/yubikey-api-client-bundle",
@@ -4477,8 +4477,8 @@
     "stability-flags": {
         "doctrine/migrations": 20,
         "mopa/bootstrap-bundle": 10,
-        "surfnet/stepup-bundle": 20,
         "simplesamlphp/saml2": 20,
+        "surfnet/stepup-bundle": 20,
         "surfnet/stepup-saml-bundle": 20
     },
     "prefer-stable": false,
