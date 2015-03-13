@@ -18,11 +18,8 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\DependencyInjection;
 
-use Surfnet\StepupGateway\GatewayBundle\Value\Loa;
-use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
-use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\Loader;
 
@@ -30,28 +27,8 @@ class SurfnetStepupGatewayGatewayExtension extends Extension
 {
     public function load(array $configs, ContainerBuilder $container)
     {
-        $configuration = new Configuration();
-        $config = $this->processConfiguration($configuration, $configs);
-
-        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.yml');
         $loader->load('repositories.yml');
-
-        $this->defineLoas($config['loa_definition'], $container);
-    }
-
-    private function defineLoas($loaDefinitions, ContainerBuilder $container)
-    {
-        if (!$container->hasDefinition('gateway.service.loa_resolution')) {
-            throw new InvalidConfigurationException('Required service gateway.service.loa_resolution does not exist');
-        }
-
-        $loaService = $container->getDefinition('gateway.service.loa_resolution');
-
-        $loa1 = new Definition('Surfnet\StepupGateway\GatewayBundle\Value\Loa', [Loa::LOA_1, $loaDefinitions['loa1']]);
-        $loa2 = new Definition('Surfnet\StepupGateway\GatewayBundle\Value\Loa', [Loa::LOA_2, $loaDefinitions['loa2']]);
-        $loa3 = new Definition('Surfnet\StepupGateway\GatewayBundle\Value\Loa', [Loa::LOA_3, $loaDefinitions['loa3']]);
-
-        $loaService->addArgument([$loa1, $loa2, $loa3]);
     }
 }

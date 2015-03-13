@@ -20,7 +20,7 @@ namespace Surfnet\StepupGateway\GatewayBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityRepository;
-use Surfnet\StepupGateway\GatewayBundle\Value\Loa;
+use Surfnet\StepupBundle\Value\Loa;
 
 class SecondFactorRepository extends EntityRepository
 {

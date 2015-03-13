@@ -4,9 +4,6 @@ services:
         arguments:
             - @gateway.repository.saml_entity
 
-    gateway.service.loa_resolution:
-        class: Surfnet\StepupGateway\GatewayBundle\Service\LoaResolutionService
-
     gateway.proxy.state_handler:
         class: Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler
         arguments:
@@ -44,7 +41,7 @@ services:
     gateway.service.stepup_authentication:
         class: Surfnet\StepupGateway\GatewayBundle\Service\StepUpAuthenticationService
         arguments:
-            - @gateway.service.loa_resolution
+            - @surfnet_stepup.service.loa_resolution
             - @saml.entity_repository
             - @gateway.repository.second_factor
             - @surfnet_gateway_api.service.yubikey

@@ -19,7 +19,7 @@
 namespace Surfnet\StepupGateway\GatewayBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Surfnet\StepupGateway\GatewayBundle\Value\Loa;
+use Surfnet\StepupBundle\Value\Loa;
 
 /**
  * @ORM\Entity(repositoryClass="Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactorRepository")

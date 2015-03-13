@@ -140,6 +140,10 @@ surfnet_yubikey_api_client:
 surfnet_stepup:
     logging:
         application_name: stepup-gateway
+    loa_definition:
+        loa1: %gateway_loa_loa1%
+        loa2: %gateway_loa_loa2%
+        loa3: %gateway_loa_loa3%
 
 monolog:
     handlers:
@@ -185,12 +189,6 @@ surfnet_saml:
             entity_id: %saml_remote_idp_entity_id%
             sso_url: %saml_remote_idp_sso_url%
             certificate: %saml_remote_idp_certificate%
-
-surfnet_stepup_gateway_gateway:
-    loa_definition:
-        loa1: %gateway_loa_loa1%
-        loa2: %gateway_loa_loa2%
-        loa3: %gateway_loa_loa3%
 
 jms_translation:
     locales: %locales%
