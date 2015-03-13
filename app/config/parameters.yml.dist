@@ -51,3 +51,4 @@ parameters:
     gateway_loa_loa2: https://gateway.tld/authentication/loa2
     gateway_loa_loa3: https://gateway.tld/authentication/loa3
 
+    asset_version: 1
