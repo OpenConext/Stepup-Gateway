@@ -24,6 +24,7 @@ use Surfnet\SamlBundle\Entity\IdentityProvider;
 use Surfnet\SamlBundle\Entity\ServiceProvider;
 use Surfnet\SamlBundle\SAML2\Attribute\AttributeDefinition;
 use Surfnet\SamlBundle\SAML2\Attribute\AttributeDictionary;
+use Surfnet\StepupBundle\Value\Loa;
 use Surfnet\StepupGateway\GatewayBundle\Saml\AssertionSigningService;
 use Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler;
 
@@ -62,19 +63,25 @@ class ProxyResponseService
      */
     private $assertionSigningService;
 
+    /**
+     * @var \Surfnet\StepupBundle\Value\Loa
+     */
+    private $intrinsicLoa;
+
     public function __construct(
         IdentityProvider $hostedIdentityProvider,
         ProxyStateHandler $proxyStateHandler,
         AssertionSigningService $assertionSigningService,
         AttributeDictionary $attributeDictionary,
-        AttributeDefinition $eptiAttribute
+        AttributeDefinition $eptiAttribute,
+        Loa $intrinsicLoa
     ) {
         $this->hostedIdentityProvider    = $hostedIdentityProvider;
         $this->proxyStateHandler         = $proxyStateHandler;
         $this->assertionSigningService   = $assertionSigningService;
         $this->attributeDictionary       = $attributeDictionary;
         $this->eptiAttribute             = $eptiAttribute;
-
+        $this->intrinsicLoa              = $intrinsicLoa;
         $this->currentTime = new \DateTime('now', new \DateTimeZone('UTC'));
     }
 
@@ -176,9 +183,7 @@ class ProxyResponseService
     private function addAuthenticationStatementTo(SAML2_Assertion $newAssertion, SAML2_Assertion $assertion)
     {
         $newAssertion->setAuthnInstant($assertion->getAuthnInstant());
-
-        // @see https://www.pivotaltracker.com/story/show/79506808
-        $newAssertion->setAuthnContextClassRef('https://gw-dev.stepup.coin.surf.net/assurance/LOA1');
+        $newAssertion->setAuthnContextClassRef((string) $this->intrinsicLoa);
 
         $authority = $assertion->getAuthenticatingAuthority();
         $newAssertion->setAuthenticatingAuthority(

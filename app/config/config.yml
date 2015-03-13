@@ -145,6 +145,9 @@ surfnet_stepup:
         loa2: %gateway_loa_loa2%
         loa3: %gateway_loa_loa3%
 
+surfnet_stepup_gateway_gateway:
+    intrinsic_loa: %gateway_loa_loa1%
+
 monolog:
     handlers:
         main:
