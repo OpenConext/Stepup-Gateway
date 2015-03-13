@@ -64,7 +64,7 @@ class GatewayController extends Controller
 
         // check if the requested loa is supported
         $requiredLoa = $originalRequest->getAuthenticationContextClassRef();
-        if ($requiredLoa && !$this->get('gateway.service.loa_resolution')->hasLoa($requiredLoa)) {
+        if ($requiredLoa && !$this->get('surfnet_stepup.service.loa_resolution')->hasLoa($requiredLoa)) {
             $logger->info(sprintf(
                 'Requested required LOA "%s" does not exist, sending response with status Requester Error',
                 $requiredLoa

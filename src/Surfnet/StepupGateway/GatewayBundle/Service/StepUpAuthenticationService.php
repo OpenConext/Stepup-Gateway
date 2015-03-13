@@ -20,12 +20,11 @@ namespace Surfnet\StepupGateway\GatewayBundle\Service;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Surfnet\SamlBundle\Entity\ServiceProvider;
+use Surfnet\StepupBundle\Service\LoaResolutionService;
 use Surfnet\StepupGateway\ApiBundle\Dto\Otp as ApiOtp;
 use Surfnet\StepupGateway\ApiBundle\Dto\Requester;
-use Surfnet\StepupGateway\ApiBundle\Service\SmsService;
 use Surfnet\StepupGateway\ApiBundle\Service\YubikeyService;
 use Surfnet\StepupGateway\GatewayBundle\Command\SendSmsChallengeCommand;
-use Surfnet\StepupGateway\GatewayBundle\Command\SendSmsCommand;
 use Surfnet\StepupGateway\GatewayBundle\Command\VerifySmsChallengeCommand;
 use Surfnet\StepupGateway\GatewayBundle\Command\VerifyYubikeyOtpCommand;
 use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor;
@@ -39,7 +38,7 @@ use Surfnet\YubikeyApiClient\Otp;
 class StepUpAuthenticationService
 {
     /**
-     * @var LoaResolutionService
+     * @var \Surfnet\StepupBundle\Service\LoaResolutionService
      */
     private $loaResolutionService;
 
@@ -113,7 +112,7 @@ class StepUpAuthenticationService
 
     /**
      * @param ArrayCollection $loaCandidates
-     * @return null|\Surfnet\StepupGateway\GatewayBundle\Value\Loa
+     * @return null|\Surfnet\StepupBundle\Value\Loa
      */
     private function resolveHighestLoa(ArrayCollection $loaCandidates)
     {
@@ -129,7 +128,7 @@ class StepUpAuthenticationService
             return null;
         }
 
-        /** @var \Surfnet\StepupGateway\GatewayBundle\Value\Loa $highest */
+        /** @var \Surfnet\StepupBundle\Value\Loa $highest */
         $highest = $actualLoas->first();
         foreach ($actualLoas as $loa) {
             // if the current highest loa cannot satisfy the next loa, that must be of a higher level...
