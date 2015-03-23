@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "6932fb44e2c5eb3dd2d3bc3cf4db6e88",
+    "hash": "1d9706f0f5491c1e540c35e9d39a0243",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -2086,16 +2086,16 @@
         },
         {
             "name": "surfnet/stepup-bundle",
-            "version": "dev-develop",
+            "version": "dev-feature/telephone-numbers-vo",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SURFnet/Stepup-bundle.git",
-                "reference": "6925b078772a8364655206299164e3d336c4d469"
+                "reference": "f970fefb7551b02d4f51f514b973583c7473290f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SURFnet/Stepup-bundle/zipball/6925b078772a8364655206299164e3d336c4d469",
-                "reference": "6925b078772a8364655206299164e3d336c4d469",
+                "url": "https://api.github.com/repos/SURFnet/Stepup-bundle/zipball/f970fefb7551b02d4f51f514b973583c7473290f",
+                "reference": "f970fefb7551b02d4f51f514b973583c7473290f",
                 "shasum": ""
             },
             "require": {
@@ -2107,6 +2107,7 @@
                 "sensio/framework-extra-bundle": "~3",
                 "symfony/config": "~2",
                 "symfony/dependency-injection": "~2",
+                "symfony/form": "~2",
                 "symfony/http-kernel": "~2",
                 "symfony/validator": "~2"
             },
@@ -2131,7 +2132,7 @@
                 "suaas",
                 "surfnet"
             ],
-            "time": "2015-03-13 10:49:44"
+            "time": "2015-03-17 14:53:07"
         },
         {
             "name": "surfnet/stepup-saml-bundle",
