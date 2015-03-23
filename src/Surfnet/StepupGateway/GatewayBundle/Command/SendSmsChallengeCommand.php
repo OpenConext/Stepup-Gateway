@@ -18,7 +18,6 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Command;
 
-use Surfnet\StepupRa\RaBundle\VettingProcedure;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class SendSmsChallengeCommand

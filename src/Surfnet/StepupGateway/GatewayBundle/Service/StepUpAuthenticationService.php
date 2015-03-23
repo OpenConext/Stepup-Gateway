@@ -21,6 +21,7 @@ namespace Surfnet\StepupGateway\GatewayBundle\Service;
 use Doctrine\Common\Collections\ArrayCollection;
 use Surfnet\SamlBundle\Entity\ServiceProvider;
 use Surfnet\StepupBundle\Service\LoaResolutionService;
+use Surfnet\StepupBundle\Value\PhoneNumber\InternationalPhoneNumber;
 use Surfnet\StepupGateway\ApiBundle\Dto\Otp as ApiOtp;
 use Surfnet\StepupGateway\ApiBundle\Dto\Requester;
 use Surfnet\StepupGateway\ApiBundle\Service\YubikeyService;
@@ -208,7 +209,11 @@ class StepUpAuthenticationService
         /** @var SecondFactor $secondFactor */
         $secondFactor = $this->secondFactorRepository->findOneBySecondFactorId($command->secondFactorId);
 
-        $command->phoneNumber = $secondFactor->secondFactorIdentifier;
+        $phoneNumber = InternationalPhoneNumber::fromStringFormat(
+            $secondFactor->secondFactorIdentifier
+        );
+
+        $command->phoneNumber = $phoneNumber->toMSISDN();
         $command->identityId = $secondFactor->identityId;
         $command->institution = $secondFactor->institution;
 
