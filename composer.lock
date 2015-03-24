@@ -2091,12 +2091,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/SURFnet/Stepup-bundle.git",
-                "reference": "0ee5031946a9108ddcdb124263a0ed0cdcf4c809"
+                "reference": "59477b5bd7ac7cfb91058feb4e532daff2c50509"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SURFnet/Stepup-bundle/zipball/0ee5031946a9108ddcdb124263a0ed0cdcf4c809",
-                "reference": "0ee5031946a9108ddcdb124263a0ed0cdcf4c809",
+                "url": "https://api.github.com/repos/SURFnet/Stepup-bundle/zipball/59477b5bd7ac7cfb91058feb4e532daff2c50509",
+                "reference": "59477b5bd7ac7cfb91058feb4e532daff2c50509",
                 "shasum": ""
             },
             "require": {
@@ -2133,7 +2133,7 @@
                 "suaas",
                 "surfnet"
             ],
-            "time": "2015-03-24 10:40:33"
+            "time": "2015-03-24 13:20:07"
         },
         {
             "name": "surfnet/stepup-saml-bundle",
