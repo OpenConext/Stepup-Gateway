@@ -19,6 +19,7 @@
 namespace Surfnet\StepupGateway\GatewayBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Surfnet\StepupBundle\Value\PhoneNumber\InternationalPhoneNumber;
 use Surfnet\StepupGateway\GatewayBundle\Command\SendSmsChallengeCommand;
 use Surfnet\StepupGateway\GatewayBundle\Command\VerifySmsChallengeCommand;
 use Surfnet\StepupGateway\GatewayBundle\Command\VerifyYubikeyOtpCommand;
@@ -203,17 +204,16 @@ class SecondFactorController extends Controller
         $command->secondFactorId = $selectedSecondFactor;
 
         $form = $this->createForm('gateway_send_sms_challenge', $command)->handleRequest($request);
+        $phoneNumber = InternationalPhoneNumber::fromStringFormat(
+            $this->getStepupService()->getSecondFactorIdentifier($selectedSecondFactor)
+        );
 
         if (!$form->isValid()) {
-            $phoneNumber = $this->getStepupService()->getSecondFactorIdentifier($selectedSecondFactor);
-
             return ['phoneNumber' => $phoneNumber, 'form' => $form->createView()];
         }
 
         if (!$this->getStepupService()->sendSmsChallenge($command)) {
             $form->addError(new FormError('gateway.form.send_sms_challenge.sms_sending_failed'));
-
-            $phoneNumber = $this->getStepupService()->getSecondFactorIdentifier($selectedSecondFactor);
 
             return ['phoneNumber' => $phoneNumber, 'form' => $form->createView()];
         }
