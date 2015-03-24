@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "1d9706f0f5491c1e540c35e9d39a0243",
+    "hash": "6932fb44e2c5eb3dd2d3bc3cf4db6e88",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -2086,16 +2086,16 @@
         },
         {
             "name": "surfnet/stepup-bundle",
-            "version": "dev-feature/telephone-numbers-vo",
+            "version": "dev-develop",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SURFnet/Stepup-bundle.git",
-                "reference": "f970fefb7551b02d4f51f514b973583c7473290f"
+                "reference": "0ee5031946a9108ddcdb124263a0ed0cdcf4c809"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SURFnet/Stepup-bundle/zipball/f970fefb7551b02d4f51f514b973583c7473290f",
-                "reference": "f970fefb7551b02d4f51f514b973583c7473290f",
+                "url": "https://api.github.com/repos/SURFnet/Stepup-bundle/zipball/0ee5031946a9108ddcdb124263a0ed0cdcf4c809",
+                "reference": "0ee5031946a9108ddcdb124263a0ed0cdcf4c809",
                 "shasum": ""
             },
             "require": {
@@ -2132,7 +2132,7 @@
                 "suaas",
                 "surfnet"
             ],
-            "time": "2015-03-17 14:53:07"
+            "time": "2015-03-24 10:40:33"
         },
         {
             "name": "surfnet/stepup-saml-bundle",
