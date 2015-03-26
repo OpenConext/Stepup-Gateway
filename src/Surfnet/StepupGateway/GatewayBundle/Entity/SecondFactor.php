@@ -20,6 +20,7 @@ namespace Surfnet\StepupGateway\GatewayBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Surfnet\StepupBundle\Value\Loa;
+use Surfnet\StepupBundle\Value\SecondFactorType;
 
 /**
  * @ORM\Entity(repositoryClass="Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactorRepository")
@@ -27,12 +28,6 @@ use Surfnet\StepupBundle\Value\Loa;
  */
 class SecondFactor
 {
-    private static $loaLevelTypeMap = [
-        'sms' => 2,
-        'tiqr' => 2,
-        'yubikey' => 3,
-    ];
-
     /**
      * @var string
      *
@@ -89,8 +84,6 @@ class SecondFactor
      */
     public function canSatisfy(Loa $loa)
     {
-        $level = self::$loaLevelTypeMap[$this->secondFactorType];
-
-        return $loa->levelIsLowerOrEqualTo($level);
+        return (new SecondFactorType($this->secondFactorType))->canSatisfy($loa);
     }
 }
