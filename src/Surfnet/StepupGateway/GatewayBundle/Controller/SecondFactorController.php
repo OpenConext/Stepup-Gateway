@@ -131,6 +131,8 @@ class SecondFactorController extends Controller
         }
 
         $context->markSecondFactorVerified();
+        $this->getAuthenticationLogger()->logSecondFactorAuthentication();
+
         $logger->info(sprintf(
             'Marked Tiqr Second Factor "%s" as verified, forwarding to Saml Proxy to respond',
             $selectedSecondFactor
@@ -180,6 +182,7 @@ class SecondFactorController extends Controller
         }
 
         $this->getResponseContext()->markSecondFactorVerified();
+        $this->getAuthenticationLogger()->logSecondFactorAuthentication();
 
         return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:respond');
     }
@@ -251,6 +254,7 @@ class SecondFactorController extends Controller
         }
 
         $this->getResponseContext()->markSecondFactorVerified();
+        $this->getAuthenticationLogger()->logSecondFactorAuthentication();
 
         return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:respond');
     }
@@ -269,5 +273,13 @@ class SecondFactorController extends Controller
     private function getResponseContext()
     {
         return $this->get('gateway.proxy.response_context');
+    }
+
+    /**
+     * @return \Surfnet\StepupGateway\GatewayBundle\Monolog\Logger\AuthenticationLogger
+     */
+    private function getAuthenticationLogger()
+    {
+        return $this->get('gateway.authentication_logger');
     }
 }

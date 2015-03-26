@@ -149,6 +149,7 @@ surfnet_stepup_gateway_gateway:
     intrinsic_loa: %gateway_loa_loa1%
 
 monolog:
+    channels: [authentication]
     handlers:
         main:
             type: group
@@ -168,6 +169,13 @@ monolog:
             type: gelf
             publisher: { hostname: %graylog_hostname% }
             formatter: surfnet_stepup.monolog.full_message_exception_gelf_message_formatter
+        authentication:
+            type: stream
+            handler: logfile
+            level: INFO
+            path: %kernel.logs_dir%/%kernel.environment%_authentication.log
+            channels: [authentication]
+            formatter: gateway.monolog.gelf_to_string_formatter
 
 surfnet_saml:
     hosted:

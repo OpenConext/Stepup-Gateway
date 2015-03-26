@@ -86,4 +86,12 @@ class SecondFactor
     {
         return (new SecondFactorType($this->secondFactorType))->canSatisfy($loa);
     }
+
+    /**
+     * @return int
+     */
+    public function getLoaLevel()
+    {
+        return (new SecondFactorType($this->secondFactorType))->getLevel();
+    }
 }
