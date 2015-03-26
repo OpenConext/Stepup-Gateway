@@ -140,12 +140,16 @@ class GatewayController extends Controller
 
         $requiredLoa = $responseContext->getRequiredLoa();
         if (!$requiredLoa) {
+            $this->get('gateway.authentication_logger')->logIntrinsicLoaAuthentication();
+
             return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:respond');
         }
 
         /** @var \Surfnet\StepupGateway\GatewayBundle\Service\StepUpAuthenticationService $stepupService */
         $stepupService = $this->get('gateway.service.stepup_authentication');
         if ($stepupService->isIntrinsicLoa($requiredLoa)) {
+            $this->get('gateway.authentication_logger')->logIntrinsicLoaAuthentication();
+
             return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:respond');
         }
 
@@ -158,12 +162,23 @@ class GatewayController extends Controller
 
         $responseContext = $this->getResponseContext();
 
+        $grantedLoa = null;
+        if ($responseContext->isSecondFactorVerified()) {
+            $secondFactor = $this->get('gateway.service.second_factor_service')->findByUuid(
+                $responseContext->getSelectedSecondFactor()
+            );
+
+            $grantedLoa = $this->get('surfnet_stepup.service.loa_resolution')->getLoaByLevel(
+                $secondFactor->getLoaLevel()
+            );
+        }
+
         /** @var \Surfnet\StepupGateway\GatewayBundle\Service\ProxyResponseService $proxyResponseService */
         $proxyResponseService = $this->get('gateway.service.response_proxy');
         $response             = $proxyResponseService->createProxyResponse(
             $responseContext->reconstituteAssertion(),
             $responseContext->getServiceProvider(),
-            $responseContext->isSecondFactorVerified() ? $responseContext->getRequiredLoa() : null
+            (string) $grantedLoa
         );
 
         $responseContext->responseSent();

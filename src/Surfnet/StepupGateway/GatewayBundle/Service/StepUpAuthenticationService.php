@@ -21,6 +21,7 @@ namespace Surfnet\StepupGateway\GatewayBundle\Service;
 use Doctrine\Common\Collections\ArrayCollection;
 use Surfnet\SamlBundle\Entity\ServiceProvider;
 use Surfnet\StepupBundle\Service\LoaResolutionService;
+use Surfnet\StepupBundle\Value\Loa;
 use Surfnet\StepupBundle\Value\PhoneNumber\InternationalPhoneNumber;
 use Surfnet\StepupGateway\ApiBundle\Dto\Otp as ApiOtp;
 use Surfnet\StepupGateway\ApiBundle\Dto\Requester;
@@ -151,7 +152,7 @@ class StepUpAuthenticationService
     {
         $loa = $this->loaResolutionService->getLoa($loa);
 
-        return $loa ? $loa->levelIsLowerOrEqualTo(1) : null;
+        return $loa ? $loa->levelIsLowerOrEqualTo(Loa::LOA_1) : null;
     }
 
     /**
