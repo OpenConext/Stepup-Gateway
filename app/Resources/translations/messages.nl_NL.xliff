@@ -169,7 +169,7 @@
       <trans-unit id="fbc134b1f4a8c33e94e122042462cd21c853204a" resname="gateway.second_factor.sms.text.after_pressing_proceed">
         <jms:reference-file line="13">views/SecondFactor/verifySmsSecondFactor.html.twig</jms:reference-file>
         <source>gateway.second_factor.sms.text.after_pressing_proceed</source>
-        <target>Na op “Verstuur code” te hebben geklikt ontvangt een tekstbericht met een code. Vul op de volgende pagina alstublieft deze code in.</target>
+        <target>Na op “Stuur code” te hebben geklikt ontvangt een tekstbericht met een code. Vul op de volgende pagina alstublieft deze code in.</target>
       </trans-unit>
       <trans-unit id="d80ea1ea4e3e600845fc1d86d0851f446f7a8908" resname="gateway.second_factor.sms.text.ensure_phone_has_signal">
         <jms:reference-file line="11">views/SecondFactor/verifySmsSecondFactor.html.twig</jms:reference-file>
