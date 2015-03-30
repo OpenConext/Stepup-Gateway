@@ -86,7 +86,7 @@
       <trans-unit id="1b12b51928c9eb9c6922fd0c910502698f0865f5" resname="gateway.form.verify_sms_challenge.text.challenge">
         <jms:reference-file line="30">Form/Type/VerifySmsChallengeType.php</jms:reference-file>
         <source>gateway.form.verify_sms_challenge.text.challenge</source>
-        <target>gateway.form.verify_sms_challenge.text.challenge</target>
+        <target>Code</target>
       </trans-unit>
       <trans-unit id="53c1b4469c10803f2e6bfb5fd31afb68c7f9556f" resname="gateway.gateway.consume_assertion.title">
         <jms:reference-file line="15">views/Gateway/consumeAssertion.html.twig</jms:reference-file>
