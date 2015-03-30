@@ -189,12 +189,12 @@
       <trans-unit id="b709c9885083cad3cea28a08aa1cf07d43fa186f" resname="gateway.second_factor.sms.text.help_user_enter_challenge">
         <jms:reference-file line="8">views/SecondFactor/verifySmsSecondFactorChallenge.html.twig</jms:reference-file>
         <source>gateway.second_factor.sms.text.help_user_enter_challenge</source>
-        <target>Volg onderstaande instructies op het bezit van uw telefoon aan te tonen.</target>
+        <target>Volg onderstaande instructies om het bezit van uw telefoon aan te tonen.</target>
       </trans-unit>
       <trans-unit id="ae96304b72fa22655facaecca34b948409c3deaa" resname="gateway.second_factor.sms.text.help_user_enter_phone_number">
         <jms:reference-file line="8">views/SecondFactor/verifySmsSecondFactor.html.twig</jms:reference-file>
         <source>gateway.second_factor.sms.text.help_user_enter_phone_number</source>
-        <target>Volg onderstaande instructies op het bezit van uw telefoon aan te tonen.</target>
+        <target>Volg onderstaande instructies om het bezit van uw telefoon aan te tonen.</target>
       </trans-unit>
       <trans-unit id="a215b416978f2c35a0ffd4be8576c8a0bdf64718" resname="gateway.second_factor.sms.text.retry_if_not_received">
         <jms:reference-file line="12">views/SecondFactor/verifySmsSecondFactorChallenge.html.twig</jms:reference-file>
