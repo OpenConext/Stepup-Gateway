@@ -181,11 +181,6 @@
         <source>gateway.second_factor.sms.text.enter_challenge_below</source>
         <target>Voer de code hieronder in.</target>
       </trans-unit>
-      <trans-unit id="ec779fbef77a977056e89b312c908f6fb0b519b5" resname="gateway.second_factor.sms.text.enter_phone_number_below">
-        <jms:reference-file line="12">views/SecondFactor/verifySmsSecondFactor.html.twig</jms:reference-file>
-        <source>gateway.second_factor.sms.text.enter_phone_number_below</source>
-        <target>Voer uw telefoonnummer hieronder in.</target>
-      </trans-unit>
       <trans-unit id="b709c9885083cad3cea28a08aa1cf07d43fa186f" resname="gateway.second_factor.sms.text.help_user_enter_challenge">
         <jms:reference-file line="8">views/SecondFactor/verifySmsSecondFactorChallenge.html.twig</jms:reference-file>
         <source>gateway.second_factor.sms.text.help_user_enter_challenge</source>
