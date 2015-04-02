@@ -2091,12 +2091,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/SURFnet/Stepup-bundle.git",
-                "reference": "d205a0a457b4d4e06f9bf745972647402a86b919"
+                "reference": "cae60583cbb8907f5f2fa4730091765c59a4204a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SURFnet/Stepup-bundle/zipball/d205a0a457b4d4e06f9bf745972647402a86b919",
-                "reference": "d205a0a457b4d4e06f9bf745972647402a86b919",
+                "url": "https://api.github.com/repos/SURFnet/Stepup-bundle/zipball/cae60583cbb8907f5f2fa4730091765c59a4204a",
+                "reference": "cae60583cbb8907f5f2fa4730091765c59a4204a",
                 "shasum": ""
             },
             "require": {
@@ -2133,7 +2133,7 @@
                 "suaas",
                 "surfnet"
             ],
-            "time": "2015-03-26 10:14:27"
+            "time": "2015-04-02 12:24:11"
         },
         {
             "name": "surfnet/stepup-saml-bundle",
@@ -2141,12 +2141,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/SURFnet/Stepup-saml-bundle.git",
-                "reference": "50cab10b59172fa2fed701be3824f81f4e0fe69f"
+                "reference": "4c595af9159b36d735f96173b89655f9aba62665"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SURFnet/Stepup-saml-bundle/zipball/50cab10b59172fa2fed701be3824f81f4e0fe69f",
-                "reference": "50cab10b59172fa2fed701be3824f81f4e0fe69f",
+                "url": "https://api.github.com/repos/SURFnet/Stepup-saml-bundle/zipball/4c595af9159b36d735f96173b89655f9aba62665",
+                "reference": "4c595af9159b36d735f96173b89655f9aba62665",
                 "shasum": ""
             },
             "require": {
@@ -2179,7 +2179,7 @@
                 "stepup",
                 "surfnet"
             ],
-            "time": "2015-03-12 11:07:50"
+            "time": "2015-03-26 12:51:29"
         },
         {
             "name": "surfnet/yubikey-api-client-bundle",

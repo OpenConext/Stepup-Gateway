@@ -57,15 +57,18 @@ services:
         class: Surfnet\StepupGateway\GatewayBundle\Service\SmsSecondFactorService
         arguments:
             - @surfnet_gateway_api.service.sms
-            - @gateway.sms.challenge_store
+            - @gateway.service.challenge_handler
             - @translator
-            - 'SURFnet'
+            - '' # Replaced in extension
 
-    gateway.sms.challenge_store:
-        class: Surfnet\StepupGateway\GatewayBundle\Service\SmsSecondFactor\SessionChallengeStore
+    gateway.service.challenge_handler:
+        public: false
+        class: Surfnet\StepupGateway\GatewayBundle\Service\SmsSecondFactor\SessionSmsVerificationStateHandler
         arguments:
             - @session
             - 'Surfnet/Gateway/SecondFactor/Sms:challenge'
+            - {} # OTP expiry interval
+            - 0  # Maximum OTP requests
 
     # Logging
     gateway.authentication_logger:
