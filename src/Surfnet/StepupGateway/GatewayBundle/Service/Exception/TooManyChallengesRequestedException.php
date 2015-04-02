@@ -16,22 +16,10 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupGateway\GatewayBundle\Service\SmsSecondFactor;
+namespace Surfnet\StepupGateway\GatewayBundle\Service\Exception;
 
-interface ChallengeStore
+use Surfnet\StepupGateway\GatewayBundle\Exception\DomainException;
+
+class TooManyChallengesRequestedException extends DomainException
 {
-    /**
-     * Generates a challenge, stores it and returns it.
-     *
-     * @return string
-     */
-    public function generateChallenge();
-
-    /**
-     * Verifies a previously generated challenge.
-     *
-     * @param string $challenge
-     * @return bool
-     */
-    public function verifyChallenge($challenge);
 }

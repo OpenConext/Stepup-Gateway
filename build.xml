@@ -50,7 +50,8 @@
             <arg path="src"/>
             <arg value="xml"/>
             <arg value="phpmd.xml"/>
-            <arg value="--exclude */Tests/*"/>
+            <arg value="--exclude"/>
+            <arg value="*/Tests/*"/>
         </exec>
     </target>
 

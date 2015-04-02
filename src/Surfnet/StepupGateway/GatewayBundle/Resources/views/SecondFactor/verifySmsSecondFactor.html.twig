@@ -9,11 +9,16 @@
 
     <ol>
         <li>{{ 'gateway.second_factor.sms.text.ensure_phone_has_signal'|trans }}</li>
-        <li>{{ 'gateway.second_factor.sms.text.enter_phone_number_below'|trans }}</li>
         <li>{{ 'gateway.second_factor.sms.text.after_pressing_proceed'|trans }}</li>
     </ol>
 
     <hr>
+
+    {% if otpRequestsRemaining != maximumOtpRequests %}
+        <div class="alert alert-{% if otpRequestsRemaining == 0 %}error{% elseif otpRequestsRemaining == 1 %}warning{% else %}info{% endif %}">
+                {{ 'gateway.second_factor.sms.text.otp_requests_remaining'|trans({ '%count%': otpRequestsRemaining }) }}
+            </div>
+    {% endif %}
 
     <div class="form-gateway-send-sms-challenge">
 
