@@ -25,6 +25,8 @@ use Surfnet\StepupGateway\GatewayBundle\Command\SendSmsChallengeCommand;
 use Surfnet\StepupGateway\GatewayBundle\Command\VerifySmsChallengeCommand;
 use Surfnet\StepupGateway\GatewayBundle\Exception\InvalidArgumentException;
 use Surfnet\StepupGateway\GatewayBundle\Service\SmsSecondFactor\ChallengeStore;
+use Surfnet\StepupGateway\GatewayBundle\Service\SmsSecondFactor\OtpVerification;
+use Surfnet\StepupGateway\GatewayBundle\Service\SmsSecondFactor\SmsVerificationStateHandler;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class SmsSecondFactorService
@@ -35,9 +37,9 @@ class SmsSecondFactorService
     private $smsService;
 
     /**
-     * @var ChallengeStore
+     * @var \Surfnet\StepupGateway\GatewayBundle\Service\SmsSecondFactor\SmsVerificationStateHandler
      */
-    private $challengeStore;
+    private $smsVerificationStateHandler;
 
     /**
      * @var TranslatorInterface
@@ -50,14 +52,14 @@ class SmsSecondFactorService
     private $originator;
 
     /**
-     * @param SmsService $smsService
-     * @param ChallengeStore $challengeStore
-     * @param TranslatorInterface $translator
-     * @param string $originator
+     * @param SmsService                  $smsService
+     * @param SmsVerificationStateHandler $smsVerificationStateHandler
+     * @param TranslatorInterface         $translator
+     * @param string                      $originator
      */
     public function __construct(
         SmsService $smsService,
-        ChallengeStore $challengeStore,
+        SmsVerificationStateHandler $smsVerificationStateHandler,
         TranslatorInterface $translator,
         $originator
     ) {
@@ -72,9 +74,30 @@ class SmsSecondFactorService
         }
 
         $this->smsService = $smsService;
-        $this->challengeStore = $challengeStore;
+        $this->smsVerificationStateHandler = $smsVerificationStateHandler;
         $this->translator = $translator;
         $this->originator = $originator;
+    }
+
+    /**
+     * @return int
+     */
+    public function getOtpRequestsRemainingCount()
+    {
+        return $this->smsVerificationStateHandler->getOtpRequestsRemainingCount();
+    }
+
+    /**
+     * @return int
+     */
+    public function getMaximumOtpRequestsCount()
+    {
+        return $this->smsVerificationStateHandler->getMaximumOtpRequestsCount();
+    }
+
+    public function clearSmsVerificationState()
+    {
+        $this->smsVerificationStateHandler->clearState();
     }
 
     /**
@@ -83,7 +106,7 @@ class SmsSecondFactorService
      */
     public function sendChallenge(SendSmsChallengeCommand $command)
     {
-        $challenge = $this->challengeStore->generateChallenge();
+        $challenge = $this->smsVerificationStateHandler->requestNewOtp($command->phoneNumber);
 
         $body = $this->translator->trans('gateway.second_factor.sms.challenge_body', ['%challenge%' => $challenge]);
 
@@ -101,10 +124,10 @@ class SmsSecondFactorService
 
     /**
      * @param VerifySmsChallengeCommand $command
-     * @return bool
+     * @return OtpVerification
      */
     public function verifyChallenge(VerifySmsChallengeCommand $command)
     {
-        return $this->challengeStore->verifyChallenge($command->challenge);
+        return $this->smsVerificationStateHandler->verify($command->challenge);
     }
 }

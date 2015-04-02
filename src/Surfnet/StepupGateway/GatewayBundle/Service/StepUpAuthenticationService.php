@@ -32,6 +32,7 @@ use Surfnet\StepupGateway\GatewayBundle\Command\VerifyYubikeyOtpCommand;
 use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor;
 use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactorRepository;
 use Surfnet\StepupGateway\GatewayBundle\Service\StepUp\YubikeyOtpVerificationResult;
+use Surfnet\StepupGateway\GatewayBundle\Service\SmsSecondFactor\OtpVerification;
 use Surfnet\YubikeyApiClient\Otp;
 
 /**
@@ -202,6 +203,22 @@ class StepUpAuthenticationService
     }
 
     /**
+     * @return int
+     */
+    public function getSmsOtpRequestsRemainingCount()
+    {
+        return $this->smsService->getOtpRequestsRemainingCount();
+    }
+
+    /**
+     * @return int
+     */
+    public function getSmsMaximumOtpRequestsCount()
+    {
+        return $this->smsService->getMaximumOtpRequestsCount();
+    }
+
+    /**
      * @param SendSmsChallengeCommand $command
      * @return bool
      */
@@ -223,10 +240,15 @@ class StepUpAuthenticationService
 
     /**
      * @param VerifySmsChallengeCommand $command
-     * @return bool
+     * @return OtpVerification
      */
     public function verifySmsChallenge(VerifySmsChallengeCommand $command)
     {
         return $this->smsService->verifyChallenge($command);
+    }
+
+    public function clearSmsVerificationState()
+    {
+        $this->smsService->clearSmsVerificationState();
     }
 }

@@ -66,6 +66,8 @@ class SecondFactorController extends Controller
 
         $context->saveSelectedSecondFactor($secondFactor->secondFactorId);
 
+        $this->getStepupService()->clearSmsVerificationState();
+
         $route = 'gateway_verify_second_factor_' . strtolower($secondFactor->secondFactorType);
         return $this->redirect($this->generateUrl($route));
     }
@@ -207,18 +209,24 @@ class SecondFactorController extends Controller
         $command->secondFactorId = $selectedSecondFactor;
 
         $form = $this->createForm('gateway_send_sms_challenge', $command)->handleRequest($request);
+
+        $stepupService = $this->getStepupService();
         $phoneNumber = InternationalPhoneNumber::fromStringFormat(
-            $this->getStepupService()->getSecondFactorIdentifier($selectedSecondFactor)
+            $stepupService->getSecondFactorIdentifier($selectedSecondFactor)
         );
 
+        $otpRequestsRemaining = $stepupService->getSmsOtpRequestsRemainingCount();
+        $maximumOtpRequests = $stepupService->getSmsMaximumOtpRequestsCount();
+        $viewVariables = ['otpRequestsRemaining' => $otpRequestsRemaining, 'maximumOtpRequests' => $maximumOtpRequests];
+
         if (!$form->isValid()) {
-            return ['phoneNumber' => $phoneNumber, 'form' => $form->createView()];
+            return array_merge($viewVariables, ['phoneNumber' => $phoneNumber, 'form' => $form->createView()]);
         }
 
-        if (!$this->getStepupService()->sendSmsChallenge($command)) {
+        if (!$stepupService->sendSmsChallenge($command)) {
             $form->addError(new FormError('gateway.form.send_sms_challenge.sms_sending_failed'));
 
-            return ['phoneNumber' => $phoneNumber, 'form' => $form->createView()];
+            return array_merge($viewVariables, ['phoneNumber' => $phoneNumber, 'form' => $form->createView()]);
         }
 
         return $this->redirect($this->generateUrl('gateway_verify_second_factor_sms_verify_challenge'));
@@ -247,16 +255,24 @@ class SecondFactorController extends Controller
             return ['form' => $form->createView()];
         }
 
-        if (!$this->getStepupService()->verifySmsChallenge($command)) {
-            $form->addError(new FormError('gateway.form.send_sms_challenge.sms_challenge_incorrect'));
+        $verification = $this->getStepupService()->verifySmsChallenge($command);
 
-            return ['form' => $form->createView()];
+        if ($verification->wasSuccessful()) {
+            $this->getStepupService()->clearSmsVerificationState();
+
+            $this->getResponseContext()->markSecondFactorVerified();
+            $this->getAuthenticationLogger()->logSecondFactorAuthentication();
+
+            return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:respond');
+        } elseif ($verification->didOtpExpire()) {
+            $form->addError(new FormError('gateway.form.send_sms_challenge.challenge_expired'));
+        } elseif ($verification->wasAttemptedTooManyTimes()) {
+            $form->addError(new FormError('gateway.form.send_sms_challenge.too_many_attempts'));
+        } else {
+            $form->addError(new FormError('gateway.form.send_sms_challenge.sms_challenge_incorrect'));
         }
 
-        $this->getResponseContext()->markSecondFactorVerified();
-        $this->getAuthenticationLogger()->logSecondFactorAuthentication();
-
-        return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:respond');
+        return ['form' => $form->createView()];
     }
 
     /**

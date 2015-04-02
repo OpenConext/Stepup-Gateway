@@ -34,6 +34,10 @@ parameters:
 
     graylog_hostname: graylog.host.tld
 
+    sms_originator: SURFStepup
+    sms_otp_expiry_interval: 900 # 15 minutes
+    sms_maximum_otp_requests: 3
+
     saml_sp_publickey:
     saml_sp_privatekey:
 
