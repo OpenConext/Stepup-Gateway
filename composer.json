@@ -24,7 +24,7 @@
         "nelmio/security-bundle": "~1.4",
         "doctrine/doctrine-migrations-bundle": "~1.0.0",
         "doctrine/migrations": "~1.0.0|1.0.0@dev",
-        "mopa/bootstrap-bundle": "dev-master",
+        "mopa/bootstrap-bundle": "~3@dev",
         "twbs/bootstrap": "~3.2.0",
         "fortawesome/font-awesome": "~4.2.0",
         "jms/translation-bundle": "~1.1.0",
