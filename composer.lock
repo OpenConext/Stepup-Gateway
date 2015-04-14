@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "6932fb44e2c5eb3dd2d3bc3cf4db6e88",
+    "hash": "e75c67b9c7af6f642cda8e1e5b7d28d2",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -1537,25 +1537,25 @@
         },
         {
             "name": "mopa/bootstrap-bundle",
-            "version": "v3.0.0-beta4",
+            "version": "dev-master",
             "target-dir": "Mopa/Bundle/BootstrapBundle",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phiamo/MopaBootstrapBundle.git",
-                "reference": "3129664a22f4a504cbbc2a5dd7a4f1db5217f970"
+                "reference": "818b0f47ebd352559950e9a64431ff9472e8a9dd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phiamo/MopaBootstrapBundle/zipball/3129664a22f4a504cbbc2a5dd7a4f1db5217f970",
-                "reference": "3129664a22f4a504cbbc2a5dd7a4f1db5217f970",
+                "url": "https://api.github.com/repos/phiamo/MopaBootstrapBundle/zipball/818b0f47ebd352559950e9a64431ff9472e8a9dd",
+                "reference": "818b0f47ebd352559950e9a64431ff9472e8a9dd",
                 "shasum": ""
             },
             "require": {
                 "mopa/composer-bridge": "~1.3",
                 "symfony/console": "~2.3",
-                "symfony/form": "~2.3",
+                "symfony/form": "~2.3|~3.0",
                 "symfony/framework-bundle": "~2.3",
-                "symfony/twig-bundle": "~2.3"
+                "symfony/twig-bundle": "~2.3|~3.0"
             },
             "suggest": {
                 "craue/formflow-bundle": "~2.0",
@@ -1598,7 +1598,7 @@
                 "form",
                 "template"
             ],
-            "time": "2014-08-06 08:40:58"
+            "time": "2015-04-10 09:34:23"
         },
         {
             "name": "mopa/composer-bridge",
@@ -4478,7 +4478,7 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "doctrine/migrations": 20,
-        "mopa/bootstrap-bundle": 10,
+        "mopa/bootstrap-bundle": 20,
         "simplesamlphp/saml2": 20,
         "surfnet/stepup-bundle": 20,
         "surfnet/stepup-saml-bundle": 20
