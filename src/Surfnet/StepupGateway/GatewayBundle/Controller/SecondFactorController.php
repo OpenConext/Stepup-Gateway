@@ -93,8 +93,10 @@ class SecondFactorController extends Controller
         $secondFactor = $secondFactorService->findByUuid($selectedSecondFactor);
         if (!$secondFactor) {
             $logger->critical(
-                'Requested verification of Tiqr second factor "%s", however that Second Factor no longer exists',
-                $selectedSecondFactor
+                sprintf(
+                    'Requested verification of Tiqr second factor "%s", however that Second Factor no longer exists',
+                    $selectedSecondFactor
+                )
             );
 
             throw new RuntimeException('Verification of selected second factor that no longer exists');
@@ -125,8 +127,10 @@ class SecondFactorController extends Controller
         $secondFactor = $this->get('gateway.service.second_factor_service')->findByUuid($selectedSecondFactor);
         if (!$secondFactor) {
             $logger->critical(
-                'Verification of Tiqr Second Factor "%s" succeeded, however that Second Factor no longer exists',
-                $selectedSecondFactor
+                sprintf(
+                    'Verification of Tiqr Second Factor "%s" succeeded, however that Second Factor no longer exists',
+                    $selectedSecondFactor
+                )
             );
 
             throw new RuntimeException('Verification of selected second factor that no longer exists');
