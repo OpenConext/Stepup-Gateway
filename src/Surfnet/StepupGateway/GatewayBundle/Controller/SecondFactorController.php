@@ -37,8 +37,9 @@ class SecondFactorController extends Controller
         $context = $this->getResponseContext();
         $originalRequestId = $context->getInResponseTo();
 
-        $logger = $this->get('logger');
-        $logger->notice('Determining which second factor to use...', ['sari' => $originalRequestId]);
+        /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
+        $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
+        $logger->notice('Determining which second factor to use...');
 
         $secondFactorCollection = $this
             ->getStepupService()
@@ -50,7 +51,7 @@ class SecondFactorController extends Controller
             );
 
         if (count($secondFactorCollection) === 0) {
-            $logger->notice('No second factors can give the determined LOA', ['sari' => $originalRequestId]);
+            $logger->notice('No second factors can give the determined LOA');
 
             return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:sendLoaCannotBeGiven');
         }
@@ -64,8 +65,7 @@ class SecondFactorController extends Controller
                 'Found "%d" second factors, using second factor of type "%s"',
                 count($secondFactorCollection),
                 $secondFactor->secondFactorType
-            ),
-            ['sari' => $originalRequestId]
+            )
         );
 
         $context->saveSelectedSecondFactor($secondFactor->secondFactorId);
@@ -81,12 +81,13 @@ class SecondFactorController extends Controller
         $context = $this->getResponseContext();
         $originalRequestId = $context->getInResponseTo();
 
-        $logger = $this->get('logger');
-        $logger->info('Received request to verify Tiqr Second Factor', ['sari' => $originalRequestId]);
+        /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
+        $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
+        $logger->info('Received request to verify Tiqr Second Factor');
 
         $selectedSecondFactor = $this->getResponseContext()->getSelectedSecondFactor();
         if (!$selectedSecondFactor) {
-            $logger->error('Cannot verify possession of an unknown second factor', ['sari' => $originalRequestId]);
+            $logger->error('Cannot verify possession of an unknown second factor');
             throw new BadRequestHttpException('Cannot verify possession of an unknown second factor.');
         }
 
@@ -94,8 +95,7 @@ class SecondFactorController extends Controller
             sprintf(
                 'Selected Tiqr Second Factor "%s" for verfication, forwarding to Saml handling',
                 $selectedSecondFactor
-            ),
-            ['sari' => $originalRequestId]
+            )
         );
 
         /** @var \Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorService $secondFactorService */
@@ -107,8 +107,7 @@ class SecondFactorController extends Controller
                 sprintf(
                     'Requested verification of Tiqr second factor "%s", however that Second Factor no longer exists',
                     $selectedSecondFactor
-                ),
-                ['sari' => $originalRequestId]
+                )
             );
 
             throw new RuntimeException('Verification of selected second factor that no longer exists');
@@ -128,12 +127,13 @@ class SecondFactorController extends Controller
         $context = $this->getResponseContext();
         $originalRequestId = $context->getInResponseTo();
 
-        $logger = $this->get('logger');
-        $logger->info('Attempting to mark Tiqr Second Factor as verified', ['sari' => $originalRequestId]);
+        /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
+        $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
+        $logger->info('Attempting to mark Tiqr Second Factor as verified');
 
         $selectedSecondFactor = $context->getSelectedSecondFactor();
         if (!$selectedSecondFactor) {
-            $logger->error('Cannot verify possession of an unknown second factor', ['sari' => $originalRequestId]);
+            $logger->error('Cannot verify possession of an unknown second factor');
             throw new BadRequestHttpException('Cannot verify possession of an unknown second factor.');
         }
 
@@ -144,8 +144,7 @@ class SecondFactorController extends Controller
                 sprintf(
                     'Verification of Tiqr Second Factor "%s" succeeded, however that Second Factor no longer exists',
                     $selectedSecondFactor
-                ),
-                ['sari' => $originalRequestId]
+                )
             );
 
             throw new RuntimeException('Verification of selected second factor that no longer exists');
@@ -158,8 +157,7 @@ class SecondFactorController extends Controller
             sprintf(
                 'Marked Tiqr Second Factor "%s" as verified, forwarding to Saml Proxy to respond',
                 $selectedSecondFactor
-            ),
-            ['sari' => $originalRequestId]
+            )
         );
 
         return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:respond');
@@ -175,7 +173,8 @@ class SecondFactorController extends Controller
         $context = $this->getResponseContext();
         $originalRequestId = $context->getInResponseTo();
 
-        $logger = $this->get('logger');
+        /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
+        $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
         $selectedSecondFactor = $this->getResponseContext()->getSelectedSecondFactor();
 
         if (!$selectedSecondFactor) {
@@ -183,7 +182,7 @@ class SecondFactorController extends Controller
             throw new BadRequestHttpException('Cannot verify possession of an unknown second factor.');
         }
 
-        $logger->notice('Verifying possession of Yubikey second factor', ['sari' => $originalRequestId]);
+        $logger->notice('Verifying possession of Yubikey second factor');
 
         $command = new VerifyYubikeyOtpCommand();
         $command->secondFactorId = $selectedSecondFactor;
@@ -216,8 +215,7 @@ class SecondFactorController extends Controller
             sprintf(
                 'Marked Yubikey Second Factor "%s" as verified, forwarding to Saml Proxy to respond',
                 $selectedSecondFactor
-            ),
-            ['sari' => $originalRequestId]
+            )
         );
 
         return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:respond');
@@ -233,18 +231,16 @@ class SecondFactorController extends Controller
         $context = $this->getResponseContext();
         $originalRequestId = $context->getInResponseTo();
 
-        $logger = $this->get('logger');
+        /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
+        $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
         $selectedSecondFactor = $this->getResponseContext()->getSelectedSecondFactor();
 
         if (!$selectedSecondFactor) {
-            $logger->error('Cannot verify possession of an unknown second factor', ['sari' => $originalRequestId]);
+            $logger->error('Cannot verify possession of an unknown second factor');
             throw new BadRequestHttpException('Cannot verify possession of an unknown second factor.');
         }
 
-        $logger->notice(
-            'Verifying possession of SMS second factor, preparing to send',
-            ['sari' => $originalRequestId]
-        );
+        $logger->notice('Verifying possession of SMS second factor, preparing to send');
 
         $command = new SendSmsChallengeCommand();
         $command->secondFactorId = $selectedSecondFactor;
@@ -264,10 +260,7 @@ class SecondFactorController extends Controller
             return array_merge($viewVariables, ['phoneNumber' => $phoneNumber, 'form' => $form->createView()]);
         }
 
-        $logger->notice(
-            'Verifying possession of SMS second factor, sending challenge per SMS',
-            ['sari' => $originalRequestId]
-        );
+        $logger->notice('Verifying possession of SMS second factor, sending challenge per SMS');
 
         if (!$stepupService->sendSmsChallenge($command)) {
             $form->addError(new FormError('gateway.form.send_sms_challenge.sms_sending_failed'));
@@ -288,11 +281,12 @@ class SecondFactorController extends Controller
         $context = $this->getResponseContext();
         $originalRequestId = $context->getInResponseTo();
 
-        $logger = $this->get('logger');
+        /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
+        $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
         $selectedSecondFactor = $this->getResponseContext()->getSelectedSecondFactor();
 
         if (!$selectedSecondFactor) {
-            $logger->error('Cannot verify possession of an unknown second factor', ['sari' => $originalRequestId]);
+            $logger->error('Cannot verify possession of an unknown second factor');
             throw new BadRequestHttpException('Cannot verify possession of an unknown second factor.');
         }
 
@@ -303,7 +297,7 @@ class SecondFactorController extends Controller
             return ['form' => $form->createView()];
         }
 
-        $logger->notice('Verifying input SMS challenge matches', ['sari' => $originalRequestId]);
+        $logger->notice('Verifying input SMS challenge matches');
 
         $verification = $this->getStepupService()->verifySmsChallenge($command);
 
@@ -317,19 +311,18 @@ class SecondFactorController extends Controller
                 sprintf(
                     'Marked Sms Second Factor "%s" as verified, forwarding to Saml Proxy to respond',
                     $selectedSecondFactor
-                ),
-                ['sari' => $originalRequestId]
+                )
             );
 
             return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:respond');
         } elseif ($verification->didOtpExpire()) {
-            $logger->notice('SMS challenge expired', ['sari' => $originalRequestId]);
+            $logger->notice('SMS challenge expired');
             $form->addError(new FormError('gateway.form.send_sms_challenge.challenge_expired'));
         } elseif ($verification->wasAttemptedTooManyTimes()) {
-            $logger->notice('SMS challenge verification was attempted too many times', ['sari' => $originalRequestId]);
+            $logger->notice('SMS challenge verification was attempted too many times');
             $form->addError(new FormError('gateway.form.send_sms_challenge.too_many_attempts'));
         } else {
-            $logger->notice('SMS challenge did not match', ['sari' => $originalRequestId]);
+            $logger->notice('SMS challenge did not match');
             $form->addError(new FormError('gateway.form.send_sms_challenge.sms_challenge_incorrect'));
         }
 

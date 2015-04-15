@@ -18,7 +18,7 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Monolog\Logger;
 
-use Monolog\Logger;
+use Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger;
 use Surfnet\StepupBundle\Service\LoaResolutionService;
 use Surfnet\StepupBundle\Value\Loa;
 use Surfnet\StepupGateway\GatewayBundle\Exception\InvalidArgumentException;
@@ -43,7 +43,7 @@ class AuthenticationLogger
     private $loaResolutionService;
 
     /**
-     * @var Logger
+     * @var SamlAuthenticationLogger
      */
     private $authenticationChannelLogger;
 
@@ -51,7 +51,7 @@ class AuthenticationLogger
         LoaResolutionService $loaResolutionService,
         ProxyStateHandler $proxyStateHandler,
         SecondFactorService $secondFactorService,
-        Logger $authenticationChannelLogger
+        SamlAuthenticationLogger $authenticationChannelLogger
     ) {
         $this->loaResolutionService = $loaResolutionService;
         $this->proxyStateHandler    = $proxyStateHandler;
@@ -60,62 +60,58 @@ class AuthenticationLogger
     }
 
     /**
-     * @param string $sari The SAML authentication request ID of the original request (not the proxy request).
+     * @param string $requestId The SAML authentication request ID of the original request (not the proxy request).
      */
-    public function logIntrinsicLoaAuthentication($sari)
+    public function logIntrinsicLoaAuthentication($requestId)
     {
-        if (!is_string($sari)) {
-            throw InvalidArgumentException::invalidType('string', 'sari', $sari);
-        }
-
         $context = [
             'second_factor_id'      => '',
             'second_factor_type'    => '',
             'institution'           => '',
             'authentication_result' => 'NONE',
             'resulting_loa'         => (string) $this->loaResolutionService->getLoaByLevel(Loa::LOA_1),
-            'sari'                  => $sari,
         ];
 
-        $this->log('Intrinsic LoA Requested', $context);
+        $this->log('Intrinsic LoA Requested', $context, $requestId);
     }
 
     /**
-     * @param string $sari The SAML authentication request ID of the original request (not the proxy request).
+     * @param string $requestId The SAML authentication request ID of the original request (not the proxy request).
      */
-    public function logSecondFactorAuthentication($sari)
+    public function logSecondFactorAuthentication($requestId)
     {
-        if (!is_string($sari)) {
-            throw InvalidArgumentException::invalidType('string', 'sari', $sari);
-        }
-
         $secondFactor = $this->secondFactorService->findByUuid(
             $this->proxyStateHandler->getSelectedSecondFactorId()
         );
+        $loa = $this->loaResolutionService->getLoaByLevel($secondFactor->getLoaLevel());
 
         $context = [
             'second_factor_id'      => $secondFactor->secondFactorId,
             'second_factor_type'    => $secondFactor->secondFactorType,
             'institution'           => $secondFactor->institution,
             'authentication_result' => $this->proxyStateHandler->isSecondFactorVerified() ? 'OK' : 'FAILED',
-            'resulting_loa'         => (string) $this->loaResolutionService->getLoaByLevel($secondFactor->getLoaLevel()),
-            'sari'                  => $sari,
+            'resulting_loa'         => (string) $loa,
         ];
 
-        $this->log('Second Factor Authenticated', $context);
+        $this->log('Second Factor Authenticated', $context, $requestId);
     }
 
     /**
      * @param string $message
      * @param array  $context
+     * @param string $requestId
      */
-    private function log($message, array $context)
+    private function log($message, array $context, $requestId)
     {
+        if (!is_string($requestId)) {
+            throw InvalidArgumentException::invalidType('string', 'requestId', $requestId);
+        }
+
         $context['identity_id']        = $this->proxyStateHandler->getIdentityNameId();
         $context['authenticating_idp'] = $this->proxyStateHandler->getAuthenticatingIdp();
         $context['requesting_sp']      = $this->proxyStateHandler->getRequestServiceProvider();
         $context['datetime']           = (new \DateTime())->format('Y-m-d\\TH:i:sP');
 
-        $this->authenticationChannelLogger->notice($message, $context);
+        $this->authenticationChannelLogger->forAuthentication($requestId)->notice($message, $context);
     }
 }

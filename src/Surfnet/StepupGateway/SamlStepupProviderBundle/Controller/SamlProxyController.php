@@ -51,8 +51,8 @@ class SamlProxyController extends Controller
     {
         $provider = $this->getProvider($provider);
 
-        /** @var \Monolog\Logger $logger */
-        $logger = $this->get('logger');
+        /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
+        $logger = $this->get('surfnet_saml.logger');
         $logger->notice('Received AuthnRequest, started processing');
 
         /** @var \Surfnet\SamlBundle\Http\RedirectBinding $redirectBinding */
@@ -67,15 +67,15 @@ class SamlProxyController extends Controller
         }
 
         $originalRequestId = $originalRequest->getRequestId();
+        $logger = $logger->forAuthentication($originalRequestId);
         $logger->notice(
             sprintf(
                 'AuthnRequest processing complete, received AuthnRequest from "%s"',
                 $originalRequest->getServiceProvider()
-            ),
-            ['sari' => $originalRequestId]
+            )
         );
 
-        $logger->debug('Checking if SP "%s" is supported', ['sari' => $originalRequestId]);
+        $logger->debug('Checking if SP "%s" is supported');
         /**
          * @var \Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\ConnectedServiceProviders $connectedServiceProviders
          */
@@ -85,8 +85,7 @@ class SamlProxyController extends Controller
                 sprintf(
                     'Received AuthnRequest from SP "%s", while SP is not allowed to use this for SSO',
                     $originalRequest->getServiceProvider()
-                ),
-                ['sari' => $originalRequestId]
+                )
             );
 
             throw new AccessDeniedHttpException();
@@ -121,8 +120,7 @@ class SamlProxyController extends Controller
                 $proxyRequest->getRequestId(),
                 $provider->getName(),
                 $provider->getRemoteIdentityProvider()->getSsoUrl()
-            ),
-            ['sari' => $originalRequestId]
+            )
         );
 
         return $redirectBinding->createRedirectResponseFor($proxyRequest);
@@ -145,7 +143,9 @@ class SamlProxyController extends Controller
             ->setSubject($subjectNameId)
             ->markRequestAsSecondFactorVerification();
 
-        $this->get('logger')->notice(
+        /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
+        $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
+        $logger->notice(
             sprintf(
                 'Sending AuthnRequest to verify Second Factor with request ID "%s" to GSSP "%s" at "%s"' .
                 ' for subject "%s"',
@@ -153,8 +153,7 @@ class SamlProxyController extends Controller
                 $provider->getName(),
                 $provider->getRemoteIdentityProvider()->getSsoUrl(),
                 $subjectNameId
-            ),
-            ['sari' => $originalRequestId]
+            )
         );
 
         /** @var \Surfnet\SamlBundle\Http\RedirectBinding $redirectBinding */
@@ -174,13 +173,12 @@ class SamlProxyController extends Controller
         $stateHandler = $provider->getStateHandler();
         $originalRequestId = $stateHandler->getRequestId();
 
-        /** @var \Monolog\Logger $logger */
-        $logger = $this->get('logger');
+        /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
+        $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
 
         $action = $stateHandler->hasSubject() ? 'Second Factor Verification' : 'Proxy Response';
         $logger->notice(
-            sprintf('Received SAMLResponse, attempting to process for %s', $action),
-            ['sari' => $originalRequestId]
+            sprintf('Received SAMLResponse, attempting to process for %s', $action)
         );
 
         try {
@@ -191,10 +189,7 @@ class SamlProxyController extends Controller
                 $provider->getServiceProvider()
             );
         } catch (Exception $exception) {
-            $logger->error(
-                sprintf('Could not process received Response, error: "%s"', $exception->getMessage()),
-                ['sari' => $originalRequestId]
-            );
+            $logger->error(sprintf('Could not process received Response, error: "%s"', $exception->getMessage()));
 
             $response = $this->createResponseFailureResponse($provider);
 
@@ -209,8 +204,7 @@ class SamlProxyController extends Controller
                     'Received Response with unexpected InResponseTo: "%s", %s',
                     $adaptedAssertion->getInResponseTo(),
                     ($expectedResponse ? 'expected "' . $expectedResponse . '"' : ' no response expected')
-                ),
-                ['sari' => $originalRequestId]
+                )
             );
 
             return $this->render('unrecoverableError');
@@ -224,8 +218,7 @@ class SamlProxyController extends Controller
                     'Requested Subject NameID "%s" and Response NameID "%s" do not match',
                     $stateHandler->getSubject(),
                     $authenticatedNameId['Value']
-                ),
-                ['sari' => $originalRequestId]
+                )
             );
 
             if ($stateHandler->secondFactorVerificationRequested()) {
@@ -241,12 +234,11 @@ class SamlProxyController extends Controller
             );
         }
 
-        $logger->notice('Successfully processed SAMLResponse', ['sari' => $originalRequestId]);
+        $logger->notice('Successfully processed SAMLResponse');
 
         if ($stateHandler->secondFactorVerificationRequested()) {
             $logger->notice(
-                'Second Factor verification was requested and was successful, forwarding to SecondFactor handling',
-                ['sari' => $originalRequestId]
+                'Second Factor verification was requested and was successful, forwarding to SecondFactor handling'
             );
 
             return $this->forward('SurfnetStepupGatewayGatewayBundle:SecondFactor:tiqrSecondFactorVerified');
@@ -261,8 +253,7 @@ class SamlProxyController extends Controller
             sprintf(
                 'Responding with response based on response from the remote IdP with response "%s"',
                 $response->getId()
-            ),
-            ['sari' => $originalRequestId]
+            )
         );
 
         return $this->renderSamlResponse('consumeAssertion', $stateHandler, $response);
