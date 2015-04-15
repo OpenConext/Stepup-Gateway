@@ -21,6 +21,7 @@ namespace Surfnet\StepupGateway\GatewayBundle\Monolog\Logger;
 use Monolog\Logger;
 use Surfnet\StepupBundle\Service\LoaResolutionService;
 use Surfnet\StepupBundle\Value\Loa;
+use Surfnet\StepupGateway\GatewayBundle\Exception\InvalidArgumentException;
 use Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler;
 use Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorService;
 
@@ -58,21 +59,36 @@ class AuthenticationLogger
         $this->authenticationChannelLogger = $authenticationChannelLogger;
     }
 
-    public function logIntrinsicLoaAuthentication()
+    /**
+     * @param string $sari The SAML authentication request ID of the original request (not the proxy request).
+     */
+    public function logIntrinsicLoaAuthentication($sari)
     {
+        if (!is_string($sari)) {
+            throw InvalidArgumentException::invalidType('string', 'sari', $sari);
+        }
+
         $context = [
             'second_factor_id'      => '',
             'second_factor_type'    => '',
             'institution'           => '',
             'authentication_result' => 'NONE',
             'resulting_loa'         => (string) $this->loaResolutionService->getLoaByLevel(Loa::LOA_1),
+            'sari'                  => $sari,
         ];
 
         $this->log('Intrinsic LoA Requested', $context);
     }
 
-    public function logSecondFactorAuthentication()
+    /**
+     * @param string $sari The SAML authentication request ID of the original request (not the proxy request).
+     */
+    public function logSecondFactorAuthentication($sari)
     {
+        if (!is_string($sari)) {
+            throw InvalidArgumentException::invalidType('string', 'sari', $sari);
+        }
+
         $secondFactor = $this->secondFactorService->findByUuid(
             $this->proxyStateHandler->getSelectedSecondFactorId()
         );
@@ -83,6 +99,7 @@ class AuthenticationLogger
             'institution'           => $secondFactor->institution,
             'authentication_result' => $this->proxyStateHandler->isSecondFactorVerified() ? 'OK' : 'FAILED',
             'resulting_loa'         => (string) $this->loaResolutionService->getLoaByLevel($secondFactor->getLoaLevel()),
+            'sari'                  => $sari,
         ];
 
         $this->log('Second Factor Authenticated', $context);

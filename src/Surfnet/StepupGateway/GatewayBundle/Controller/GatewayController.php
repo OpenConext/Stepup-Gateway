@@ -49,26 +49,32 @@ class GatewayController extends Controller
             return $this->render('unrecoverableError');
         }
 
-        $logger->notice(sprintf(
-            'AuthnRequest processing complete, received AuthnRequest from "%s", request ID: "%s"',
-            $originalRequest->getServiceProvider(),
-            $originalRequest->getRequestId()
-        ));
+        $originalRequestId = $originalRequest->getRequestId();
+        $logger->notice(
+            sprintf(
+                'AuthnRequest processing complete, received AuthnRequest from "%s"',
+                $originalRequest->getServiceProvider()
+            ),
+            ['sari' => $originalRequestId]
+        );
 
         /** @var \Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler $stateHandler */
         $stateHandler = $this->get('gateway.proxy.state_handler');
         $stateHandler
-            ->setRequestId($originalRequest->getRequestId())
+            ->setRequestId($originalRequestId)
             ->setRequestServiceProvider($originalRequest->getServiceProvider())
             ->setRelayState($httpRequest->get(AuthnRequest::PARAMETER_RELAY_STATE, ''));
 
         // check if the requested loa is supported
         $requiredLoa = $originalRequest->getAuthenticationContextClassRef();
         if ($requiredLoa && !$this->get('surfnet_stepup.service.loa_resolution')->hasLoa($requiredLoa)) {
-            $logger->info(sprintf(
-                'Requested required LOA "%s" does not exist, sending response with status Requester Error',
-                $requiredLoa
-            ));
+            $logger->warning(
+                sprintf(
+                    'Requested required LOA "%s" does not exist, sending response with status Requester Error',
+                    $requiredLoa
+                ),
+                ['sari' => $originalRequestId]
+            );
 
             $response = $this->createRequesterFailureResponse();
             return $this->renderSamlResponse('consumeAssertion', $response);
@@ -84,11 +90,14 @@ class GatewayController extends Controller
         $proxyRequest->setScoping([$originalRequest->getServiceProvider()]);
         $stateHandler->setGatewayRequestId($proxyRequest->getRequestId());
 
-        $this->get('logger')->notice(sprintf(
-            'Sending Proxy AuthnRequest with request ID: "%s" for original AuthnRequest "%s"',
-            $proxyRequest->getRequestId(),
-            $originalRequest->getRequestId()
-        ));
+        $this->get('logger')->notice(
+            sprintf(
+                'Sending Proxy AuthnRequest with proxy request ID: "%s"',
+                $proxyRequest->getRequestId(),
+                $originalRequestId
+            ),
+            ['sari' => $originalRequestId]
+        );
 
         return $redirectBinding->createRedirectResponseFor($proxyRequest);
     }
@@ -104,9 +113,16 @@ class GatewayController extends Controller
      */
     public function consumeAssertionAction(Request $request)
     {
-        $this->get('logger')->notice('Received SAMLResponse, attempting to process for Proxy Response');
-
         $responseContext = $this->getResponseContext();
+        $originalRequestId = $responseContext->getInResponseTo();
+
+        /** @var \Monolog\Logger $logger */
+        $logger = $this->get('logger');
+        $logger->notice(
+            'Received SAMLResponse, attempting to process for Proxy Response',
+            ['sari' => $originalRequestId]
+        );
+
         try {
             /** @var \SAML2_Assertion $assertion */
             $assertion = $this->get('surfnet_saml.http.post_binding')->processResponse(
@@ -115,9 +131,10 @@ class GatewayController extends Controller
                 $this->get('surfnet_saml.hosted.service_provider')
             );
         } catch (Exception $exception) {
-            /** @var \Monolog\Logger $logger */
-            $logger = $this->get('logger');
-            $logger->error(sprintf('Could not process received Response, error: "%s"', $exception->getMessage()));
+            $logger->error(
+                sprintf('Could not process received Response, error: "%s"', $exception->getMessage()),
+                ['sari' => $originalRequestId]
+            );
 
             $response = $this->createResponseFailureResponse($responseContext);
 
@@ -125,22 +142,27 @@ class GatewayController extends Controller
         }
 
         $adaptedAssertion = new AssertionAdapter($assertion);
-        $expectedResponse = $responseContext->getExpectedInResponseTo();
-        if (!$adaptedAssertion->inResponseToMatches($expectedResponse)) {
-            $this->get('logger')->critical(sprintf(
-                'Received Response with unexpected InResponseTo: "%s", %s',
-                $adaptedAssertion->getInResponseTo(),
-                ($expectedResponse ? 'expected "' . $expectedResponse . '"' : ' no response expected')
-            ));
+        $expectedInResponseTo = $responseContext->getExpectedInResponseTo();
+        if (!$adaptedAssertion->inResponseToMatches($expectedInResponseTo)) {
+            $logger->critical(
+                sprintf(
+                    'Received Response with unexpected InResponseTo: "%s", %s',
+                    $adaptedAssertion->getInResponseTo(),
+                    ($expectedInResponseTo ? 'expected "' . $expectedInResponseTo . '"' : ' no response expected')
+                ),
+                ['sari' => $originalRequestId]
+            );
 
             return $this->render('unrecoverableError');
         }
+
+        $logger->notice('Successfully processed SAMLResponse', ['sari' => $originalRequestId]);
 
         $responseContext->saveAssertion($assertion);
 
         $requiredLoa = $responseContext->getRequiredLoa();
         if (!$requiredLoa) {
-            $this->get('gateway.authentication_logger')->logIntrinsicLoaAuthentication();
+            $this->get('gateway.authentication_logger')->logIntrinsicLoaAuthentication($originalRequestId);
 
             return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:respond');
         }
@@ -148,19 +170,27 @@ class GatewayController extends Controller
         /** @var \Surfnet\StepupGateway\GatewayBundle\Service\StepUpAuthenticationService $stepupService */
         $stepupService = $this->get('gateway.service.stepup_authentication');
         if ($stepupService->isIntrinsicLoa($requiredLoa)) {
-            $this->get('gateway.authentication_logger')->logIntrinsicLoaAuthentication();
+            $this->get('gateway.authentication_logger')->logIntrinsicLoaAuthentication($originalRequestId);
 
             return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:respond');
         }
+
+        $logger->notice(
+            sprintf('Attempting to obtain requested LoA %s through a second factor', $requiredLoa),
+            ['sari' => $originalRequestId]
+        );
 
         return $this->forward('SurfnetStepupGatewayGatewayBundle:SecondFactor:selectSecondFactorForVerification');
     }
 
     public function respondAction()
     {
-        $this->get('logger')->notice('Creating Response');
-
         $responseContext = $this->getResponseContext();
+        $originalRequestId = $responseContext->getInResponseTo();
+
+        /** @var \Monolog\Logger $logger */
+        $logger = $this->get('logger');
+        $logger->notice('Creating Response', ['sari' => $originalRequestId]);
 
         $grantedLoa = null;
         if ($responseContext->isSecondFactorVerified()) {
@@ -183,20 +213,29 @@ class GatewayController extends Controller
 
         $responseContext->responseSent();
 
-        $this->get('logger')->notice(sprintf(
-            'Responding to request "%s" with response based on response from the remote IdP with response "%s"',
-            $responseContext->getInResponseTo(),
-            $response->getId()
-        ));
+        $logger->notice(
+            sprintf(
+                'Responding with response based on response from the remote IdP with ID "%s" and granted LoA "%s"',
+                $response->getId(),
+                $grantedLoa
+            ),
+            ['sari' => $originalRequestId]
+        );
 
         return $this->renderSamlResponse('consumeAssertion', $response);
     }
 
     public function sendLoaCannotBeGivenAction()
     {
-        $this->get('logger')->notice('LOA cannot be given, creating Response with NoAuthnContext status');
-
         $responseContext = $this->getResponseContext();
+        $originalRequestId = $responseContext->getInResponseTo();
+
+        /** @var \Monolog\Logger $logger */
+        $logger = $this->get('logger');
+        $logger->notice(
+            'LOA cannot be given, creating Response with NoAuthnContext status',
+            ['sari' => $originalRequestId]
+        );
 
         /** @var \Surfnet\StepupGateway\GatewayBundle\Saml\ResponseBuilder $responseBuilder */
         $responseBuilder = $this->get('gateway.proxy.response_builder');
@@ -206,11 +245,13 @@ class GatewayController extends Controller
             ->setResponseStatus(SAML2_Const::STATUS_NO_AUTHN_CONTEXT)
             ->get();
 
-        $this->get('logger')->notice(sprintf(
-            'Responding to request "%s" with response based on response from the remote IdP with response "%s"',
-            $responseContext->getInResponseTo(),
-            $response->getId()
-        ));
+        $logger->notice(
+            sprintf(
+                'Responding with response based on response from the remote IdP with response "%s"',
+                $response->getId()
+            ),
+            ['sari' => $originalRequestId]
+        );
 
         return $this->renderSamlResponse('consumeAssertion', $response);
     }

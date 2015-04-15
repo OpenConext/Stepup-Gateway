@@ -34,11 +34,12 @@ class SecondFactorController extends Controller
 {
     public function selectSecondFactorForVerificationAction()
     {
-        $logger = $this->get('logger');
-
-        $logger->notice('Determining which second factor to use...');
-
         $context = $this->getResponseContext();
+        $originalRequestId = $context->getInResponseTo();
+
+        $logger = $this->get('logger');
+        $logger->notice('Determining which second factor to use...', ['sari' => $originalRequestId]);
+
         $secondFactorCollection = $this
             ->getStepupService()
             ->determineViableSecondFactors(
@@ -49,7 +50,7 @@ class SecondFactorController extends Controller
             );
 
         if (count($secondFactorCollection) === 0) {
-            $logger->notice('No second factors can give the determined LOA');
+            $logger->notice('No second factors can give the determined LOA', ['sari' => $originalRequestId]);
 
             return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:sendLoaCannotBeGiven');
         }
@@ -58,11 +59,14 @@ class SecondFactorController extends Controller
         /** @var \Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor $secondFactor */
         $secondFactor = $secondFactorCollection->first();
 
-        $logger->notice(sprintf(
-            'Found "%d" second factors, using second factor of type "%s"',
-            count($secondFactorCollection),
-            $secondFactor->secondFactorType
-        ));
+        $logger->notice(
+            sprintf(
+                'Found "%d" second factors, using second factor of type "%s"',
+                count($secondFactorCollection),
+                $secondFactor->secondFactorType
+            ),
+            ['sari' => $originalRequestId]
+        );
 
         $context->saveSelectedSecondFactor($secondFactor->secondFactorId);
 
@@ -74,18 +78,25 @@ class SecondFactorController extends Controller
 
     public function verifyTiqrSecondFactorAction()
     {
+        $context = $this->getResponseContext();
+        $originalRequestId = $context->getInResponseTo();
+
         $logger = $this->get('logger');
-        $logger->info('Received request to verify Tiqr Second Factor');
+        $logger->info('Received request to verify Tiqr Second Factor', ['sari' => $originalRequestId]);
 
         $selectedSecondFactor = $this->getResponseContext()->getSelectedSecondFactor();
         if (!$selectedSecondFactor) {
+            $logger->error('Cannot verify possession of an unknown second factor', ['sari' => $originalRequestId]);
             throw new BadRequestHttpException('Cannot verify possession of an unknown second factor.');
         }
 
-        $logger->info(sprintf(
-            'Selected Tiqr Second Factor "%s" for verfication, forwarding to Saml handling',
-            $selectedSecondFactor
-        ));
+        $logger->info(
+            sprintf(
+                'Selected Tiqr Second Factor "%s" for verfication, forwarding to Saml handling',
+                $selectedSecondFactor
+            ),
+            ['sari' => $originalRequestId]
+        );
 
         /** @var \Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorService $secondFactorService */
         $secondFactorService = $this->get('gateway.service.second_factor_service');
@@ -96,7 +107,8 @@ class SecondFactorController extends Controller
                 sprintf(
                     'Requested verification of Tiqr second factor "%s", however that Second Factor no longer exists',
                     $selectedSecondFactor
-                )
+                ),
+                ['sari' => $originalRequestId]
             );
 
             throw new RuntimeException('Verification of selected second factor that no longer exists');
@@ -113,13 +125,15 @@ class SecondFactorController extends Controller
 
     public function tiqrSecondFactorVerifiedAction()
     {
-        $logger = $this->get('logger');
         $context = $this->getResponseContext();
+        $originalRequestId = $context->getInResponseTo();
 
-        $logger->info('Attempting to mark Tiqr Second Factor as verified');
+        $logger = $this->get('logger');
+        $logger->info('Attempting to mark Tiqr Second Factor as verified', ['sari' => $originalRequestId]);
 
         $selectedSecondFactor = $context->getSelectedSecondFactor();
         if (!$selectedSecondFactor) {
+            $logger->error('Cannot verify possession of an unknown second factor', ['sari' => $originalRequestId]);
             throw new BadRequestHttpException('Cannot verify possession of an unknown second factor.');
         }
 
@@ -130,19 +144,23 @@ class SecondFactorController extends Controller
                 sprintf(
                     'Verification of Tiqr Second Factor "%s" succeeded, however that Second Factor no longer exists',
                     $selectedSecondFactor
-                )
+                ),
+                ['sari' => $originalRequestId]
             );
 
             throw new RuntimeException('Verification of selected second factor that no longer exists');
         }
 
         $context->markSecondFactorVerified();
-        $this->getAuthenticationLogger()->logSecondFactorAuthentication();
+        $this->getAuthenticationLogger()->logSecondFactorAuthentication($originalRequestId);
 
-        $logger->info(sprintf(
-            'Marked Tiqr Second Factor "%s" as verified, forwarding to Saml Proxy to respond',
-            $selectedSecondFactor
-        ));
+        $logger->info(
+            sprintf(
+                'Marked Tiqr Second Factor "%s" as verified, forwarding to Saml Proxy to respond',
+                $selectedSecondFactor
+            ),
+            ['sari' => $originalRequestId]
+        );
 
         return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:respond');
     }
@@ -154,14 +172,18 @@ class SecondFactorController extends Controller
      */
     public function verifyYubiKeySecondFactorAction(Request $request)
     {
+        $context = $this->getResponseContext();
+        $originalRequestId = $context->getInResponseTo();
+
+        $logger = $this->get('logger');
         $selectedSecondFactor = $this->getResponseContext()->getSelectedSecondFactor();
 
         if (!$selectedSecondFactor) {
+            $logger->error('Cannot verify possession of an unknown second factor', ['sari' => $originalRequestId]);
             throw new BadRequestHttpException('Cannot verify possession of an unknown second factor.');
         }
 
-        $logger = $this->get('logger');
-        $logger->notice('Verifying possession of Yubikey second factor');
+        $logger->notice('Verifying possession of Yubikey second factor', ['sari' => $originalRequestId]);
 
         $command = new VerifyYubikeyOtpCommand();
         $command->secondFactorId = $selectedSecondFactor;
@@ -188,7 +210,15 @@ class SecondFactorController extends Controller
         }
 
         $this->getResponseContext()->markSecondFactorVerified();
-        $this->getAuthenticationLogger()->logSecondFactorAuthentication();
+        $this->getAuthenticationLogger()->logSecondFactorAuthentication($originalRequestId);
+
+        $logger->info(
+            sprintf(
+                'Marked Yubikey Second Factor "%s" as verified, forwarding to Saml Proxy to respond',
+                $selectedSecondFactor
+            ),
+            ['sari' => $originalRequestId]
+        );
 
         return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:respond');
     }
@@ -200,14 +230,21 @@ class SecondFactorController extends Controller
      */
     public function verifySmsSecondFactorAction(Request $request)
     {
+        $context = $this->getResponseContext();
+        $originalRequestId = $context->getInResponseTo();
+
+        $logger = $this->get('logger');
         $selectedSecondFactor = $this->getResponseContext()->getSelectedSecondFactor();
 
         if (!$selectedSecondFactor) {
+            $logger->error('Cannot verify possession of an unknown second factor', ['sari' => $originalRequestId]);
             throw new BadRequestHttpException('Cannot verify possession of an unknown second factor.');
         }
 
-        $logger = $this->get('logger');
-        $logger->notice('Verifying possession of SMS second factor, sending challenge per SMS');
+        $logger->notice(
+            'Verifying possession of SMS second factor, preparing to send',
+            ['sari' => $originalRequestId]
+        );
 
         $command = new SendSmsChallengeCommand();
         $command->secondFactorId = $selectedSecondFactor;
@@ -227,6 +264,11 @@ class SecondFactorController extends Controller
             return array_merge($viewVariables, ['phoneNumber' => $phoneNumber, 'form' => $form->createView()]);
         }
 
+        $logger->notice(
+            'Verifying possession of SMS second factor, sending challenge per SMS',
+            ['sari' => $originalRequestId]
+        );
+
         if (!$stepupService->sendSmsChallenge($command)) {
             $form->addError(new FormError('gateway.form.send_sms_challenge.sms_sending_failed'));
 
@@ -243,14 +285,16 @@ class SecondFactorController extends Controller
      */
     public function verifySmsSecondFactorChallengeAction(Request $request)
     {
+        $context = $this->getResponseContext();
+        $originalRequestId = $context->getInResponseTo();
+
+        $logger = $this->get('logger');
         $selectedSecondFactor = $this->getResponseContext()->getSelectedSecondFactor();
 
         if (!$selectedSecondFactor) {
+            $logger->error('Cannot verify possession of an unknown second factor', ['sari' => $originalRequestId]);
             throw new BadRequestHttpException('Cannot verify possession of an unknown second factor.');
         }
-
-        $logger = $this->get('logger');
-        $logger->notice('Verifying possession of SMS second factor, sending challenge per SMS');
 
         $command = new VerifySmsChallengeCommand();
         $form = $this->createForm('gateway_verify_sms_challenge', $command)->handleRequest($request);
@@ -259,20 +303,33 @@ class SecondFactorController extends Controller
             return ['form' => $form->createView()];
         }
 
+        $logger->notice('Verifying input SMS challenge matches', ['sari' => $originalRequestId]);
+
         $verification = $this->getStepupService()->verifySmsChallenge($command);
 
         if ($verification->wasSuccessful()) {
             $this->getStepupService()->clearSmsVerificationState();
 
             $this->getResponseContext()->markSecondFactorVerified();
-            $this->getAuthenticationLogger()->logSecondFactorAuthentication();
+            $this->getAuthenticationLogger()->logSecondFactorAuthentication($originalRequestId);
+
+            $logger->info(
+                sprintf(
+                    'Marked Sms Second Factor "%s" as verified, forwarding to Saml Proxy to respond',
+                    $selectedSecondFactor
+                ),
+                ['sari' => $originalRequestId]
+            );
 
             return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:respond');
         } elseif ($verification->didOtpExpire()) {
+            $logger->notice('SMS challenge expired', ['sari' => $originalRequestId]);
             $form->addError(new FormError('gateway.form.send_sms_challenge.challenge_expired'));
         } elseif ($verification->wasAttemptedTooManyTimes()) {
+            $logger->notice('SMS challenge verification was attempted too many times', ['sari' => $originalRequestId]);
             $form->addError(new FormError('gateway.form.send_sms_challenge.too_many_attempts'));
         } else {
+            $logger->notice('SMS challenge did not match', ['sari' => $originalRequestId]);
             $form->addError(new FormError('gateway.form.send_sms_challenge.sms_challenge_incorrect'));
         }
 

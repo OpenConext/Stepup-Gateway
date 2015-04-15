@@ -66,13 +66,16 @@ class SamlProxyController extends Controller
             return $this->render('unrecoverableError');
         }
 
-        $logger->notice(sprintf(
-            'AuthnRequest processing complete, received AuthnRequest from "%s", request ID: "%s"',
-            $originalRequest->getServiceProvider(),
-            $originalRequest->getRequestId()
-        ));
+        $originalRequestId = $originalRequest->getRequestId();
+        $logger->notice(
+            sprintf(
+                'AuthnRequest processing complete, received AuthnRequest from "%s"',
+                $originalRequest->getServiceProvider()
+            ),
+            ['sari' => $originalRequestId]
+        );
 
-        $logger->debug('Checking if SP "%s" is supported');
+        $logger->debug('Checking if SP "%s" is supported', ['sari' => $originalRequestId]);
         /**
          * @var \Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\ConnectedServiceProviders $connectedServiceProviders
          */
@@ -82,7 +85,8 @@ class SamlProxyController extends Controller
                 sprintf(
                     'Received AuthnRequest from SP "%s", while SP is not allowed to use this for SSO',
                     $originalRequest->getServiceProvider()
-                )
+                ),
+                ['sari' => $originalRequestId]
             );
 
             throw new AccessDeniedHttpException();
@@ -91,7 +95,7 @@ class SamlProxyController extends Controller
         /** @var StateHandler $stateHandler */
         $stateHandler = $provider->getStateHandler();
         $stateHandler
-            ->setRequestId($originalRequest->getRequestId())
+            ->setRequestId($originalRequestId)
             ->setRequestServiceProvider($originalRequest->getServiceProvider())
             ->setRelayState($httpRequest->get(AuthnRequest::PARAMETER_RELAY_STATE, ''));
 
@@ -111,13 +115,15 @@ class SamlProxyController extends Controller
         $proxyRequest->setScoping([$originalRequest->getServiceProvider()]);
         $stateHandler->setGatewayRequestId($proxyRequest->getRequestId());
 
-        $logger->notice(sprintf(
-            'Sending Proxy AuthnRequest with request ID: "%s" for original AuthnRequest "%s" to GSSP "%s" at "%s"',
-            $proxyRequest->getRequestId(),
-            $originalRequest->getRequestId(),
-            $provider->getName(),
-            $provider->getRemoteIdentityProvider()->getSsoUrl()
-        ));
+        $logger->notice(
+            sprintf(
+                'Sending Proxy AuthnRequest with request ID "%s" to GSSP "%s" at "%s"',
+                $proxyRequest->getRequestId(),
+                $provider->getName(),
+                $provider->getRemoteIdentityProvider()->getSsoUrl()
+            ),
+            ['sari' => $originalRequestId]
+        );
 
         return $redirectBinding->createRedirectResponseFor($proxyRequest);
     }
@@ -126,6 +132,7 @@ class SamlProxyController extends Controller
     {
         $provider = $this->getProvider($provider);
         $stateHandler = $provider->getStateHandler();
+        $originalRequestId = $stateHandler->getRequestId();
 
         $authnRequest = AuthnRequestFactory::createNewRequest(
             $provider->getServiceProvider(),
@@ -138,13 +145,17 @@ class SamlProxyController extends Controller
             ->setSubject($subjectNameId)
             ->markRequestAsSecondFactorVerification();
 
-        $this->get('logger')->notice(sprintf(
-            'Sending AuthnRequest to verify Second Factor with request ID: "%s" to GSSP "%s" at "%s" for subject "%s"',
-            $authnRequest->getRequestId(),
-            $provider->getName(),
-            $provider->getRemoteIdentityProvider()->getSsoUrl(),
-            $subjectNameId
-        ));
+        $this->get('logger')->notice(
+            sprintf(
+                'Sending AuthnRequest to verify Second Factor with request ID "%s" to GSSP "%s" at "%s"' .
+                ' for subject "%s"',
+                $authnRequest->getRequestId(),
+                $provider->getName(),
+                $provider->getRemoteIdentityProvider()->getSsoUrl(),
+                $subjectNameId
+            ),
+            ['sari' => $originalRequestId]
+        );
 
         /** @var \Surfnet\SamlBundle\Http\RedirectBinding $redirectBinding */
         $redirectBinding = $this->get('surfnet_saml.http.redirect_binding');
@@ -161,11 +172,16 @@ class SamlProxyController extends Controller
     {
         $provider = $this->getProvider($provider);
         $stateHandler = $provider->getStateHandler();
+        $originalRequestId = $stateHandler->getRequestId();
+
         /** @var \Monolog\Logger $logger */
         $logger = $this->get('logger');
 
         $action = $stateHandler->hasSubject() ? 'Second Factor Verification' : 'Proxy Response';
-        $logger->notice(sprintf('Received SAMLResponse, attempting to process for %s', $action));
+        $logger->notice(
+            sprintf('Received SAMLResponse, attempting to process for %s', $action),
+            ['sari' => $originalRequestId]
+        );
 
         try {
             /** @var \SAML2_Assertion $assertion */
@@ -175,7 +191,10 @@ class SamlProxyController extends Controller
                 $provider->getServiceProvider()
             );
         } catch (Exception $exception) {
-            $logger->error(sprintf('Could not process received Response, error: "%s"', $exception->getMessage()));
+            $logger->error(
+                sprintf('Could not process received Response, error: "%s"', $exception->getMessage()),
+                ['sari' => $originalRequestId]
+            );
 
             $response = $this->createResponseFailureResponse($provider);
 
@@ -185,11 +204,14 @@ class SamlProxyController extends Controller
         $adaptedAssertion = new AssertionAdapter($assertion);
         $expectedResponse = $stateHandler->getGatewayRequestId();
         if (!$adaptedAssertion->inResponseToMatches($expectedResponse)) {
-            $logger->critical(sprintf(
-                'Received Response with unexpected InResponseTo: "%s", %s',
-                $adaptedAssertion->getInResponseTo(),
-                ($expectedResponse ? 'expected "' . $expectedResponse . '"' : ' no response expected')
-            ));
+            $logger->critical(
+                sprintf(
+                    'Received Response with unexpected InResponseTo: "%s", %s',
+                    $adaptedAssertion->getInResponseTo(),
+                    ($expectedResponse ? 'expected "' . $expectedResponse . '"' : ' no response expected')
+                ),
+                ['sari' => $originalRequestId]
+            );
 
             return $this->render('unrecoverableError');
         }
@@ -197,11 +219,14 @@ class SamlProxyController extends Controller
         $authenticatedNameId = $assertion->getNameId();
         $isSubjectRequested = $stateHandler->hasSubject();
         if ($isSubjectRequested && ($stateHandler->getSubject() !== $authenticatedNameId['Value'])) {
-            $logger->critical(sprintf(
-                'Requested Subject NameID "%s" and Response NameID "%s" do not match',
-                $stateHandler->getSubject(),
-                $authenticatedNameId['Value']
-            ));
+            $logger->critical(
+                sprintf(
+                    'Requested Subject NameID "%s" and Response NameID "%s" do not match',
+                    $stateHandler->getSubject(),
+                    $authenticatedNameId['Value']
+                ),
+                ['sari' => $originalRequestId]
+            );
 
             if ($stateHandler->secondFactorVerificationRequested()) {
                 // the error should go to the original requesting service provider
@@ -216,26 +241,29 @@ class SamlProxyController extends Controller
             );
         }
 
+        $logger->notice('Successfully processed SAMLResponse', ['sari' => $originalRequestId]);
+
         if ($stateHandler->secondFactorVerificationRequested()) {
             $logger->notice(
-                'Second Factor verification was requested and was successful, forwarding to SecondFactor handling'
+                'Second Factor verification was requested and was successful, forwarding to SecondFactor handling',
+                ['sari' => $originalRequestId]
             );
 
             return $this->forward('SurfnetStepupGatewayGatewayBundle:SecondFactor:tiqrSecondFactorVerified');
         }
-
-        $logger->notice('Creating Response for original request "%s" based on response "%s"');
 
         /** @var \Surfnet\StepupGateway\SamlStepupProviderBundle\Saml\ProxyResponseFactory $proxyResponseFactory */
         $targetServiceProvider = $this->getServiceProvider($stateHandler->getRequestServiceProvider());
         $proxyResponseFactory = $this->get('gssp.provider.' . $provider->getName() . '.response_proxy');
         $response             = $proxyResponseFactory->createProxyResponse($assertion, $targetServiceProvider);
 
-        $logger->notice(sprintf(
-            'Responding to request "%s" with response based on response from the remote IdP with response "%s"',
-            $stateHandler->getRequestId(),
-            $response->getId()
-        ));
+        $logger->notice(
+            sprintf(
+                'Responding with response based on response from the remote IdP with response "%s"',
+                $response->getId()
+            ),
+            ['sari' => $originalRequestId]
+        );
 
         return $this->renderSamlResponse('consumeAssertion', $stateHandler, $response);
     }
