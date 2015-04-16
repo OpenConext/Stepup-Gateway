@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "c6d91a7109c41016e227f23c9a49ba3d",
+    "hash": "1877b117457f55a9906e0a9cb7fe9cb9",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -2288,16 +2288,16 @@
         },
         {
             "name": "surfnet/stepup-saml-bundle",
-            "version": "dev-feature/sari",
+            "version": "dev-develop",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SURFnet/Stepup-saml-bundle.git",
-                "reference": "3bb1cca4541c0f2b029a6833a1ea4370489e99b8"
+                "reference": "4f4d4d9d04b3d9b1e322ad4cc6579336ba932ed3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SURFnet/Stepup-saml-bundle/zipball/3bb1cca4541c0f2b029a6833a1ea4370489e99b8",
-                "reference": "3bb1cca4541c0f2b029a6833a1ea4370489e99b8",
+                "url": "https://api.github.com/repos/SURFnet/Stepup-saml-bundle/zipball/4f4d4d9d04b3d9b1e322ad4cc6579336ba932ed3",
+                "reference": "4f4d4d9d04b3d9b1e322ad4cc6579336ba932ed3",
                 "shasum": ""
             },
             "require": {
@@ -2330,7 +2330,7 @@
                 "stepup",
                 "surfnet"
             ],
-            "time": "2015-04-16 09:08:31"
+            "time": "2015-04-16 10:02:22"
         },
         {
             "name": "surfnet/yubikey-api-client-bundle",

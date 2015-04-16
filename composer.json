@@ -37,7 +37,7 @@
         "simplesamlphp/saml2": "dev-master",
         "surfnet/stepup-bundle": "dev-develop",
         "simplesamlphp/saml2": "dev-master",
-        "surfnet/stepup-saml-bundle": "dev-feature/sari"
+        "surfnet/stepup-saml-bundle": "dev-develop"
     },
     "repositories": [
         {
