@@ -60,13 +60,11 @@ class SecondFactorController extends Controller
         /** @var \Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor $secondFactor */
         $secondFactor = $secondFactorCollection->first();
 
-        $logger->notice(
-            sprintf(
-                'Found "%d" second factors, using second factor of type "%s"',
-                count($secondFactorCollection),
-                $secondFactor->secondFactorType
-            )
-        );
+        $logger->notice(sprintf(
+            'Found "%d" second factors, using second factor of type "%s"',
+            count($secondFactorCollection),
+            $secondFactor->secondFactorType
+        ));
 
         $context->saveSelectedSecondFactor($secondFactor->secondFactorId);
 
@@ -91,12 +89,10 @@ class SecondFactorController extends Controller
             throw new BadRequestHttpException('Cannot verify possession of an unknown second factor.');
         }
 
-        $logger->info(
-            sprintf(
-                'Selected Tiqr Second Factor "%s" for verfication, forwarding to Saml handling',
-                $selectedSecondFactor
-            )
-        );
+        $logger->info(sprintf(
+            'Selected Tiqr Second Factor "%s" for verfication, forwarding to Saml handling',
+            $selectedSecondFactor
+        ));
 
         /** @var \Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorService $secondFactorService */
         $secondFactorService = $this->get('gateway.service.second_factor_service');
@@ -104,10 +100,8 @@ class SecondFactorController extends Controller
         $secondFactor = $secondFactorService->findByUuid($selectedSecondFactor);
         if (!$secondFactor) {
             $logger->critical(
-                sprintf(
-                    'Requested verification of Tiqr second factor "%s", however that Second Factor no longer exists',
-                    $selectedSecondFactor
-                )
+                'Requested verification of Tiqr second factor "%s", however that Second Factor no longer exists',
+                $selectedSecondFactor
             );
 
             throw new RuntimeException('Verification of selected second factor that no longer exists');
@@ -140,12 +134,10 @@ class SecondFactorController extends Controller
         /** @var \Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor $secondFactor */
         $secondFactor = $this->get('gateway.service.second_factor_service')->findByUuid($selectedSecondFactor);
         if (!$secondFactor) {
-            $logger->critical(
-                sprintf(
-                    'Verification of Tiqr Second Factor "%s" succeeded, however that Second Factor no longer exists',
-                    $selectedSecondFactor
-                )
-            );
+            $logger->critical(sprintf(
+                'Verification of Tiqr Second Factor "%s" succeeded, however that Second Factor no longer exists',
+                $selectedSecondFactor
+            ));
 
             throw new RuntimeException('Verification of selected second factor that no longer exists');
         }
@@ -153,12 +145,10 @@ class SecondFactorController extends Controller
         $context->markSecondFactorVerified();
         $this->getAuthenticationLogger()->logSecondFactorAuthentication($originalRequestId);
 
-        $logger->info(
-            sprintf(
-                'Marked Tiqr Second Factor "%s" as verified, forwarding to Saml Proxy to respond',
-                $selectedSecondFactor
-            )
-        );
+        $logger->info(sprintf(
+            'Marked Tiqr Second Factor "%s" as verified, forwarding to Saml Proxy to respond',
+            $selectedSecondFactor
+        ));
 
         return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:respond');
     }

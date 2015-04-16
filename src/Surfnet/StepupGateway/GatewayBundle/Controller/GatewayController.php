@@ -51,12 +51,11 @@ class GatewayController extends Controller
 
         $originalRequestId = $originalRequest->getRequestId();
         $logger = $logger->forAuthentication($originalRequestId);
-        $logger->notice(
-            sprintf(
-                'AuthnRequest processing complete, received AuthnRequest from "%s"',
-                $originalRequest->getServiceProvider()
-            )
-        );
+        $logger->notice(sprintf(
+            'AuthnRequest processing complete, received AuthnRequest from "%s", request ID: "%s"',
+            $originalRequest->getServiceProvider(),
+            $originalRequest->getRequestId()
+        ));
 
         /** @var \Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler $stateHandler */
         $stateHandler = $this->get('gateway.proxy.state_handler');
@@ -68,12 +67,10 @@ class GatewayController extends Controller
         // check if the requested loa is supported
         $requiredLoa = $originalRequest->getAuthenticationContextClassRef();
         if ($requiredLoa && !$this->get('surfnet_stepup.service.loa_resolution')->hasLoa($requiredLoa)) {
-            $logger->warning(
-                sprintf(
-                    'Requested required LOA "%s" does not exist, sending response with status Requester Error',
-                    $requiredLoa
-                )
-            );
+            $logger->info(sprintf(
+                'Requested required LOA "%s" does not exist, sending response with status Requester Error',
+                $requiredLoa
+            ));
 
             $response = $this->createRequesterFailureResponse();
             return $this->renderSamlResponse('consumeAssertion', $response);
@@ -89,13 +86,11 @@ class GatewayController extends Controller
         $proxyRequest->setScoping([$originalRequest->getServiceProvider()]);
         $stateHandler->setGatewayRequestId($proxyRequest->getRequestId());
 
-        $logger->notice(
-            sprintf(
-                'Sending Proxy AuthnRequest with proxy request ID: "%s"',
-                $proxyRequest->getRequestId(),
-                $originalRequestId
-            )
-        );
+        $logger->notice(sprintf(
+            'Sending Proxy AuthnRequest with request ID: "%s" for original AuthnRequest "%s"',
+            $proxyRequest->getRequestId(),
+            $originalRequest->getRequestId()
+        ));
 
         return $redirectBinding->createRedirectResponseFor($proxyRequest);
     }
@@ -136,13 +131,11 @@ class GatewayController extends Controller
         $adaptedAssertion = new AssertionAdapter($assertion);
         $expectedInResponseTo = $responseContext->getExpectedInResponseTo();
         if (!$adaptedAssertion->inResponseToMatches($expectedInResponseTo)) {
-            $logger->critical(
-                sprintf(
-                    'Received Response with unexpected InResponseTo: "%s", %s',
-                    $adaptedAssertion->getInResponseTo(),
-                    ($expectedInResponseTo ? 'expected "' . $expectedInResponseTo . '"' : ' no response expected')
-                )
-            );
+            $logger->critical(sprintf(
+                'Received Response with unexpected InResponseTo: "%s", %s',
+                $adaptedAssertion->getInResponseTo(),
+                ($expectedInResponseTo ? 'expected "' . $expectedInResponseTo . '"' : ' no response expected')
+            ));
 
             return $this->render('unrecoverableError');
         }
@@ -201,13 +194,11 @@ class GatewayController extends Controller
 
         $responseContext->responseSent();
 
-        $logger->notice(
-            sprintf(
-                'Responding with response based on response from the remote IdP with ID "%s" and granted LoA "%s"',
-                $response->getId(),
-                $grantedLoa
-            )
-        );
+        $logger->notice(sprintf(
+            'Responding to request "%s" with response based on response from the remote IdP with response "%s"',
+            $responseContext->getInResponseTo(),
+            $response->getId()
+        ));
 
         return $this->renderSamlResponse('consumeAssertion', $response);
     }
@@ -229,12 +220,11 @@ class GatewayController extends Controller
             ->setResponseStatus(SAML2_Const::STATUS_NO_AUTHN_CONTEXT)
             ->get();
 
-        $logger->notice(
-            sprintf(
-                'Responding with response based on response from the remote IdP with response "%s"',
-                $response->getId()
-            )
-        );
+        $logger->notice(sprintf(
+            'Responding to request "%s" with response based on response from the remote IdP with response "%s"',
+            $responseContext->getInResponseTo(),
+            $response->getId()
+        ));
 
         return $this->renderSamlResponse('consumeAssertion', $response);
     }
