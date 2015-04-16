@@ -2292,12 +2292,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/SURFnet/Stepup-saml-bundle.git",
-                "reference": "b72158134f96599186cf3911f896e53f205254e3"
+                "reference": "3bb1cca4541c0f2b029a6833a1ea4370489e99b8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SURFnet/Stepup-saml-bundle/zipball/b72158134f96599186cf3911f896e53f205254e3",
-                "reference": "b72158134f96599186cf3911f896e53f205254e3",
+                "url": "https://api.github.com/repos/SURFnet/Stepup-saml-bundle/zipball/3bb1cca4541c0f2b029a6833a1ea4370489e99b8",
+                "reference": "3bb1cca4541c0f2b029a6833a1ea4370489e99b8",
                 "shasum": ""
             },
             "require": {
@@ -2330,7 +2330,7 @@
                 "stepup",
                 "surfnet"
             ],
-            "time": "2015-04-15 14:25:12"
+            "time": "2015-04-16 09:08:31"
         },
         {
             "name": "surfnet/yubikey-api-client-bundle",

@@ -51,8 +51,8 @@ class SamlProxyController extends Controller
     {
         $provider = $this->getProvider($provider);
 
-        /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
-        $logger = $this->get('surfnet_saml.logger');
+        /** @var \Psr\Log\LoggerInterface $logger */
+        $logger = $this->get('logger');
         $logger->notice('Received AuthnRequest, started processing');
 
         /** @var \Surfnet\SamlBundle\Http\RedirectBinding $redirectBinding */
@@ -67,7 +67,7 @@ class SamlProxyController extends Controller
         }
 
         $originalRequestId = $originalRequest->getRequestId();
-        $logger = $logger->forAuthentication($originalRequestId);
+        $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
         $logger->notice(sprintf(
             'AuthnRequest processing complete, received AuthnRequest from "%s", request ID: "%s"',
             $originalRequest->getServiceProvider(),
