@@ -126,7 +126,8 @@ class SamlProxyController extends Controller
     {
         $provider = $this->getProvider($provider);
         $stateHandler = $provider->getStateHandler();
-        $originalRequestId = $stateHandler->getRequestId();
+
+        $originalRequestId = $this->get('gateway.proxy.response_context')->getInResponseTo();
 
         $authnRequest = AuthnRequestFactory::createNewRequest(
             $provider->getServiceProvider(),
@@ -164,7 +165,8 @@ class SamlProxyController extends Controller
     {
         $provider = $this->getProvider($provider);
         $stateHandler = $provider->getStateHandler();
-        $originalRequestId = $stateHandler->getRequestId();
+
+        $originalRequestId = $this->get('gateway.proxy.response_context')->getInResponseTo();
 
         /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
         $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
