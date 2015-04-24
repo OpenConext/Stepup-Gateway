@@ -140,7 +140,6 @@ class StepUpAuthenticationService
             }
         }
 
-        return $this->loaResolutionService->getLoa('https://gw-dev.stepup.coin.surf.net/authentication/loa2');
         return $highest;
     }
 
