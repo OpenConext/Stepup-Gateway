@@ -136,6 +136,7 @@ class SamlProxyController extends Controller
         $authnRequest->setSubject($subjectNameId);
 
         $stateHandler
+            ->setRequestId($originalRequestId)
             ->setGatewayRequestId($authnRequest->getRequestId())
             ->setSubject($subjectNameId)
             ->markRequestAsSecondFactorVerification();
@@ -165,8 +166,7 @@ class SamlProxyController extends Controller
     {
         $provider = $this->getProvider($provider);
         $stateHandler = $provider->getStateHandler();
-
-        $originalRequestId = $this->get('gateway.proxy.response_context')->getInResponseTo();
+        $originalRequestId = $stateHandler->getRequestId();
 
         /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
         $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
