@@ -2,6 +2,7 @@ imports:
     - { resource: parameters.yml }
     - { resource: security.yml }
     - { resource: samlstepupproviders.yml }
+    - { resource: logging.yml }
 
 framework:
     #esi:             ~
@@ -151,35 +152,6 @@ surfnet_stepup_gateway_gateway:
         originator: %sms_originator%
         otp_expiry_interval: %sms_otp_expiry_interval%
         maximum_otp_requests: %sms_maximum_otp_requests%
-
-monolog:
-    channels: [authentication]
-    handlers:
-        main:
-            type: group
-            members:
-                - main_graylog
-                - main_logfile
-        main_graylog:
-            type: buffer
-            handler: graylog
-            level: NOTICE
-        main_logfile:
-            type: stream
-            handler: logfile
-            level: NOTICE
-            path: %kernel.logs_dir%/%kernel.environment%.log
-        graylog:
-            type: gelf
-            publisher: { hostname: %graylog_hostname% }
-            formatter: surfnet_stepup.monolog.full_message_exception_gelf_message_formatter
-        authentication:
-            type: stream
-            handler: logfile
-            level: INFO
-            path: %kernel.logs_dir%/%kernel.environment%_authentication.log
-            channels: [authentication]
-            formatter: gateway.monolog.gelf_to_string_formatter
 
 surfnet_saml:
     hosted:

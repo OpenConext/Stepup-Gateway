@@ -10,10 +10,12 @@
     "minimum-stability": "stable",
     "require": {
         "php": ">=5.4",
-        "symfony/symfony": "~2.6.2",
-        "doctrine/dbal": "~2.2,>=2.2.3",
-        "doctrine/orm": "~2.2,>=2.2.3",
-        "doctrine/doctrine-bundle": "~1.2",
+        "symfony/symfony": "~2.6,>=2.6.6",
+        "doctrine/dbal": "~2.5",
+        "doctrine/orm": "~2.5",
+        "doctrine/doctrine-bundle": "~1.4",
+        "doctrine/common": "~2.5",
+        "doctrine/cache": "~1.4",
         "twig/extensions": "~1.0",
         "symfony/assetic-bundle": "~2.3",
         "symfony/swiftmailer-bundle": "~2.3",
@@ -23,8 +25,8 @@
         "incenteev/composer-parameter-handler": "~2.0",
         "nelmio/security-bundle": "~1.4",
         "doctrine/doctrine-migrations-bundle": "~1.0.0",
-        "doctrine/migrations": "~1.0.0|1.0.0@dev",
-        "mopa/bootstrap-bundle": "~3|3.0.0@beta",
+        "doctrine/migrations": "~1.0.0|1.0.0@alpha",
+        "mopa/bootstrap-bundle": "~3@dev",
         "twbs/bootstrap": "~3.2.0",
         "fortawesome/font-awesome": "~4.2.0",
         "jms/translation-bundle": "~1.1.0",
@@ -34,7 +36,7 @@
         "surfnet/yubikey-api-client-bundle": "~1.2",
         "surfnet/stepup-bundle": "0.2.*",
         "simplesamlphp/saml2": "dev-master",
-        "surfnet/stepup-saml-bundle": "0.3.*"
+        "surfnet/stepup-saml-bundle": "0.4.*"
     },
     "repositories": [
         {
@@ -47,12 +49,6 @@
         "ibuildings/qa-tools": "~1.1,>=1.1.27",
         "liip/rmt": "1.1.*"
     },
-    "repositories": [
-        {
-          "type": "vcs",
-          "url": "https://github.com/SURFnet/saml2"
-        }
-    ],
     "scripts": {
         "post-install-cmd": [
             "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",

@@ -51,7 +51,7 @@ class SamlProxyController extends Controller
     {
         $provider = $this->getProvider($provider);
 
-        /** @var \Monolog\Logger $logger */
+        /** @var \Psr\Log\LoggerInterface $logger */
         $logger = $this->get('logger');
         $logger->notice('Received AuthnRequest, started processing');
 
@@ -66,6 +66,8 @@ class SamlProxyController extends Controller
             return $this->render('unrecoverableError');
         }
 
+        $originalRequestId = $originalRequest->getRequestId();
+        $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
         $logger->notice(sprintf(
             'AuthnRequest processing complete, received AuthnRequest from "%s", request ID: "%s"',
             $originalRequest->getServiceProvider(),
@@ -78,12 +80,10 @@ class SamlProxyController extends Controller
          */
         $connectedServiceProviders = $this->get('gssp.connected_service_providers');
         if (!$connectedServiceProviders->isConnected($originalRequest->getServiceProvider())) {
-            $logger->warn(
-                sprintf(
-                    'Received AuthnRequest from SP "%s", while SP is not allowed to use this for SSO',
-                    $originalRequest->getServiceProvider()
-                )
-            );
+            $logger->warning(sprintf(
+                'Received AuthnRequest from SP "%s", while SP is not allowed to use this for SSO',
+                $originalRequest->getServiceProvider()
+            ));
 
             throw new AccessDeniedHttpException();
         }
@@ -91,7 +91,7 @@ class SamlProxyController extends Controller
         /** @var StateHandler $stateHandler */
         $stateHandler = $provider->getStateHandler();
         $stateHandler
-            ->setRequestId($originalRequest->getRequestId())
+            ->setRequestId($originalRequestId)
             ->setRequestServiceProvider($originalRequest->getServiceProvider())
             ->setRelayState($httpRequest->get(AuthnRequest::PARAMETER_RELAY_STATE, ''));
 
@@ -127,6 +127,8 @@ class SamlProxyController extends Controller
         $provider = $this->getProvider($provider);
         $stateHandler = $provider->getStateHandler();
 
+        $originalRequestId = $this->get('gateway.proxy.response_context')->getInResponseTo();
+
         $authnRequest = AuthnRequestFactory::createNewRequest(
             $provider->getServiceProvider(),
             $provider->getRemoteIdentityProvider()
@@ -134,11 +136,14 @@ class SamlProxyController extends Controller
         $authnRequest->setSubject($subjectNameId);
 
         $stateHandler
+            ->setRequestId($originalRequestId)
             ->setGatewayRequestId($authnRequest->getRequestId())
             ->setSubject($subjectNameId)
             ->markRequestAsSecondFactorVerification();
 
-        $this->get('logger')->notice(sprintf(
+        /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
+        $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
+        $logger->notice(sprintf(
             'Sending AuthnRequest to verify Second Factor with request ID: "%s" to GSSP "%s" at "%s" for subject "%s"',
             $authnRequest->getRequestId(),
             $provider->getName(),
@@ -161,11 +166,15 @@ class SamlProxyController extends Controller
     {
         $provider = $this->getProvider($provider);
         $stateHandler = $provider->getStateHandler();
-        /** @var \Monolog\Logger $logger */
-        $logger = $this->get('logger');
+        $originalRequestId = $stateHandler->getRequestId();
+
+        /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
+        $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
 
         $action = $stateHandler->hasSubject() ? 'Second Factor Verification' : 'Proxy Response';
-        $logger->notice(sprintf('Received SAMLResponse, attempting to process for %s', $action));
+        $logger->notice(
+            sprintf('Received SAMLResponse, attempting to process for %s', $action)
+        );
 
         try {
             /** @var \SAML2_Assertion $assertion */
@@ -216,6 +225,8 @@ class SamlProxyController extends Controller
             );
         }
 
+        $logger->notice('Successfully processed SAMLResponse');
+
         if ($stateHandler->secondFactorVerificationRequested()) {
             $logger->notice(
                 'Second Factor verification was requested and was successful, forwarding to SecondFactor handling'
@@ -223,8 +234,6 @@ class SamlProxyController extends Controller
 
             return $this->forward('SurfnetStepupGatewayGatewayBundle:SecondFactor:tiqrSecondFactorVerified');
         }
-
-        $logger->notice('Creating Response for original request "%s" based on response "%s"');
 
         /** @var \Surfnet\StepupGateway\SamlStepupProviderBundle\Saml\ProxyResponseFactory $proxyResponseFactory */
         $targetServiceProvider = $this->getServiceProvider($stateHandler->getRequestServiceProvider());
