@@ -19,9 +19,9 @@
 namespace Surfnet\StepupGateway\GatewayBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Surfnet\StepupBundle\Command\VerifyPossessionOfPhoneCommand;
 use Surfnet\StepupBundle\Value\PhoneNumber\InternationalPhoneNumber;
 use Surfnet\StepupGateway\GatewayBundle\Command\SendSmsChallengeCommand;
-use Surfnet\StepupGateway\GatewayBundle\Command\VerifySmsChallengeCommand;
 use Surfnet\StepupGateway\GatewayBundle\Command\VerifyYubikeyOtpCommand;
 use Surfnet\StepupGateway\GatewayBundle\Exception\RuntimeException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -280,7 +280,7 @@ class SecondFactorController extends Controller
             throw new BadRequestHttpException('Cannot verify possession of an unknown second factor.');
         }
 
-        $command = new VerifySmsChallengeCommand();
+        $command = new VerifyPossessionOfPhoneCommand();
         $form = $this->createForm('gateway_verify_sms_challenge', $command)->handleRequest($request);
 
         if (!$form->isValid()) {

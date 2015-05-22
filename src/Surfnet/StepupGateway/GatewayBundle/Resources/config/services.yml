@@ -51,24 +51,13 @@ services:
             - @saml.entity_repository
             - @gateway.repository.second_factor
             - @surfnet_gateway_api.service.yubikey
-            - @gateway.service.sms_second_factor
+            - @surfnet_stepup.service.sms_second_factor
+            - @translator
 
-    gateway.service.sms_second_factor:
-        class: Surfnet\StepupGateway\GatewayBundle\Service\SmsSecondFactorService
+    gateway.service.gateway_api_sms:
+        class: Surfnet\StepupGateway\GatewayBundle\Service\GatewayApiSmsService
         arguments:
             - @surfnet_gateway_api.service.sms
-            - @gateway.service.challenge_handler
-            - @translator
-            - '' # Replaced in extension
-
-    gateway.service.challenge_handler:
-        public: false
-        class: Surfnet\StepupGateway\GatewayBundle\Service\SmsSecondFactor\SessionSmsVerificationStateHandler
-        arguments:
-            - @session
-            - 'Surfnet/Gateway/SecondFactor/Sms:challenge'
-            - {} # OTP expiry interval
-            - 0  # Maximum OTP requests
 
     # Logging
     gateway.authentication_logger:

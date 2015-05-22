@@ -47,7 +47,7 @@ class VerifySmsChallengeType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => 'Surfnet\StepupGateway\GatewayBundle\Command\VerifySmsChallengeCommand',
+            'data_class' => 'Surfnet\StepupBundle\Command\VerifyPossessionOfPhoneCommand',
         ]);
     }
 

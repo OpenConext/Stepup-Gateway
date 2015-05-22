@@ -31,58 +31,7 @@ final class Configuration implements ConfigurationInterface
         $rootNode = $treeBuilder->root('surfnet_stepup_gateway_gateway');
 
         $rootNode->children()->scalarNode('intrinsic_loa')->isRequired()->end()->end();
-        $this->createSmsConfiguration($rootNode);
 
         return $treeBuilder;
-    }
-
-    private function createSmsConfiguration(ArrayNodeDefinition $root)
-    {
-        $root
-            ->children()
-                ->arrayNode('sms')
-                    ->info('SMS configuration')
-                    ->isRequired()
-                    ->children()
-                        ->scalarNode('originator')
-                            ->info('Originator (sender) for SMS messages')
-                            ->isRequired()
-                            ->validate()
-                                ->ifTrue(function ($value) {
-                                    return (!is_string($value) || !preg_match('~^[a-z0-9]{1,11}$~i', $value));
-                                })
-                                ->thenInvalid(
-                                    'Invalid SMS originator specified: "%s". Must be a string matching '
-                                    . '"~^[a-z0-9]{1,11}$~i".'
-                                )
-                            ->end()
-                        ->end()
-                        ->integerNode('otp_expiry_interval')
-                            ->info('After how many seconds an SMS challenge OTP expires')
-                            ->isRequired()
-                            ->validate()
-                                ->ifTrue(function ($value) {
-                                    return $value <= 0;
-                                })
-                                ->thenInvalid(
-                                    'Invalid SMS challenge OTP expiry, must be one or more seconds.'
-                                )
-                            ->end()
-                        ->end()
-                        ->integerNode('maximum_otp_requests')
-                            ->info('How many challenges a user may request during a session')
-                            ->isRequired()
-                            ->validate()
-                                ->ifTrue(function ($value) {
-                                    return $value <= 0;
-                                })
-                                ->thenInvalid(
-                                    'Maximum OTP requests has a minimum of 1'
-                                )
-                            ->end()
-                        ->end()
-                    ->end()
-                ->end()
-            ->end();
     }
 }
