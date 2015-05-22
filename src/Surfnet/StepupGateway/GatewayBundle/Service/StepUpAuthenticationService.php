@@ -19,6 +19,7 @@
 namespace Surfnet\StepupGateway\GatewayBundle\Service;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Psr\Log\LoggerInterface;
 use Surfnet\SamlBundle\Entity\ServiceProvider;
 use Surfnet\StepupBundle\Command\SendSmsChallengeCommand as StepupSendSmsChallengeCommand;
 use Surfnet\StepupBundle\Command\VerifyPossessionOfPhoneCommand;
@@ -73,13 +74,19 @@ class StepUpAuthenticationService
      */
     private $translator;
 
+    /**
+     * @var \Psr\Log\LoggerInterface
+     */
+    private $logger;
+
     public function __construct(
         LoaResolutionService $loaResolutionService,
         SamlEntityService $samlEntityService,
         SecondFactorRepository $secondFactorRepository,
         YubikeyService $yubikeyService,
         SmsSecondFactorService $smsService,
-        TranslatorInterface $translator
+        TranslatorInterface $translator,
+        LoggerInterface $logger
     ) {
         $this->loaResolutionService = $loaResolutionService;
         $this->samlEntityService = $samlEntityService;
@@ -87,6 +94,7 @@ class StepUpAuthenticationService
         $this->yubikeyService = $yubikeyService;
         $this->smsService = $smsService;
         $this->translator = $translator;
+        $this->logger = $logger;
     }
 
     /**
@@ -106,21 +114,40 @@ class StepUpAuthenticationService
 
         if ($requestedLoa) {
             $loaCandidates->add($requestedLoa);
+            $this->logger->info(sprintf('Added requested LoA "%s" as candidate', $requestedLoa));
         }
 
         $spConfiguredLoas = $serviceProvider->get('configuredLoas');
-
         $loaCandidates->add($spConfiguredLoas['__default__']);
+        $this->logger->info(sprintf('Added SP\'s default LoA "%s" as candidate', $spConfiguredLoas['__default__']));
+
         if (array_key_exists($authenticatingIdp, $spConfiguredLoas)) {
             $loaCandidates->add($spConfiguredLoas[$authenticatingIdp]);
+            $this->logger->info(sprintf(
+                'Added SP\'s LoA "%s" for this IdP as candidate',
+                $spConfiguredLoas[$authenticatingIdp]
+            ));
         }
 
         $highestLoa = $this->resolveHighestLoa($loaCandidates);
         if (!$highestLoa) {
+            $this->logger->info(sprintf(
+                'Out of %d candidate LoA\'s, no highest LoA could be determined; no candidate second factors',
+                count($loaCandidates)
+            ));
             return new ArrayCollection();
         }
 
-        return $this->secondFactorRepository->getAllMatchingFor($highestLoa, $identityNameId);
+        $this->logger->info(
+            sprintf('Out of %d candidate LoA\'s, LoA "%s" is the highest', count($loaCandidates), $highestLoa)
+        );
+
+        $candidateSecondFactors = $this->secondFactorRepository->getAllMatchingFor($highestLoa, $identityNameId);
+        $this->logger->info(
+            sprintf('Loaded %d matching candidate second factors', count($candidateSecondFactors))
+        );
+
+        return $candidateSecondFactors;
     }
 
     /**
