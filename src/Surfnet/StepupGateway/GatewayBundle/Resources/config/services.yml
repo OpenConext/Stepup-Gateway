@@ -48,7 +48,6 @@ services:
         class: Surfnet\StepupGateway\GatewayBundle\Service\StepUpAuthenticationService
         arguments:
             - @surfnet_stepup.service.loa_resolution
-            - @saml.entity_repository
             - @gateway.repository.second_factor
             - @surfnet_gateway_api.service.yubikey
             - @surfnet_stepup.service.sms_second_factor
