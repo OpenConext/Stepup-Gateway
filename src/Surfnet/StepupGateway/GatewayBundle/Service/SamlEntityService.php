@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Service;
 
+use Surfnet\SamlBundle\Entity\IdentityProvider;
 use Surfnet\SamlBundle\Entity\ServiceProvider;
 use Surfnet\SamlBundle\Entity\ServiceProviderRepository;
 use Surfnet\StepupGateway\GatewayBundle\Entity\SamlEntityRepository;
@@ -31,14 +32,54 @@ class SamlEntityService implements ServiceProviderRepository
     private $samlEntityRepository;
 
     /**
-     * @var array
+     * @var \Surfnet\SamlBundle\Entity\IdentityProvider[]
+     */
+    private $loadedIdentityProviders;
+
+    /**
+     * @var \Surfnet\SamlBundle\Entity\ServiceProvider[]
      */
     private $loadedServiceProviders;
 
     public function __construct(SamlEntityRepository $samlEntityRepository)
     {
         $this->samlEntityRepository = $samlEntityRepository;
+        $this->loadedIdentityProviders = [];
         $this->loadedServiceProviders = [];
+    }
+
+    /**
+     * @param string $entityId
+     * @return IdentityProvider
+     */
+    public function getIdentityProvider($entityId)
+    {
+        if (!array_key_exists($entityId, $this->loadedIdentityProviders) && !$this->hasIdentityProvider($entityId)) {
+            throw new RuntimeException(sprintf(
+                'Failed at attempting to load unknown IdentityProvider with EntityId "%s"',
+                $entityId
+            ));
+        }
+
+        return $this->loadedIdentityProviders[$entityId];
+    }
+
+    /**
+     * @param string $entityId
+     * @return bool
+     */
+    public function hasIdentityProvider($entityId)
+    {
+        $samlEntity = $this->samlEntityRepository->getIdentityProvider($entityId);
+
+        if (!$samlEntity) {
+            return false;
+        }
+
+        $identityProvider = $samlEntity->toIdentityProvider();
+        $this->loadedIdentityProviders[$identityProvider->getEntityId()] = $identityProvider;
+
+        return true;
     }
 
     /**

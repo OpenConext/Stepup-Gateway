@@ -27,6 +27,25 @@ class SamlEntityRepository extends EntityRepository
      * @return null|SamlEntity
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
+    public function getIdentityProvider($entityId)
+    {
+        return $this
+            ->createQueryBuilder('s')
+            ->where('s.type = :entityType')
+            ->andWhere('s.entityId = :entityId')
+            ->setParameters([
+                'entityType' => SamlEntity::TYPE_IDP,
+                'entityId'   => $entityId
+            ])
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    /**
+     * @param $entityId
+     * @return null|SamlEntity
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
     public function getServiceProvider($entityId)
     {
         return $this
