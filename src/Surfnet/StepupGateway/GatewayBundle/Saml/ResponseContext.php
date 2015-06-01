@@ -35,7 +35,7 @@ class ResponseContext
     private $hostedIdentityProvider;
 
     /**
-     * @var SamlEntityService
+     * @var \Surfnet\StepupGateway\GatewayBundle\Service\SamlEntityService
      */
     private $samlEntityService;
 
@@ -48,6 +48,11 @@ class ResponseContext
      * @var DateTime
      */
     private $generationTime;
+
+    /**
+     * @var IdentityProvider|null
+     */
+    private $authenticatingIdp;
 
     /**
      * @var ServiceProvider
@@ -190,11 +195,25 @@ class ResponseContext
     }
 
     /**
-     * @return null|string
+     * @return null|IdentityProvider
      */
     public function getAuthenticatingIdp()
     {
-        return $this->stateHandler->getAuthenticatingIdp();
+        $entityId = $this->stateHandler->getAuthenticatingIdp();
+
+        if (!$entityId) {
+            return null;
+        }
+
+        if (isset($this->authenticatingIdp)) {
+            return $this->authenticatingIdp;
+        }
+
+        $this->authenticatingIdp = $this->samlEntityService->hasIdentityProvider($entityId)
+            ? $this->samlEntityService->getIdentityProvider($entityId)
+            : null;
+
+        return $this->authenticatingIdp;
     }
 
     /**

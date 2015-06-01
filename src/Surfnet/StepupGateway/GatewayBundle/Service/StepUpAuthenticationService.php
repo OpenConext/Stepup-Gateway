@@ -20,6 +20,7 @@ namespace Surfnet\StepupGateway\GatewayBundle\Service;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Psr\Log\LoggerInterface;
+use Surfnet\SamlBundle\Entity\IdentityProvider;
 use Surfnet\SamlBundle\Entity\ServiceProvider;
 use Surfnet\StepupBundle\Command\SendSmsChallengeCommand as StepupSendSmsChallengeCommand;
 use Surfnet\StepupBundle\Command\VerifyPossessionOfPhoneCommand;
@@ -50,11 +51,6 @@ class StepUpAuthenticationService
     private $loaResolutionService;
 
     /**
-     * @var \Surfnet\StepupGateway\GatewayBundle\Service\SamlEntityService
-     */
-    private $samlEntityService;
-
-    /**
      * @var \Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactorRepository
      */
     private $secondFactorRepository;
@@ -81,7 +77,6 @@ class StepUpAuthenticationService
 
     public function __construct(
         LoaResolutionService $loaResolutionService,
-        SamlEntityService $samlEntityService,
         SecondFactorRepository $secondFactorRepository,
         YubikeyService $yubikeyService,
         SmsSecondFactorService $smsService,
@@ -89,7 +84,6 @@ class StepUpAuthenticationService
         LoggerInterface $logger
     ) {
         $this->loaResolutionService = $loaResolutionService;
-        $this->samlEntityService = $samlEntityService;
         $this->secondFactorRepository = $secondFactorRepository;
         $this->yubikeyService = $yubikeyService;
         $this->smsService = $smsService;
@@ -101,14 +95,14 @@ class StepUpAuthenticationService
      * @param string          $identityNameId
      * @param string          $requestedLoa
      * @param ServiceProvider $serviceProvider
-     * @param string          $authenticatingIdp
+     * @param IdentityProvider|null $authenticatingIdp
      * @return \Doctrine\Common\Collections\ArrayCollection
      */
     public function determineViableSecondFactors(
         $identityNameId,
         $requestedLoa,
         ServiceProvider $serviceProvider,
-        $authenticatingIdp
+        IdentityProvider $authenticatingIdp = null
     ) {
         $loaCandidates = new ArrayCollection();
 
@@ -121,12 +115,28 @@ class StepUpAuthenticationService
         $loaCandidates->add($spConfiguredLoas['__default__']);
         $this->logger->info(sprintf('Added SP\'s default LoA "%s" as candidate', $spConfiguredLoas['__default__']));
 
-        if (array_key_exists($authenticatingIdp, $spConfiguredLoas)) {
-            $loaCandidates->add($spConfiguredLoas[$authenticatingIdp]);
-            $this->logger->info(sprintf(
-                'Added SP\'s LoA "%s" for this IdP as candidate',
-                $spConfiguredLoas[$authenticatingIdp]
-            ));
+        if ($authenticatingIdp) {
+            if (array_key_exists($authenticatingIdp->getEntityId(), $spConfiguredLoas)) {
+                $loaCandidates->add($spConfiguredLoas[$authenticatingIdp->getEntityId()]);
+                $this->logger->info(sprintf(
+                    'Added SP\'s LoA "%s" for this IdP as candidate',
+                    $spConfiguredLoas[$authenticatingIdp->getEntityId()]
+                ));
+            }
+
+            $idpConfiguredLoas = $authenticatingIdp->get('configuredLoas');
+            $loaCandidates->add($idpConfiguredLoas['__default__']);
+            $this->logger->info(
+                sprintf('Added authenticating IdP\'s default LoA "%s" as candidate', $spConfiguredLoas['__default__'])
+            );
+
+            if (array_key_exists($serviceProvider->getEntityId(), $idpConfiguredLoas)) {
+                $loaCandidates->add($idpConfiguredLoas[$serviceProvider->getEntityId()]);
+                $this->logger->info(sprintf(
+                    'Added authenticating IdP\'s LoA "%s" for this SP as candidate',
+                    $idpConfiguredLoas[$serviceProvider->getEntityId()]
+                ));
+            }
         }
 
         $highestLoa = $this->resolveHighestLoa($loaCandidates);

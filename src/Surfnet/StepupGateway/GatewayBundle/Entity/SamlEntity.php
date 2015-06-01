@@ -27,17 +27,26 @@ use Surfnet\StepupGateway\GatewayBundle\Exception\RuntimeException;
 /**
  * @ORM\Entity(repositoryClass="Surfnet\StepupGateway\GatewayBundle\Entity\SamlEntityRepository")
  * @ORM\Table()
+ *
+ * @SuppressWarnings(PHPMD.UnusedPrivateField)
  */
 class SamlEntity
 {
     /**
-     * Constants denoting the type of SamlEntity. Also used in the gateway to make that distinction
+     * Constants denoting the type of SamlEntity. Also used in the middleware to make that distinction
      */
     const TYPE_IDP = 'idp';
     const TYPE_SP = 'sp';
 
     /**
+     * @var string
+     *
      * @ORM\Id
+     * @ORM\Column(length=36)
+     */
+    private $id;
+
+    /**
      * @ORM\Column
      *
      * @var string
@@ -57,6 +66,28 @@ class SamlEntity
      * @var string the configuration as json string
      */
     private $configuration;
+
+    /**
+     * @return IdentityProvider
+     */
+    public function toIdentityProvider()
+    {
+        if (!$this->type === self::TYPE_IDP) {
+            throw new RuntimeException(sprintf(
+                'Cannot cast a SAMLEntity to an IdentityProvider if it is not of the type "%s", current type: "%s"',
+                self::TYPE_IDP,
+                $this->type
+            ));
+        }
+
+        $decodedConfiguration = $this->decodeConfiguration();
+
+        // index based will be supported later on
+        $configuration['entityId']             = $this->entityId;
+        $configuration['configuredLoas']       = $decodedConfiguration['loa'];
+
+        return new IdentityProvider($configuration);
+    }
 
     /**
      * @return ServiceProvider
