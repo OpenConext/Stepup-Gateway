@@ -19,21 +19,25 @@
 namespace Surfnet\StepupGateway\GatewayBundle\Service;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Psr\Log\LoggerInterface;
 use Surfnet\SamlBundle\Entity\ServiceProvider;
+use Surfnet\StepupBundle\Command\SendSmsChallengeCommand as StepupSendSmsChallengeCommand;
+use Surfnet\StepupBundle\Command\VerifyPossessionOfPhoneCommand;
 use Surfnet\StepupBundle\Service\LoaResolutionService;
+use Surfnet\StepupBundle\Service\SmsSecondFactor\OtpVerification;
+use Surfnet\StepupBundle\Service\SmsSecondFactorService;
 use Surfnet\StepupBundle\Value\Loa;
 use Surfnet\StepupBundle\Value\PhoneNumber\InternationalPhoneNumber;
 use Surfnet\StepupGateway\ApiBundle\Dto\Otp as ApiOtp;
 use Surfnet\StepupGateway\ApiBundle\Dto\Requester;
 use Surfnet\StepupGateway\ApiBundle\Service\YubikeyService;
 use Surfnet\StepupGateway\GatewayBundle\Command\SendSmsChallengeCommand;
-use Surfnet\StepupGateway\GatewayBundle\Command\VerifySmsChallengeCommand;
 use Surfnet\StepupGateway\GatewayBundle\Command\VerifyYubikeyOtpCommand;
 use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor;
 use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactorRepository;
 use Surfnet\StepupGateway\GatewayBundle\Service\StepUp\YubikeyOtpVerificationResult;
-use Surfnet\StepupGateway\GatewayBundle\Service\SmsSecondFactor\OtpVerification;
 use Surfnet\YubikeyApiClient\Otp;
+use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -46,37 +50,51 @@ class StepUpAuthenticationService
     private $loaResolutionService;
 
     /**
-     * @var SamlEntityService
+     * @var \Surfnet\StepupGateway\GatewayBundle\Service\SamlEntityService
      */
     private $samlEntityService;
 
     /**
-     * @var SecondFactorRepository
+     * @var \Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactorRepository
      */
     private $secondFactorRepository;
 
     /**
-     * @var YubikeyService
+     * @var \Surfnet\StepupGateway\ApiBundle\Service\YubikeyService
      */
     private $yubikeyService;
 
     /**
-     * @var SmsSecondFactorService
+     * @var \Surfnet\StepupBundle\Service\SmsSecondFactorService
      */
     private $smsService;
+
+    /**
+     * @var \Symfony\Component\Translation\TranslatorInterface
+     */
+    private $translator;
+
+    /**
+     * @var \Psr\Log\LoggerInterface
+     */
+    private $logger;
 
     public function __construct(
         LoaResolutionService $loaResolutionService,
         SamlEntityService $samlEntityService,
         SecondFactorRepository $secondFactorRepository,
         YubikeyService $yubikeyService,
-        SmsSecondFactorService $smsService
+        SmsSecondFactorService $smsService,
+        TranslatorInterface $translator,
+        LoggerInterface $logger
     ) {
         $this->loaResolutionService = $loaResolutionService;
         $this->samlEntityService = $samlEntityService;
         $this->secondFactorRepository = $secondFactorRepository;
         $this->yubikeyService = $yubikeyService;
         $this->smsService = $smsService;
+        $this->translator = $translator;
+        $this->logger = $logger;
     }
 
     /**
@@ -96,21 +114,40 @@ class StepUpAuthenticationService
 
         if ($requestedLoa) {
             $loaCandidates->add($requestedLoa);
+            $this->logger->info(sprintf('Added requested LoA "%s" as candidate', $requestedLoa));
         }
 
         $spConfiguredLoas = $serviceProvider->get('configuredLoas');
-
         $loaCandidates->add($spConfiguredLoas['__default__']);
+        $this->logger->info(sprintf('Added SP\'s default LoA "%s" as candidate', $spConfiguredLoas['__default__']));
+
         if (array_key_exists($authenticatingIdp, $spConfiguredLoas)) {
             $loaCandidates->add($spConfiguredLoas[$authenticatingIdp]);
+            $this->logger->info(sprintf(
+                'Added SP\'s LoA "%s" for this IdP as candidate',
+                $spConfiguredLoas[$authenticatingIdp]
+            ));
         }
 
         $highestLoa = $this->resolveHighestLoa($loaCandidates);
         if (!$highestLoa) {
+            $this->logger->info(sprintf(
+                'Out of %d candidate LoA\'s, no highest LoA could be determined; no candidate second factors',
+                count($loaCandidates)
+            ));
             return new ArrayCollection();
         }
 
-        return $this->secondFactorRepository->getAllMatchingFor($highestLoa, $identityNameId);
+        $this->logger->info(
+            sprintf('Out of %d candidate LoA\'s, LoA "%s" is the highest', count($loaCandidates), $highestLoa)
+        );
+
+        $candidateSecondFactors = $this->secondFactorRepository->getAllMatchingFor($highestLoa, $identityNameId);
+        $this->logger->info(
+            sprintf('Loaded %d matching candidate second factors', count($candidateSecondFactors))
+        );
+
+        return $candidateSecondFactors;
     }
 
     /**
@@ -227,24 +264,24 @@ class StepUpAuthenticationService
         /** @var SecondFactor $secondFactor */
         $secondFactor = $this->secondFactorRepository->findOneBySecondFactorId($command->secondFactorId);
 
-        $phoneNumber = InternationalPhoneNumber::fromStringFormat(
-            $secondFactor->secondFactorIdentifier
-        );
+        $phoneNumber = InternationalPhoneNumber::fromStringFormat($secondFactor->secondFactorIdentifier);
 
-        $command->phoneNumber = $phoneNumber->toMSISDN();
-        $command->identityId = $secondFactor->identityId;
-        $command->institution = $secondFactor->institution;
+        $stepupCommand = new StepupSendSmsChallengeCommand();
+        $stepupCommand->phoneNumber = $phoneNumber;
+        $stepupCommand->body = $this->translator->trans('gateway.second_factor.sms.challenge_body');
+        $stepupCommand->identity = $secondFactor->identityId;
+        $stepupCommand->institution = $secondFactor->institution;
 
-        return $this->smsService->sendChallenge($command);
+        return $this->smsService->sendChallenge($stepupCommand);
     }
 
     /**
-     * @param VerifySmsChallengeCommand $command
+     * @param VerifyPossessionOfPhoneCommand $command
      * @return OtpVerification
      */
-    public function verifySmsChallenge(VerifySmsChallengeCommand $command)
+    public function verifySmsChallenge(VerifyPossessionOfPhoneCommand $command)
     {
-        return $this->smsService->verifyChallenge($command);
+        return $this->smsService->verifyPossession($command);
     }
 
     public function clearSmsVerificationState()
