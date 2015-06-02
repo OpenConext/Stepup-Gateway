@@ -72,6 +72,15 @@ class SecondFactor
     public $secondFactorIdentifier;
 
     /**
+     * In which language to display any second factor verification screens.
+     *
+     * @var string
+     *
+     * @ORM\Column
+     */
+    public $displayLocale;
+
+    /**
      * No new second factors should be created by the gateway
      */
     final private function __construct()

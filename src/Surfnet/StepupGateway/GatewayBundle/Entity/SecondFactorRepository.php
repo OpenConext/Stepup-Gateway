@@ -24,6 +24,11 @@ use Surfnet\StepupBundle\Value\Loa;
 
 class SecondFactorRepository extends EntityRepository
 {
+    /**
+     * @var SecondFactor[]
+     */
+    private $secondFactorsById = [];
+
     public function getAllMatchingFor(Loa $highestLoa, $identityNameId)
     {
         /** @var \Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor[] $secondFactors */
@@ -44,11 +49,17 @@ class SecondFactorRepository extends EntityRepository
     }
 
     /**
+     * Loads a second factor by its ID. Subsequent calls do not hit the database.
+     *
      * @param string $secondFactorId
      * @return null|SecondFactor
      */
     public function findOneBySecondFactorId($secondFactorId)
     {
-        return $this->findOneBy(['secondFactorId' => $secondFactorId]);
+        if (!isset($this->secondFactorsById[$secondFactorId])) {
+            $this->secondFactorsById[$secondFactorId] = $this->findOneBy(['secondFactorId' => $secondFactorId]);
+        }
+
+        return $this->secondFactorsById[$secondFactorId];
     }
 }
