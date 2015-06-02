@@ -1,70 +1,21 @@
 monolog:
     channels: [authentication]
-
     handlers:
         prod-signaler:
             type: fingers_crossed
             action_level: ERROR
-            handler: nested_prod_main
+            passthru_level: NOTICE # this means that all message of level NOTICE or higher are always logged
+            handler: main_syslog
             bubble: false # if we handle it, nothing else should
-        nested_prod_main:
-            type: group
-            members:
-                - main_syslog
-                #- main_graylog
-                #- main_logfile
-                #- buffered_mailer
-
-## Log to local syslog daemon ##
+            channels: ["!authentication"] # the auth channel is logged by the next handler
         main_syslog:
-            type: buffer
-            handler: nested_syslog
-            level: NOTICE
-        nested_syslog:
             type: syslog
             ident: stepup-gateway
             facility: user
 
-## Log to graylog (GELF UDP) ##
-#       main_graylog:
-#           type: buffer
-#           handler: nested_graylog
-#           level: NOTICE
-#       nested_graylog:
-#           type: gelf
-#           publisher: { hostname: %graylog_hostname% }
-#           formatter: surfnet_stepup.monolog.full_message_exception_gelf_message_formatter
-
-## Log to file ##
-#       main_logfile:
-#           type: stream
-#           handler: logfile
-#           level: NOTICE
-#           path: %kernel.logs_dir%/%kernel.environment%.log
-
-## Email errors ##
-#       buffered_mailer:
-#           type:    buffer
-#           handler: nested_swift
-#       nested_swift:
-#           type:       swift_mailer
-#           from_email: stepup-error@example.com
-#           to_email:   error@example.com
-#           subject:    "[Step-up][Gateway][%kernel.environment%] An Error Occurred!"
-
-
-## Log messages on the authentication channel to syslog ##
         authenthentication_syslog:
             type: syslog
-            ident: stepup-gateway
+            ident: stepup-authentication
             facility: user
             level: INFO
             channels: [authentication]
-
-## Log messages on the authentication channel to file ##
-#       authentication_file:
-#           type: stream
-#           handler: logfile
-#           level: INFO
-#           path: %kernel.logs_dir%/%kernel.environment%_authentication.log
-#           channels: [authentication]
