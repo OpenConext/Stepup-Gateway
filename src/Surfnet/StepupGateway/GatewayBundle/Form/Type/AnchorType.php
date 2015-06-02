@@ -22,7 +22,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\ButtonTypeInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class AnchorType extends AbstractType implements ButtonTypeInterface
 {
@@ -36,7 +36,7 @@ class AnchorType extends AbstractType implements ButtonTypeInterface
         return 'anchor';
     }
 
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
             'route'           => null,
