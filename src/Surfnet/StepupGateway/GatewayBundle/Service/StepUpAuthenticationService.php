@@ -36,6 +36,7 @@ use Surfnet\StepupGateway\GatewayBundle\Command\SendSmsChallengeCommand;
 use Surfnet\StepupGateway\GatewayBundle\Command\VerifyYubikeyOtpCommand;
 use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor;
 use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactorRepository;
+use Surfnet\StepupGateway\GatewayBundle\Exception\RuntimeException;
 use Surfnet\StepupGateway\GatewayBundle\Service\StepUp\YubikeyOtpVerificationResult;
 use Surfnet\YubikeyApiClient\Otp;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -93,13 +94,31 @@ class StepUpAuthenticationService
 
     /**
      * @param string          $identityNameId
-     * @param string          $requestedLoa
-     * @param ServiceProvider $serviceProvider
-     * @param IdentityProvider|null $authenticatingIdp
+     * @param string          $requiredLoa
      * @return \Doctrine\Common\Collections\ArrayCollection
      */
     public function determineViableSecondFactors(
         $identityNameId,
+        $requiredLoa
+    ) {
+        $candidateSecondFactors = $this->secondFactorRepository->getAllMatchingFor($requiredLoa, $identityNameId);
+        $this->logger->info(
+            sprintf('Loaded %d matching candidate second factors', count($candidateSecondFactors))
+        );
+
+        return $candidateSecondFactors;
+    }
+
+    /**
+     * @param                  $requestedLoa
+     * @param ServiceProvider  $serviceProvider
+     * @param IdentityProvider $authenticatingIdp
+     * @return null|Loa
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity) see https://www.pivotaltracker.com/story/show/96065350
+     * @SuppressWarnings(PHPMD.NPathComplexity)      see https://www.pivotaltracker.com/story/show/96065350
+     */
+    public function resolveHighestRequiredLoa(
         $requestedLoa,
         ServiceProvider $serviceProvider,
         IdentityProvider $authenticatingIdp = null
@@ -139,33 +158,10 @@ class StepUpAuthenticationService
             }
         }
 
-        $highestLoa = $this->resolveHighestLoa($loaCandidates);
-        if (!$highestLoa) {
-            $this->logger->info(sprintf(
-                'Out of %d candidate LoA\'s, no highest LoA could be determined; no candidate second factors',
-                count($loaCandidates)
-            ));
-            return new ArrayCollection();
+        if (!count($loaCandidates)) {
+            throw new RuntimeException('No loa can be found, at least one Loa (SP default) should be found');
         }
 
-        $this->logger->info(
-            sprintf('Out of %d candidate LoA\'s, LoA "%s" is the highest', count($loaCandidates), $highestLoa)
-        );
-
-        $candidateSecondFactors = $this->secondFactorRepository->getAllMatchingFor($highestLoa, $identityNameId);
-        $this->logger->info(
-            sprintf('Loaded %d matching candidate second factors', count($candidateSecondFactors))
-        );
-
-        return $candidateSecondFactors;
-    }
-
-    /**
-     * @param ArrayCollection $loaCandidates
-     * @return null|\Surfnet\StepupBundle\Value\Loa
-     */
-    private function resolveHighestLoa(ArrayCollection $loaCandidates)
-    {
         $actualLoas = new ArrayCollection();
         foreach ($loaCandidates as $loaDefinition) {
             $loa = $this->loaResolutionService->getLoa($loaDefinition);
@@ -175,19 +171,28 @@ class StepUpAuthenticationService
         }
 
         if (!count($actualLoas)) {
+            $this->logger->info(sprintf(
+                'Out of "%d" candidates, no existing loa could be found, no authentication is possible.',
+                count($loaCandidates)
+            ));
+
             return null;
         }
 
-        /** @var \Surfnet\StepupBundle\Value\Loa $highest */
-        $highest = $actualLoas->first();
+        /** @var \Surfnet\StepupBundle\Value\Loa $highestLoa */
+        $highestLoa = $actualLoas->first();
         foreach ($actualLoas as $loa) {
             // if the current highest loa cannot satisfy the next loa, that must be of a higher level...
-            if (!$highest->canSatisfyLoa($loa)) {
-                $highest = $loa;
+            if (!$highestLoa->canSatisfyLoa($loa)) {
+                $highestLoa = $loa;
             }
         }
 
-        return $highest;
+        $this->logger->info(
+            sprintf('Out of %d candidate LoA\'s, LoA "%s" is the highest', count($loaCandidates), $highestLoa)
+        );
+
+        return $highestLoa;
     }
 
     /**

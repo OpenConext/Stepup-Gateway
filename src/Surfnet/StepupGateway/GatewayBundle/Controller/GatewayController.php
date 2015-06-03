@@ -144,22 +144,7 @@ class GatewayController extends Controller
 
         $responseContext->saveAssertion($assertion);
 
-        $requiredLoa = $responseContext->getRequiredLoa();
-        if (!$requiredLoa) {
-            $this->get('gateway.authentication_logger')->logIntrinsicLoaAuthentication($originalRequestId);
-
-            return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:respond');
-        }
-
-        /** @var \Surfnet\StepupGateway\GatewayBundle\Service\StepUpAuthenticationService $stepupService */
-        $stepupService = $this->get('gateway.service.stepup_authentication');
-        if ($stepupService->isIntrinsicLoa($requiredLoa)) {
-            $this->get('gateway.authentication_logger')->logIntrinsicLoaAuthentication($originalRequestId);
-
-            return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:respond');
-        }
-
-        $logger->notice(sprintf('Attempting to obtain requested LoA %s through a second factor', $requiredLoa));
+        $logger->notice(sprintf('Forwarding to second factor controller for loa determination and handling'));
 
         return $this->forward('SurfnetStepupGatewayGatewayBundle:SecondFactor:selectSecondFactorForVerification');
     }

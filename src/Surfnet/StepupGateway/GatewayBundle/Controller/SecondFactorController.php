@@ -41,14 +41,31 @@ class SecondFactorController extends Controller
         $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
         $logger->notice('Determining which second factor to use...');
 
-        $secondFactorCollection = $this
+        $requiredLoa = $this
             ->getStepupService()
-            ->determineViableSecondFactors(
-                $context->getIdentityNameId(),
+            ->resolveHighestRequiredLoa(
                 $context->getRequiredLoa(),
                 $context->getServiceProvider(),
                 $context->getAuthenticatingIdp()
             );
+
+        if ($requiredLoa === null) {
+            $logger->notice(
+                'No valid required loa can be determined, no authentication is possible, loa cannot be given'
+            );
+
+            return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:sendLoaCannotBeGiven');
+        }
+
+        if ($this->getStepupService()->isIntrinsicLoa($requiredLoa)) {
+            $this->get('gateway.authentication_logger')->logIntrinsicLoaAuthentication($originalRequestId);
+
+            return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:respond');
+        }
+
+        $secondFactorCollection = $this
+            ->getStepupService()
+            ->determineViableSecondFactors($context->getIdentityNameId(), $requiredLoa);
 
         if (count($secondFactorCollection) === 0) {
             $logger->notice('No second factors can give the determined LOA');
