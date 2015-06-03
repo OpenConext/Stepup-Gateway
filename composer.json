@@ -35,8 +35,8 @@
         "mockery/mockery": "~0.9.0",
         "surfnet/yubikey-api-client-bundle": "~1.2",
         "simplesamlphp/saml2": "dev-master",
-        "surfnet/stepup-bundle": "dev-maintenance/symfony-2.7",
-        "surfnet/stepup-saml-bundle": "dev-maintenance/symfony-2.7"
+        "surfnet/stepup-bundle": "dev-develop",
+        "surfnet/stepup-saml-bundle": "dev-develop"
     },
     "repositories": [
         {

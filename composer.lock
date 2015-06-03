@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "4c391c5b9b88eb79c4dbdcc9b72e4866",
+    "hash": "c5f51af3de2b7b3c9dfd94dca2f5bdef",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -2238,16 +2238,16 @@
         },
         {
             "name": "surfnet/stepup-bundle",
-            "version": "dev-maintenance/symfony-2.7",
+            "version": "dev-develop",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SURFnet/Stepup-bundle.git",
-                "reference": "21801cbe361f246fede06fc9895107ca2b221d0d"
+                "reference": "543596b5a3fa294e89a2b47dc53d8ecceb21ce36"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SURFnet/Stepup-bundle/zipball/21801cbe361f246fede06fc9895107ca2b221d0d",
-                "reference": "21801cbe361f246fede06fc9895107ca2b221d0d",
+                "url": "https://api.github.com/repos/SURFnet/Stepup-bundle/zipball/543596b5a3fa294e89a2b47dc53d8ecceb21ce36",
+                "reference": "543596b5a3fa294e89a2b47dc53d8ecceb21ce36",
                 "shasum": ""
             },
             "require": {
@@ -2286,20 +2286,20 @@
                 "suaas",
                 "surfnet"
             ],
-            "time": "2015-06-03 15:38:36"
+            "time": "2015-06-03 16:28:41"
         },
         {
             "name": "surfnet/stepup-saml-bundle",
-            "version": "dev-maintenance/symfony-2.7",
+            "version": "dev-develop",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SURFnet/Stepup-saml-bundle.git",
-                "reference": "4e9457c627b2e01dde930f52d5bce0690179ba6b"
+                "reference": "410f74d707053162ff043f57fbc114ddfdb65cab"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SURFnet/Stepup-saml-bundle/zipball/4e9457c627b2e01dde930f52d5bce0690179ba6b",
-                "reference": "4e9457c627b2e01dde930f52d5bce0690179ba6b",
+                "url": "https://api.github.com/repos/SURFnet/Stepup-saml-bundle/zipball/410f74d707053162ff043f57fbc114ddfdb65cab",
+                "reference": "410f74d707053162ff043f57fbc114ddfdb65cab",
                 "shasum": ""
             },
             "require": {
@@ -2333,7 +2333,7 @@
                 "stepup",
                 "surfnet"
             ],
-            "time": "2015-06-02 12:25:57"
+            "time": "2015-06-03 15:15:11"
         },
         {
             "name": "surfnet/yubikey-api-client-bundle",
