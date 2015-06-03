@@ -10,26 +10,3 @@ imports:
 #        metadata_cache_driver: apc
 #        result_cache_driver: apc
 #        query_cache_driver: apc
-
-monolog:
-    handlers:
-        prod-signaler:
-            type: fingers_crossed
-            action_level: ERROR
-            handler: prod_main
-            bubble: false # if we handle it, nothing else should
-        prod_main:
-            type: group
-            members:
-                - main_graylog
-                - main_logfile
-                - buffered_mailer
-        buffered_mailer:
-            type:    buffer
-            handler: swift
-        swift:
-            type:       swift_mailer
-    # these email addresses should be configurable and configured correctly
-            from_email: stepup-error@surfnet.nl
-            to_email:   error@example.com
-            subject:    "[StepUp][Gateway][%kernel.environment%] An Error Occurred!"

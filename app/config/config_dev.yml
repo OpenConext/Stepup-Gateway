@@ -1,6 +1,52 @@
 imports:
     - { resource: config.yml }
 
+# Be careful not to remove the prod-signaler handler, which overwrites
+# the prod-signaler handler defined in logging.yml. The handler defined
+# in logging.yml disables bubbling which means that none of the handlers
+# below are invoked. Since the current dev setup is incompatible with the
+# prod setup defined in logging.yml, this means we won't see any logs in
+# the infrastructure currently used (graylog). Overwriting the handler
+# here resolves that and reinstates the dev logging setup.
+#
+# this configuration must be replaced to reflect production setup
+# see https://www.pivotaltracker.com/story/show/96056010
+#
+monolog:
+    channels: [authentication]
+    handlers:
+        prod-signaler:
+            type: group
+            members:
+                - main_graylog
+                - main_logfile
+                - main_debuglog
+        main_graylog:
+            type:    buffer
+            handler: graylog
+            level:   NOTICE
+        main_logfile:
+            type:    stream
+            handler: logfile
+            level:   NOTICE
+            path:    %kernel.logs_dir%/%kernel.environment%.log
+        main_debuglog:
+            type:    stream
+            handler: logfile
+            level:   DEBUG
+            path:    "%kernel.logs_dir%/%kernel.environment%.debug.log"
+        graylog:
+            type:      gelf
+            publisher: { hostname: %graylog_hostname% }
+            formatter: surfnet_stepup.monolog.full_message_exception_gelf_message_formatter
+        authentication:
+            type:      stream
+            handler:   logfile
+            level:     INFO
+            path:      %kernel.logs_dir%/%kernel.environment%_authentication.log
+            channels:  [authentication]
+            formatter: gateway.monolog.gelf_to_string_formatter
+
 framework:
     router:
         resource: "%kernel.root_dir%/config/routing_dev.yml"
@@ -10,24 +56,6 @@ framework:
 web_profiler:
     toolbar: "%debug_toolbar%"
     intercept_redirects: "%debug_redirects%"
-
-monolog:
-    handlers:
-        main:
-            type:   stream
-            path:   "%kernel.logs_dir%/%kernel.environment%.debug.log"
-            level:  debug
-        console:
-            type:   console
-            bubble: false
-        # uncomment to get logging in your browser
-        # you may have to allow bigger header sizes in your Web server configuration
-        #firephp:
-        #    type:   firephp
-        #    level:  info
-        #chromephp:
-        #    type:   chromephp
-        #    level:  info
 
 assetic:
     use_controller: "%use_assetic_controller%"
