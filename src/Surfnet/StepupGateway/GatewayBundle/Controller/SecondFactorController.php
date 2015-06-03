@@ -51,7 +51,7 @@ class SecondFactorController extends Controller
 
         if ($requiredLoa === null) {
             $logger->notice(
-                'No valid required loa can be determined, no authentication is possible, loa cannot be given'
+                'No valid required Loa can be determined, no authentication is possible, Loa cannot be given'
             );
 
             return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:sendLoaCannotBeGiven');
@@ -68,7 +68,7 @@ class SecondFactorController extends Controller
             ->determineViableSecondFactors($context->getIdentityNameId(), $requiredLoa);
 
         if (count($secondFactorCollection) === 0) {
-            $logger->notice('No second factors can give the determined LOA');
+            $logger->notice('No second factors can give the determined Loa');
 
             return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:sendLoaCannotBeGiven');
         }

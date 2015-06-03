@@ -94,12 +94,12 @@ class StepUpAuthenticationService
 
     /**
      * @param string          $identityNameId
-     * @param string          $requiredLoa
+     * @param Loa             $requiredLoa
      * @return \Doctrine\Common\Collections\ArrayCollection
      */
     public function determineViableSecondFactors(
         $identityNameId,
-        $requiredLoa
+        Loa $requiredLoa
     ) {
         $candidateSecondFactors = $this->secondFactorRepository->getAllMatchingFor($requiredLoa, $identityNameId);
         $this->logger->info(
@@ -110,7 +110,7 @@ class StepUpAuthenticationService
     }
 
     /**
-     * @param                  $requestedLoa
+     * @param string           $requestedLoa
      * @param ServiceProvider  $serviceProvider
      * @param IdentityProvider $authenticatingIdp
      * @return null|Loa
@@ -127,18 +127,18 @@ class StepUpAuthenticationService
 
         if ($requestedLoa) {
             $loaCandidates->add($requestedLoa);
-            $this->logger->info(sprintf('Added requested LoA "%s" as candidate', $requestedLoa));
+            $this->logger->info(sprintf('Added requested Loa "%s" as candidate', $requestedLoa));
         }
 
         $spConfiguredLoas = $serviceProvider->get('configuredLoas');
         $loaCandidates->add($spConfiguredLoas['__default__']);
-        $this->logger->info(sprintf('Added SP\'s default LoA "%s" as candidate', $spConfiguredLoas['__default__']));
+        $this->logger->info(sprintf('Added SP\'s default Loa "%s" as candidate', $spConfiguredLoas['__default__']));
 
         if ($authenticatingIdp) {
             if (array_key_exists($authenticatingIdp->getEntityId(), $spConfiguredLoas)) {
                 $loaCandidates->add($spConfiguredLoas[$authenticatingIdp->getEntityId()]);
                 $this->logger->info(sprintf(
-                    'Added SP\'s LoA "%s" for this IdP as candidate',
+                    'Added SP\'s Loa "%s" for this IdP as candidate',
                     $spConfiguredLoas[$authenticatingIdp->getEntityId()]
                 ));
             }
@@ -146,20 +146,20 @@ class StepUpAuthenticationService
             $idpConfiguredLoas = $authenticatingIdp->get('configuredLoas');
             $loaCandidates->add($idpConfiguredLoas['__default__']);
             $this->logger->info(
-                sprintf('Added authenticating IdP\'s default LoA "%s" as candidate', $spConfiguredLoas['__default__'])
+                sprintf('Added authenticating IdP\'s default Loa "%s" as candidate', $spConfiguredLoas['__default__'])
             );
 
             if (array_key_exists($serviceProvider->getEntityId(), $idpConfiguredLoas)) {
                 $loaCandidates->add($idpConfiguredLoas[$serviceProvider->getEntityId()]);
                 $this->logger->info(sprintf(
-                    'Added authenticating IdP\'s LoA "%s" for this SP as candidate',
+                    'Added authenticating IdP\'s Loa "%s" for this SP as candidate',
                     $idpConfiguredLoas[$serviceProvider->getEntityId()]
                 ));
             }
         }
 
         if (!count($loaCandidates)) {
-            throw new RuntimeException('No loa can be found, at least one Loa (SP default) should be found');
+            throw new RuntimeException('No Loa can be found, at least one Loa (SP default) should be found');
         }
 
         $actualLoas = new ArrayCollection();
@@ -172,7 +172,7 @@ class StepUpAuthenticationService
 
         if (!count($actualLoas)) {
             $this->logger->info(sprintf(
-                'Out of "%d" candidates, no existing loa could be found, no authentication is possible.',
+                'Out of "%d" candidates, no existing Loa could be found, no authentication is possible.',
                 count($loaCandidates)
             ));
 
@@ -182,21 +182,21 @@ class StepUpAuthenticationService
         /** @var \Surfnet\StepupBundle\Value\Loa $highestLoa */
         $highestLoa = $actualLoas->first();
         foreach ($actualLoas as $loa) {
-            // if the current highest loa cannot satisfy the next loa, that must be of a higher level...
+            // if the current highest Loa cannot satisfy the next Loa, that must be of a higher level...
             if (!$highestLoa->canSatisfyLoa($loa)) {
                 $highestLoa = $loa;
             }
         }
 
         $this->logger->info(
-            sprintf('Out of %d candidate LoA\'s, LoA "%s" is the highest', count($loaCandidates), $highestLoa)
+            sprintf('Out of %d candidate Loa\'s, Loa "%s" is the highest', count($loaCandidates), $highestLoa)
         );
 
         return $highestLoa;
     }
 
     /**
-     * Returns whether the given LoA identifier identifies the minimum LoA, intrinsic to being authenticated via an IdP.
+     * Returns whether the given Loa identifier identifies the minimum Loa, intrinsic to being authenticated via an IdP.
      *
      * @param Loa $loa
      * @return bool

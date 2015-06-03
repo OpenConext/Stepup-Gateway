@@ -72,7 +72,7 @@ class AuthenticationLogger
             'resulting_loa'         => (string) $this->loaResolutionService->getLoaByLevel(Loa::LOA_1),
         ];
 
-        $this->log('Intrinsic LoA Requested', $context, $requestId);
+        $this->log('Intrinsic Loa Requested', $context, $requestId);
     }
 
     /**

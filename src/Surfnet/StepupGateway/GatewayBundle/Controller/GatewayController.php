@@ -64,11 +64,11 @@ class GatewayController extends Controller
             ->setRequestServiceProvider($originalRequest->getServiceProvider())
             ->setRelayState($httpRequest->get(AuthnRequest::PARAMETER_RELAY_STATE, ''));
 
-        // check if the requested loa is supported
+        // check if the requested Loa is supported
         $requiredLoa = $originalRequest->getAuthenticationContextClassRef();
         if ($requiredLoa && !$this->get('surfnet_stepup.service.loa_resolution')->hasLoa($requiredLoa)) {
             $logger->info(sprintf(
-                'Requested required LOA "%s" does not exist, sending response with status Requester Error',
+                'Requested required Loa "%s" does not exist, sending response with status Requester Error',
                 $requiredLoa
             ));
 
@@ -195,7 +195,7 @@ class GatewayController extends Controller
 
         /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
         $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
-        $logger->notice('LOA cannot be given, creating Response with NoAuthnContext status');
+        $logger->notice('Loa cannot be given, creating Response with NoAuthnContext status');
 
         /** @var \Surfnet\StepupGateway\GatewayBundle\Saml\ResponseBuilder $responseBuilder */
         $responseBuilder = $this->get('gateway.proxy.response_builder');
