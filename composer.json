@@ -10,7 +10,7 @@
     "minimum-stability": "stable",
     "require": {
         "php": ">=5.4",
-        "symfony/symfony": "~2.6,>=2.6.6",
+        "symfony/symfony": "^2.7",
         "doctrine/dbal": "~2.5",
         "doctrine/orm": "~2.5",
         "doctrine/doctrine-bundle": "~1.4",
@@ -35,8 +35,7 @@
         "mockery/mockery": "~0.9.0",
         "surfnet/yubikey-api-client-bundle": "~1.2",
         "simplesamlphp/saml2": "dev-master",
-        "surfnet/stepup-bundle": "dev-maintenance/sms-verification",
-        "simplesamlphp/saml2": "dev-master",
+        "surfnet/stepup-bundle": "dev-develop",
         "surfnet/stepup-saml-bundle": "dev-develop"
     },
     "repositories": [

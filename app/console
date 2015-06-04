@@ -17,7 +17,7 @@ $debug = getenv('SYMFONY_DEBUG') !== '0' && !$input->hasParameterOption(array('-
     && $env !== 'build';
 
 if ($debug) {
-    Debug::enable();
+    Debug::enable(~E_USER_DEPRECATED);
 }
 
 $kernel = new AppKernel($env, $debug);
