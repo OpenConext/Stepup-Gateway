@@ -36,7 +36,7 @@
         "surfnet/yubikey-api-client-bundle": "~1.2",
         "simplesamlphp/saml2": "dev-master",
         "surfnet/stepup-bundle": "dev-develop",
-        "surfnet/stepup-saml-bundle": "dev-develop"
+        "surfnet/stepup-saml-bundle": "^0.5.0"
     },
     "repositories": [
         {
@@ -49,12 +49,6 @@
         "ibuildings/qa-tools": "~1.1,>=1.1.27",
         "liip/rmt": "1.1.*"
     },
-    "repositories": [
-        {
-          "type": "vcs",
-          "url": "https://github.com/SURFnet/saml2"
-        }
-    ],
     "scripts": {
         "post-install-cmd": [
             "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",
