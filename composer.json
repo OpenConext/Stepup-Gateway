@@ -36,7 +36,7 @@
         "surfnet/yubikey-api-client-bundle": "~1.2",
         "simplesamlphp/saml2": "dev-master",
         "surfnet/stepup-bundle": "dev-develop",
-        "surfnet/stepup-saml-bundle": "dev-bugfix/make-url-generation-request-stack-aware"
+        "surfnet/stepup-saml-bundle": "^0.5.0"
     },
     "repositories": [
         {
