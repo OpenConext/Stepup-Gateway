@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "c5f51af3de2b7b3c9dfd94dca2f5bdef",
+    "hash": "017807be95b0c250ac755300d4a0d8bd",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -2253,7 +2253,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SURFnet/Stepup-bundle/zipball/543596b5a3fa294e89a2b47dc53d8ecceb21ce36",
+                "url": "https://api.github.com/repos/SURFnet/Stepup-bundle/zipball/23f703e235cf2408311d359754bd767432dcb5b1",
                 "reference": "543596b5a3fa294e89a2b47dc53d8ecceb21ce36",
                 "shasum": ""
             },
@@ -2297,16 +2297,16 @@
         },
         {
             "name": "surfnet/stepup-saml-bundle",
-            "version": "dev-develop",
+            "version": "dev-bugfix/make-url-generation-request-stack-aware",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SURFnet/Stepup-saml-bundle.git",
-                "reference": "410f74d707053162ff043f57fbc114ddfdb65cab"
+                "reference": "f9852abf656b76e5cf520b3e7c4d3c255fc38ea5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SURFnet/Stepup-saml-bundle/zipball/410f74d707053162ff043f57fbc114ddfdb65cab",
-                "reference": "410f74d707053162ff043f57fbc114ddfdb65cab",
+                "url": "https://api.github.com/repos/SURFnet/Stepup-saml-bundle/zipball/f9852abf656b76e5cf520b3e7c4d3c255fc38ea5",
+                "reference": "f9852abf656b76e5cf520b3e7c4d3c255fc38ea5",
                 "shasum": ""
             },
             "require": {
@@ -2340,7 +2340,7 @@
                 "stepup",
                 "surfnet"
             ],
-            "time": "2015-06-03 15:15:11"
+            "time": "2015-06-11 10:23:47"
         },
         {
             "name": "surfnet/yubikey-api-client-bundle",
