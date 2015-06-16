@@ -76,6 +76,19 @@ class SecondFactorController extends Controller
         // will be replaced by a second factor selection screen once we support multiple
         /** @var \Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor $secondFactor */
         $secondFactor = $secondFactorCollection->first();
+        // when multiple second factors are supported this should be moved into the
+        // StepUpAuthenticationService::determineViableSecondFactors and handled in a performant way
+        // currently keeping this here for visibility
+        if (!$this->get('gateway.service.whitelist')->contains($secondFactor->institution)) {
+            $logger->notice(sprintf(
+                'Second factor "%s" is listed for institution "%s" which is not on the whitelist, sending Loa '
+                . 'cannot be given response',
+                $secondFactor->secondFactorId,
+                $secondFactor->institution
+            ));
+
+            return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:sendLoaCannotBeGiven');
+        }
 
         $logger->notice(sprintf(
             'Found "%d" second factors, using second factor of type "%s"',

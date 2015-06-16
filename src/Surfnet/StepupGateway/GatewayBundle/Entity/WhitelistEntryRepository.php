@@ -29,8 +29,9 @@ class WhitelistEntryRepository extends EntityRepository
     public function hasEntryFor($institution)
     {
         $count = $this->createQueryBuilder('w')
-            ->select('count(w.institution) as count')
-            ->where('institution = :institution')
+            ->select('COUNT(w.institution)')
+//            ->from('SurfnetStepupGatewayGatewayBundle:WhitelistEntry', 'w')
+            ->where('w.institution = :institution')
             ->setParameter('institution', $institution)
             ->getQuery()
             ->getSingleScalarResult();

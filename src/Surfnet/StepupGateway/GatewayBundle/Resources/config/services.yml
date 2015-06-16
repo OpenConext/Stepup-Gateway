@@ -59,6 +59,11 @@ services:
         arguments:
             - @surfnet_gateway_api.service.sms
 
+    gateway.service.whitelist:
+        class: Surfnet\StepupGateway\GatewayBundle\Service\WhitelistService
+        arguments:
+            - @gateway.repository.whitelist_entry
+
     # Logging
     gateway.authentication_logger:
         class: Surfnet\StepupGateway\GatewayBundle\Monolog\Logger\AuthenticationLogger
