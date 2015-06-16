@@ -26,6 +26,7 @@ use Doctrine\ORM\Mapping as ORM;
 class WhitelistEntry
 {
     /**
+     * @ORM\Id
      * @ORM\Column(type="string")
      *
      * @var string
