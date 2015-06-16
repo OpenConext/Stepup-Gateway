@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "1de2419f5d44e4f49b18b76b85c9da6e",
+    "hash": "67b2a4ee14ff3a68f6c2fac104d86f22",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -1697,7 +1697,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phiamo/MopaBootstrapBundle/zipball/22bc280b9a254caa42c5b44b55f43eb33ab15426",
+                "url": "https://api.github.com/repos/phiamo/MopaBootstrapBundle/zipball/4d4b6291b47fc70491a4f92105be39d6bcccbb95",
                 "reference": "818b0f47ebd352559950e9a64431ff9472e8a9dd",
                 "shasum": ""
             },
