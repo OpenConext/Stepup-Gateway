@@ -30,7 +30,6 @@ class WhitelistEntryRepository extends EntityRepository
     {
         $count = $this->createQueryBuilder('w')
             ->select('COUNT(w.institution)')
-//            ->from('SurfnetStepupGatewayGatewayBundle:WhitelistEntry', 'w')
             ->where('w.institution = :institution')
             ->setParameter('institution', $institution)
             ->getQuery()
