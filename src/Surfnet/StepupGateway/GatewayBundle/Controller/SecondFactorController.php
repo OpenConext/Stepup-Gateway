@@ -55,6 +55,8 @@ class SecondFactorController extends Controller
             );
 
             return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:sendLoaCannotBeGiven');
+        } else {
+            $logger->notice(sprintf('Determined that the required Loa is "%s"', $requiredLoa));
         }
 
         if ($this->getStepupService()->isIntrinsicLoa($requiredLoa)) {
