@@ -19,3 +19,4 @@ monolog:
             facility: user
             level: INFO
             channels: [authentication]
+            formatter: gateway.monolog.gelf_to_string_formatter
