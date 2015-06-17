@@ -30,11 +30,13 @@ monolog:
             handler: logfile
             level:   NOTICE
             path:    %kernel.logs_dir%/%kernel.environment%.log
+            formatter: surfnet_stepup.monolog.json_formatter
         main_debuglog:
             type:    stream
             handler: logfile
             level:   DEBUG
             path:    "%kernel.logs_dir%/%kernel.environment%.debug.log"
+            formatter: surfnet_stepup.monolog.json_formatter
         graylog:
             type:      gelf
             publisher: { hostname: %graylog_hostname% }
