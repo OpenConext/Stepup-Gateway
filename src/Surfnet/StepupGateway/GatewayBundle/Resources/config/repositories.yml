@@ -12,3 +12,10 @@ services:
         factory_method:  getRepository
         arguments:
             - 'Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor'
+
+    gateway.repository.whitelist_entry:
+        class:           Surfnet\StepupGateway\GatewayBundle\Entity\WhitelistEntryRepository
+        factory_service: doctrine.orm.gateway_entity_manager
+        factory_method:  getRepository
+        arguments:
+            - 'Surfnet\StepupGateway\GatewayBundle\Entity\WhitelistEntry'
