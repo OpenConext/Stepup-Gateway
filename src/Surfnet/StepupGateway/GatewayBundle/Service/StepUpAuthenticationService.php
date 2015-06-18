@@ -29,6 +29,7 @@ use Surfnet\StepupBundle\Service\SmsSecondFactor\OtpVerification;
 use Surfnet\StepupBundle\Service\SmsSecondFactorService;
 use Surfnet\StepupBundle\Value\Loa;
 use Surfnet\StepupBundle\Value\PhoneNumber\InternationalPhoneNumber;
+use Surfnet\StepupBundle\Value\YubikeyPublicId;
 use Surfnet\StepupGateway\ApiBundle\Dto\Otp as ApiOtp;
 use Surfnet\StepupGateway\ApiBundle\Dto\Requester;
 use Surfnet\StepupGateway\ApiBundle\Service\YubikeyService;
@@ -228,16 +229,16 @@ class StepUpAuthenticationService
             return new YubikeyOtpVerificationResult(YubikeyOtpVerificationResult::RESULT_OTP_VERIFICATION_FAILED, null);
         }
 
-        $otp = Otp::fromString($command->otp);
+        $publicId = YubikeyPublicId::fromModHex(Otp::fromString($command->otp)->publicId)->getYubikeyPublicId();
 
-        if ($otp->publicId !== $secondFactor->secondFactorIdentifier) {
+        if ($publicId !== $secondFactor->secondFactorIdentifier) {
             return new YubikeyOtpVerificationResult(
                 YubikeyOtpVerificationResult::RESULT_PUBLIC_ID_DID_NOT_MATCH,
-                $otp->publicId
+                $publicId
             );
         }
 
-        return new YubikeyOtpVerificationResult(YubikeyOtpVerificationResult::RESULT_PUBLIC_ID_MATCHED, $otp->publicId);
+        return new YubikeyOtpVerificationResult(YubikeyOtpVerificationResult::RESULT_PUBLIC_ID_MATCHED, $publicId);
     }
 
     /**
