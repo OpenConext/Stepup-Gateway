@@ -18,6 +18,8 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Service\StepUp;
 
+use Surfnet\StepupBundle\Value\YubikeyPublicId;
+
 class YubikeyOtpVerificationResult
 {
     const RESULT_PUBLIC_ID_MATCHED = 0;
@@ -25,7 +27,7 @@ class YubikeyOtpVerificationResult
     const RESULT_OTP_VERIFICATION_FAILED = 2;
 
     /**
-     * @var string|null
+     * @var \Surfnet\StepupBundle\Value\YubikeyPublicId|null
      */
     private $publicId;
 
@@ -36,11 +38,11 @@ class YubikeyOtpVerificationResult
 
     /**
      * @param int $result
-     * @param string|null $publicId
+     * @param YubikeyPublicId|null $publicId
      * @throws DomainException When $result is not one of the RESULT constants.
      * @throws InvalidArgumentException When the public ID is not a string.
      */
-    public function __construct($result, $publicId)
+    public function __construct($result, YubikeyPublicId $publicId = null)
     {
         $acceptableResults = [
             self::RESULT_PUBLIC_ID_MATCHED,
@@ -52,17 +54,13 @@ class YubikeyOtpVerificationResult
             throw new DomainException('Public ID verification result is not one of the RESULT constants.');
         }
 
-        if (!is_string($publicId) && $publicId !== null) {
-            throw new InvalidArgumentException('Public ID must be string or null.');
-        }
-
         $this->result = $result;
         $this->publicId = $publicId;
     }
 
     public function didPublicIdMatch()
     {
-        return $this->result === self::RESULT_PUBLIC_ID_MATCHED && is_string($this->publicId);
+        return $this->result === self::RESULT_PUBLIC_ID_MATCHED && $this->publicId !== null;
     }
 
     public function didOtpVerificationFail()
@@ -71,7 +69,7 @@ class YubikeyOtpVerificationResult
     }
 
     /**
-     * @return string|null
+     * @return YubikeyPublicId|null
      */
     public function getPublicId()
     {
