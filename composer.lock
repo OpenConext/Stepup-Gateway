@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "67b2a4ee14ff3a68f6c2fac104d86f22",
+    "hash": "7a1ddbb13f3b29c725d2ecff9a4a49c6",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -2199,16 +2199,16 @@
         },
         {
             "name": "surfnet/messagebird-api-client-bundle",
-            "version": "2.0.0",
+            "version": "2.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SURFnet/messagebird-api-client-bundle.git",
-                "reference": "716160fdae463881cd5511987f940069a1654d96"
+                "reference": "2f28727626b493f33d93e4cc115fc74c08f0a37f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SURFnet/messagebird-api-client-bundle/zipball/716160fdae463881cd5511987f940069a1654d96",
-                "reference": "716160fdae463881cd5511987f940069a1654d96",
+                "url": "https://api.github.com/repos/SURFnet/messagebird-api-client-bundle/zipball/2f28727626b493f33d93e4cc115fc74c08f0a37f",
+                "reference": "2f28727626b493f33d93e4cc115fc74c08f0a37f",
                 "shasum": ""
             },
             "require": {
@@ -2241,20 +2241,20 @@
                 "sms",
                 "surfnet"
             ],
-            "time": "2014-10-17 07:25:17"
+            "time": "2015-06-19 09:39:15"
         },
         {
             "name": "surfnet/stepup-bundle",
-            "version": "dev-develop",
+            "version": "1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SURFnet/Stepup-bundle.git",
-                "reference": "38e51b79287948932774ce44942a0877b1aeb23e"
+                "reference": "7e201ac7f5b870a142a85d3a44f1e2ebb8b31933"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SURFnet/Stepup-bundle/zipball/38e51b79287948932774ce44942a0877b1aeb23e",
-                "reference": "38e51b79287948932774ce44942a0877b1aeb23e",
+                "url": "https://api.github.com/repos/SURFnet/Stepup-bundle/zipball/7e201ac7f5b870a142a85d3a44f1e2ebb8b31933",
+                "reference": "7e201ac7f5b870a142a85d3a44f1e2ebb8b31933",
                 "shasum": ""
             },
             "require": {
@@ -2294,20 +2294,20 @@
                 "suaas",
                 "surfnet"
             ],
-            "time": "2015-06-19 11:32:32"
+            "time": "2015-06-19 11:44:48"
         },
         {
             "name": "surfnet/stepup-saml-bundle",
-            "version": "0.5.0",
+            "version": "1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SURFnet/Stepup-saml-bundle.git",
-                "reference": "2ca70a90af3890da6ca7f2b3e447ffe6c4e54677"
+                "reference": "8f336c442d3dc9d045bff498c4b27de65213565a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SURFnet/Stepup-saml-bundle/zipball/2ca70a90af3890da6ca7f2b3e447ffe6c4e54677",
-                "reference": "2ca70a90af3890da6ca7f2b3e447ffe6c4e54677",
+                "url": "https://api.github.com/repos/SURFnet/Stepup-saml-bundle/zipball/8f336c442d3dc9d045bff498c4b27de65213565a",
+                "reference": "8f336c442d3dc9d045bff498c4b27de65213565a",
                 "shasum": ""
             },
             "require": {
@@ -2341,7 +2341,7 @@
                 "stepup",
                 "surfnet"
             ],
-            "time": "2015-06-11 11:24:37"
+            "time": "2015-06-19 10:11:01"
         },
         {
             "name": "surfnet/yubikey-api-client-bundle",
@@ -4593,8 +4593,7 @@
     "stability-flags": {
         "doctrine/migrations": 15,
         "mopa/bootstrap-bundle": 20,
-        "simplesamlphp/saml2": 20,
-        "surfnet/stepup-bundle": 20
+        "simplesamlphp/saml2": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

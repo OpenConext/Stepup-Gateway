@@ -31,12 +31,12 @@
         "fortawesome/font-awesome": "~4.2.0",
         "jms/translation-bundle": "~1.1.0",
         "jms/di-extra-bundle": "~1.4.0",
-        "surfnet/messagebird-api-client-bundle": "~2.0",
+        "surfnet/messagebird-api-client-bundle": "^2.1",
         "mockery/mockery": "~0.9.0",
-        "surfnet/yubikey-api-client-bundle": "~1.2",
+        "surfnet/yubikey-api-client-bundle": "^1.2",
         "simplesamlphp/saml2": "dev-master",
-        "surfnet/stepup-bundle": "dev-develop",
-        "surfnet/stepup-saml-bundle": "^0.5.0"
+        "surfnet/stepup-bundle": "^1.0",
+        "surfnet/stepup-saml-bundle": "^1.0"
     },
     "repositories": [
         {
