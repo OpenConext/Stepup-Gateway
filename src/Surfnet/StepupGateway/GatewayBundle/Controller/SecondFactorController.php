@@ -19,9 +19,9 @@
 namespace Surfnet\StepupGateway\GatewayBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Surfnet\StepupBundle\Command\VerifyPossessionOfPhoneCommand;
 use Surfnet\StepupBundle\Value\PhoneNumber\InternationalPhoneNumber;
 use Surfnet\StepupGateway\GatewayBundle\Command\SendSmsChallengeCommand;
-use Surfnet\StepupGateway\GatewayBundle\Command\VerifySmsChallengeCommand;
 use Surfnet\StepupGateway\GatewayBundle\Command\VerifyYubikeyOtpCommand;
 use Surfnet\StepupGateway\GatewayBundle\Exception\RuntimeException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -41,17 +41,36 @@ class SecondFactorController extends Controller
         $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
         $logger->notice('Determining which second factor to use...');
 
-        $secondFactorCollection = $this
+        $requiredLoa = $this
             ->getStepupService()
-            ->determineViableSecondFactors(
-                $context->getIdentityNameId(),
+            ->resolveHighestRequiredLoa(
                 $context->getRequiredLoa(),
                 $context->getServiceProvider(),
                 $context->getAuthenticatingIdp()
             );
 
+        if ($requiredLoa === null) {
+            $logger->notice(
+                'No valid required Loa can be determined, no authentication is possible, Loa cannot be given'
+            );
+
+            return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:sendLoaCannotBeGiven');
+        } else {
+            $logger->notice(sprintf('Determined that the required Loa is "%s"', $requiredLoa));
+        }
+
+        if ($this->getStepupService()->isIntrinsicLoa($requiredLoa)) {
+            $this->get('gateway.authentication_logger')->logIntrinsicLoaAuthentication($originalRequestId);
+
+            return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:respond');
+        }
+
+        $secondFactorCollection = $this
+            ->getStepupService()
+            ->determineViableSecondFactors($context->getIdentityNameId(), $requiredLoa);
+
         if (count($secondFactorCollection) === 0) {
-            $logger->notice('No second factors can give the determined LOA');
+            $logger->notice('No second factors can give the determined Loa');
 
             return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:sendLoaCannotBeGiven');
         }
@@ -59,6 +78,19 @@ class SecondFactorController extends Controller
         // will be replaced by a second factor selection screen once we support multiple
         /** @var \Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor $secondFactor */
         $secondFactor = $secondFactorCollection->first();
+        // when multiple second factors are supported this should be moved into the
+        // StepUpAuthenticationService::determineViableSecondFactors and handled in a performant way
+        // currently keeping this here for visibility
+        if (!$this->get('gateway.service.whitelist')->contains($secondFactor->institution)) {
+            $logger->notice(sprintf(
+                'Second factor "%s" is listed for institution "%s" which is not on the whitelist, sending Loa '
+                . 'cannot be given response',
+                $secondFactor->secondFactorId,
+                $secondFactor->institution
+            ));
+
+            return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:sendLoaCannotBeGiven');
+        }
 
         $logger->notice(sprintf(
             'Found "%d" second factors, using second factor of type "%s"',
@@ -280,7 +312,7 @@ class SecondFactorController extends Controller
             throw new BadRequestHttpException('Cannot verify possession of an unknown second factor.');
         }
 
-        $command = new VerifySmsChallengeCommand();
+        $command = new VerifyPossessionOfPhoneCommand();
         $form = $this->createForm('gateway_verify_sms_challenge', $command)->handleRequest($request);
 
         if (!$form->isValid()) {

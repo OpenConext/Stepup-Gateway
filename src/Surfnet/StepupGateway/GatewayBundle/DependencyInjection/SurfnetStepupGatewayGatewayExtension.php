@@ -38,14 +38,5 @@ class SurfnetStepupGatewayGatewayExtension extends Extension
         $container
             ->getDefinition('gateway.security.intrinsic_loa')
             ->addArgument($config['intrinsic_loa']);
-
-        $container
-            ->getDefinition('gateway.service.sms_second_factor')
-            ->replaceArgument(3, $config['sms']['originator']);
-
-        $container
-            ->getDefinition('gateway.service.challenge_handler')
-            ->replaceArgument(2, $config['sms']['otp_expiry_interval'])
-            ->replaceArgument(3, $config['sms']['maximum_otp_requests']);
     }
 }

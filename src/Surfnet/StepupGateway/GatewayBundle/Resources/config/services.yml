@@ -48,27 +48,21 @@ services:
         class: Surfnet\StepupGateway\GatewayBundle\Service\StepUpAuthenticationService
         arguments:
             - @surfnet_stepup.service.loa_resolution
-            - @saml.entity_repository
             - @gateway.repository.second_factor
             - @surfnet_gateway_api.service.yubikey
-            - @gateway.service.sms_second_factor
+            - @surfnet_stepup.service.sms_second_factor
+            - @translator
+            - @logger
 
-    gateway.service.sms_second_factor:
-        class: Surfnet\StepupGateway\GatewayBundle\Service\SmsSecondFactorService
+    gateway.service.gateway_api_sms:
+        class: Surfnet\StepupGateway\GatewayBundle\Service\GatewayApiSmsService
         arguments:
             - @surfnet_gateway_api.service.sms
-            - @gateway.service.challenge_handler
-            - @translator
-            - '' # Replaced in extension
 
-    gateway.service.challenge_handler:
-        public: false
-        class: Surfnet\StepupGateway\GatewayBundle\Service\SmsSecondFactor\SessionSmsVerificationStateHandler
+    gateway.service.whitelist:
+        class: Surfnet\StepupGateway\GatewayBundle\Service\WhitelistService
         arguments:
-            - @session
-            - 'Surfnet/Gateway/SecondFactor/Sms:challenge'
-            - {} # OTP expiry interval
-            - 0  # Maximum OTP requests
+            - @gateway.repository.whitelist_entry
 
     # Logging
     gateway.authentication_logger:
@@ -104,3 +98,11 @@ services:
     gateway.form.verify_sms_challenge:
         class: Surfnet\StepupGateway\GatewayBundle\Form\Type\VerifySmsChallengeType
         tags: [{ name: form.type, alias: gateway_verify_sms_challenge }]
+
+    # Listeners
+    gateway.event_listener.locale:
+        class: Surfnet\StepupGateway\GatewayBundle\EventListener\SecondFactorLocaleListener
+        arguments:
+            - @gateway.proxy.response_context
+            - @gateway.service.second_factor_service
+        tags: [{ name: kernel.event_subscriber }]

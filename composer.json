@@ -10,7 +10,7 @@
     "minimum-stability": "stable",
     "require": {
         "php": ">=5.4",
-        "symfony/symfony": "~2.6,>=2.6.6",
+        "symfony/symfony": "^2.7",
         "doctrine/dbal": "~2.5",
         "doctrine/orm": "~2.5",
         "doctrine/doctrine-bundle": "~1.4",
@@ -20,7 +20,7 @@
         "symfony/assetic-bundle": "~2.3",
         "symfony/swiftmailer-bundle": "~2.3",
         "symfony/monolog-bundle": "~2.4",
-        "sensio/distribution-bundle": "~3.0",
+        "sensio/distribution-bundle": "^3.0.21",
         "sensio/framework-extra-bundle": "~3.0",
         "incenteev/composer-parameter-handler": "~2.0",
         "nelmio/security-bundle": "~1.4",
@@ -31,12 +31,12 @@
         "fortawesome/font-awesome": "~4.2.0",
         "jms/translation-bundle": "~1.1.0",
         "jms/di-extra-bundle": "~1.4.0",
-        "surfnet/messagebird-api-client-bundle": "~2.0",
+        "surfnet/messagebird-api-client-bundle": "^2.1",
         "mockery/mockery": "~0.9.0",
-        "surfnet/yubikey-api-client-bundle": "~1.2",
-        "surfnet/stepup-bundle": "0.2.*",
+        "surfnet/yubikey-api-client-bundle": "^1.2",
         "simplesamlphp/saml2": "dev-master",
-        "surfnet/stepup-saml-bundle": "0.4.*"
+        "surfnet/stepup-bundle": "^1.0",
+        "surfnet/stepup-saml-bundle": "^1.0"
     },
     "repositories": [
         {

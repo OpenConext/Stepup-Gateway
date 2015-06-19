@@ -16,10 +16,25 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupGateway\GatewayBundle\Service\Exception;
+namespace Surfnet\StepupGateway\GatewayBundle\Entity;
 
-use Surfnet\StepupGateway\GatewayBundle\Exception\DomainException;
+use Doctrine\ORM\EntityRepository;
 
-class TooManyChallengesRequestedException extends DomainException
+class WhitelistEntryRepository extends EntityRepository
 {
+    /**
+     * @param string $institution
+     * @return bool
+     */
+    public function hasEntryFor($institution)
+    {
+        $count = $this->createQueryBuilder('w')
+            ->select('COUNT(w.institution)')
+            ->where('w.institution = :institution')
+            ->setParameter('institution', $institution)
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        return (bool) $count;
+    }
 }

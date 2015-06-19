@@ -16,17 +16,24 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupGateway\GatewayBundle\Command;
+namespace Surfnet\StepupGateway\GatewayBundle\Entity;
 
-use Symfony\Component\Validator\Constraints as Assert;
+use Doctrine\ORM\Mapping as ORM;
 
-class VerifySmsChallengeCommand
+/**
+ * @ORM\Entity(repositoryClass="Surfnet\StepupGateway\GatewayBundle\Entity\WhitelistEntryRepository")
+ */
+class WhitelistEntry
 {
     /**
-     * @Assert\NotBlank(message="gateway.verify_sms_challenge_command.challenge.may_not_be_empty")
-     * @Assert\Type(type="string", message="gateway.verify_sms_challenge_command.challenge.must_be_string")
+     * @ORM\Id
+     * @ORM\Column(type="string")
      *
      * @var string
      */
-    public $challenge;
+    public $institution;
+
+    final private function __construct()
+    {
+    }
 }

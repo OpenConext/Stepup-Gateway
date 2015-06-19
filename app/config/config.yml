@@ -16,7 +16,8 @@ framework:
     validation:      { enable_annotations: true }
     templating:
         engines: ['twig']
-        assets_version: %asset_version%
+    assets:
+        version: %asset_version%
     default_locale:  "%default_locale%"
     trusted_hosts:   ~
     trusted_proxies: "%trusted_proxies%"
@@ -145,13 +146,14 @@ surfnet_stepup:
         loa1: %gateway_loa_loa1%
         loa2: %gateway_loa_loa2%
         loa3: %gateway_loa_loa3%
-
-surfnet_stepup_gateway_gateway:
-    intrinsic_loa: %gateway_loa_loa1%
     sms:
+        service: gateway.service.gateway_api_sms
         originator: %sms_originator%
         otp_expiry_interval: %sms_otp_expiry_interval%
         maximum_otp_requests: %sms_maximum_otp_requests%
+
+surfnet_stepup_gateway_gateway:
+    intrinsic_loa: %gateway_loa_loa1%
 
 surfnet_saml:
     hosted:

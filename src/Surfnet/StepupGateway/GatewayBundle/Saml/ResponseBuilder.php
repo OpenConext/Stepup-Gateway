@@ -86,7 +86,7 @@ class ResponseBuilder
     {
         return in_array($status, [
             SAML2_Const::STATUS_AUTHN_FAILED,       // failed authentication
-            SAML2_Const::STATUS_NO_AUTHN_CONTEXT,   // insufficient LOA or LOA cannot be met
+            SAML2_Const::STATUS_NO_AUTHN_CONTEXT,   // insufficient Loa or Loa cannot be met
             SAML2_Const::STATUS_SUCCESS,            // weeee!
             SAML2_Const::STATUS_REQUESTER,          // Something is wrong with the AuthnRequest
             SAML2_Const::STATUS_RESPONDER           // Something went wrong with the Response

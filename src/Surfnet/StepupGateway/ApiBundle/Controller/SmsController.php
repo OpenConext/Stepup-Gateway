@@ -60,6 +60,6 @@ class SmsController extends Controller
         }
 
         // Invalid access key or server error
-        return new JsonResponse(['errors' => $errors], 500);
+        return new JsonResponse(['errors' => $errors], 502);
     }
 }
