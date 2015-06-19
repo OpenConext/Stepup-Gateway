@@ -29,6 +29,7 @@ use Surfnet\StepupBundle\Service\SmsSecondFactor\OtpVerification;
 use Surfnet\StepupBundle\Service\SmsSecondFactorService;
 use Surfnet\StepupBundle\Value\Loa;
 use Surfnet\StepupBundle\Value\PhoneNumber\InternationalPhoneNumber;
+use Surfnet\StepupBundle\Value\YubikeyOtp;
 use Surfnet\StepupBundle\Value\YubikeyPublicId;
 use Surfnet\StepupGateway\ApiBundle\Dto\Otp as ApiOtp;
 use Surfnet\StepupGateway\ApiBundle\Dto\Requester;
@@ -39,7 +40,6 @@ use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor;
 use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactorRepository;
 use Surfnet\StepupGateway\GatewayBundle\Exception\RuntimeException;
 use Surfnet\StepupGateway\GatewayBundle\Service\StepUp\YubikeyOtpVerificationResult;
-use Surfnet\YubikeyApiClient\Otp;
 use Symfony\Component\Translation\TranslatorInterface;
 
 /**
@@ -229,9 +229,10 @@ class StepUpAuthenticationService
             return new YubikeyOtpVerificationResult(YubikeyOtpVerificationResult::RESULT_OTP_VERIFICATION_FAILED, null);
         }
 
-        $publicId = YubikeyPublicId::fromModHex(Otp::fromString($command->otp)->publicId)->getYubikeyPublicId();
+        $otp = YubikeyOtp::fromString($command->otp);
+        $publicId = YubikeyPublicId::fromOtp($otp);
 
-        if ($publicId !== $secondFactor->secondFactorIdentifier) {
+        if ($publicId->getYubikeyPublicId() !== $secondFactor->secondFactorIdentifier) {
             return new YubikeyOtpVerificationResult(
                 YubikeyOtpVerificationResult::RESULT_PUBLIC_ID_DID_NOT_MATCH,
                 $publicId
