@@ -232,7 +232,7 @@ class StepUpAuthenticationService
         $otp = YubikeyOtp::fromString($command->otp);
         $publicId = YubikeyPublicId::fromOtp($otp);
 
-        if ($publicId->getYubikeyPublicId() !== $secondFactor->secondFactorIdentifier) {
+        if (!$publicId->equals(new YubikeyPublicId($secondFactor->secondFactorIdentifier))) {
             return new YubikeyOtpVerificationResult(
                 YubikeyOtpVerificationResult::RESULT_PUBLIC_ID_DID_NOT_MATCH,
                 $publicId
