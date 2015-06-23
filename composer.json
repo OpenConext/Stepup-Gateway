@@ -38,12 +38,6 @@
         "surfnet/stepup-bundle": "^1.0",
         "surfnet/stepup-saml-bundle": "^1.0"
     },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/SURFnet/saml2"
-        }
-    ],
     "require-dev": {
         "sensio/generator-bundle": "~2.3",
         "ibuildings/qa-tools": "~1.1,>=1.1.27",
