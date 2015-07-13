@@ -107,6 +107,9 @@ swiftmailer:
     spool:     { type: memory }
 
 nelmio_security:
+    clickjacking:
+        paths:
+            '^/.*': DENY
     # Content Security Policy
     csp:
         report_uri: /csp/report
