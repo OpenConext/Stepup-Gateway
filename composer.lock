@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "41ac1889fb9da6783110e65b97c66dde",
+    "hash": "676ad16e2cc69c2c095a25fcc9fbd41f",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -1697,7 +1697,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phiamo/MopaBootstrapBundle/zipball/4d4b6291b47fc70491a4f92105be39d6bcccbb95",
+                "url": "https://api.github.com/repos/phiamo/MopaBootstrapBundle/zipball/ee161a9c8ebc41358466076ff065d2df7a852ab7",
                 "reference": "818b0f47ebd352559950e9a64431ff9472e8a9dd",
                 "shasum": ""
             },
@@ -1930,6 +1930,47 @@
             "time": "2012-12-21 11:40:51"
         },
         {
+            "name": "robrichards/xmlseclibs",
+            "version": "1.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/robrichards/xmlseclibs.git",
+                "reference": "e91b4272f43b7708020c995f3c58056e68bfddf0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/robrichards/xmlseclibs/zipball/e91b4272f43b7708020c995f3c58056e68bfddf0",
+                "reference": "e91b4272f43b7708020c995f3c58056e68bfddf0",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">= 5.2"
+            },
+            "suggest": {
+                "ext/mcrypt": "MCrypt extension",
+                "ext/openssl": "OpenSSL extension"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "src/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "description": "A PHP library for XML Security",
+            "homepage": "https://github.com/robrichards/xmlseclibs",
+            "keywords": [
+                "security",
+                "signature",
+                "xml",
+                "xmldsig"
+            ],
+            "time": "2015-06-23 18:50:25"
+        },
+        {
             "name": "sensio/distribution-bundle",
             "version": "v3.0.30",
             "target-dir": "Sensio/Bundle/DistributionBundle",
@@ -2091,16 +2132,16 @@
         },
         {
             "name": "simplesamlphp/saml2",
-            "version": "dev-master",
+            "version": "v1.6.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/simplesamlphp/saml2.git",
-                "reference": "fd11ea8c7d8de2537b1b8e06033e0db2664bb373"
+                "reference": "da4f356dfee6eaabac4fb8afb0de045e571c476b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/simplesamlphp/saml2/zipball/fd11ea8c7d8de2537b1b8e06033e0db2664bb373",
-                "reference": "fd11ea8c7d8de2537b1b8e06033e0db2664bb373",
+                "url": "https://api.github.com/repos/simplesamlphp/saml2/zipball/da4f356dfee6eaabac4fb8afb0de045e571c476b",
+                "reference": "da4f356dfee6eaabac4fb8afb0de045e571c476b",
                 "shasum": ""
             },
             "require": {
@@ -2137,58 +2178,7 @@
                 }
             ],
             "description": "SAML2 PHP library from SimpleSAMLphp",
-            "time": "2015-06-22 14:31:51"
-        },
-        {
-            "name": "simplesamlphp/xmlseclibs",
-            "version": "v1.3.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/simplesamlphp/xmlseclibs.git",
-                "reference": "734e80899ade295b979de08553161cad63c2dd98"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/simplesamlphp/xmlseclibs/zipball/734e80899ade295b979de08553161cad63c2dd98",
-                "reference": "734e80899ade295b979de08553161cad63c2dd98",
-                "shasum": ""
-            },
-            "replace": {
-                "cdatazone/xmlseclibs": "self.version",
-                "fr3d/xmlseclibs": "self.version",
-                "robrichards/xmlseclibs": "self.version"
-            },
-            "suggest": {
-                "ext/mcrypt": "",
-                "ext/openssl": ""
-            },
-            "type": "library",
-            "autoload": {
-                "files": [
-                    "xmlseclibs.php"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "authors": [
-                {
-                    "name": "Rob Richards"
-                }
-            ],
-            "description": "A PHP library for XML Security",
-            "homepage": "http://code.google.com/p/xmlseclibs/",
-            "keywords": [
-                "certificate",
-                "security",
-                "signature",
-                "signing",
-                "x.509",
-                "xml",
-                "xmlsec"
-            ],
-            "time": "2013-06-19 00:00:00"
+            "time": "2015-07-13 10:00:26"
         },
         {
             "name": "surfnet/messagebird-api-client-bundle",
@@ -2291,22 +2281,23 @@
         },
         {
             "name": "surfnet/stepup-saml-bundle",
-            "version": "1.0.0",
+            "version": "1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SURFnet/Stepup-saml-bundle.git",
-                "reference": "8f336c442d3dc9d045bff498c4b27de65213565a"
+                "reference": "abc48cd40ed5abebf74d12467c439db54d0aa5f5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SURFnet/Stepup-saml-bundle/zipball/8f336c442d3dc9d045bff498c4b27de65213565a",
-                "reference": "8f336c442d3dc9d045bff498c4b27de65213565a",
+                "url": "https://api.github.com/repos/SURFnet/Stepup-saml-bundle/zipball/abc48cd40ed5abebf74d12467c439db54d0aa5f5",
+                "reference": "abc48cd40ed5abebf74d12467c439db54d0aa5f5",
                 "shasum": ""
             },
             "require": {
                 "ext-openssl": "*",
                 "php": "~5.4",
-                "simplesamlphp/saml2": "dev-master",
+                "robrichards/xmlseclibs": "^1.4.0",
+                "simplesamlphp/saml2": "^1.6.1",
                 "symfony/dependency-injection": "^2.6",
                 "symfony/framework-bundle": "~2.5"
             },
@@ -2334,7 +2325,7 @@
                 "stepup",
                 "surfnet"
             ],
-            "time": "2015-06-19 10:11:01"
+            "time": "2015-07-13 12:44:50"
         },
         {
             "name": "surfnet/yubikey-api-client-bundle",
@@ -4585,8 +4576,7 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "doctrine/migrations": 15,
-        "mopa/bootstrap-bundle": 20,
-        "simplesamlphp/saml2": 20
+        "mopa/bootstrap-bundle": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

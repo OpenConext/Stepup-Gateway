@@ -34,9 +34,8 @@
         "surfnet/messagebird-api-client-bundle": "^2.1",
         "mockery/mockery": "~0.9.0",
         "surfnet/yubikey-api-client-bundle": "^1.2",
-        "simplesamlphp/saml2": "dev-master",
         "surfnet/stepup-bundle": "^1.0",
-        "surfnet/stepup-saml-bundle": "^1.0"
+        "surfnet/stepup-saml-bundle": "^1.2.0"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3",
