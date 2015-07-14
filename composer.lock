@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "5216d61f155a1bf4101e01e1a6359130",
+    "hash": "89369691f0ab9baeed2d9543870a02a5",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -2228,16 +2228,16 @@
         },
         {
             "name": "surfnet/stepup-bundle",
-            "version": "1.0.0",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SURFnet/Stepup-bundle.git",
-                "reference": "7e201ac7f5b870a142a85d3a44f1e2ebb8b31933"
+                "reference": "5282a745516ba34cdd164c8d09b0add9fb859615"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SURFnet/Stepup-bundle/zipball/7e201ac7f5b870a142a85d3a44f1e2ebb8b31933",
-                "reference": "7e201ac7f5b870a142a85d3a44f1e2ebb8b31933",
+                "url": "https://api.github.com/repos/SURFnet/Stepup-bundle/zipball/5282a745516ba34cdd164c8d09b0add9fb859615",
+                "reference": "5282a745516ba34cdd164c8d09b0add9fb859615",
                 "shasum": ""
             },
             "require": {
@@ -2277,7 +2277,7 @@
                 "suaas",
                 "surfnet"
             ],
-            "time": "2015-06-19 11:44:48"
+            "time": "2015-07-14 11:33:20"
         },
         {
             "name": "surfnet/stepup-saml-bundle",
