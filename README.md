@@ -9,10 +9,13 @@ Step-up Gateway
  * [Composer](https://getcomposer.org/)
  * A web server (Apache, Nginx)
  * MariaDB 5.5+ (MySQL should work as well)
- * Graylog2 (or disable this Monolog handler)
+ * syslog (or change the logging configuration in /app/config/logging.yml)
 
 ## Installation
 
 Clone the repository or download the archive to a directory. Install the dependencies by running `composer install` and fill out the database credentials et cetera.
 
 The Gateway is configured to only accept connections over SSL. Disable this under `nelmio_security` in `config.yml` or run the web server using a (self-signed) certificate.
+
+## Stepup
+This component is part of the stepup software an requires other components to function. Please refer to https://github.com/SURFnet/Stepup-Deploy for information for setting up the stepup software.
