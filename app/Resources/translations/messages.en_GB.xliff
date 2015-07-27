@@ -73,6 +73,26 @@
         <source>gateway.form.gateway_send_sms_challenge.label.phone_number</source>
         <target>Phone number</target>
       </trans-unit>
+      <trans-unit id="369b2c8dea153b42d8dc01645e54140a83cb5f4f" resname="gateway.form.send_sms_challenge.sms_challenge_expired">
+        <jms:reference-file line="10">Resources/views/translations.html.twig</jms:reference-file>
+        <source>gateway.form.send_sms_challenge.sms_challenge_expired</source>
+        <target>Your code has expired. Please request a new code.</target>
+      </trans-unit>
+      <trans-unit id="ffeb09a45624fa2a2ce80cbdbe52cc274e7cb1a5" resname="gateway.form.send_sms_challenge.sms_challenge_incorrect">
+        <jms:reference-file line="9">Resources/views/translations.html.twig</jms:reference-file>
+        <source>gateway.form.send_sms_challenge.sms_challenge_incorrect</source>
+        <target>This code is not correct. Please try again or request a new code.</target>
+      </trans-unit>
+      <trans-unit id="b8020a5c4b1ce8f6a3cfa6854588499b9a6168ef" resname="gateway.form.send_sms_challenge.sms_sending_failed">
+        <jms:reference-file line="8">Resources/views/translations.html.twig</jms:reference-file>
+        <source>gateway.form.send_sms_challenge.sms_sending_failed</source>
+        <target>The sending of the code via SMS failed.</target>
+      </trans-unit>
+      <trans-unit id="be86ce24f39578ecbfb3cf0ad710a5a96e819ff6" resname="gateway.form.send_sms_challenge.too_many_attempts">
+        <jms:reference-file line="11">Resources/views/translations.html.twig</jms:reference-file>
+        <source>gateway.form.send_sms_challenge.too_many_attempts</source>
+        <target>You have exceeded the limit of ten attempts; you can no longer attempt verification of any more codes. Contact your helpdesk or try again later.</target>
+      </trans-unit>
       <trans-unit id="949d225017cfbb80ae094b1af62b758c4ab1cd2c" resname="gateway.form.verify_sms_challenge.button.resend_challenge">
         <jms:reference-file line="41">Form/Type/VerifySmsChallengeType.php</jms:reference-file>
         <source>gateway.form.verify_sms_challenge.button.resend_challenge</source>
@@ -87,6 +107,16 @@
         <jms:reference-file line="30">Form/Type/VerifySmsChallengeType.php</jms:reference-file>
         <source>gateway.form.verify_sms_challenge.text.challenge</source>
         <target>Code</target>
+      </trans-unit>
+      <trans-unit id="69e4a91f05f1619fc6326ff78659255bc0d4f7ce" resname="gateway.form.verify_yubikey.otp_verification_failed">
+        <jms:reference-file line="4">Resources/views/translations.html.twig</jms:reference-file>
+        <source>gateway.form.verify_yubikey.otp_verification_failed</source>
+        <target>The Yubikey code was invalid. Please try again.</target>
+      </trans-unit>
+      <trans-unit id="ff41865a3ee14ef7455ab11e77851280932ec1bb" resname="gateway.form.verify_yubikey.public_id_mismatch">
+        <jms:reference-file line="5">Resources/views/translations.html.twig</jms:reference-file>
+        <source>gateway.form.verify_yubikey.public_id_mismatch</source>
+        <target>You used another Yubikey than you used during your registration process.</target>
       </trans-unit>
       <trans-unit id="53c1b4469c10803f2e6bfb5fd31afb68c7f9556f" resname="gateway.gateway.consume_assertion.title">
         <jms:reference-file line="15">views/Gateway/consumeAssertion.html.twig</jms:reference-file>
