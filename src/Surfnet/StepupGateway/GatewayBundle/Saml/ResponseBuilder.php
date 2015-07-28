@@ -85,18 +85,35 @@ class ResponseBuilder
     private function isValidResponseStatus($status)
     {
         return in_array($status, [
-            SAML2_Const::STATUS_AUTHN_FAILED,       // failed authentication
-            SAML2_Const::STATUS_NO_AUTHN_CONTEXT,   // insufficient Loa or Loa cannot be met
             SAML2_Const::STATUS_SUCCESS,            // weeee!
             SAML2_Const::STATUS_REQUESTER,          // Something is wrong with the AuthnRequest
-            SAML2_Const::STATUS_RESPONDER           // Something went wrong with the Response
+            SAML2_Const::STATUS_RESPONDER,          // Something went wrong with the Response
+            SAML2_Const::STATUS_VERSION_MISMATCH,   // The version of the request message was incorrect
         ]);
     }
 
     private function isValidResponseSubStatus($subStatus)
     {
         return in_array($subStatus, [
-            SAML2_Const::STATUS_REQUEST_UNSUPPORTED
+            SAML2_Const::STATUS_AUTHN_FAILED,               // failed authentication
+            SAML2_Const::STATUS_INVALID_ATTR,
+            SAML2_Const::STATUS_INVALID_NAMEID_POLICY,
+            SAML2_Const::STATUS_NO_AUTHN_CONTEXT,           // insufficient Loa or Loa cannot be met
+            SAML2_Const::STATUS_NO_AVAILABLE_IDP,
+            SAML2_Const::STATUS_NO_PASSIVE,
+            SAML2_Const::STATUS_NO_SUPPORTED_IDP,
+            SAML2_Const::STATUS_PARTIAL_LOGOUT,
+            SAML2_Const::STATUS_PROXY_COUNT_EXCEEDED,
+            SAML2_Const::STATUS_REQUEST_DENIED,
+            SAML2_Const::STATUS_REQUEST_UNSUPPORTED,
+            SAML2_Const::STATUS_REQUEST_VERSION_DEPRECATED,
+            SAML2_Const::STATUS_REQUEST_VERSION_TOO_HIGH,
+            SAML2_Const::STATUS_REQUEST_VERSION_TOO_LOW,
+            SAML2_Const::STATUS_RESOURCE_NOT_RECOGNIZED,
+            SAML2_Const::STATUS_TOO_MANY_RESPONSES,
+            SAML2_Const::STATUS_UNKNOWN_ATTR_PROFILE,
+            SAML2_Const::STATUS_UNKNOWN_PRINCIPAL,
+            SAML2_Const::STATUS_UNSUPPORTED_BINDING,
         ]);
     }
 }
