@@ -202,7 +202,7 @@ class GatewayController extends Controller
 
         $response = $responseBuilder
             ->createNewResponse($responseContext)
-            ->setResponseStatus(SAML2_Const::STATUS_NO_AUTHN_CONTEXT)
+            ->setResponseStatus(SAML2_Const::STATUS_RESPONDER, SAML2_Const::STATUS_NO_AUTHN_CONTEXT)
             ->get();
 
         $logger->notice(sprintf(
