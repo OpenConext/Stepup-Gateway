@@ -53,7 +53,13 @@ class ResponseBuilder
         return $this;
     }
 
-    public function setResponseStatus($status, $subStatus = null)
+    /**
+     * @param string $status
+     * @param string|null $subStatus
+     * @param string|null $message
+     * @return $this
+     */
+    public function setResponseStatus($status, $subStatus = null, $message = null)
     {
         if (!$this->isValidResponseStatus($status)) {
             throw new LogicException(sprintf('Trying to set invalid Response Status'));
@@ -67,6 +73,10 @@ class ResponseBuilder
         if ($subStatus) {
             $status['SubCode'] = $subStatus;
         }
+        if ($message) {
+            $status['Message'] = $message;
+        }
+
         $this->response->setStatus($status);
 
         return $this;
