@@ -211,6 +211,10 @@ class SecondFactorController extends Controller
 
         $form = $this->createForm('gateway_verify_yubikey_otp', $command)->handleRequest($request);
 
+        if ($form->get('cancel')->isClicked()) {
+            return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:sendAuthenticationCancelledByUser');
+        }
+
         if (!$form->isValid()) {
             // OTP field is rendered empty in the template.
             return ['form' => $form->createView()];
@@ -278,6 +282,10 @@ class SecondFactorController extends Controller
         $maximumOtpRequests = $stepupService->getSmsMaximumOtpRequestsCount();
         $viewVariables = ['otpRequestsRemaining' => $otpRequestsRemaining, 'maximumOtpRequests' => $maximumOtpRequests];
 
+        if ($form->get('cancel')->isClicked()) {
+            return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:sendAuthenticationCancelledByUser');
+        }
+
         if (!$form->isValid()) {
             return array_merge($viewVariables, ['phoneNumber' => $phoneNumber, 'form' => $form->createView()]);
         }
@@ -314,6 +322,10 @@ class SecondFactorController extends Controller
 
         $command = new VerifyPossessionOfPhoneCommand();
         $form = $this->createForm('gateway_verify_sms_challenge', $command)->handleRequest($request);
+
+        if ($form->get('cancel')->isClicked()) {
+            return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:sendAuthenticationCancelledByUser');
+        }
 
         if (!$form->isValid()) {
             return ['form' => $form->createView()];
