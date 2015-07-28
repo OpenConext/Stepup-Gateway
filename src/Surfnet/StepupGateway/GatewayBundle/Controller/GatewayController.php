@@ -214,6 +214,36 @@ class GatewayController extends Controller
         return $this->renderSamlResponse('consumeAssertion', $response);
     }
 
+    public function sendAuthenticationCancelledByUserAction()
+    {
+        $responseContext = $this->getResponseContext();
+        $originalRequestId = $responseContext->getInResponseTo();
+
+        /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
+        $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
+        $logger->notice('Authentication was cancelled by the user, creating Response with AuthnFailed status');
+
+        /** @var \Surfnet\StepupGateway\GatewayBundle\Saml\ResponseBuilder $responseBuilder */
+        $responseBuilder = $this->get('gateway.proxy.response_builder');
+
+        $response = $responseBuilder
+            ->createNewResponse($responseContext)
+            ->setResponseStatus(
+                SAML2_Const::STATUS_RESPONDER,
+                SAML2_Const::STATUS_AUTHN_FAILED,
+                'Authentication cancelled by user'
+            )
+            ->get();
+
+        $logger->notice(sprintf(
+            'Responding to request "%s" with response based on response from the remote IdP with response "%s"',
+            $responseContext->getInResponseTo(),
+            $response->getId()
+        ));
+
+        return $this->renderSamlResponse('consumeAssertion', $response);
+    }
+
     /**
      * @param string         $view
      * @param SAML2_Response $response

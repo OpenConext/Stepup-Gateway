@@ -63,6 +63,11 @@
         <source>gateway.error.unrecoverable_error</source>
         <target>Onherstelbare fout.</target>
       </trans-unit>
+      <trans-unit id="65f3ce4b0efbcaaaafd540e24188ea54d0851540" resname="gateway.form.gateway_cancel_second_factor_verification.button.cancel_verification">
+        <jms:reference-file line="29">Form/Type/CancelSecondFactorVerificationType.php</jms:reference-file>
+        <source>gateway.form.gateway_cancel_second_factor_verification.button.cancel_verification</source>
+        <target>Annuleren</target>
+      </trans-unit>
       <trans-unit id="216da4e667c1127a830eadcac98926f5bd508efb" resname="gateway.form.gateway_send_sms_challenge.button.send_challenge">
         <jms:reference-file line="30">Form/Type/SendSmsChallengeType.php</jms:reference-file>
         <source>gateway.form.gateway_send_sms_challenge.button.send_challenge</source>
@@ -72,6 +77,11 @@
         <jms:reference-file line="28">views/SecondFactor/verifySmsSecondFactor.html.twig</jms:reference-file>
         <source>gateway.form.gateway_send_sms_challenge.label.phone_number</source>
         <target>Telefoonnummer</target>
+      </trans-unit>
+      <trans-unit id="ddf7dd3f1b77196052dad82522de3845661976fa" resname="gateway.form.send_sms_challenge.button.cancel">
+        <jms:reference-file line="34">Form/Type/SendSmsChallengeType.php</jms:reference-file>
+        <source>gateway.form.send_sms_challenge.button.cancel</source>
+        <target>Annuleren</target>
       </trans-unit>
       <trans-unit id="369b2c8dea153b42d8dc01645e54140a83cb5f4f" resname="gateway.form.send_sms_challenge.sms_challenge_expired">
         <jms:reference-file line="10">Resources/views/translations.html.twig</jms:reference-file>
@@ -92,6 +102,11 @@
         <jms:reference-file line="11">Resources/views/translations.html.twig</jms:reference-file>
         <source>gateway.form.send_sms_challenge.too_many_attempts</source>
         <target>De limiet van tien pogingen is bereikt; je kunt geen codes meer verifiëren. Neem contact op met de helpdesk van je installing of probeer het later nog eens.</target>
+      </trans-unit>
+      <trans-unit id="815ec86e9c26021d75afe4356d9ae3bbb93e9582" resname="gateway.form.verify_sms_challenge.button.cancel">
+        <jms:reference-file line="46">Form/Type/VerifySmsChallengeType.php</jms:reference-file>
+        <source>gateway.form.verify_sms_challenge.button.cancel</source>
+        <target>Annuleren</target>
       </trans-unit>
       <trans-unit id="949d225017cfbb80ae094b1af62b758c4ab1cd2c" resname="gateway.form.verify_sms_challenge.button.resend_challenge">
         <jms:reference-file line="41">Form/Type/VerifySmsChallengeType.php</jms:reference-file>
@@ -117,6 +132,11 @@
         <jms:reference-file line="5">Resources/views/translations.html.twig</jms:reference-file>
         <source>gateway.form.verify_yubikey.public_id_mismatch</source>
         <target>Je gebruikt nu een andere YubiKey dan tijdens het registratieproces.</target>
+      </trans-unit>
+      <trans-unit id="4b7b462d7958d591725738f5b1e3334abeb57160" resname="gateway.form.verify_yubikey_otp.button.cancel">
+        <jms:reference-file line="46">Form/Type/VerifyYubikeyOtpType.php</jms:reference-file>
+        <source>gateway.form.verify_yubikey_otp.button.cancel</source>
+        <target>Annuleren</target>
       </trans-unit>
       <trans-unit id="53c1b4469c10803f2e6bfb5fd31afb68c7f9556f" resname="gateway.gateway.consume_assertion.title">
         <jms:reference-file line="15">views/Gateway/consumeAssertion.html.twig</jms:reference-file>
