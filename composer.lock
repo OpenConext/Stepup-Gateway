@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "89369691f0ab9baeed2d9543870a02a5",
+    "hash": "d9e630b86f8aea7eead61c6c0b106a60",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -1697,7 +1697,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phiamo/MopaBootstrapBundle/zipball/ee161a9c8ebc41358466076ff065d2df7a852ab7",
+                "url": "https://api.github.com/repos/phiamo/MopaBootstrapBundle/zipball/c34671a55b2585e20a35ab5c6e1ad13a7e220b01",
                 "reference": "818b0f47ebd352559950e9a64431ff9472e8a9dd",
                 "shasum": ""
             },
@@ -2228,16 +2228,16 @@
         },
         {
             "name": "surfnet/stepup-bundle",
-            "version": "1.1.0",
+            "version": "1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SURFnet/Stepup-bundle.git",
-                "reference": "5282a745516ba34cdd164c8d09b0add9fb859615"
+                "reference": "144492c6c29a81d39178d8ab9876d81ae3b0cb63"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SURFnet/Stepup-bundle/zipball/5282a745516ba34cdd164c8d09b0add9fb859615",
-                "reference": "5282a745516ba34cdd164c8d09b0add9fb859615",
+                "url": "https://api.github.com/repos/SURFnet/Stepup-bundle/zipball/144492c6c29a81d39178d8ab9876d81ae3b0cb63",
+                "reference": "144492c6c29a81d39178d8ab9876d81ae3b0cb63",
                 "shasum": ""
             },
             "require": {
@@ -2277,7 +2277,7 @@
                 "suaas",
                 "surfnet"
             ],
-            "time": "2015-07-14 11:33:20"
+            "time": "2015-07-29 15:18:35"
         },
         {
             "name": "surfnet/stepup-saml-bundle",
