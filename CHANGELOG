@@ -2,6 +2,9 @@
 VERSION 1  RELEASE 1.0
 ======================
 
+   Version 1.2 - Update layout and text, add button to cancel login, fix invalid SAML StatusCode
+      29/07/2015 18:59  1.2.0  initial release
+
    Version 1.1 - Security improvements and bugfixes
       15/07/2015 13:45  1.1.0  initial release
 
