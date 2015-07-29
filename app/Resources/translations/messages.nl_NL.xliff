@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:jms="urn:jms:translation" version="1.2">
-  <file date="2015-04-02T17:26:02Z" source-language="en" target-language="nl_NL" datatype="plaintext" original="not.available">
+  <file date="2015-07-28T16:48:20Z" source-language="en" target-language="nl_NL" datatype="plaintext" original="not.available">
     <header>
       <tool tool-id="JMSTranslationBundle" tool-name="JMSTranslationBundle" tool-version="1.1.0-DEV"/>
       <note>The source node in most cases contains the sample message as written by the developer. If it looks like a dot-delimitted string such as "form.label.firstname", then the developer has not provided a default message.</note>
@@ -10,7 +10,7 @@
         <jms:reference-file line="6">Resources/views/base.html.twig</jms:reference-file>
         <jms:reference-file line="26">Resources/views/base.html.twig</jms:reference-file>
         <source>app.name</source>
-        <target>Step-up Gateway</target>
+        <target>SURFconext Sterke Authenticatie</target>
       </trans-unit>
       <trans-unit id="1aa7637939b9d85db5e1b5bb89ebb0dedbc01f7e" resname="gateway.error.click_to_go_back_to_sp">
         <jms:reference-file line="9">views/Gateway/unprocessableResponse.html.twig</jms:reference-file>
@@ -28,7 +28,7 @@
         <target>Er is een fout opgetreden door onbekende oorzaak. Ga terug om het opnieuw te proberen.</target>
       </trans-unit>
       <trans-unit id="21ca83986f91793e943bbae8b73297e7b06146c5" resname="gateway.error.text.if_you_think_this_is_incorrect_report">
-        <jms:reference-file line="12">views/Exception/error404.html.twig</jms:reference-file>
+        <jms:reference-file line="13">views/Exception/error404.html.twig</jms:reference-file>
         <source>gateway.error.text.if_you_think_this_is_incorrect_report</source>
         <target>Rapporteer deze fout met bovenstaande foutcode bij SURFnet als je denkt dat deze foutmelding ongerechtvaardigd is.</target>
       </trans-unit>
@@ -38,13 +38,13 @@
         <target>De aangevraagde pagina bestaat niet. Ga terug en probeer het opnieuw.</target>
       </trans-unit>
       <trans-unit id="706344da8bbe9c21296992c5e0e74c68e546f191" resname="gateway.error.text.what_were_you_doing_well_fix_it">
-        <jms:reference-file line="12">views/Exception/error.html.twig</jms:reference-file>
+        <jms:reference-file line="13">views/Exception/error.html.twig</jms:reference-file>
         <source>gateway.error.text.what_were_you_doing_well_fix_it</source>
         <target>Rapporteer deze fout met bovenstaande foutcode bij SURFnet als je denkt dat deze foutmelding ongerechtvaardigd is.</target>
       </trans-unit>
       <trans-unit id="b0c6c739ae28f825ab8beb19b0ac2a2fe3318c8b" resname="gateway.error.text.your_art_code">
-        <jms:reference-file line="11">views/Exception/error.html.twig</jms:reference-file>
-        <jms:reference-file line="11">views/Exception/error404.html.twig</jms:reference-file>
+        <jms:reference-file line="12">views/Exception/error.html.twig</jms:reference-file>
+        <jms:reference-file line="12">views/Exception/error404.html.twig</jms:reference-file>
         <source>gateway.error.text.your_art_code</source>
         <target>De code voor deze foutmelding is</target>
       </trans-unit>
@@ -63,15 +63,50 @@
         <source>gateway.error.unrecoverable_error</source>
         <target>Onherstelbare fout.</target>
       </trans-unit>
+      <trans-unit id="65f3ce4b0efbcaaaafd540e24188ea54d0851540" resname="gateway.form.gateway_cancel_second_factor_verification.button.cancel_verification">
+        <jms:reference-file line="29">Form/Type/CancelSecondFactorVerificationType.php</jms:reference-file>
+        <source>gateway.form.gateway_cancel_second_factor_verification.button.cancel_verification</source>
+        <target>Annuleren</target>
+      </trans-unit>
       <trans-unit id="216da4e667c1127a830eadcac98926f5bd508efb" resname="gateway.form.gateway_send_sms_challenge.button.send_challenge">
         <jms:reference-file line="30">Form/Type/SendSmsChallengeType.php</jms:reference-file>
         <source>gateway.form.gateway_send_sms_challenge.button.send_challenge</source>
         <target>Stuur code</target>
       </trans-unit>
       <trans-unit id="7039a04e477c52544533b4969fb09c19f34d1452" resname="gateway.form.gateway_send_sms_challenge.label.phone_number">
-        <jms:reference-file line="23">views/SecondFactor/verifySmsSecondFactor.html.twig</jms:reference-file>
+        <jms:reference-file line="28">views/SecondFactor/verifySmsSecondFactor.html.twig</jms:reference-file>
         <source>gateway.form.gateway_send_sms_challenge.label.phone_number</source>
         <target>Telefoonnummer</target>
+      </trans-unit>
+      <trans-unit id="ddf7dd3f1b77196052dad82522de3845661976fa" resname="gateway.form.send_sms_challenge.button.cancel">
+        <jms:reference-file line="34">Form/Type/SendSmsChallengeType.php</jms:reference-file>
+        <source>gateway.form.send_sms_challenge.button.cancel</source>
+        <target>Annuleren</target>
+      </trans-unit>
+      <trans-unit id="369b2c8dea153b42d8dc01645e54140a83cb5f4f" resname="gateway.form.send_sms_challenge.sms_challenge_expired">
+        <jms:reference-file line="10">Resources/views/translations.html.twig</jms:reference-file>
+        <source>gateway.form.send_sms_challenge.sms_challenge_expired</source>
+        <target>Deze code is verlopen. Vraag een nieuwe code aan.</target>
+      </trans-unit>
+      <trans-unit id="ffeb09a45624fa2a2ce80cbdbe52cc274e7cb1a5" resname="gateway.form.send_sms_challenge.sms_challenge_incorrect">
+        <jms:reference-file line="9">Resources/views/translations.html.twig</jms:reference-file>
+        <source>gateway.form.send_sms_challenge.sms_challenge_incorrect</source>
+        <target>Deze code is niet juist. Probeer het nog eens, of vraag een nieuwe code op.</target>
+      </trans-unit>
+      <trans-unit id="b8020a5c4b1ce8f6a3cfa6854588499b9a6168ef" resname="gateway.form.send_sms_challenge.sms_sending_failed">
+        <jms:reference-file line="8">Resources/views/translations.html.twig</jms:reference-file>
+        <source>gateway.form.send_sms_challenge.sms_sending_failed</source>
+        <target>Het versturen van de SMS-code is mislukt.</target>
+      </trans-unit>
+      <trans-unit id="be86ce24f39578ecbfb3cf0ad710a5a96e819ff6" resname="gateway.form.send_sms_challenge.too_many_attempts">
+        <jms:reference-file line="11">Resources/views/translations.html.twig</jms:reference-file>
+        <source>gateway.form.send_sms_challenge.too_many_attempts</source>
+        <target>De limiet van tien pogingen is bereikt; je kunt geen codes meer verifiëren. Neem contact op met de helpdesk van je installing of probeer het later nog eens.</target>
+      </trans-unit>
+      <trans-unit id="815ec86e9c26021d75afe4356d9ae3bbb93e9582" resname="gateway.form.verify_sms_challenge.button.cancel">
+        <jms:reference-file line="46">Form/Type/VerifySmsChallengeType.php</jms:reference-file>
+        <source>gateway.form.verify_sms_challenge.button.cancel</source>
+        <target>Annuleren</target>
       </trans-unit>
       <trans-unit id="949d225017cfbb80ae094b1af62b758c4ab1cd2c" resname="gateway.form.verify_sms_challenge.button.resend_challenge">
         <jms:reference-file line="41">Form/Type/VerifySmsChallengeType.php</jms:reference-file>
@@ -88,10 +123,25 @@
         <source>gateway.form.verify_sms_challenge.text.challenge</source>
         <target>Code</target>
       </trans-unit>
+      <trans-unit id="69e4a91f05f1619fc6326ff78659255bc0d4f7ce" resname="gateway.form.verify_yubikey.otp_verification_failed">
+        <jms:reference-file line="4">Resources/views/translations.html.twig</jms:reference-file>
+        <source>gateway.form.verify_yubikey.otp_verification_failed</source>
+        <target>De YubiKey code is ongeldig. Probeer het nog eens</target>
+      </trans-unit>
+      <trans-unit id="ff41865a3ee14ef7455ab11e77851280932ec1bb" resname="gateway.form.verify_yubikey.public_id_mismatch">
+        <jms:reference-file line="5">Resources/views/translations.html.twig</jms:reference-file>
+        <source>gateway.form.verify_yubikey.public_id_mismatch</source>
+        <target>Je gebruikt nu een andere YubiKey dan tijdens het registratieproces.</target>
+      </trans-unit>
+      <trans-unit id="4b7b462d7958d591725738f5b1e3334abeb57160" resname="gateway.form.verify_yubikey_otp.button.cancel">
+        <jms:reference-file line="46">Form/Type/VerifyYubikeyOtpType.php</jms:reference-file>
+        <source>gateway.form.verify_yubikey_otp.button.cancel</source>
+        <target>Annuleren</target>
+      </trans-unit>
       <trans-unit id="53c1b4469c10803f2e6bfb5fd31afb68c7f9556f" resname="gateway.gateway.consume_assertion.title">
         <jms:reference-file line="15">views/Gateway/consumeAssertion.html.twig</jms:reference-file>
         <source>gateway.gateway.consume_assertion.title</source>
-        <target>Een moment geduld alstublieft</target>
+        <target>Een moment geduld alsjeblieft</target>
       </trans-unit>
       <trans-unit id="189f85b546ea29bc943a11a82d0e270276518e9d" resname="gateway.gateway.unprocessable_response.title">
         <jms:reference-file line="3">views/Gateway/unprocessableResponse.html.twig</jms:reference-file>
@@ -111,7 +161,7 @@
       <trans-unit id="705f824eef098a0d957e06af812f80e7c5624772" resname="gateway.gssp.consume_assertion.one_moment_please">
         <jms:reference-file line="21">views/SamlProxy/consumeAssertion.html.twig</jms:reference-file>
         <source>gateway.gssp.consume_assertion.one_moment_please</source>
-        <target>Een moment geduld alstublieft...</target>
+        <target>Een moment geduld alsjeblieft...</target>
       </trans-unit>
       <trans-unit id="dd0639f6ce42b824ec288bec780389ceb6840ad0" resname="gateway.gssp.consume_assertion.title">
         <jms:reference-file line="15">views/SamlProxy/consumeAssertion.html.twig</jms:reference-file>
@@ -148,7 +198,7 @@
         <jms:reference-file line="15">views/SamlProxy/recoverableError.html.twig</jms:reference-file>
         <jms:reference-file line="15">views/SamlProxy/unprocessableResponse.html.twig</jms:reference-file>
         <source>gateway.gssp.submit.click_to_go_back_to_sp</source>
-        <target>Klik om terug te gaan naar de originele website.</target>
+        <target>Klik om terug te gaan.</target>
       </trans-unit>
       <trans-unit id="9fde40492d6e72cfb65112c6873e47bab8a0500e" resname="gateway.gssp.unprocessable_response.title">
         <jms:reference-file line="3">views/SamlProxy/recoverableError.html.twig</jms:reference-file>
@@ -157,9 +207,9 @@
         <target>Onverwerkbare login-response</target>
       </trans-unit>
       <trans-unit id="1c41e8d2b8040894426471450740d39af284d440" resname="gateway.second_factor.sms.challenge_body">
-        <jms:reference-file line="88">GatewayBundle/Service/SmsSecondFactorService.php</jms:reference-file>
+        <jms:reference-file line="286">GatewayBundle/Service/StepUpAuthenticationService.php</jms:reference-file>
         <source>gateway.second_factor.sms.challenge_body</source>
-        <target>Uw SMS-code: %challenge%</target>
+        <target>Je SMS-code: %challenge%</target>
       </trans-unit>
       <trans-unit id="fecb0bb6d9524901050c51767a3cf1eceb80da04" resname="gateway.second_factor.sms.send_challenge.title">
         <jms:reference-file line="3">views/SecondFactor/verifySmsSecondFactor.html.twig</jms:reference-file>
@@ -167,14 +217,14 @@
         <target>SMS verifiëren</target>
       </trans-unit>
       <trans-unit id="fbc134b1f4a8c33e94e122042462cd21c853204a" resname="gateway.second_factor.sms.text.after_pressing_proceed">
-        <jms:reference-file line="13">views/SecondFactor/verifySmsSecondFactor.html.twig</jms:reference-file>
+        <jms:reference-file line="12">views/SecondFactor/verifySmsSecondFactor.html.twig</jms:reference-file>
         <source>gateway.second_factor.sms.text.after_pressing_proceed</source>
-        <target>Na op “Stuur code” te hebben geklikt ontvangt een tekstbericht met een code. Vul op de volgende pagina alstublieft deze code in.</target>
+        <target>Na op “Stuur code” te hebben geklikt ontvang je een tekstbericht met een code. Vul deze code op de volgende pagina in.</target>
       </trans-unit>
       <trans-unit id="d80ea1ea4e3e600845fc1d86d0851f446f7a8908" resname="gateway.second_factor.sms.text.ensure_phone_has_signal">
         <jms:reference-file line="11">views/SecondFactor/verifySmsSecondFactor.html.twig</jms:reference-file>
         <source>gateway.second_factor.sms.text.ensure_phone_has_signal</source>
-        <target>Controleer dat uw telefoon signaal heeft en tekstberichten kan ontvangen.</target>
+        <target>Controleer dat je telefoon bereik heeft en tekstberichten kan ontvangen.</target>
       </trans-unit>
       <trans-unit id="125a385345b59621d0a18ef5608a775eb04b5f25" resname="gateway.second_factor.sms.text.enter_challenge_below">
         <jms:reference-file line="11">views/SecondFactor/verifySmsSecondFactorChallenge.html.twig</jms:reference-file>
@@ -184,15 +234,15 @@
       <trans-unit id="b709c9885083cad3cea28a08aa1cf07d43fa186f" resname="gateway.second_factor.sms.text.help_user_enter_challenge">
         <jms:reference-file line="8">views/SecondFactor/verifySmsSecondFactorChallenge.html.twig</jms:reference-file>
         <source>gateway.second_factor.sms.text.help_user_enter_challenge</source>
-        <target>Volg onderstaande instructies om het bezit van uw telefoon aan te tonen.</target>
+        <target>Je hebt net een SMS-code ontvangen. Gebruik deze om in te loggen:</target>
       </trans-unit>
       <trans-unit id="ae96304b72fa22655facaecca34b948409c3deaa" resname="gateway.second_factor.sms.text.help_user_enter_phone_number">
         <jms:reference-file line="8">views/SecondFactor/verifySmsSecondFactor.html.twig</jms:reference-file>
         <source>gateway.second_factor.sms.text.help_user_enter_phone_number</source>
-        <target>Volg onderstaande instructies om het bezit van uw telefoon aan te tonen.</target>
+        <target>Volg onderstaande instructies om het bezit van je telefoon aan te tonen.</target>
       </trans-unit>
       <trans-unit id="0d06981098d22a2fa3428068bbc7e53d8cff3db7" resname="gateway.second_factor.sms.text.otp_requests_remaining">
-        <jms:reference-file line="20">views/SecondFactor/verifySmsSecondFactor.html.twig</jms:reference-file>
+        <jms:reference-file line="19">views/SecondFactor/verifySmsSecondFactor.html.twig</jms:reference-file>
         <jms:reference-file line="12">Resources/views/translations.html.twig</jms:reference-file>
         <source>gateway.second_factor.sms.text.otp_requests_remaining</source>
         <target>Aantal resterende pogingen: %count%</target>
@@ -210,32 +260,32 @@
       <trans-unit id="be12899784c0176e20b93e0030a2144365add26d" resname="gateway.second_factor.yubikey.text.connect_yubikey_to_pc">
         <jms:reference-file line="11">views/SecondFactor/verifyYubikeySecondFactor.html.twig</jms:reference-file>
         <source>gateway.second_factor.yubikey.text.connect_yubikey_to_pc</source>
-        <target>Verbind je persoonlijke Yubikey met de computer.</target>
+        <target>Stop je YubiKey in een USB-poort van je computer.</target>
       </trans-unit>
       <trans-unit id="6204e24e7c7b389809232589df868be2b511cdf5" resname="gateway.second_factor.yubikey.text.ensure_form_field_focus">
         <jms:reference-file line="12">views/SecondFactor/verifyYubikeySecondFactor.html.twig</jms:reference-file>
         <source>gateway.second_factor.yubikey.text.ensure_form_field_focus</source>
-        <target>Zorg ervoor dat het onderstaande veld in focus is.</target>
+        <target>Zorg dat het invulveld hieronder actief is.</target>
       </trans-unit>
       <trans-unit id="1445676eeee2335e0d37dad8c7d7bf883ea69c40" resname="gateway.second_factor.yubikey.text.help_user_enter_challenge">
         <jms:reference-file line="8">views/SecondFactor/verifyYubikeySecondFactor.html.twig</jms:reference-file>
         <source>gateway.second_factor.yubikey.text.help_user_enter_challenge</source>
-        <target>Om het bezit van je geregistreerde Yubikey aan te tonen, voer alsjeblieft onderstaande stappen uit.</target>
+        <target>Gebruik je YubiKey om in te loggen:</target>
       </trans-unit>
       <trans-unit id="2845155cc34878dd2e86f19ca5ea1b01c2039d01" resname="gateway.second_factor.yubikey.text.press_once_form_auto_submitted">
         <jms:reference-file line="13">views/SecondFactor/verifyYubikeySecondFactor.html.twig</jms:reference-file>
         <source>gateway.second_factor.yubikey.text.press_once_form_auto_submitted</source>
-        <target>Druk éénmaal op je persoonlijke Yubikey om een code in te voeren in het onderstaande veld.</target>
+        <target>Druk op de knop van je YubiKey en houd even vast. Er verschijnt automatisch een eenmalige code in het invulveld.</target>
       </trans-unit>
       <trans-unit id="46afcd414845fe64dedd737b959f7cd327b85a63" resname="gateway.submit.click_to_go_back_to_sp">
         <jms:reference-file line="15">views/Gateway/unprocessableResponse.html.twig</jms:reference-file>
         <source>gateway.submit.click_to_go_back_to_sp</source>
-        <target>Klik om terug te gaan naar de originele website.</target>
+        <target>Klik om terug te gaan.</target>
       </trans-unit>
       <trans-unit id="ee8b15d139dd5ba69eb2bfbc1c540b03894bafd7" resname="ra.registration.yubikey.title.enter_challenge">
         <jms:reference-file line="3">views/SecondFactor/verifyYubikeySecondFactor.html.twig</jms:reference-file>
         <source>ra.registration.yubikey.title.enter_challenge</source>
-        <target>Voer code in</target>
+        <target>Log in met je YubiKey</target>
       </trans-unit>
     </body>
   </file>
