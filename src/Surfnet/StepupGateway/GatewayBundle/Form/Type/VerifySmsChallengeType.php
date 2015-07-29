@@ -42,6 +42,10 @@ class VerifySmsChallengeType extends AbstractType
             'attr'  => ['class' => 'btn btn-default'],
             'route' => 'gateway_verify_second_factor_sms',
         ]);
+        $builder->add('cancel', 'submit', [
+            'label' => 'gateway.form.verify_sms_challenge.button.cancel',
+            'attr'  => ['class' => 'btn btn-danger', 'formnovalidate' => 'formnovalidate'],
+        ]);
     }
 
     public function configureOptions(OptionsResolver $resolver)
