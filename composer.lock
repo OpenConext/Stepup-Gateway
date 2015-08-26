@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "a943be776625e2baf23558f1a34e3752",
+    "hash": "3193149a426427b182fbc93ab90edfb3",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -2190,7 +2190,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SURFnet/messagebird-api-client-bundle/zipball/745748f4db35bbe1111c7052dc77c228e60507f5",
+                "url": "https://api.github.com/repos/SURFnet/messagebird-api-client-bundle/zipball/bd694f69c76e53d8b94c4c609328a0144c625744",
                 "reference": "745748f4db35bbe1111c7052dc77c228e60507f5",
                 "shasum": ""
             },
@@ -2236,7 +2236,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SURFnet/Stepup-bundle/zipball/ac1513d9ddfde02849896e10f4c517a81642bcda",
+                "url": "https://api.github.com/repos/SURFnet/Stepup-bundle/zipball/d1d802c07fbc73459747e632ff555dcb0ebf14e4",
                 "reference": "ac1513d9ddfde02849896e10f4c517a81642bcda",
                 "shasum": ""
             },
@@ -2289,7 +2289,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SURFnet/Stepup-saml-bundle/zipball/53b7fd0198a1e9de2504a3762af499f744ad222d",
+                "url": "https://api.github.com/repos/SURFnet/Stepup-saml-bundle/zipball/62ac63e0f7bd15257aa919d0d6885f76cdcaea43",
                 "reference": "53b7fd0198a1e9de2504a3762af499f744ad222d",
                 "shasum": ""
             },
@@ -2337,7 +2337,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SURFnet/yubikey-api-client-bundle/zipball/44696c13f9197945cbca759798dcc219edfae696",
+                "url": "https://api.github.com/repos/SURFnet/yubikey-api-client-bundle/zipball/0e924675e560354fc0898c2a0921f6a2d4776826",
                 "reference": "44696c13f9197945cbca759798dcc219edfae696",
                 "shasum": ""
             },
@@ -4585,7 +4585,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=5.4|^7"
+        "php": ">=5.4,<8.0-dev"
     },
     "platform-dev": []
 }
