@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "3193149a426427b182fbc93ab90edfb3",
+    "hash": "d5235811410ec9ead296835b97ef283d",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -1697,7 +1697,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phiamo/MopaBootstrapBundle/zipball/c34671a55b2585e20a35ab5c6e1ad13a7e220b01",
+                "url": "https://api.github.com/repos/phiamo/MopaBootstrapBundle/zipball/df1027ba4c6c8c2203c0a17c3a1360fbc1494693",
                 "reference": "818b0f47ebd352559950e9a64431ff9472e8a9dd",
                 "shasum": ""
             },
@@ -3542,6 +3542,54 @@
                 "version"
             ],
             "time": "2014-10-28 10:33:21"
+        },
+        {
+            "name": "matthiasnoback/symfony-config-test",
+            "version": "1.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/matthiasnoback/SymfonyConfigTest.git",
+                "reference": "9e1d553cc5b3900b48e8d4074d84cc7a02c958d1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/matthiasnoback/SymfonyConfigTest/zipball/9e1d553cc5b3900b48e8d4074d84cc7a02c958d1",
+                "reference": "9e1d553cc5b3900b48e8d4074d84cc7a02c958d1",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3",
+                "symfony/config": "2.*"
+            },
+            "require-dev": {
+                "phpunit/phpunit": ">=3.7",
+                "sebastian/exporter": "1.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Matthias\\SymfonyConfigTest\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Matthias Noback",
+                    "email": "matthiasnoback@gmail.com",
+                    "homepage": "http://php-and-symfony.matthiasnoback.nl"
+                }
+            ],
+            "description": "Library for testing user classes related to the Symfony Config Component",
+            "homepage": "https://github.com/matthiasnoback/SymfonyConfigTest",
+            "keywords": [
+                "config",
+                "phpunit",
+                "symfony"
+            ],
+            "time": "2015-04-20 08:58:05"
         },
         {
             "name": "pdepend/pdepend",

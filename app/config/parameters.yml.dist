@@ -4,9 +4,12 @@ parameters:
     database_driver:   pdo_mysql
     database_host:     127.0.0.1
     database_port:     ~
-    database_name:     gateway
+    database_gateway_name:     gateway
     database_gateway_user:     gateway
     database_gateway_password: gateway
+    database_u2f_name:         u2f
+    database_u2f_user:         u2f
+    database_u2f_password:     u2f
     database_deploy_user:      deploy
     database_deploy_password:  deploy
 

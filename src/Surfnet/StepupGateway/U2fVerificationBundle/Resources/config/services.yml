@@ -1,0 +1,15 @@
+services:
+
+    surfnet_stepup_u2f_verification.command.migrations.diff:
+        class: Surfnet\StepupGateway\U2fVerificationBundle\Console\Command\MigrationsDiffDoctrineCommand
+        arguments:
+            - ~ # Entity manager name overridden in extension through configuration
+        tags:
+            - { name: console.command }
+
+    surfnet_stepup_u2f_verification.command.migrations.migrate:
+        class: Surfnet\StepupGateway\U2fVerificationBundle\Console\Command\MigrationsMigrateDoctrineCommand
+        arguments:
+            - ~ # Entity manager name overridden in extension through configuration
+        tags:
+            - { name: console.command }

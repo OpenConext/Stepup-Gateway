@@ -45,6 +45,7 @@ class AppKernel extends Kernel
             new JMS\DiExtraBundle\JMSDiExtraBundle($this),
             new JMS\AopBundle\JMSAopBundle(),
             new Surfnet\StepupGateway\SamlStepupProviderBundle\SurfnetStepupGatewaySamlStepupProviderBundle(),
+            new Surfnet\StepupGateway\U2fVerificationBundle\SurfnetStepupGatewayU2fVerificationBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {
