@@ -29,12 +29,19 @@ class SurfnetStepupGatewayU2fVerificationExtension extends Extension
     public function load(array $config, ContainerBuilder $container)
     {
         $processor = new Processor();
-        /*$config = */$processor->processConfiguration(new Configuration(), $config);
+        $config = $processor->processConfiguration(new Configuration(), $config);
 
         $loader = new YamlFileLoader(
             $container,
             new FileLocator(__DIR__ . '/../Resources/config')
         );
         $loader->load('services.yml');
+
+        $container
+            ->getDefinition('surfnet_stepup_u2f_verification.command.migrations.diff')
+            ->replaceArgument(0, $config['migrations']['diff_entity_manager']);
+        $container
+            ->getDefinition('surfnet_stepup_u2f_verification.command.migrations.migrate')
+            ->replaceArgument(0, $config['migrations']['migrate_entity_manager']);
     }
 }

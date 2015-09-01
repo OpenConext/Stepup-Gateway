@@ -16,10 +16,19 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupGateway\GatewayBundle;
+namespace Surfnet\StepupGateway\U2fVerificationBundle\Exception;
 
-use Symfony\Component\HttpKernel\Bundle\Bundle;
+use InvalidArgumentException as CoreInvalidArgumentException;
 
-class SurfnetStepupGatewayGatewayBundle extends Bundle
+class InvalidArgumentException extends CoreInvalidArgumentException
 {
+    public static function invalidType($expectedType, $parameter, $value)
+    {
+        return new self(sprintf(
+            'Invalid Argument, parameter "%s" should be of type "%s", "%s" given',
+            $parameter,
+            $expectedType,
+            is_object($value) ? get_class($value) : gettype($value)
+        ));
+    }
 }

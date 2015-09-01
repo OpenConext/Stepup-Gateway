@@ -16,21 +16,41 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupGateway\GatewayBundle\Console\Command;
+namespace Surfnet\StepupGateway\U2fVerificationBundle\Console\Command;
 
+use Surfnet\StepupGateway\U2fVerificationBundle\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Process\ProcessBuilder;
 
 /**
  * @SuppressWarnings(PHPMD.UnusedLocalVariables)
  */
 class MigrationsDiffDoctrineCommand extends Command
 {
+    /**
+     * @var string|null
+     */
+    private $entityManagerName;
+
+    /**
+     * @param string|null $entityManagerName
+     */
+    public function __construct($entityManagerName = null)
+    {
+        parent::__construct();
+
+        if (!is_string($entityManagerName) && $entityManagerName !== null) {
+            throw InvalidArgumentException::invalidType('string|null', 'entityManagerName', $entityManagerName);
+        }
+
+        $this->entityManagerName = $entityManagerName;
+    }
+
     protected function configure()
     {
-        $this->setName('gateway:migrations:diff');
+        $this->setName('u2f:migrations:diff');
         $this->setDescription('Performs a mapping/database diff using the correct entity manager');
     }
 
@@ -38,12 +58,12 @@ class MigrationsDiffDoctrineCommand extends Command
     {
         $output->writeln(['<info>Generating diff for U2F...</info>', '']);
 
-        ProcessBuilder::create(
-            ['app/console', 'doc:mig:diff', '--em=u2f']
-        )
-            ->getProcess()
-            ->run(function ($type, $data) use ($output) {
-                $output->write($data);
-            });
+        $parameters = ['doc:mig:diff'];
+
+        if ($this->entityManagerName !== null) {
+            $parameters['--em'] = $this->entityManagerName;
+        }
+
+        $this->getApplication()->doRun(new ArrayInput($parameters), $output);
     }
 }

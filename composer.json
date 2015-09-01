@@ -40,7 +40,8 @@
     "require-dev": {
         "sensio/generator-bundle": "~2.3",
         "ibuildings/qa-tools": "~1.1,>=1.1.27",
-        "liip/rmt": "1.1.*"
+        "liip/rmt": "1.1.*",
+        "matthiasnoback/symfony-config-test": "^1.2"
     },
     "scripts": {
         "post-install-cmd": [

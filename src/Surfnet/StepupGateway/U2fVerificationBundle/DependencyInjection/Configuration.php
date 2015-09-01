@@ -26,7 +26,52 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder;
-        $treeBuilder->root('surfnet_stepup_gateway_u2f_verification');
+
+        $treeBuilder
+            ->root('surfnet_stepup_gateway_u2f_verification')
+            ->children()
+                ->arrayNode('migrations')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->scalarNode('diff_entity_manager')
+                            ->info(
+                                'This is the name of the Doctrine entity manager that is used for schema ' .
+                                'diffing. If it is unspecified, or NULL, the default entity manager is used.'
+                            )
+                            ->defaultNull()
+                            ->validate()
+                                ->ifTrue(
+                                    function ($entityManagerName) {
+                                        return !is_string($entityManagerName) && $entityManagerName !== null;
+                                    }
+                                )
+                                ->thenInvalid(
+                                    'surfnet_stepup_gateway_u2f_verification.migrations.diff_entity_manager should ' .
+                                    'be a string or NULL'
+                                )
+                            ->end()
+                        ->end()
+                        ->scalarNode('migrate_entity_manager')
+                            ->info(
+                                'This is the name of the Doctrine entity manager that is used for migrations. ' .
+                                'If it is unspecified, or NULL, the default entity manager is used.'
+                            )
+                            ->defaultNull()
+                            ->validate()
+                                ->ifTrue(
+                                    function ($entityManagerName) {
+                                        return !is_string($entityManagerName) && $entityManagerName !== null;
+                                    }
+                                )
+                                ->thenInvalid(
+                                    'surfnet_stepup_gateway_u2f_verification.migrations.migrate_entity_manager ' .
+                                    'should be a string or NULL'
+                                )
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end();
 
         return $treeBuilder;
     }
