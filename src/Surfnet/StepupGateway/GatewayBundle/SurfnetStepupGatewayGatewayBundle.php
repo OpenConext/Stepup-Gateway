@@ -18,8 +18,16 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle;
 
+use Surfnet\StepupGateway\GatewayBundle\Console\Command\MigrationsDiffDoctrineCommand;
+use Surfnet\StepupGateway\GatewayBundle\Console\Command\MigrationsMigrateDoctrineCommand;
+use Symfony\Component\Console\Application;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class SurfnetStepupGatewayGatewayBundle extends Bundle
 {
+    public function registerCommands(Application $application)
+    {
+        $application->add(new MigrationsDiffDoctrineCommand());
+        $application->add(new MigrationsMigrateDoctrineCommand());
+    }
 }
