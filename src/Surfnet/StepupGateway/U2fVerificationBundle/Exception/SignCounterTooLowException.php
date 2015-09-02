@@ -18,17 +18,10 @@
 
 namespace Surfnet\StepupGateway\U2fVerificationBundle\Exception;
 
-use InvalidArgumentException as CoreInvalidArgumentException;
-
-class InvalidArgumentException extends CoreInvalidArgumentException
+/**
+ * When catching this, you should invalidate the U2F device registration, because there is more one U2F device that can
+ * authenticate using this registration in circulation.
+ */
+class SignCounterTooLowException extends DomainException
 {
-    public static function invalidType($expectedType, $parameter, $value)
-    {
-        return new self(sprintf(
-            'Invalid Argument, parameter "%s" should be of type "%s", "%s" given',
-            $parameter,
-            $expectedType,
-            is_object($value) ? get_class($value) : gettype($value)
-        ));
-    }
 }

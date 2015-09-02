@@ -18,17 +18,8 @@
 
 namespace Surfnet\StepupGateway\U2fVerificationBundle\Exception;
 
-use InvalidArgumentException as CoreInvalidArgumentException;
+use DomainException as CoreDomainException;
 
-class InvalidArgumentException extends CoreInvalidArgumentException
+class DomainException extends CoreDomainException
 {
-    public static function invalidType($expectedType, $parameter, $value)
-    {
-        return new self(sprintf(
-            'Invalid Argument, parameter "%s" should be of type "%s", "%s" given',
-            $parameter,
-            $expectedType,
-            is_object($value) ? get_class($value) : gettype($value)
-        ));
-    }
 }

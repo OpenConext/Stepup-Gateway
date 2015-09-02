@@ -84,6 +84,9 @@ doctrine:
                 user:     "%database_deploy_user%"
                 password: "%database_deploy_password%"
                 charset:  UTF8
+        types:
+            u2f_key_handle: Surfnet\StepupGateway\U2fVerificationBundle\Doctrine\Type\KeyHandleType
+            u2f_public_key:  Surfnet\StepupGateway\U2fVerificationBundle\Doctrine\Type\PublicKeyType
     orm:
         default_entity_manager: gateway
         auto_generate_proxy_classes: "%kernel.debug%"
