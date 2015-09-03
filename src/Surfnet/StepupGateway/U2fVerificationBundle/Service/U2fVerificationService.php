@@ -162,4 +162,9 @@ final class U2fVerificationService
 
         return AuthenticationVerificationResult::success();
     }
+
+    public function revokeRegistration(KeyHandle $keyHandle)
+    {
+        $this->registrationRepository->revokeByKeyHandle($keyHandle);
+    }
 }

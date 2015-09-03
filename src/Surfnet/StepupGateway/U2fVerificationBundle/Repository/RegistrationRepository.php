@@ -43,13 +43,14 @@ class RegistrationRepository extends EntityRepository
         $entityManager->flush();
     }
 
-    /**
-     * @param Registration $registration
-     */
-    public function revoke(Registration $registration)
+    public function revokeByKeyHandle(KeyHandle $keyHandle)
     {
-        $entityManager = $this->getEntityManager();
-        $entityManager->remove($registration);
-        $entityManager->flush();
+        $this
+            ->createQueryBuilder('r')
+            ->delete()
+            ->where('r.keyHandle = :keyHandle')
+            ->setParameter('keyHandle', $keyHandle)
+            ->getQuery()
+            ->execute();
     }
 }
