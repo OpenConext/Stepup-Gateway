@@ -36,10 +36,16 @@ final class VerificationServiceRegistrationTest extends TestCase
      */
     public function it_can_register_a_u2f_device()
     {
-        $publicKey = 'public-key';
-        $keyHandle = 'key-handle';
+        $publicKey        = 'public-key';
+        $keyHandle        = 'key-handle';
+        $registrationData = 'registration-data';
+        $clientData       = 'client-data';
 
         $yubicoRequest = new \u2flib_server\RegisterRequest('challenge', self::APP_ID);
+        $yubicoResponse = (object) [
+            'registrationData' => $registrationData,
+            'clientData' => $clientData,
+        ];
 
         $yubicoRegistration = new \u2flib_server\Registration();
         $yubicoRegistration->publicKey = $publicKey;
@@ -53,8 +59,8 @@ final class VerificationServiceRegistrationTest extends TestCase
         $request->appId     = self::APP_ID;
 
         $response = new \Surfnet\StepupGateway\U2fVerificationBundle\Dto\RegisterResponse();
-        $response->registrationData = 'registration-data';
-        $response->clientData = 'client-data';
+        $response->registrationData = $registrationData;
+        $response->clientData = $clientData;
 
         $expectedRegistration = new \Surfnet\StepupGateway\U2fVerificationBundle\Entity\Registration(new KeyHandle($keyHandle), new PublicKey($publicKey));
 
@@ -63,7 +69,7 @@ final class VerificationServiceRegistrationTest extends TestCase
         $u2f = m::mock('u2flib_server\U2F');
         $u2f->shouldReceive('doRegister')
             ->once()
-            ->with(m::anyOf($yubicoRequest), m::anyOf($response))
+            ->with(m::anyOf($yubicoRequest), m::anyOf($yubicoResponse))
             ->andReturn($yubicoRegistration);
 
         $registrationRepository = m::mock('Surfnet\StepupGateway\U2fVerificationBundle\Repository\RegistrationRepository');
@@ -89,7 +95,14 @@ final class VerificationServiceRegistrationTest extends TestCase
         $errorCode,
         RegistrationVerificationResult $expectedResult
     ) {
+        $registrationData = 'registration-data';
+        $clientData       = 'client-data';
+
         $yubicoRequest = new \u2flib_server\RegisterRequest('challenge', self::APP_ID);
+        $yubicoResponse = (object) [
+            'registrationData' => $registrationData,
+            'clientData' => $clientData,
+        ];
 
         $request = new \Surfnet\StepupGateway\U2fVerificationBundle\Dto\RegisterRequest();
         $request->version   = 'U2F_V2';
@@ -97,13 +110,13 @@ final class VerificationServiceRegistrationTest extends TestCase
         $request->appId     = self::APP_ID;
 
         $response = new \Surfnet\StepupGateway\U2fVerificationBundle\Dto\RegisterResponse();
-        $response->registrationData = 'registration-data';
-        $response->clientData = 'client-data';
+        $response->registrationData = $registrationData;
+        $response->clientData = $clientData;
 
         $u2f = m::mock('u2flib_server\U2F');
         $u2f->shouldReceive('doRegister')
             ->once()
-            ->with(m::anyOf($yubicoRequest), m::anyOf($response))
+            ->with(m::anyOf($yubicoRequest), m::anyOf($yubicoResponse))
             ->andThrow(new Error('error', $errorCode));
 
         $registrationRepository = m::mock('Surfnet\StepupGateway\U2fVerificationBundle\Repository\RegistrationRepository');
@@ -147,7 +160,14 @@ final class VerificationServiceRegistrationTest extends TestCase
      */
     public function it_throws_unexpected_u2f_registration_verification_errors($errorCode)
     {
+        $registrationData = 'registration-data';
+        $clientData       = 'client-data';
+
         $yubicoRequest = new \u2flib_server\RegisterRequest('challenge', self::APP_ID);
+        $yubicoResponse = (object) [
+            'registrationData' => $registrationData,
+            'clientData' => $clientData,
+        ];
 
         $request = new \Surfnet\StepupGateway\U2fVerificationBundle\Dto\RegisterRequest();
         $request->version   = 'U2F_V2';
@@ -155,13 +175,13 @@ final class VerificationServiceRegistrationTest extends TestCase
         $request->appId     = self::APP_ID;
 
         $response = new \Surfnet\StepupGateway\U2fVerificationBundle\Dto\RegisterResponse();
-        $response->registrationData = 'registration-data';
-        $response->clientData = 'client-data';
+        $response->registrationData = $registrationData;
+        $response->clientData = $clientData;
 
         $u2f = m::mock('u2flib_server\U2F');
         $u2f->shouldReceive('doRegister')
             ->once()
-            ->with(m::anyOf($yubicoRequest), m::anyOf($response))
+            ->with(m::anyOf($yubicoRequest), m::anyOf($yubicoResponse))
             ->andThrow(new Error('error', $errorCode));
 
         $registrationRepository = m::mock('Surfnet\StepupGateway\U2fVerificationBundle\Repository\RegistrationRepository');

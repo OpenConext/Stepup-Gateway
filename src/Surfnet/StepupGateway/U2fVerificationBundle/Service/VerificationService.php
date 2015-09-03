@@ -67,9 +67,16 @@ final class VerificationService
         }
 
         $yubicoRequest = new YubicoRegisterRequest($request->challenge, $request->appId);
+        $yubicoResponse = new \stdClass;
+        $yubicoResponse->registrationData = $response->registrationData;
+        $yubicoResponse->clientData = $response->clientData;
+
+        if ($response->errorCode !== 0) {
+            $yubicoResponse->errorCode = $response->errorCode;
+        }
 
         try {
-            $yubicoRegistration = $this->u2fService->doRegister($yubicoRequest, $response);
+            $yubicoRegistration = $this->u2fService->doRegister($yubicoRequest, $yubicoResponse);
         } catch (Error $error) {
             switch ($error->getCode()) {
                 case \u2flib_server\ERR_UNMATCHED_CHALLENGE:
