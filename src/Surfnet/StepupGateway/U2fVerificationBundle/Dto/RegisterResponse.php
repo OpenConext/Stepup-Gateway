@@ -57,7 +57,7 @@ final class RegisterResponse
      * @var int
      * @see https://fidoalliance.org/specs/fido-u2f-v1.0-nfc-bt-amendment-20150514/fido-u2f-javascript-api.html#error-codes
      */
-    public $errorCode;
+    public $errorCode = self::ERROR_CODE_OK;
 
     /**
      * @var string
