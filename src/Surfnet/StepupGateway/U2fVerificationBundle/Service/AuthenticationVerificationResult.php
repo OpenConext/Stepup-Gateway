@@ -37,9 +37,9 @@ final class AuthenticationVerificationResult
     const STATUS_REQUEST_RESPONSE_MISMATCH = 1;
 
     /**
-     * The response challenge was not for the given registration.
+     * The response challenge was not a registration unknown to us.
      */
-    const STATUS_RESPONSE_REGISTRATION_MISMATCH = 2;
+    const STATUS_REGISTRATION_UNKNOWN = 2;
 
     /**
      * The response was signed by another party than the device, indicating it was tampered with.
@@ -105,9 +105,9 @@ final class AuthenticationVerificationResult
     /**
      * @return self
      */
-    public static function responseRegistrationMismatch()
+    public static function registrationUnknown()
     {
-        return new self(self::STATUS_RESPONSE_REGISTRATION_MISMATCH);
+        return new self(self::STATUS_REGISTRATION_UNKNOWN);
     }
 
     /**
@@ -193,9 +193,9 @@ final class AuthenticationVerificationResult
     /**
      * @return bool
      */
-    public function didResponseChallengeNotMatchRegistration()
+    public function wasRegistrationUnknown()
     {
-        return $this->status === self::STATUS_RESPONSE_REGISTRATION_MISMATCH;
+        return $this->status === self::STATUS_REGISTRATION_UNKNOWN;
     }
 
     /**

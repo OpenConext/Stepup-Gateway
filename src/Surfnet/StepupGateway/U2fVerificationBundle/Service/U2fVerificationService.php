@@ -104,13 +104,18 @@ final class U2fVerificationService
     /**
      * Request signing of a sign request. Does not support U2F's sign counter system.
      *
-     * @param Registration $registration The registration that is to be signed.
      * @param SignRequest  $request The sign request that you requested earlier and was used to query the U2F device.
      * @param SignResponse $response The response that the U2F device gave in response to the sign request.
      * @return AuthenticationVerificationResult
      */
-    public function verifyAuthentication(Registration $registration, SignRequest $request, SignResponse $response)
+    public function verifyAuthentication(SignRequest $request, SignResponse $response)
     {
+        $registration = $this->registrationRepository->findByKeyHandle(new KeyHandle($request->keyHandle));
+
+        if ($registration === null) {
+            return AuthenticationVerificationResult::registrationUnknown();
+        }
+
         $yubicoRegistration = new YubicoRegistration();
         $yubicoRegistration->keyHandle = $registration->getKeyHandle()->getKeyHandle();
         $yubicoRegistration->publicKey = $registration->getPublicKey()->getPublicKey();
@@ -128,7 +133,10 @@ final class U2fVerificationService
                 case \u2flib_server\ERR_NO_MATCHING_REQUEST:
                     return AuthenticationVerificationResult::requestResponseMismatch();
                 case \u2flib_server\ERR_NO_MATCHING_REGISTRATION:
-                    return AuthenticationVerificationResult::responseRegistrationMismatch();
+                    throw new LogicException(
+                        'Registration with key handle matching that of sign request\'s was used in verification, yet ' .
+                        'underlying library determined they do not match'
+                    );
                 case \u2flib_server\ERR_PUBKEY_DECODE:
                     return AuthenticationVerificationResult::publicKeyDecodingFailed();
                 case \u2flib_server\ERR_AUTHENTICATION_FAILURE:
