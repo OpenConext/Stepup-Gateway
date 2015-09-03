@@ -18,9 +18,7 @@
 
 namespace Surfnet\StepupGateway\U2fVerificationBundle\Dto;
 
-use JsonSerializable;
-
-final class SignRequest implements JsonSerializable
+final class SignRequest
 {
     /**
      * @var string
@@ -41,14 +39,4 @@ final class SignRequest implements JsonSerializable
      * @var string
      */
     public $keyHandle;
-
-    public function jsonSerialize()
-    {
-        return [
-            'version'   => $this->version,
-            'challenge' => $this->challenge,
-            'appId'     => $this->appId,
-            'keyHandle' => $this->keyHandle,
-        ];
-    }
 }
