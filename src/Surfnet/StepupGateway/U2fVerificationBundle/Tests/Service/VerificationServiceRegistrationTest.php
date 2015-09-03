@@ -20,13 +20,13 @@ namespace Surfnet\StepupGateway\U2fVerificationBundle\Tests\Service;
 
 use Mockery as m;
 use PHPUnit_Framework_TestCase as TestCase;
-use Surfnet\StepupGateway\U2fVerificationBundle\Service\U2fVerificationService;
+use Surfnet\StepupGateway\U2fVerificationBundle\Service\VerificationService;
 use Surfnet\StepupGateway\U2fVerificationBundle\Service\RegistrationVerificationResult;
 use Surfnet\StepupGateway\U2fVerificationBundle\Value\KeyHandle;
 use Surfnet\StepupGateway\U2fVerificationBundle\Value\PublicKey;
 use u2flib_server\Error;
 
-final class U2fVerificationServiceRegistrationTest extends TestCase
+final class VerificationServiceRegistrationTest extends TestCase
 {
     const APP_ID = 'https://gateway.surfconext.invalid/u2f/app-id';
 
@@ -72,7 +72,7 @@ final class U2fVerificationServiceRegistrationTest extends TestCase
             ->once()
             ->with(m::anyOf($expectedRegistration));
 
-        $service = new U2fVerificationService($u2f, $registrationRepository);
+        $service = new VerificationService($u2f, $registrationRepository);
 
         $this->assertEquals($expectedResult, $service->verifyRegistration($request, $response));
     }
@@ -108,7 +108,7 @@ final class U2fVerificationServiceRegistrationTest extends TestCase
 
         $registrationRepository = m::mock('Surfnet\StepupGateway\U2fVerificationBundle\Repository\RegistrationRepository');
         $registrationRepository->shouldReceive('save')->never();
-        $service = new U2fVerificationService($u2f, $registrationRepository);
+        $service = new VerificationService($u2f, $registrationRepository);
 
         $this->assertEquals($expectedResult, $service->verifyRegistration($request, $response));
     }
@@ -166,7 +166,7 @@ final class U2fVerificationServiceRegistrationTest extends TestCase
 
         $registrationRepository = m::mock('Surfnet\StepupGateway\U2fVerificationBundle\Repository\RegistrationRepository');
         $registrationRepository->shouldReceive('save')->never();
-        $service = new U2fVerificationService($u2f, $registrationRepository);
+        $service = new VerificationService($u2f, $registrationRepository);
 
         $this->setExpectedExceptionRegExp('Surfnet\StepupGateway\U2fVerificationBundle\Exception\LogicException');
         $service->verifyRegistration($request, $response);
@@ -204,7 +204,7 @@ final class U2fVerificationServiceRegistrationTest extends TestCase
 
         $registrationRepository = m::mock('Surfnet\StepupGateway\U2fVerificationBundle\Repository\RegistrationRepository');
         $registrationRepository->shouldReceive('save')->never();
-        $service = new U2fVerificationService(m::mock('u2flib_server\U2F'), $registrationRepository);
+        $service = new VerificationService(m::mock('u2flib_server\U2F'), $registrationRepository);
         $result = $service->verifyRegistration($request, $response);
 
         $this->assertTrue($result->$errorMethod(), "Registration result should report $errorMethod() to be true");

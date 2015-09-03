@@ -20,13 +20,13 @@ namespace Surfnet\StepupGateway\U2fVerificationBundle\Tests\Service;
 
 use Mockery as m;
 use PHPUnit_Framework_TestCase as TestCase;
-use Surfnet\StepupGateway\U2fVerificationBundle\Service\U2fVerificationService;
+use Surfnet\StepupGateway\U2fVerificationBundle\Service\VerificationService;
 use Surfnet\StepupGateway\U2fVerificationBundle\Service\RegistrationVerificationResult;
 use Surfnet\StepupGateway\U2fVerificationBundle\Value\KeyHandle;
 use Surfnet\StepupGateway\U2fVerificationBundle\Value\PublicKey;
 use u2flib_server\Error;
 
-final class U2fVerificationServiceRegistrationRevocationTest extends TestCase
+final class VerificationServiceRegistrationRevocationTest extends TestCase
 {
     /**
      * @test
@@ -43,7 +43,7 @@ final class U2fVerificationServiceRegistrationRevocationTest extends TestCase
         );
         $registrationRepository->shouldReceive('revokeByKeyHandle')->with($keyHandle)->once();
 
-        $service = new U2fVerificationService($u2f, $registrationRepository);
+        $service = new VerificationService($u2f, $registrationRepository);
         $service->revokeRegistration($keyHandle);
     }
 }

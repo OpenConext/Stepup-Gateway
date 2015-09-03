@@ -21,12 +21,12 @@ namespace Surfnet\StepupGateway\U2fVerificationBundle\Tests\Service;
 use Mockery as m;
 use PHPUnit_Framework_TestCase as TestCase;
 use Surfnet\StepupGateway\U2fVerificationBundle\Service\AuthenticationVerificationResult;
-use Surfnet\StepupGateway\U2fVerificationBundle\Service\U2fVerificationService;
+use Surfnet\StepupGateway\U2fVerificationBundle\Service\VerificationService;
 use Surfnet\StepupGateway\U2fVerificationBundle\Value\KeyHandle;
 use Surfnet\StepupGateway\U2fVerificationBundle\Value\PublicKey;
 use u2flib_server\Error;
 
-final class U2fVerificationServiceAuthenticationVerificationTest extends TestCase
+final class VerificationServiceAuthenticationVerificationTest extends TestCase
 {
     const APP_ID = 'https://gateway.surfconext.invalid/u2f/app-id';
 
@@ -95,7 +95,7 @@ final class U2fVerificationServiceAuthenticationVerificationTest extends TestCas
         $registrationWithCounter10->authenticationWasVerified(10);
         $registrationRepository->shouldReceive('save')->with(m::anyOf($registrationWithCounter10))->once();
 
-        $service = new U2fVerificationService($u2f, $registrationRepository);
+        $service = new VerificationService($u2f, $registrationRepository);
 
         $this->assertEquals($expectedResult, $service->verifyAuthentication($request, $response));
     }
@@ -132,7 +132,7 @@ final class U2fVerificationServiceAuthenticationVerificationTest extends TestCas
             ->once()
             ->andReturn(null);
 
-        $service = new U2fVerificationService($u2f, $registrationRepository);
+        $service = new VerificationService($u2f, $registrationRepository);
 
         $this->assertEquals($expectedResult, $service->verifyAuthentication($request, $response));
     }
@@ -192,7 +192,7 @@ final class U2fVerificationServiceAuthenticationVerificationTest extends TestCas
                 )
             );
 
-        $service = new U2fVerificationService($u2f, $registrationRepository);
+        $service = new VerificationService($u2f, $registrationRepository);
 
         $this->assertEquals($expectedResult, $service->verifyAuthentication($request, $response));
     }
@@ -247,7 +247,7 @@ final class U2fVerificationServiceAuthenticationVerificationTest extends TestCas
         $registrationRepository = m::mock('Surfnet\StepupGateway\U2fVerificationBundle\Repository\RegistrationRepository');
         $registrationRepository->shouldReceive('findByKeyHandle')->never();
 
-        $service = new U2fVerificationService($u2f, $registrationRepository);
+        $service = new VerificationService($u2f, $registrationRepository);
 
         $expectedResult = AuthenticationVerificationResult::deviceReportedError($deviceErrorCode);
         $this->assertEquals($expectedResult, $service->verifyAuthentication($request, $response));
@@ -329,7 +329,7 @@ final class U2fVerificationServiceAuthenticationVerificationTest extends TestCas
                 )
             );
 
-        $service = new U2fVerificationService($u2f, $registrationRepository);
+        $service = new VerificationService($u2f, $registrationRepository);
 
         $this->setExpectedExceptionRegExp('Surfnet\StepupGateway\U2fVerificationBundle\Exception\LogicException');
         $service->verifyAuthentication($request, $response);

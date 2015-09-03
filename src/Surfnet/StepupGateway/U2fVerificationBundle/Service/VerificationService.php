@@ -36,7 +36,7 @@ use u2flib_server\U2F;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects) — Mainly due to the DTOs.
  */
-final class U2fVerificationService
+final class VerificationService
 {
     /**
      * @var \u2flib_server\U2F
