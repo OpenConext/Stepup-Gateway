@@ -25,7 +25,7 @@ use Surfnet\StepupGateway\U2fVerificationBundle\Value\KeyHandle;
 use Surfnet\StepupGateway\U2fVerificationBundle\Value\PublicKey;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Surfnet\StepupGateway\U2fVerificationBundle\Repository\RegistrationRepository")
  */
 class Registration
 {
