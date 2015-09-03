@@ -110,6 +110,10 @@ final class U2fVerificationService
      */
     public function verifyAuthentication(SignRequest $request, SignResponse $response)
     {
+        if ($response->errorCode !== 0) {
+            return AuthenticationVerificationResult::deviceReportedError($response->errorCode);
+        }
+
         $registration = $this->registrationRepository->findByKeyHandle(new KeyHandle($request->keyHandle));
 
         if ($registration === null) {
