@@ -216,6 +216,14 @@ final class RegistrationVerificationResult
     /**
      * @return bool
      */
+    public function didDeviceReportAnError()
+    {
+        return $this->status === self::STATUS_DEVICE_ERROR;
+    }
+
+    /**
+     * @return bool
+     */
     public function didResponseChallengeNotMatchRequestChallenge()
     {
         return $this->status === self::STATUS_UNMATCHED_REGISTRATION_CHALLENGE;
