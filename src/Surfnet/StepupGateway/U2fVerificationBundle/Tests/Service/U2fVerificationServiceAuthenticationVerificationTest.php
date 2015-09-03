@@ -46,9 +46,15 @@ final class U2fVerificationServiceAuthenticationVerificationTest extends TestCas
         $yubicoRequest->keyHandle = $keyHandle;
         $yubicoRequest->challenge = $challenge;
 
-        $yubicoRegistration = new \u2flib_server\Registration();
-        $yubicoRegistration->publicKey = $publicKey;
-        $yubicoRegistration->keyHandle = $keyHandle;
+        $yubicoRegistrationIn = new \u2flib_server\Registration();
+        $yubicoRegistrationIn->publicKey = $publicKey;
+        $yubicoRegistrationIn->keyHandle = $keyHandle;
+        $yubicoRegistrationIn->counter = 0;
+
+        $yubicoRegistrationOut = new \u2flib_server\Registration();
+        $yubicoRegistrationOut->publicKey = $publicKey;
+        $yubicoRegistrationOut->keyHandle = $keyHandle;
+        $yubicoRegistrationOut->counter = 10;
 
         $request = new \Surfnet\StepupGateway\U2fVerificationBundle\Dto\SignRequest();
         $request->version   = \u2flib_server\U2F_VERSION;
@@ -66,10 +72,11 @@ final class U2fVerificationServiceAuthenticationVerificationTest extends TestCas
         $u2f = m::mock('u2flib_server\U2F');
         $u2f->shouldReceive('doAuthenticate')
             ->once()
-            ->with(m::anyOf([$yubicoRequest]), m::anyOf([$yubicoRegistration]), m::anyOf($response))
-            ->andReturn($yubicoRegistration);
+            ->with(m::anyOf([$yubicoRequest]), m::anyOf([$yubicoRegistrationIn]), m::anyOf($response))
+            ->andReturn($yubicoRegistrationOut);
 
         $registrationRepository = m::mock('Surfnet\StepupGateway\U2fVerificationBundle\Repository\RegistrationRepository');
+
         $registrationRepository
             ->shouldReceive('findByKeyHandle')
             ->with(m::anyOf(new KeyHandle($keyHandle)))
@@ -80,6 +87,13 @@ final class U2fVerificationServiceAuthenticationVerificationTest extends TestCas
                     new PublicKey($publicKey)
                 )
             );
+
+        $registrationWithCounter10 = new \Surfnet\StepupGateway\U2fVerificationBundle\Entity\Registration(
+            new KeyHandle($keyHandle),
+            new PublicKey($publicKey)
+        );
+        $registrationWithCounter10->authenticationWasVerified(10);
+        $registrationRepository->shouldReceive('save')->with(m::anyOf($registrationWithCounter10))->once();
 
         $service = new U2fVerificationService($u2f, $registrationRepository);
 

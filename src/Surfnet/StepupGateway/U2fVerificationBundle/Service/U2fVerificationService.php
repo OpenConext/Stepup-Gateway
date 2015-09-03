@@ -131,7 +131,7 @@ final class U2fVerificationService
         $yubicoRequest->keyHandle = $request->keyHandle;
 
         try {
-            $this->u2fService->doAuthenticate([$yubicoRequest], [$yubicoRegistration], $response);
+            $yubicoRegistration = $this->u2fService->doAuthenticate([$yubicoRequest], [$yubicoRegistration], $response);
         } catch (Error $error) {
             switch ($error->getCode()) {
                 case \u2flib_server\ERR_NO_MATCHING_REQUEST:
@@ -156,6 +156,9 @@ final class U2fVerificationService
                     );
             }
         }
+
+        $registration->authenticationWasVerified($yubicoRegistration->counter);
+        $this->registrationRepository->save($registration);
 
         return AuthenticationVerificationResult::success();
     }
