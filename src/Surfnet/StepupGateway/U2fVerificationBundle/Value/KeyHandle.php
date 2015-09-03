@@ -55,4 +55,13 @@ final class KeyHandle
     {
         return $this->keyHandle;
     }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        // Doctrine needs to be able to convert identifier fields to strings.
+        return $this->keyHandle;
+    }
 }
