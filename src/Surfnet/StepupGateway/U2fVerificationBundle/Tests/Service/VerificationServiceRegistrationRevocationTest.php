@@ -36,14 +36,12 @@ final class VerificationServiceRegistrationRevocationTest extends TestCase
     {
         $keyHandle = new KeyHandle('key-handle');
 
-        $u2f = m::mock('u2flib_server\U2F');
-
-        $registrationRepository = m::mock(
-            'Surfnet\StepupGateway\U2fVerificationBundle\Repository\RegistrationRepository'
-        );
+        $registrationRepository = m::mock('Surfnet\StepupGateway\U2fVerificationBundle\Repository\RegistrationRepository');
         $registrationRepository->shouldReceive('revokeByKeyHandle')->with($keyHandle)->once();
 
-        $service = new VerificationService($u2f, $registrationRepository);
+        $u2fService = m::mock('Surfnet\StepupU2fBundle\Service\U2fService');
+
+        $service = new VerificationService($registrationRepository, $u2fService);
         $service->revokeRegistration($keyHandle);
     }
 }

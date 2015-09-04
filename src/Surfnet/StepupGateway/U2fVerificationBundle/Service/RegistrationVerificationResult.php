@@ -18,10 +18,11 @@
 
 namespace Surfnet\StepupGateway\U2fVerificationBundle\Service;
 
-use Surfnet\StepupGateway\U2fVerificationBundle\Dto\RegisterResponse;
 use Surfnet\StepupGateway\U2fVerificationBundle\Entity\Registration;
-use Surfnet\StepupGateway\U2fVerificationBundle\Exception\InvalidArgumentException;
 use Surfnet\StepupGateway\U2fVerificationBundle\Exception\LogicException;
+use Surfnet\StepupGateway\U2fVerificationBundle\Value\KeyHandle;
+use Surfnet\StepupGateway\U2fVerificationBundle\Value\PublicKey;
+use Surfnet\StepupU2fBundle\Service\RegistrationVerificationResult as U2fRegistrationVerificationResult;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -29,42 +30,9 @@ use Surfnet\StepupGateway\U2fVerificationBundle\Exception\LogicException;
 final class RegistrationVerificationResult
 {
     /**
-     * Registration was a success.
+     * @var U2fRegistrationVerificationResult
      */
-    const STATUS_SUCCESS = 0;
-
-    /**
-     * The response challenge did not match the request challenge.
-     */
-    const STATUS_UNMATCHED_REGISTRATION_CHALLENGE = 1;
-
-    /**
-     * The response was signed by another party than the device, indicating it was tampered with.
-     */
-    const STATUS_RESPONSE_NOT_SIGNED_BY_DEVICE = 2;
-
-    /**
-     * The device has not been manufactured by a trusted party.
-     */
-    const STATUS_UNTRUSTED_DEVICE = 3;
-
-    /**
-     * The decoding of the device's public key failed.
-     */
-    const STATUS_PUBLIC_KEY_DECODING_FAILED = 4;
-
-    /**
-     * The U2F device reported an error.
-     *
-     * @see \Surfnet\StepupU2fBundle\Dto\RegisterResponse::$errorCode
-     * @see \Surfnet\StepupU2fBundle\Dto\RegisterResponse::ERROR_CODE_* constants
-     */
-    const STATUS_DEVICE_ERROR = 5;
-
-    /**
-     * @var int
-     */
-    private $status;
+    private $wrappedResult;
 
     /**
      * @var Registration|null
@@ -72,93 +40,30 @@ final class RegistrationVerificationResult
     private $registration;
 
     /**
-     * @var int|null
+     * @param U2fRegistrationVerificationResult $u2fResult
+     * @return self
      */
-    private $deviceErrorCode;
-
-    /**
-     * @param Registration $registration
-     * @return RegistrationVerificationResult
-     */
-    public static function success(Registration $registration)
+    public static function wrap(U2fRegistrationVerificationResult $u2fResult)
     {
-        $result = new self(self::STATUS_SUCCESS);
-        $result->registration = $registration;
+        $result = new self;
+        $result->wrappedResult = $u2fResult;
 
-        return $result;
-    }
-
-    /**
-     * @param int $errorCode
-     * @return RegistrationVerificationResult
-     */
-    public static function deviceReportedError($errorCode)
-    {
-        $validErrorCodes = [
-            RegisterResponse::ERROR_CODE_OK,
-            RegisterResponse::ERROR_CODE_OTHER_ERROR,
-            RegisterResponse::ERROR_CODE_BAD_REQUEST,
-            RegisterResponse::ERROR_CODE_CONFIGURATION_UNSUPPORTED,
-            RegisterResponse::ERROR_CODE_DEVICE_INELIGIBLE,
-            RegisterResponse::ERROR_CODE_TIMEOUT,
-        ];
-
-        if (!in_array($errorCode, $validErrorCodes, true)) {
-            throw new InvalidArgumentException('Device error code is not one of the known error codes');
+        if ($u2fResult->wasSuccessful()) {
+            $result->registration = new Registration(
+                new KeyHandle($u2fResult->getRegistration()->keyHandle),
+                new PublicKey($u2fResult->getRegistration()->publicKey)
+            );
         }
 
-        $result = new self(self::STATUS_DEVICE_ERROR);
-        $result->deviceErrorCode = $errorCode;
-
         return $result;
     }
 
     /**
-     * @return RegistrationVerificationResult
-     */
-    public static function responseChallengeDidNotMatchRequestChallenge()
-    {
-        return new self(self::STATUS_UNMATCHED_REGISTRATION_CHALLENGE);
-    }
-
-    /**
-     * @return RegistrationVerificationResult
-     */
-    public static function responseWasNotSignedByDevice()
-    {
-        return new self(self::STATUS_RESPONSE_NOT_SIGNED_BY_DEVICE);
-    }
-
-    /**
-     * @return RegistrationVerificationResult
-     */
-    public static function deviceCannotBeTrusted()
-    {
-        return new self(self::STATUS_UNTRUSTED_DEVICE);
-    }
-
-    /**
-     * @return RegistrationVerificationResult
-     */
-    public static function publicKeyDecodingFailed()
-    {
-        return new self(self::STATUS_PUBLIC_KEY_DECODING_FAILED);
-    }
-
-    /**
-     * @param int $status
-     */
-    private function __construct($status)
-    {
-        $this->status = $status;
-    }
-
-    /**
-     * @return bool
+     * @return U2fRegistrationVerificationResult
      */
     public function wasSuccessful()
     {
-        return $this->status === self::STATUS_SUCCESS;
+        return $this->wrappedResult->wasSuccessful();
     }
 
     /**
@@ -166,7 +71,7 @@ final class RegistrationVerificationResult
      */
     public function getRegistration()
     {
-        if (!$this->wasSuccessful()) {
+        if (!$this->wrappedResult->wasSuccessful()) {
             throw new LogicException('The registration was unsuccessful and the registration data is not available');
         }
 
@@ -178,7 +83,7 @@ final class RegistrationVerificationResult
      */
     public function didDeviceReportABadRequest()
     {
-        return $this->didDeviceReportError(RegisterResponse::ERROR_CODE_BAD_REQUEST);
+        return $this->wrappedResult->didDeviceReportABadRequest();
     }
 
     /**
@@ -186,7 +91,7 @@ final class RegistrationVerificationResult
      */
     public function wasClientConfigurationUnsupported()
     {
-        return $this->didDeviceReportError(RegisterResponse::ERROR_CODE_CONFIGURATION_UNSUPPORTED);
+        return $this->wrappedResult->wasClientConfigurationUnsupported();
     }
 
     /**
@@ -194,7 +99,7 @@ final class RegistrationVerificationResult
      */
     public function wasDeviceAlreadyRegistered()
     {
-        return $this->didDeviceReportError(RegisterResponse::ERROR_CODE_DEVICE_INELIGIBLE);
+        return $this->wrappedResult->wasDeviceAlreadyRegistered();
     }
 
     /**
@@ -202,7 +107,7 @@ final class RegistrationVerificationResult
      */
     public function didDeviceTimeOut()
     {
-        return $this->didDeviceReportError(RegisterResponse::ERROR_CODE_TIMEOUT);
+        return $this->wrappedResult->didDeviceTimeOut();
     }
 
     /**
@@ -210,15 +115,15 @@ final class RegistrationVerificationResult
      */
     public function didDeviceReportAnUnknownError()
     {
-        return $this->didDeviceReportError(RegisterResponse::ERROR_CODE_OTHER_ERROR);
+        return $this->wrappedResult->didDeviceReportAnUnknownError();
     }
 
     /**
      * @return bool
      */
-    public function didDeviceReportAnError()
+    public function didDeviceReportAnyError()
     {
-        return $this->status === self::STATUS_DEVICE_ERROR;
+        return $this->wrappedResult->didDeviceReportAnyError();
     }
 
     /**
@@ -226,7 +131,7 @@ final class RegistrationVerificationResult
      */
     public function didResponseChallengeNotMatchRequestChallenge()
     {
-        return $this->status === self::STATUS_UNMATCHED_REGISTRATION_CHALLENGE;
+        return $this->wrappedResult->didResponseChallengeNotMatchRequestChallenge();
     }
 
     /**
@@ -234,7 +139,7 @@ final class RegistrationVerificationResult
      */
     public function wasResponseNotSignedByDevice()
     {
-        return $this->status === self::STATUS_RESPONSE_NOT_SIGNED_BY_DEVICE;
+        return $this->wrappedResult->wasResponseNotSignedByDevice();
     }
 
     /**
@@ -242,7 +147,7 @@ final class RegistrationVerificationResult
      */
     public function canDeviceNotBeTrusted()
     {
-        return $this->status === self::STATUS_UNTRUSTED_DEVICE;
+        return $this->wrappedResult->canDeviceNotBeTrusted();
     }
 
     /**
@@ -250,15 +155,6 @@ final class RegistrationVerificationResult
      */
     public function didPublicKeyDecodingFail()
     {
-        return $this->status === self::STATUS_PUBLIC_KEY_DECODING_FAILED;
-    }
-
-    /**
-     * @param int $errorCode
-     * @return bool
-     */
-    private function didDeviceReportError($errorCode)
-    {
-        return $this->status === self::STATUS_DEVICE_ERROR && $this->deviceErrorCode === $errorCode;
+        return $this->wrappedResult->didPublicKeyDecodingFail();
     }
 }

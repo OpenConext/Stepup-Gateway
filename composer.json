@@ -36,7 +36,7 @@
         "surfnet/yubikey-api-client-bundle": "dev-develop",
         "surfnet/stepup-bundle": "dev-develop",
         "surfnet/stepup-saml-bundle": "dev-develop",
-        "yubico/u2flib-server": "^0.1.0"
+        "surfnet/stepup-u2f-bundle": "dev-maintenance/merge-reg-auth-service"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3",

@@ -20,11 +20,15 @@ namespace Surfnet\StepupGateway\U2fVerificationBundle\Tests\Service;
 
 use Mockery as m;
 use PHPUnit_Framework_TestCase as TestCase;
-use Surfnet\StepupGateway\U2fVerificationBundle\Service\AuthenticationVerificationResult;
+use Surfnet\StepupGateway\U2fVerificationBundle\Entity\Registration;
 use Surfnet\StepupGateway\U2fVerificationBundle\Service\VerificationService;
 use Surfnet\StepupGateway\U2fVerificationBundle\Value\KeyHandle;
 use Surfnet\StepupGateway\U2fVerificationBundle\Value\PublicKey;
-use u2flib_server\Error;
+use Surfnet\StepupU2fBundle\Dto\Registration as RegistrationDto;
+use Surfnet\StepupU2fBundle\Dto\SignRequest;
+use Surfnet\StepupU2fBundle\Dto\SignResponse;
+use Surfnet\StepupU2fBundle\Service\AuthenticationVerificationResult;
+use Surfnet\StepupU2fBundle\Service\RegistrationVerificationResult;
 
 final class VerificationServiceAuthenticationVerificationTest extends TestCase
 {
@@ -32,319 +36,88 @@ final class VerificationServiceAuthenticationVerificationTest extends TestCase
 
     /**
      * @test
-     * @group signing
+     * @group authentication
      */
-    public function it_can_verify_a_signing_response()
+    public function it_can_verify_an_authentication()
     {
-        $publicKey  = 'public-key';
-        $keyHandle = 'key-handle';
-        $challenge = 'challenge';
+        $keyHandle          = 'key-handle';
+        $publicKey          = 'public-key';
+        $updatedSignCounter = 10;
 
-        $yubicoRequest = new \u2flib_server\SignRequest();
-        $yubicoRequest->version = \u2flib_server\U2F_VERSION;
-        $yubicoRequest->appId = self::APP_ID;
-        $yubicoRequest->keyHandle = $keyHandle;
-        $yubicoRequest->challenge = $challenge;
-
-        $yubicoRegistrationIn = new \u2flib_server\Registration();
-        $yubicoRegistrationIn->publicKey = $publicKey;
-        $yubicoRegistrationIn->keyHandle = $keyHandle;
-        $yubicoRegistrationIn->counter = 0;
-
-        $yubicoRegistrationOut = new \u2flib_server\Registration();
-        $yubicoRegistrationOut->publicKey = $publicKey;
-        $yubicoRegistrationOut->keyHandle = $keyHandle;
-        $yubicoRegistrationOut->counter = 10;
-
-        $request = new \Surfnet\StepupGateway\U2fVerificationBundle\Dto\SignRequest();
-        $request->version   = \u2flib_server\U2F_VERSION;
-        $request->challenge = $challenge;
-        $request->appId     = self::APP_ID;
+        $request = new SignRequest();
         $request->keyHandle = $keyHandle;
 
-        $response = new \Surfnet\StepupGateway\U2fVerificationBundle\Dto\SignResponse();
-        $response->keyHandle = $keyHandle;
-        $response->clientData = 'client-data';
-        $response->signatureData = 'signature-data';
+        $response = new SignResponse();
 
-        $expectedResult = AuthenticationVerificationResult::success();
+        $registration = m::mock(new Registration(new KeyHandle($keyHandle), new PublicKey($publicKey)));
+        $registration->shouldReceive('authenticationWasVerified')->once()->with($updatedSignCounter);
 
-        $u2f = m::mock('u2flib_server\U2F');
-        $u2f->shouldReceive('doAuthenticate')
-            ->once()
-            ->with(m::anyOf([$yubicoRequest]), m::anyOf([$yubicoRegistrationIn]), m::anyOf($response))
-            ->andReturn($yubicoRegistrationOut);
+        $registrationDtoBeforeVerification = new RegistrationDto();
+        $registrationDtoBeforeVerification->keyHandle   = $keyHandle;
+        $registrationDtoBeforeVerification->publicKey   = $publicKey;
+        $registrationDtoBeforeVerification->signCounter = 0;
 
-        $registrationRepository = m::mock('Surfnet\StepupGateway\U2fVerificationBundle\Repository\RegistrationRepository');
-
-        $registrationRepository
-            ->shouldReceive('findByKeyHandle')
-            ->with(m::anyOf(new KeyHandle($keyHandle)))
-            ->once()
-            ->andReturn(
-                new \Surfnet\StepupGateway\U2fVerificationBundle\Entity\Registration(
-                    new KeyHandle($keyHandle),
-                    new PublicKey($publicKey)
-                )
-            );
-
-        $registrationWithCounter10 = new \Surfnet\StepupGateway\U2fVerificationBundle\Entity\Registration(
-            new KeyHandle($keyHandle),
-            new PublicKey($publicKey)
-        );
-        $registrationWithCounter10->authenticationWasVerified(10);
-        $registrationRepository->shouldReceive('save')->with(m::anyOf($registrationWithCounter10))->once();
-
-        $service = new VerificationService($u2f, $registrationRepository);
-
-        $this->assertEquals($expectedResult, $service->verifyAuthentication($request, $response));
-    }
-
-    /**
-     * @test
-     * @group signing
-     */
-    public function it_will_handle_missing_registrations()
-    {
-        $keyHandle = 'key-handle';
-        $challenge = 'challenge';
-
-        $request = new \Surfnet\StepupGateway\U2fVerificationBundle\Dto\SignRequest();
-        $request->version   = \u2flib_server\U2F_VERSION;
-        $request->challenge = $challenge;
-        $request->appId     = self::APP_ID;
-        $request->keyHandle = $keyHandle;
-
-        $response = new \Surfnet\StepupGateway\U2fVerificationBundle\Dto\SignResponse();
-        $response->keyHandle = $keyHandle;
-        $response->clientData = 'client-data';
-        $response->signatureData = 'signature-data';
-
-        $expectedResult = AuthenticationVerificationResult::registrationUnknown();
-
-        $u2f = m::mock('u2flib_server\U2F');
-        $u2f->shouldReceive('doAuthenticate')->never();
+        $registrationDtoAfterVerification = clone $registrationDtoBeforeVerification;
+        $registrationDtoAfterVerification->signCounter = $updatedSignCounter;
 
         $registrationRepository = m::mock('Surfnet\StepupGateway\U2fVerificationBundle\Repository\RegistrationRepository');
         $registrationRepository
             ->shouldReceive('findByKeyHandle')
             ->with(m::anyOf(new KeyHandle($keyHandle)))
-            ->once()
-            ->andReturn(null);
-
-        $service = new VerificationService($u2f, $registrationRepository);
-
-        $this->assertEquals($expectedResult, $service->verifyAuthentication($request, $response));
-    }
-
-    /**
-     * @test
-     * @group signing
-     * @dataProvider expectedVerificationErrors
-     *
-     * @param int $errorCode
-     * @param AuthenticationVerificationResult $expectedResult
-     */
-    public function it_handles_expected_u2f_registration_verification_errors(
-        $errorCode,
-        AuthenticationVerificationResult $expectedResult
-    ) {
-        $keyHandle = 'key-handle';
-        $challenge = 'challenge';
-        $publicKey = 'public-key';
-
-        $yubicoRequest = new \u2flib_server\SignRequest();
-        $yubicoRequest->keyHandle = $keyHandle;
-        $yubicoRequest->appId     = self::APP_ID;
-        $yubicoRequest->version   = \u2flib_server\U2F_VERSION;
-        $yubicoRequest->challenge = $challenge;
-
-        $yubicoRegistration = new \u2flib_server\Registration();
-        $yubicoRegistration->keyHandle = $keyHandle;
-        $yubicoRegistration->publicKey = $publicKey;
-
-        $request = new \Surfnet\StepupGateway\U2fVerificationBundle\Dto\SignRequest();
-        $request->version   = \u2flib_server\U2F_VERSION;
-        $request->challenge = $challenge;
-        $request->appId     = self::APP_ID;
-        $request->keyHandle = $keyHandle;
-
-        $response = new \Surfnet\StepupGateway\U2fVerificationBundle\Dto\SignResponse();
-        $response->clientData = 'client-data';
-        $response->keyHandle = $keyHandle;
-        $response->signatureData = 'signature-data';
-
-        $u2f = m::mock('u2flib_server\U2F');
-        $u2f->shouldReceive('doAuthenticate')
-            ->once()
-            ->with(m::anyOf([$yubicoRequest]), m::anyOf([$yubicoRegistration]), m::anyOf($response))
-            ->andThrow(new Error('error', $errorCode));
-
-        $registrationRepository = m::mock('Surfnet\StepupGateway\U2fVerificationBundle\Repository\RegistrationRepository');
+            ->andReturn($registration);
         $registrationRepository
-            ->shouldReceive('findByKeyHandle')
-            ->with(m::anyOf(new KeyHandle($keyHandle)))
+            ->shouldReceive('save')
             ->once()
-            ->andReturn(
-                new \Surfnet\StepupGateway\U2fVerificationBundle\Entity\Registration(
-                    new KeyHandle($keyHandle),
-                    new PublicKey($publicKey)
-                )
-            );
+            ->with($registration);
 
-        $service = new VerificationService($u2f, $registrationRepository);
+        $u2fService = m::mock('Surfnet\StepupU2fBundle\Service\U2fService');
+        $u2fService
+            ->shouldReceive('verifyAuthentication')
+            ->with(m::anyOf($registrationDtoBeforeVerification), m::anyOf($request), m::anyOf($response))
+            ->andReturn(AuthenticationVerificationResult::success($registrationDtoAfterVerification));
 
-        $this->assertEquals($expectedResult, $service->verifyAuthentication($request, $response));
-    }
-
-    public function expectedVerificationErrors()
-    {
-        // Autoload the U2F class to make sure the error constants are loaded which are also defined in the file.
-        class_exists('u2flib_server\U2F');
-
-        return [
-            'requestResponseMismatch' => [
-                \u2flib_server\ERR_NO_MATCHING_REQUEST,
-                AuthenticationVerificationResult::requestResponseMismatch()
-            ],
-            'responseWasNotSignedByDevice' => [
-                \u2flib_server\ERR_AUTHENTICATION_FAILURE,
-                AuthenticationVerificationResult::responseWasNotSignedByDevice()
-            ],
-            'publicKeyDecodingFailed' => [
-                \u2flib_server\ERR_PUBKEY_DECODE,
-                AuthenticationVerificationResult::publicKeyDecodingFailed()
-            ],
-        ];
-    }
-
-    /**
-     * @test
-     * @group signing
-     * @dataProvider expectedDeviceErrors
-     *
-     * @param int $deviceErrorCode
-     */
-    public function it_handles_expected_device_errors($deviceErrorCode) {
-        $keyHandle = 'key-handle';
-        $challenge = 'challenge';
-
-        $request = new \Surfnet\StepupGateway\U2fVerificationBundle\Dto\SignRequest();
-        $request->version   = \u2flib_server\U2F_VERSION;
-        $request->challenge = $challenge;
-        $request->appId     = self::APP_ID;
-        $request->keyHandle = $keyHandle;
-
-        $response = new \Surfnet\StepupGateway\U2fVerificationBundle\Dto\SignResponse();
-        $response->errorCode = $deviceErrorCode;
-        $response->clientData = 'client-data';
-        $response->keyHandle = $keyHandle;
-        $response->signatureData = 'signature-data';
-
-        $u2f = m::mock('u2flib_server\U2F');
-        $u2f->shouldReceive('doAuthenticate')->never();
-
-        $registrationRepository = m::mock('Surfnet\StepupGateway\U2fVerificationBundle\Repository\RegistrationRepository');
-        $registrationRepository->shouldReceive('findByKeyHandle')->never();
-
-        $service = new VerificationService($u2f, $registrationRepository);
-
-        $expectedResult = AuthenticationVerificationResult::deviceReportedError($deviceErrorCode);
-        $this->assertEquals($expectedResult, $service->verifyAuthentication($request, $response));
-    }
-
-    public function expectedDeviceErrors()
-    {
-        // Autoload the U2F class to make sure the error constants are loaded which are also defined in the file.
-        class_exists('u2flib_server\U2F');
-
-        return [
-            'ERROR_CODE_OTHER_ERROR' => [
-                \Surfnet\StepupGateway\U2fVerificationBundle\Dto\SignResponse::ERROR_CODE_OTHER_ERROR,
-            ],
-            'ERROR_CODE_BAD_REQUEST' => [
-                \Surfnet\StepupGateway\U2fVerificationBundle\Dto\SignResponse::ERROR_CODE_BAD_REQUEST,
-            ],
-            'ERROR_CODE_CONFIGURATION_UNSUPPORTED' => [
-                \Surfnet\StepupGateway\U2fVerificationBundle\Dto\SignResponse::ERROR_CODE_CONFIGURATION_UNSUPPORTED,
-            ],
-            'ERROR_CODE_DEVICE_INELIGIBLE' => [
-                \Surfnet\StepupGateway\U2fVerificationBundle\Dto\SignResponse::ERROR_CODE_DEVICE_INELIGIBLE,
-            ],
-            'ERROR_CODE_TIMEOUT' => [
-                \Surfnet\StepupGateway\U2fVerificationBundle\Dto\SignResponse::ERROR_CODE_TIMEOUT,
-            ],
-        ];
-    }
-
-    /**
-     * @test
-     * @group signing
-     * @dataProvider unexpectedVerificationErrors
-     *
-     * @param int $errorCode
-     */
-    public function it_throws_unexpected_u2f_registration_verification_errors($errorCode)
-    {
-        $challenge = 'challenge';
-        $keyHandle = 'key-handle';
-        $publicKey = 'public-key';
-
-        $yubicoRequest = new \u2flib_server\SignRequest();
-        $yubicoRequest->challenge = $challenge;
-        $yubicoRequest->keyHandle = $keyHandle;
-        $yubicoRequest->appId     = self::APP_ID;
-        $yubicoRequest->version   = \u2flib_server\U2F_VERSION;
-
-        $yubicoRegistration = new \u2flib_server\Registration();
-        $yubicoRegistration->keyHandle = $keyHandle;
-        $yubicoRegistration->publicKey = $publicKey;
-
-        $request = new \Surfnet\StepupGateway\U2fVerificationBundle\Dto\SignRequest();
-        $request->version   = \u2flib_server\U2F_VERSION;
-        $request->challenge = $challenge;
-        $request->appId     = self::APP_ID;
-        $request->keyHandle = $keyHandle;
-
-        $response = new \Surfnet\StepupGateway\U2fVerificationBundle\Dto\SignResponse();
-        $response->clientData = 'client-data';
-        $response->keyHandle = $keyHandle;
-        $response->signatureData = 'signature-data';
-
-        $u2f = m::mock('u2flib_server\U2F');
-        $u2f->shouldReceive('doAuthenticate')
-            ->once()
-            ->with(m::anyOf([$yubicoRequest]), m::anyOf([$yubicoRegistration]), m::anyOf($response))
-            ->andThrow(new Error('error', $errorCode));
-
-        $registrationRepository = m::mock('Surfnet\StepupGateway\U2fVerificationBundle\Repository\RegistrationRepository');
-        $registrationRepository
-            ->shouldReceive('findByKeyHandle')
-            ->with(m::anyOf(new KeyHandle($keyHandle)))
-            ->once()
-            ->andReturn(
-                new \Surfnet\StepupGateway\U2fVerificationBundle\Entity\Registration(
-                    new KeyHandle($keyHandle),
-                    new PublicKey($publicKey)
-                )
-            );
-
-        $service = new VerificationService($u2f, $registrationRepository);
-
-        $this->setExpectedExceptionRegExp('Surfnet\StepupGateway\U2fVerificationBundle\Exception\LogicException');
+        $service = new VerificationService($registrationRepository, $u2fService);
         $service->verifyAuthentication($request, $response);
     }
 
-    public function unexpectedVerificationErrors()
+    /**
+     * @test
+     * @group registration
+     */
+    public function it_doesnt_save_the_registration_on_failed_authentication()
     {
-        // Autoload the U2F class to make sure the error constants are loaded which are also defined in the file.
-        class_exists('u2flib_server\U2F');
+        $keyHandle = 'key-handle';
+        $publicKey = 'public-key';
 
-        return [
-            [\u2flib_server\ERR_NO_MATCHING_REGISTRATION],
-            [\u2flib_server\ERR_ATTESTATION_VERIFICATION],
-            [\u2flib_server\ERR_BAD_RANDOM],
-            [235789],
-        ];
+        $request = new SignRequest();
+        $request->keyHandle = $keyHandle;
+
+        $response = new SignResponse();
+
+        $registration = m::mock(new Registration(new KeyHandle($keyHandle), new PublicKey($publicKey)));
+        $registration->shouldReceive('authenticationWasVerified')->never();
+
+        $registrationDto = new RegistrationDto();
+        $registrationDto->keyHandle   = $keyHandle;
+        $registrationDto->publicKey   = $publicKey;
+        $registrationDto->signCounter = 0;
+
+        $registrationRepository = m::mock('Surfnet\StepupGateway\U2fVerificationBundle\Repository\RegistrationRepository');
+        $registrationRepository
+            ->shouldReceive('findByKeyHandle')
+            ->once()
+            ->with(m::anyOf(new KeyHandle($keyHandle)))
+            ->andReturn($registration);
+        $registrationRepository->shouldReceive('save')->never();
+
+        $u2fService = m::mock('Surfnet\StepupU2fBundle\Service\U2fService');
+        $u2fService
+            ->shouldReceive('verifyAuthentication')
+            ->with(m::anyOf($registrationDto), m::anyOf($request), m::anyOf($response))
+            ->once()
+            ->andReturn(AuthenticationVerificationResult::publicKeyDecodingFailed());
+
+        $service = new VerificationService($registrationRepository, $u2fService);
+        $service->verifyAuthentication($request, $response);
     }
 }

@@ -212,6 +212,9 @@ jms_translation:
             excluded_dirs: [cache, data, logs, Tests]
             extractors: []
 
+surfnet_stepup_u2f:
+    app_id: https://gw.u2f.dev:7000/u2f/appID
+
 surfnet_stepup_gateway_u2f_verification:
     migrations:
         diff_entity_manager: u2f

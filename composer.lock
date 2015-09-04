@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "f7be1224a7a9d324ea414466f213da3d",
+    "hash": "708056685b288ceef9cf3c6719e945d6",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -2232,12 +2232,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/SURFnet/Stepup-bundle.git",
-                "reference": "ac1513d9ddfde02849896e10f4c517a81642bcda"
+                "reference": "d1d802c07fbc73459747e632ff555dcb0ebf14e4"
             },
             "dist": {
                 "type": "zip",
                 "url": "https://api.github.com/repos/SURFnet/Stepup-bundle/zipball/d1d802c07fbc73459747e632ff555dcb0ebf14e4",
-                "reference": "ac1513d9ddfde02849896e10f4c517a81642bcda",
+                "reference": "d1d802c07fbc73459747e632ff555dcb0ebf14e4",
                 "shasum": ""
             },
             "require": {
@@ -2246,7 +2246,7 @@
                 "graylog2/gelf-php": "~1.1",
                 "guzzlehttp/guzzle": "~4",
                 "monolog/monolog": "~1.11",
-                "php": "~5.4|^7",
+                "php": ">=5.4,<8.0-dev",
                 "sensio/framework-extra-bundle": "~3",
                 "symfony/config": "^2.7",
                 "symfony/dependency-injection": "^2.7",
@@ -2277,7 +2277,7 @@
                 "suaas",
                 "surfnet"
             ],
-            "time": "2015-08-26 09:22:28"
+            "time": "2015-08-26 09:49:43"
         },
         {
             "name": "surfnet/stepup-saml-bundle",
@@ -2326,6 +2326,48 @@
                 "surfnet"
             ],
             "time": "2015-08-26 09:24:49"
+        },
+        {
+            "name": "surfnet/stepup-u2f-bundle",
+            "version": "dev-maintenance/merge-reg-auth-service",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/SURFnet/Stepup-u2f-bundle.git",
+                "reference": "a3052a6dbdd06add13731cc178bfebf9dd7c9934"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/SURFnet/Stepup-u2f-bundle/zipball/a3052a6dbdd06add13731cc178bfebf9dd7c9934",
+                "reference": "a3052a6dbdd06add13731cc178bfebf9dd7c9934",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4|^7",
+                "symfony/config": "^2.7",
+                "symfony/dependency-injection": "^2.7",
+                "symfony/form": "^2.7",
+                "symfony/http-kernel": "^2.7",
+                "symfony/validator": "^2.7",
+                "yubico/u2flib-server": "^0.1.0"
+            },
+            "require-dev": {
+                "ibuildings/qa-tools": "~1.1,>=1.1.27",
+                "liip/rmt": "1.1.*",
+                "matthiasnoback/symfony-config-test": "^1.2",
+                "mockery/mockery": "~0.9"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Surfnet\\StepupU2fBundle\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "description": "The SURFnet Step-up U2F bundle contains server-side device verification, and the necessary forms and resources to enable client-side U2F interaction with Step-up Identities",
+            "time": "2015-09-04 10:41:45"
         },
         {
             "name": "surfnet/yubikey-api-client-bundle",
@@ -4659,7 +4701,8 @@
         "surfnet/messagebird-api-client-bundle": 20,
         "surfnet/yubikey-api-client-bundle": 20,
         "surfnet/stepup-bundle": 20,
-        "surfnet/stepup-saml-bundle": 20
+        "surfnet/stepup-saml-bundle": 20,
+        "surfnet/stepup-u2f-bundle": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
