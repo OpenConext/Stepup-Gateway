@@ -157,4 +157,12 @@ final class RegistrationVerificationResult
     {
         return $this->wrappedResult->didPublicKeyDecodingFail();
     }
+
+    /**
+     * @return bool
+     */
+    public function didntAppIdsMatch()
+    {
+        return $this->wrappedResult->didntAppIdsMatch();
+    }
 }

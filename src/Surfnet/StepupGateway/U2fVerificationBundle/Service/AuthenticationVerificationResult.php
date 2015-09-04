@@ -153,4 +153,12 @@ final class AuthenticationVerificationResult
     {
         return $this->wrappedResult && $this->wrappedResult->didPublicKeyDecodingFail();
     }
+
+    /**
+     * @return bool
+     */
+    public function didntAppIdsMatch()
+    {
+        return $this->wrappedResult->didntAppIdsMatch();
+    }
 }

@@ -28,6 +28,7 @@ final class U2fRegistrationVerificationResult implements JsonSerializable
     const STATUS_UNTRUSTED_DEVICE = 'UNTRUSTED_DEVICE';
     const STATUS_PUBLIC_KEY_DECODING_FAILED = 'PUBLIC_KEY';
     const STATUS_DEVICE_ERROR = 'DEVICE_ERROR';
+    const STATUS_APP_ID_MISMATCH = 'APP_ID_MISMATCH';
 
     /**
      * @var string

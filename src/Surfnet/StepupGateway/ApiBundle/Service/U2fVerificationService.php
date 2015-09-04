@@ -104,6 +104,9 @@ final class U2fVerificationService
         } elseif ($result->didPublicKeyDecodingFail()) {
             $apiResult->status = U2fRegistrationVerificationResult::STATUS_PUBLIC_KEY_DECODING_FAILED;
             $this->logger->error('Decoding of the public key failed');
+        } elseif ($result->didntAppIdsMatch()) {
+            $apiResult->status = U2fRegistrationVerificationResult::STATUS_APP_ID_MISMATCH;
+            $this->logger->critical('The AppID of a U2F message didn\'t match the server\'s');
         } else {
             throw new LogicException('Unknown registration verification result status');
         }
@@ -153,6 +156,8 @@ final class U2fVerificationService
             $apiResult->status = U2fAuthenticationVerificationResult::STATUS_RESPONSE_NOT_SIGNED_BY_DEVICE;
         } elseif ($result->didPublicKeyDecodingFail()) {
             $apiResult->status = U2fAuthenticationVerificationResult::STATUS_PUBLIC_KEY_DECODING_FAILED;
+        } elseif ($result->didntAppIdsMatch()) {
+            $apiResult->status = U2fAuthenticationVerificationResult::STATUS_APP_ID_MISMATCH;
         } else {
             throw new LogicException('Unknown authentication verification result status');
         }

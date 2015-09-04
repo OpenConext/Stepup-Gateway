@@ -28,6 +28,7 @@ final class U2fAuthenticationVerificationResult implements JsonSerializable
     const STATUS_RESPONSE_NOT_SIGNED_BY_DEVICE = 'RESPONSE_NOT_SIGNED_BY_DEVICE';
     const STATUS_PUBLIC_KEY_DECODING_FAILED = 'PUBLIC_KEY_DECODING_FAILED';
     const STATUS_DEVICE_ERROR = 'DEVICE_ERROR';
+    const STATUS_APP_ID_MISMATCH = 'APP_ID_MISMATCH';
 
     /**
      * @var string
