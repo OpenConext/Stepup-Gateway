@@ -30,7 +30,7 @@ class RegistrationRepository extends EntityRepository
      */
     public function findByKeyHandle(KeyHandle $keyHandle)
     {
-        return $this->findOneBy(['keyHandle' => $keyHandle->getKeyHandle()]);
+        return $this->findOneBy(['keyHandle' => $keyHandle]);
     }
 
     /**
