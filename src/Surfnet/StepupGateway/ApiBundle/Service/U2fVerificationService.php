@@ -145,19 +145,26 @@ final class U2fVerificationService
         $apiResult = new U2fAuthenticationVerificationResult();
 
         if ($result->wasSuccessful()) {
+            $this->logger->notice('U2F device authentication verification successful');
             $apiResult->status = U2fAuthenticationVerificationResult::STATUS_SUCCESS;
         } elseif ($result->didDeviceReportAnyError()) {
             $apiResult->status = U2fAuthenticationVerificationResult::STATUS_DEVICE_ERROR;
+            $this->logger->error('U2F device reported an error');
         } elseif ($result->didResponseChallengeNotMatchRequestChallenge()) {
             $apiResult->status = U2fAuthenticationVerificationResult::STATUS_REQUEST_RESPONSE_MISMATCH;
+            $this->logger->error('Response challenge did not match request challenge');
         } elseif ($result->wasRegistrationUnknown()) {
             $apiResult->status = U2fAuthenticationVerificationResult::STATUS_REGISTRATION_UNKNOWN;
+            $this->logger->error('Registration unknown');
         } elseif ($result->wasResponseNotSignedByDevice()) {
             $apiResult->status = U2fAuthenticationVerificationResult::STATUS_RESPONSE_NOT_SIGNED_BY_DEVICE;
+            $this->logger->error('Response was not signed by device');
         } elseif ($result->didPublicKeyDecodingFail()) {
             $apiResult->status = U2fAuthenticationVerificationResult::STATUS_PUBLIC_KEY_DECODING_FAILED;
+            $this->logger->error('Decoding of the public key failed');
         } elseif ($result->didntAppIdsMatch()) {
             $apiResult->status = U2fAuthenticationVerificationResult::STATUS_APP_ID_MISMATCH;
+            $this->logger->critical('The AppID of a U2F message didn\'t match the server\'s');
         } else {
             throw new LogicException('Unknown authentication verification result status');
         }
