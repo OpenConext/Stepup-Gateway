@@ -22,6 +22,7 @@ use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
 use Surfnet\StepupGateway\U2fVerificationBundle\Exception\InvalidArgumentException;
+use Surfnet\StepupGateway\U2fVerificationBundle\Exception\LogicException;
 use Surfnet\StepupGateway\U2fVerificationBundle\Value\KeyHandle;
 
 class KeyHandleType extends Type
@@ -43,7 +44,12 @@ class KeyHandleType extends Type
             return $value;
         }
 
-        throw new LogicException('PHP value should be instance of KeyHandle or NULL');
+        throw new LogicException(
+            sprintf(
+                'PHP value should be instance of KeyHandle or NULL, got "%s"',
+                is_object($value) ? get_class($value) : gettype($value)
+            )
+        );
     }
 
     public function convertToPHPValue($value, AbstractPlatform $platform)
