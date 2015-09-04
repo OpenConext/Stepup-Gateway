@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "708056685b288ceef9cf3c6719e945d6",
+    "hash": "dd440fd81bbb7fafb2e08e769ca0daed",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -2228,16 +2228,16 @@
         },
         {
             "name": "surfnet/stepup-bundle",
-            "version": "dev-develop",
+            "version": "dev-feature/multipart-param-names",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SURFnet/Stepup-bundle.git",
-                "reference": "d1d802c07fbc73459747e632ff555dcb0ebf14e4"
+                "reference": "665e697b7473cdace900e86902eeb69008ed30fd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SURFnet/Stepup-bundle/zipball/d1d802c07fbc73459747e632ff555dcb0ebf14e4",
-                "reference": "d1d802c07fbc73459747e632ff555dcb0ebf14e4",
+                "url": "https://api.github.com/repos/SURFnet/Stepup-bundle/zipball/665e697b7473cdace900e86902eeb69008ed30fd",
+                "reference": "665e697b7473cdace900e86902eeb69008ed30fd",
                 "shasum": ""
             },
             "require": {
@@ -2246,7 +2246,7 @@
                 "graylog2/gelf-php": "~1.1",
                 "guzzlehttp/guzzle": "~4",
                 "monolog/monolog": "~1.11",
-                "php": ">=5.4,<8.0-dev",
+                "php": "~5.4|^7",
                 "sensio/framework-extra-bundle": "~3",
                 "symfony/config": "^2.7",
                 "symfony/dependency-injection": "^2.7",
@@ -2277,7 +2277,7 @@
                 "suaas",
                 "surfnet"
             ],
-            "time": "2015-08-26 09:49:43"
+            "time": "2015-09-03 15:59:38"
         },
         {
             "name": "surfnet/stepup-saml-bundle",
