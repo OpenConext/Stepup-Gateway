@@ -20,6 +20,7 @@ namespace Surfnet\StepupGateway\ApiBundle\Service;
 
 use Exception;
 use Psr\Log\LoggerInterface;
+use Surfnet\StepupGateway\ApiBundle\Dto\RevokeRequest;
 use Surfnet\StepupGateway\ApiBundle\Dto\Requester;
 use Surfnet\StepupGateway\ApiBundle\Dto\U2fRegisterRequest;
 use Surfnet\StepupGateway\ApiBundle\Dto\U2fRegisterResponse;
@@ -28,6 +29,7 @@ use Surfnet\StepupGateway\ApiBundle\Dto\U2fSignResponse;
 use Surfnet\StepupGateway\ApiBundle\Exception\LogicException;
 use Surfnet\StepupGateway\ApiBundle\Exception\RuntimeException;
 use Surfnet\StepupGateway\U2fVerificationBundle\Service\VerificationService;
+use Surfnet\StepupGateway\U2fVerificationBundle\Value\KeyHandle;
 use Surfnet\StepupU2fBundle\Dto\RegisterRequest;
 use Surfnet\StepupU2fBundle\Dto\RegisterResponse;
 use Surfnet\StepupU2fBundle\Dto\SignRequest;
@@ -156,6 +158,30 @@ final class U2fVerificationService
         }
 
         return $apiResult;
+    }
+
+    /**
+     * @param RevokeRequest $revokeRequest
+     * @param Requester $requester
+     */
+    public function revokeRegistration(RevokeRequest $revokeRequest, Requester $requester)
+    {
+        $this->logger->notice('Received request to revoke a U2F device registration');
+
+        try {
+            $this->verificationService->revokeRegistration(new KeyHandle($revokeRequest->keyHandle));
+        } catch (Exception $e) {
+            $errorMessage = sprintf(
+                'An exception was thrown while revoking the U2F device registration (%s: %s)',
+                get_class($e),
+                $e->getMessage()
+            );
+            $this->logger->critical($errorMessage, ['exception' => $e]);
+
+            throw new RuntimeException($errorMessage, 0, $e);
+        }
+
+        $this->logger->notice('Revoked U2F device registration');
     }
 
     /**

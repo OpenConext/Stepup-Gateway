@@ -21,3 +21,9 @@ u2f_verify_authentication:
     defaults:  { _controller: SurfnetStepupGatewayApiBundle:U2fVerification:verifyAuthentication }
     methods:   [POST]
     condition: "request.headers.get('Content-Type') == 'application/json' && request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
+
+u2f_revoke_registration:
+    path:      /u2f/revoke-registration
+    defaults:  { _controller: SurfnetStepupGatewayApiBundle:U2fVerification:revokeRegistration }
+    methods:   [POST]
+    condition: "request.headers.get('Content-Type') == 'application/json' && request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"

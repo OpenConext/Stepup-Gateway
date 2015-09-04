@@ -19,6 +19,7 @@
 namespace Surfnet\StepupGateway\ApiBundle\Controller;
 
 use Exception;
+use Surfnet\StepupGateway\ApiBundle\Dto\RevokeRequest;
 use Surfnet\StepupGateway\ApiBundle\Dto\Requester;
 use Surfnet\StepupGateway\ApiBundle\Dto\U2fRegisterRequest;
 use Surfnet\StepupGateway\ApiBundle\Dto\U2fRegisterResponse;
@@ -78,6 +79,17 @@ class U2fVerificationController extends Controller
         }
 
         return new JsonResponse($result, 400);
+    }
+
+    public function revokeRegistrationAction(RevokeRequest $revokeRequest, Requester $requester)
+    {
+        try {
+            $this->getService()->revokeRegistration($revokeRequest, $requester);
+        } catch (Exception $e) {
+            return new JsonResponse(['errors' => [$e->getMessage()]], 500);
+        }
+
+        return new JsonResponse(['status' => 'SUCCESS'], 200);
     }
 
     /**
