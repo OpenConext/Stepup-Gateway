@@ -42,9 +42,12 @@ final class U2fRegistrationVerificationResult implements JsonSerializable
 
     public function jsonSerialize()
     {
-        return [
-            'status'     => $this->status,
-            'key_handle' => $this->keyHandle,
-        ];
+        $json = ['status' => $this->status];
+
+        if ($this->keyHandle) {
+            $json['key_handle'] = $this->keyHandle;
+        }
+
+        return $json;
     }
 }
