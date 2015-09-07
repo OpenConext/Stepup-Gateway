@@ -30,6 +30,7 @@ use Surfnet\StepupGateway\ApiBundle\Service\U2fRegistrationVerificationResult;
 use Surfnet\StepupGateway\ApiBundle\Service\U2fVerificationService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 class U2fVerificationController extends Controller
 {
@@ -51,7 +52,7 @@ class U2fVerificationController extends Controller
         }
 
         if ($result->status === U2fRegistrationVerificationResult::STATUS_SUCCESS) {
-            return new JsonResponse($result, 200);
+            return new JsonResponse($result, Response::HTTP_CREATED);
         }
 
         return new JsonResponse($result, 400);
