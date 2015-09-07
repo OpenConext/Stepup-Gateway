@@ -34,7 +34,7 @@
         "surfnet/messagebird-api-client-bundle": "dev-develop",
         "mockery/mockery": "~0.9.0",
         "surfnet/yubikey-api-client-bundle": "dev-develop",
-        "surfnet/stepup-bundle": "dev-feature/multipart-param-names",
+        "surfnet/stepup-bundle": "dev-develop",
         "surfnet/stepup-saml-bundle": "dev-develop",
         "surfnet/stepup-u2f-bundle": "dev-maintenance/merge-reg-auth-service"
     },
