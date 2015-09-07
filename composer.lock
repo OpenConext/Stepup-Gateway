@@ -2333,12 +2333,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/SURFnet/Stepup-u2f-bundle.git",
-                "reference": "29e5b1abfd1c62ae2f96c56232326c2a4d26784c"
+                "reference": "ba3335a74ea73dd0980d063cdad1e3d30da73832"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SURFnet/Stepup-u2f-bundle/zipball/29e5b1abfd1c62ae2f96c56232326c2a4d26784c",
-                "reference": "29e5b1abfd1c62ae2f96c56232326c2a4d26784c",
+                "url": "https://api.github.com/repos/SURFnet/Stepup-u2f-bundle/zipball/ba3335a74ea73dd0980d063cdad1e3d30da73832",
+                "reference": "ba3335a74ea73dd0980d063cdad1e3d30da73832",
                 "shasum": ""
             },
             "require": {
@@ -2367,7 +2367,7 @@
                 "Apache-2.0"
             ],
             "description": "The SURFnet Step-up U2F bundle contains server-side device verification, and the necessary forms and resources to enable client-side U2F interaction with Step-up Identities",
-            "time": "2015-09-04 13:41:56"
+            "time": "2015-09-07 07:28:59"
         },
         {
             "name": "surfnet/yubikey-api-client-bundle",
