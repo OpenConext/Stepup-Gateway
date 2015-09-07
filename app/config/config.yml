@@ -213,7 +213,7 @@ jms_translation:
             extractors: []
 
 surfnet_stepup_u2f:
-    app_id: https://gw.u2f.dev:7000/u2f/appID
+    app_id: %u2f_app_id%
 
 surfnet_stepup_gateway_u2f_verification:
     migrations:
