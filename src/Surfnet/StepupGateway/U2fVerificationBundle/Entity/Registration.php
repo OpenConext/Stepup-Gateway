@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupGateway\U2fVerificationBundle\Entity;
 
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Surfnet\StepupGateway\U2fVerificationBundle\Exception\DomainException;
 use Surfnet\StepupGateway\U2fVerificationBundle\Exception\InvalidArgumentException;
@@ -53,6 +54,13 @@ class Registration
     private $signCounter;
 
     /**
+     * @ORM\Column(type="datetime")
+     *
+     * @var DateTime
+     */
+    private $lastUsed;
+
+    /**
      * @param KeyHandle $keyHandle
      * @param PublicKey $publicKey
      */
@@ -61,6 +69,7 @@ class Registration
         $this->keyHandle   = $keyHandle;
         $this->publicKey   = $publicKey;
         $this->signCounter = 0;
+        $this->lastUsed    = new DateTime();
     }
 
     /**
@@ -85,6 +94,7 @@ class Registration
         }
 
         $this->signCounter = $newSignCounter;
+        $this->lastUsed    = new DateTime();
     }
 
     /**
