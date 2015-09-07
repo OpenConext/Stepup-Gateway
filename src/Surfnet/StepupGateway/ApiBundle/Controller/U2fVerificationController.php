@@ -48,14 +48,14 @@ class U2fVerificationController extends Controller
         try {
             $result = $this->getService()->verifyRegistration($registerRequest, $registerResponse, $requester);
         } catch (Exception $e) {
-            return new JsonResponse(['errors' => [$e->getMessage()]], 500);
+            return new JsonResponse(['errors' => [$e->getMessage()]], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         if ($result->status === U2fRegistrationVerificationResult::STATUS_SUCCESS) {
             return new JsonResponse($result, Response::HTTP_CREATED);
         }
 
-        return new JsonResponse($result, 400);
+        return new JsonResponse($result, Response::HTTP_BAD_REQUEST);
     }
 
     /**
@@ -72,14 +72,14 @@ class U2fVerificationController extends Controller
         try {
             $result = $this->getService()->verifyAuthentication($signRequest, $signResponse, $requester);
         } catch (Exception $e) {
-            return new JsonResponse(['errors' => [$e->getMessage()]], 500);
+            return new JsonResponse(['errors' => [$e->getMessage()]], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         if ($result->status === U2fAuthenticationVerificationResult::STATUS_SUCCESS) {
-            return new JsonResponse($result, 200);
+            return new JsonResponse($result, Response::HTTP_OK);
         }
 
-        return new JsonResponse($result, 400);
+        return new JsonResponse($result, Response::HTTP_BAD_REQUEST);
     }
 
     public function revokeRegistrationAction(RevokeRequest $revokeRequest, Requester $requester)
@@ -87,10 +87,10 @@ class U2fVerificationController extends Controller
         try {
             $this->getService()->revokeRegistration($revokeRequest, $requester);
         } catch (Exception $e) {
-            return new JsonResponse(['errors' => [$e->getMessage()]], 500);
+            return new JsonResponse(['errors' => [$e->getMessage()]], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        return new JsonResponse(['status' => 'SUCCESS'], 200);
+        return new JsonResponse(['status' => 'SUCCESS'], Response::HTTP_OK);
     }
 
     /**
