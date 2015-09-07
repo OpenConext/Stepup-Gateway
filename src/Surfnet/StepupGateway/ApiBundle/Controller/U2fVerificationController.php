@@ -32,6 +32,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects) -- Mainly due to DTOs
+ */
 class U2fVerificationController extends Controller
 {
     /**
