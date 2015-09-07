@@ -47,4 +47,15 @@ final class KeyHandleTest extends TestCase
     {
         new KeyHandle($nonString);
     }
+
+    /**
+     * @test
+     * @expectedException \Surfnet\StepupGateway\U2fVerificationBundle\Exception\InvalidArgumentException
+     * @expectedExceptionMessage may not be an empty string
+     * @group value
+     */
+    public function it_doesnt_accept_an_empty_string_as_key_handle()
+    {
+        new KeyHandle('');
+    }
 }
