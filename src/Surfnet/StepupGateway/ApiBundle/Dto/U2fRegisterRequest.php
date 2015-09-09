@@ -24,7 +24,7 @@ use Surfnet\StepupBundle\Request\JsonConvertible;
 final class U2fRegisterRequest implements JsonConvertible
 {
     /**
-     * @Assert\Type("string", message="reRegister request version must be a string")
+     * @Assert\Type("string", message="Register request version must be a string")
      *
      * @var string
      */
