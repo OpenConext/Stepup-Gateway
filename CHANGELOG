@@ -3,6 +3,7 @@ VERSION 1  RELEASE 1.0
 ======================
 
    Version 1.2 - Update layout and text, add button to cancel login, fix invalid SAML StatusCode
+      14/09/2015 15:09  1.2.1  Enable entering of Yubikey OTPs in Internet Explorer browsers
       29/07/2015 18:59  1.2.0  initial release
 
    Version 1.1 - Security improvements and bugfixes
