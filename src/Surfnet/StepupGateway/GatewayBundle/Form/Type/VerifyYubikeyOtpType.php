@@ -40,7 +40,7 @@ class VerifyYubikeyOtpType extends AbstractType
         // This button is the form's default button, so as to prevent the form being submitted as if the cancel button
         // has been pressed.
         $builder->add('submit', 'submit', [
-            'attr'  => ['class' => 'btn btn-hidden'],
+            'attr'  => ['class' => 'btn btn-off-screen'],
         ]);
         $builder->add('cancel', 'submit', [
             'label' => 'gateway.form.verify_yubikey_otp.button.cancel',
