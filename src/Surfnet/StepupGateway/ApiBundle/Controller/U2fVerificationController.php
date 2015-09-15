@@ -48,8 +48,10 @@ class U2fVerificationController extends Controller
         U2fRegisterResponse $registerResponse,
         Requester $requester
     ) {
+        $service = $this->getU2fVerificationService();
+
         try {
-            $result = $this->getService()->verifyRegistration($registerRequest, $registerResponse, $requester);
+            $result = $service->verifyRegistration($registerRequest, $registerResponse, $requester);
         } catch (Exception $e) {
             return new JsonResponse(['errors' => [$e->getMessage()]], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -73,7 +75,7 @@ class U2fVerificationController extends Controller
         Requester $requester
     ) {
         try {
-            $result = $this->getService()->verifyAuthentication($signRequest, $signResponse, $requester);
+            $result = $this->getU2fVerificationService()->verifyAuthentication($signRequest, $signResponse, $requester);
         } catch (Exception $e) {
             return new JsonResponse(['errors' => [$e->getMessage()]], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -88,7 +90,7 @@ class U2fVerificationController extends Controller
     public function revokeRegistrationAction(RevokeRequest $revokeRequest, Requester $requester)
     {
         try {
-            $this->getService()->revokeRegistration($revokeRequest, $requester);
+            $this->getU2fVerificationService()->revokeRegistration($revokeRequest, $requester);
         } catch (Exception $e) {
             return new JsonResponse(['errors' => [$e->getMessage()]], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -99,7 +101,7 @@ class U2fVerificationController extends Controller
     /**
      * @return U2fVerificationService
      */
-    private function getService()
+    private function getU2fVerificationService()
     {
         return $this->get('surfnet_gateway_api.service.u2f_verification');
     }
