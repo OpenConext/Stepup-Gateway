@@ -18,15 +18,12 @@
 
 namespace Surfnet\StepupGateway\ApiBundle\Service;
 
-use Exception;
-use Psr\Log\LoggerInterface;
 use Surfnet\StepupGateway\ApiBundle\Dto\Requester;
 use Surfnet\StepupGateway\ApiBundle\Dto\RevokeRequest;
 use Surfnet\StepupGateway\ApiBundle\Dto\U2fRegisterRequest;
 use Surfnet\StepupGateway\ApiBundle\Dto\U2fRegisterResponse;
 use Surfnet\StepupGateway\ApiBundle\Dto\U2fSignRequest;
 use Surfnet\StepupGateway\ApiBundle\Dto\U2fSignResponse;
-use Surfnet\StepupGateway\ApiBundle\Exception\RuntimeException;
 use Surfnet\StepupGateway\U2fVerificationBundle\Service\AuthenticationVerificationResult;
 use Surfnet\StepupGateway\U2fVerificationBundle\Service\RegistrationVerificationResult;
 use Surfnet\StepupGateway\U2fVerificationBundle\Service\VerificationService;
@@ -46,15 +43,9 @@ final class U2fVerificationService
      */
     private $verificationService;
 
-    /**
-     * @var \Psr\Log\LoggerInterface
-     */
-    private $logger;
-
-    public function __construct(VerificationService $verificationService, LoggerInterface $logger)
+    public function __construct(VerificationService $verificationService)
     {
         $this->verificationService = $verificationService;
-        $this->logger = $logger;
     }
 
     /**
@@ -66,33 +57,10 @@ final class U2fVerificationService
      */
     public function verifyRegistration(U2fRegisterRequest $request, U2fRegisterResponse $response, Requester $requester)
     {
-        $this->logger->notice('Received request to verify a U2F device registration');
-
-        try {
-            $result = $this->verificationService->verifyRegistration(
-                $this->adaptRegisterRequest($request),
-                $this->adaptRegisterResponse($response)
-            );
-        } catch (Exception $e) {
-            $errorMessage = sprintf(
-                'An exception was thrown while verifying the U2F device registration (%s: %s)',
-                get_class($e),
-                $e->getMessage()
-            );
-            $this->logger->critical($errorMessage, ['exception' => $e]);
-
-            throw new RuntimeException($errorMessage, 0, $e);
-        }
-
-        if ($result->wasSuccessful()) {
-            $this->logger->notice('U2F device authentication verification successful');
-        } else {
-            $this->logger->error(
-                sprintf('U2F device authentication verification failed, reason ("%s")', $result->getStatus())
-            );
-        }
-
-        return $result;
+        return $this->verificationService->verifyRegistration(
+            $this->adaptRegisterRequest($request),
+            $this->adaptRegisterResponse($response)
+        );
     }
 
     /**
@@ -105,33 +73,10 @@ final class U2fVerificationService
      */
     public function verifyAuthentication(U2fSignRequest $request, U2fSignResponse $response, Requester $requester)
     {
-        $this->logger->notice('Received request to verify a U2F device registration');
-
-        try {
-            $result = $this->verificationService->verifyAuthentication(
-                $this->adaptSignRequest($request),
-                $this->adaptSignResponse($response)
-            );
-        } catch (Exception $e) {
-            $errorMessage = sprintf(
-                'An exception was thrown while verifying the U2F device authentication (%s: %s)',
-                get_class($e),
-                $e->getMessage()
-            );
-            $this->logger->critical($errorMessage, ['exception' => $e]);
-
-            throw new RuntimeException($errorMessage, 0, $e);
-        }
-
-        if ($result->wasSuccessful()) {
-            $this->logger->notice('U2F device authentication verification successful');
-        } else {
-            $this->logger->error(
-                sprintf('U2F device authentication verification failed, reason ("%s")', $result->getStatus())
-            );
-        }
-
-        return $result;
+        return $this->verificationService->verifyAuthentication(
+            $this->adaptSignRequest($request),
+            $this->adaptSignResponse($response)
+        );
     }
 
     /**
@@ -140,22 +85,7 @@ final class U2fVerificationService
      */
     public function revokeRegistration(RevokeRequest $revokeRequest, Requester $requester)
     {
-        $this->logger->notice('Received request to revoke a U2F device registration');
-
-        try {
-            $this->verificationService->revokeRegistration(new KeyHandle($revokeRequest->keyHandle));
-        } catch (Exception $e) {
-            $errorMessage = sprintf(
-                'An exception was thrown while revoking the U2F device registration (%s: %s)',
-                get_class($e),
-                $e->getMessage()
-            );
-            $this->logger->critical($errorMessage, ['exception' => $e]);
-
-            throw new RuntimeException($errorMessage, 0, $e);
-        }
-
-        $this->logger->notice('Revoked U2F device registration');
+        $this->verificationService->revokeRegistration(new KeyHandle($revokeRequest->keyHandle));
     }
 
     /**

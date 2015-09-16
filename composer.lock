@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "708056685b288ceef9cf3c6719e945d6",
+    "hash": "e5a835a7c17397e5ab289d362c2e3491",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -1697,7 +1697,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phiamo/MopaBootstrapBundle/zipball/df1027ba4c6c8c2203c0a17c3a1360fbc1494693",
+                "url": "https://api.github.com/repos/phiamo/MopaBootstrapBundle/zipball/cc093b4f10f5598f9c5d77acd365c0e61283e8e7",
                 "reference": "818b0f47ebd352559950e9a64431ff9472e8a9dd",
                 "shasum": ""
             },
@@ -2236,7 +2236,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SURFnet/Stepup-bundle/zipball/09e44810b7d62e97c2fbce78093857735a6abc97",
+                "url": "https://api.github.com/repos/SURFnet/Stepup-bundle/zipball/1e15e4adf96144f470ec7660b02c2faf2b5cc9d0",
                 "reference": "09e44810b7d62e97c2fbce78093857735a6abc97",
                 "shasum": ""
             },
@@ -2329,16 +2329,16 @@
         },
         {
             "name": "surfnet/stepup-u2f-bundle",
-            "version": "dev-maintenance/merge-reg-auth-service",
+            "version": "dev-develop",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SURFnet/Stepup-u2f-bundle.git",
-                "reference": "ba3335a74ea73dd0980d063cdad1e3d30da73832"
+                "reference": "fccdaaf85e7ebbbfa05b608e69170da9539992d6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SURFnet/Stepup-u2f-bundle/zipball/ba3335a74ea73dd0980d063cdad1e3d30da73832",
-                "reference": "ba3335a74ea73dd0980d063cdad1e3d30da73832",
+                "url": "https://api.github.com/repos/SURFnet/Stepup-u2f-bundle/zipball/fccdaaf85e7ebbbfa05b608e69170da9539992d6",
+                "reference": "fccdaaf85e7ebbbfa05b608e69170da9539992d6",
                 "shasum": ""
             },
             "require": {
@@ -2367,7 +2367,7 @@
                 "Apache-2.0"
             ],
             "description": "The SURFnet Step-up U2F bundle contains server-side device verification, and the necessary forms and resources to enable client-side U2F interaction with Step-up Identities",
-            "time": "2015-09-07 07:28:59"
+            "time": "2015-09-16 07:37:16"
         },
         {
             "name": "surfnet/yubikey-api-client-bundle",

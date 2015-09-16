@@ -16,10 +16,10 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupGateway\ApiBundle\Exception;
+namespace Surfnet\StepupGateway\U2fVerificationBundle\Exception;
 
-use LogicException as CoreLogicException;
+use RuntimeException as CoreRuntimeException;
 
-final class LogicException extends CoreLogicException
+class RuntimeException extends CoreRuntimeException
 {
 }

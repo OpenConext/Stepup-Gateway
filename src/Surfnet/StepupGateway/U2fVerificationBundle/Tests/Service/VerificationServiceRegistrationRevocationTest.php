@@ -20,6 +20,7 @@ namespace Surfnet\StepupGateway\U2fVerificationBundle\Tests\Service;
 
 use Mockery as m;
 use PHPUnit_Framework_TestCase as TestCase;
+use Psr\Log\NullLogger;
 use Surfnet\StepupGateway\U2fVerificationBundle\Service\VerificationService;
 use Surfnet\StepupGateway\U2fVerificationBundle\Service\RegistrationVerificationResult;
 use Surfnet\StepupGateway\U2fVerificationBundle\Value\KeyHandle;
@@ -41,7 +42,7 @@ final class VerificationServiceRegistrationRevocationTest extends TestCase
 
         $u2fService = m::mock('Surfnet\StepupU2fBundle\Service\U2fService');
 
-        $service = new VerificationService($registrationRepository, $u2fService);
+        $service = new VerificationService($registrationRepository, $u2fService, new NullLogger());
         $service->revokeRegistration($keyHandle);
     }
 }

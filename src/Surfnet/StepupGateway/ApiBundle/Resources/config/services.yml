@@ -20,4 +20,3 @@ services:
         class: Surfnet\StepupGateway\ApiBundle\Service\U2fVerificationService
         arguments:
             - @surfnet_stepup_u2f_verification.service.u2f_verification
-            - @logger

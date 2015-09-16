@@ -20,6 +20,7 @@ namespace Surfnet\StepupGateway\U2fVerificationBundle\Tests\Service;
 
 use Mockery as m;
 use PHPUnit_Framework_TestCase as TestCase;
+use Psr\Log\NullLogger;
 use Surfnet\StepupGateway\U2fVerificationBundle\Entity\Registration;
 use Surfnet\StepupGateway\U2fVerificationBundle\Service\VerificationService;
 use Surfnet\StepupGateway\U2fVerificationBundle\Value\KeyHandle;
@@ -76,7 +77,7 @@ final class VerificationServiceAuthenticationVerificationTest extends TestCase
             ->with(m::anyOf($registrationDtoBeforeVerification), m::anyOf($request), m::anyOf($response))
             ->andReturn(AuthenticationVerificationResult::success($registrationDtoAfterVerification));
 
-        $service = new VerificationService($registrationRepository, $u2fService);
+        $service = new VerificationService($registrationRepository, $u2fService, new NullLogger());
         $service->verifyAuthentication($request, $response);
     }
 
@@ -117,7 +118,7 @@ final class VerificationServiceAuthenticationVerificationTest extends TestCase
             ->once()
             ->andReturn(AuthenticationVerificationResult::publicKeyDecodingFailed());
 
-        $service = new VerificationService($registrationRepository, $u2fService);
+        $service = new VerificationService($registrationRepository, $u2fService, new NullLogger());
         $service->verifyAuthentication($request, $response);
     }
 }

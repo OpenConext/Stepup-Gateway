@@ -20,6 +20,7 @@ namespace Surfnet\StepupGateway\U2fVerificationBundle\Tests\Service;
 
 use Mockery as m;
 use PHPUnit_Framework_TestCase as TestCase;
+use Psr\Log\NullLogger;
 use Surfnet\StepupGateway\U2fVerificationBundle\Entity\Registration;
 use Surfnet\StepupGateway\U2fVerificationBundle\Service\VerificationService;
 use Surfnet\StepupGateway\U2fVerificationBundle\Value\KeyHandle;
@@ -64,7 +65,7 @@ final class VerificationServiceRegistrationTest extends TestCase
             ->with(m::anyOf($request), m::anyOf($response))
             ->andReturn(RegistrationVerificationResult::success($registrationDto));
 
-        $service = new VerificationService($registrationRepository, $u2fService);
+        $service = new VerificationService($registrationRepository, $u2fService, new NullLogger());
         $service->verifyRegistration($request, $response);
     }
 
@@ -87,7 +88,7 @@ final class VerificationServiceRegistrationTest extends TestCase
             ->once()
             ->andReturn(RegistrationVerificationResult::deviceCannotBeTrusted());
 
-        $service = new VerificationService($registrationRepository, $u2fService);
+        $service = new VerificationService($registrationRepository, $u2fService, new NullLogger());
         $service->verifyRegistration($request, $response);
     }
 }

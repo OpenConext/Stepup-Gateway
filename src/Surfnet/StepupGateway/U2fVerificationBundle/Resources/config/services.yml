@@ -19,6 +19,7 @@ services:
         arguments:
             - @surfnet_stepup_u2f_verification.repository.registration
             - @surfnet_stepup_u2f.service.u2f
+            - @logger
 
     surfnet_stepup_u2f_verification.repository.registration:
         class: Surfnet\StepupGateway\U2fVerificationBundle\Repository\RegistrationRepository
