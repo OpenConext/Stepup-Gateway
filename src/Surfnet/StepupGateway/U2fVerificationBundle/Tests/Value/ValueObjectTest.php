@@ -23,12 +23,22 @@ trait ValueObjectTest
     public function nonStrings()
     {
         return [
-            'int'      => [1],
-            'float'    => [1.1],
-            'resource' => [fopen('php://memory', 'w')],
-            'object'   => [new \stdClass],
-            'array'    => [array()],
-            'bool'     => [false],
+            'int (0)'      => [0],
+            'int (1)'      => [1],
+            'float'        => [1.1],
+            'resource'     => [fopen('php://memory', 'w')],
+            'object'       => [new \stdClass],
+            'array'        => [array()],
+            'bool'         => [false],
+            'null'         => [null],
+        ];
+    }
+
+    public function nonEmptyStrings()
+    {
+        return [
+            'blank string' => [' '],
+            'falsy string' => ['0'],
         ];
     }
 }

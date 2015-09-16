@@ -36,6 +36,18 @@ final class PublicKeyTest extends TestCase
 
     /**
      * @test
+     * @dataProvider nonEmptyStrings
+     * @group value
+     *
+     * @param string $string
+     */
+    public function it_accepts_strings_as_public_key($string)
+    {
+        new PublicKey($string);
+    }
+
+    /**
+     * @test
      * @dataProvider nonStrings
      * @expectedException \Surfnet\StepupGateway\U2fVerificationBundle\Exception\InvalidArgumentException
      * @expectedExceptionMessage should be of type "string"
@@ -46,5 +58,16 @@ final class PublicKeyTest extends TestCase
     public function it_doesnt_accept_non_strings_as_public_key($nonString)
     {
         new PublicKey($nonString);
+    }
+
+    /**
+     * @test
+     * @expectedException \Surfnet\StepupGateway\U2fVerificationBundle\Exception\InvalidArgumentException
+     * @expectedExceptionMessage may not be an empty string
+     * @group value
+     */
+    public function it_doesnt_accept_an_empty_string_as_public_keyh()
+    {
+        new PublicKey('');
     }
 }

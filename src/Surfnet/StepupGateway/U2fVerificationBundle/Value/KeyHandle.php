@@ -36,7 +36,7 @@ final class KeyHandle
             throw InvalidArgumentException::invalidType('string', 'keyHandle', $keyHandle);
         }
 
-        if (empty($keyHandle)) {
+        if ($keyHandle === '') {
             throw new InvalidArgumentException('Invalid Argument, parameter "keyHandle" may not be an empty string');
         }
 

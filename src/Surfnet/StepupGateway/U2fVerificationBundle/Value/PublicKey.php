@@ -36,6 +36,10 @@ final class PublicKey
             throw InvalidArgumentException::invalidType('string', 'publicKey', $publicKey);
         }
 
+        if ($publicKey === '') {
+            throw new InvalidArgumentException('Invalid Argument, parameter "publicKey" may not be an empty string');
+        }
+
         $this->publicKey = $publicKey;
     }
 

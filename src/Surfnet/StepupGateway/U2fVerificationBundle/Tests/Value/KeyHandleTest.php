@@ -36,6 +36,18 @@ final class KeyHandleTest extends TestCase
 
     /**
      * @test
+     * @dataProvider nonEmptyStrings
+     * @group value
+     *
+     * @param string $string
+     */
+    public function it_accepts_strings_as_key_handle($string)
+    {
+        new KeyHandle($string);
+    }
+
+    /**
+     * @test
      * @dataProvider nonStrings
      * @expectedException \Surfnet\StepupGateway\U2fVerificationBundle\Exception\InvalidArgumentException
      * @expectedExceptionMessage should be of type "string"
