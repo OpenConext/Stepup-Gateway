@@ -30,6 +30,9 @@ use Surfnet\StepupU2fBundle\Dto\SignRequest;
 use Surfnet\StepupU2fBundle\Dto\SignResponse;
 use Surfnet\StepupU2fBundle\Service\U2fService;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects) -- Due to use of logger, result objects and value objects
+ */
 final class VerificationService
 {
     /**
