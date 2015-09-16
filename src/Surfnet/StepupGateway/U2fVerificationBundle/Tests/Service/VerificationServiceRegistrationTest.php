@@ -75,20 +75,15 @@ final class VerificationServiceRegistrationTest extends TestCase
      */
     public function it_will_not_store_unsuccessful_registrations()
     {
-        $request = new RegisterRequest();
-        $response = new RegisterResponse();
-
         $registrationRepository = m::mock('Surfnet\StepupGateway\U2fVerificationBundle\Repository\RegistrationRepository');
         $registrationRepository->shouldReceive('save')->never();
 
         $u2fService = m::mock('Surfnet\StepupU2fBundle\Service\U2fService');
         $u2fService
             ->shouldReceive('verifyRegistration')
-            ->with(m::anyOf($request), m::anyOf($response))
-            ->once()
             ->andReturn(RegistrationVerificationResult::deviceCannotBeTrusted());
 
         $service = new VerificationService($registrationRepository, $u2fService, new NullLogger());
-        $service->verifyRegistration($request, $response);
+        $service->verifyRegistration(new RegisterRequest(), new RegisterResponse());
     }
 }
