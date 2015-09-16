@@ -217,7 +217,7 @@ final class U2fVerificationService
     private function adaptRegisterResponse(U2fRegisterResponse $response)
     {
         $adapted = new RegisterResponse();
-        $adapted->errorCode = $response->errorCode ?: 0;
+        $adapted->errorCode = $response->errorCode ?: RegisterResponse::ERROR_CODE_OK;
         $adapted->registrationData = $response->registrationData;
         $adapted->clientData = $response->clientData;
 
@@ -246,7 +246,7 @@ final class U2fVerificationService
     private function adaptSignResponse(U2fSignResponse $response)
     {
         $adapted = new SignResponse();
-        $adapted->errorCode = $response->errorCode ?: 0;
+        $adapted->errorCode = $response->errorCode ?: SignResponse::ERROR_CODE_OK;
         $adapted->keyHandle = $response->keyHandle;
         $adapted->clientData = $response->clientData;
         $adapted->signatureData = $response->signatureData;
