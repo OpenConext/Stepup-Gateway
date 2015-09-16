@@ -53,7 +53,7 @@ final class VerificationService
      */
     public function verifyRegistration(RegisterRequest $request, RegisterResponse $response)
     {
-        $result = RegistrationVerificationResult::wrap($this->u2fService->verifyRegistration($request, $response));
+        $result = RegistrationVerificationResult::from($this->u2fService->verifyRegistration($request, $response));
 
         if ($result->wasSuccessful()) {
             $this->registrationRepository->save($result->getRegistration());
@@ -89,7 +89,7 @@ final class VerificationService
             $this->registrationRepository->save($registration);
         }
 
-        return AuthenticationVerificationResult::wrap($result);
+        return AuthenticationVerificationResult::from($result);
     }
 
     public function revokeRegistration(KeyHandle $keyHandle)

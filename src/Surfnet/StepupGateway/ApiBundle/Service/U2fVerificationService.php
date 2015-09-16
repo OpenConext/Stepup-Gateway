@@ -20,14 +20,15 @@ namespace Surfnet\StepupGateway\ApiBundle\Service;
 
 use Exception;
 use Psr\Log\LoggerInterface;
-use Surfnet\StepupGateway\ApiBundle\Dto\RevokeRequest;
 use Surfnet\StepupGateway\ApiBundle\Dto\Requester;
+use Surfnet\StepupGateway\ApiBundle\Dto\RevokeRequest;
 use Surfnet\StepupGateway\ApiBundle\Dto\U2fRegisterRequest;
 use Surfnet\StepupGateway\ApiBundle\Dto\U2fRegisterResponse;
 use Surfnet\StepupGateway\ApiBundle\Dto\U2fSignRequest;
 use Surfnet\StepupGateway\ApiBundle\Dto\U2fSignResponse;
-use Surfnet\StepupGateway\ApiBundle\Exception\LogicException;
 use Surfnet\StepupGateway\ApiBundle\Exception\RuntimeException;
+use Surfnet\StepupGateway\U2fVerificationBundle\Service\AuthenticationVerificationResult;
+use Surfnet\StepupGateway\U2fVerificationBundle\Service\RegistrationVerificationResult;
 use Surfnet\StepupGateway\U2fVerificationBundle\Service\VerificationService;
 use Surfnet\StepupGateway\U2fVerificationBundle\Value\KeyHandle;
 use Surfnet\StepupU2fBundle\Dto\RegisterRequest;
@@ -61,7 +62,7 @@ final class U2fVerificationService
      *     device.
      * @param U2fRegisterResponse $response The response that the U2F device gave in response to the register request.
      * @param Requester        $requester
-     * @return U2fRegistrationVerificationResult
+     * @return RegistrationVerificationResult
      */
     public function verifyRegistration(U2fRegisterRequest $request, U2fRegisterResponse $response, Requester $requester)
     {
@@ -83,35 +84,15 @@ final class U2fVerificationService
             throw new RuntimeException($errorMessage, 0, $e);
         }
 
-        $apiResult = new U2fRegistrationVerificationResult();
-
         if ($result->wasSuccessful()) {
-            $this->logger->notice('U2F device registration successful');
-            $apiResult->status = U2fRegistrationVerificationResult::STATUS_SUCCESS;
-            $apiResult->keyHandle = $result->getRegistration()->getKeyHandle()->getKeyHandle();
-        } elseif ($result->didDeviceReportAnyError()) {
-            $apiResult->status = U2fRegistrationVerificationResult::STATUS_DEVICE_ERROR;
-            $this->logger->error('U2F device reported an error');
-        } elseif ($result->didResponseChallengeNotMatchRequestChallenge()) {
-            $apiResult->status = U2fRegistrationVerificationResult::STATUS_UNMATCHED_REGISTRATION_CHALLENGE;
-            $this->logger->error('Response challenge did not match request challenge');
-        } elseif ($result->wasResponseNotSignedByDevice()) {
-            $apiResult->status = U2fRegistrationVerificationResult::STATUS_RESPONSE_NOT_SIGNED_BY_DEVICE;
-            $this->logger->error('Response was not signed by device');
-        } elseif ($result->canDeviceNotBeTrusted()) {
-            $apiResult->status = U2fRegistrationVerificationResult::STATUS_UNTRUSTED_DEVICE;
-            $this->logger->error('The device\'s certificate can not be trusted');
-        } elseif ($result->didPublicKeyDecodingFail()) {
-            $apiResult->status = U2fRegistrationVerificationResult::STATUS_PUBLIC_KEY_DECODING_FAILED;
-            $this->logger->error('Decoding of the public key failed');
-        } elseif ($result->didntAppIdsMatch()) {
-            $apiResult->status = U2fRegistrationVerificationResult::STATUS_APP_ID_MISMATCH;
-            $this->logger->critical('The AppID of a U2F message didn\'t match the server\'s');
+            $this->logger->notice('U2F device authentication verification successful');
         } else {
-            throw new LogicException('Unknown registration verification result status');
+            $this->logger->error(
+                sprintf('U2F device authentication verification failed, reason ("%s")', $result->getStatus())
+            );
         }
 
-        return $apiResult;
+        return $result;
     }
 
     /**
@@ -120,7 +101,7 @@ final class U2fVerificationService
      * @param U2fSignRequest  $request The sign request that you requested earlier and was used to query the U2F device.
      * @param U2fSignResponse $response The response that the U2F device gave in response to the sign request.
      * @param Requester    $requester
-     * @return U2fAuthenticationVerificationResult
+     * @return AuthenticationVerificationResult
      */
     public function verifyAuthentication(U2fSignRequest $request, U2fSignResponse $response, Requester $requester)
     {
@@ -142,34 +123,15 @@ final class U2fVerificationService
             throw new RuntimeException($errorMessage, 0, $e);
         }
 
-        $apiResult = new U2fAuthenticationVerificationResult();
-
         if ($result->wasSuccessful()) {
             $this->logger->notice('U2F device authentication verification successful');
-            $apiResult->status = U2fAuthenticationVerificationResult::STATUS_SUCCESS;
-        } elseif ($result->didDeviceReportAnyError()) {
-            $apiResult->status = U2fAuthenticationVerificationResult::STATUS_DEVICE_ERROR;
-            $this->logger->error('U2F device reported an error');
-        } elseif ($result->didResponseChallengeNotMatchRequestChallenge()) {
-            $apiResult->status = U2fAuthenticationVerificationResult::STATUS_REQUEST_RESPONSE_MISMATCH;
-            $this->logger->error('Response challenge did not match request challenge');
-        } elseif ($result->wasRegistrationUnknown()) {
-            $apiResult->status = U2fAuthenticationVerificationResult::STATUS_REGISTRATION_UNKNOWN;
-            $this->logger->error('Registration unknown');
-        } elseif ($result->wasResponseNotSignedByDevice()) {
-            $apiResult->status = U2fAuthenticationVerificationResult::STATUS_RESPONSE_NOT_SIGNED_BY_DEVICE;
-            $this->logger->error('Response was not signed by device');
-        } elseif ($result->didPublicKeyDecodingFail()) {
-            $apiResult->status = U2fAuthenticationVerificationResult::STATUS_PUBLIC_KEY_DECODING_FAILED;
-            $this->logger->error('Decoding of the public key failed');
-        } elseif ($result->didntAppIdsMatch()) {
-            $apiResult->status = U2fAuthenticationVerificationResult::STATUS_APP_ID_MISMATCH;
-            $this->logger->critical('The AppID of a U2F message didn\'t match the server\'s');
         } else {
-            throw new LogicException('Unknown authentication verification result status');
+            $this->logger->error(
+                sprintf('U2F device authentication verification failed, reason ("%s")', $result->getStatus())
+            );
         }
 
-        return $apiResult;
+        return $result;
     }
 
     /**

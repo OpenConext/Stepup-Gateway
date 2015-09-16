@@ -19,8 +19,8 @@
 namespace Surfnet\StepupGateway\ApiBundle\Controller;
 
 use Exception;
-use Surfnet\StepupGateway\ApiBundle\Dto\RevokeRequest;
 use Surfnet\StepupGateway\ApiBundle\Dto\Requester;
+use Surfnet\StepupGateway\ApiBundle\Dto\RevokeRequest;
 use Surfnet\StepupGateway\ApiBundle\Dto\U2fRegisterRequest;
 use Surfnet\StepupGateway\ApiBundle\Dto\U2fRegisterResponse;
 use Surfnet\StepupGateway\ApiBundle\Dto\U2fSignRequest;
@@ -56,11 +56,17 @@ class U2fVerificationController extends Controller
             return new JsonResponse(['errors' => [$e->getMessage()]], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        if ($result->status === U2fRegistrationVerificationResult::STATUS_SUCCESS) {
-            return new JsonResponse($result, Response::HTTP_CREATED);
+        if ($result->wasSuccessful()) {
+            return new JsonResponse(
+                [
+                    'status'     => $result->getStatus(),
+                    'key_handle' => $result->getRegistration()->getKeyHandle()->getKeyHandle(),
+                ],
+                Response::HTTP_CREATED
+            );
         }
 
-        return new JsonResponse($result, Response::HTTP_BAD_REQUEST);
+        return new JsonResponse(['status' => $result->getStatus()], Response::HTTP_BAD_REQUEST);
     }
 
     /**
@@ -80,11 +86,11 @@ class U2fVerificationController extends Controller
             return new JsonResponse(['errors' => [$e->getMessage()]], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        if ($result->status === U2fAuthenticationVerificationResult::STATUS_SUCCESS) {
-            return new JsonResponse($result, Response::HTTP_OK);
+        if ($result->wasSuccessful()) {
+            return new JsonResponse(['status' => $result->getStatus()], Response::HTTP_OK);
         }
 
-        return new JsonResponse($result, Response::HTTP_BAD_REQUEST);
+        return new JsonResponse(['status' => $result->getStatus()], Response::HTTP_BAD_REQUEST);
     }
 
     public function revokeRegistrationAction(RevokeRequest $revokeRequest, Requester $requester)
