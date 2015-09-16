@@ -24,6 +24,11 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class U2fController extends Controller
 {
+    /**
+     * @return Response
+     *
+     * @see https://fidoalliance.org/specs/fido-u2f-v1.0-nfc-bt-amendment-20150514/fido-appid-and-facets.html#trustedfacets-structure
+     */
     public function appIdAction()
     {
         return new JsonResponse(
