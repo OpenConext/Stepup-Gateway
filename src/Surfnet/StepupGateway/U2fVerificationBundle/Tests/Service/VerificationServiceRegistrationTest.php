@@ -38,35 +38,23 @@ final class VerificationServiceRegistrationTest extends TestCase
      * @test
      * @group registration
      */
-    public function it_can_verify_a_registration()
+    public function it_stores_successful_registrations()
     {
-        $keyHandle = 'key-handle';
-        $publicKey = 'public-key';
-
-        $request = new RegisterRequest();
-        $response = new RegisterResponse();
-
-        $registration = new Registration(new KeyHandle($keyHandle), new PublicKey($publicKey));
-
-        $registrationDto = new RegistrationDto();
-        $registrationDto->keyHandle   = $keyHandle;
-        $registrationDto->publicKey   = $publicKey;
-        $registrationDto->signCounter = 0;
-
-        $registrationRepository = m::mock('Surfnet\StepupGateway\U2fVerificationBundle\Repository\RegistrationRepository');
-        $registrationRepository
-            ->shouldReceive('save')
-            ->once()
-            ->with(m::anyOf($registration));
+        $registration = new RegistrationDto;
+        $registration->keyHandle = 'key-handle';
+        $registration->publicKey = 'public-key';
+        $registration->signCounter = 20;
 
         $u2fService = m::mock('Surfnet\StepupU2fBundle\Service\U2fService');
         $u2fService
             ->shouldReceive('verifyRegistration')
-            ->with(m::anyOf($request), m::anyOf($response))
-            ->andReturn(RegistrationVerificationResult::success($registrationDto));
+            ->andReturn(RegistrationVerificationResult::success($registration));
+
+        $registrationRepository = m::mock('Surfnet\StepupGateway\U2fVerificationBundle\Repository\RegistrationRepository');
+        $registrationRepository->shouldReceive('save')->once();
 
         $service = new VerificationService($registrationRepository, $u2fService, new NullLogger());
-        $service->verifyRegistration($request, $response);
+        $service->verifyRegistration(new RegisterRequest(), new RegisterResponse());
     }
 
     /**
