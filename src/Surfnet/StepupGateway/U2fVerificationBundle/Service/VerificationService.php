@@ -157,7 +157,7 @@ final class VerificationService
         $this->logger->notice('Received request to revoke a U2F device registration from the U2F verification server');
 
         try {
-            $this->registrationRepository->revokeByKeyHandle($keyHandle);
+            $this->registrationRepository->removeByKeyHandle($keyHandle);
         } catch (Exception $e) {
             $errorMessage = sprintf(
                 'An exception was thrown while revoking the U2F device registration (%s: %s)',

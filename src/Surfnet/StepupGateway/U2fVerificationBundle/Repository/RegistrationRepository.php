@@ -43,7 +43,7 @@ class RegistrationRepository extends EntityRepository
         $entityManager->flush();
     }
 
-    public function revokeByKeyHandle(KeyHandle $keyHandle)
+    public function removeByKeyHandle(KeyHandle $keyHandle)
     {
         $this
             ->createQueryBuilder('r')
