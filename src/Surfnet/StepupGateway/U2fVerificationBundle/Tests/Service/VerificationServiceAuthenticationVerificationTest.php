@@ -29,7 +29,6 @@ use Surfnet\StepupU2fBundle\Dto\Registration as RegistrationDto;
 use Surfnet\StepupU2fBundle\Dto\SignRequest;
 use Surfnet\StepupU2fBundle\Dto\SignResponse;
 use Surfnet\StepupU2fBundle\Service\AuthenticationVerificationResult;
-use Surfnet\StepupU2fBundle\Service\RegistrationVerificationResult;
 
 final class VerificationServiceAuthenticationVerificationTest extends TestCase
 {
@@ -39,7 +38,7 @@ final class VerificationServiceAuthenticationVerificationTest extends TestCase
      * @test
      * @group authentication
      */
-    public function it_can_verify_an_authentication()
+    public function it_updates_and_stores_the_sign_counter()
     {
         $keyHandle          = 'key-handle';
         $publicKey          = 'public-key';
@@ -53,28 +52,18 @@ final class VerificationServiceAuthenticationVerificationTest extends TestCase
         $registration = m::mock(new Registration(new KeyHandle($keyHandle), new PublicKey($publicKey)));
         $registration->shouldReceive('authenticationWasVerified')->once()->with($updatedSignCounter);
 
-        $registrationDtoBeforeVerification = new RegistrationDto();
-        $registrationDtoBeforeVerification->keyHandle   = $keyHandle;
-        $registrationDtoBeforeVerification->publicKey   = $publicKey;
-        $registrationDtoBeforeVerification->signCounter = 0;
-
-        $registrationDtoAfterVerification = clone $registrationDtoBeforeVerification;
+        $registrationDtoAfterVerification = new RegistrationDto();
+        $registrationDtoAfterVerification->keyHandle   = $keyHandle;
+        $registrationDtoAfterVerification->publicKey   = $publicKey;
         $registrationDtoAfterVerification->signCounter = $updatedSignCounter;
 
         $registrationRepository = m::mock('Surfnet\StepupGateway\U2fVerificationBundle\Repository\RegistrationRepository');
-        $registrationRepository
-            ->shouldReceive('findByKeyHandle')
-            ->with(m::anyOf(new KeyHandle($keyHandle)))
-            ->andReturn($registration);
-        $registrationRepository
-            ->shouldReceive('save')
-            ->once()
-            ->with($registration);
+        $registrationRepository->shouldReceive('findByKeyHandle')->andReturn($registration);
+        $registrationRepository->shouldReceive('save')->once();
 
         $u2fService = m::mock('Surfnet\StepupU2fBundle\Service\U2fService');
         $u2fService
             ->shouldReceive('verifyAuthentication')
-            ->with(m::anyOf($registrationDtoBeforeVerification), m::anyOf($request), m::anyOf($response))
             ->andReturn(AuthenticationVerificationResult::success($registrationDtoAfterVerification));
 
         $service = new VerificationService($registrationRepository, $u2fService, new NullLogger());
