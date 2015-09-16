@@ -22,6 +22,7 @@ use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Surfnet\StepupGateway\U2fVerificationBundle\Exception\DomainException;
 use Surfnet\StepupGateway\U2fVerificationBundle\Exception\InvalidArgumentException;
+use Surfnet\StepupGateway\U2fVerificationBundle\Exception\SignCounterTooLowException;
 use Surfnet\StepupGateway\U2fVerificationBundle\Value\KeyHandle;
 use Surfnet\StepupGateway\U2fVerificationBundle\Value\PublicKey;
 
@@ -83,7 +84,7 @@ class Registration
         }
 
         if ($newSignCounter <= $this->signCounter) {
-            throw new DomainException(
+            throw new SignCounterTooLowException(
                 sprintf(
                     'An authentication matching this registration was verified, but the sign counter "%d" was lower ' .
                     'than or equal to the last known sign counter "%d". This registration must be invalidated.',
