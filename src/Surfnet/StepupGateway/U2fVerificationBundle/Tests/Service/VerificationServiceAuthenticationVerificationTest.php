@@ -87,24 +87,15 @@ final class VerificationServiceAuthenticationVerificationTest extends TestCase
         $registration = m::mock(new Registration(new KeyHandle($keyHandle), new PublicKey($publicKey)));
         $registration->shouldReceive('authenticationWasVerified')->never();
 
-        $registrationDto = new RegistrationDto();
-        $registrationDto->keyHandle   = $keyHandle;
-        $registrationDto->publicKey   = $publicKey;
-        $registrationDto->signCounter = 0;
-
         $registrationRepository = m::mock('Surfnet\StepupGateway\U2fVerificationBundle\Repository\RegistrationRepository');
         $registrationRepository
             ->shouldReceive('findByKeyHandle')
-            ->once()
-            ->with(m::anyOf(new KeyHandle($keyHandle)))
             ->andReturn($registration);
         $registrationRepository->shouldReceive('save')->never();
 
         $u2fService = m::mock('Surfnet\StepupU2fBundle\Service\U2fService');
         $u2fService
             ->shouldReceive('verifyAuthentication')
-            ->with(m::anyOf($registrationDto), m::anyOf($request), m::anyOf($response))
-            ->once()
             ->andReturn(AuthenticationVerificationResult::publicKeyDecodingFailed());
 
         $service = new VerificationService($registrationRepository, $u2fService, new NullLogger());
