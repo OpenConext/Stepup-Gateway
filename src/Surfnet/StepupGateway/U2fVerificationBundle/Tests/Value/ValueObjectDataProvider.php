@@ -18,7 +18,7 @@
 
 namespace Surfnet\StepupGateway\U2fVerificationBundle\Tests\Value;
 
-trait ValueObjectTest
+trait ValueObjectDataProvider
 {
     public function nonStrings()
     {

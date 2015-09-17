@@ -23,7 +23,7 @@ use Surfnet\StepupGateway\U2fVerificationBundle\Value\KeyHandle;
 
 final class KeyHandleTest extends TestCase
 {
-    use ValueObjectTest;
+    use ValueObjectDataProvider;
 
     /**
      * @test

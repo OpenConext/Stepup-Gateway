@@ -23,7 +23,7 @@ use Surfnet\StepupGateway\U2fVerificationBundle\Value\PublicKey;
 
 final class PublicKeyTest extends TestCase
 {
-    use ValueObjectTest;
+    use ValueObjectDataProvider;
 
     /**
      * @test
