@@ -18,8 +18,8 @@
 
 namespace Surfnet\StepupGateway\ApiBundle\Dto;
 
-use Symfony\Component\Validator\Constraints as Assert;
 use Surfnet\StepupBundle\Request\JsonConvertible;
+use Symfony\Component\Validator\Constraints as Assert;
 
 final class RevokeRequest implements JsonConvertible
 {

@@ -21,7 +21,6 @@ namespace Surfnet\StepupGateway\ApiBundle\Tests\Request;
 use Mockery as m;
 use PHPUnit_Framework_TestCase as TestCase;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Surfnet\StepupBundle\Exception\BadJsonRequestException;
 use Surfnet\StepupGateway\ApiBundle\Request\SignRequestParamConverter;
 use Surfnet\StepupU2fBundle\Dto\SignRequest;
 
