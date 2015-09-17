@@ -16,11 +16,6 @@ services:
         arguments:
             - ~ # HTTP Basic realm string, see extension
 
-    surfnet_gateway_api.service.u2f_verification:
-        class: Surfnet\StepupGateway\ApiBundle\Service\U2fVerificationService
-        arguments:
-            - @surfnet_stepup_u2f_verification.service.u2f_verification
-
     surfnet_stepup.register_request_param_converter:
         class: Surfnet\StepupGateway\ApiBundle\Request\RegisterRequestParamConverter
         arguments: [@validator]

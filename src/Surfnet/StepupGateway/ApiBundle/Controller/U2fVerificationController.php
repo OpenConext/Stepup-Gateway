@@ -21,7 +21,8 @@ namespace Surfnet\StepupGateway\ApiBundle\Controller;
 use Exception;
 use Surfnet\StepupGateway\ApiBundle\Dto\Requester;
 use Surfnet\StepupGateway\ApiBundle\Dto\RevokeRequest;
-use Surfnet\StepupGateway\ApiBundle\Service\U2fVerificationService;
+use Surfnet\StepupGateway\U2fVerificationBundle\Service\VerificationService;
+use Surfnet\StepupGateway\U2fVerificationBundle\Value\KeyHandle;
 use Surfnet\StepupU2fBundle\Dto\RegisterRequest;
 use Surfnet\StepupU2fBundle\Dto\RegisterResponse;
 use Surfnet\StepupU2fBundle\Dto\SignRequest;
@@ -49,7 +50,7 @@ class U2fVerificationController extends Controller
         $service = $this->getU2fVerificationService();
 
         try {
-            $result = $service->verifyRegistration($registerRequest, $registerResponse, $requester);
+            $result = $service->verifyRegistration($registerRequest, $registerResponse);
         } catch (Exception $e) {
             return new JsonResponse(['errors' => [$e->getMessage()]], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -79,7 +80,7 @@ class U2fVerificationController extends Controller
         Requester $requester
     ) {
         try {
-            $result = $this->getU2fVerificationService()->verifyAuthentication($signRequest, $signResponse, $requester);
+            $result = $this->getU2fVerificationService()->verifyAuthentication($signRequest, $signResponse);
         } catch (Exception $e) {
             return new JsonResponse(['errors' => [$e->getMessage()]], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -94,7 +95,7 @@ class U2fVerificationController extends Controller
     public function revokeRegistrationAction(RevokeRequest $revokeRequest, Requester $requester)
     {
         try {
-            $removed = $this->getU2fVerificationService()->revokeRegistration($revokeRequest, $requester);
+            $removed = $this->getU2fVerificationService()->revokeRegistration(new KeyHandle($revokeRequest->keyHandle));
         } catch (Exception $e) {
             return new JsonResponse(['errors' => [$e->getMessage()]], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -107,10 +108,10 @@ class U2fVerificationController extends Controller
     }
 
     /**
-     * @return U2fVerificationService
+     * @return VerificationService
      */
     private function getU2fVerificationService()
     {
-        return $this->get('surfnet_gateway_api.service.u2f_verification');
+        return $this->get('surfnet_stepup_u2f_verification.service.u2f_verification');
     }
 }
