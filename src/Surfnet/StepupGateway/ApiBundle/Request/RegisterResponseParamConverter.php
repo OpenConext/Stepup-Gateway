@@ -86,6 +86,8 @@ class RegisterResponseParamConverter implements ParamConverterInterface
         }
 
         $request->attributes->set($name, $registerResponse);
+
+        return true;
     }
 
     public function supports(ParamConverter $configuration)

@@ -86,6 +86,8 @@ class RegisterRequestParamConverter implements ParamConverterInterface
         }
 
         $request->attributes->set($name, $registerRequest);
+
+        return true;
     }
 
     public function supports(ParamConverter $configuration)

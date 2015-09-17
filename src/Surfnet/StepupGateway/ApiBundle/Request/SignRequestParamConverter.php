@@ -97,6 +97,8 @@ class SignRequestParamConverter implements ParamConverterInterface
         }
 
         $request->attributes->set($name, $signRequest);
+
+        return true;
     }
 
     public function supports(ParamConverter $configuration)
