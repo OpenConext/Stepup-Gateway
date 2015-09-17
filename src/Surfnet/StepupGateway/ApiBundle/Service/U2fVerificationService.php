@@ -20,10 +20,6 @@ namespace Surfnet\StepupGateway\ApiBundle\Service;
 
 use Surfnet\StepupGateway\ApiBundle\Dto\Requester;
 use Surfnet\StepupGateway\ApiBundle\Dto\RevokeRequest;
-use Surfnet\StepupGateway\ApiBundle\Dto\U2fRegisterRequest;
-use Surfnet\StepupGateway\ApiBundle\Dto\U2fRegisterResponse;
-use Surfnet\StepupGateway\ApiBundle\Dto\U2fSignRequest;
-use Surfnet\StepupGateway\ApiBundle\Dto\U2fSignResponse;
 use Surfnet\StepupGateway\U2fVerificationBundle\Service\AuthenticationVerificationResult;
 use Surfnet\StepupGateway\U2fVerificationBundle\Service\RegistrationVerificationResult;
 use Surfnet\StepupGateway\U2fVerificationBundle\Service\VerificationService;
@@ -49,34 +45,28 @@ final class U2fVerificationService
     }
 
     /**
-     * @param U2fRegisterRequest  $request The register request that you requested earlier and was used to query the U2F
+     * @param RegisterRequest  $request The register request that you requested earlier and was used to query the U2F
      *     device.
-     * @param U2fRegisterResponse $response The response that the U2F device gave in response to the register request.
+     * @param RegisterResponse $response The response that the U2F device gave in response to the register request.
      * @param Requester        $requester
      * @return RegistrationVerificationResult
      */
-    public function verifyRegistration(U2fRegisterRequest $request, U2fRegisterResponse $response, Requester $requester)
+    public function verifyRegistration(RegisterRequest $request, RegisterResponse $response, Requester $requester)
     {
-        return $this->verificationService->verifyRegistration(
-            $this->adaptRegisterRequest($request),
-            $this->adaptRegisterResponse($response)
-        );
+        return $this->verificationService->verifyRegistration($request, $response);
     }
 
     /**
      * Request signing of a sign request. Does not support U2F's sign counter system.
      *
-     * @param U2fSignRequest  $request The sign request that you requested earlier and was used to query the U2F device.
-     * @param U2fSignResponse $response The response that the U2F device gave in response to the sign request.
+     * @param SignRequest  $request The sign request that you requested earlier and was used to query the U2F device.
+     * @param SignResponse $response The response that the U2F device gave in response to the sign request.
      * @param Requester    $requester
      * @return AuthenticationVerificationResult
      */
-    public function verifyAuthentication(U2fSignRequest $request, U2fSignResponse $response, Requester $requester)
+    public function verifyAuthentication(SignRequest $request, SignResponse $response, Requester $requester)
     {
-        return $this->verificationService->verifyAuthentication(
-            $this->adaptSignRequest($request),
-            $this->adaptSignResponse($response)
-        );
+        return $this->verificationService->verifyAuthentication($request, $response);
     }
 
     /**
@@ -87,63 +77,5 @@ final class U2fVerificationService
     public function revokeRegistration(RevokeRequest $revokeRequest, Requester $requester)
     {
         return $this->verificationService->revokeRegistration(new KeyHandle($revokeRequest->keyHandle));
-    }
-
-    /**
-     * @param U2fRegisterRequest $request
-     * @return RegisterRequest
-     */
-    private function adaptRegisterRequest(U2fRegisterRequest $request)
-    {
-        $adapted = new RegisterRequest();
-        $adapted->version = $request->version;
-        $adapted->appId = $request->appId;
-        $adapted->challenge = $request->challenge;
-
-        return $adapted;
-    }
-
-    /**
-     * @param U2fRegisterResponse $response
-     * @return RegisterResponse
-     */
-    private function adaptRegisterResponse(U2fRegisterResponse $response)
-    {
-        $adapted = new RegisterResponse();
-        $adapted->errorCode = $response->errorCode ?: RegisterResponse::ERROR_CODE_OK;
-        $adapted->registrationData = $response->registrationData;
-        $adapted->clientData = $response->clientData;
-
-        return $adapted;
-    }
-
-    /**
-     * @param U2fSignRequest $request
-     * @return SignRequest
-     */
-    private function adaptSignRequest(U2fSignRequest $request)
-    {
-        $adapted = new SignRequest();
-        $adapted->version   = $request->version;
-        $adapted->keyHandle = $request->keyHandle;
-        $adapted->appId     = $request->appId;
-        $adapted->challenge = $request->challenge;
-
-        return $adapted;
-    }
-
-    /**
-     * @param U2fSignResponse $response
-     * @return SignResponse
-     */
-    private function adaptSignResponse(U2fSignResponse $response)
-    {
-        $adapted = new SignResponse();
-        $adapted->errorCode = $response->errorCode ?: SignResponse::ERROR_CODE_OK;
-        $adapted->keyHandle = $response->keyHandle;
-        $adapted->clientData = $response->clientData;
-        $adapted->signatureData = $response->signatureData;
-
-        return $adapted;
     }
 }

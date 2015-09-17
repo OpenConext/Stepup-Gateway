@@ -20,3 +20,24 @@ services:
         class: Surfnet\StepupGateway\ApiBundle\Service\U2fVerificationService
         arguments:
             - @surfnet_stepup_u2f_verification.service.u2f_verification
+
+    surfnet_stepup.register_request_param_converter:
+        class: Surfnet\StepupGateway\ApiBundle\Request\RegisterRequestParamConverter
+        arguments: [@validator]
+        tags: [{ name: request.param_converter, priority: -1, converter: surfnet_stepup.json_convertible }]
+
+    surfnet_stepup.register_response_param_converter:
+        class: Surfnet\StepupGateway\ApiBundle\Request\RegisterResponseParamConverter
+        arguments: [@validator]
+        tags: [{ name: request.param_converter, priority: -1, converter: surfnet_stepup.json_convertible }]
+
+    surfnet_stepup.sign_request_param_converter:
+        class: Surfnet\StepupGateway\ApiBundle\Request\SignRequestParamConverter
+        arguments: [@validator]
+        tags: [{ name: request.param_converter, priority: -1, converter: surfnet_stepup.json_convertible }]
+
+    surfnet_stepup.sign_response_param_converter:
+        class: Surfnet\StepupGateway\ApiBundle\Request\SignResponseParamConverter
+        arguments: [@validator]
+        tags: [{ name: request.param_converter, priority: -1, converter: surfnet_stepup.json_convertible }]
+

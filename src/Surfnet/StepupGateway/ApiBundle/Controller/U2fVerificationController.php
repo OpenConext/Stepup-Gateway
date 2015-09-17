@@ -21,13 +21,11 @@ namespace Surfnet\StepupGateway\ApiBundle\Controller;
 use Exception;
 use Surfnet\StepupGateway\ApiBundle\Dto\Requester;
 use Surfnet\StepupGateway\ApiBundle\Dto\RevokeRequest;
-use Surfnet\StepupGateway\ApiBundle\Dto\U2fRegisterRequest;
-use Surfnet\StepupGateway\ApiBundle\Dto\U2fRegisterResponse;
-use Surfnet\StepupGateway\ApiBundle\Dto\U2fSignRequest;
-use Surfnet\StepupGateway\ApiBundle\Dto\U2fSignResponse;
-use Surfnet\StepupGateway\ApiBundle\Service\U2fAuthenticationVerificationResult;
-use Surfnet\StepupGateway\ApiBundle\Service\U2fRegistrationVerificationResult;
 use Surfnet\StepupGateway\ApiBundle\Service\U2fVerificationService;
+use Surfnet\StepupU2fBundle\Dto\RegisterRequest;
+use Surfnet\StepupU2fBundle\Dto\RegisterResponse;
+use Surfnet\StepupU2fBundle\Dto\SignRequest;
+use Surfnet\StepupU2fBundle\Dto\SignResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -38,14 +36,14 @@ use Symfony\Component\HttpFoundation\Response;
 class U2fVerificationController extends Controller
 {
     /**
-     * @param U2fRegisterRequest  $registerRequest
-     * @param U2fRegisterResponse $registerResponse
+     * @param RegisterRequest  $registerRequest
+     * @param RegisterResponse $registerResponse
      * @param Requester           $requester
      * @return JsonResponse
      */
     public function registerAction(
-        U2fRegisterRequest $registerRequest,
-        U2fRegisterResponse $registerResponse,
+        RegisterRequest $registerRequest,
+        RegisterResponse $registerResponse,
         Requester $requester
     ) {
         $service = $this->getU2fVerificationService();
@@ -70,14 +68,14 @@ class U2fVerificationController extends Controller
     }
 
     /**
-     * @param U2fSignRequest  $signRequest
-     * @param U2fSignResponse $signResponse
+     * @param SignRequest  $signRequest
+     * @param SignResponse $signResponse
      * @param Requester       $requester
      * @return JsonResponse
      */
     public function verifyAuthenticationAction(
-        U2fSignRequest $signRequest,
-        U2fSignResponse $signResponse,
+        SignRequest $signRequest,
+        SignResponse $signResponse,
         Requester $requester
     ) {
         try {
