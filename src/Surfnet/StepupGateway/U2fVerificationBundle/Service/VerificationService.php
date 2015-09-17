@@ -155,12 +155,16 @@ final class VerificationService
         return $result;
     }
 
+    /**
+     * @param KeyHandle $keyHandle
+     * @return bool Whether the registration was found and removed.
+     */
     public function revokeRegistration(KeyHandle $keyHandle)
     {
         $this->logger->notice('Received request to revoke a U2F device registration from the U2F verification server');
 
         try {
-            $this->registrationRepository->removeByKeyHandle($keyHandle);
+            $removed = $this->registrationRepository->removeByKeyHandle($keyHandle);
         } catch (Exception $e) {
             $errorMessage = sprintf(
                 'An exception was thrown while revoking the U2F device registration (%s: %s)',
@@ -173,5 +177,7 @@ final class VerificationService
         }
 
         $this->logger->notice('Revoked U2F device registration');
+
+        return $removed;
     }
 }

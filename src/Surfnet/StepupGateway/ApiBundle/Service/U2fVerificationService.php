@@ -81,11 +81,12 @@ final class U2fVerificationService
 
     /**
      * @param RevokeRequest $revokeRequest
-     * @param Requester $requester
+     * @param Requester     $requester
+     * @return bool Whether the registration was found and removed.
      */
     public function revokeRegistration(RevokeRequest $revokeRequest, Requester $requester)
     {
-        $this->verificationService->revokeRegistration(new KeyHandle($revokeRequest->keyHandle));
+        return $this->verificationService->revokeRegistration(new KeyHandle($revokeRequest->keyHandle));
     }
 
     /**

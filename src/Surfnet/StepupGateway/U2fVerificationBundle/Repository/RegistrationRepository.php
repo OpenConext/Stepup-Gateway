@@ -43,14 +43,22 @@ class RegistrationRepository extends EntityRepository
         $entityManager->flush();
     }
 
+    /**
+     * @param KeyHandle $keyHandle
+     * @return bool Whether the registration was found and removed.
+     */
     public function removeByKeyHandle(KeyHandle $keyHandle)
     {
-        $this
-            ->createQueryBuilder('r')
-            ->delete()
-            ->where('r.keyHandle = :keyHandle')
-            ->setParameter('keyHandle', $keyHandle)
-            ->getQuery()
-            ->execute();
+        $registration = $this->findByKeyHandle($keyHandle);
+
+        if ($registration === null) {
+            return false;
+        }
+
+        $entityManager = $this->getEntityManager();
+        $entityManager->remove($registration);
+        $entityManager->flush();
+
+        return true;
     }
 }
