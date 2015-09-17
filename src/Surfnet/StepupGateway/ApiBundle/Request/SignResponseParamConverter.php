@@ -69,7 +69,10 @@ class SignResponseParamConverter implements ParamConverterInterface
             $extraneousPropertyNames = array_diff($actualPropertyNames, $expectedPropertyNames);
 
             if (count($missingPropertyNames)) {
-                $errors[] = sprintf('Missing authentication response properties: %s', join(', ', $missingPropertyNames));
+                $errors[] = sprintf(
+                    'Missing authentication response properties: %s',
+                    join(', ', $missingPropertyNames)
+                );
             }
 
             if (count($extraneousPropertyNames)) {

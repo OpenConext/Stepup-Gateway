@@ -41,7 +41,7 @@ class PublicKeyType extends Type
         }
 
         if ($value === null) {
-            return $value;
+            return null;
         }
 
         throw new LogicException(

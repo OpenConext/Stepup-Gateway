@@ -33,12 +33,12 @@ final class U2fController extends Controller
     {
         return new JsonResponse(
             [
-                "trustedFacets" => [
+                'trustedFacets' => [
                     [
-                        "version" => ["major" => 1, "minor" => 0],
-                        "ids"     => [
-                            "https://ss-dev.stepup.coin.surf.net",
-                            "https://ra-dev.stepup.coin.surf.net",
+                        'version' => ['major' => 1, 'minor' => 0],
+                        'ids'     => [
+                            'https://ss-dev.stepup.coin.surf.net',
+                            'https://ra-dev.stepup.coin.surf.net',
                         ],
                     ],
                 ],
