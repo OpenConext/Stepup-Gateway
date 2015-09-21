@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2014 SURFnet bv
+ * Copyright 2015 SURFnet bv
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,21 +16,17 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupGateway\GatewayBundle\DependencyInjection;
+namespace Surfnet\StepupGateway\ApiBundle\Dto;
 
-use Symfony\Component\Config\Definition\Builder\TreeBuilder;
-use Symfony\Component\Config\Definition\ConfigurationInterface;
+use Surfnet\StepupBundle\Request\JsonConvertible;
+use Symfony\Component\Validator\Constraints as Assert;
 
-final class Configuration implements ConfigurationInterface
+final class RevokeRequest implements JsonConvertible
 {
-    public function getConfigTreeBuilder()
-    {
-        $treeBuilder = new TreeBuilder();
-
-        $rootNode = $treeBuilder->root('surfnet_stepup_gateway_gateway');
-
-        $rootNode->children()->scalarNode('intrinsic_loa')->isRequired()->end()->end();
-
-        return $treeBuilder;
-    }
+    /**
+     * @Assert\Type("string", message="Key handle must be a string")
+     *
+     * @var string
+     */
+    public $keyHandle;
 }

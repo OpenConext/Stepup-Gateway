@@ -58,3 +58,5 @@ parameters:
     gateway_loa_loa3: https://gateway.tld/authentication/loa3
 
     asset_version: 1
+
+    u2f_app_id: https://gateway.tld/u2f/app-id

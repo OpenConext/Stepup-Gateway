@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2014 SURFnet bv
+ * Copyright 2015 SURFnet bv
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,21 +16,12 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupGateway\GatewayBundle\DependencyInjection;
+namespace Surfnet\StepupGateway\U2fVerificationBundle\Exception;
 
-use Symfony\Component\Config\Definition\Builder\TreeBuilder;
-use Symfony\Component\Config\Definition\ConfigurationInterface;
-
-final class Configuration implements ConfigurationInterface
+/**
+ * When catching this, you should invalidate the U2F device registration, because there is more one U2F device that can
+ * authenticate using this registration in circulation.
+ */
+class SignCounterTooLowException extends DomainException
 {
-    public function getConfigTreeBuilder()
-    {
-        $treeBuilder = new TreeBuilder();
-
-        $rootNode = $treeBuilder->root('surfnet_stepup_gateway_gateway');
-
-        $rootNode->children()->scalarNode('intrinsic_loa')->isRequired()->end()->end();
-
-        return $treeBuilder;
-    }
 }

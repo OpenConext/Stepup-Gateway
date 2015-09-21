@@ -35,7 +35,8 @@
         "mockery/mockery": "~0.9.0",
         "surfnet/yubikey-api-client-bundle": "dev-develop",
         "surfnet/stepup-bundle": "dev-develop",
-        "surfnet/stepup-saml-bundle": "dev-develop"
+        "surfnet/stepup-saml-bundle": "dev-develop",
+        "surfnet/stepup-u2f-bundle": "dev-develop"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3",

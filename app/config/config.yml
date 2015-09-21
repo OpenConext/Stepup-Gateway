@@ -84,6 +84,9 @@ doctrine:
                 user:     "%database_deploy_user%"
                 password: "%database_deploy_password%"
                 charset:  UTF8
+        types:
+            u2f_key_handle: Surfnet\StepupGateway\U2fVerificationBundle\Doctrine\Type\KeyHandleType
+            u2f_public_key:  Surfnet\StepupGateway\U2fVerificationBundle\Doctrine\Type\PublicKeyType
     orm:
         default_entity_manager: gateway
         auto_generate_proxy_classes: "%kernel.debug%"
@@ -208,6 +211,9 @@ jms_translation:
             excluded_names: ['*TestCase.php', '*Test.php']
             excluded_dirs: [cache, data, logs, Tests]
             extractors: []
+
+surfnet_stepup_u2f:
+    app_id: %u2f_app_id%
 
 surfnet_stepup_gateway_u2f_verification:
     migrations:

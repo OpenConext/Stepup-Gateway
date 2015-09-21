@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2014 SURFnet bv
+ * Copyright 2015 SURFnet bv
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,21 +16,10 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupGateway\GatewayBundle\DependencyInjection;
+namespace Surfnet\StepupGateway\U2fVerificationBundle\Exception;
 
-use Symfony\Component\Config\Definition\Builder\TreeBuilder;
-use Symfony\Component\Config\Definition\ConfigurationInterface;
+use DomainException as CoreDomainException;
 
-final class Configuration implements ConfigurationInterface
+class DomainException extends CoreDomainException
 {
-    public function getConfigTreeBuilder()
-    {
-        $treeBuilder = new TreeBuilder();
-
-        $rootNode = $treeBuilder->root('surfnet_stepup_gateway_gateway');
-
-        $rootNode->children()->scalarNode('intrinsic_loa')->isRequired()->end()->end();
-
-        return $treeBuilder;
-    }
 }
