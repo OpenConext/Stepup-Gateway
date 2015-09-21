@@ -94,14 +94,18 @@ class U2fVerificationController extends Controller
 
     public function revokeRegistrationAction(RevokeRequest $revokeRequest, Requester $requester)
     {
+        $verificationService = $this->getU2fVerificationService();
+
         try {
-            $removed = $this->getU2fVerificationService()->revokeRegistration(new KeyHandle($revokeRequest->keyHandle));
+            $registration = $verificationService->findRegistrationByKeyHandle(new KeyHandle($revokeRequest->keyHandle));
+
+            if ($registration === null) {
+                return new JsonResponse(['status' => 'UNKNOWN_KEY_HANDLE'], Response::HTTP_NOT_FOUND);
+            }
+
+            $verificationService->revokeRegistration($registration);
         } catch (Exception $e) {
             return new JsonResponse(['errors' => [$e->getMessage()]], Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
-
-        if (!$removed) {
-            return new JsonResponse(['status' => 'UNKNOWN_KEY_HANDLE'], Response::HTTP_NOT_FOUND);
         }
 
         return new JsonResponse(['status' => 'SUCCESS'], Response::HTTP_OK);

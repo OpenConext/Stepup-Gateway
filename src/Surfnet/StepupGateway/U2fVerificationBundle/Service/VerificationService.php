@@ -20,12 +20,13 @@ namespace Surfnet\StepupGateway\U2fVerificationBundle\Service;
 
 use Exception;
 use Psr\Log\LoggerInterface;
+use Surfnet\StepupGateway\U2fVerificationBundle\Entity\Registration;
 use Surfnet\StepupGateway\U2fVerificationBundle\Exception\RuntimeException;
 use Surfnet\StepupGateway\U2fVerificationBundle\Repository\RegistrationRepository;
 use Surfnet\StepupGateway\U2fVerificationBundle\Value\KeyHandle;
 use Surfnet\StepupU2fBundle\Dto\RegisterRequest;
 use Surfnet\StepupU2fBundle\Dto\RegisterResponse;
-use Surfnet\StepupU2fBundle\Dto\Registration;
+use Surfnet\StepupU2fBundle\Dto\Registration as RegistrationDto;
 use Surfnet\StepupU2fBundle\Dto\SignRequest;
 use Surfnet\StepupU2fBundle\Dto\SignResponse;
 use Surfnet\StepupU2fBundle\Service\U2fService;
@@ -117,7 +118,7 @@ final class VerificationService
             return AuthenticationVerificationResult::registrationUnknown();
         }
 
-        $registrationDto = new Registration();
+        $registrationDto = new RegistrationDto();
         $registrationDto->keyHandle   = $registration->getKeyHandle()->getKeyHandle();
         $registrationDto->publicKey   = $registration->getPublicKey()->getPublicKey();
         $registrationDto->signCounter = $registration->getSignCounter();
@@ -157,14 +158,22 @@ final class VerificationService
 
     /**
      * @param KeyHandle $keyHandle
-     * @return bool Whether the registration was found and removed.
+     * @return null|Registration
      */
-    public function revokeRegistration(KeyHandle $keyHandle)
+    public function findRegistrationByKeyHandle(KeyHandle $keyHandle)
+    {
+        return $this->registrationRepository->findByKeyHandle($keyHandle);
+    }
+
+    /**
+     * @param Registration $registration
+     */
+    public function revokeRegistration(Registration $registration)
     {
         $this->logger->notice('Received request to revoke a U2F device registration from the U2F verification server');
 
         try {
-            $removed = $this->registrationRepository->removeByKeyHandle($keyHandle);
+            $this->registrationRepository->remove($registration);
         } catch (Exception $e) {
             $errorMessage = sprintf(
                 'An exception was thrown while revoking the U2F device registration (%s: %s)',
@@ -177,7 +186,5 @@ final class VerificationService
         }
 
         $this->logger->notice('Revoked U2F device registration');
-
-        return $removed;
     }
 }
