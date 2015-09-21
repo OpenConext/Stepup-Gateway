@@ -5,6 +5,7 @@
         "This file is @generated automatically"
     ],
     "hash": "e5a835a7c17397e5ab289d362c2e3491",
+    "content-hash": "ad21049259e7ad49ae0b8949254bd057",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -2289,7 +2290,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SURFnet/Stepup-saml-bundle/zipball/62ac63e0f7bd15257aa919d0d6885f76cdcaea43",
+                "url": "https://api.github.com/repos/SURFnet/Stepup-saml-bundle/zipball/4dde80135a11844ab4e5ba8eec3602194c49a67d",
                 "reference": "53b7fd0198a1e9de2504a3762af499f744ad222d",
                 "shasum": ""
             },
@@ -2333,12 +2334,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/SURFnet/Stepup-u2f-bundle.git",
-                "reference": "fccdaaf85e7ebbbfa05b608e69170da9539992d6"
+                "reference": "b28737d7b8df5ecbdf7a1e952ecfb530a2951c05"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SURFnet/Stepup-u2f-bundle/zipball/fccdaaf85e7ebbbfa05b608e69170da9539992d6",
-                "reference": "fccdaaf85e7ebbbfa05b608e69170da9539992d6",
+                "url": "https://api.github.com/repos/SURFnet/Stepup-u2f-bundle/zipball/b28737d7b8df5ecbdf7a1e952ecfb530a2951c05",
+                "reference": "b28737d7b8df5ecbdf7a1e952ecfb530a2951c05",
                 "shasum": ""
             },
             "require": {
@@ -2367,7 +2368,7 @@
                 "Apache-2.0"
             ],
             "description": "The SURFnet Step-up U2F bundle contains server-side device verification, and the necessary forms and resources to enable client-side U2F interaction with Step-up Identities",
-            "time": "2015-09-16 07:37:16"
+            "time": "2015-09-17 15:02:04"
         },
         {
             "name": "surfnet/yubikey-api-client-bundle",
