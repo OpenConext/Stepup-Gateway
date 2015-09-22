@@ -19,8 +19,8 @@
 namespace Surfnet\StepupGateway\ApiBundle\Controller;
 
 use Exception;
+use Surfnet\StepupGateway\ApiBundle\Dto\KeyHandle as KeyHandleDto;
 use Surfnet\StepupGateway\ApiBundle\Dto\Requester;
-use Surfnet\StepupGateway\ApiBundle\Dto\RevokeRequest;
 use Surfnet\StepupGateway\U2fVerificationBundle\Service\VerificationService;
 use Surfnet\StepupGateway\U2fVerificationBundle\Value\KeyHandle;
 use Surfnet\StepupU2fBundle\Dto\RegisterRequest;
@@ -69,6 +69,32 @@ class U2fVerificationController extends Controller
     }
 
     /**
+     * @param KeyHandleDto $keyHandle
+     * @return Response
+     */
+    public function createSignRequestAction(KeyHandleDto $keyHandle)
+    {
+        $service      = $this->getU2fVerificationService();
+        $registration = $service->findRegistrationByKeyHandle(new KeyHandle($keyHandle->value));
+
+        if ($registration === null) {
+            return new JsonResponse(['status' => 'UNKNOWN_KEY_HANDLE'], Response::HTTP_BAD_REQUEST);
+        }
+
+        $signRequest = $service->createSignRequest($registration);
+
+        return new JsonResponse(
+            [
+                'version'    => $signRequest->version,
+                'challenge'  => $signRequest->challenge,
+                'app_id'     => $signRequest->appId,
+                'key_handle' => $signRequest->keyHandle,
+            ],
+            Response::HTTP_CREATED
+        );
+    }
+
+    /**
      * @param SignRequest  $signRequest
      * @param SignResponse $signResponse
      * @param Requester       $requester
@@ -92,12 +118,12 @@ class U2fVerificationController extends Controller
         return new JsonResponse(['status' => $result->getStatus()], Response::HTTP_BAD_REQUEST);
     }
 
-    public function revokeRegistrationAction(RevokeRequest $revokeRequest, Requester $requester)
+    public function revokeRegistrationAction(KeyHandleDto $keyHandle, Requester $requester)
     {
         $verificationService = $this->getU2fVerificationService();
 
         try {
-            $registration = $verificationService->findRegistrationByKeyHandle(new KeyHandle($revokeRequest->keyHandle));
+            $registration = $verificationService->findRegistrationByKeyHandle(new KeyHandle($keyHandle->value));
 
             if ($registration === null) {
                 return new JsonResponse(['status' => 'UNKNOWN_KEY_HANDLE'], Response::HTTP_NOT_FOUND);

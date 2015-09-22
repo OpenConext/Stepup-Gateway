@@ -98,6 +98,22 @@ final class VerificationService
     }
 
     /**
+     * @param Registration $registration
+     * @return SignRequest
+     */
+    public function createSignRequest(Registration $registration)
+    {
+        $this->logger->notice('Received request to create a sign request on the U2F verification server');
+
+        $registrationDto = new RegistrationDto();
+        $registrationDto->keyHandle   = $registration->getKeyHandle()->getKeyHandle();
+        $registrationDto->publicKey   = $registration->getPublicKey()->getPublicKey();
+        $registrationDto->signCounter = $registration->getSignCounter();
+
+        return $this->u2fService->createSignRequest($registrationDto);
+    }
+
+    /**
      * Request signing of a sign request. Does not support U2F's sign counter system.
      *
      * @param SignRequest  $request The sign request that you requested earlier and was used to query the U2F device.
