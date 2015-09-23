@@ -37,6 +37,23 @@ use Symfony\Component\HttpFoundation\Response;
 class U2fVerificationController extends Controller
 {
     /**
+     * @return Response
+     */
+    public function createRegisterRequestAction()
+    {
+        $registerRequest = $this->getU2fVerificationService()->createRegisterRequest();
+
+        return new JsonResponse(
+            [
+                'version'    => $registerRequest->version,
+                'challenge'  => $registerRequest->challenge,
+                'app_id'     => $registerRequest->appId,
+            ],
+            Response::HTTP_CREATED
+        );
+    }
+
+    /**
      * @param RegisterRequest  $registerRequest
      * @param RegisterResponse $registerResponse
      * @param Requester           $requester

@@ -62,6 +62,16 @@ final class VerificationService
     }
 
     /**
+     * @return RegisterRequest
+     */
+    public function createRegisterRequest()
+    {
+        $this->logger->notice('Received request to create a register request with the U2F verification server');
+
+        return $this->u2fService->createRegistrationRequest();
+    }
+
+    /**
      * @param RegisterRequest  $request The register request that you requested earlier and was used to query the U2F
      *     device.
      * @param RegisterResponse $response The response that the U2F device gave in response to the register request.
