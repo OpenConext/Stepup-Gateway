@@ -39,6 +39,7 @@ final class U2fController extends Controller
                         'ids'     => [
                             'https://ss-dev.stepup.coin.surf.net',
                             'https://ra-dev.stepup.coin.surf.net',
+                            'https://gw-dev.stepup.coin.surf.net',
                         ],
                     ],
                 ],

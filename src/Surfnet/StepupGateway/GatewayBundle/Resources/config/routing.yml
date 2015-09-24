@@ -37,3 +37,13 @@ gateway_verify_second_factor_tiqr:
     path:     /verify-second-factor/tiqr
     methods:  [GET]
     defaults: { _controller: SurfnetStepupGatewayGatewayBundle:SecondFactor:verifyTiqrSecondFactor }
+
+gateway_verify_second_factor_u2f:
+    path:     /verify-second-factor/u2f/authenticate
+    methods:  [GET]
+    defaults: { _controller: SurfnetStepupGatewayGatewayBundle:SecondFactor:initiateU2fAuthentication }
+
+gateway_verify_second_factor_u2f_verify_authentication:
+    path:     /verify-second-factor/u2f/authenticate
+    methods:  [POST]
+    defaults: { _controller: SurfnetStepupGatewayGatewayBundle:SecondFactor:verifyU2fAuthentication }

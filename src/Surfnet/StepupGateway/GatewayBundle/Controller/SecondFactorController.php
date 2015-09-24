@@ -26,10 +26,13 @@ use Surfnet\StepupGateway\GatewayBundle\Command\SendSmsChallengeCommand;
 use Surfnet\StepupGateway\GatewayBundle\Command\VerifyYubikeyOtpCommand;
 use Surfnet\StepupGateway\GatewayBundle\Exception\RuntimeException;
 use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
+use Surfnet\StepupGateway\U2fVerificationBundle\Value\KeyHandle;
+use Surfnet\StepupU2fBundle\Dto\SignResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class SecondFactorController extends Controller
@@ -340,6 +343,117 @@ class SecondFactorController extends Controller
         } else {
             $logger->notice('SMS challenge did not match');
             $form->addError(new FormError('gateway.form.send_sms_challenge.sms_challenge_incorrect'));
+        }
+
+        return ['form' => $form->createView()];
+    }
+
+    /**
+     * @Template
+     */
+    public function initiateU2fAuthenticationAction()
+    {
+        $context = $this->getResponseContext();
+        $originalRequestId = $context->getInResponseTo();
+
+        /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
+        $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
+
+        $selectedSecondFactor = $this->getSelectedSecondFactor($context, $logger);
+        $stepupService = $this->getStepupService();
+
+        $service = $this->get('surfnet_stepup_u2f_verification.service.u2f_verification');
+        $keyHandle = new KeyHandle($stepupService->getSecondFactorIdentifier($selectedSecondFactor));
+        $registration = $service->findRegistrationByKeyHandle($keyHandle);
+
+        if ($registration === null) {
+            $logger->critical(
+                sprintf('No known registration for key handle of second factor "%s"', $selectedSecondFactor)
+            );
+            $this->addFlash('error', 'gateway.u2f.alert.unknown_registration');
+
+            return ['authenticationFailed' => true];
+        }
+
+        $signRequest = $service->createSignRequest($registration);
+        $signResponse = new SignResponse();
+
+        $formAction = $this->generateUrl('gateway_verify_second_factor_u2f_verify_authentication');
+        $form = $this->createForm(
+            'surfnet_stepup_u2f_verify_device_authentication',
+            $signResponse,
+            ['sign_request' => $signRequest, 'action' => $formAction]
+        );
+
+        /** @var AttributeBagInterface $session */
+        $session = $this->get('gateway.session.u2f');
+        $session->set('request', $signRequest);
+
+        return ['form' => $form->createView()];
+    }
+
+    /**
+     * @Template("SurfnetStepupGatewayGatewayBundle:SecondFactor:initiateU2fAuthentication.html.twig")
+     *
+     * @param Request $request
+     * @return array|Response
+     */
+    public function verifyU2fAuthenticationAction(Request $request)
+    {
+        $context = $this->getResponseContext();
+        $originalRequestId = $context->getInResponseTo();
+
+        /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
+        $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
+
+        $selectedSecondFactor = $this->getSelectedSecondFactor($context, $logger);
+
+        /** @var AttributeBagInterface $session */
+        $session = $this->get('gateway.session.u2f');
+        $signRequest = $session->get('request');
+        $signResponse = new SignResponse();
+
+        $formAction = $this->generateUrl('gateway_verify_second_factor_u2f_verify_authentication');
+        $form = $this
+            ->createForm(
+                'surfnet_stepup_u2f_verify_device_authentication',
+                $signResponse,
+                ['sign_request' => $signRequest, 'action' => $formAction]
+            )
+            ->handleRequest($request);
+
+        if (!$form->isValid()) {
+            $logger->error('U2F authentication verification could not be started because device send illegal data');
+            $this->addFlash('error', 'gateway.u2f.alert.error');
+
+            return ['authenticationFailed' => true];
+        }
+
+        $service = $this->get('surfnet_stepup_u2f_verification.service.u2f_verification');
+        $result = $service->verifyAuthentication($signRequest, $signResponse);
+
+        if ($result->wasSuccessful()) {
+            $context->markSecondFactorVerified();
+            $this->getAuthenticationLogger()->logSecondFactorAuthentication($originalRequestId);
+
+            $logger->info(
+                sprintf(
+                    'Marked U2F second factor "%s" as verified, forwarding to Saml Proxy to respond',
+                    $selectedSecondFactor
+                )
+            );
+
+            return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:respond');
+        } elseif ($result->didDeviceReportError()) {
+            $logger->error('U2F device reported error during authentication');
+            $this->addFlash('error', 'gateway.u2f.alert.device_reported_an_error');
+
+            return ['authenticationFailed' => true];
+        } else {
+            $logger->error('U2F authentication verification failed');
+            $this->addFlash('error', 'gateway.u2f.alert.error');
+
+            return ['authenticationFailed' => true];
         }
 
         return ['form' => $form->createView()];
