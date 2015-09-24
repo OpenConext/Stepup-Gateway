@@ -113,6 +113,10 @@ services:
         class: Surfnet\StepupGateway\GatewayBundle\Form\Type\VerifySmsChallengeType
         tags: [{ name: form.type, alias: gateway_verify_sms_challenge }]
 
+    gateway.form.cancel_second_factor_verification:
+        class: Surfnet\StepupGateway\GatewayBundle\Form\Type\CancelSecondFactorVerificationType
+        tags: [{ name: form.type, alias: gateway_cancel_second_factor_verification }]
+
     # Listeners
     gateway.event_listener.locale:
         class: Surfnet\StepupGateway\GatewayBundle\EventListener\SecondFactorLocaleListener

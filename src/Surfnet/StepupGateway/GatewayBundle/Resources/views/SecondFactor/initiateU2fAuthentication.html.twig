@@ -10,9 +10,9 @@
         <li>{{ 'gateway.second_factor.u2f.text.activate_u2f_device'|trans }}</li>
     </ul>
 
-    <hr>
-
     {% if authenticationFailed is defined and authenticationFailed %}
+        <hr>
+
         {# We don't render the form in case of an error to prevent potential continuous resubmission of device errors #}
         <a href="{{ path('gateway_verify_second_factor_u2f') }}" class="btn btn-primary">
             {{ 'gateway.second_factor.u2f.button.retry'|trans }}
@@ -20,6 +20,10 @@
     {% else %}
         {{ form(form) }}
     {% endif %}
+
+    <hr>
+
+    {{ form(cancelForm) }}
 
 {% endblock %}
 
