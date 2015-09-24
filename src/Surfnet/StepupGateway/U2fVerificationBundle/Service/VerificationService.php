@@ -62,6 +62,16 @@ final class VerificationService
     }
 
     /**
+     * @return RegisterRequest
+     */
+    public function createRegisterRequest()
+    {
+        $this->logger->notice('Received request to create a register request with the U2F verification server');
+
+        return $this->u2fService->createRegistrationRequest();
+    }
+
+    /**
      * @param RegisterRequest  $request The register request that you requested earlier and was used to query the U2F
      *     device.
      * @param RegisterResponse $response The response that the U2F device gave in response to the register request.
@@ -95,6 +105,22 @@ final class VerificationService
         }
 
         return $result;
+    }
+
+    /**
+     * @param Registration $registration
+     * @return SignRequest
+     */
+    public function createSignRequest(Registration $registration)
+    {
+        $this->logger->notice('Received request to create a sign request on the U2F verification server');
+
+        $registrationDto = new RegistrationDto();
+        $registrationDto->keyHandle   = $registration->getKeyHandle()->getKeyHandle();
+        $registrationDto->publicKey   = $registration->getPublicKey()->getPublicKey();
+        $registrationDto->signCounter = $registration->getSignCounter();
+
+        return $this->u2fService->createSignRequest($registrationDto);
     }
 
     /**

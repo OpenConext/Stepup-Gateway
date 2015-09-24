@@ -21,12 +21,12 @@ namespace Surfnet\StepupGateway\ApiBundle\Dto;
 use Surfnet\StepupBundle\Request\JsonConvertible;
 use Symfony\Component\Validator\Constraints as Assert;
 
-final class RevokeRequest implements JsonConvertible
+final class KeyHandle implements JsonConvertible
 {
     /**
      * @Assert\Type("string", message="Key handle must be a string")
      *
      * @var string
      */
-    public $keyHandle;
+    public $value;
 }

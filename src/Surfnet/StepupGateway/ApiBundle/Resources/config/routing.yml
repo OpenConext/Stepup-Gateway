@@ -10,9 +10,21 @@ yubikey_verify:
     methods:   [POST]
     condition: "request.headers.get('Content-Type') == 'application/json' && request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
 
+u2f_create_register_request:
+    path:      /u2f/create-register-request
+    defaults:  { _controller: SurfnetStepupGatewayApiBundle:U2fVerification:createRegisterRequest }
+    methods:   [POST]
+    condition: "request.headers.get('Content-Type') == 'application/json' && request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
+
 u2f_register:
     path:      /u2f/register
     defaults:  { _controller: SurfnetStepupGatewayApiBundle:U2fVerification:register }
+    methods:   [POST]
+    condition: "request.headers.get('Content-Type') == 'application/json' && request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
+
+u2f_create_sign_request:
+    path:      /u2f/create-sign-request
+    defaults:  { _controller: SurfnetStepupGatewayApiBundle:U2fVerification:createSignRequest }
     methods:   [POST]
     condition: "request.headers.get('Content-Type') == 'application/json' && request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
 
