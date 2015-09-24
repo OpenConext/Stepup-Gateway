@@ -49,7 +49,7 @@ class U2fVerificationController extends Controller
                 'challenge'  => $registerRequest->challenge,
                 'app_id'     => $registerRequest->appId,
             ],
-            Response::HTTP_CREATED
+            Response::HTTP_OK
         );
     }
 
@@ -78,7 +78,7 @@ class U2fVerificationController extends Controller
                     'status'     => $result->getStatus(),
                     'key_handle' => $result->getRegistration()->getKeyHandle()->getKeyHandle(),
                 ],
-                Response::HTTP_CREATED
+                Response::HTTP_OK
             );
         }
 
@@ -107,7 +107,7 @@ class U2fVerificationController extends Controller
                 'app_id'     => $signRequest->appId,
                 'key_handle' => $signRequest->keyHandle,
             ],
-            Response::HTTP_CREATED
+            Response::HTTP_OK
         );
     }
 
