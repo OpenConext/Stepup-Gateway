@@ -370,6 +370,8 @@ class SecondFactorController extends Controller
         $cancelForm =
             $this->createForm('gateway_cancel_second_factor_verification', null, ['action' => $cancelFormAction]);
 
+        $logger->notice('Verifying possession of U2F second factor, looking for registration matching key handle');
+
         $service = $this->get('surfnet_stepup_u2f_verification.service.u2f_verification');
         $keyHandle = new KeyHandle($stepupService->getSecondFactorIdentifier($selectedSecondFactor));
         $registration = $service->findRegistrationByKeyHandle($keyHandle);
@@ -382,6 +384,8 @@ class SecondFactorController extends Controller
 
             return ['authenticationFailed' => true, 'cancelForm' => $cancelForm->createView()];
         }
+
+        $logger->notice('Creating sign request');
 
         $signRequest = $service->createSignRequest($registration);
         $signResponse = new SignResponse();
@@ -415,6 +419,8 @@ class SecondFactorController extends Controller
         $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
 
         $selectedSecondFactor = $this->getSelectedSecondFactor($context, $logger);
+
+        $logger->notice('Received sign response from device');
 
         /** @var AttributeBagInterface $session */
         $session = $this->get('gateway.session.u2f');
