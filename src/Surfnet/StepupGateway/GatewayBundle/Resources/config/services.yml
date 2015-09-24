@@ -53,6 +53,7 @@ services:
             - @surfnet_stepup.service.sms_second_factor
             - @translator
             - @logger
+            - [] # See extension
 
     gateway.service.gateway_api_sms:
         class: Surfnet\StepupGateway\GatewayBundle\Service\GatewayApiSmsService

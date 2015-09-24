@@ -176,6 +176,7 @@ surfnet_stepup:
 
 surfnet_stepup_gateway_gateway:
     intrinsic_loa: %gateway_loa_loa1%
+    enabled_second_factors: %enabled_second_factors%
 
 surfnet_saml:
     hosted:

@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "e5a835a7c17397e5ab289d362c2e3491",
-    "content-hash": "ad21049259e7ad49ae0b8949254bd057",
+    "hash": "78aa6916a2284e09c6f37b1ac62dfbea",
+    "content-hash": "491e30a3a2ead698f1e071d18c300628",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -3619,25 +3619,21 @@
         },
         {
             "name": "matthiasnoback/symfony-config-test",
-            "version": "1.2.0",
+            "version": "v1.2.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/matthiasnoback/SymfonyConfigTest.git",
-                "reference": "9e1d553cc5b3900b48e8d4074d84cc7a02c958d1"
+                "reference": "f8fa058a4643b17a21a7853587b94bc6d3e84334"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/matthiasnoback/SymfonyConfigTest/zipball/9e1d553cc5b3900b48e8d4074d84cc7a02c958d1",
-                "reference": "9e1d553cc5b3900b48e8d4074d84cc7a02c958d1",
+                "url": "https://api.github.com/repos/matthiasnoback/SymfonyConfigTest/zipball/f8fa058a4643b17a21a7853587b94bc6d3e84334",
+                "reference": "f8fa058a4643b17a21a7853587b94bc6d3e84334",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3",
                 "symfony/config": "2.*"
-            },
-            "require-dev": {
-                "phpunit/phpunit": ">=3.7",
-                "sebastian/exporter": "1.*"
             },
             "type": "library",
             "autoload": {
@@ -3663,7 +3659,7 @@
                 "phpunit",
                 "symfony"
             ],
-            "time": "2015-04-20 08:58:05"
+            "time": "2015-09-24 06:32:51"
         },
         {
             "name": "pdepend/pdepend",

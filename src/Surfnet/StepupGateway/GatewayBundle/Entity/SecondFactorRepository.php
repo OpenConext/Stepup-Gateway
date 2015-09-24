@@ -19,6 +19,7 @@
 namespace Surfnet\StepupGateway\GatewayBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityRepository;
 use Surfnet\StepupBundle\Value\Loa;
 
@@ -29,6 +30,11 @@ class SecondFactorRepository extends EntityRepository
      */
     private $secondFactorsById = [];
 
+    /**
+     * @param Loa $highestLoa
+     * @param string $identityNameId
+     * @return Collection
+     */
     public function getAllMatchingFor(Loa $highestLoa, $identityNameId)
     {
         /** @var \Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor[] $secondFactors */

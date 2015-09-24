@@ -77,13 +77,28 @@ class StepUpAuthenticationService
      */
     private $logger;
 
+    /**
+     * @var string[]
+     */
+    private $enabledSecondFactorTypes;
+
+    /**
+     * @param LoaResolutionService   $loaResolutionService
+     * @param SecondFactorRepository $secondFactorRepository
+     * @param YubikeyService         $yubikeyService
+     * @param SmsSecondFactorService $smsService
+     * @param TranslatorInterface    $translator
+     * @param LoggerInterface        $logger
+     * @param string[]               $enabledSecondFactorTypes
+     */
     public function __construct(
         LoaResolutionService $loaResolutionService,
         SecondFactorRepository $secondFactorRepository,
         YubikeyService $yubikeyService,
         SmsSecondFactorService $smsService,
         TranslatorInterface $translator,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        array $enabledSecondFactorTypes
     ) {
         $this->loaResolutionService = $loaResolutionService;
         $this->secondFactorRepository = $secondFactorRepository;
@@ -91,6 +106,7 @@ class StepUpAuthenticationService
         $this->smsService = $smsService;
         $this->translator = $translator;
         $this->logger = $logger;
+        $this->enabledSecondFactorTypes = $enabledSecondFactorTypes;
     }
 
     /**
@@ -107,7 +123,23 @@ class StepUpAuthenticationService
             sprintf('Loaded %d matching candidate second factors', count($candidateSecondFactors))
         );
 
-        return $candidateSecondFactors;
+        $enabledCandidateSecondFactors = new ArrayCollection();
+        foreach ($candidateSecondFactors as $candidate) {
+            if (!in_array($candidate->secondFactorType, $this->enabledSecondFactorTypes)) {
+                $this->logger->info(
+                    sprintf(
+                        'Discarding candidate; its second factor type "%s" is not enabled',
+                        $candidate->secondFactorType
+                    )
+                );
+
+                continue;
+            }
+
+            $enabledCandidateSecondFactors->add($candidate);
+        }
+
+        return $enabledCandidateSecondFactors;
     }
 
     /**
