@@ -18,12 +18,14 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Controller;
 
+use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Surfnet\StepupBundle\Command\VerifyPossessionOfPhoneCommand;
 use Surfnet\StepupBundle\Value\PhoneNumber\InternationalPhoneNumber;
 use Surfnet\StepupGateway\GatewayBundle\Command\SendSmsChallengeCommand;
 use Surfnet\StepupGateway\GatewayBundle\Command\VerifyYubikeyOtpCommand;
 use Surfnet\StepupGateway\GatewayBundle\Exception\RuntimeException;
+use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
@@ -115,11 +117,7 @@ class SecondFactorController extends Controller
         $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
         $logger->info('Received request to verify Tiqr Second Factor');
 
-        $selectedSecondFactor = $this->getResponseContext()->getSelectedSecondFactor();
-        if (!$selectedSecondFactor) {
-            $logger->error('Cannot verify possession of an unknown second factor');
-            throw new BadRequestHttpException('Cannot verify possession of an unknown second factor.');
-        }
+        $selectedSecondFactor = $this->getSelectedSecondFactor($context, $logger);
 
         $logger->info(sprintf(
             'Selected Tiqr Second Factor "%s" for verfication, forwarding to Saml handling',
@@ -157,11 +155,7 @@ class SecondFactorController extends Controller
         $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
         $logger->info('Attempting to mark Tiqr Second Factor as verified');
 
-        $selectedSecondFactor = $context->getSelectedSecondFactor();
-        if (!$selectedSecondFactor) {
-            $logger->error('Cannot verify possession of an unknown second factor');
-            throw new BadRequestHttpException('Cannot verify possession of an unknown second factor.');
-        }
+        $selectedSecondFactor = $this->getSelectedSecondFactor($context, $logger);
 
         /** @var \Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor $secondFactor */
         $secondFactor = $this->get('gateway.service.second_factor_service')->findByUuid($selectedSecondFactor);
@@ -197,12 +191,8 @@ class SecondFactorController extends Controller
 
         /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
         $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
-        $selectedSecondFactor = $this->getResponseContext()->getSelectedSecondFactor();
 
-        if (!$selectedSecondFactor) {
-            $logger->error('Cannot verify possession of an unknown second factor', ['sari' => $originalRequestId]);
-            throw new BadRequestHttpException('Cannot verify possession of an unknown second factor.');
-        }
+        $selectedSecondFactor = $this->getSelectedSecondFactor($context, $logger);
 
         $logger->notice('Verifying possession of Yubikey second factor');
 
@@ -259,12 +249,8 @@ class SecondFactorController extends Controller
 
         /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
         $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
-        $selectedSecondFactor = $this->getResponseContext()->getSelectedSecondFactor();
 
-        if (!$selectedSecondFactor) {
-            $logger->error('Cannot verify possession of an unknown second factor');
-            throw new BadRequestHttpException('Cannot verify possession of an unknown second factor.');
-        }
+        $selectedSecondFactor = $this->getSelectedSecondFactor($context, $logger);
 
         $logger->notice('Verifying possession of SMS second factor, preparing to send');
 
@@ -313,12 +299,8 @@ class SecondFactorController extends Controller
 
         /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
         $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
-        $selectedSecondFactor = $this->getResponseContext()->getSelectedSecondFactor();
 
-        if (!$selectedSecondFactor) {
-            $logger->error('Cannot verify possession of an unknown second factor');
-            throw new BadRequestHttpException('Cannot verify possession of an unknown second factor.');
-        }
+        $selectedSecondFactor = $this->getSelectedSecondFactor($context, $logger);
 
         $command = new VerifyPossessionOfPhoneCommand();
         $form = $this->createForm('gateway_verify_sms_challenge', $command)->handleRequest($request);
@@ -372,7 +354,7 @@ class SecondFactorController extends Controller
     }
 
     /**
-     * @return \Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext
+     * @return ResponseContext
      */
     private function getResponseContext()
     {
@@ -385,5 +367,23 @@ class SecondFactorController extends Controller
     private function getAuthenticationLogger()
     {
         return $this->get('gateway.authentication_logger');
+    }
+
+    /**
+     * @param ResponseContext $context
+     * @param LoggerInterface $logger
+     * @return string
+     */
+    private function getSelectedSecondFactor(ResponseContext $context, LoggerInterface $logger)
+    {
+        $selectedSecondFactor = $context->getSelectedSecondFactor();
+
+        if (!$selectedSecondFactor) {
+            $logger->error('Cannot verify possession of an unknown second factor');
+
+            throw new BadRequestHttpException('Cannot verify possession of an unknown second factor.');
+        }
+
+        return $selectedSecondFactor;
     }
 }
