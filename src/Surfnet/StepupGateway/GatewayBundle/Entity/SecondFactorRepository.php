@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2014 SURFnet bv
+ * Copyright 2015 SURFnet B.V.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,41 +18,17 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\EntityRepository;
 use Surfnet\StepupBundle\Value\Loa;
 
-class SecondFactorRepository extends EntityRepository
+interface SecondFactorRepository
 {
     /**
-     * @var SecondFactor[]
-     */
-    private $secondFactorsById = [];
-
-    /**
-     * @param Loa $highestLoa
+     * @param Loa    $highestLoa
      * @param string $identityNameId
      * @return Collection
      */
-    public function getAllMatchingFor(Loa $highestLoa, $identityNameId)
-    {
-        /** @var \Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor[] $secondFactors */
-        $secondFactors = $this->createQueryBuilder('sf')
-            ->where('sf.nameId = :nameId')
-            ->setParameter('nameId', $identityNameId)
-            ->getQuery()
-            ->getResult();
-
-        $matches = new ArrayCollection();
-        foreach ($secondFactors as $secondFactor) {
-            if ($secondFactor->canSatisfy($highestLoa)) {
-                $matches->add($secondFactor);
-            }
-        }
-
-        return $matches;
-    }
+    public function getAllMatchingFor(Loa $highestLoa, $identityNameId);
 
     /**
      * Loads a second factor by its ID. Subsequent calls do not hit the database.
@@ -60,12 +36,5 @@ class SecondFactorRepository extends EntityRepository
      * @param string $secondFactorId
      * @return null|SecondFactor
      */
-    public function findOneBySecondFactorId($secondFactorId)
-    {
-        if (!isset($this->secondFactorsById[$secondFactorId])) {
-            $this->secondFactorsById[$secondFactorId] = $this->findOneBy(['secondFactorId' => $secondFactorId]);
-        }
-
-        return $this->secondFactorsById[$secondFactorId];
-    }
+    public function findOneBySecondFactorId($secondFactorId);
 }
