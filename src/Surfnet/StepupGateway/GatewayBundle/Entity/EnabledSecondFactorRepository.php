@@ -79,7 +79,7 @@ final class EnabledSecondFactorRepository implements SecondFactorRepository
     {
         $secondFactor = $this->secondFactorRepository->findOneBySecondFactorId($secondFactorId);
 
-        if (!array_key_exists($secondFactor->secondFactorType, $this->enabledTypes)) {
+        if (!$secondFactor || !array_key_exists($secondFactor->secondFactorType, $this->enabledTypes)) {
             return null;
         }
 
