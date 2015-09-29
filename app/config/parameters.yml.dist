@@ -60,3 +60,7 @@ parameters:
     asset_version: 1
 
     u2f_app_id: https://gateway.tld/u2f/app-id
+
+    enabled_second_factors:
+        - sms
+        - yubikey

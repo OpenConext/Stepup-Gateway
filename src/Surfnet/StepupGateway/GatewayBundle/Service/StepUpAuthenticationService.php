@@ -77,6 +77,14 @@ class StepUpAuthenticationService
      */
     private $logger;
 
+    /**
+     * @param LoaResolutionService   $loaResolutionService
+     * @param SecondFactorRepository $secondFactorRepository
+     * @param YubikeyService         $yubikeyService
+     * @param SmsSecondFactorService $smsService
+     * @param TranslatorInterface    $translator
+     * @param LoggerInterface        $logger
+     */
     public function __construct(
         LoaResolutionService $loaResolutionService,
         SecondFactorRepository $secondFactorRepository,

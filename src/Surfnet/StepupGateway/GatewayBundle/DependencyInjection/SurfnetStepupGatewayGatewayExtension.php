@@ -38,5 +38,9 @@ class SurfnetStepupGatewayGatewayExtension extends Extension
         $container
             ->getDefinition('gateway.security.intrinsic_loa')
             ->addArgument($config['intrinsic_loa']);
+
+        $container
+            ->getDefinition('gateway.repository.second_factor.enabled')
+            ->replaceArgument(1, $config['enabled_second_factors']);
     }
 }
