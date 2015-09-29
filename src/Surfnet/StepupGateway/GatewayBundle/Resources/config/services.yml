@@ -64,6 +64,20 @@ services:
         arguments:
             - @gateway.repository.whitelist_entry
 
+    gateway.session.u2f:
+        class: Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag
+        factory: ['@session', 'getBag']
+        arguments: ['gateway.service.u2f']
+
+    gateway.session.u2f.namespaced_attribute_bag:
+        public: false
+        class: Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag
+        arguments:
+            - '__gateway.service.u2f__'
+            - '/'
+        calls:
+            - [setName, ['gateway.service.u2f']]
+
     # Logging
     gateway.authentication_logger:
         class: Surfnet\StepupGateway\GatewayBundle\Monolog\Logger\AuthenticationLogger
@@ -98,6 +112,10 @@ services:
     gateway.form.verify_sms_challenge:
         class: Surfnet\StepupGateway\GatewayBundle\Form\Type\VerifySmsChallengeType
         tags: [{ name: form.type, alias: gateway_verify_sms_challenge }]
+
+    gateway.form.cancel_second_factor_verification:
+        class: Surfnet\StepupGateway\GatewayBundle\Form\Type\CancelSecondFactorVerificationType
+        tags: [{ name: form.type, alias: gateway_cancel_second_factor_verification }]
 
     # Listeners
     gateway.event_listener.locale:

@@ -257,6 +257,26 @@
         <source>gateway.second_factor.sms.verify_challenge.title.page</source>
         <target>Verify SMS-code</target>
       </trans-unit>
+      <trans-unit id="d0af79ae0b3f333a17355d24f9fd8cea1311dc48" resname="gateway.second_factor.u2f.button.retry">
+        <jms:reference-file line="18">views/SecondFactor/initiateU2fAuthentication.html.twig</jms:reference-file>
+        <source>gateway.second_factor.u2f.button.retry</source>
+        <target>Retry</target>
+      </trans-unit>
+      <trans-unit id="847f4fe9ebff36182e92bf5cfdb58ee68a3bbdba" resname="gateway.second_factor.u2f.text.activate_u2f_device">
+        <jms:reference-file line="10">views/SecondFactor/initiateU2fAuthentication.html.twig</jms:reference-file>
+        <source>gateway.second_factor.u2f.text.activate_u2f_device</source>
+        <target>Activate the U2F device. This is usually performed using a button.</target>
+      </trans-unit>
+      <trans-unit id="d6c16ec06be9cc6266d1f8dd31086bdfa9fe4331" resname="gateway.second_factor.u2f.text.ensure_device_connected_to_pc">
+        <jms:reference-file line="9">views/SecondFactor/initiateU2fAuthentication.html.twig</jms:reference-file>
+        <source>gateway.second_factor.u2f.text.ensure_device_connected_to_pc</source>
+        <target>Ensure your U2F device is linked to your computer.</target>
+      </trans-unit>
+      <trans-unit id="51f9749bdf254a6d5e6f7370c0b042d813f9f9f1" resname="gateway.second_factor.u2f.title.authenticate">
+        <jms:reference-file line="3">views/SecondFactor/initiateU2fAuthentication.html.twig</jms:reference-file>
+        <source>gateway.second_factor.u2f.title.authenticate</source>
+        <target>Authenticate with your U2F device</target>
+      </trans-unit>
       <trans-unit id="be12899784c0176e20b93e0030a2144365add26d" resname="gateway.second_factor.yubikey.text.connect_yubikey_to_pc">
         <jms:reference-file line="11">views/SecondFactor/verifyYubikeySecondFactor.html.twig</jms:reference-file>
         <source>gateway.second_factor.yubikey.text.connect_yubikey_to_pc</source>
@@ -281,6 +301,21 @@
         <jms:reference-file line="15">views/Gateway/unprocessableResponse.html.twig</jms:reference-file>
         <source>gateway.submit.click_to_go_back_to_sp</source>
         <target>Click to go back.</target>
+      </trans-unit>
+      <trans-unit id="9b27b207d4333411d2b69ba0b7827de90c8c1d16" resname="gateway.u2f.alert.device_reported_an_error">
+        <jms:reference-file line="17">Resources/views/translations.html.twig</jms:reference-file>
+        <source>gateway.u2f.alert.device_reported_an_error</source>
+        <target>The U2F device reported an error. Try again or visit your IT helpdesk.</target>
+      </trans-unit>
+      <trans-unit id="48b1aeae580249687d55b44e22b613188803acdf" resname="gateway.u2f.alert.error">
+        <jms:reference-file line="16">Resources/views/translations.html.twig</jms:reference-file>
+        <source>gateway.u2f.alert.error</source>
+        <target>The authentication using the U2F device failed. Try again or visit your IT helpdesk.</target>
+      </trans-unit>
+      <trans-unit id="b5ef4b347f1b6489a162ecf06fd0c6a0acc1ac0b" resname="gateway.u2f.alert.unknown_registration">
+        <jms:reference-file line="15">Resources/views/translations.html.twig</jms:reference-file>
+        <source>gateway.u2f.alert.unknown_registration</source>
+        <target>The U2F device you used is not known. You must re-register your device.</target>
       </trans-unit>
       <trans-unit id="ee8b15d139dd5ba69eb2bfbc1c540b03894bafd7" resname="ra.registration.yubikey.title.enter_challenge">
         <jms:reference-file line="3">views/SecondFactor/verifyYubikeySecondFactor.html.twig</jms:reference-file>

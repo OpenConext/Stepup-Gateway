@@ -16,16 +16,22 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupGateway\GatewayBundle;
+namespace Surfnet\StepupGateway\GatewayBundle\DependencyInjection\Compiler;
 
-use Surfnet\StepupGateway\GatewayBundle\DependencyInjection\Compiler\U2fSessionBagSessionPass;
+use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\HttpKernel\Bundle\Bundle;
+use Symfony\Component\DependencyInjection\Reference;
 
-class SurfnetStepupGatewayGatewayBundle extends Bundle
+class U2fSessionBagSessionPass implements CompilerPassInterface
 {
-    public function build(ContainerBuilder $container)
+    /**
+     * {@inheritdoc} This is required to ensure that our NamespacedAttributeBag is registered in the session handler
+     * before the session is started.
+     */
+    public function process(ContainerBuilder $container)
     {
-        $container->addCompilerPass(new U2fSessionBagSessionPass());
+        $container
+            ->getDefinition('session')
+            ->addMethodCall('registerBag', [new Reference('gateway.session.u2f.namespaced_attribute_bag')]);
     }
 }

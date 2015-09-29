@@ -131,6 +131,11 @@ final class AuthenticationVerificationResult
         return $this->status === self::STATUS_SUCCESS;
     }
 
+    public function didDeviceReportError()
+    {
+        return $this->status === self::STATUS_DEVICE_ERROR;
+    }
+
     /**
      * @return string
      */
