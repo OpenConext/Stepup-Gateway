@@ -45,8 +45,11 @@ final class SecondFactorLocaleListener implements EventSubscriberInterface
     public function setRequestLocale(GetResponseEvent $event)
     {
         $secondFactorId = $this->responseContext->getSelectedSecondFactor();
-        $secondFactor = $this->secondFactorService->findByUuid($secondFactorId);
+        if (!$secondFactorId) {
+            return;
+        }
 
+        $secondFactor = $this->secondFactorService->findByUuid($secondFactorId);
         if (!$secondFactor) {
             return;
         }
