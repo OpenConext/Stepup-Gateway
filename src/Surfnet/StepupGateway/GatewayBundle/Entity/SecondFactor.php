@@ -23,7 +23,7 @@ use Surfnet\StepupBundle\Value\Loa;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 
 /**
- * @ORM\Entity(repositoryClass="Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactorRepository")
+ * @ORM\Entity(repositoryClass="Surfnet\StepupGateway\GatewayBundle\Entity\DoctrineSecondFactorRepository")
  * @ORM\Table
  */
 class SecondFactor

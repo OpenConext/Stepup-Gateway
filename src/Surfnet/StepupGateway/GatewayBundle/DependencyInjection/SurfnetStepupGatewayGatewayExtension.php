@@ -19,10 +19,10 @@
 namespace Surfnet\StepupGateway\GatewayBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Processor;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
-use Symfony\Component\HttpKernel\DependencyInjection\Extension;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader;
+use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 class SurfnetStepupGatewayGatewayExtension extends Extension
 {
@@ -38,5 +38,9 @@ class SurfnetStepupGatewayGatewayExtension extends Extension
         $container
             ->getDefinition('gateway.security.intrinsic_loa')
             ->addArgument($config['intrinsic_loa']);
+
+        $container
+            ->getDefinition('gateway.repository.second_factor.enabled')
+            ->replaceArgument(1, $config['enabled_second_factors']);
     }
 }
