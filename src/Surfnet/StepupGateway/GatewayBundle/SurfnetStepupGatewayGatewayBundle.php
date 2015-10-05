@@ -18,8 +18,14 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle;
 
+use Surfnet\StepupGateway\GatewayBundle\DependencyInjection\Compiler\U2fSessionBagSessionPass;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class SurfnetStepupGatewayGatewayBundle extends Bundle
 {
+    public function build(ContainerBuilder $container)
+    {
+        $container->addCompilerPass(new U2fSessionBagSessionPass());
+    }
 }

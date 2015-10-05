@@ -6,6 +6,10 @@
       <note>The source node in most cases contains the sample message as written by the developer. If it looks like a dot-delimitted string such as "form.label.firstname", then the developer has not provided a default message.</note>
     </header>
     <body>
+      <trans-unit id="d3eed7dad6fb7610f30c9cd66a4a85d0049a7fe7" resname="Key handle must be a string">
+        <source>Key handle must be a string</source>
+        <target>Key handle must be a string</target>
+      </trans-unit>
       <trans-unit id="d7d536e4daf0156dcf5724414c59214bae223843" resname="gateway.verify_yubikey_command.otp.may_not_be_empty">
         <source>gateway.verify_yubikey_command.otp.may_not_be_empty</source>
         <target>Yubikey-veld mag niet leeg zijn.</target>

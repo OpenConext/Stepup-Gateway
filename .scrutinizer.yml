@@ -1,6 +1,7 @@
 filter:
     excluded_paths:
         - "*/Tests/*"
+        - "app/DoctrineMigrations/*"
 
 checks:
     php:

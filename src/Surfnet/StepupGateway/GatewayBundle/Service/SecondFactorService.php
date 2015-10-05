@@ -18,12 +18,13 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Service;
 
+use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor;
 use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactorRepository;
 
 class SecondFactorService
 {
     /**
-     * @var SecondFactorRepository
+     * @var \Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactorRepository
      */
     private $repository;
 
@@ -34,7 +35,7 @@ class SecondFactorService
 
     /**
      * @param $uuid
-     * @return null|\Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor
+     * @return null|SecondFactor
      */
     public function findByUuid($uuid)
     {
