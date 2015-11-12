@@ -36,7 +36,8 @@
         "surfnet/yubikey-api-client-bundle": "dev-develop",
         "surfnet/stepup-bundle": "dev-develop",
         "surfnet/stepup-saml-bundle": "dev-develop",
-        "surfnet/stepup-u2f-bundle": "dev-develop"
+        "surfnet/stepup-u2f-bundle": "dev-develop",
+        "mopa/composer-bridge": "dev-master as v1.5.0"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3",
