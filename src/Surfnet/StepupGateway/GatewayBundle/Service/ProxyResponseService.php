@@ -24,8 +24,10 @@ use Surfnet\SamlBundle\Entity\IdentityProvider;
 use Surfnet\SamlBundle\Entity\ServiceProvider;
 use Surfnet\SamlBundle\SAML2\Attribute\AttributeDefinition;
 use Surfnet\SamlBundle\SAML2\Attribute\AttributeDictionary;
+use Surfnet\SamlBundle\SAML2\Response\AssertionAdapter;
 use Surfnet\StepupBundle\Value\Loa;
 use Surfnet\StepupGateway\GatewayBundle\Saml\AssertionSigningService;
+use Surfnet\StepupGateway\GatewayBundle\Saml\Exception\RuntimeException;
 use Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler;
 
 /**
@@ -93,23 +95,20 @@ class ProxyResponseService
      */
     public function createProxyResponse(SAML2_Assertion $assertion, ServiceProvider $targetServiceProvider, $loa = null)
     {
-        $attributes = $this->extractAttributes($assertion);
-        $translatedAssertion = $this->attributeDictionary->translate($assertion);
 
         $newAssertion = new SAML2_Assertion();
         $newAssertion->setNotBefore($this->currentTime->getTimestamp());
         $newAssertion->setNotOnOrAfter($this->getTimestamp('PT5M'));
-        $newAssertion->setAttributes($attributes);
+        $newAssertion->setAttributes($assertion->getAttributes());
         $newAssertion->setIssuer($this->hostedIdentityProvider->getEntityId());
         $newAssertion->setIssueInstant($this->getTimestamp());
 
         $this->assertionSigningService->signAssertion($newAssertion);
         $this->addSubjectConfirmationFor($newAssertion, $targetServiceProvider);
 
-        $newAssertion->setNameId([
-            'Value'  => $translatedAssertion->getAttribute('eduPersonTargetedID'),
-            'Format' => 'urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified'
-        ]);
+        $translatedAssertion = $this->attributeDictionary->translate($assertion);
+        $eptiNameId = $this->parseEptiNameId($translatedAssertion);
+        $newAssertion->setNameId($eptiNameId);
 
         $newAssertion->setValidAudiences([$this->proxyStateHandler->getRequestServiceProvider()]);
 
@@ -120,41 +119,6 @@ class ProxyResponseService
         }
 
         return $this->createNewAuthnResponse($newAssertion, $targetServiceProvider);
-    }
-
-    /**
-     * @param SAML2_Assertion $assertion
-     * @return array
-     * @throws Exception
-     *
-     * This really should be done differently/somewhere else
-     * @see https://www.pivotaltracker.com/story/show/83743310
-     */
-    private function extractAttributes(SAML2_Assertion $assertion)
-    {
-        /** @var \Surfnet\SamlBundle\SAML2\Attribute\AttributeDefinition $eptiDefinition */
-        $attributes = $assertion->getAttributes();
-
-        $eptiKey = false;
-        if (array_key_exists($this->eptiAttribute->getUrnMace(), $attributes)) {
-            $eptiKey = $this->eptiAttribute->getUrnMace();
-        } elseif (array_key_exists($this->eptiAttribute->getUrnOid(), $attributes)) {
-            $eptiKey = $this->eptiAttribute->getUrnOid();
-        }
-
-        if ($eptiKey === false) {
-            return $attributes;
-        }
-
-        // @see https://github.com/OpenConext/OpenConext-engineblock/blob/f12d660ddd295668dae1d52a837b2ed2cfc39340
-        //      /library/EngineBlock/Corto/Filter/Command/AddEduPersonTargettedId.php#L36
-        $document = new \DOMDocument();
-        $document->loadXML('<base />');
-        \SAML2_Utils::addNameId($document->documentElement, $assertion->getNameId());
-
-        $attributes[$eptiKey] = [$document->documentElement->childNodes];
-
-        return $attributes;
     }
 
     /**
@@ -224,5 +188,27 @@ class ProxyResponseService
         }
 
         return $time->getTimestamp();
+    }
+
+    /**
+     * @param AssertionAdapter $translatedAssertion
+     * @return array
+     */
+    private function parseEptiNameId(AssertionAdapter $translatedAssertion)
+    {
+        /** @var \DOMNodeList[] $eptiValues */
+        $eptiValues      = $translatedAssertion->getAttributeValue('eduPersonTargetedID');
+        $eptiDomNodeList = $eptiValues[0];
+
+        if (!$eptiDomNodeList instanceof \DOMNodeList || $eptiDomNodeList->length !== 1) {
+            throw new RuntimeException(
+                'EPTI attribute must contain exactly one NameID element as value:::: ' . print_r($eptiValues, true)
+            );
+        }
+
+        $eptiValue  = $eptiDomNodeList->item(0);
+        $eptiNameId = \SAML2_Utils::parseNameId($eptiValue);
+
+        return $eptiNameId;
     }
 }
