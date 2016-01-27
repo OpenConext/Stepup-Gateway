@@ -196,7 +196,7 @@ class ProxyResponseService
      */
     private function parseEptiNameId(AssertionAdapter $translatedAssertion)
     {
-        /** @var \DOMNodeList $eptiValues */
+        /** @var \DOMNodeList[] $eptiValues */
         $eptiValues      = $translatedAssertion->getAttributeValue('eduPersonTargetedID');
         $eptiDomNodeList = $eptiValues[0];
 
