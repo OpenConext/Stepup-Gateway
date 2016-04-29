@@ -4,9 +4,9 @@ imports:
 surfnet_stepup_gateway_saml_stepup_provider:
     allowed_sps: %gssp_allowed_sps%
     routes:
-        sso: %gssp_routes_sso%
-        consume_assertion: %gssp_routes_consume_assertion%
-        metadata: %gssp_routes_metadata%
+        sso: gssp_verify
+        consume_assertion: gssp_consume_assertion
+        metadata: gssp_saml_metadata
     providers:
         tiqr:
             enabled: %gssp_tiqr_enabled%
