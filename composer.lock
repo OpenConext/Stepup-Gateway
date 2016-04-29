@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "763fbe5529cd70beb428cb8fb2fcd7af",
-    "content-hash": "de116ee302b04432988dffeeafb1ca70",
+    "hash": "11c775ee86a9725900f9a930de578805",
+    "content-hash": "7f8b061bab0acdf46295ff8b2a176a3a",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -2275,7 +2275,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SURFnet/messagebird-api-client-bundle/zipball/bd694f69c76e53d8b94c4c609328a0144c625744",
+                "url": "https://api.github.com/repos/SURFnet/messagebird-api-client-bundle/zipball/9c818040072a87424eb2e440a6e4a3a96ae3a4f7",
                 "reference": "bd694f69c76e53d8b94c4c609328a0144c625744",
                 "shasum": ""
             },
@@ -2313,16 +2313,16 @@
         },
         {
             "name": "surfnet/stepup-bundle",
-            "version": "dev-develop",
+            "version": "1.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SURFnet/Stepup-bundle.git",
-                "reference": "1e15e4adf96144f470ec7660b02c2faf2b5cc9d0"
+                "reference": "d4426aec24f17b075be54de0e931a547b43de6c8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SURFnet/Stepup-bundle/zipball/1e15e4adf96144f470ec7660b02c2faf2b5cc9d0",
-                "reference": "1e15e4adf96144f470ec7660b02c2faf2b5cc9d0",
+                "url": "https://api.github.com/repos/SURFnet/Stepup-bundle/zipball/d4426aec24f17b075be54de0e931a547b43de6c8",
+                "reference": "d4426aec24f17b075be54de0e931a547b43de6c8",
                 "shasum": ""
             },
             "require": {
@@ -2362,20 +2362,20 @@
                 "suaas",
                 "surfnet"
             ],
-            "time": "2015-09-09 09:07:14"
+            "time": "2016-04-28 12:40:48"
         },
         {
             "name": "surfnet/stepup-saml-bundle",
-            "version": "2.1.0",
+            "version": "2.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SURFnet/Stepup-saml-bundle.git",
-                "reference": "2df7f8814895f19e21f0787b4a1b1444d0efdeb2"
+                "reference": "ebc1696f6a850bc6e68031ff2b045c10ebc3c554"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SURFnet/Stepup-saml-bundle/zipball/2df7f8814895f19e21f0787b4a1b1444d0efdeb2",
-                "reference": "2df7f8814895f19e21f0787b4a1b1444d0efdeb2",
+                "url": "https://api.github.com/repos/SURFnet/Stepup-saml-bundle/zipball/ebc1696f6a850bc6e68031ff2b045c10ebc3c554",
+                "reference": "ebc1696f6a850bc6e68031ff2b045c10ebc3c554",
                 "shasum": ""
             },
             "require": {
@@ -2410,7 +2410,7 @@
                 "stepup",
                 "surfnet"
             ],
-            "time": "2016-01-27 15:45:18"
+            "time": "2016-03-30 07:06:17"
         },
         {
             "name": "surfnet/stepup-u2f-bundle",
@@ -3922,22 +3922,24 @@
         },
         {
             "name": "phpspec/prophecy",
-            "version": "v1.5.0",
+            "version": "v1.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpspec/prophecy.git",
-                "reference": "4745ded9307786b730d7a60df5cb5a6c43cf95f7"
+                "reference": "3c91bdf81797d725b14cb62906f9a4ce44235972"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/4745ded9307786b730d7a60df5cb5a6c43cf95f7",
-                "reference": "4745ded9307786b730d7a60df5cb5a6c43cf95f7",
+                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/3c91bdf81797d725b14cb62906f9a4ce44235972",
+                "reference": "3c91bdf81797d725b14cb62906f9a4ce44235972",
                 "shasum": ""
             },
             "require": {
                 "doctrine/instantiator": "^1.0.2",
+                "php": "^5.3|^7.0",
                 "phpdocumentor/reflection-docblock": "~2.0",
-                "sebastian/comparator": "~1.1"
+                "sebastian/comparator": "~1.1",
+                "sebastian/recursion-context": "~1.0"
             },
             "require-dev": {
                 "phpspec/phpspec": "~2.0"
@@ -3945,7 +3947,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.4.x-dev"
+                    "dev-master": "1.5.x-dev"
                 }
             },
             "autoload": {
@@ -3978,7 +3980,7 @@
                 "spy",
                 "stub"
             ],
-            "time": "2015-08-13 10:07:40"
+            "time": "2016-02-15 07:46:21"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -5039,7 +5041,6 @@
         "mopa/bootstrap-bundle": 5,
         "surfnet/messagebird-api-client-bundle": 20,
         "surfnet/yubikey-api-client-bundle": 20,
-        "surfnet/stepup-bundle": 20,
         "surfnet/stepup-u2f-bundle": 20,
         "mopa/composer-bridge": 20
     },

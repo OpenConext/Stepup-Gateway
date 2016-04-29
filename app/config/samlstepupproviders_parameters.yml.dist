@@ -1,11 +1,8 @@
 parameters:
-    # the routes should be kept as is, they map to specific URLs on the gateway
-    gssp_routes_sso: gssp_verify
-    gssp_routes_consume_assertion: gssp_consume_assertion
-    gssp_routes_metadata: gssp_saml_metadata
+    # A list of service provider entity IDs that are allowed to send authn requests to the GSSPs
+    gssp_allowed_sps: [https://sp.one.entityid, https://sp.two.entityid, used_for_checking_if_received_request_is_allowed]
     # tiqr should be enabled
     gssp_tiqr_enabled: true
-    gssp_tiqr_allowed_sps: [https://sp.one.entityid, https://sp.two.entityid, used_for_checking_if_received_request_is_allowed]
     gssp_tiqr_sp_publickey: '/full/path/to/the/gateway-as-sp/public-key-file.cer'
     gssp_tiqr_sp_privatekey: '/full/path/to/the/gateway-as-sp/private-key-file.pem'
     gssp_tiqr_idp_publickey: '/full/path/to/the/gateway-as-idp/public-key-file.cer'
@@ -15,3 +12,13 @@ parameters:
     gssp_tiqr_remote_entity_id: 'https://actual-gssp.entity-id.tld'
     gssp_tiqr_remote_sso_url: 'https://actual-gssp.entity-id.tld/single-sign-on/url'
     gssp_tiqr_remote_certificate: 'The contents of the certificate published by the gssp'
+    gssp_biometric_enabled: true
+    gssp_biometric_sp_publickey: '/full/path/to/the/gateway-as-sp/public-key-file.cer'
+    gssp_biometric_sp_privatekey: '/full/path/to/the/gateway-as-sp/private-key-file.pem'
+    gssp_biometric_idp_publickey: '/full/path/to/the/gateway-as-idp/public-key-file.cer'
+    gssp_biometric_idp_privatekey: '/full/path/to/the/gateway-as-sp/private-key-file.pem'
+    gssp_biometric_metadata_publickey: '/full/path/to/the/gateway-metadata/public-key-file.cer'
+    gssp_biometric_metadata_privatekey: '/full/path/to/the/gateway-as-sp/private-key-file.pem'
+    gssp_biometric_remote_entity_id: 'https://actual-gssp.entity-id.tld'
+    gssp_biometric_remote_sso_url: 'https://actual-gssp.entity-id.tld/single-sign-on/url'
+    gssp_biometric_remote_certificate: 'The contents of the certificate published by the gssp'
