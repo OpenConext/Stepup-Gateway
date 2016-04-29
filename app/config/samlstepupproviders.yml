@@ -2,7 +2,7 @@ imports:
     - { resource: samlstepupproviders_parameters.yml }
 
 surfnet_stepup_gateway_saml_stepup_provider:
-    allowed_sps: %gssp_tiqr_allowed_sps%
+    allowed_sps: %gssp_allowed_sps%
     routes:
         sso: %gssp_routes_sso%
         consume_assertion: %gssp_routes_consume_assertion%
