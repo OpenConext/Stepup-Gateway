@@ -33,10 +33,10 @@ gateway_verify_second_factor_sms_verify_challenge:
     methods:  [GET,POST]
     defaults: { _controller: SurfnetStepupGatewayGatewayBundle:SecondFactor:verifySmsSecondFactorChallenge }
 
-gateway_verify_second_factor_tiqr:
-    path:     /verify-second-factor/tiqr
+gateway_verify_second_factor_gssf:
+    path:     /verify-second-factor/gssf
     methods:  [GET]
-    defaults: { _controller: SurfnetStepupGatewayGatewayBundle:SecondFactor:verifyTiqrSecondFactor }
+    defaults: { _controller: SurfnetStepupGatewayGatewayBundle:SecondFactor:verifyGssf }
 
 gateway_verify_second_factor_u2f:
     path:     /verify-second-factor/u2f/authenticate

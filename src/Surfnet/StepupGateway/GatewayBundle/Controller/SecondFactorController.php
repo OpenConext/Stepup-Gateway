@@ -115,19 +115,19 @@ class SecondFactorController extends Controller
         return $this->redirect($this->generateUrl($route));
     }
 
-    public function verifyTiqrSecondFactorAction()
+    public function verifyGssfAction()
     {
         $context = $this->getResponseContext();
         $originalRequestId = $context->getInResponseTo();
 
         /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
         $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
-        $logger->info('Received request to verify Tiqr Second Factor');
+        $logger->info('Received request to verify GSSF');
 
         $selectedSecondFactor = $this->getSelectedSecondFactor($context, $logger);
 
         $logger->info(sprintf(
-            'Selected Tiqr Second Factor "%s" for verfication, forwarding to Saml handling',
+            'Selected GSSF "%s" for verfication, forwarding to Saml handling',
             $selectedSecondFactor
         ));
 
@@ -136,10 +136,10 @@ class SecondFactorController extends Controller
         /** @var \Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor $secondFactor */
         $secondFactor = $secondFactorService->findByUuid($selectedSecondFactor);
         if (!$secondFactor) {
-            $logger->critical(
-                'Requested verification of Tiqr second factor "%s", however that Second Factor no longer exists',
+            $logger->critical(sprintf(
+                'Requested verification of GSSF "%s", however that Second Factor no longer exists',
                 $selectedSecondFactor
-            );
+            ));
 
             throw new RuntimeException('Verification of selected second factor that no longer exists');
         }
@@ -147,20 +147,20 @@ class SecondFactorController extends Controller
         return $this->forward(
             'SurfnetStepupGatewaySamlStepupProviderBundle:SamlProxy:sendSecondFactorVerificationAuthnRequest',
             [
-                'provider' => 'tiqr',
+                'provider' => $secondFactor->secondFactorType,
                 'subjectNameId' => $secondFactor->secondFactorIdentifier
             ]
         );
     }
 
-    public function tiqrSecondFactorVerifiedAction()
+    public function gssfVerifiedAction()
     {
         $context = $this->getResponseContext();
         $originalRequestId = $context->getInResponseTo();
 
         /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
         $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
-        $logger->info('Attempting to mark Tiqr Second Factor as verified');
+        $logger->info('Attempting to mark GSSF as verified');
 
         $selectedSecondFactor = $this->getSelectedSecondFactor($context, $logger);
 
@@ -168,7 +168,7 @@ class SecondFactorController extends Controller
         $secondFactor = $this->get('gateway.service.second_factor_service')->findByUuid($selectedSecondFactor);
         if (!$secondFactor) {
             $logger->critical(sprintf(
-                'Verification of Tiqr Second Factor "%s" succeeded, however that Second Factor no longer exists',
+                'Verification of GSSF "%s" succeeded, however that Second Factor no longer exists',
                 $selectedSecondFactor
             ));
 
@@ -179,7 +179,7 @@ class SecondFactorController extends Controller
         $this->getAuthenticationLogger()->logSecondFactorAuthentication($originalRequestId);
 
         $logger->info(sprintf(
-            'Marked Tiqr Second Factor "%s" as verified, forwarding to Saml Proxy to respond',
+            'Marked GSSF "%s" as verified, forwarding to Gateway controller to respond',
             $selectedSecondFactor
         ));
 
