@@ -33,7 +33,7 @@ gateway_2nd_factor_only_identityprovider_sso:
 gateway_verify_second_factor_yubikey:
     path:     /verify-second-factor/yubikey
     methods:  [GET,POST]
-    defaults: { _controller: SurfnetStepupGatewayGatewayBundle:SecondFactor:verifyYubikeySecondFactor }
+    defaults: { _controller: SurfnetStepupGatewayGatewayBundle:Yubikey:verifyYubikeySecondFactor }
 
 
 gateway_verify_second_factor_sms:
