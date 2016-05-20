@@ -72,6 +72,11 @@ services:
         arguments:
             - @gateway.repository.whitelist_entry
 
+    gateway.service.require_selected_factor:
+        class: Surfnet\StepupGateway\GatewayBundle\Service\RequireSecondFactorSelectedService
+        arguments:
+            - @gateway.proxy.response_context
+
     gateway.session.u2f:
         class: Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag
         factory: ['@session', 'getBag']
