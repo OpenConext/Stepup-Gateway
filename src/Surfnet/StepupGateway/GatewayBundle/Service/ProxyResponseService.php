@@ -95,7 +95,7 @@ class ProxyResponseService
      * @return \SAML2_Response
      */
     public function create2ndFactorOnlyResponse(
-      AuthnRequest $request,
+      $nameId,
       ServiceProvider $targetServiceProvider,
       $authnContextClassRef
     ) {
@@ -108,7 +108,10 @@ class ProxyResponseService
         $this->assertionSigningService->signAssertion($newAssertion);
         $this->addSubjectConfirmationFor($newAssertion, $targetServiceProvider);
 
-        $newAssertion->setNameId($request->getNameId());
+        $newAssertion->setNameId([
+            'Format' => \SAML2_Const::NAMEID_UNSPECIFIED,
+            'Value' => $nameId,
+        ]);
 
         $newAssertion->setValidAudiences([$this->proxyStateHandler->getRequestServiceProvider()]);
 
