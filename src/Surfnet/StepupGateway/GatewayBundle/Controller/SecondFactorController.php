@@ -43,7 +43,7 @@ class SecondFactorController extends Controller
 {
     public function selectSecondFactorForVerificationAction()
     {
-        $context = $this->getResponseContext();
+        $context = $this->get('gateway.proxy.response_context');
         $originalRequestId = $context->getInResponseTo();
 
         /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
@@ -51,7 +51,7 @@ class SecondFactorController extends Controller
         $logger->notice('Determining which second factor to use...');
 
         $requiredLoa = $this
-            ->getStepupService()
+            ->get('gateway.service.stepup_authentication')
             ->resolveHighestRequiredLoa(
                 $context->getRequiredLoa(),
                 $context->getServiceProvider(),
@@ -68,14 +68,14 @@ class SecondFactorController extends Controller
             $logger->notice(sprintf('Determined that the required Loa is "%s"', $requiredLoa));
         }
 
-        if ($this->getStepupService()->isIntrinsicLoa($requiredLoa)) {
+        if ($this->get('gateway.service.stepup_authentication')->isIntrinsicLoa($requiredLoa)) {
             $this->get('gateway.authentication_logger')->logIntrinsicLoaAuthentication($originalRequestId);
 
             return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:respond');
         }
 
         $secondFactorCollection = $this
-            ->getStepupService()
+            ->get('gateway.service.stepup_authentication')
             ->determineViableSecondFactors($context->getIdentityNameId(), $requiredLoa);
 
         if (count($secondFactorCollection) === 0) {
@@ -109,7 +109,7 @@ class SecondFactorController extends Controller
 
         $context->saveSelectedSecondFactor($secondFactor->secondFactorId);
 
-        $this->getStepupService()->clearSmsVerificationState();
+        $this->get('gateway.service.stepup_authentication')->clearSmsVerificationState();
 
         $route = 'gateway_verify_second_factor_' . strtolower($secondFactor->secondFactorType);
         return $this->redirect($this->generateUrl($route));
@@ -117,7 +117,7 @@ class SecondFactorController extends Controller
 
     public function verifyGssfAction()
     {
-        $context = $this->getResponseContext();
+        $context = $this->get('gateway.proxy.response_context');
         $originalRequestId = $context->getInResponseTo();
 
         /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
@@ -155,7 +155,7 @@ class SecondFactorController extends Controller
 
     public function gssfVerifiedAction()
     {
-        $context = $this->getResponseContext();
+        $context = $this->get('gateway.proxy.response_context');
         $originalRequestId = $context->getInResponseTo();
 
         /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
@@ -176,7 +176,7 @@ class SecondFactorController extends Controller
         }
 
         $context->markSecondFactorVerified();
-        $this->getAuthenticationLogger()->logSecondFactorAuthentication($originalRequestId);
+        $this->get('gateway.authentication_logger')->logSecondFactorAuthentication($originalRequestId);
 
         $logger->info(sprintf(
             'Marked GSSF "%s" as verified, forwarding to Gateway controller to respond',
@@ -193,7 +193,7 @@ class SecondFactorController extends Controller
      */
     public function verifyYubiKeySecondFactorAction(Request $request)
     {
-        $context = $this->getResponseContext();
+        $context = $this->get('gateway.proxy.response_context');
         $originalRequestId = $context->getInResponseTo();
 
         /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
@@ -217,7 +217,7 @@ class SecondFactorController extends Controller
             return ['form' => $form->createView()];
         }
 
-        $result = $this->getStepupService()->verifyYubikeyOtp($command);
+        $result = $this->get('gateway.service.stepup_authentication')->verifyYubikeyOtp($command);
 
         if ($result->didOtpVerificationFail()) {
             $form->addError(new FormError('gateway.form.verify_yubikey.otp_verification_failed'));
@@ -231,8 +231,8 @@ class SecondFactorController extends Controller
             return ['form' => $form->createView()];
         }
 
-        $this->getResponseContext()->markSecondFactorVerified();
-        $this->getAuthenticationLogger()->logSecondFactorAuthentication($originalRequestId);
+        $this->get('gateway.proxy.response_context')->markSecondFactorVerified();
+        $this->get('gateway.authentication_logger')->logSecondFactorAuthentication($originalRequestId);
 
         $logger->info(
             sprintf(
@@ -251,7 +251,7 @@ class SecondFactorController extends Controller
      */
     public function verifySmsSecondFactorAction(Request $request)
     {
-        $context = $this->getResponseContext();
+        $context = $this->get('gateway.proxy.response_context');
         $originalRequestId = $context->getInResponseTo();
 
         /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
@@ -266,7 +266,7 @@ class SecondFactorController extends Controller
 
         $form = $this->createForm('gateway_send_sms_challenge', $command)->handleRequest($request);
 
-        $stepupService = $this->getStepupService();
+        $stepupService = $this->get('gateway.service.stepup_authentication');
         $phoneNumber = InternationalPhoneNumber::fromStringFormat(
             $stepupService->getSecondFactorIdentifier($selectedSecondFactor)
         );
@@ -301,7 +301,7 @@ class SecondFactorController extends Controller
      */
     public function verifySmsSecondFactorChallengeAction(Request $request)
     {
-        $context = $this->getResponseContext();
+        $context = $this->get('gateway.proxy.response_context');
         $originalRequestId = $context->getInResponseTo();
 
         /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
@@ -322,13 +322,13 @@ class SecondFactorController extends Controller
 
         $logger->notice('Verifying input SMS challenge matches');
 
-        $verification = $this->getStepupService()->verifySmsChallenge($command);
+        $verification = $this->get('gateway.service.stepup_authentication')->verifySmsChallenge($command);
 
         if ($verification->wasSuccessful()) {
-            $this->getStepupService()->clearSmsVerificationState();
+            $this->get('gateway.service.stepup_authentication')->clearSmsVerificationState();
 
-            $this->getResponseContext()->markSecondFactorVerified();
-            $this->getAuthenticationLogger()->logSecondFactorAuthentication($originalRequestId);
+            $this->get('gateway.proxy.response_context')->markSecondFactorVerified();
+            $this->get('gateway.authentication_logger')->logSecondFactorAuthentication($originalRequestId);
 
             $logger->info(
                 sprintf(
@@ -357,14 +357,14 @@ class SecondFactorController extends Controller
      */
     public function initiateU2fAuthenticationAction()
     {
-        $context = $this->getResponseContext();
+        $context = $this->get('gateway.proxy.response_context');
         $originalRequestId = $context->getInResponseTo();
 
         /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
         $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
 
         $selectedSecondFactor = $this->getSelectedSecondFactor($context, $logger);
-        $stepupService = $this->getStepupService();
+        $stepupService = $this->get('gateway.service.stepup_authentication');
 
         $cancelFormAction = $this->generateUrl('gateway_verify_second_factor_u2f_cancel_authentication');
         $cancelForm =
@@ -412,7 +412,7 @@ class SecondFactorController extends Controller
      */
     public function verifyU2fAuthenticationAction(Request $request)
     {
-        $context = $this->getResponseContext();
+        $context = $this->get('gateway.proxy.response_context');
         $originalRequestId = $context->getInResponseTo();
 
         /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
@@ -452,7 +452,7 @@ class SecondFactorController extends Controller
 
         if ($result->wasSuccessful()) {
             $context->markSecondFactorVerified();
-            $this->getAuthenticationLogger()->logSecondFactorAuthentication($originalRequestId);
+            $this->get('gateway.authentication_logger')->logSecondFactorAuthentication($originalRequestId);
 
             $logger->info(
                 sprintf(
@@ -476,30 +476,6 @@ class SecondFactorController extends Controller
     public function cancelU2fAuthenticationAction()
     {
         return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:sendAuthenticationCancelledByUser');
-    }
-
-    /**
-     * @return \Surfnet\StepupGateway\GatewayBundle\Service\StepupAuthenticationService
-     */
-    private function getStepupService()
-    {
-        return $this->get('gateway.service.stepup_authentication');
-    }
-
-    /**
-     * @return ResponseContext
-     */
-    private function getResponseContext()
-    {
-        return $this->get('gateway.proxy.response_context');
-    }
-
-    /**
-     * @return \Surfnet\StepupGateway\GatewayBundle\Monolog\Logger\AuthenticationLogger
-     */
-    private function getAuthenticationLogger()
-    {
-        return $this->get('gateway.authentication_logger');
     }
 
     /**
