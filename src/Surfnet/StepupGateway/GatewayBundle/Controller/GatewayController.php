@@ -46,7 +46,9 @@ class GatewayController extends Controller
         } catch (Exception $e) {
             $logger->critical(sprintf('Could not process Request, error: "%s"', $e->getMessage()));
 
-            return $this->render('unrecoverableError');
+            return $this->render(
+              'SurfnetStepupGatewayGatewayBundle:Gateway:unrecoverableError.html.twig'
+            );
         }
 
         $originalRequestId = $originalRequest->getRequestId();
@@ -71,9 +73,7 @@ class GatewayController extends Controller
                 'Requested required Loa "%s" does not exist, sending response with status Requester Error',
                 $requiredLoa
             ));
-
-            $response = $this->createRequesterFailureResponse();
-            return $this->renderSamlResponse('consumeAssertion', $response);
+            return $this->get('gateway.service.saml_response')->renderRequesterFailureResponse();
         }
 
         $stateHandler->setRequestAuthnContextClassRef($originalRequest->getAuthenticationContextClassRef());
@@ -106,7 +106,7 @@ class GatewayController extends Controller
      */
     public function consumeAssertionAction(Request $request)
     {
-        $responseContext = $this->getResponseContext();
+        $responseContext = $this->get('gateway.proxy.response_context');
         $originalRequestId = $responseContext->getInResponseTo();
 
         /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
@@ -122,10 +122,7 @@ class GatewayController extends Controller
             );
         } catch (Exception $exception) {
             $logger->error(sprintf('Could not process received Response, error: "%s"', $exception->getMessage()));
-
-            $response = $this->createResponseFailureResponse($responseContext);
-
-            return $this->renderSamlResponse('unprocessableResponse', $response);
+            return $this->get('gateway.service.saml_response')->renderUnprocessableResponse();
         }
 
         $adaptedAssertion = new AssertionAdapter($assertion);
@@ -137,7 +134,9 @@ class GatewayController extends Controller
                 ($expectedInResponseTo ? 'expected "' . $expectedInResponseTo . '"' : ' no response expected')
             ));
 
-            return $this->render('unrecoverableError');
+            return $this->render(
+              'SurfnetStepupGatewayGatewayBundle:Gateway:unrecoverableError.html.twig'
+            );
         }
 
         $logger->notice('Successfully processed SAMLResponse');
@@ -146,12 +145,14 @@ class GatewayController extends Controller
 
         $logger->notice(sprintf('Forwarding to second factor controller for loa determination and handling'));
 
-        return $this->forward('SurfnetStepupGatewayGatewayBundle:SecondFactor:selectSecondFactorForVerification');
+        return $this->forward(
+          'SurfnetStepupGatewayGatewayBundle:SecondFactor:selectSecondFactorForVerification'
+        );
     }
 
     public function respondAction()
     {
-        $responseContext = $this->getResponseContext();
+        $responseContext = $this->get('gateway.proxy.response_context');
         $originalRequestId = $responseContext->getInResponseTo();
 
         /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
@@ -185,12 +186,12 @@ class GatewayController extends Controller
             $response->getId()
         ));
 
-        return $this->renderSamlResponse('consumeAssertion', $response);
+        return $this->get('gateway.service.saml_response')->renderResponse($response);
     }
 
     public function sendLoaCannotBeGivenAction()
     {
-        $responseContext = $this->getResponseContext();
+        $responseContext = $this->get('gateway.proxy.response_context');
         $originalRequestId = $responseContext->getInResponseTo();
 
         /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
@@ -211,12 +212,12 @@ class GatewayController extends Controller
             $response->getId()
         ));
 
-        return $this->renderSamlResponse('consumeAssertion', $response);
+        return $this->get('gateway.service.saml_response')->renderResponse($response);
     }
 
     public function sendAuthenticationCancelledByUserAction()
     {
-        $responseContext = $this->getResponseContext();
+        $responseContext = $this->get('gateway.proxy.response_context');
         $originalRequestId = $responseContext->getInResponseTo();
 
         /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
@@ -241,89 +242,6 @@ class GatewayController extends Controller
             $response->getId()
         ));
 
-        return $this->renderSamlResponse('consumeAssertion', $response);
-    }
-
-    /**
-     * @param string         $view
-     * @param SAML2_Response $response
-     * @return Response
-     */
-    public function renderSamlResponse($view, SAML2_Response $response)
-    {
-        $responseContext = $this->getResponseContext();
-
-        return $this->render($view, [
-            'acu'        => $responseContext->getDestination(),
-            'response'   => $this->getResponseAsXML($response),
-            'relayState' => $responseContext->getRelayState()
-        ]);
-    }
-
-    /**
-     * @param string   $view
-     * @param array    $parameters
-     * @param Response $response
-     * @return Response
-     */
-    public function render($view, array $parameters = array(), Response $response = null)
-    {
-        return parent::render(
-            'SurfnetStepupGatewayGatewayBundle:Gateway:' . $view . '.html.twig',
-            $parameters,
-            $response
-        );
-    }
-
-    /**
-     * @return \Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext
-     */
-    public function getResponseContext()
-    {
-        return $this->get('gateway.proxy.response_context');
-    }
-
-    /**
-     * @param SAML2_Response $response
-     * @return string
-     */
-    private function getResponseAsXML(SAML2_Response $response)
-    {
-        return base64_encode($response->toUnsignedXML()->ownerDocument->saveXML());
-    }
-
-    /**
-     * @return SAML2_Response
-     */
-    private function createRequesterFailureResponse()
-    {
-        /** @var \Surfnet\StepupGateway\GatewayBundle\Saml\ResponseBuilder $responseBuilder */
-        $responseBuilder = $this->get('gateway.proxy.response_builder');
-        $context = $this->getResponseContext();
-
-        $response = $responseBuilder
-            ->createNewResponse($context)
-            ->setResponseStatus(SAML2_Const::STATUS_REQUESTER, SAML2_Const::STATUS_REQUEST_UNSUPPORTED)
-            ->get();
-
-        return $response;
-
-    }
-
-    /**
-     * @param $context
-     * @return SAML2_Response
-     */
-    private function createResponseFailureResponse($context)
-    {
-        /** @var \Surfnet\StepupGateway\GatewayBundle\Saml\ResponseBuilder $responseBuilder */
-        $responseBuilder = $this->get('gateway.proxy.response_builder');
-
-        $response = $responseBuilder
-            ->createNewResponse($context)
-            ->setResponseStatus(SAML2_Const::STATUS_RESPONDER)
-            ->get();
-
-        return $response;
+        return $this->get('gateway.service.saml_response')->renderResponse($response);
     }
 }

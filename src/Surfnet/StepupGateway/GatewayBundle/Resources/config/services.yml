@@ -24,6 +24,11 @@ services:
         arguments:
             - @gateway.repository.second_factor
 
+    gateway.security.intrinsic_loa:
+        public: false
+        class: Surfnet\StepupBundle\Value\Loa
+        factory: [@surfnet_stepup.service.loa_resolution, getLoa]
+
     gateway.service.response_proxy:
         class: Surfnet\StepupGateway\GatewayBundle\Service\ProxyResponseService
         arguments:
@@ -34,10 +39,12 @@ services:
             - @saml.attribute.eduPersonTargetedID
             - @gateway.security.intrinsic_loa
 
-    gateway.security.intrinsic_loa:
-        public: false
-        class: Surfnet\StepupBundle\Value\Loa
-        factory: [@surfnet_stepup.service.loa_resolution, getLoa]
+    gateway.service.saml_response:
+        class: Surfnet\StepupGateway\GatewayBundle\Service\SamlResponseRenderingService
+        arguments:
+          - @gateway.proxy.response_context
+          - @gateway.proxy.response_builder
+          - @templating
 
     gateway.service.assertion_signing:
         class: Surfnet\StepupGateway\GatewayBundle\Saml\AssertionSigningService
