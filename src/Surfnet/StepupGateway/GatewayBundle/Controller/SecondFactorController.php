@@ -63,7 +63,7 @@ class SecondFactorController extends Controller
                 'No valid required Loa can be determined, no authentication is possible, Loa cannot be given'
             );
 
-            return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:sendLoaCannotBeGiven');
+            return $this->forward('SurfnetStepupGatewayGatewayBundle:Failure:sendLoaCannotBeGiven');
         } else {
             $logger->notice(sprintf('Determined that the required Loa is "%s"', $requiredLoa));
         }
@@ -81,7 +81,7 @@ class SecondFactorController extends Controller
         if (count($secondFactorCollection) === 0) {
             $logger->notice('No second factors can give the determined Loa');
 
-            return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:sendLoaCannotBeGiven');
+            return $this->forward('SurfnetStepupGatewayGatewayBundle:Failure:sendLoaCannotBeGiven');
         }
 
         // will be replaced by a second factor selection screen once we support multiple
@@ -98,7 +98,7 @@ class SecondFactorController extends Controller
                 $secondFactor->institution
             ));
 
-            return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:sendLoaCannotBeGiven');
+            return $this->forward('SurfnetStepupGatewayGatewayBundle:Failure:sendLoaCannotBeGiven');
         }
 
         $logger->notice(sprintf(
@@ -209,7 +209,7 @@ class SecondFactorController extends Controller
         $form = $this->createForm('gateway_verify_yubikey_otp', $command)->handleRequest($request);
 
         if ($form->get('cancel')->isClicked()) {
-            return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:sendAuthenticationCancelledByUser');
+            return $this->forward('SurfnetStepupGatewayGatewayBundle:Failure:sendAuthenticationCancelledByUser');
         }
 
         if (!$form->isValid()) {
@@ -276,7 +276,7 @@ class SecondFactorController extends Controller
         $viewVariables = ['otpRequestsRemaining' => $otpRequestsRemaining, 'maximumOtpRequests' => $maximumOtpRequests];
 
         if ($form->get('cancel')->isClicked()) {
-            return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:sendAuthenticationCancelledByUser');
+            return $this->forward('SurfnetStepupGatewayGatewayBundle:Failure:sendAuthenticationCancelledByUser');
         }
 
         if (!$form->isValid()) {
@@ -313,7 +313,7 @@ class SecondFactorController extends Controller
         $form = $this->createForm('gateway_verify_sms_challenge', $command)->handleRequest($request);
 
         if ($form->get('cancel')->isClicked()) {
-            return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:sendAuthenticationCancelledByUser');
+            return $this->forward('SurfnetStepupGatewayGatewayBundle:Failure:sendAuthenticationCancelledByUser');
         }
 
         if (!$form->isValid()) {
@@ -475,7 +475,7 @@ class SecondFactorController extends Controller
 
     public function cancelU2fAuthenticationAction()
     {
-        return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:sendAuthenticationCancelledByUser');
+        return $this->forward('SurfnetStepupGatewayGatewayBundle:Failure:sendAuthenticationCancelledByUser');
     }
 
     /**
