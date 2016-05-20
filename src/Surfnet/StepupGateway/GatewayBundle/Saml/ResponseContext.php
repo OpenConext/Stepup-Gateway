@@ -35,7 +35,7 @@ class ResponseContext
     private $hostedIdentityProvider;
 
     /**
-     * @var \Surfnet\StepupGateway\GatewayBundle\Service\SamlEntityService
+     * @var SamlEntityService
      */
     private $samlEntityService;
 
