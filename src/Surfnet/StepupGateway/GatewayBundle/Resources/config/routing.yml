@@ -1,7 +1,7 @@
 gateway_saml_metadata:
     path:     /authentication/metadata
     methods:  [GET]
-    defaults: { _controller: SurfnetStepupGatewayGatewayBundle:Metadata:metadata}
+    defaults: { _controller: SurfnetStepupGatewayGatewayBundle:Gateway:metadata}
 
 gateway_serviceprovider_consume_assertion:
     path:     /authentication/consume-assertion

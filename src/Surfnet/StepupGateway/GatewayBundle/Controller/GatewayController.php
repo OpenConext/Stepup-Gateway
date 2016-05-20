@@ -22,6 +22,7 @@ use Exception;
 use SAML2_Assertion;
 use SAML2_Const;
 use SAML2_Response;
+use Surfnet\SamlBundle\Http\XMLResponse;
 use Surfnet\SamlBundle\SAML2\AuthnRequest;
 use Surfnet\SamlBundle\SAML2\AuthnRequestFactory;
 use Surfnet\StepupGateway\GatewayBundle\Saml\AssertionAdapter;
@@ -32,6 +33,14 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class GatewayController extends Controller
 {
+    public function metadataAction()
+    {
+        /** @var \Surfnet\SamlBundle\Metadata\MetadataFactory $metadataFactory */
+        $metadataFactory = $this->get('surfnet_saml.metadata_factory');
+
+        return new XMLResponse($metadataFactory->generate());
+    }
+
     public function ssoAction(Request $httpRequest)
     {
         /** @var \Psr\Log\LoggerInterface $logger */
