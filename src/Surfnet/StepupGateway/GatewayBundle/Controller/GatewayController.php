@@ -155,7 +155,7 @@ class GatewayController extends Controller
         $logger->notice(sprintf('Forwarding to second factor controller for loa determination and handling'));
 
         return $this->forward(
-          'SurfnetStepupGatewayGatewayBundle:SecondFactor:selectSecondFactorForVerification'
+          'SurfnetStepupGatewayGatewayBundle:Selection:selectSecondFactorForVerification'
         );
     }
 

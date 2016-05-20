@@ -23,11 +23,7 @@ use Surfnet\StepupBundle\Command\VerifyPossessionOfPhoneCommand;
 use Surfnet\StepupBundle\Value\PhoneNumber\InternationalPhoneNumber;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects) -- Too many second factor types in one controller. See Pivotal:
- *     https://www.pivotaltracker.com/story/show/104104610
- */
-class SecondFactorController extends Controller
+class SelectionController extends Controller
 {
     public function selectSecondFactorForVerificationAction()
     {
@@ -59,7 +55,7 @@ class SecondFactorController extends Controller
         if ($this->get('gateway.service.stepup_authentication')->isIntrinsicLoa($requiredLoa)) {
             $this->get('gateway.authentication_logger')->logIntrinsicLoaAuthentication($originalRequestId);
 
-            return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:respond');
+            return $this->forward($context->getResponseAction());
         }
 
         $secondFactorCollection = $this
