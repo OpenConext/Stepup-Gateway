@@ -82,6 +82,6 @@ class YubikeyController extends Controller
           )
         );
 
-        return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:respond');
+        return $this->forward($context->getResponseAction());
     }
 }

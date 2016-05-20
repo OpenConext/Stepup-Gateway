@@ -93,6 +93,6 @@ class GssfController extends Controller
           $selectedSecondFactor
         ));
 
-        return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:respond');
+        return $this->forward($context->getResponseAction());
     }
 }

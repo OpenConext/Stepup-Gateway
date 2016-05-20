@@ -228,6 +228,25 @@ class ProxyStateHandler
     }
 
     /**
+     * @param string $controllerName
+     * @return $this
+     */
+    public function setResponseAction($controllerName)
+    {
+        $this->set('response_controller', $controllerName);
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getResponseAction()
+    {
+        return $this->get('response_controller');
+    }
+
+    /**
      * @param string $key
      * @param mixed $value Any scalar
      */

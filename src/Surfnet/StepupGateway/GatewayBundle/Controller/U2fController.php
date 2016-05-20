@@ -138,7 +138,7 @@ class U2fController extends Controller
               )
             );
 
-            return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:respond');
+            return $this->forward($context->getResponseAction());
         } elseif ($result->didDeviceReportError()) {
             $logger->error('U2F device reported error during authentication');
             $this->addFlash('error', 'gateway.u2f.alert.device_reported_an_error');

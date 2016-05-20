@@ -123,7 +123,7 @@ class SmsController extends Controller
               )
             );
 
-            return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:respond');
+            return $this->forward($context->getResponseAction());
         } elseif ($verification->didOtpExpire()) {
             $logger->notice('SMS challenge expired');
             $form->addError(new FormError('gateway.form.send_sms_challenge.challenge_expired'));

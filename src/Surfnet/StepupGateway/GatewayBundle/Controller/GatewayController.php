@@ -73,7 +73,8 @@ class GatewayController extends Controller
         $stateHandler
             ->setRequestId($originalRequestId)
             ->setRequestServiceProvider($originalRequest->getServiceProvider())
-            ->setRelayState($httpRequest->get(AuthnRequest::PARAMETER_RELAY_STATE, ''));
+            ->setRelayState($httpRequest->get(AuthnRequest::PARAMETER_RELAY_STATE, ''))
+            ->setResponseAction('SurfnetStepupGatewayGatewayBundle:Gateway:respond');
 
         // check if the requested Loa is supported
         $requiredLoa = $originalRequest->getAuthenticationContextClassRef();

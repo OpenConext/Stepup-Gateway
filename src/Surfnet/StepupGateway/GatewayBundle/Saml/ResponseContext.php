@@ -247,6 +247,14 @@ class ResponseContext
     }
 
     /**
+     * @return null|string
+     */
+    public function getResponseAction()
+    {
+        return $this->stateHandler->getResponseAction();
+    }
+
+    /**
      * Resets some state after the response is sent (e.g. resets which second factor was selected and whether it was
      * verified).
      */
