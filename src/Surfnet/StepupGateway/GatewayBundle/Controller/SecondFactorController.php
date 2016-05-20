@@ -19,21 +19,9 @@
 namespace Surfnet\StepupGateway\GatewayBundle\Controller;
 
 use Psr\Log\LoggerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Surfnet\StepupBundle\Command\VerifyPossessionOfPhoneCommand;
 use Surfnet\StepupBundle\Value\PhoneNumber\InternationalPhoneNumber;
-use Surfnet\StepupGateway\GatewayBundle\Command\SendSmsChallengeCommand;
-use Surfnet\StepupGateway\GatewayBundle\Command\VerifyYubikeyOtpCommand;
-use Surfnet\StepupGateway\GatewayBundle\Exception\RuntimeException;
-use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
-use Surfnet\StepupGateway\U2fVerificationBundle\Value\KeyHandle;
-use Surfnet\StepupU2fBundle\Dto\SignResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Form\FormError;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects) -- Too many second factor types in one controller. See Pivotal:
@@ -113,78 +101,5 @@ class SecondFactorController extends Controller
 
         $route = 'gateway_verify_second_factor_' . strtolower($secondFactor->secondFactorType);
         return $this->redirect($this->generateUrl($route));
-    }
-
-    public function verifyGssfAction()
-    {
-        $context = $this->get('gateway.proxy.response_context');
-        $originalRequestId = $context->getInResponseTo();
-
-        /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
-        $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
-        $logger->info('Received request to verify GSSF');
-
-        $selectedSecondFactor = $this->get('gateway.service.require_selected_factor')
-          ->requireSelectedSecondFactor($logger);
-
-        $logger->info(sprintf(
-            'Selected GSSF "%s" for verfication, forwarding to Saml handling',
-            $selectedSecondFactor
-        ));
-
-        /** @var \Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorService $secondFactorService */
-        $secondFactorService = $this->get('gateway.service.second_factor_service');
-        /** @var \Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor $secondFactor */
-        $secondFactor = $secondFactorService->findByUuid($selectedSecondFactor);
-        if (!$secondFactor) {
-            $logger->critical(sprintf(
-                'Requested verification of GSSF "%s", however that Second Factor no longer exists',
-                $selectedSecondFactor
-            ));
-
-            throw new RuntimeException('Verification of selected second factor that no longer exists');
-        }
-
-        return $this->forward(
-            'SurfnetStepupGatewaySamlStepupProviderBundle:SamlProxy:sendSecondFactorVerificationAuthnRequest',
-            [
-                'provider' => $secondFactor->secondFactorType,
-                'subjectNameId' => $secondFactor->secondFactorIdentifier
-            ]
-        );
-    }
-
-    public function gssfVerifiedAction()
-    {
-        $context = $this->get('gateway.proxy.response_context');
-        $originalRequestId = $context->getInResponseTo();
-
-        /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
-        $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
-        $logger->info('Attempting to mark GSSF as verified');
-
-        $selectedSecondFactor = $this->get('gateway.service.require_selected_factor')
-          ->requireSelectedSecondFactor($logger);
-
-        /** @var \Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor $secondFactor */
-        $secondFactor = $this->get('gateway.service.second_factor_service')->findByUuid($selectedSecondFactor);
-        if (!$secondFactor) {
-            $logger->critical(sprintf(
-                'Verification of GSSF "%s" succeeded, however that Second Factor no longer exists',
-                $selectedSecondFactor
-            ));
-
-            throw new RuntimeException('Verification of selected second factor that no longer exists');
-        }
-
-        $context->markSecondFactorVerified();
-        $this->get('gateway.authentication_logger')->logSecondFactorAuthentication($originalRequestId);
-
-        $logger->info(sprintf(
-            'Marked GSSF "%s" as verified, forwarding to Gateway controller to respond',
-            $selectedSecondFactor
-        ));
-
-        return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:respond');
     }
 }

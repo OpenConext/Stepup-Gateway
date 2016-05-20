@@ -50,7 +50,7 @@ gateway_verify_second_factor_sms_verify_challenge:
 gateway_verify_second_factor_gssf:
     path:     /verify-second-factor/gssf
     methods:  [GET]
-    defaults: { _controller: SurfnetStepupGatewayGatewayBundle:SecondFactor:verifyGssf }
+    defaults: { _controller: SurfnetStepupGatewayGatewayBundle:Gssf:verifyGssf }
 
 
 gateway_verify_second_factor_u2f:
