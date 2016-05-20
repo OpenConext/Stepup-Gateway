@@ -24,6 +24,7 @@ use Surfnet\SamlBundle\Entity\IdentityProvider;
 use Surfnet\SamlBundle\Entity\ServiceProvider;
 use Surfnet\SamlBundle\SAML2\Attribute\AttributeDefinition;
 use Surfnet\SamlBundle\SAML2\Attribute\AttributeDictionary;
+use Surfnet\SamlBundle\SAML2\AuthnRequest;
 use Surfnet\SamlBundle\SAML2\Response\AssertionAdapter;
 use Surfnet\StepupBundle\Value\Loa;
 use Surfnet\StepupGateway\GatewayBundle\Saml\AssertionSigningService;
@@ -90,12 +91,42 @@ class ProxyResponseService
     /**
      * @param SAML2_Assertion $assertion
      * @param ServiceProvider $targetServiceProvider
+     * @param string|null $authnContextClassRef
+     * @return \SAML2_Response
+     */
+    public function create2ndFactorOnlyResponse(
+      AuthnRequest $request,
+      ServiceProvider $targetServiceProvider,
+      $authnContextClassRef
+    ) {
+        $newAssertion = new SAML2_Assertion();
+        $newAssertion->setNotBefore($this->currentTime->getTimestamp());
+        $newAssertion->setNotOnOrAfter($this->getTimestamp('PT5M'));
+        $newAssertion->setIssuer($this->hostedIdentityProvider->getEntityId());
+        $newAssertion->setIssueInstant($this->getTimestamp());
+
+        $this->assertionSigningService->signAssertion($newAssertion);
+        $this->addSubjectConfirmationFor($newAssertion, $targetServiceProvider);
+
+        $newAssertion->setNameId($request->getNameId());
+
+        $newAssertion->setValidAudiences([$this->proxyStateHandler->getRequestServiceProvider()]);
+
+        $this->addAuthenticationStatementTo($newAssertion, $newAssertion);
+
+        $newAssertion->setAuthnContextClassRef($authnContextClassRef);
+
+        return $this->createNewAuthnResponse($newAssertion, $targetServiceProvider);
+    }
+
+    /**
+     * @param SAML2_Assertion $assertion
+     * @param ServiceProvider $targetServiceProvider
      * @param string|null $loa
      * @return \SAML2_Response
      */
     public function createProxyResponse(SAML2_Assertion $assertion, ServiceProvider $targetServiceProvider, $loa = null)
     {
-
         $newAssertion = new SAML2_Assertion();
         $newAssertion->setNotBefore($this->currentTime->getTimestamp());
         $newAssertion->setNotOnOrAfter($this->getTimestamp('PT5M'));
