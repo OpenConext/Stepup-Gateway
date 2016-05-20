@@ -39,12 +39,12 @@ gateway_verify_second_factor_yubikey:
 gateway_verify_second_factor_sms:
     path:     /verify-second-factor/sms/send-challenge
     methods:  [GET,POST]
-    defaults: { _controller: SurfnetStepupGatewayGatewayBundle:SecondFactor:verifySmsSecondFactor }
+    defaults: { _controller: SurfnetStepupGatewayGatewayBundle:Sms:verifySmsSecondFactor }
 
 gateway_verify_second_factor_sms_verify_challenge:
     path:     /verify-second-factor/sms/verify-challenge
     methods:  [GET,POST]
-    defaults: { _controller: SurfnetStepupGatewayGatewayBundle:SecondFactor:verifySmsSecondFactorChallenge }
+    defaults: { _controller: SurfnetStepupGatewayGatewayBundle:Sms:verifySmsSecondFactorChallenge }
 
 
 gateway_verify_second_factor_gssf:
