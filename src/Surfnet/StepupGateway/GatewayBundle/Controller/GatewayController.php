@@ -35,10 +35,9 @@ class GatewayController extends Controller
 {
     public function metadataAction()
     {
-        /** @var \Surfnet\SamlBundle\Metadata\MetadataFactory $metadataFactory */
-        $metadataFactory = $this->get('surfnet_saml.metadata_factory');
-
-        return new XMLResponse($metadataFactory->generate());
+        return new XMLResponse(
+          $this->get('surfnet_saml.metadata_factory')->generate()
+        );
     }
 
     public function ssoAction(Request $httpRequest)
