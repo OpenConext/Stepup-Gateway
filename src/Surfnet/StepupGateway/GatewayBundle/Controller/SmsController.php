@@ -26,7 +26,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Surfnet\StepupGateway\GatewayBundle\Command\SendSmsChallengeCommand;
 
-final class SmsController extends Controller
+class SmsController extends Controller
 {
     /**
      * @Template
