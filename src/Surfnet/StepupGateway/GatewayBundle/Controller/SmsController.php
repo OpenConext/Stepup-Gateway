@@ -25,6 +25,7 @@ use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Surfnet\StepupGateway\GatewayBundle\Command\SendSmsChallengeCommand;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 class SmsController extends Controller
 {

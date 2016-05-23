@@ -23,6 +23,7 @@ use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Surfnet\StepupGateway\GatewayBundle\Command\VerifyYubikeyOtpCommand;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 class YubikeyController extends Controller
 {
