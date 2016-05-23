@@ -76,11 +76,11 @@ class GatewayController extends Controller
             ->setResponseAction('SurfnetStepupGatewayGatewayBundle:Gateway:respond');
 
         // check if the requested Loa is supported
-        $requiredLoa = $originalRequest->getAuthenticationContextClassRef();
-        if ($requiredLoa && !$this->get('surfnet_stepup.service.loa_resolution')->hasLoa($requiredLoa)) {
+        $authnContextClassRef = $originalRequest->getAuthenticationContextClassRef();
+        if ($authnContextClassRef && !$this->get('surfnet_stepup.service.loa_resolution')->hasLoa($authnContextClassRef)) {
             $logger->info(sprintf(
                 'Requested required Loa "%s" does not exist, sending response with status Requester Error',
-                $requiredLoa
+                $authnContextClassRef
             ));
             return $this->get('gateway.service.saml_response')->renderRequesterFailureResponse();
         }
