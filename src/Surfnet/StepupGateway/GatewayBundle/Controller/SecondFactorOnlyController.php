@@ -21,25 +21,34 @@ namespace Surfnet\StepupGateway\GatewayBundle\Controller;
 use Exception;
 use Surfnet\SamlBundle\Http\XMLResponse;
 use Surfnet\SamlBundle\SAML2\AuthnRequest;
+use Surfnet\StepupBundle\Value\AuthnContextClass;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class SecondFactorOnlyController extends Controller
 {
+    /**
+     * @return XMLResponse
+     */
     public function metadataAction()
     {
+        // @todo FIX ME
         return new XMLResponse(
           $this->get('surfnet_saml.metadata_factory')->generate()
         );
     }
 
+    /**
+     * @param Request $httpRequest
+     * @return Response
+     */
     public function ssoAction(Request $httpRequest)
     {
-        /** @var \Psr\Log\LoggerInterface $logger */
         $logger = $this->get('logger');
         $logger->notice('Received AuthnRequest, started processing');
 
-        /** @var \Surfnet\SamlBundle\Http\RedirectBinding $redirectBinding */
         $redirectBinding = $this->get('surfnet_saml.http.redirect_binding');
 
         try {
@@ -60,8 +69,8 @@ class SecondFactorOnlyController extends Controller
           $originalRequest->getRequestId()
         ));
 
-        /** @var \Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler $stateHandler */
         $stateHandler = $this->get('gateway.proxy.state_handler');
+
         $stateHandler
           ->setRequestId($originalRequestId)
           ->setRequestServiceProvider($originalRequest->getServiceProvider())
@@ -87,9 +96,11 @@ class SecondFactorOnlyController extends Controller
             return $this->get('gateway.service.saml_response')->renderRequesterFailureResponse();
         }
 
-        if ($requiredLoa && !$this->get('surfnet_stepup.service.loa_resolution')->hasLoa($requiredLoa)) {
+        $loaResolutionService = $this->get('surfnet_stepup.service.loa_resolution');
+        if ($requiredLoa && !$loaResolutionService->hasLoa($requiredLoa)) {
             $logger->info(sprintf(
-              'Requested required Loa "%s" does not exist, sending response with status Requester Error',
+              'Requested required Loa "%s" does not exist,'
+              .' sending response with status Requester Error',
               $requiredLoa
             ));
             return $this->get('gateway.service.saml_response')->renderRequesterFailureResponse();
@@ -108,40 +119,49 @@ class SecondFactorOnlyController extends Controller
         );
     }
 
+    /**
+     * @return Response
+     */
     public function respondAction()
     {
         $responseContext = $this->get('gateway.proxy.response_context');
         $originalRequestId = $responseContext->getInResponseTo();
 
-        /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
         $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
         $logger->notice('Creating Response');
 
-        $grantedLoa = null;
-        if (!$responseContext->isSecondFactorVerified()) {
+        $secondFactorUuid = $this->get('gateway.service.require_selected_factor')
+          ->requireSelectedSecondFactor($logger);
 
+        if (!$responseContext->isSecondFactorVerified()) {
+            $logger->error('Second factor was not verified');
+            throw new BadRequestHttpException('Cannot verify possession of an unknown second factor.');
         }
 
         $secondFactor = $this->get('gateway.service.second_factor_service')->findByUuid(
-          $responseContext->getSelectedSecondFactor()
+          $secondFactorUuid
         );
 
         $grantedLoa = $this->get('surfnet_stepup.service.loa_resolution')->getLoaByLevel(
           $secondFactor->getLoaLevel()
         );
 
-        /** @var \Surfnet\StepupGateway\GatewayBundle\Service\ProxyResponseService $proxyResponseService */
-        $proxyResponseService = $this->get('gateway.service.response_proxy');
-        $response             = $proxyResponseService->create2ndFactorOnlyResponse(
-          $responseContext->getIdentityNameId(),
-          $responseContext->getServiceProvider(),
-          (string) $grantedLoa
+        $authnContextClass = $grantedLoa->fetchAuthnContextClassOfType(
+          AuthnContextClass::TYPE_SECOND_FACTOR_ONLY
+        );
+
+        $response = $this->get('gateway.service.response_proxy')
+          ->create2ndFactorOnlyResponse(
+              $responseContext->getIdentityNameId(),
+              $responseContext->getServiceProvider(),
+              (string) $authnContextClass
         );
 
         $responseContext->responseSent();
 
         $logger->notice(sprintf(
-          'Responding to request "%s" with response based on response from the remote IdP with response "%s"',
+          'Responding to request "%s" with response based on '
+          . 'response from the remote IdP with response "%s"',
           $responseContext->getInResponseTo(),
           $response->getId()
         ));
