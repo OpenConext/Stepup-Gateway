@@ -180,7 +180,7 @@ class SecondFactorOnlyController extends Controller
           AuthnContextClass::TYPE_SECOND_FACTOR_ONLY
         );
 
-        $response = $this->get('gateway.service.response_proxy')
+        $response = $this->get('second_factor_only.response_proxy')
           ->create2ndFactorOnlyResponse(
               $responseContext->getIdentityNameId(),
               $responseContext->getServiceProvider(),
