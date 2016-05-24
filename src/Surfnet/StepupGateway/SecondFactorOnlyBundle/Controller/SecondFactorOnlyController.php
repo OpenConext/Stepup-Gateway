@@ -92,9 +92,9 @@ class SecondFactorOnlyController extends Controller
         $stateHandler->saveIdentityNameId($originalRequest->getNameId());
 
         // check if the requested Loa is supported
-        $requiredLoa = $originalRequest->getAuthenticationContextClassRef();
+        $authnContextClassRef = $originalRequest->getAuthenticationContextClassRef();
 
-        if (!$requiredLoa) {
+        if (!$authnContextClassRef) {
             $logger->info(
               'No LOA requested, sending response with status Requester Error'
             );
