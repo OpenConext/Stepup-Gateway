@@ -41,7 +41,6 @@ class YubikeyController extends Controller
         );
         $originalRequestId = $context->getInResponseTo();
 
-        /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
         $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
 
         $selectedSecondFactor = $this->get('gateway.service.require_selected_factor')
@@ -77,7 +76,7 @@ class YubikeyController extends Controller
             return ['form' => $form->createView()];
         }
 
-        $this->get('gateway.proxy.response_context')->markSecondFactorVerified();
+        $context->markSecondFactorVerified();
         $this->get('gateway.authentication_logger')->logSecondFactorAuthentication($originalRequestId);
 
         $logger->info(

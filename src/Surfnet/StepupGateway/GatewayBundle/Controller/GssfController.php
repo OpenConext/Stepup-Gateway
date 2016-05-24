@@ -19,7 +19,9 @@
 namespace Surfnet\StepupGateway\GatewayBundle\Controller;
 
 use RuntimeException;
+use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor;
 use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
+use Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 class GssfController extends Controller
@@ -44,9 +46,7 @@ class GssfController extends Controller
           $selectedSecondFactor
         ));
 
-        /** @var \Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorService $secondFactorService */
         $secondFactorService = $this->get('gateway.service.second_factor_service');
-        /** @var \Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor $secondFactor */
         $secondFactor = $secondFactorService->findByUuid($selectedSecondFactor);
         if (!$secondFactor) {
             $logger->critical(sprintf(
@@ -81,7 +81,7 @@ class GssfController extends Controller
         $selectedSecondFactor = $this->get('gateway.service.require_selected_factor')
           ->requireSelectedSecondFactor($logger);
 
-        /** @var \Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor $secondFactor */
+        /** @var SecondFactor $secondFactor */
         $secondFactor = $this->get('gateway.service.second_factor_service')->findByUuid($selectedSecondFactor);
         if (!$secondFactor) {
             $logger->critical(sprintf(

@@ -40,7 +40,6 @@ class U2fController extends Controller
         );
         $originalRequestId = $context->getInResponseTo();
 
-        /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
         $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
 
         $selectedSecondFactor = $this->get('gateway.service.require_selected_factor')
@@ -71,7 +70,6 @@ class U2fController extends Controller
         $signRequest = $service->createSignRequest($registration);
         $signResponse = new SignResponse();
 
-        /** @var AttributeBagInterface $session */
         $session = $this->get('gateway.session.u2f');
         $session->set('request', $signRequest);
 
@@ -99,7 +97,6 @@ class U2fController extends Controller
         );
         $originalRequestId = $context->getInResponseTo();
 
-        /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
         $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
 
         $selectedSecondFactor = $this->get('gateway.service.require_selected_factor')
@@ -160,6 +157,8 @@ class U2fController extends Controller
 
     public function cancelU2fAuthenticationAction()
     {
-        return $this->forward('SurfnetStepupGatewayGatewayBundle:Failure:sendAuthenticationCancelledByUser');
+        return $this->forward(
+          'SurfnetStepupGatewayGatewayBundle:Failure:sendAuthenticationCancelledByUser'
+        );
     }
 }

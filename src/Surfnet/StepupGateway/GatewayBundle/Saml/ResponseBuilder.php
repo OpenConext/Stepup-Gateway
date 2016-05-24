@@ -30,7 +30,7 @@ class ResponseBuilder
     private $response;
 
     /**
-     * @var \Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext
+     * @var ResponseContext
      */
     private $responseContext;
 

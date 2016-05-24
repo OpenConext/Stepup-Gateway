@@ -26,6 +26,7 @@ use Surfnet\SamlBundle\Http\XMLResponse;
 use Surfnet\SamlBundle\SAML2\AuthnRequest;
 use Surfnet\SamlBundle\SAML2\AuthnRequestFactory;
 use Surfnet\StepupGateway\GatewayBundle\Saml\AssertionAdapter;
+use Surfnet\StepupGateway\GatewayBundle\Service\ProxyResponseService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -195,7 +196,7 @@ class GatewayController extends Controller
             );
         }
 
-        /** @var \Surfnet\StepupGateway\GatewayBundle\Service\ProxyResponseService $proxyResponseService */
+        /** @var ProxyResponseService $proxyResponseService */
         $proxyResponseService = $this->get('gateway.service.response_proxy');
         $response             = $proxyResponseService->createProxyResponse(
             $responseContext->reconstituteAssertion(),

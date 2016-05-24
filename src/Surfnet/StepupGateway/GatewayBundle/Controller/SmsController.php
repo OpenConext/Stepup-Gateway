@@ -43,7 +43,6 @@ class SmsController extends Controller
         );
         $originalRequestId = $context->getInResponseTo();
 
-        /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
         $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
 
         $selectedSecondFactor = $this->get('gateway.service.require_selected_factor')
@@ -81,7 +80,9 @@ class SmsController extends Controller
             return array_merge($viewVariables, ['phoneNumber' => $phoneNumber, 'form' => $form->createView()]);
         }
 
-        return $this->redirect($this->generateUrl('gateway_verify_second_factor_sms_verify_challenge'));
+        return $this->redirect(
+          $this->generateUrl('gateway_verify_second_factor_sms_verify_challenge')
+        );
     }
 
     /**
@@ -97,7 +98,6 @@ class SmsController extends Controller
         );
         $originalRequestId = $context->getInResponseTo();
 
-        /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
         $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
 
         $selectedSecondFactor = $this->get('gateway.service.require_selected_factor')

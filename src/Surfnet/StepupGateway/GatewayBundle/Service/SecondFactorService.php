@@ -24,7 +24,7 @@ use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactorRepository;
 class SecondFactorService
 {
     /**
-     * @var \Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactorRepository
+     * @var SecondFactorRepository
      */
     private $repository;
 
