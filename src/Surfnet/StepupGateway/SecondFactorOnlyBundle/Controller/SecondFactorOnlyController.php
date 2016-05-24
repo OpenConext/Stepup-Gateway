@@ -36,9 +36,8 @@ class SecondFactorOnlyController extends Controller
      */
     public function metadataAction()
     {
-        // @todo FIX ME
         return new XMLResponse(
-          $this->get('surfnet_saml.metadata_factory')->generate()
+          $this->get('second_factor_only.metadata_factory')->generate()
         );
     }
 
