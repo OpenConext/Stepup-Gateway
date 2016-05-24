@@ -19,12 +19,15 @@
 namespace Surfnet\StepupGateway\GatewayBundle\Controller;
 
 use Exception;
+use Psr\Log\LoggerInterface;
 use SAML2_Assertion;
 use SAML2_Const;
 use SAML2_Response;
 use Surfnet\SamlBundle\Http\XMLResponse;
+use Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger;
 use Surfnet\SamlBundle\SAML2\AuthnRequest;
 use Surfnet\SamlBundle\SAML2\AuthnRequestFactory;
+use Surfnet\StepupBundle\Value\AuthnContextClass;
 use Surfnet\StepupGateway\GatewayBundle\Saml\AssertionAdapter;
 use Surfnet\StepupGateway\GatewayBundle\Service\ProxyResponseService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -81,20 +84,16 @@ class GatewayController extends Controller
 
         // check if the requested Loa is supported
         $authnContextClassRef = $originalRequest->getAuthenticationContextClassRef();
-        if ($authnContextClassRef && !$this->get('surfnet_stepup.service.loa_resolution')->hasLoa($authnContextClassRef)) {
-            $logger->info(sprintf(
-                'Requested required Loa "%s" does not exist, sending response with status Requester Error',
-                $authnContextClassRef
-            ));
-            $responseRendering = $this->get('gateway.service.saml_response');
-            return $responseRendering->renderRequesterFailureResponse(
-              $this->get(self::RESPONSE_CONTEXT_SERVICE_ID)
-            );
+        $failureResponse = $this->verifyAuthnContextClassRef(
+          $authnContextClassRef,
+          $logger
+        );
+
+        if ($failureResponse) {
+            return $failureResponse;
         }
 
-        $stateHandler->setRequestAuthnContextClassRef(
-          $originalRequest->getAuthenticationContextClassRef()
-        );
+        $stateHandler->setRequestAuthnContextClassRef($authnContextClassRef);
 
         $proxyRequest = AuthnRequestFactory::createNewRequest(
             $this->get('surfnet_saml.hosted.service_provider'),
@@ -132,7 +131,6 @@ class GatewayController extends Controller
         $logger->notice('Received SAMLResponse, attempting to process for Proxy Response');
 
         try {
-            /** @var \SAML2_Assertion $assertion */
             $assertion = $this->get('surfnet_saml.http.post_binding')->processResponse(
                 $request,
                 $this->get('surfnet_saml.remote.idp'),
@@ -181,7 +179,6 @@ class GatewayController extends Controller
         $responseContext = $this->get(static::RESPONSE_CONTEXT_SERVICE_ID);
         $originalRequestId = $responseContext->getInResponseTo();
 
-        /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
         $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
         $logger->notice('Creating Response');
 
@@ -196,7 +193,6 @@ class GatewayController extends Controller
             );
         }
 
-        /** @var ProxyResponseService $proxyResponseService */
         $proxyResponseService = $this->get('gateway.service.response_proxy');
         $response             = $proxyResponseService->createProxyResponse(
             $responseContext->reconstituteAssertion(),
@@ -214,5 +210,59 @@ class GatewayController extends Controller
 
         $responseRendering = $this->get('gateway.service.saml_response');
         return $responseRendering->renderResponse($responseContext, $response);
+    }
+
+    /**
+     * @param $authnContextClassRef
+     * @param LoggerInterface $logger
+     * @return null|Response
+     */
+    private function verifyAuthnContextClassRef(
+      $authnContextClassRef,
+      LoggerInterface $logger
+    ) {
+        if (!$authnContextClassRef) {
+            return null;
+        }
+
+        $loaResolution = $this->get('surfnet_stepup.service.loa_resolution');
+        if (!$loaResolution->hasLoa($authnContextClassRef)) {
+            $logger->info(
+              sprintf(
+                'Requested required Loa "%s" does not exist, sending response with status Requester Error',
+                $authnContextClassRef
+              )
+            );
+            $responseRendering = $this->get(
+              'gateway.service.saml_response'
+            );
+
+            return $responseRendering->renderRequesterFailureResponse(
+              $this->get(self::RESPONSE_CONTEXT_SERVICE_ID)
+            );
+        }
+
+        $loa = $loaResolution->getLoa($authnContextClassRef);
+        $authContextClass = $loa->fetchAuthnContextClassOfType(
+          AuthnContextClass::TYPE_GATEWAY
+        );
+
+        if (!$authContextClass->isIdentifiedBy($authnContextClassRef)) {
+            $logger->info(
+              sprintf(
+                'Requested required Loa "%s" is of the wrong type, sending response with status Requester Error',
+                $authnContextClassRef
+              )
+            );
+            $responseRendering = $this->get(
+              'gateway.service.saml_response'
+            );
+
+            return $responseRendering->renderRequesterFailureResponse(
+              $this->get(self::RESPONSE_CONTEXT_SERVICE_ID)
+            );
+        }
+
+        return null;
     }
 }
