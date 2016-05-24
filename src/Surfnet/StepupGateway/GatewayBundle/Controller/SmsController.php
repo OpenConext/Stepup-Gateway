@@ -92,7 +92,7 @@ class SmsController extends Controller
      */
     public function verifySmsSecondFactorChallengeAction(Request $request)
     {
-        /** @var ResponseContext $responseContext */
+        /** @var ResponseContext $context */
         $context = $this->get(
           $this->get('gateway.proxy.state_handler')->getResponseContextServiceId()
         );
@@ -121,7 +121,7 @@ class SmsController extends Controller
         if ($verification->wasSuccessful()) {
             $this->get('gateway.service.stepup_authentication')->clearSmsVerificationState();
 
-            $this->get('gateway.proxy.response_context')->markSecondFactorVerified();
+            $context->markSecondFactorVerified();
             $this->get('gateway.authentication_logger')->logSecondFactorAuthentication($originalRequestId);
 
             $logger->info(
