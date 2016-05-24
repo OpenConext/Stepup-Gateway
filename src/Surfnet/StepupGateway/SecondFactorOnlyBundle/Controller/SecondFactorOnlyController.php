@@ -76,7 +76,7 @@ class SecondFactorOnlyController extends Controller
           ->setRequestId($originalRequestId)
           ->setRequestServiceProvider($originalRequest->getServiceProvider())
           ->setRelayState($httpRequest->get(AuthnRequest::PARAMETER_RELAY_STATE, ''))
-          ->setResponseAction('SurfnetStepupGatewayGatewayBundle:SecondFactorOnly:respond')
+          ->setResponseAction('SurfnetStepupGatewaySecondFactorOnlyBundle:SecondFactorOnly:respond')
           ->setResponseContextServiceId(static::RESPONSE_CONTEXT_SERVICE_ID);
 
         if (!$originalRequest->getNameId()) {
