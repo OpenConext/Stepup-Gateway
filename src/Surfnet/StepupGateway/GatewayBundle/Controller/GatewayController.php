@@ -33,6 +33,8 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class GatewayController extends Controller
 {
+    const RESPONSE_CONTEXT_SERVICE_ID = 'gateway.proxy.response_context';
+
     public function metadataAction()
     {
         return new XMLResponse(
@@ -73,7 +75,8 @@ class GatewayController extends Controller
             ->setRequestId($originalRequestId)
             ->setRequestServiceProvider($originalRequest->getServiceProvider())
             ->setRelayState($httpRequest->get(AuthnRequest::PARAMETER_RELAY_STATE, ''))
-            ->setResponseAction('SurfnetStepupGatewayGatewayBundle:Gateway:respond');
+            ->setResponseAction('SurfnetStepupGatewayGatewayBundle:Gateway:respond')
+            ->setResponseContextServiceId(static::RESPONSE_CONTEXT_SERVICE_ID);
 
         // check if the requested Loa is supported
         $authnContextClassRef = $originalRequest->getAuthenticationContextClassRef();
@@ -115,7 +118,7 @@ class GatewayController extends Controller
      */
     public function consumeAssertionAction(Request $request)
     {
-        $responseContext = $this->get('gateway.proxy.response_context');
+        $responseContext = $this->get(static::RESPONSE_CONTEXT_SERVICE_ID);
         $originalRequestId = $responseContext->getInResponseTo();
 
         /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
@@ -161,7 +164,7 @@ class GatewayController extends Controller
 
     public function respondAction()
     {
-        $responseContext = $this->get('gateway.proxy.response_context');
+        $responseContext = $this->get(static::RESPONSE_CONTEXT_SERVICE_ID);
         $originalRequestId = $responseContext->getInResponseTo();
 
         /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */

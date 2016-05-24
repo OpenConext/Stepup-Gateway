@@ -19,13 +19,17 @@
 namespace Surfnet\StepupGateway\GatewayBundle\Controller;
 
 use RuntimeException;
+use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 class GssfController extends Controller
 {
     public function verifyGssfAction()
     {
-        $context = $this->get('gateway.proxy.response_context');
+        /** @var ResponseContext $responseContext */
+        $context = $this->get(
+          $this->get('gateway.proxy.state_handler')->getResponseContextServiceId()
+        );
         $originalRequestId = $context->getInResponseTo();
 
         /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
@@ -64,7 +68,10 @@ class GssfController extends Controller
 
     public function gssfVerifiedAction()
     {
-        $context = $this->get('gateway.proxy.response_context');
+        /** @var ResponseContext $responseContext */
+        $context = $this->get(
+          $this->get('gateway.proxy.state_handler')->getResponseContextServiceId()
+        );
         $originalRequestId = $context->getInResponseTo();
 
         /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */

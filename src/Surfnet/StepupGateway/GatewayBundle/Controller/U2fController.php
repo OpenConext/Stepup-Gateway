@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Controller;
 
+use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
 use Surfnet\StepupGateway\U2fVerificationBundle\Value\KeyHandle;
 use Surfnet\StepupU2fBundle\Dto\SignResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -33,7 +34,10 @@ class U2fController extends Controller
      */
     public function initiateU2fAuthenticationAction()
     {
-        $context = $this->get('gateway.proxy.response_context');
+        /** @var ResponseContext $responseContext */
+        $context = $this->get(
+          $this->get('gateway.proxy.state_handler')->getResponseContextServiceId()
+        );
         $originalRequestId = $context->getInResponseTo();
 
         /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
@@ -89,7 +93,10 @@ class U2fController extends Controller
      */
     public function verifyU2fAuthenticationAction(Request $request)
     {
-        $context = $this->get('gateway.proxy.response_context');
+        /** @var ResponseContext $responseContext */
+        $context = $this->get(
+          $this->get('gateway.proxy.state_handler')->getResponseContextServiceId()
+        );
         $originalRequestId = $context->getInResponseTo();
 
         /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */

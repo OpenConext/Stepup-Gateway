@@ -20,6 +20,7 @@ namespace Surfnet\StepupGateway\GatewayBundle\Controller;
 
 use Surfnet\StepupBundle\Command\VerifyPossessionOfPhoneCommand;
 use Surfnet\StepupBundle\Value\PhoneNumber\InternationalPhoneNumber;
+use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
@@ -36,7 +37,10 @@ class SmsController extends Controller
      */
     public function verifySmsSecondFactorAction(Request $request)
     {
-        $context = $this->get('gateway.proxy.response_context');
+        /** @var ResponseContext $responseContext */
+        $context = $this->get(
+          $this->get('gateway.proxy.state_handler')->getResponseContextServiceId()
+        );
         $originalRequestId = $context->getInResponseTo();
 
         /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
@@ -87,7 +91,10 @@ class SmsController extends Controller
      */
     public function verifySmsSecondFactorChallengeAction(Request $request)
     {
-        $context = $this->get('gateway.proxy.response_context');
+        /** @var ResponseContext $responseContext */
+        $context = $this->get(
+          $this->get('gateway.proxy.state_handler')->getResponseContextServiceId()
+        );
         $originalRequestId = $context->getInResponseTo();
 
         /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */

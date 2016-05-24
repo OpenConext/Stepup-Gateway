@@ -247,6 +247,25 @@ class ProxyStateHandler
     }
 
     /**
+     * @param string $serviceId
+     * @return $this
+     */
+    public function setResponseContextServiceId($serviceId)
+    {
+        $this->set('response_context_service_id', $serviceId);
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getResponseContextServiceId()
+    {
+        return $this->get('response_context_service_id');
+    }
+
+    /**
      * @param string $key
      * @param mixed $value Any scalar
      */

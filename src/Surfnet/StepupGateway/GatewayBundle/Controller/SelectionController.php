@@ -21,13 +21,17 @@ namespace Surfnet\StepupGateway\GatewayBundle\Controller;
 use Psr\Log\LoggerInterface;
 use Surfnet\StepupBundle\Command\VerifyPossessionOfPhoneCommand;
 use Surfnet\StepupBundle\Value\PhoneNumber\InternationalPhoneNumber;
+use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 class SelectionController extends Controller
 {
     public function selectSecondFactorForVerificationAction()
     {
-        $context = $this->get('gateway.proxy.response_context');
+        /** @var ResponseContext $responseContext */
+        $context = $this->get(
+          $this->get('gateway.proxy.state_handler')->getResponseContextServiceId()
+        );
         $originalRequestId = $context->getInResponseTo();
 
         /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */

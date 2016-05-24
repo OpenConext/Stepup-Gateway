@@ -19,13 +19,17 @@
 namespace Surfnet\StepupGateway\GatewayBundle\Controller;
 
 use SAML2_Const;
+use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 class FailureController extends Controller
 {
     public function sendLoaCannotBeGivenAction()
     {
-        $responseContext = $this->get('gateway.proxy.response_context');
+        /** @var ResponseContext $responseContext */
+        $responseContext = $this->get(
+          $this->get('gateway.proxy.state_handler')->getResponseContextServiceId()
+        );
         $originalRequestId = $responseContext->getInResponseTo();
 
         /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
@@ -51,7 +55,10 @@ class FailureController extends Controller
 
     public function sendAuthenticationCancelledByUserAction()
     {
-        $responseContext = $this->get('gateway.proxy.response_context');
+        /** @var ResponseContext $responseContext */
+        $responseContext = $this->get(
+          $this->get('gateway.proxy.state_handler')->getResponseContextServiceId()
+        );
         $originalRequestId = $responseContext->getInResponseTo();
 
         /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */

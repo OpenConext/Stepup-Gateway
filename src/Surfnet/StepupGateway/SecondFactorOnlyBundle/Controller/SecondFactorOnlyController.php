@@ -29,6 +29,8 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class SecondFactorOnlyController extends Controller
 {
+    const RESPONSE_CONTEXT_SERVICE_ID = 'second_factor_only.response_context';
+
     /**
      * @return XMLResponse
      */
@@ -75,7 +77,8 @@ class SecondFactorOnlyController extends Controller
           ->setRequestId($originalRequestId)
           ->setRequestServiceProvider($originalRequest->getServiceProvider())
           ->setRelayState($httpRequest->get(AuthnRequest::PARAMETER_RELAY_STATE, ''))
-          ->setResponseAction('SurfnetStepupGatewayGatewayBundle:SecondFactorOnly:respond');
+          ->setResponseAction('SurfnetStepupGatewayGatewayBundle:SecondFactorOnly:respond')
+          ->setResponseContextServiceId(static::RESPONSE_CONTEXT_SERVICE_ID);
 
         if (!$originalRequest->getNameId()) {
             $logger->info(
@@ -124,7 +127,7 @@ class SecondFactorOnlyController extends Controller
      */
     public function respondAction()
     {
-        $responseContext = $this->get('gateway.proxy.response_context');
+        $responseContext = $this->get(static::RESPONSE_CONTEXT_SERVICE_ID);
         $originalRequestId = $responseContext->getInResponseTo();
 
         $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
