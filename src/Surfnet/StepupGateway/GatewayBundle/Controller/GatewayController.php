@@ -85,10 +85,15 @@ class GatewayController extends Controller
                 'Requested required Loa "%s" does not exist, sending response with status Requester Error',
                 $authnContextClassRef
             ));
-            return $this->get('gateway.service.saml_response')->renderRequesterFailureResponse();
+            $responseRendering = $this->get('gateway.service.saml_response');
+            return $responseRendering->renderRequesterFailureResponse(
+              $this->get(self::RESPONSE_CONTEXT_SERVICE_ID)
+            );
         }
 
-        $stateHandler->setRequestAuthnContextClassRef($originalRequest->getAuthenticationContextClassRef());
+        $stateHandler->setRequestAuthnContextClassRef(
+          $originalRequest->getAuthenticationContextClassRef()
+        );
 
         $proxyRequest = AuthnRequestFactory::createNewRequest(
             $this->get('surfnet_saml.hosted.service_provider'),
@@ -133,8 +138,16 @@ class GatewayController extends Controller
                 $this->get('surfnet_saml.hosted.service_provider')
             );
         } catch (Exception $exception) {
-            $logger->error(sprintf('Could not process received Response, error: "%s"', $exception->getMessage()));
-            return $this->get('gateway.service.saml_response')->renderUnprocessableResponse();
+            $logger->error(
+              sprintf(
+                'Could not process received Response, error: "%s"',
+                $exception->getMessage()
+              )
+            );
+            $responseRendering = $this->get('gateway.service.saml_response');
+            return $responseRendering->renderUnprocessableResponse(
+              $this->get(static::RESPONSE_CONTEXT_SERVICE_ID)
+            );
         }
 
         $adaptedAssertion = new AssertionAdapter($assertion);
@@ -198,6 +211,7 @@ class GatewayController extends Controller
             $response->getId()
         ));
 
-        return $this->get('gateway.service.saml_response')->renderResponse($response);
+        $responseRendering = $this->get('gateway.service.saml_response');
+        return $responseRendering->renderResponse($responseContext, $response);
     }
 }

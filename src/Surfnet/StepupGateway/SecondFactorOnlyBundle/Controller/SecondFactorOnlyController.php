@@ -84,7 +84,10 @@ class SecondFactorOnlyController extends Controller
             $logger->info(
               'No NameID provided, sending response with status Requester Error'
             );
-            return $this->get('gateway.service.saml_response')->renderRequesterFailureResponse();
+            $responseRendering = $this->get('gateway.service.saml_response');
+            return $responseRendering->renderRequesterFailureResponse(
+              $this->get(static::RESPONSE_CONTEXT_SERVICE_ID)
+            );
         }
 
         $stateHandler->saveIdentityNameId($originalRequest->getNameId());
@@ -96,7 +99,10 @@ class SecondFactorOnlyController extends Controller
             $logger->info(
               'No LOA requested, sending response with status Requester Error'
             );
-            return $this->get('gateway.service.saml_response')->renderRequesterFailureResponse();
+            $responseRendering = $this->get('gateway.service.saml_response');
+            return $responseRendering->renderRequesterFailureResponse(
+              $this->get(static::RESPONSE_CONTEXT_SERVICE_ID)
+            );
         }
 
         $loaResolutionService = $this->get('surfnet_stepup.service.loa_resolution');
@@ -106,7 +112,10 @@ class SecondFactorOnlyController extends Controller
               .' sending response with status Requester Error',
               $requiredLoa
             ));
-            return $this->get('gateway.service.saml_response')->renderRequesterFailureResponse();
+            $responseRendering = $this->get('gateway.service.saml_response');
+            return $responseRendering->renderRequesterFailureResponse(
+              $this->get(static::RESPONSE_CONTEXT_SERVICE_ID)
+            );
         }
 
         $stateHandler->setRequestAuthnContextClassRef(
@@ -169,6 +178,7 @@ class SecondFactorOnlyController extends Controller
           $response->getId()
         ));
 
-        return $this->get('gateway.service.saml_response')->renderResponse($response);
+        $responseRendering = $this->get('gateway.service.saml_response');
+        return $responseRendering->renderResponse($responseContext, $response);
     }
 }

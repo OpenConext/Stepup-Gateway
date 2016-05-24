@@ -50,7 +50,8 @@ class FailureController extends Controller
           $response->getId()
         ));
 
-        return $this->get('gateway.service.saml_response')->renderResponse($response);
+        $responseRendering = $this->get('gateway.service.saml_response');
+        return $responseRendering->renderResponse($responseContext, $response);
     }
 
     public function sendAuthenticationCancelledByUserAction()
@@ -83,6 +84,7 @@ class FailureController extends Controller
           $response->getId()
         ));
 
-        return $this->get('gateway.service.saml_response')->renderResponse($response);
+        $responseRendering = $this->get('gateway.service.saml_response');
+        return $responseRendering->renderResponse($responseContext, $response);
     }
 }

@@ -42,7 +42,6 @@ services:
     gateway.service.saml_response:
         class: Surfnet\StepupGateway\GatewayBundle\Service\SamlResponseRenderingService
         arguments:
-          - @gateway.proxy.response_context
           - @gateway.proxy.response_builder
           - @templating
 
