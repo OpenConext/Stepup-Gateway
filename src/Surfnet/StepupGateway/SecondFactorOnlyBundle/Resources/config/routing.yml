@@ -1,0 +1,9 @@
+gateway_2nd_factor_only_metadata:
+    path:     /2nd-factor-only/metadata
+    methods:  [GET]
+    defaults: { _controller: SurfnetStepupGatewaySecondFactorOnlyBundle:SecondFactorOnly:metadata}
+
+gateway_2nd_factor_only_identityprovider_sso:
+    path:     /2nd-factor-only/single-sign-on
+    methods:  [GET, POST]
+    defaults: { _controller: SurfnetStepupGatewaySecondFactorOnlyBundle:SecondFactorOnly:sso }

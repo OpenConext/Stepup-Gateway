@@ -6,6 +6,10 @@ surfnet_stepup_gateway_gateway:
     resource: "@SurfnetStepupGatewayGatewayBundle/Resources/config/routing.yml"
     prefix:   /
 
+surfnet_stepup_gateway_second_factor_only:
+    resource: "@SurfnetStepupGatewaySecondFactorOnlyBundle/Resources/config/routing.yml"
+    prefix:   /
+
 nelmio_security_report:
     path: /csp/report
     defaults: { _controller: nelmio_security.csp_reporter_controller:indexAction }

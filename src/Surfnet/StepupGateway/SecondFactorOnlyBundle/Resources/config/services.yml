@@ -1,0 +1,58 @@
+services:
+    second_factor_only.configuration.hosted_entities:
+        public: false
+        class: Surfnet\SamlBundle\Entity\HostedEntities
+        arguments:
+            - '@router'
+            - '@request_stack'
+            - null
+            - enabled: true
+              entity_id_route: 'gateway_2nd_factor_only_metadata'
+              sso_route: 'gateway_2nd_factor_only_identityprovider_sso'
+              public_key: '%saml_idp_publickey%'
+              private_key: '%saml_idp_privatekey%'
+
+    second_factor_only.hosted.identity_provider:
+        class:   Surfnet\SamlBundle\Entity\IdentityProvider
+        factory: ['@second_factor_only.configuration.hosted_entities', getIdentityProvider]
+
+    second_factor_only.configuration.metadata:
+        class: Surfnet\SamlBundle\Metadata\MetadataConfiguration
+        properties:
+            entityIdRoute: 'gateway_2nd_factor_only_metadata'
+            isSp: false
+            isIdP: true
+            ssoRoute: 'gateway_2nd_factor_only_identityprovider_sso'
+            idpCertificate: '%saml_idp_publickey%'
+            publicKey: '%saml_metadata_publickey%'
+            privateKey: '%saml_metadata_privatekey%'
+
+    second_factor_only.metadata_factory:
+        class: Surfnet\SamlBundle\Metadata\MetadataFactory
+        arguments:
+            - '@templating'
+            - '@router'
+            - '@surfnet_saml.signing_service'
+            - '@second_factor_only.configuration.metadata'
+
+    second_factor_only.response_context:
+        class: Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext
+        arguments:
+            - @second_factor_only.hosted.identity_provider
+            - @saml.entity_repository
+            - @gateway.proxy.state_handler
+
+    second_factor_only.response_proxy:
+        class: Surfnet\StepupGateway\GatewayBundle\Service\ProxyResponseService
+        arguments:
+            - @second_factor_only.hosted.identity_provider
+            - @gateway.proxy.state_handler
+            - @second_factor_only.assertion_signing
+            - @surfnet_saml.saml.attribute_dictionary
+            - @saml.attribute.eduPersonTargetedID
+            - @gateway.security.intrinsic_loa
+
+    second_factor_only.assertion_signing:
+        class: Surfnet\StepupGateway\GatewayBundle\Saml\AssertionSigningService
+        arguments:
+            - @second_factor_only.hosted.identity_provider
