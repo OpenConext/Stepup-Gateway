@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupGateway\GatewayBundle\Controller;
+namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Controller;
 
 use Exception;
 use Surfnet\SamlBundle\Http\XMLResponse;
