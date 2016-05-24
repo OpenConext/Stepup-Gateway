@@ -126,7 +126,7 @@ class SecondFactorOnlyController extends Controller
         if (!$expectedContextClass || !$expectedContextClass->isIdentifiedBy($authnContextClassRef)) {
             $logger->info(sprintf(
               'Requested required Loa "%s" does is of the wrong type!'
-              . ' Please use 2nd-factor-only AuthnContextClassRefs.'
+              . ' Please use second-factor-only AuthnContextClassRefs.'
               . ' Sending response with status Requester Error',
               $authnContextClassRef
             ));
@@ -181,7 +181,7 @@ class SecondFactorOnlyController extends Controller
         );
 
         $response = $this->get('second_factor_only.response_proxy')
-          ->create2ndFactorOnlyResponse(
+          ->createSecondFactorOnlyResponse(
               $responseContext->getIdentityNameId(),
               $responseContext->getServiceProvider(),
               (string) $authnContextClass

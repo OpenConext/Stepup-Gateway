@@ -94,7 +94,7 @@ class ProxyResponseService
      * @param string|null $authnContextClassRef
      * @return \SAML2_Response
      */
-    public function create2ndFactorOnlyResponse(
+    public function createSecondFactorOnlyResponse(
       $nameId,
       ServiceProvider $targetServiceProvider,
       $authnContextClassRef

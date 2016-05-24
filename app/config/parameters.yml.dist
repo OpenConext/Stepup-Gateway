@@ -55,9 +55,9 @@ parameters:
 
     gateway_loa_loa1: https://gateway.tld/authentication/loa1
     gateway_loa_loa2: https://gateway.tld/authentication/loa2
-    2nd_factor_only_loa_loa2: https://gateway.tld/2nd-factor-only/level2
+    second_factor_only_loa_loa2: https://gateway.tld/second-factor-only/level2
     gateway_loa_loa3: https://gateway.tld/authentication/loa3
-    2nd_factor_only_loa_loa3: https://gateway.tld/2nd-factor-only/level3
+    second_factor_only_loa_loa3: https://gateway.tld/second-factor-only/level3
 
     asset_version: 1
 

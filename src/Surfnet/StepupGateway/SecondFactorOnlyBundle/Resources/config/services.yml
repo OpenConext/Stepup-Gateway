@@ -7,8 +7,8 @@ services:
             - '@request_stack'
             - null
             - enabled: true
-              entity_id_route: 'gateway_2nd_factor_only_metadata'
-              sso_route: 'gateway_2nd_factor_only_identityprovider_sso'
+              entity_id_route: 'gateway_second_factor_only_metadata'
+              sso_route: 'gateway_second_factor_only_identityprovider_sso'
               public_key: '%saml_idp_publickey%'
               private_key: '%saml_idp_privatekey%'
 
@@ -19,10 +19,10 @@ services:
     second_factor_only.configuration.metadata:
         class: Surfnet\SamlBundle\Metadata\MetadataConfiguration
         properties:
-            entityIdRoute: 'gateway_2nd_factor_only_metadata'
+            entityIdRoute: 'gateway_second_factor_only_metadata'
             isSp: false
             isIdP: true
-            ssoRoute: 'gateway_2nd_factor_only_identityprovider_sso'
+            ssoRoute: 'gateway_second_factor_only_identityprovider_sso'
             idpCertificate: '%saml_idp_publickey%'
             publicKey: '%saml_metadata_publickey%'
             privateKey: '%saml_metadata_privatekey%'

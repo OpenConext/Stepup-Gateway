@@ -172,14 +172,14 @@ surfnet_stepup:
           - id: %gateway_loa_loa2%
             type: gateway
 
-          - id: %2nd_factor_only_loa_loa2%
-            type: 2nd-factor-only
+          - id: %second_factor_only_loa_loa2%
+            type: second-factor-only
         3:
           - id: %gateway_loa_loa3%
             type: gateway
 
-          - id: %2nd_factor_only_loa_loa3%
-            type: 2nd-factor-only
+          - id: %second_factor_only_loa_loa3%
+            type: second-factor-only
     sms:
         service: gateway.service.gateway_api_sms
         originator: %sms_originator%
