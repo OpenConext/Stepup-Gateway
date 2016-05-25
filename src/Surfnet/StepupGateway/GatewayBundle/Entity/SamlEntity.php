@@ -21,7 +21,6 @@ namespace Surfnet\StepupGateway\GatewayBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use GuzzleHttp;
 use Surfnet\SamlBundle\Entity\IdentityProvider;
-use Surfnet\SamlBundle\Entity\ServiceProvider;
 use Surfnet\StepupGateway\GatewayBundle\Exception\RuntimeException;
 
 /**
@@ -109,6 +108,11 @@ class SamlEntity
         $configuration['certificateData']      = $decodedConfiguration['public_key'];
         $configuration['entityId']             = $this->entityId;
         $configuration['configuredLoas']       = $decodedConfiguration['loa'];
+
+        $configuration['secondFactorOnly'] = false;
+        if (isset($decodedConfiguration['second_factor_only'])) {
+            $configuration['secondFactorOnly'] = (bool) $decodedConfiguration['second_factor_only'];
+        }
 
         return new ServiceProvider($configuration);
     }
