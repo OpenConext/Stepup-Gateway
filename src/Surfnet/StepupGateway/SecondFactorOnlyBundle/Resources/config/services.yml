@@ -39,7 +39,7 @@ services:
         class: Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext
         arguments:
             - @second_factor_only.hosted.identity_provider
-            - @saml.entity_repository
+            - @second_factor_only.entity_service
             - @gateway.proxy.state_handler
 
     second_factor_only.response_proxy:
@@ -56,3 +56,20 @@ services:
         class: Surfnet\StepupGateway\GatewayBundle\Saml\AssertionSigningService
         arguments:
             - @second_factor_only.hosted.identity_provider
+
+    second_factor_only.http.redirect_binding:
+        class: Surfnet\SamlBundle\Http\RedirectBinding
+        arguments:
+            - '@logger'
+            - '@surfnet_saml.signing.signature_verifier'
+            - '@second_factor_only.entity_service'
+
+    second_factor_only.entity_service:
+        class: Surfnet\StepupGateway\GatewayBundle\Service\SamlEntityService
+        arguments:
+            - @second_factor_only.repository.gateway_saml_entity
+
+    second_factor_only.repository.gateway_saml_entity:
+            class: Surfnet\StepupGateway\SecondFactorOnlyBundle\Entity\SamlEntityRepository\SecondFactorOnlySamlEntityRepositoryDecorator
+            arguments:
+                - @gateway.repository.saml_entity

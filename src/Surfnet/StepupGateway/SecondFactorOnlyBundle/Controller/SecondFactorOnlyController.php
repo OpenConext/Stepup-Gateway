@@ -50,7 +50,7 @@ class SecondFactorOnlyController extends Controller
         $logger = $this->get('logger');
         $logger->notice('Received AuthnRequest, started processing');
 
-        $redirectBinding = $this->get('surfnet_saml.http.redirect_binding');
+        $redirectBinding = $this->get('second_factor_only.http.redirect_binding');
 
         try {
             $originalRequest = $redirectBinding->processRequest($httpRequest);

@@ -6,6 +6,11 @@ services:
         arguments:
             - 'Surfnet\StepupGateway\GatewayBundle\Entity\SamlEntity'
 
+    gateway.repository.gateway_saml_entity:
+            class: Surfnet\StepupGateway\GatewayBundle\Entity\SamlEntityRepository\GatewaySamlEntityRepositoryDecorator
+            arguments:
+                - @gateway.repository.saml_entity
+
     gateway.repository.second_factor:
         alias: gateway.repository.second_factor.enabled
 
