@@ -199,7 +199,7 @@ surfnet_saml:
             private_key: %saml_sp_privatekey%
         identity_provider:
             enabled: true
-            service_provider_repository: saml.entity_repository
+            service_provider_repository: gateway.entity_service
             sso_route: gateway_identityprovider_sso
             public_key: %saml_idp_publickey%
             private_key: %saml_idp_privatekey%
