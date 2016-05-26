@@ -199,7 +199,9 @@ class SecondFactorOnlyController extends Controller
 
         if (!$responseContext->isSecondFactorVerified()) {
             $logger->error('Second factor was not verified');
-            throw new BadRequestHttpException('Cannot verify possession of an unknown second factor.');
+            throw new BadRequestHttpException(
+              'Cannot verify possession of an unknown second factor.'
+            );
         }
 
         $secondFactor = $this->get('gateway.service.second_factor_service')
