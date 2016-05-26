@@ -35,7 +35,7 @@ class ResponseContext
     private $hostedIdentityProvider;
 
     /**
-     * @var \Surfnet\StepupGateway\GatewayBundle\Service\SamlEntityService
+     * @var SamlEntityService
      */
     private $samlEntityService;
 
@@ -244,6 +244,14 @@ class ResponseContext
     public function isSecondFactorVerified()
     {
         return $this->stateHandler->getSelectedSecondFactorId() && $this->stateHandler->isSecondFactorVerified();
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getResponseAction()
+    {
+        return $this->stateHandler->getResponseAction();
     }
 
     /**

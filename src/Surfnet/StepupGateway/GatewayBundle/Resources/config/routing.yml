@@ -1,7 +1,7 @@
 gateway_saml_metadata:
     path:     /authentication/metadata
     methods:  [GET]
-    defaults: { _controller: SurfnetStepupGatewayGatewayBundle:Metadata:metadata}
+    defaults: { _controller: SurfnetStepupGatewayGatewayBundle:Gateway:metadata}
 
 gateway_serviceprovider_consume_assertion:
     path:     /authentication/consume-assertion
@@ -18,37 +18,41 @@ gateway_identityprovider_sso_proxy:
     methods:  [POST]
     defaults: { _controller: SurfnetStepupGatewayGatewayBundle:Gateway:proxySso }
 
+
 gateway_verify_second_factor_yubikey:
     path:     /verify-second-factor/yubikey
     methods:  [GET,POST]
-    defaults: { _controller: SurfnetStepupGatewayGatewayBundle:SecondFactor:verifyYubikeySecondFactor }
+    defaults: { _controller: SurfnetStepupGatewayGatewayBundle:Yubikey:verifyYubikeySecondFactor }
+
 
 gateway_verify_second_factor_sms:
     path:     /verify-second-factor/sms/send-challenge
     methods:  [GET,POST]
-    defaults: { _controller: SurfnetStepupGatewayGatewayBundle:SecondFactor:verifySmsSecondFactor }
+    defaults: { _controller: SurfnetStepupGatewayGatewayBundle:Sms:verifySmsSecondFactor }
 
 gateway_verify_second_factor_sms_verify_challenge:
     path:     /verify-second-factor/sms/verify-challenge
     methods:  [GET,POST]
-    defaults: { _controller: SurfnetStepupGatewayGatewayBundle:SecondFactor:verifySmsSecondFactorChallenge }
+    defaults: { _controller: SurfnetStepupGatewayGatewayBundle:Sms:verifySmsSecondFactorChallenge }
+
 
 gateway_verify_second_factor_gssf:
     path:     /verify-second-factor/gssf
     methods:  [GET]
-    defaults: { _controller: SurfnetStepupGatewayGatewayBundle:SecondFactor:verifyGssf }
+    defaults: { _controller: SurfnetStepupGatewayGatewayBundle:Gssf:verifyGssf }
+
 
 gateway_verify_second_factor_u2f:
     path:     /verify-second-factor/u2f/authenticate
     methods:  [GET]
-    defaults: { _controller: SurfnetStepupGatewayGatewayBundle:SecondFactor:initiateU2fAuthentication }
+    defaults: { _controller: SurfnetStepupGatewayGatewayBundle:U2f:initiateU2fAuthentication }
 
 gateway_verify_second_factor_u2f_verify_authentication:
     path:     /verify-second-factor/u2f/authenticate
     methods:  [POST]
-    defaults: { _controller: SurfnetStepupGatewayGatewayBundle:SecondFactor:verifyU2fAuthentication }
+    defaults: { _controller: SurfnetStepupGatewayGatewayBundle:U2f:verifyU2fAuthentication }
 
 gateway_verify_second_factor_u2f_cancel_authentication:
     path:     /verify-second-factor/u2f/cancel
     methods:  [POST]
-    defaults: { _controller: SurfnetStepupGatewayGatewayBundle:SecondFactor:cancelU2fAuthentication }
+    defaults: { _controller: SurfnetStepupGatewayGatewayBundle:U2f:cancelU2fAuthentication }

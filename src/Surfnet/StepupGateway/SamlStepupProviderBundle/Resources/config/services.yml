@@ -5,8 +5,8 @@ services:
     gssp.connected_service_providers:
         class: Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\ConnectedServiceProviders
         arguments:
-            - @saml.entity_repository
-            - []
+            - @saml.entity_service
+            - [] # Is set from config in SurfnetStepupGatewaySamlStepupProviderExtension.
 
     gssp.session:
         class: Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag

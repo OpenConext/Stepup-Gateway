@@ -16,18 +16,10 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupGateway\GatewayBundle\Controller;
+namespace Surfnet\StepupGateway\SecondFactorOnlyBundle;
 
-use Surfnet\SamlBundle\Http\XMLResponse;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-class MetadataController extends Controller
+class SurfnetStepupGatewaySecondFactorOnlyBundle extends Bundle
 {
-    public function metadataAction()
-    {
-        /** @var \Surfnet\SamlBundle\Metadata\MetadataFactory $metadataFactory */
-        $metadataFactory = $this->get('surfnet_saml.metadata_factory');
-
-        return new XMLResponse($metadataFactory->generate());
-    }
 }

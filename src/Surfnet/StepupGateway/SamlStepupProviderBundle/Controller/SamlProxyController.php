@@ -232,7 +232,7 @@ class SamlProxyController extends Controller
                 'Second Factor verification was requested and was successful, forwarding to SecondFactor handling'
             );
 
-            return $this->forward('SurfnetStepupGatewayGatewayBundle:SecondFactor:gssfVerified');
+            return $this->forward('SurfnetStepupGatewayGatewayBundle:Gssf:gssfVerified');
         }
 
         /** @var \Surfnet\StepupGateway\SamlStepupProviderBundle\Saml\ProxyResponseFactory $proxyResponseFactory */
