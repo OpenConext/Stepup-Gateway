@@ -113,6 +113,11 @@ class SamlEntity
         if (isset($decodedConfiguration['second_factor_only'])) {
             $configuration['secondFactorOnly'] = (bool) $decodedConfiguration['second_factor_only'];
         }
+        $configuration['secondFactorOnlyNameIdPatterns'] = [];
+        if (isset($decodedConfiguration['second_factor_only_nameid_patterns'])) {
+            $configuration['secondFactorOnlyNameIdPatterns'] =
+              $decodedConfiguration['second_factor_only_nameid_patterns'];
+        }
 
         return new ServiceProvider($configuration);
     }

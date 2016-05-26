@@ -80,17 +80,15 @@ class SecondFactorOnlyController extends Controller
           ->setResponseAction('SurfnetStepupGatewaySecondFactorOnlyBundle:SecondFactorOnly:respond')
           ->setResponseContextServiceId(static::RESPONSE_CONTEXT_SERVICE_ID);
 
-        if (!$originalRequest->getNameId()) {
-            $logger->info(
-              'No NameID provided, sending response with status Requester Error'
-            );
+        // Check if the NameID is provided and we may use it.
+        $nameId = $originalRequest->getNameId();
+        if (!$this->verifyNameId($originalRequest->getServiceProvider(), $nameId, $logger)) {
             $responseRendering = $this->get('gateway.service.saml_response');
             return $responseRendering->renderRequesterFailureResponse(
               $this->get(static::RESPONSE_CONTEXT_SERVICE_ID)
             );
         }
-
-        $stateHandler->saveIdentityNameId($originalRequest->getNameId());
+        $stateHandler->saveIdentityNameId($nameId);
 
         // check if the requested Loa is supported
         $authnContextClassRef = $originalRequest->getAuthenticationContextClassRef();
@@ -114,6 +112,34 @@ class SecondFactorOnlyController extends Controller
         return $this->forward(
           'SurfnetStepupGatewayGatewayBundle:Selection:selectSecondFactorForVerification'
         );
+    }
+
+    /**
+     * @param string $spEntityId
+     * @param string $nameId
+     * @param LoggerInterface $logger
+     * @return bool
+     */
+    private function verifyNameId($spEntityId, $nameId, LoggerInterface $logger)
+    {
+        if (!$nameId) {
+            $logger->info(
+              'No NameID provided, sending response with status Requester Error'
+            );
+            return false;
+        }
+
+        $entityService = $this->get('second_factor_only.entity_service');
+        $serviceProvider = $entityService->getServiceProvider($spEntityId);
+
+        if (!$serviceProvider->isAllowedToUseSecondFactorOnlyFor($nameId)) {
+            $logger->info(
+              'No NameID provided, sending response with status Requester Error'
+            );
+            return false;
+        }
+
+        return true;
     }
 
     /**
