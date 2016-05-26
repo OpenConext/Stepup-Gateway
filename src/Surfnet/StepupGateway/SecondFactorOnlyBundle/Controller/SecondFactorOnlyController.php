@@ -92,18 +92,13 @@ class SecondFactorOnlyController extends Controller
 
         // check if the requested Loa is supported
         $authnContextClassRef = $originalRequest->getAuthenticationContextClassRef();
-        $failureResponse = $this->verifyAuthnContextClassRef(
-          $authnContextClassRef,
-          $logger
-        );
-
-        if ($failureResponse) {
-            return $failureResponse;
+        if (!$this->verifyAuthnContextClassRef($authnContextClassRef, $logger)) {
+            $responseRendering = $this->get('gateway.service.saml_response');
+            return $responseRendering->renderRequesterFailureResponse(
+              $this->get(static::RESPONSE_CONTEXT_SERVICE_ID)
+            );
         }
-
-        $stateHandler->setRequestAuthnContextClassRef(
-          $originalRequest->getAuthenticationContextClassRef()
-        );
+        $stateHandler->setRequestAuthnContextClassRef($authnContextClassRef);
 
         $logger->notice(
           'Forwarding to second factor controller for loa determination and handling'
@@ -112,6 +107,51 @@ class SecondFactorOnlyController extends Controller
         return $this->forward(
           'SurfnetStepupGatewayGatewayBundle:Selection:selectSecondFactorForVerification'
         );
+    }
+
+    /**
+     * @param string $authnContextClassRef
+     * @param LoggerInterface $logger
+     * @return Response
+     */
+    private function verifyAuthnContextClassRef(
+      $authnContextClassRef,
+      LoggerInterface $logger
+    ) {
+        if (!$authnContextClassRef) {
+            $logger->info(
+              'No LOA requested, sending response with status Requester Error'
+            );
+            return false;
+        }
+
+        $loaResolutionService = $this->get('surfnet_stepup.service.loa_resolution');
+        $loa = $loaResolutionService->getLoa($authnContextClassRef);
+
+        if (!$loa) {
+            $logger->info(sprintf(
+              'Requested required Loa "%s" does not exist,'
+              .' sending response with status Requester Error',
+              $authnContextClassRef
+            ));
+            return false;
+        }
+
+        $expectedContextClass = $loa->fetchAuthnContextClassOfType(
+          AuthnContextClass::TYPE_SECOND_FACTOR_ONLY
+        );
+
+        if (!$expectedContextClass) {
+            $logger->info(sprintf(
+              'Requested required Loa "%s" does is of the wrong type!'
+              . ' Please use second-factor-only AuthnContextClassRefs.'
+              . ' Sending response with status Requester Error',
+              $authnContextClassRef
+            ));
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -191,57 +231,5 @@ class SecondFactorOnlyController extends Controller
 
         $responseRendering = $this->get('gateway.service.saml_response');
         return $responseRendering->renderResponse($responseContext, $response);
-    }
-
-    /**
-     * @param string $authnContextClassRef
-     * @param LoggerInterface $logger
-     * @return Response
-     */
-    private function verifyAuthnContextClassRef(
-      $authnContextClassRef,
-      LoggerInterface $logger
-    ) {
-        if (!$authnContextClassRef) {
-            $logger->info(
-              'No LOA requested, sending response with status Requester Error'
-            );
-            $responseRendering = $this->get('gateway.service.saml_response');
-            return $responseRendering->renderRequesterFailureResponse(
-              $this->get(static::RESPONSE_CONTEXT_SERVICE_ID)
-            );
-        }
-
-        $loaResolutionService = $this->get('surfnet_stepup.service.loa_resolution');
-        $loa = $loaResolutionService->getLoa($authnContextClassRef);
-
-        if (!$loa) {
-            $logger->info(sprintf(
-              'Requested required Loa "%s" does not exist,'
-              .' sending response with status Requester Error',
-              $authnContextClassRef
-            ));
-            $responseRendering = $this->get('gateway.service.saml_response');
-            return $responseRendering->renderRequesterFailureResponse(
-              $this->get(static::RESPONSE_CONTEXT_SERVICE_ID)
-            );
-        }
-
-        $expectedContextClass = $loa->fetchAuthnContextClassOfType(
-          AuthnContextClass::TYPE_SECOND_FACTOR_ONLY
-        );
-
-        if (!$expectedContextClass || !$expectedContextClass->isIdentifiedBy($authnContextClassRef)) {
-            $logger->info(sprintf(
-              'Requested required Loa "%s" does is of the wrong type!'
-              . ' Please use second-factor-only AuthnContextClassRefs.'
-              . ' Sending response with status Requester Error',
-              $authnContextClassRef
-            ));
-            $responseRendering = $this->get('gateway.service.saml_response');
-            return $responseRendering->renderRequesterFailureResponse(
-              $this->get(static::RESPONSE_CONTEXT_SERVICE_ID)
-            );
-        }
     }
 }
