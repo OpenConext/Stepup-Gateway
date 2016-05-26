@@ -49,7 +49,9 @@ class SecondFactorOnlyController extends Controller
     public function ssoAction(Request $httpRequest)
     {
         $logger = $this->get('logger');
-        $logger->notice('Received AuthnRequest, started processing');
+        $logger->notice(
+          'Received AuthnRequest on second-factor-only endpoint, started processing'
+        );
 
         $redirectBinding = $this->get('second_factor_only.http.redirect_binding');
 
@@ -90,7 +92,7 @@ class SecondFactorOnlyController extends Controller
         }
         $stateHandler->saveIdentityNameId($nameId);
 
-        // check if the requested Loa is supported
+        // Check if the requested Loa is provided and supported.
         $authnContextClassRef = $originalRequest->getAuthenticationContextClassRef();
         if (!$this->verifyAuthnContextClassRef($authnContextClassRef, $logger)) {
             $responseRendering = $this->get('gateway.service.saml_response');
@@ -103,7 +105,6 @@ class SecondFactorOnlyController extends Controller
         $logger->notice(
           'Forwarding to second factor controller for loa determination and handling'
         );
-
         return $this->forward(
           'SurfnetStepupGatewayGatewayBundle:Selection:selectSecondFactorForVerification'
         );
@@ -191,7 +192,7 @@ class SecondFactorOnlyController extends Controller
         $originalRequestId = $responseContext->getInResponseTo();
 
         $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
-        $logger->notice('Creating Response');
+        $logger->notice('Creating second-factor-only Response');
 
         $secondFactorUuid = $this->get('gateway.service.require_selected_factor')
           ->requireSelectedSecondFactor($logger);
@@ -201,13 +202,11 @@ class SecondFactorOnlyController extends Controller
             throw new BadRequestHttpException('Cannot verify possession of an unknown second factor.');
         }
 
-        $secondFactor = $this->get('gateway.service.second_factor_service')->findByUuid(
-          $secondFactorUuid
-        );
+        $secondFactor = $this->get('gateway.service.second_factor_service')
+          ->findByUuid($secondFactorUuid);
 
-        $grantedLoa = $this->get('surfnet_stepup.service.loa_resolution')->getLoaByLevel(
-          $secondFactor->getLoaLevel()
-        );
+        $grantedLoa = $this->get('surfnet_stepup.service.loa_resolution')
+          ->getLoaByLevel($secondFactor->getLoaLevel());
 
         $authnContextClass = $grantedLoa->fetchAuthnContextClassOfType(
           AuthnContextClass::TYPE_SECOND_FACTOR_ONLY
@@ -223,8 +222,7 @@ class SecondFactorOnlyController extends Controller
         $responseContext->responseSent();
 
         $logger->notice(sprintf(
-          'Responding to request "%s" with response based on '
-          . 'response from the remote IdP with response "%s"',
+          'Responding to request "%s" with newly created response "%s"',
           $responseContext->getInResponseTo(),
           $response->getId()
         ));
