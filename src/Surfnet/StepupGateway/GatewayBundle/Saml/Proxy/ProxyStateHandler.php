@@ -95,12 +95,12 @@ class ProxyStateHandler
     }
 
     /**
-     * @param string $loa_identifier
+     * @param string $loaIdentifier
      * @return $this
      */
-    public function setRequiredLoaIdentifier($loa_identifier)
+    public function setRequiredLoaIdentifier($loaIdentifier)
     {
-        $this->set('loa_identifier', $loa_identifier);
+        $this->set('loa_identifier', $loaIdentifier);
 
         return $this;
     }
