@@ -42,7 +42,7 @@ class GatewayController extends Controller
         $redirectBinding = $this->get('surfnet_saml.http.redirect_binding');
 
         try {
-            $originalRequest = $redirectBinding->processRequest($httpRequest);
+            $originalRequest = $redirectBinding->processUnsignedRequest($httpRequest);
         } catch (Exception $e) {
             $logger->critical(sprintf('Could not process Request, error: "%s"', $e->getMessage()));
 
@@ -65,18 +65,25 @@ class GatewayController extends Controller
             ->setRelayState($httpRequest->get(AuthnRequest::PARAMETER_RELAY_STATE, ''));
 
         // check if the requested Loa is supported
-        $requiredLoa = $originalRequest->getAuthenticationContextClassRef();
-        if ($requiredLoa && !$this->get('surfnet_stepup.service.loa_resolution')->hasLoa($requiredLoa)) {
-            $logger->info(sprintf(
-                'Requested required Loa "%s" does not exist, sending response with status Requester Error',
-                $requiredLoa
-            ));
+        $authnContextClassRef = $originalRequest->getAuthenticationContextClassRef();
+        if ($authnContextClassRef) {
+            $requiredLoaIdentifier = $this->get('gateway.loa_domain')->findLoaIdByAuthnContextClassRef(
+                $authnContextClassRef
+            );
 
-            $response = $this->createRequesterFailureResponse();
-            return $this->renderSamlResponse('consumeAssertion', $response);
+            if (!$requiredLoaIdentifier) {
+                $logger->info(sprintf(
+                    'Requested required Loa "%s" does not exist, sending response with status Requester Error',
+                    $requiredLoaIdentifier
+                ));
+
+                $response = $this->createRequesterFailureResponse();
+
+                return $this->renderSamlResponse('consumeAssertion', $response);
+            }
+
+            $stateHandler->setRequiredLoaIdentifier($requiredLoaIdentifier);
         }
-
-        $stateHandler->setRequestAuthnContextClassRef($originalRequest->getAuthenticationContextClassRef());
 
         $proxyRequest = AuthnRequestFactory::createNewRequest(
             $this->get('surfnet_saml.hosted.service_provider'),
