@@ -177,19 +177,11 @@ surfnet_stepup:
 surfnet_stepup_gateway_gateway:
     intrinsic_loa: %gateway_loa_loa1%
     enabled_second_factors: %enabled_second_factors%
-    loa_domains:
-        gateway:
-            - loa: %gateway_loa_loa1%
-              ref: %gateway_loa_loa1%
-            - loa: %gateway_loa_loa2%
-              ref: %gateway_loa_loa2%
-            - loa: %gateway_loa_loa3%
-              ref: %gateway_loa_loa3%
-        second_factor_only:
-            - loa: %gateway_loa_loa2%
-              ref: %second_factor_only_loa_loa2%
-            - loa: %gateway_loa_loa3%
-              ref: %second_factor_only_loa_loa3%
+    second_factor_only_loa_aliases:
+        - loa: %gateway_loa_loa2%
+          ref: %second_factor_only_loa_loa2%
+        - loa: %gateway_loa_loa3%
+          ref: %second_factor_only_loa_loa3%
 
 
 surfnet_saml:

@@ -65,25 +65,14 @@ class GatewayController extends Controller
             ->setRelayState($httpRequest->get(AuthnRequest::PARAMETER_RELAY_STATE, ''));
 
         // check if the requested Loa is supported
-        $authnContextClassRef = $originalRequest->getAuthenticationContextClassRef();
-        if ($authnContextClassRef) {
-            $requiredLoaIdentifier = $this->get('gateway.accr_lookup')->findLoaIdByAuthnContextClassRef(
-                $authnContextClassRef
-            );
-
-            if (!$requiredLoaIdentifier) {
-                $logger->info(sprintf(
-                    'Requested required Loa "%s" does not exist, sending response with status Requester Error',
-                    $requiredLoaIdentifier
-                ));
-
-                $response = $this->createRequesterFailureResponse();
-
-                return $this->renderSamlResponse('consumeAssertion', $response);
-            }
-
-            $stateHandler->setRequiredLoaIdentifier($requiredLoaIdentifier);
+        $requiredLoa = $originalRequest->getAuthenticationContextClassRef();
+        if ($requiredLoa && !$this->get('surfnet_stepup.service.loa_resolution')->hasLoa($requiredLoa)) {
+            $logger->info(sprintf(
+                'Requested required Loa "%s" does not exist, sending response with status Requester Error',
+                $requiredLoa
+            ));
         }
+        $stateHandler->setRequiredLoaIdentifier($requiredLoa);
 
         $proxyRequest = AuthnRequestFactory::createNewRequest(
             $this->get('surfnet_saml.hosted.service_provider'),
