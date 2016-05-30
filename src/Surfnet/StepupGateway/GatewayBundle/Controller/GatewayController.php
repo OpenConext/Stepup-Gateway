@@ -71,7 +71,11 @@ class GatewayController extends Controller
                 'Requested required Loa "%s" does not exist, sending response with status Requester Error',
                 $requiredLoa
             ));
+
+            $response = $this->createRequesterFailureResponse();
+            return $this->renderSamlResponse('consumeAssertion', $response);
         }
+
         $stateHandler->setRequiredLoaIdentifier($requiredLoa);
 
         $proxyRequest = AuthnRequestFactory::createNewRequest(
