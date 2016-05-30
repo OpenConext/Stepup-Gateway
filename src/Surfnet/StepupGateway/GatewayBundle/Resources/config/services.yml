@@ -39,11 +39,10 @@ services:
         class: Surfnet\StepupBundle\Value\Loa
         factory: [@surfnet_stepup.service.loa_resolution, getLoa]
 
-    gateway.loa_domain:
-        class: Surfnet\StepupGateway\GatewayBundle\Entity\LoaDomain
+    gateway.accr_lookup:
+        class: Surfnet\StepupGateway\GatewayBundle\Service\AuthnContextClassRefLookupService
         arguments:
-            - gateway
-            - [] # Set in Extension from the config.
+            - [] # See SurfnetStepupGatewayGatewayExtension::replaceAuthnContextClassRefLookupMapping
 
     gateway.service.assertion_signing:
         class: Surfnet\StepupGateway\GatewayBundle\Saml\AssertionSigningService

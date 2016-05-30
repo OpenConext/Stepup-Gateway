@@ -44,6 +44,17 @@ class SurfnetStepupGatewayGatewayExtension extends Extension
             ->getDefinition('gateway.repository.second_factor.enabled')
             ->replaceArgument(1, $config['enabled_second_factors']);
 
+        $this->replaceAuthnContextClassRefLookupMapping($config, $container);
+    }
+
+    /**
+     * @param array $config
+     * @param ContainerBuilder $container
+     */
+    private function replaceAuthnContextClassRefLookupMapping(
+        array $config,
+        ContainerBuilder $container
+    ) {
         $loaAuthnContextClassMapping = [];
         foreach ($config['loa_domains']['gateway'] as $mapping) {
             if (isset($loaAuthnContextClassMapping[$mapping['loa']])) {
@@ -55,7 +66,7 @@ class SurfnetStepupGatewayGatewayExtension extends Extension
             $loaAuthnContextClassMapping[$mapping['loa']] = $mapping['ref'];
         }
         $container
-            ->getDefinition('gateway.loa_domain')
-            ->replaceArgument(1, $loaAuthnContextClassMapping);
+            ->getDefinition('gateway.accr_lookup')
+            ->replaceArgument(0, $loaAuthnContextClassMapping);
     }
 }

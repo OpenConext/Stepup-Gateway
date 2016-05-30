@@ -67,7 +67,7 @@ class GatewayController extends Controller
         // check if the requested Loa is supported
         $authnContextClassRef = $originalRequest->getAuthenticationContextClassRef();
         if ($authnContextClassRef) {
-            $requiredLoaIdentifier = $this->get('gateway.loa_domain')->findLoaIdByAuthnContextClassRef(
+            $requiredLoaIdentifier = $this->get('gateway.accr_lookup')->findLoaIdByAuthnContextClassRef(
                 $authnContextClassRef
             );
 
