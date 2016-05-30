@@ -121,7 +121,7 @@ class ResponseContext
      */
     public function getRequiredLoa()
     {
-        return $this->stateHandler->getRequestAuthContextClassRef();
+        return $this->stateHandler->getRequiredLoaIdentifier();
     }
 
     /**

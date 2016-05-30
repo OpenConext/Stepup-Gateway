@@ -42,7 +42,7 @@ class GatewayController extends Controller
         $redirectBinding = $this->get('surfnet_saml.http.redirect_binding');
 
         try {
-            $originalRequest = $redirectBinding->processRequest($httpRequest);
+            $originalRequest = $redirectBinding->processUnsignedRequest($httpRequest);
         } catch (Exception $e) {
             $logger->critical(sprintf('Could not process Request, error: "%s"', $e->getMessage()));
 
@@ -76,7 +76,7 @@ class GatewayController extends Controller
             return $this->renderSamlResponse('consumeAssertion', $response);
         }
 
-        $stateHandler->setRequestAuthnContextClassRef($originalRequest->getAuthenticationContextClassRef());
+        $stateHandler->setRequiredLoaIdentifier($requiredLoa);
 
         $proxyRequest = AuthnRequestFactory::createNewRequest(
             $this->get('surfnet_saml.hosted.service_provider'),

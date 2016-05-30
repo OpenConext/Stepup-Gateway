@@ -95,12 +95,12 @@ class ProxyStateHandler
     }
 
     /**
-     * @param string $authnContext
+     * @param string $loaIdentifier
      * @return $this
      */
-    public function setRequestAuthnContextClassRef($authnContext)
+    public function setRequiredLoaIdentifier($loaIdentifier)
     {
-        $this->set('authn_context', $authnContext);
+        $this->set('loa_identifier', $loaIdentifier);
 
         return $this;
     }
@@ -108,9 +108,9 @@ class ProxyStateHandler
     /**
      * @return string|null
      */
-    public function getRequestAuthContextClassRef()
+    public function getRequiredLoaIdentifier()
     {
-        return $this->get('authn_context');
+        return $this->get('loa_identifier');
     }
 
     /**

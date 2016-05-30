@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\DependencyInjection;
 
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -42,5 +43,30 @@ class SurfnetStepupGatewayGatewayExtension extends Extension
         $container
             ->getDefinition('gateway.repository.second_factor.enabled')
             ->replaceArgument(1, $config['enabled_second_factors']);
+
+        $this->replaceAuthnContextClassRefLookupMapping($config, $container);
+    }
+
+    /**
+     * @param array $config
+     * @param ContainerBuilder $container
+     */
+    private function replaceAuthnContextClassRefLookupMapping(
+        array $config,
+        ContainerBuilder $container
+    ) {
+        $loaAuthnContextClassMapping = [];
+        foreach ($config['loa_domains']['gateway'] as $mapping) {
+            if (isset($loaAuthnContextClassMapping[$mapping['loa']])) {
+                throw new InvalidConfigurationException(
+                    'Duplicate loa identifiers in surfnet_stepup_gateway_gateway.loa_domains.gateway'
+                );
+            }
+
+            $loaAuthnContextClassMapping[$mapping['loa']] = $mapping['ref'];
+        }
+        $container
+            ->getDefinition('gateway.accr_lookup')
+            ->replaceArgument(0, $loaAuthnContextClassMapping);
     }
 }
