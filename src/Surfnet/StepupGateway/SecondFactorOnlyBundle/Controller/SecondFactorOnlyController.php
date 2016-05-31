@@ -85,7 +85,7 @@ class SecondFactorOnlyController extends Controller
 
         // Check if the NameID is provided and we may use it.
         $nameId = $originalRequest->getNameId();
-        if (!$this->isNameIdAllowedToUseSecondFactorOnly($originalRequest->getServiceProvider(), $nameId, $logger)) {
+        if (!$this->get('second_factor_only.validate_nameid')->with($logger)->validate($originalRequest->getServiceProvider(), $nameId)) {
             /** @var \Surfnet\StepupGateway\GatewayBundle\Service\ResponseRenderingService $responseRendering */
             $responseRendering = $this->get('second_factor_only.response_rendering');
             return $responseRendering->renderRequesterFailureResponse(
@@ -96,8 +96,8 @@ class SecondFactorOnlyController extends Controller
 
         // Check if the requested Loa is provided and supported.
         $authnContextClassRef = $originalRequest->getAuthenticationContextClassRef();
-        $loaId = $this->verifyAuthnContextClassRef($authnContextClassRef, $logger);
-        if (!$loaId) {
+        $loaId = $this->get('second_factor_only.validate_accr')->with($logger)->validate($authnContextClassRef);
+        if (empty($loaId)) {
             /** @var \Surfnet\StepupGateway\GatewayBundle\Service\ResponseRenderingService $responseRendering */
             $responseRendering = $this->get('second_factor_only.response_rendering');
             return $responseRendering->renderRequesterFailureResponse(
@@ -112,89 +112,6 @@ class SecondFactorOnlyController extends Controller
         return $this->forward(
             'SurfnetStepupGatewayGatewayBundle:SecondFactor:selectSecondFactorForVerification'
         );
-    }
-
-    /**
-     * @param string $authnContextClassRef
-     * @param LoggerInterface $logger
-     * @return string|null
-     */
-    private function verifyAuthnContextClassRef(
-        $authnContextClassRef,
-        LoggerInterface $logger
-    ) {
-        if (!$authnContextClassRef) {
-            $logger->info(
-                'No LOA requested, sending response with status Requester Error'
-            );
-            return null;
-        }
-
-        /** @var LoaAliasLookupService $loaAliasLookup */
-        $loaAliasLookup = $this->get('second_factor_only.loa_alias_lookup');
-        $loaId = $loaAliasLookup->findLoaIdByAlias($authnContextClassRef);
-
-        if (!$loaId) {
-            $logger->info(sprintf(
-                'Requested required Loa "%s" does not have a second factor alias,'
-                .' sending response with status Requester Error',
-                $authnContextClassRef
-            ));
-            return null;
-        }
-
-        $loaResolutionService = $this->get('surfnet_stepup.service.loa_resolution');
-
-        if (!$loaResolutionService->hasLoa($loaId)) {
-            $logger->info(sprintf(
-                'Requested required Loa "%s" does not exist,'
-                .' sending response with status Requester Error',
-                $authnContextClassRef
-            ));
-            return null;
-        }
-
-        return $loaId;
-    }
-
-    /**
-     * @param string $spEntityId
-     * @param string $nameId
-     * @param LoggerInterface $logger
-     * @return bool
-     */
-    private function isNameIdAllowedToUseSecondFactorOnly($spEntityId, $nameId, LoggerInterface $logger)
-    {
-        if (!$nameId) {
-            $logger->info(
-                'No NameID provided, sending response with status Requester Error'
-            );
-            return false;
-        }
-
-        $entityService = $this->get('second_factor_only.entity_service');
-        $serviceProvider = $entityService->getServiceProvider($spEntityId);
-
-        if (!$serviceProvider->isAllowedToUseSecondFactorOnlyFor($nameId)) {
-            $logger->info(
-                sprintf(
-                    'SP "%s" may not use SecondFactorOnly mode for nameid "%s", sending response with status Requester Error',
-                    $spEntityId,
-                    $nameId
-                )
-            );
-            return false;
-        }
-
-        $logger->info(
-            sprintf(
-                'SP "%s" is allowed to use SecondFactorOnly mode for nameid "%s"',
-                $spEntityId,
-                $nameId
-            )
-        );
-
-        return true;
     }
 
     /**

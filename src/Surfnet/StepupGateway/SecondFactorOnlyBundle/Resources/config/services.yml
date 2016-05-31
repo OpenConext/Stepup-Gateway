@@ -81,7 +81,21 @@ services:
         arguments:
             - @gateway.repository.saml_entity
 
+    second_factor_only.validate_nameid:
+        class: Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\SecondFactorOnlyNameIdValidationService
+        arguments:
+            - @logger
+            - @second_factor_only.entity_service
+
+    second_factor_only.validate_accr:
+        class: Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\AuthnContextClassRefValidationService
+        arguments:
+            - @logger
+            - @second_factor_only.loa_alias_lookup
+            - @surfnet_stepup.service.loa_resolution
+
     second_factor_only.loa_alias_lookup:
+        public: false
         class: Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\LoaAliasLookupService
         arguments:
             - [] # See SurfnetStepupGatewaySecondFactorOnlyExtension::replaceLoaAliasConfig
