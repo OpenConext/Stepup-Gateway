@@ -284,7 +284,7 @@ class SecondFactorController extends Controller
 
         $logger->notice('Verifying possession of SMS second factor, sending challenge per SMS');
 
-        if (false && !$stepupService->sendSmsChallenge($command)) {
+        if (!$stepupService->sendSmsChallenge($command)) {
             $form->addError(new FormError('gateway.form.send_sms_challenge.sms_sending_failed'));
 
             return array_merge($viewVariables, ['phoneNumber' => $phoneNumber, 'form' => $form->createView()]);
@@ -323,7 +323,7 @@ class SecondFactorController extends Controller
 
         $verification = $this->getStepupService()->verifySmsChallenge($command);
 
-        if (true || $verification->wasSuccessful()) {
+        if ($verification->wasSuccessful()) {
             $this->getStepupService()->clearSmsVerificationState();
 
             $this->getResponseContext()->markSecondFactorVerified();
