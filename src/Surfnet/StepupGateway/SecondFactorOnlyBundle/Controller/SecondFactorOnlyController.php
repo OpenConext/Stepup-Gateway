@@ -117,7 +117,7 @@ class SecondFactorOnlyController extends Controller
     /**
      * @param string $authnContextClassRef
      * @param LoggerInterface $logger
-     * @return string
+     * @return string|null
      */
     private function verifyAuthnContextClassRef(
         $authnContextClassRef,
@@ -127,7 +127,7 @@ class SecondFactorOnlyController extends Controller
             $logger->info(
                 'No LOA requested, sending response with status Requester Error'
             );
-            return;
+            return null;
         }
 
         /** @var LoaAliasLookupService $loaAliasLookup */
@@ -140,7 +140,7 @@ class SecondFactorOnlyController extends Controller
                 .' sending response with status Requester Error',
                 $authnContextClassRef
             ));
-            return;
+            return null;
         }
 
         $loaResolutionService = $this->get('surfnet_stepup.service.loa_resolution');
@@ -151,7 +151,7 @@ class SecondFactorOnlyController extends Controller
                 .' sending response with status Requester Error',
                 $authnContextClassRef
             ));
-            return;
+            return null;
         }
 
         return $loaId;
