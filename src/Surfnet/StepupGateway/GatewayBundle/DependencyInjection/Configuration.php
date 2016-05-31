@@ -56,17 +56,6 @@ final class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
-                ->arrayNode('second_factor_only_loa_aliases')
-                    ->isRequired()
-                    ->children()
-                        ->prototype('array')
-                            ->children()
-                                ->scalarNode('loa')->isRequired()->end()
-                                ->scalarNode('ref')->isRequired()->end()
-                            ->end()
-                        ->end()
-                    ->end()
-                ->end()
             ->end();
 
         return $treeBuilder;
