@@ -109,7 +109,8 @@ final class ResponseRenderingService
                 'acu'        => $context->getDestination(),
                 'response'   => $this->getResponseAsXML($response),
                 'relayState' => $context->getRelayState()
-            ]);
+            ]
+        );
     }
 
     /**

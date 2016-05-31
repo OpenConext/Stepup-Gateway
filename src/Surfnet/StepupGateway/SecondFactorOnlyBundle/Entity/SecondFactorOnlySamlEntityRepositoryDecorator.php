@@ -20,8 +20,7 @@ namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Entity;
 
 use Surfnet\StepupGateway\GatewayBundle\Entity\SamlEntityRepositoryInterface;
 
-final class SecondFactorOnlySamlEntityRepositoryDecorator
-    implements SamlEntityRepositoryInterface
+final class SecondFactorOnlySamlEntityRepositoryDecorator implements SamlEntityRepositoryInterface
 {
     /**
      * @var SamlEntityRepositoryInterface
