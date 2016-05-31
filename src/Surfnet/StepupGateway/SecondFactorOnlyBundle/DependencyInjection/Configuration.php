@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupGateway\GatewayBundle\DependencyInjection;
+namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\DependencyInjection;
 
 use Surfnet\StepupBundle\Exception\DomainException;
 use Surfnet\StepupBundle\Exception\InvalidArgumentException;
