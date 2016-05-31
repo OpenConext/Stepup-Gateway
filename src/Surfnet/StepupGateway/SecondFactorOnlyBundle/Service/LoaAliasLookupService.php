@@ -29,7 +29,7 @@ final class LoaAliasLookupService
     private $loaAliases;
 
     /**
-     * @param array<string,string> $loaAuthnContextClassMapping
+     * @param array<string,string> $loaAliases
      */
     public function __construct(array $loaAliases)
     {
@@ -37,7 +37,7 @@ final class LoaAliasLookupService
             if (!is_string($loaId)) {
                 throw InvalidArgumentException::invalidType(
                     'string',
-                    'authnContextClassRef',
+                    'loaId',
                     $alias
                 );
             }
