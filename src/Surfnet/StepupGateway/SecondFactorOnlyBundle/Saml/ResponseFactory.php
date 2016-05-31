@@ -24,9 +24,6 @@ use Surfnet\SamlBundle\Entity\ServiceProvider;
 use Surfnet\StepupGateway\GatewayBundle\Saml\AssertionSigningService;
 use Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
 final class ResponseFactory
 {
     /**
@@ -72,6 +69,44 @@ final class ResponseFactory
         $authnContextClassRef
     ) {
 
+        return $this->createNewAuthnResponse(
+            $this->createNewAssertion(
+                $nameId,
+                $targetServiceProvider,
+                $authnContextClassRef
+            ),
+            $targetServiceProvider
+        );
+    }
+
+    /**
+     * @param SAML2_Assertion $newAssertion
+     * @param ServiceProvider $targetServiceProvider
+     * @return \SAML2_Response
+     */
+    private function createNewAuthnResponse(SAML2_Assertion $newAssertion, ServiceProvider $targetServiceProvider)
+    {
+        $response = new \SAML2_Response();
+        $response->setAssertions([$newAssertion]);
+        $response->setIssuer($this->hostedIdentityProvider->getEntityId());
+        $response->setIssueInstant($this->getTimestamp());
+        $response->setDestination($targetServiceProvider->getAssertionConsumerUrl());
+        $response->setInResponseTo($this->proxyStateHandler->getRequestId());
+
+        return $response;
+    }
+
+    /**
+     * @param string $nameId
+     * @param ServiceProvider $targetServiceProvider
+     * @param string $authnContextClassRef
+     * @return SAML2_Assertion
+     */
+    private function createNewAssertion(
+        $nameId,
+        ServiceProvider $targetServiceProvider,
+        $authnContextClassRef
+    ) {
         $newAssertion = new SAML2_Assertion();
         $newAssertion->setNotBefore($this->currentTime->getTimestamp());
         $newAssertion->setNotOnOrAfter($this->getTimestamp('PT5M'));
@@ -85,7 +120,8 @@ final class ResponseFactory
         ]);
         $newAssertion->setValidAudiences([$this->proxyStateHandler->getRequestServiceProvider()]);
         $this->addAuthenticationStatementTo($newAssertion, $authnContextClassRef);
-        return $this->createNewAuthnResponse($newAssertion, $targetServiceProvider);
+
+        return $newAssertion;
     }
 
     /**
@@ -116,23 +152,6 @@ final class ResponseFactory
         $assertion->setAuthnInstant($this->getTimestamp());
         $assertion->setAuthnContextClassRef($authnContextClassRef);
         $assertion->setAuthenticatingAuthority([$this->hostedIdentityProvider->getEntityId()]);
-    }
-
-    /**
-     * @param SAML2_Assertion $newAssertion
-     * @param ServiceProvider $targetServiceProvider
-     * @return \SAML2_Response
-     */
-    private function createNewAuthnResponse(SAML2_Assertion $newAssertion, ServiceProvider $targetServiceProvider)
-    {
-        $response = new \SAML2_Response();
-        $response->setAssertions([$newAssertion]);
-        $response->setIssuer($this->hostedIdentityProvider->getEntityId());
-        $response->setIssueInstant($this->getTimestamp());
-        $response->setDestination($targetServiceProvider->getAssertionConsumerUrl());
-        $response->setInResponseTo($this->proxyStateHandler->getRequestId());
-
-        return $response;
     }
 
     /**
