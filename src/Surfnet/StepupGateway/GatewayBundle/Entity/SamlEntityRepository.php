@@ -18,45 +18,19 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Entity;
 
-use Doctrine\ORM\EntityRepository;
-
-class SamlEntityRepository extends EntityRepository implements SamlEntityRepositoryInterface
+interface SamlEntityRepository
 {
     /**
      * @param $entityId
      * @return null|SamlEntity
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function getIdentityProvider($entityId)
-    {
-        return $this
-            ->createQueryBuilder('s')
-            ->where('s.type = :entityType')
-            ->andWhere('s.entityId = :entityId')
-            ->setParameters([
-                'entityType' => SamlEntity::TYPE_IDP,
-                'entityId'   => $entityId
-            ])
-            ->getQuery()
-            ->getOneOrNullResult();
-    }
+    public function getIdentityProvider($entityId);
 
     /**
      * @param $entityId
      * @return null|SamlEntity
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function getServiceProvider($entityId)
-    {
-        return $this
-            ->createQueryBuilder('s')
-            ->where('s.type = :entityType')
-            ->andWhere('s.entityId = :entityId')
-            ->setParameters([
-                'entityType' => SamlEntity::TYPE_SP,
-                'entityId'   => $entityId
-            ])
-            ->getQuery()
-            ->getOneOrNullResult();
-    }
+    public function getServiceProvider($entityId);
 }

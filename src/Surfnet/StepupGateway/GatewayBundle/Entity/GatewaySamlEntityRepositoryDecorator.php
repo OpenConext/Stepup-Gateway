@@ -20,14 +20,14 @@ namespace Surfnet\StepupGateway\GatewayBundle\Entity;
 
 use Surfnet\StepupGateway\GatewayBundle\Exception\InvalidArgumentException;
 
-final class GatewaySamlEntityRepositoryDecorator implements SamlEntityRepositoryInterface
+final class GatewaySamlEntityRepositoryDecorator implements SamlEntityRepository
 {
     /**
-     * @var SamlEntityRepositoryInterface
+     * @var SamlEntityRepository
      */
     private $repository;
 
-    public function __construct(SamlEntityRepositoryInterface $repository)
+    public function __construct(SamlEntityRepository $repository)
     {
         $this->repository = $repository;
     }

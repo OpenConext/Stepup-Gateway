@@ -18,16 +18,16 @@
 
 namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Entity;
 
-use Surfnet\StepupGateway\GatewayBundle\Entity\SamlEntityRepositoryInterface;
+use Surfnet\StepupGateway\GatewayBundle\Entity\SamlEntityRepository;
 
-final class SecondFactorOnlySamlEntityRepositoryDecorator implements SamlEntityRepositoryInterface
+final class SecondFactorOnlySamlEntityRepositoryDecorator implements SamlEntityRepository
 {
     /**
-     * @var SamlEntityRepositoryInterface
+     * @var SamlEntityRepository
      */
     private $repository;
 
-    public function __construct(SamlEntityRepositoryInterface $repository)
+    public function __construct(SamlEntityRepository $repository)
     {
         $this->repository = $repository;
     }
