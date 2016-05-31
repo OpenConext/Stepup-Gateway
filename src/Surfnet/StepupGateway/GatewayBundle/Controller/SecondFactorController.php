@@ -36,8 +36,7 @@ use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 /**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects) -- Too many second factor types in one controller. See Pivotal:
- *     https://www.pivotaltracker.com/story/show/104104610
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class SecondFactorController extends Controller
 {
