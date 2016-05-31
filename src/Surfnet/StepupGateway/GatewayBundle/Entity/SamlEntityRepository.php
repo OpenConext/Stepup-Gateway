@@ -20,7 +20,7 @@ namespace Surfnet\StepupGateway\GatewayBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
 
-class SamlEntityRepository extends EntityRepository
+class SamlEntityRepository extends EntityRepository implements SamlEntityRepositoryInterface
 {
     /**
      * @param $entityId

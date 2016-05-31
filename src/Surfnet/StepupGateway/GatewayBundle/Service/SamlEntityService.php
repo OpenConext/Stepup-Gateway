@@ -19,9 +19,9 @@
 namespace Surfnet\StepupGateway\GatewayBundle\Service;
 
 use Surfnet\SamlBundle\Entity\IdentityProvider;
-use Surfnet\SamlBundle\Entity\ServiceProvider;
 use Surfnet\SamlBundle\Entity\ServiceProviderRepository;
-use Surfnet\StepupGateway\GatewayBundle\Entity\SamlEntityRepository;
+use Surfnet\StepupGateway\GatewayBundle\Entity\SamlEntityRepositoryInterface;
+use Surfnet\StepupGateway\GatewayBundle\Entity\ServiceProvider;
 use Surfnet\StepupGateway\GatewayBundle\Exception\RuntimeException;
 
 class SamlEntityService implements ServiceProviderRepository
@@ -41,7 +41,7 @@ class SamlEntityService implements ServiceProviderRepository
      */
     private $loadedServiceProviders;
 
-    public function __construct(SamlEntityRepository $samlEntityRepository)
+    public function __construct(SamlEntityRepositoryInterface $samlEntityRepository)
     {
         $this->samlEntityRepository = $samlEntityRepository;
         $this->loadedIdentityProviders = [];
