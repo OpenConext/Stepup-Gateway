@@ -84,4 +84,4 @@ services:
     second_factor_only.loa_alias_lookup:
         class: Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\LoaAliasLookupService
         arguments:
-            - [] # See SurfnetStepupGatewaySecondFactorOnlyExtension::replaceAuthnContextClassRefLookupMapping
+            - [] # See SurfnetStepupGatewaySecondFactorOnlyExtension::replaceLoaAliasConfig
