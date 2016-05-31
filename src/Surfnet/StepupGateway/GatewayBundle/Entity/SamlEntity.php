@@ -111,7 +111,7 @@ class SamlEntity
 
         $configuration['secondFactorOnly'] = false;
         if (isset($decodedConfiguration['second_factor_only'])) {
-            $configuration['secondFactorOnly'] = (bool) $decodedConfiguration['second_factor_only'];
+            $configuration['secondFactorOnly'] = $decodedConfiguration['second_factor_only'];
         }
         $configuration['secondFactorOnlyNameIdPatterns'] = [];
         if (isset($decodedConfiguration['second_factor_only_nameid_patterns'])) {
