@@ -59,32 +59,10 @@ class ServiceProvider extends BaseServiceProvider
 
         $nameIdPatterns = $this->get('secondFactorOnlyNameIdPatterns');
         foreach ($nameIdPatterns as $nameIdPattern) {
-            if ($this->match($nameIdPattern, $nameId)) {
+            if ((bool) preg_match('#^' . strtr(preg_quote($nameIdPattern, '#'), ['\*' => '.*']) . '$#', $nameId)) {
                 return true;
             }
         }
         return false;
-    }
-
-    /**
-     * Does a given wildcard pattern match a string?
-     *
-     * Adapted from: http://php.net/manual/en/function.fnmatch.php
-     * @param string $pattern
-     * @param string $string
-     * @return bool
-     */
-    private function match($pattern, $string) {
-        $modifiers = null;
-        $transforms = array(
-            '\*'    => '.*',
-        );
-
-        $pattern = '#^'
-            . strtr(preg_quote($pattern, '#'), $transforms)
-            . '$#'
-            . $modifiers;
-
-        return (boolean) preg_match($pattern, $string);
     }
 }
