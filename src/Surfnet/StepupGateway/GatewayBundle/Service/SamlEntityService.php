@@ -27,7 +27,7 @@ use Surfnet\StepupGateway\GatewayBundle\Exception\RuntimeException;
 class SamlEntityService implements ServiceProviderRepository
 {
     /**
-     * @var \Surfnet\StepupGateway\GatewayBundle\Entity\DoctrineSamlEntityRepository
+     * @var \Surfnet\StepupGateway\GatewayBundle\Entity\SamlEntityRepository
      */
     private $samlEntityRepository;
 
