@@ -59,6 +59,8 @@ parameters:
     gateway_loa_loa3: https://gateway.tld/authentication/loa3
     second_factor_only_loa_loa3: https://gateway.tld/second-factor-only/level3
 
+    second_factor_only: false
+
     asset_version: 1
 
     u2f_app_id: https://gateway.tld/u2f/app-id
