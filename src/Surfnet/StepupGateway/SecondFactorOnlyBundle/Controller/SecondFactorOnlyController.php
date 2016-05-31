@@ -177,10 +177,22 @@ class SecondFactorOnlyController extends Controller
 
         if (!$serviceProvider->isAllowedToUseSecondFactorOnlyFor($nameId)) {
             $logger->info(
-                'No NameID provided, sending response with status Requester Error'
+                sprintf(
+                    'SP "%s" may not use SecondFactorOnly mode for nameid "%s", sending response with status Requester Error',
+                    $spEntityId,
+                    $nameId
+                )
             );
             return false;
         }
+
+        $logger->info(
+            sprintf(
+                'SP "%s" is allowed to use SecondFactorOnly mode for nameid "%s"',
+                $spEntityId,
+                $nameId
+            )
+        );
 
         return true;
     }
