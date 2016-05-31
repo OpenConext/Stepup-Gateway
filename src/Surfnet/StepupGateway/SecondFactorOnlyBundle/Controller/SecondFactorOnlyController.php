@@ -41,7 +41,7 @@ class SecondFactorOnlyController extends Controller
     {
         $logger = $this->get('logger');
 
-        if (!$this->get('service_container')->getParameter('second_factor_only')) {
+        if (!$this->getParameter('second_factor_only')) {
             $logger->notice(sprintf(
                 'Access to %s denied, second_factor_only parameter set to false.',
                 __METHOD__
@@ -195,7 +195,7 @@ class SecondFactorOnlyController extends Controller
 
         $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
 
-        if (!$this->get('service_container')->getParameter('second_factor_only')) {
+        if (!$this->getParameter('second_factor_only')) {
             $logger->notice(sprintf(
                 'Access to %s denied, second_factor_only parameter set to false.',
                 __METHOD__

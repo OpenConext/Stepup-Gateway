@@ -25,7 +25,7 @@ class MetadataController extends Controller
 {
     public function metadataAction()
     {
-        if (!$this->get('service_container')->getParameter('second_factor_only')) {
+        if (!$this->getParameter('second_factor_only')) {
             $this->get('logger')->notice(sprintf(
                 'Access to %s denied, second_factor_only parameter set to false.',
                 __METHOD__
