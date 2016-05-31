@@ -85,7 +85,7 @@ class SecondFactorOnlyController extends Controller
 
         // Check if the NameID is provided and we may use it.
         $nameId = $originalRequest->getNameId();
-        if (!$this->verifyNameId($originalRequest->getServiceProvider(), $nameId, $logger)) {
+        if (!$this->isNameIdAllowedToUseSecondFactorOnly($originalRequest->getServiceProvider(), $nameId, $logger)) {
             /** @var \Surfnet\StepupGateway\GatewayBundle\Service\ResponseRenderingService $responseRendering */
             $responseRendering = $this->get('second_factor_only.response_rendering');
             return $responseRendering->renderRequesterFailureResponse(
@@ -163,7 +163,7 @@ class SecondFactorOnlyController extends Controller
      * @param LoggerInterface $logger
      * @return bool
      */
-    private function verifyNameId($spEntityId, $nameId, LoggerInterface $logger)
+    private function isNameIdAllowedToUseSecondFactorOnly($spEntityId, $nameId, LoggerInterface $logger)
     {
         if (!$nameId) {
             $logger->info(
