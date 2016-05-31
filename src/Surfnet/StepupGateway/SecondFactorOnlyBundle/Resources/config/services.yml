@@ -38,7 +38,7 @@ services:
             - @second_factor_only.configuration.metadata
 
     second_factor_only.response_rendering:
-        class: Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\ResponseRenderingService
+        class: Surfnet\StepupGateway\GatewayBundle\Service\ResponseRenderingService
         arguments:
             - @gateway.proxy.response_builder
             - @templating

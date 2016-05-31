@@ -86,7 +86,7 @@ class SecondFactorOnlyController extends Controller
         // Check if the NameID is provided and we may use it.
         $nameId = $originalRequest->getNameId();
         if (!$this->verifyNameId($originalRequest->getServiceProvider(), $nameId, $logger)) {
-            /** @var \Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\ResponseRenderingService $responseRendering */
+            /** @var \Surfnet\StepupGateway\GatewayBundle\Service\ResponseRenderingService $responseRendering */
             $responseRendering = $this->get('second_factor_only.response_rendering');
             return $responseRendering->renderRequesterFailureResponse(
                 $this->getResponseContext()
@@ -98,7 +98,7 @@ class SecondFactorOnlyController extends Controller
         $authnContextClassRef = $originalRequest->getAuthenticationContextClassRef();
         $loaId = $this->verifyAuthnContextClassRef($authnContextClassRef, $logger);
         if (!$loaId) {
-            /** @var \Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\ResponseRenderingService $responseRendering */
+            /** @var \Surfnet\StepupGateway\GatewayBundle\Service\ResponseRenderingService $responseRendering */
             $responseRendering = $this->get('second_factor_only.response_rendering');
             return $responseRendering->renderRequesterFailureResponse(
                 $this->getResponseContext()

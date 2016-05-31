@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Service;
+namespace Surfnet\StepupGateway\GatewayBundle\Service;
 
 use SAML2_Const;
 use SAML2_Response;
