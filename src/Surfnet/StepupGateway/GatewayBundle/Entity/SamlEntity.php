@@ -24,7 +24,7 @@ use Surfnet\SamlBundle\Entity\IdentityProvider;
 use Surfnet\StepupGateway\GatewayBundle\Exception\RuntimeException;
 
 /**
- * @ORM\Entity(repositoryClass="Surfnet\StepupGateway\GatewayBundle\Entity\SamlEntityRepository")
+ * @ORM\Entity(repositoryClass="Surfnet\StepupGateway\GatewayBundle\Entity\DoctrineSamlEntityRepository")
  * @ORM\Table()
  *
  * @SuppressWarnings(PHPMD.UnusedPrivateField)
