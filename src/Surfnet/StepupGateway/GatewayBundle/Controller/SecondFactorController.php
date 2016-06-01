@@ -36,8 +36,7 @@ use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 /**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects) -- Too many second factor types in one controller. See Pivotal:
- *     https://www.pivotaltracker.com/story/show/104104610
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class SecondFactorController extends Controller
 {
@@ -71,7 +70,7 @@ class SecondFactorController extends Controller
         if ($this->getStepupService()->isIntrinsicLoa($requiredLoa)) {
             $this->get('gateway.authentication_logger')->logIntrinsicLoaAuthentication($originalRequestId);
 
-            return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:respond');
+            return $this->forward($context->getResponseAction());
         }
 
         $secondFactorCollection = $this
@@ -183,7 +182,7 @@ class SecondFactorController extends Controller
             $selectedSecondFactor
         ));
 
-        return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:respond');
+        return $this->forward($context->getResponseAction());
     }
 
     /**
@@ -241,7 +240,7 @@ class SecondFactorController extends Controller
             )
         );
 
-        return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:respond');
+        return $this->forward($context->getResponseAction());
     }
 
     /**
@@ -337,7 +336,7 @@ class SecondFactorController extends Controller
                 )
             );
 
-            return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:respond');
+            return $this->forward($context->getResponseAction());
         } elseif ($verification->didOtpExpire()) {
             $logger->notice('SMS challenge expired');
             $form->addError(new FormError('gateway.form.send_sms_challenge.challenge_expired'));
@@ -461,7 +460,7 @@ class SecondFactorController extends Controller
                 )
             );
 
-            return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:respond');
+            return $this->forward($context->getResponseAction());
         } elseif ($result->didDeviceReportError()) {
             $logger->error('U2F device reported error during authentication');
             $this->addFlash('error', 'gateway.u2f.alert.device_reported_an_error');
@@ -491,7 +490,7 @@ class SecondFactorController extends Controller
      */
     private function getResponseContext()
     {
-        return $this->get('gateway.proxy.response_context');
+        return $this->get($this->get('gateway.proxy.state_handler')->getResponseContextServiceId());
     }
 
     /**

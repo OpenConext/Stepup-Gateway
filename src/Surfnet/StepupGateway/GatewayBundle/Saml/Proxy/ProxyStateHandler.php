@@ -95,12 +95,12 @@ class ProxyStateHandler
     }
 
     /**
-     * @param string $authnContext
+     * @param string $loaIdentifier
      * @return $this
      */
-    public function setRequestAuthnContextClassRef($authnContext)
+    public function setRequiredLoaIdentifier($loaIdentifier)
     {
-        $this->set('authn_context', $authnContext);
+        $this->set('loa_identifier', $loaIdentifier);
 
         return $this;
     }
@@ -108,9 +108,9 @@ class ProxyStateHandler
     /**
      * @return string|null
      */
-    public function getRequestAuthContextClassRef()
+    public function getRequiredLoaIdentifier()
     {
-        return $this->get('authn_context');
+        return $this->get('loa_identifier');
     }
 
     /**
@@ -225,6 +225,39 @@ class ProxyStateHandler
     public function isSecondFactorVerified()
     {
         return $this->get('selected_second_factor_verified') === true;
+    }
+
+    /**
+     * @param string $controllerName
+     * @return $this
+     */
+    public function setResponseAction($controllerName)
+    {
+        $this->set('response_controller', $controllerName);
+        return $this;
+    }
+    /**
+     * @return string|null
+     */
+    public function getResponseAction()
+    {
+        return $this->get('response_controller');
+    }
+    /**
+     * @param string $serviceId
+     * @return $this
+     */
+    public function setResponseContextServiceId($serviceId)
+    {
+        $this->set('response_context_service_id', $serviceId);
+        return $this;
+    }
+    /**
+     * @return string|null
+     */
+    public function getResponseContextServiceId()
+    {
+        return $this->get('response_context_service_id');
     }
 
     /**

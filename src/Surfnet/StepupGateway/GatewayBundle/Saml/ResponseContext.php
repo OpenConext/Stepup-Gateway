@@ -121,7 +121,7 @@ class ResponseContext
      */
     public function getRequiredLoa()
     {
-        return $this->stateHandler->getRequestAuthContextClassRef();
+        return $this->stateHandler->getRequiredLoaIdentifier();
     }
 
     /**
@@ -244,6 +244,11 @@ class ResponseContext
     public function isSecondFactorVerified()
     {
         return $this->stateHandler->getSelectedSecondFactorId() && $this->stateHandler->isSecondFactorVerified();
+    }
+
+    public function getResponseAction()
+    {
+        return $this->stateHandler->getResponseAction();
     }
 
     /**
