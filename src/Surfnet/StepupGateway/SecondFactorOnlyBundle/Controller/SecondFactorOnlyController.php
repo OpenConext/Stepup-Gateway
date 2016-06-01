@@ -95,8 +95,9 @@ class SecondFactorOnlyController extends Controller
         $stateHandler->saveIdentityNameId($nameId);
 
         // Check if the requested Loa is provided and supported.
-        $authnContextClassRef = $originalRequest->getAuthenticationContextClassRef();
-        $loaId = $this->get('second_factor_only.validate_accr')->with($logger)->validate($authnContextClassRef);
+        $loaId = $this->get('second_factor_only.loa_resolution')->with($logger)->resolve(
+            $originalRequest->getAuthenticationContextClassRef()
+        );
         if (empty($loaId)) {
             /** @var \Surfnet\StepupGateway\GatewayBundle\Service\ResponseRenderingService $responseRendering */
             $responseRendering = $this->get('second_factor_only.response_rendering');

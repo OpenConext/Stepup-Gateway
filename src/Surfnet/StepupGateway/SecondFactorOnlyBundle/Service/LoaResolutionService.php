@@ -19,9 +19,9 @@
 namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Service;
 
 use Psr\Log\LoggerInterface;
-use Surfnet\StepupBundle\Service\LoaResolutionService;
+use Surfnet\StepupBundle\Service\LoaResolutionService as BaseResolutionService;
 
-final class AuthnContextClassRefValidationService
+final class LoaResolutionService
 {
     /**
      * @var LoggerInterface
@@ -34,7 +34,7 @@ final class AuthnContextClassRefValidationService
     private $loaAliasLookup;
 
     /**
-     * @var LoaResolutionService
+     * @var BaseResolutionService
      */
     private $loaResolution;
 
@@ -59,28 +59,28 @@ final class AuthnContextClassRefValidationService
     }
 
     /**
-     * Validate that a given ACCR was provided and has a valid LOA alias.
+     * Resolves a LOA id.
      *
-     * Returns the LOA id.
+     * Returns the LOA id or an empty string if there is an issue.
      *
-     * @param string $authnContextClassRef
+     * @param string $loaId
      *   AuthnContextClassRef provided in AuthnRequest.
      *
      * @return string
      *   LOA Id
      */
-    public function validate($authnContextClassRef) {
-        if (empty($authnContextClassRef)) {
+    public function resolve($loaId) {
+        if (empty($loaId)) {
             $this->logger->info( 'No LOA requested, sending response with status Requester Error');
             return '';
         }
 
-        $loaId = $this->loaAliasLookup->findLoaIdByAlias($authnContextClassRef);
+        $loaId = $this->loaAliasLookup->findLoaIdByAlias($loaId);
 
         if (!$loaId) {
             $this->logger->info(sprintf(
                 'Requested required Loa "%s" does not have a second factor alias',
-                $authnContextClassRef
+                $loaId
             ));
             return '';
         }
@@ -88,7 +88,7 @@ final class AuthnContextClassRefValidationService
         if (!$this->loaResolution->hasLoa($loaId)) {
             $this->logger->info(sprintf(
                 'Requested required Loa "%s" does not exist',
-                $authnContextClassRef
+                $loaId
             ));
             return '';
         }

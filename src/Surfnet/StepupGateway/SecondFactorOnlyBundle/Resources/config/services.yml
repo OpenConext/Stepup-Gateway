@@ -87,8 +87,8 @@ services:
             - @logger
             - @second_factor_only.entity_service
 
-    second_factor_only.validate_accr:
-        class: Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\AuthnContextClassRefValidationService
+    second_factor_only.loa_resolution:
+        class: Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\LoaResolutionService
         arguments:
             - @logger
             - @second_factor_only.loa_alias_lookup
