@@ -69,7 +69,8 @@ final class LoaResolutionService
      * @return string
      *   LOA Id
      */
-    public function resolve($loaId) {
+    public function resolve($loaId)
+    {
         if (empty($loaId)) {
             $this->logger->info( 'No LOA requested, sending response with status Requester Error');
             return '';
