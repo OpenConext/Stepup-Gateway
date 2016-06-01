@@ -4,6 +4,11 @@ services:
         arguments:
             - @gateway.repository.saml_entity
 
+    gateway.entity_service:
+        class: Surfnet\StepupGateway\GatewayBundle\Service\SamlEntityService
+        arguments:
+            - @gateway.repository.gateway_saml_entity
+
     gateway.proxy.state_handler:
         class: Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler
         arguments:
@@ -16,7 +21,7 @@ services:
         class: Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext
         arguments:
             - @surfnet_saml.hosted.identity_provider
-            - @saml.entity_repository
+            - @gateway.entity_service
             - @gateway.proxy.state_handler
 
     gateway.service.second_factor_service:

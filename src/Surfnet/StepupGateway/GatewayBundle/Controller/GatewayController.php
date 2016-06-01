@@ -32,6 +32,8 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class GatewayController extends Controller
 {
+    const RESPONSE_CONTEXT_SERVICE_ID = 'gateway.proxy.response_context';
+
     public function ssoAction(Request $httpRequest)
     {
         /** @var \Psr\Log\LoggerInterface $logger */
@@ -42,7 +44,7 @@ class GatewayController extends Controller
         $redirectBinding = $this->get('surfnet_saml.http.redirect_binding');
 
         try {
-            $originalRequest = $redirectBinding->processRequest($httpRequest);
+            $originalRequest = $redirectBinding->processUnsignedRequest($httpRequest);
         } catch (Exception $e) {
             $logger->critical(sprintf('Could not process Request, error: "%s"', $e->getMessage()));
 
@@ -62,7 +64,9 @@ class GatewayController extends Controller
         $stateHandler
             ->setRequestId($originalRequestId)
             ->setRequestServiceProvider($originalRequest->getServiceProvider())
-            ->setRelayState($httpRequest->get(AuthnRequest::PARAMETER_RELAY_STATE, ''));
+            ->setRelayState($httpRequest->get(AuthnRequest::PARAMETER_RELAY_STATE, ''))
+            ->setResponseAction('SurfnetStepupGatewayGatewayBundle:Gateway:respond')
+            ->setResponseContextServiceId(static::RESPONSE_CONTEXT_SERVICE_ID);
 
         // check if the requested Loa is supported
         $requiredLoa = $originalRequest->getAuthenticationContextClassRef();
@@ -76,7 +80,7 @@ class GatewayController extends Controller
             return $this->renderSamlResponse('consumeAssertion', $response);
         }
 
-        $stateHandler->setRequestAuthnContextClassRef($originalRequest->getAuthenticationContextClassRef());
+        $stateHandler->setRequiredLoaIdentifier($requiredLoa);
 
         $proxyRequest = AuthnRequestFactory::createNewRequest(
             $this->get('surfnet_saml.hosted.service_provider'),
@@ -280,7 +284,14 @@ class GatewayController extends Controller
      */
     public function getResponseContext()
     {
-        return $this->get('gateway.proxy.response_context');
+        $stateHandler = $this->get('gateway.proxy.state_handler');
+        $responseContextServiceId = $stateHandler->getResponseContextServiceId();
+
+        if (!$responseContextServiceId) {
+            return $this->get(static::RESPONSE_CONTEXT_SERVICE_ID);
+        }
+
+        return $this->get($responseContextServiceId);
     }
 
     /**
