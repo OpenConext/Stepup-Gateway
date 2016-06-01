@@ -95,7 +95,6 @@ services:
             - @surfnet_stepup.service.loa_resolution
 
     second_factor_only.loa_alias_lookup:
-        public: false
         class: Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\LoaAliasLookupService
         arguments:
             - [] # See SurfnetStepupGatewaySecondFactorOnlyExtension::replaceLoaAliasConfig
