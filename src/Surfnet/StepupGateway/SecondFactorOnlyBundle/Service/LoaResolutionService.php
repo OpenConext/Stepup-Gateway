@@ -41,7 +41,7 @@ final class LoaResolutionService
     public function __construct(
         LoggerInterface $logger,
         LoaAliasLookupService $loaAliasLookup,
-        LoaResolutionService $loaResolution
+        BaseResolutionService $loaResolution
     ) {
         $this->logger = $logger;
         $this->loaAliasLookup = $loaAliasLookup;
