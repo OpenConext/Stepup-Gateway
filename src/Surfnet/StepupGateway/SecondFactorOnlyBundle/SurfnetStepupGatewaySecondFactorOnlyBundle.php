@@ -16,21 +16,10 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupGateway\GatewayBundle\Entity;
+namespace Surfnet\StepupGateway\SecondFactorOnlyBundle;
 
-interface SamlEntityRepository
+use Symfony\Component\HttpKernel\Bundle\Bundle;
+
+class SurfnetStepupGatewaySecondFactorOnlyBundle extends Bundle
 {
-    /**
-     * @param $entityId
-     * @return null|SamlEntity
-     * @throws \Doctrine\ORM\NonUniqueResultException
-     */
-    public function getIdentityProvider($entityId);
-
-    /**
-     * @param $entityId
-     * @return null|SamlEntity
-     * @throws \Doctrine\ORM\NonUniqueResultException
-     */
-    public function getServiceProvider($entityId);
 }

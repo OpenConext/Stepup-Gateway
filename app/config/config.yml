@@ -178,6 +178,13 @@ surfnet_stepup_gateway_gateway:
     intrinsic_loa: %gateway_loa_loa1%
     enabled_second_factors: %enabled_second_factors%
 
+surfnet_stepup_gateway_second_factor_only:
+    loa_aliases:
+        - loa: %gateway_loa_loa2%
+          alias: %second_factor_only_loa_loa2%
+        - loa: %gateway_loa_loa3%
+          alias: %second_factor_only_loa_loa3%
+
 surfnet_saml:
     hosted:
         service_provider:
@@ -187,7 +194,7 @@ surfnet_saml:
             private_key: %saml_sp_privatekey%
         identity_provider:
             enabled: true
-            service_provider_repository: saml.entity_repository
+            service_provider_repository: gateway.entity_service
             sso_route: gateway_identityprovider_sso
             public_key: %saml_idp_publickey%
             private_key: %saml_idp_privatekey%
