@@ -15,7 +15,11 @@ Step-up Gateway
 
 Clone the repository or download the archive to a directory. Install the dependencies by running `composer install` and fill out the database credentials et cetera.
 
+Make sure to run database migrations for u2f using `app/console u2f:migrations:migrate`.
+
+Run `app/console mopa:bootstrap:symlink:less` to configure Bootstrap symlinks.
+
 The Gateway is configured to only accept connections over SSL. Disable this under `nelmio_security` in `config.yml` or run the web server using a (self-signed) certificate.
 
 ## Stepup
-This component is part of the stepup software an requires other components to function. Please refer to https://github.com/SURFnet/Stepup-Deploy for information for setting up the stepup software.
+This component is part of the Stepup software and requires other components to function. Please refer to https://github.com/SURFnet/Stepup-Deploy for information for setting up the Stepup software.
