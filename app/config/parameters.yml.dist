@@ -18,9 +18,10 @@ parameters:
     mailer_user:       ~
     mailer_password:   ~
 
-    default_locale:    en_GB
-    locales:           [nl_NL, en_GB]
-    secret:            NotSoSecretReplaceMe!
+    default_locale:         en_GB
+    locales:                [nl_NL, en_GB]
+    locale_cookie_domain:   surfconext.nl
+    secret:                 NotSoSecretReplaceMe!
 
     debug_toolbar:          true
     debug_redirects:        false
