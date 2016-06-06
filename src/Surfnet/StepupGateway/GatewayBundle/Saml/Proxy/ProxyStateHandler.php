@@ -261,6 +261,24 @@ class ProxyStateHandler
     }
 
     /**
+     * @param string $locale
+     * @return $this
+     */
+    public function setPreferredLocale($locale)
+    {
+        $this->set('locale', $locale);
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPreferredLocale()
+    {
+        return $this->get('locale');
+    }
+
+    /**
      * @param string $key
      * @param mixed $value Any scalar
      */
