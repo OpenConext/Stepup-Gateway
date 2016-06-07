@@ -43,7 +43,7 @@ final class SecondFactorOnlyNameIdValidationService
     public function validate($spEntityId, $nameId)
     {
         if (!$nameId) {
-            $this->logger->info(
+            $this->logger->notice(
                 'No NameID provided, sending response with status Requester Error'
             );
             return false;
@@ -52,7 +52,7 @@ final class SecondFactorOnlyNameIdValidationService
         $serviceProvider = $this->entityService->getServiceProvider($spEntityId);
 
         if (!$serviceProvider->isAllowedToUseSecondFactorOnlyFor($nameId)) {
-            $this->logger->info(
+            $this->logger->notice(
                 sprintf(
                     'SP "%s" may not use SecondFactorOnly mode for nameid "%s", sending response with status Requester Error',
                     $spEntityId,
@@ -62,7 +62,7 @@ final class SecondFactorOnlyNameIdValidationService
             return false;
         }
 
-        $this->logger->info(
+        $this->logger->notice(
             sprintf(
                 'SP "%s" is allowed to use SecondFactorOnly mode for nameid "%s"',
                 $spEntityId,
