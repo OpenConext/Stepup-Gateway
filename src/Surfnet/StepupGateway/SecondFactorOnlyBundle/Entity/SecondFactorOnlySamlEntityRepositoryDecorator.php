@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Entity;
 
+use Surfnet\StepupGateway\GatewayBundle\Entity\SamlEntity;
 use Surfnet\StepupGateway\GatewayBundle\Entity\SamlEntityRepository;
 
 final class SecondFactorOnlySamlEntityRepositoryDecorator implements SamlEntityRepository
@@ -40,6 +41,10 @@ final class SecondFactorOnlySamlEntityRepositoryDecorator implements SamlEntityR
     public function getServiceProvider($entityId)
     {
         $serviceProvider = $this->repository->getServiceProvider($entityId);
+
+        if (!$serviceProvider instanceof SamlEntity) {
+            return null;
+        }
 
         if (!$serviceProvider->toServiceProvider()->mayUseSecondFactorOnly()) {
             return null;

@@ -44,7 +44,7 @@ class GatewayController extends Controller
         $redirectBinding = $this->get('surfnet_saml.http.redirect_binding');
 
         try {
-            $originalRequest = $redirectBinding->processUnsignedRequest($httpRequest);
+            $originalRequest = $redirectBinding->processSignedRequest($httpRequest);
         } catch (Exception $e) {
             $logger->critical(sprintf('Could not process Request, error: "%s"', $e->getMessage()));
 
