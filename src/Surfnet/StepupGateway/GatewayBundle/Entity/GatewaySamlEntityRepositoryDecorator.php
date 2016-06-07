@@ -57,6 +57,10 @@ final class GatewaySamlEntityRepositoryDecorator implements SamlEntityRepository
 
         $serviceProvider = $this->repository->getServiceProvider($entityId);
 
+        if (!$serviceProvider instanceof SamlEntity) {
+            return null;
+        }
+
         if (!$serviceProvider->toServiceProvider()->mayUseGateway()) {
             return null;
         }
