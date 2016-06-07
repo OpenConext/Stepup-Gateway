@@ -140,7 +140,7 @@ services:
     gateway.locale_cookie_listener:
         class: Surfnet\StepupBundle\EventListener\LocaleCookieListener
         arguments:
-            - @surfnet_stepup.locale_cookie_settings
+            - @surfnet_stepup.locale_cookie_helper
             - @gateway.locale_provider
             - @logger
         tags:
