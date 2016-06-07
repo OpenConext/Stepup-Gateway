@@ -271,7 +271,7 @@ class ProxyStateHandler
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getPreferredLocale()
     {
