@@ -22,6 +22,6 @@ final class SecondFactorLocaleProvider implements LocaleProviderService
      */
     public function determinePreferredLocale()
     {
-        return $this->stateHandler->getPreferredLocale();
+        return (string) $this->stateHandler->getPreferredLocale();
     }
 }
