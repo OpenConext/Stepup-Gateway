@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "fd2692dc26869508b122c4f4dc26f4e6",
-    "content-hash": "99b00f77ed5562536cd9502ba417cff6",
+    "hash": "fd3a42c1678b91c22bdac2e2d133a2b2",
+    "content-hash": "e96ba9ed809744a30ad1052f2ad742bb",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -1777,24 +1777,24 @@
         },
         {
             "name": "mopa/bootstrap-bundle",
-            "version": "v3.0.0",
+            "version": "v3.0.0-RC2",
             "target-dir": "Mopa/Bundle/BootstrapBundle",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phiamo/MopaBootstrapBundle.git",
-                "reference": "0205959643168208f3b313b2e00ca643441850b4"
+                "reference": "c43c1c3b230cccfaa2548b55a7ddca5a5af8eaff"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phiamo/MopaBootstrapBundle/zipball/0205959643168208f3b313b2e00ca643441850b4",
-                "reference": "0205959643168208f3b313b2e00ca643441850b4",
+                "url": "https://api.github.com/repos/phiamo/MopaBootstrapBundle/zipball/c43c1c3b230cccfaa2548b55a7ddca5a5af8eaff",
+                "reference": "c43c1c3b230cccfaa2548b55a7ddca5a5af8eaff",
                 "shasum": ""
             },
             "require": {
                 "mopa/composer-bridge": "~1.3",
-                "symfony/console": "~2.3|~3.0",
+                "symfony/console": "~2.3",
                 "symfony/form": "~2.3|~3.0",
-                "symfony/framework-bundle": "~2.3|~3.0",
+                "symfony/framework-bundle": "~2.3",
                 "symfony/twig-bundle": "~2.3|~3.0",
                 "twig/twig": "^1.14.2"
             },
@@ -1845,7 +1845,7 @@
                 "form",
                 "template"
             ],
-            "time": "2015-11-27 15:18:23"
+            "time": "2015-09-10 17:23:40"
         },
         {
             "name": "mopa/composer-bridge",
@@ -5581,6 +5581,7 @@
     ],
     "minimum-stability": "stable",
     "stability-flags": {
+        "mopa/bootstrap-bundle": 5,
         "surfnet/stepup-u2f-bundle": 20,
         "mopa/composer-bridge": 20
     },
