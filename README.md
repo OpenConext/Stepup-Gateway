@@ -5,7 +5,7 @@ Step-up Gateway
 
 ## Requirements
 
- * PHP 5.4+
+ * PHP 5.6 (Note that we test on 7.0 but do not run or support it officially)
  * [Composer](https://getcomposer.org/)
  * A web server (Apache, Nginx)
  * MariaDB 5.5+ (MySQL should work as well)

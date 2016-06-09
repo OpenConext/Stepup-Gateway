@@ -173,6 +173,8 @@ surfnet_stepup:
         originator: %sms_originator%
         otp_expiry_interval: %sms_otp_expiry_interval%
         maximum_otp_requests: %sms_maximum_otp_requests%
+    locale_cookie:
+        domain: %locale_cookie_domain%
 
 surfnet_stepup_gateway_gateway:
     intrinsic_loa: %gateway_loa_loa1%

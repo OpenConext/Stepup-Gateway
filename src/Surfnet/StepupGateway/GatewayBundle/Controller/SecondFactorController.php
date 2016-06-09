@@ -106,7 +106,7 @@ class SecondFactorController extends Controller
             $secondFactor->secondFactorType
         ));
 
-        $context->saveSelectedSecondFactor($secondFactor->secondFactorId);
+        $context->saveSelectedSecondFactor($secondFactor);
 
         $this->getStepupService()->clearSmsVerificationState();
 
