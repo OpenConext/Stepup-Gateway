@@ -15,7 +15,6 @@ php:
 matrix:
   allow_failures:
     - php: 7.0
-      env: extraflags=--ignore-platform-reqs
 
 env:
   global:
@@ -28,7 +27,7 @@ cache:
 before_script:
   - phpenv config-add .travis.php.ini
   - composer self-update
-  - composer install $extraflags --prefer-dist
+  - composer install --prefer-dist
 
 script:
   - ant
