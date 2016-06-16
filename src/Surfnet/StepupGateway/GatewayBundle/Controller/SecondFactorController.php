@@ -113,8 +113,7 @@ class SecondFactorController extends Controller
         $route = 'gateway_verify_second_factor_';
         if ($secondFactor->isGssf()) {
             $route .= 'gssf';
-        }
-        else {
+        } else {
             $route .= strtolower($secondFactor->secondFactorType);
         }
 
