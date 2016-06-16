@@ -110,7 +110,13 @@ class SecondFactorController extends Controller
 
         $this->getStepupService()->clearSmsVerificationState();
 
-        $route = 'gateway_verify_second_factor_' . strtolower($secondFactor->secondFactorType);
+        $route = 'gateway_verify_second_factor_';
+        if ($secondFactor->isGssf()) {
+            $route .= 'gssf';
+        } else {
+            $route .= strtolower($secondFactor->secondFactorType);
+        }
+
         return $this->redirect($this->generateUrl($route));
     }
 

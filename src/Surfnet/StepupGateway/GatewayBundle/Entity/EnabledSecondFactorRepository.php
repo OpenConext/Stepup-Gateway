@@ -33,6 +33,7 @@ final class EnabledSecondFactorRepository implements SecondFactorRepository
      * @var string[]
      */
     private $enabledTypes;
+
     /**
      * @var LoggerInterface
      */
