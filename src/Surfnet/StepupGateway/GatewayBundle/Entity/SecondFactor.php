@@ -107,7 +107,7 @@ class SecondFactor
     /**
      * @return bool
      */
-    public function requiresGssf()
+    public function isGssf()
     {
         return (new SecondFactorType($this->secondFactorType))->isGssf();
     }
