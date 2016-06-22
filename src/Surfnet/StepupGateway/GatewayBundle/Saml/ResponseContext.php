@@ -24,6 +24,7 @@ use DOMDocument;
 use SAML2_Assertion;
 use Surfnet\SamlBundle\Entity\IdentityProvider;
 use Surfnet\SamlBundle\Entity\ServiceProvider;
+use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor;
 use Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler;
 use Surfnet\StepupGateway\GatewayBundle\Service\SamlEntityService;
 
@@ -217,12 +218,13 @@ class ResponseContext
     }
 
     /**
-     * @param string|null $secondFactorId
+     * @param SecondFactor $secondFactor
      */
-    public function saveSelectedSecondFactor($secondFactorId)
+    public function saveSelectedSecondFactor(SecondFactor $secondFactor)
     {
-        $this->stateHandler->setSelectedSecondFactorId($secondFactorId);
+        $this->stateHandler->setSelectedSecondFactorId($secondFactor->secondFactorId);
         $this->stateHandler->setSecondFactorVerified(false);
+        $this->stateHandler->setPreferredLocale($secondFactor->displayLocale);
     }
 
     /**
@@ -252,11 +254,12 @@ class ResponseContext
     }
 
     /**
-     * Resets some state after the response is sent (e.g. resets which second factor was selected and whether it was
-     * verified).
+     * Resets some state after the response is sent
+     * (e.g. resets which second factor was selected and whether it was verified).
      */
     public function responseSent()
     {
-        $this->saveSelectedSecondFactor(null);
+        $this->stateHandler->setSelectedSecondFactorId(null);
+        $this->stateHandler->setSecondFactorVerified(false);
     }
 }
