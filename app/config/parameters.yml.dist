@@ -52,7 +52,7 @@ parameters:
 
     saml_remote_idp_entity_id:
     saml_remote_idp_sso_url:
-    saml_remote_idp_certificate:
+    saml_remote_idp_certificate: 'FOR CI ONLY, REPLACE WITH ACTUAL VALUE'
 
     gateway_loa_loa1: https://gateway.tld/authentication/loa1
     gateway_loa_loa2: https://gateway.tld/authentication/loa2
