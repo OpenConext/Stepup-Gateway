@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "c8b88df7f03e3ece83d1bf74676eb680",
-    "content-hash": "fd5bc8ad460c5c08300634bda1d7b779",
+    "hash": "77f05377e7a0be280dd614f65f8d309f",
+    "content-hash": "c81d7a40e866745feec0a83d49aabb55",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -2443,25 +2443,25 @@
         },
         {
             "name": "surfnet/stepup-bundle",
-            "version": "1.4.0",
+            "version": "1.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SURFnet/Stepup-bundle.git",
-                "reference": "0d29ea86a1fe6523fc5697796e59af28c9580fe3"
+                "reference": "4ad7ebe9f9075ec39c5d1fc8449fe8fef33e60d2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SURFnet/Stepup-bundle/zipball/0d29ea86a1fe6523fc5697796e59af28c9580fe3",
-                "reference": "0d29ea86a1fe6523fc5697796e59af28c9580fe3",
+                "url": "https://api.github.com/repos/SURFnet/Stepup-bundle/zipball/4ad7ebe9f9075ec39c5d1fc8449fe8fef33e60d2",
+                "reference": "4ad7ebe9f9075ec39c5d1fc8449fe8fef33e60d2",
                 "shasum": ""
             },
             "require": {
                 "ext-gmp": "*",
                 "ext-openssl": "*",
-                "graylog2/gelf-php": "~1.1",
+                "graylog2/gelf-php": "^1.5",
                 "guzzlehttp/guzzle": "~4",
                 "monolog/monolog": "~1.11",
-                "php": ">=5.4,<8.0-dev",
+                "php": "^5.6|^7.0",
                 "sensio/framework-extra-bundle": "~3",
                 "symfony/config": "^2.7",
                 "symfony/dependency-injection": "^2.7",
@@ -2492,7 +2492,7 @@
                 "suaas",
                 "surfnet"
             ],
-            "time": "2016-06-08 13:02:43"
+            "time": "2016-08-03 07:45:32"
         },
         {
             "name": "surfnet/stepup-saml-bundle",
