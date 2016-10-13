@@ -68,6 +68,10 @@ class SecondFactorController extends Controller
         }
 
         if ($this->getStepupService()->isIntrinsicLoa($requiredLoa)) {
+            $logger->notice(sprintf(
+                'Intrinsic Loa "%s" is an intrinsic Loa, forwarding without selecting second factor',
+                $requiredLoa
+            ));
             $this->get('gateway.authentication_logger')->logIntrinsicLoaAuthentication($originalRequestId);
 
             return $this->forward($context->getResponseAction());
@@ -86,6 +90,7 @@ class SecondFactorController extends Controller
         // will be replaced by a second factor selection screen once we support multiple
         /** @var \Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor $secondFactor */
         $secondFactor = $secondFactorCollection->first();
+
         // when multiple second factors are supported this should be moved into the
         // StepUpAuthenticationService::determineViableSecondFactors and handled in a performant way
         // currently keeping this here for visibility
