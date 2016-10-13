@@ -224,7 +224,6 @@ class ResponseContext
     {
         $this->stateHandler->setSelectedSecondFactorId($secondFactor->secondFactorId);
         $this->stateHandler->setSecondFactorVerified(false);
-        $this->stateHandler->setPreferredLocale($secondFactor->displayLocale);
     }
 
     /**
@@ -260,6 +259,5 @@ class ResponseContext
     public function responseSent()
     {
         $this->stateHandler->setSelectedSecondFactorId(null);
-        $this->stateHandler->setSecondFactorVerified(false);
     }
 }
