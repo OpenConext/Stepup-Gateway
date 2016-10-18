@@ -136,10 +136,6 @@ nelmio_security:
         report_logger_service: monolog.logger.security
         # Content types: default, script, object, style, img, media, frame, font, connect
         default: [ self ]
-    signed_cookie:
-        names: ['*']
-    encrypted_cookie:
-        names: ['*']
 
 services:
     twig.extension.text: # Required by JMSTranslationBundle
