@@ -2102,22 +2102,30 @@
         },
         {
             "name": "psr/log",
-            "version": "1.0.0",
+            "version": "1.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-fig/log.git",
-                "reference": "fe0936ee26643249e916849d48e3a51d5f5e278b"
+                "reference": "4ebe3a8bf773a19edfe0a84b6585ba3d401b724d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/log/zipball/fe0936ee26643249e916849d48e3a51d5f5e278b",
-                "reference": "fe0936ee26643249e916849d48e3a51d5f5e278b",
+                "url": "https://api.github.com/repos/php-fig/log/zipball/4ebe3a8bf773a19edfe0a84b6585ba3d401b724d",
+                "reference": "4ebe3a8bf773a19edfe0a84b6585ba3d401b724d",
                 "shasum": ""
             },
+            "require": {
+                "php": ">=5.3.0"
+            },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
             "autoload": {
-                "psr-0": {
-                    "Psr\\Log\\": ""
+                "psr-4": {
+                    "Psr\\Log\\": "Psr/Log/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -2131,25 +2139,26 @@
                 }
             ],
             "description": "Common interface for logging libraries",
+            "homepage": "https://github.com/php-fig/log",
             "keywords": [
                 "log",
                 "psr",
                 "psr-3"
             ],
-            "time": "2012-12-21 11:40:51"
+            "time": "2016-10-10 12:19:37"
         },
         {
             "name": "robrichards/xmlseclibs",
-            "version": "1.4.1",
+            "version": "1.4.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/robrichards/xmlseclibs.git",
-                "reference": "465f18a8e1196c279b1298a3b08bcbee71ea4e4e"
+                "reference": "79fb5e03c4ee4dc3ec77e4b2628231374364a017"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/robrichards/xmlseclibs/zipball/465f18a8e1196c279b1298a3b08bcbee71ea4e4e",
-                "reference": "465f18a8e1196c279b1298a3b08bcbee71ea4e4e",
+                "url": "https://api.github.com/repos/robrichards/xmlseclibs/zipball/79fb5e03c4ee4dc3ec77e4b2628231374364a017",
+                "reference": "79fb5e03c4ee4dc3ec77e4b2628231374364a017",
                 "shasum": ""
             },
             "require": {
@@ -2177,7 +2186,7 @@
                 "xml",
                 "xmldsig"
             ],
-            "time": "2015-07-31 12:22:14"
+            "time": "2016-09-08 13:31:44"
         },
         {
             "name": "sensio/distribution-bundle",
@@ -2348,16 +2357,16 @@
         },
         {
             "name": "simplesamlphp/saml2",
-            "version": "v1.9",
+            "version": "v1.10.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/simplesamlphp/saml2.git",
-                "reference": "be2b348c46cceb311a743a33fb51035158f6f69a"
+                "reference": "3f268c25ca5e9748652834faad04525746227ef7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/simplesamlphp/saml2/zipball/be2b348c46cceb311a743a33fb51035158f6f69a",
-                "reference": "be2b348c46cceb311a743a33fb51035158f6f69a",
+                "url": "https://api.github.com/repos/simplesamlphp/saml2/zipball/3f268c25ca5e9748652834faad04525746227ef7",
+                "reference": "3f268c25ca5e9748652834faad04525746227ef7",
                 "shasum": ""
             },
             "require": {
@@ -2393,7 +2402,7 @@
                 }
             ],
             "description": "SAML2 PHP library from SimpleSAMLphp",
-            "time": "2016-03-16 14:11:59"
+            "time": "2016-12-02 12:15:53"
         },
         {
             "name": "surfnet/messagebird-api-client-bundle",
@@ -2496,16 +2505,16 @@
         },
         {
             "name": "surfnet/stepup-saml-bundle",
-            "version": "2.5.0",
+            "version": "2.6.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SURFnet/Stepup-saml-bundle.git",
-                "reference": "3ee050d16f76bf63b48fa01af3e75e1b42668d72"
+                "reference": "2c1e4c084d790f49e867a4c33463b2da872a4182"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SURFnet/Stepup-saml-bundle/zipball/3ee050d16f76bf63b48fa01af3e75e1b42668d72",
-                "reference": "3ee050d16f76bf63b48fa01af3e75e1b42668d72",
+                "url": "https://api.github.com/repos/SURFnet/Stepup-saml-bundle/zipball/2c1e4c084d790f49e867a4c33463b2da872a4182",
+                "reference": "2c1e4c084d790f49e867a4c33463b2da872a4182",
                 "shasum": ""
             },
             "require": {
@@ -2540,7 +2549,7 @@
                 "stepup",
                 "surfnet"
             ],
-            "time": "2016-07-01 09:33:44"
+            "time": "2016-12-12 12:31:10"
         },
         {
             "name": "surfnet/stepup-u2f-bundle",
