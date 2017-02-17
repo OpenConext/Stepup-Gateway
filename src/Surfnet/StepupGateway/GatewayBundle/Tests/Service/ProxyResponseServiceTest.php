@@ -36,6 +36,8 @@ use Surfnet\StepupGateway\SamlStepupProviderBundle\Saml\StateHandler;
 
 final class ProxyResponseServiceTest extends PHPUnit_Framework_TestCase
 {
+    const IDENTITY_PROVIDER_ENTITY_ID = 'https://gateway.pilot.stepup.surfconext.nl/authentication/metadata';
+
     const ISSUER = 'https://engine.surfconext.nl/authentication/idp/metadata';
 
     const EXISTING_AUTHENTICATING_AUTHORITY = 'https://www.onegini.me/';
@@ -88,6 +90,7 @@ final class ProxyResponseServiceTest extends PHPUnit_Framework_TestCase
         $container = new TestSaml2Container(new NullLogger());
         SAML2_Compat_ContainerSingleton::setContainer($container);
 
+        $this->identityProvider->shouldReceive('getEntityId')->andReturn(self::IDENTITY_PROVIDER_ENTITY_ID);
         $this->attributeDictionary->shouldReceive('translate->getAttributeValue')->andReturnNull();
     }
 
