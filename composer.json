@@ -33,7 +33,7 @@
         "jms/di-extra-bundle": "~1.4.0",
         "surfnet/messagebird-api-client-bundle": "~2.2",
         "mockery/mockery": "~0.9.0",
-        "surfnet/yubikey-api-client-bundle": "~2.0",
+        "surfnet/yubikey-api-client-bundle": "^3.0",
         "surfnet/stepup-bundle": "^1.5",
         "surfnet/stepup-saml-bundle": "2.7.0",
         "surfnet/stepup-u2f-bundle": "dev-develop",
