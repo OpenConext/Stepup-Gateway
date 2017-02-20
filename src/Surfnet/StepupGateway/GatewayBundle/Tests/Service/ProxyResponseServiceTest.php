@@ -97,7 +97,7 @@ final class ProxyResponseServiceTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function shouldSetProxiedIdentityProviderAsAuthenticatingAuthority()
+    public function it_sets_the_proxied_identity_provider_as_authenticating_authority()
     {
         $factory = new ProxyResponseService(
             $this->identityProvider,
@@ -127,7 +127,7 @@ final class ProxyResponseServiceTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function shouldAppendProxiedIdentityProviderToExistingAuthenticatingAuthorities()
+    public function it_appends_the_proxied_identity_provider_to_existing_authenticating_authorities()
     {
         $factory = new ProxyResponseService(
             $this->identityProvider,
