@@ -44,7 +44,7 @@ class GatewayController extends Controller
         $redirectBinding = $this->get('surfnet_saml.http.redirect_binding');
 
         try {
-            $originalRequest = $redirectBinding->processSignedRequest($httpRequest);
+            $originalRequest = $redirectBinding->receiveSignedAuthnRequestFrom($httpRequest);
         } catch (Exception $e) {
             $logger->critical(sprintf('Could not process Request, error: "%s"', $e->getMessage()));
 
@@ -77,6 +77,7 @@ class GatewayController extends Controller
             ));
 
             $response = $this->createRequesterFailureResponse();
+
             return $this->renderSamlResponse('consumeAssertion', $response);
         }
 

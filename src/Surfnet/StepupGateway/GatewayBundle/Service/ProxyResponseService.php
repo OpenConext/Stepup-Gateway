@@ -18,16 +18,13 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Service;
 
-use Exception;
 use SAML2_Assertion;
 use Surfnet\SamlBundle\Entity\IdentityProvider;
 use Surfnet\SamlBundle\Entity\ServiceProvider;
 use Surfnet\SamlBundle\SAML2\Attribute\AttributeDefinition;
 use Surfnet\SamlBundle\SAML2\Attribute\AttributeDictionary;
-use Surfnet\SamlBundle\SAML2\Response\AssertionAdapter;
 use Surfnet\StepupBundle\Value\Loa;
 use Surfnet\StepupGateway\GatewayBundle\Saml\AssertionSigningService;
-use Surfnet\StepupGateway\GatewayBundle\Saml\Exception\RuntimeException;
 use Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler;
 
 /**
@@ -107,8 +104,8 @@ class ProxyResponseService
         $this->addSubjectConfirmationFor($newAssertion, $targetServiceProvider);
 
         $translatedAssertion = $this->attributeDictionary->translate($assertion);
-        $eptiNameId = $this->parseEptiNameId($translatedAssertion);
-        $newAssertion->setNameId($eptiNameId);
+        $eptiNameId = $translatedAssertion->getAttributeValue('eduPersonTargetedID');
+        $newAssertion->setNameId($eptiNameId[0]);
 
         $newAssertion->setValidAudiences([$this->proxyStateHandler->getRequestServiceProvider()]);
 
@@ -153,7 +150,7 @@ class ProxyResponseService
         $newAssertion->setAuthenticatingAuthority(
             array_merge(
                 (empty($authority) ? [] : $authority),
-                [$this->hostedIdentityProvider->getEntityId()]
+                [$assertion->getIssuer()]
             )
         );
     }
@@ -188,27 +185,5 @@ class ProxyResponseService
         }
 
         return $time->getTimestamp();
-    }
-
-    /**
-     * @param AssertionAdapter $translatedAssertion
-     * @return array
-     */
-    private function parseEptiNameId(AssertionAdapter $translatedAssertion)
-    {
-        /** @var \DOMNodeList[] $eptiValues */
-        $eptiValues      = $translatedAssertion->getAttributeValue('eduPersonTargetedID');
-        $eptiDomNodeList = $eptiValues[0];
-
-        if (!$eptiDomNodeList instanceof \DOMNodeList || $eptiDomNodeList->length !== 1) {
-            throw new RuntimeException(
-                'EPTI attribute must contain exactly one NameID element as value:::: ' . print_r($eptiValues, true)
-            );
-        }
-
-        $eptiValue  = $eptiDomNodeList->item(0);
-        $eptiNameId = \SAML2_Utils::parseNameId($eptiValue);
-
-        return $eptiNameId;
     }
 }
