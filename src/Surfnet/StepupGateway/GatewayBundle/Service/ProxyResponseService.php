@@ -150,7 +150,7 @@ class ProxyResponseService
         $newAssertion->setAuthenticatingAuthority(
             array_merge(
                 (empty($authority) ? [] : $authority),
-                [$this->hostedIdentityProvider->getEntityId()]
+                [$assertion->getIssuer()]
             )
         );
     }
