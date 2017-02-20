@@ -2595,21 +2595,22 @@
         },
         {
             "name": "surfnet/yubikey-api-client",
-            "version": "1.0.0",
+            "version": "2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SURFnet/yubikey-api-client.git",
-                "reference": "1f62fbd2df927d6a087e624b9b951f53e50b6e2d"
+                "reference": "031f9ffd4cf8ac1234a92c8d1a31dfe502a4e98c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SURFnet/yubikey-api-client/zipball/1f62fbd2df927d6a087e624b9b951f53e50b6e2d",
-                "reference": "1f62fbd2df927d6a087e624b9b951f53e50b6e2d",
+                "url": "https://api.github.com/repos/SURFnet/yubikey-api-client/zipball/031f9ffd4cf8ac1234a92c8d1a31dfe502a4e98c",
+                "reference": "031f9ffd4cf8ac1234a92c8d1a31dfe502a4e98c",
                 "shasum": ""
             },
             "require": {
                 "guzzlehttp/guzzle": "~4.0",
-                "php": ">=5.4,<8.0-dev"
+                "paragonie/random_compat": "^1|^2",
+                "php": "^5.6|^7"
             },
             "require-dev": {
                 "ibuildings/qa-tools": "~1.1",
@@ -2620,7 +2621,8 @@
             "autoload": {
                 "psr-4": {
                     "Surfnet\\YubikeyApiClient\\": "src",
-                    "Surfnet\\YubikeyApiClient\\Tests\\": "tests"
+                    "Surfnet\\YubikeyApiClient\\Tests\\": "tests/unit",
+                    "Surfnet\\YubikeyApiClient\\IntegrationTests\\": "tests/integration"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -2633,25 +2635,25 @@
                 "yubico",
                 "yubikey"
             ],
-            "time": "2016-04-29 13:45:22"
+            "time": "2017-02-20 14:25:40"
         },
         {
             "name": "surfnet/yubikey-api-client-bundle",
-            "version": "2.0.0",
+            "version": "3.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SURFnet/yubikey-api-client-bundle.git",
-                "reference": "b436cca2819f64205b00e3ca1048b3dc4af10095"
+                "reference": "d9d9990b63f321745caa2290645b7660aeb3f95f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SURFnet/yubikey-api-client-bundle/zipball/b436cca2819f64205b00e3ca1048b3dc4af10095",
-                "reference": "b436cca2819f64205b00e3ca1048b3dc4af10095",
+                "url": "https://api.github.com/repos/SURFnet/yubikey-api-client-bundle/zipball/d9d9990b63f321745caa2290645b7660aeb3f95f",
+                "reference": "d9d9990b63f321745caa2290645b7660aeb3f95f",
                 "shasum": ""
             },
             "require": {
-                "php": "^5.4|^7.0",
-                "surfnet/yubikey-api-client": "^1.0",
+                "php": "^5.6|^7.0",
+                "surfnet/yubikey-api-client": "^2.0",
                 "symfony/config": "^2.7|^3.0",
                 "symfony/dependency-injection": "^2.7|^3.0",
                 "symfony/http-kernel": "^2.7|^3.0"
@@ -2680,7 +2682,7 @@
                 "yubico",
                 "yubikey"
             ],
-            "time": "2016-04-29 14:03:49"
+            "time": "2017-02-20 15:47:38"
         },
         {
             "name": "swiftmailer/swiftmailer",
