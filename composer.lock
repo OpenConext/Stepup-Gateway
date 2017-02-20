@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "1fdf5d5137e4acc4aa2de546b9164ad6",
-    "content-hash": "2b52ed28fed18f2a05b517ddfd2dde55",
+    "hash": "0b61166f0ccdd87fa1c931579a4fc78a",
+    "content-hash": "ce3bc662dfe63f7e284a8c28a901b00a",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -2455,12 +2455,12 @@
             "version": "1.5.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/SURFnet/Stepup-bundle.git",
+                "url": "https://github.com/OpenConext/Stepup-bundle.git",
                 "reference": "4ad7ebe9f9075ec39c5d1fc8449fe8fef33e60d2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SURFnet/Stepup-bundle/zipball/4ad7ebe9f9075ec39c5d1fc8449fe8fef33e60d2",
+                "url": "https://api.github.com/repos/OpenConext/Stepup-bundle/zipball/4ad7ebe9f9075ec39c5d1fc8449fe8fef33e60d2",
                 "reference": "4ad7ebe9f9075ec39c5d1fc8449fe8fef33e60d2",
                 "shasum": ""
             },
@@ -2505,16 +2505,16 @@
         },
         {
             "name": "surfnet/stepup-saml-bundle",
-            "version": "2.6.3",
+            "version": "2.7.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/SURFnet/Stepup-saml-bundle.git",
-                "reference": "2c1e4c084d790f49e867a4c33463b2da872a4182"
+                "url": "https://github.com/OpenConext/Stepup-saml-bundle.git",
+                "reference": "b581460d6618d578b9a37a24b8ed2c32dab5177d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SURFnet/Stepup-saml-bundle/zipball/2c1e4c084d790f49e867a4c33463b2da872a4182",
-                "reference": "2c1e4c084d790f49e867a4c33463b2da872a4182",
+                "url": "https://api.github.com/repos/OpenConext/Stepup-saml-bundle/zipball/b581460d6618d578b9a37a24b8ed2c32dab5177d",
+                "reference": "b581460d6618d578b9a37a24b8ed2c32dab5177d",
                 "shasum": ""
             },
             "require": {
@@ -2549,19 +2549,19 @@
                 "stepup",
                 "surfnet"
             ],
-            "time": "2016-12-12 12:31:10"
+            "time": "2017-02-20 14:42:30"
         },
         {
             "name": "surfnet/stepup-u2f-bundle",
             "version": "dev-develop",
             "source": {
                 "type": "git",
-                "url": "https://github.com/SURFnet/Stepup-u2f-bundle.git",
+                "url": "https://github.com/OpenConext/Stepup-u2f-bundle.git",
                 "reference": "b28737d7b8df5ecbdf7a1e952ecfb530a2951c05"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SURFnet/Stepup-u2f-bundle/zipball/b28737d7b8df5ecbdf7a1e952ecfb530a2951c05",
+                "url": "https://api.github.com/repos/OpenConext/Stepup-u2f-bundle/zipball/b28737d7b8df5ecbdf7a1e952ecfb530a2951c05",
                 "reference": "b28737d7b8df5ecbdf7a1e952ecfb530a2951c05",
                 "shasum": ""
             },
@@ -2595,21 +2595,22 @@
         },
         {
             "name": "surfnet/yubikey-api-client",
-            "version": "1.0.0",
+            "version": "2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SURFnet/yubikey-api-client.git",
-                "reference": "1f62fbd2df927d6a087e624b9b951f53e50b6e2d"
+                "reference": "031f9ffd4cf8ac1234a92c8d1a31dfe502a4e98c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SURFnet/yubikey-api-client/zipball/1f62fbd2df927d6a087e624b9b951f53e50b6e2d",
-                "reference": "1f62fbd2df927d6a087e624b9b951f53e50b6e2d",
+                "url": "https://api.github.com/repos/SURFnet/yubikey-api-client/zipball/031f9ffd4cf8ac1234a92c8d1a31dfe502a4e98c",
+                "reference": "031f9ffd4cf8ac1234a92c8d1a31dfe502a4e98c",
                 "shasum": ""
             },
             "require": {
                 "guzzlehttp/guzzle": "~4.0",
-                "php": ">=5.4,<8.0-dev"
+                "paragonie/random_compat": "^1|^2",
+                "php": "^5.6|^7"
             },
             "require-dev": {
                 "ibuildings/qa-tools": "~1.1",
@@ -2620,7 +2621,8 @@
             "autoload": {
                 "psr-4": {
                     "Surfnet\\YubikeyApiClient\\": "src",
-                    "Surfnet\\YubikeyApiClient\\Tests\\": "tests"
+                    "Surfnet\\YubikeyApiClient\\Tests\\": "tests/unit",
+                    "Surfnet\\YubikeyApiClient\\IntegrationTests\\": "tests/integration"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -2633,25 +2635,25 @@
                 "yubico",
                 "yubikey"
             ],
-            "time": "2016-04-29 13:45:22"
+            "time": "2017-02-20 14:25:40"
         },
         {
             "name": "surfnet/yubikey-api-client-bundle",
-            "version": "2.0.0",
+            "version": "3.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SURFnet/yubikey-api-client-bundle.git",
-                "reference": "b436cca2819f64205b00e3ca1048b3dc4af10095"
+                "reference": "d9d9990b63f321745caa2290645b7660aeb3f95f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SURFnet/yubikey-api-client-bundle/zipball/b436cca2819f64205b00e3ca1048b3dc4af10095",
-                "reference": "b436cca2819f64205b00e3ca1048b3dc4af10095",
+                "url": "https://api.github.com/repos/SURFnet/yubikey-api-client-bundle/zipball/d9d9990b63f321745caa2290645b7660aeb3f95f",
+                "reference": "d9d9990b63f321745caa2290645b7660aeb3f95f",
                 "shasum": ""
             },
             "require": {
-                "php": "^5.4|^7.0",
-                "surfnet/yubikey-api-client": "^1.0",
+                "php": "^5.6|^7.0",
+                "surfnet/yubikey-api-client": "^2.0",
                 "symfony/config": "^2.7|^3.0",
                 "symfony/dependency-injection": "^2.7|^3.0",
                 "symfony/http-kernel": "^2.7|^3.0"
@@ -2680,7 +2682,7 @@
                 "yubico",
                 "yubikey"
             ],
-            "time": "2016-04-29 14:03:49"
+            "time": "2017-02-20 15:47:38"
         },
         {
             "name": "swiftmailer/swiftmailer",
