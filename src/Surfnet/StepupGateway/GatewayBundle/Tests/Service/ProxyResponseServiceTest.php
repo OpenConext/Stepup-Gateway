@@ -36,12 +36,6 @@ use Surfnet\StepupGateway\SamlStepupProviderBundle\Saml\StateHandler;
 
 final class ProxyResponseServiceTest extends PHPUnit_Framework_TestCase
 {
-    const IDENTITY_PROVIDER_ENTITY_ID = 'https://gateway.pilot.stepup.surfconext.nl/authentication/metadata';
-
-    const ISSUER = 'https://engine.surfconext.nl/authentication/idp/metadata';
-
-    const EXISTING_AUTHENTICATING_AUTHORITY = 'https://www.onegini.me/';
-
     /**
      * @var Mockery\MockInterface|IdentityProvider
      */
@@ -90,7 +84,7 @@ final class ProxyResponseServiceTest extends PHPUnit_Framework_TestCase
         $container = new TestSaml2Container(new NullLogger());
         SAML2_Compat_ContainerSingleton::setContainer($container);
 
-        $this->identityProvider->shouldReceive('getEntityId')->andReturn(self::IDENTITY_PROVIDER_ENTITY_ID);
+        $this->identityProvider->shouldReceive('getEntityId')->andReturn('https://gateway.example/metadata');
         $this->attributeDictionary->shouldReceive('translate->getAttributeValue')->andReturnNull();
     }
 
@@ -109,7 +103,7 @@ final class ProxyResponseServiceTest extends PHPUnit_Framework_TestCase
         );
 
         $originalAssertion = new SAML2_Assertion();
-        $originalAssertion->setIssuer(self::ISSUER);
+        $originalAssertion->setIssuer('https://idp.example/metadata');
 
         $response = $factory->createProxyResponse($originalAssertion, $this->targetServiceProvider);
 
@@ -119,7 +113,7 @@ final class ProxyResponseServiceTest extends PHPUnit_Framework_TestCase
         $this->assertInstanceOf(SAML2_Assertion::class, $assertion);
 
         $this->assertEquals(
-            [self::ISSUER],
+            ['https://idp.example/metadata'],
             $assertion->getAuthenticatingAuthority()
         );
     }
@@ -139,8 +133,8 @@ final class ProxyResponseServiceTest extends PHPUnit_Framework_TestCase
         );
 
         $originalAssertion = new SAML2_Assertion();
-        $originalAssertion->setIssuer(self::ISSUER);
-        $originalAssertion->setAuthenticatingAuthority([self::EXISTING_AUTHENTICATING_AUTHORITY]);
+        $originalAssertion->setIssuer('https://idp.example/metadata');
+        $originalAssertion->setAuthenticatingAuthority(['https://previous.idp.example/metadata']);
 
         $response = $factory->createProxyResponse($originalAssertion, $this->targetServiceProvider);
 
@@ -150,7 +144,7 @@ final class ProxyResponseServiceTest extends PHPUnit_Framework_TestCase
         $this->assertInstanceOf(SAML2_Assertion::class, $assertion);
 
         $this->assertEquals(
-            [self::EXISTING_AUTHENTICATING_AUTHORITY, self::ISSUER],
+            ['https://previous.idp.example/metadata', 'https://idp.example/metadata'],
             $assertion->getAuthenticatingAuthority()
         );
     }
