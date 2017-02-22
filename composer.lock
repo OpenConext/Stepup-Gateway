@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "0b61166f0ccdd87fa1c931579a4fc78a",
-    "content-hash": "ce3bc662dfe63f7e284a8c28a901b00a",
+    "hash": "4f15e877b50379a1933f490064fa7b9d",
+    "content-hash": "a88bf1cbc738a86a9cdcebd7c08f4306",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -1009,16 +1009,16 @@
         },
         {
             "name": "guzzlehttp/guzzle",
-            "version": "4.2.3",
+            "version": "4.2.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/guzzle.git",
-                "reference": "66fd916e9f9130bc22c51450476823391cb2f67c"
+                "reference": "13a8e5acff26b0a87d353042170b48976da004a1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/66fd916e9f9130bc22c51450476823391cb2f67c",
-                "reference": "66fd916e9f9130bc22c51450476823391cb2f67c",
+                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/13a8e5acff26b0a87d353042170b48976da004a1",
+                "reference": "13a8e5acff26b0a87d353042170b48976da004a1",
                 "shasum": ""
             },
             "require": {
@@ -1070,7 +1070,7 @@
                 "rest",
                 "web service"
             ],
-            "time": "2014-10-05 19:29:14"
+            "time": "2016-07-15 17:44:18"
         },
         {
             "name": "guzzlehttp/streams",
@@ -2595,16 +2595,16 @@
         },
         {
             "name": "surfnet/yubikey-api-client",
-            "version": "2.0.0",
+            "version": "2.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SURFnet/yubikey-api-client.git",
-                "reference": "031f9ffd4cf8ac1234a92c8d1a31dfe502a4e98c"
+                "reference": "f8539018f10cb4a0d31b46870098781e94216bfe"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SURFnet/yubikey-api-client/zipball/031f9ffd4cf8ac1234a92c8d1a31dfe502a4e98c",
-                "reference": "031f9ffd4cf8ac1234a92c8d1a31dfe502a4e98c",
+                "url": "https://api.github.com/repos/SURFnet/yubikey-api-client/zipball/f8539018f10cb4a0d31b46870098781e94216bfe",
+                "reference": "f8539018f10cb4a0d31b46870098781e94216bfe",
                 "shasum": ""
             },
             "require": {
@@ -2635,7 +2635,7 @@
                 "yubico",
                 "yubikey"
             ],
-            "time": "2017-02-20 14:25:40"
+            "time": "2017-02-22 15:49:13"
         },
         {
             "name": "surfnet/yubikey-api-client-bundle",
