@@ -19,9 +19,7 @@
 namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Controller;
 
 use Exception;
-use Psr\Log\LoggerInterface;
 use Surfnet\SamlBundle\SAML2\AuthnRequest;
-use Surfnet\StepupBundle\Value\Loa;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Saml\ResponseFactory;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\LoaAliasLookupService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -31,8 +29,6 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class SecondFactorOnlyController extends Controller
 {
-    const RESPONSE_CONTEXT_SERVICE_ID = 'second_factor_only.response_context';
-
     /**
      * @param Request $httpRequest
      * @return Response
@@ -42,28 +38,22 @@ class SecondFactorOnlyController extends Controller
         $logger = $this->get('logger');
 
         if (!$this->getParameter('second_factor_only')) {
-            $logger->notice(sprintf(
-                'Access to %s denied, second_factor_only parameter set to false.',
-                __METHOD__
-            ));
-            throw $this->createAccessDeniedException('Second Factor Only feature disabled');
+            $logger->notice('Access to ssoAction denied, second_factor_only parameter set to false.');
+
+            throw $this->createAccessDeniedException('Second Factor Only feature is disabled');
         }
 
-        $logger->notice(
-            'Received AuthnRequest on second-factor-only endpoint, started processing'
-        );
+        $logger->notice('Received AuthnRequest on second-factor-only endpoint, started processing');
 
         /** @var \Surfnet\SamlBundle\Http\RedirectBinding $redirectBinding */
         $redirectBinding = $this->get('second_factor_only.http.redirect_binding');
 
         try {
-            $originalRequest = $redirectBinding->processSignedRequest($httpRequest);
+            $originalRequest = $redirectBinding->receiveSignedAuthnRequestFrom($httpRequest);
         } catch (Exception $e) {
             $logger->critical(sprintf('Could not process Request, error: "%s"', $e->getMessage()));
 
-            return $this->render(
-                'SurfnetStepupGatewayGatewayBundle:Gateway:unrecoverableError.html.twig'
-            );
+            return $this->render('SurfnetStepupGatewayGatewayBundle:Gateway:unrecoverableError.html.twig');
         }
 
         $originalRequestId = $originalRequest->getRequestId();
@@ -75,44 +65,47 @@ class SecondFactorOnlyController extends Controller
         ));
 
         $stateHandler = $this->get('gateway.proxy.state_handler');
-
         $stateHandler
             ->setRequestId($originalRequestId)
             ->setRequestServiceProvider($originalRequest->getServiceProvider())
             ->setRelayState($httpRequest->get(AuthnRequest::PARAMETER_RELAY_STATE, ''))
             ->setResponseAction('SurfnetStepupGatewaySecondFactorOnlyBundle:SecondFactorOnly:respond')
-            ->setResponseContextServiceId(static::RESPONSE_CONTEXT_SERVICE_ID);
+            ->setResponseContextServiceId('second_factor_only.response_context');
 
         // Check if the NameID is provided and we may use it.
         $nameId = $originalRequest->getNameId();
-        if (!$this->get('second_factor_only.validate_nameid')->with($logger)->validate($originalRequest->getServiceProvider(), $nameId)) {
+        $secondFactorOnlyNameIdValidator = $this->get('second_factor_only.validate_nameid')->with($logger);
+        $serviceProviderMayUseSecondFactorOnly = $secondFactorOnlyNameIdValidator->validate(
+            $originalRequest->getServiceProvider(),
+            $nameId
+        );
+
+        if (!$serviceProviderMayUseSecondFactorOnly) {
             /** @var \Surfnet\StepupGateway\GatewayBundle\Service\ResponseRenderingService $responseRendering */
             $responseRendering = $this->get('second_factor_only.response_rendering');
-            return $responseRendering->renderRequesterFailureResponse(
-                $this->getResponseContext()
-            );
+
+            return $responseRendering->renderRequesterFailureResponse($this->getResponseContext());
         }
+
         $stateHandler->saveIdentityNameId($nameId);
 
         // Check if the requested Loa is provided and supported.
         $loaId = $this->get('second_factor_only.loa_resolution')->with($logger)->resolve(
             $originalRequest->getAuthenticationContextClassRef()
         );
+
         if (empty($loaId)) {
             /** @var \Surfnet\StepupGateway\GatewayBundle\Service\ResponseRenderingService $responseRendering */
             $responseRendering = $this->get('second_factor_only.response_rendering');
-            return $responseRendering->renderRequesterFailureResponse(
-                $this->getResponseContext()
-            );
+
+            return $responseRendering->renderRequesterFailureResponse($this->getResponseContext());
         }
+
         $stateHandler->setRequiredLoaIdentifier($loaId);
 
-        $logger->notice(
-            'Forwarding to second factor controller for loa determination and handling'
-        );
-        return $this->forward(
-            'SurfnetStepupGatewayGatewayBundle:SecondFactor:selectSecondFactorForVerification'
-        );
+        $logger->notice('Forwarding to second factor controller for loa determination and handling');
+
+        return $this->forward('SurfnetStepupGatewayGatewayBundle:SecondFactor:selectSecondFactorForVerification');
     }
 
     /**
@@ -186,6 +179,6 @@ class SecondFactorOnlyController extends Controller
      */
     public function getResponseContext()
     {
-        return $this->get(static::RESPONSE_CONTEXT_SERVICE_ID);
+        return $this->get('second_factor_only.response_context');
     }
 }
