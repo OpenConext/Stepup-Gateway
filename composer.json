@@ -42,7 +42,12 @@
     "require-dev": {
         "sensio/generator-bundle": "~2.3",
         "liip/rmt": "1.1.*",
-        "matthiasnoback/symfony-config-test": "^1.2.1"
+        "matthiasnoback/symfony-config-test": "^1.2.1",
+        "phpmd/phpmd": "^2.0",
+        "phpunit/phpunit": "^4.0",
+        "sensiolabs/security-checker": "^2.0",
+        "sebastian/phpcpd": "^2.0",
+        "squizlabs/php_codesniffer": "^1.0"
     },
     "scripts": {
         "post-install-cmd": [
