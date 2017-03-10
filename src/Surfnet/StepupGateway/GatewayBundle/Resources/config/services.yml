@@ -130,18 +130,3 @@ services:
             - @gateway.proxy.response_context
             - @gateway.service.second_factor_service
         tags: [{ name: kernel.event_subscriber }]
-
-    gateway.locale_provider:
-        public: false
-        class: Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorLocaleProvider
-        arguments:
-            - @gateway.proxy.state_handler
-
-    gateway.locale_cookie_listener:
-        class: Surfnet\StepupBundle\EventListener\LocaleCookieListener
-        arguments:
-            - @surfnet_stepup.locale_cookie_helper
-            - @gateway.locale_provider
-            - @logger
-        tags:
-            - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse }
