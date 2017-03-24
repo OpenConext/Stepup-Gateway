@@ -18,35 +18,21 @@ monolog:
         prod-signaler:
             type: group
             members:
-                - main_graylog
-                - main_logfile
-                - main_debuglog
-        main_graylog:
-            type:    buffer
-            handler: graylog
-            level:   NOTICE
-        main_logfile:
-            type:    stream
-            handler: logfile
-            level:   NOTICE
-            path:    %kernel.logs_dir%/%kernel.environment%.log
+                - main_syslog
+            bubble: false # if we handle it, nothing else should
+            channels: ["!authentication"] # the auth channel is logged by the next handler
+        main_syslog:
+            type: syslog
+            ident: stepup-gateway
+            facility: user
+            level: DEBUG
             formatter: surfnet_stepup.monolog.json_formatter
-        main_debuglog:
-            type:    stream
-            handler: logfile
-            level:   DEBUG
-            path:    "%kernel.logs_dir%/%kernel.environment%.debug.log"
-            formatter: surfnet_stepup.monolog.json_formatter
-        graylog:
-            type:      gelf
-            publisher: { hostname: %graylog_hostname% }
-            formatter: surfnet_stepup.monolog.full_message_exception_gelf_message_formatter
-        authentication:
-            type:      stream
-            handler:   logfile
-            level:     INFO
-            path:      %kernel.logs_dir%/%kernel.environment%_authentication.log
-            channels:  [authentication]
+        authenthentication_syslog:
+            type: syslog
+            ident: stepup-authentication
+            facility: user
+            level: INFO
+            channels: [authentication]
             formatter: gateway.monolog.gelf_to_string_formatter
 
 framework:
