@@ -25,7 +25,12 @@ The Gateway is configured to only accept connections over SSL. Disable this unde
 
 ## Documentation
 
-Documentation specific to this component is located in the [docs](./docs)) directory in this repository.
+Documentation specific to this component is located in the [docs](./docs) directory in this repository:
+- [Gateway API](./docs/GatewayAPI.md)
+- [SAML Proxy](./docs/SAMLProxy.md) with:
+  - [GSSP](./docs/GSSP.md)
+  - [SFO](./docs/SFO.md)
+- [SAML Example messages](./docs/ExampleSAMLMessages.md)
 
 Documentation for the Stepup system can be found in the
 - [Stepup-Deploy](https://github.com/OpenConext/Stepup-Deploy) repository;
