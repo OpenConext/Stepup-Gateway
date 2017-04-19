@@ -1,5 +1,7 @@
 # Generic SAML Stepup Provider (GSSP)
 
+![GSSP](GSSP.png).
+
 OpenConext Stepup offers a generic SAML 2.0 WEB-SSO based method to add new providers of stepup mechanisms in a way that requires minimal changes in the Stepup-Gateway, the Stepup-RA and the Stepup-SelfService. Such a Generic SAML Stepup Provider (GSSP) behaves as an SAML IdP towards the Stepup-Gateway. Currently a "biometric" GSSP can be configured in addition to the "tiqr" GSSP. To add more GSSPs some coding is required in the Stepup applications, but it would certainly be feasible to implement a way to add new GSSPs to Stepup though configuration only.
 
 The GSSP interface in the Stepup-Gateway allows both the authentication of users and the enrolment of new users for a step-up method to be delegated to a separate component that functions as part of the step up authentication service. This allows new step-up methods to be changed or added to the Stepup service without having to change any of the existing components. Any web based authentication method can be added to Stepup in this way.
