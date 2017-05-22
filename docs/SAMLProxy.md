@@ -123,6 +123,69 @@ The Stepup-Gateway does not proxy the Session information from the Remote IdP to
 - There is no `SessionNotOnOrAfter` in the AuthnStatement
 - There is No `SessionIdentifier` in the AuthnStatement
 
+### SAML Errors
+
+The result of a successfull authentication is a SAML Response, with an Assetion, and with a `StatusCode` with a value of `Success`.
+```xml
+<samlp:Response >
+    <saml:Issuer>...</saml:Issuer>
+    <samlp:Status>
+        <samlp:StatusCode Value="urn:oasis:names:tc:SAML:2.0:status:Success" />
+    </samlp:Status>
+    <saml:Assertion>
+       ...
+    </saml:Assertion>
+</samlp:Response>
+```
+
+To indicate a problem the Gateway, as IdP, can send a SAML response with an error status code back to the SP. Currently two situations result in a specific status code. Note how `StatusCode`s are nested in the message examples below. Future verions of the gateway may define additional status codes, and additional situations in which to emit a status code. The `StatusMessage` is optional and may, or may not, be present.
+
+#### AuthnFailed
+
+When the user cancels authentiation, either at the remote IdP or during authentication of their second factor, the Gateway sends a SAML Response back to the SP with a top-level status code of `urn:oasis:names:tc:SAML:2.0:status:Responder` and a second-level status code of `urn:oasis:names:tc:SAML:2.0:status:AuthnFailed`.
+
+Example:
+```xml
+<samlp:Response xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"
+                xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
+                ID="_Yasz/Kubip05bTwe7hIWOc5As+NxwmEliPJ88nUQ"
+                Version="2.0"
+                IssueInstant="2015-05-12T12:17:38Z"
+                Destination="https://your-sp.example.com/acs-location"
+                InResponseTo="_6d93f735ccfb8d98454999b4016d515834211b0dde"
+                >
+    <saml:Issuer>https://sa-gw.surfconext.nl/authentication/metadata</saml:Issuer>
+    <samlp:Status>
+        <samlp:StatusCode Value="urn:oasis:names:tc:SAML:2.0:status:Responder">
+            <samlp:StatusCode Value="urn:oasis:names:tc:SAML:2.0:status:AuthnFailed" />
+        </samlp:StatusCode>
+        <samlp:StatusMessage>Authentication cancelled by user</samlp:StatusMessage>
+    </samlp:Status>
+</samlp:Response>
+```
+
+#### NoAuthnConext
+
+When the user cannot be authenticated at the requested LoA, either because the user has no second factor, the requested authentication conext is unknown, or the user does not have a second factor that can meet the requested LoA, the Gateway sands a SAML Response back to the SP with a top-level status code of `urn:oasis:names:tc:SAML:2.0:status:Requester` and a second-level status code of `urn:oasis:names:tc:SAML:2.0:status:NoAuthnContext`.
+
+Example:
+```xml
+<samlp:Response xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"
+                xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
+                ID="_Yasz/Kubip05bTwe7hIWOc5As+NxwmEliPJ88nUQ"
+                Version="2.0"
+                IssueInstant="2015-05-12T12:17:38Z"
+                Destination="https://your-sp.example.com/acs-location"
+                InResponseTo="_6d93f735ccfb8d98454999b4016d515834211b0dde"
+                >
+    <saml:Issuer>https://sa-gw.surfconext.nl/authentication/metadata</saml:Issuer>
+    <samlp:Status>
+        <samlp:StatusCode Value="urn:oasis:names:tc:SAML:2.0:status:Requester">
+            <samlp:StatusCode Value="urn:oasis:names:tc:SAML:2.0:status:NoAuthnContext" />
+        </samlp:StatusCode>      
+    </samlp:Status>
+</samlp:Response>
+```
 
 ## Services
 
