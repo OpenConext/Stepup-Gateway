@@ -137,20 +137,17 @@ class GatewayController extends Controller
 
         if (!$adaptedAssertion->hasSubject()) {
             $logger->critical('Received Response without eduPersonTargetedID (EPTI)');
-            $response = $this->createResponseFailureResponse(
-                $responseContext,
-                'The "urn:mace:dir:attribute-def:eduPersonTargetedID" is not present'
-            );
-            return $this->renderSamlResponse('unprocessableResponse', $response);
+            return $this->render('unrecoverableError', [
+                'message' => 'The "urn:mace:dir:attribute-def:eduPersonTargetedID" is not present'
+            ]);
         }
 
         if (!$adaptedAssertion->hasSubjectNameId()) {
             $logger->critical('Received Response with missing NameId in eduPersonTargetedID (EPTI)');
-            $response = $this->createResponseFailureResponse(
-                $responseContext,
-                'The "urn:mace:dir:attribute-def:eduPersonTargetedID" attribute does not contain a NameID with a value.'
-            );
-            return $this->renderSamlResponse('unprocessableResponse', $response);
+
+            return $this->render('unrecoverableError', [
+                'message' => 'The "urn:mace:dir:attribute-def:eduPersonTargetedID" attribute does not contain a NameID with a value.'
+            ]);
         }
 
         $expectedInResponseTo = $responseContext->getExpectedInResponseTo();
