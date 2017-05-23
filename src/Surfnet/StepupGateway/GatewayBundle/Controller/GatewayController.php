@@ -340,17 +340,16 @@ class GatewayController extends Controller
 
     /**
      * @param $context
-     * @param null $message     By default the messase is null, it can be used to specify the problem with the response
      * @return SAML2_Response
      */
-    private function createResponseFailureResponse($context, $message = null)
+    private function createResponseFailureResponse($context)
     {
         /** @var \Surfnet\StepupGateway\GatewayBundle\Saml\ResponseBuilder $responseBuilder */
         $responseBuilder = $this->get('gateway.proxy.response_builder');
 
         $response = $responseBuilder
             ->createNewResponse($context)
-            ->setResponseStatus(SAML2_Const::STATUS_RESPONDER, null, $message)
+            ->setResponseStatus(SAML2_Const::STATUS_RESPONDER)
             ->get();
 
         return $response;
