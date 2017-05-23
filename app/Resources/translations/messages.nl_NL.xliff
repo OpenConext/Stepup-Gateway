@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:jms="urn:jms:translation" version="1.2">
-  <file date="2015-07-28T16:48:20Z" source-language="en" target-language="nl_NL" datatype="plaintext" original="not.available">
+  <file date="2017-05-23T15:17:22Z" source-language="en" target-language="nl_NL" datatype="plaintext" original="not.available">
     <header>
       <tool tool-id="JMSTranslationBundle" tool-name="JMSTranslationBundle" tool-version="1.1.0-DEV"/>
       <note>The source node in most cases contains the sample message as written by the developer. If it looks like a dot-delimitted string such as "form.label.firstname", then the developer has not provided a default message.</note>
@@ -43,8 +43,8 @@
         <target>Rapporteer deze fout met bovenstaande foutcode bij SURFnet als je denkt dat deze foutmelding ongerechtvaardigd is.</target>
       </trans-unit>
       <trans-unit id="b0c6c739ae28f825ab8beb19b0ac2a2fe3318c8b" resname="gateway.error.text.your_art_code">
-        <jms:reference-file line="12">views/Exception/error.html.twig</jms:reference-file>
         <jms:reference-file line="12">views/Exception/error404.html.twig</jms:reference-file>
+        <jms:reference-file line="12">views/Exception/error.html.twig</jms:reference-file>
         <source>gateway.error.text.your_art_code</source>
         <target>De code voor deze foutmelding is</target>
       </trans-unit>
@@ -62,6 +62,11 @@
         <jms:reference-file line="7">views/Gateway/unrecoverableError.html.twig</jms:reference-file>
         <source>gateway.error.unrecoverable_error</source>
         <target>Onherstelbare fout.</target>
+      </trans-unit>
+      <trans-unit id="ad7b85583eab0d11276cba0979bc97e4a45be68d" resname="gateway.error.unrecoverable_error_message_intro">
+        <jms:reference-file line="9">views/Gateway/unrecoverableError.html.twig</jms:reference-file>
+        <source>gateway.error.unrecoverable_error_message_intro</source>
+        <target state="new">gateway.error.unrecoverable_error_message_intro</target>
       </trans-unit>
       <trans-unit id="65f3ce4b0efbcaaaafd540e24188ea54d0851540" resname="gateway.form.gateway_cancel_second_factor_verification.button.cancel_verification">
         <jms:reference-file line="29">Form/Type/CancelSecondFactorVerificationType.php</jms:reference-file>
@@ -207,7 +212,7 @@
         <target>Onverwerkbare login-response</target>
       </trans-unit>
       <trans-unit id="1c41e8d2b8040894426471450740d39af284d440" resname="gateway.second_factor.sms.challenge_body">
-        <jms:reference-file line="286">GatewayBundle/Service/StepUpAuthenticationService.php</jms:reference-file>
+        <jms:reference-file line="294">GatewayBundle/Service/StepUpAuthenticationService.php</jms:reference-file>
         <source>gateway.second_factor.sms.challenge_body</source>
         <target>Je SMS-code: %challenge%</target>
       </trans-unit>
