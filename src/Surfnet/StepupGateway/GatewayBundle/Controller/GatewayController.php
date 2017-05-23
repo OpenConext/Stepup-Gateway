@@ -134,6 +134,25 @@ class GatewayController extends Controller
         }
 
         $adaptedAssertion = new AssertionAdapter($assertion);
+
+        if (!$adaptedAssertion->hasSubject()) {
+            $logger->critical('Received Response without eduPersonTargetedID (EPTI)');
+            $response = $this->createResponseFailureResponse(
+                $responseContext,
+                'The "urn:mace:dir:attribute-def:eduPersonTargetedID" is not present'
+            );
+            return $this->renderSamlResponse('unprocessableResponse', $response);
+        }
+
+        if (!$adaptedAssertion->hasSubjectNameId()) {
+            $logger->critical('Received Response with missing NameId in eduPersonTargetedID (EPTI)');
+            $response = $this->createResponseFailureResponse(
+                $responseContext,
+                'The "urn:mace:dir:attribute-def:eduPersonTargetedID" attribute does not contain a NameID with a value.'
+            );
+            return $this->renderSamlResponse('unprocessableResponse', $response);
+        }
+
         $expectedInResponseTo = $responseContext->getExpectedInResponseTo();
         if (!$adaptedAssertion->inResponseToMatches($expectedInResponseTo)) {
             $logger->critical(sprintf(
@@ -324,16 +343,17 @@ class GatewayController extends Controller
 
     /**
      * @param $context
+     * @param null $message     By default the messase is null, it can be used to specify the problem with the response
      * @return SAML2_Response
      */
-    private function createResponseFailureResponse($context)
+    private function createResponseFailureResponse($context, $message = null)
     {
         /** @var \Surfnet\StepupGateway\GatewayBundle\Saml\ResponseBuilder $responseBuilder */
         $responseBuilder = $this->get('gateway.proxy.response_builder');
 
         $response = $responseBuilder
             ->createNewResponse($context)
-            ->setResponseStatus(SAML2_Const::STATUS_RESPONDER)
+            ->setResponseStatus(SAML2_Const::STATUS_RESPONDER, null, $message)
             ->get();
 
         return $response;
