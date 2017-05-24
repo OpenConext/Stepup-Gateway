@@ -6,8 +6,10 @@
     <p class="bg-danger">
         {{ 'gateway.error.unrecoverable_error'|trans }}
         {% if message is not null %}
-            <p>{{ 'gateway.error.unrecoverable_error_message_intro'|trans }}<br>
-            {{ message }}</p>
+            <br>
+            {{ 'gateway.error.unrecoverable_error_message_intro'|trans }}
+            <br>
+            {{ message }}
         {% endif %}
     </p>
 {% endblock content %}
