@@ -169,8 +169,9 @@ class GatewayController extends Controller
                 $responseContext->getSelectedSecondFactor()
             );
 
+            $secondFactorTypeFactory = $this->get('surfnet_stepup.service.second_factor_type_factory');
             $grantedLoa = $this->get('surfnet_stepup.service.loa_resolution')->getLoaByLevel(
-                $secondFactor->getLoaLevel()
+                $secondFactor->getLoaLevel($secondFactorTypeFactory)
             );
         }
 
