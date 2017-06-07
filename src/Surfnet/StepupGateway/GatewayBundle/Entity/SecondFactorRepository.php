@@ -19,17 +19,18 @@
 namespace Surfnet\StepupGateway\GatewayBundle\Entity;
 
 use Doctrine\Common\Collections\Collection;
-use Surfnet\StepupBundle\Service\SecondFactorType\SecondFactorTypeFactory;
+use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupBundle\Value\Loa;
 
 interface SecondFactorRepository
 {
     /**
-     * @param Loa    $highestLoa
+     * @param Loa $highestLoa
      * @param string $identityNameId
+     * @param SecondFactorTypeService $service
      * @return Collection
      */
-    public function getAllMatchingFor(Loa $highestLoa, $identityNameId, SecondFactorTypeFactory $secondFactorTypeFactory);
+    public function getAllMatchingFor(Loa $highestLoa, $identityNameId, SecondFactorTypeService $service);
 
     /**
      * Loads a second factor by its ID. Subsequent calls do not hit the database.

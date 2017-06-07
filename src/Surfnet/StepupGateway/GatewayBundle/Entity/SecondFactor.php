@@ -19,8 +19,9 @@
 namespace Surfnet\StepupGateway\GatewayBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Surfnet\StepupBundle\Service\SecondFactorType\SecondFactorTypeFactory;
+use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupBundle\Value\Loa;
+use Surfnet\StepupBundle\Value\SecondFactorType;
 
 /**
  * @ORM\Entity(repositoryClass="Surfnet\StepupGateway\GatewayBundle\Entity\DoctrineSecondFactorRepository")
@@ -89,32 +90,31 @@ class SecondFactor
 
     /**
      * @param Loa $loa
-     * @param SecondFactorTypeFactory $factory
+     * @param SecondFactorTypeService $service
      * @return bool
      */
-    public function canSatisfy(Loa $loa, SecondFactorTypeFactory $factory)
+    public function canSatisfy(Loa $loa, SecondFactorTypeService $service)
     {
-        $secondFactorType = $factory->build($this->secondFactorType);
-        return $secondFactorType->canSatisfy($loa);
+        $secondFactorType = new SecondFactorType($this->secondFactorType);
+        return $service->canSatisfy($secondFactorType, $loa);
     }
 
     /**
-     * @param SecondFactorTypeFactory $factory
+     * @param SecondFactorTypeService $service
      * @return int
      */
-    public function getLoaLevel(SecondFactorTypeFactory $factory)
+    public function getLoaLevel(SecondFactorTypeService $service)
     {
-        $secondFactorType = $factory->build($this->secondFactorType);
-        return $secondFactorType->getLevel();
+        $secondFactorType = new SecondFactorType($this->secondFactorType);
+        return $service->getLevel($secondFactorType);
     }
 
     /**
-     * @param SecondFactorTypeFactory $factory
      * @return bool
      */
-    public function isGssf(SecondFactorTypeFactory $factory)
+    public function isGssf()
     {
-        $secondFactorType = $factory->build($this->secondFactorType);
+        $secondFactorType = new SecondFactorType($this->secondFactorType);
         return $secondFactorType->isGssf();
     }
 }

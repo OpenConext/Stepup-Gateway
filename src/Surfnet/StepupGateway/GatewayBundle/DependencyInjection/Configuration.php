@@ -29,14 +29,23 @@ final class Configuration implements ConfigurationInterface
 
         $rootNode = $treeBuilder->root('surfnet_stepup_gateway_gateway');
 
-        $rootNode
-            ->children()
-                ->scalarNode('intrinsic_loa')
+        $children = $rootNode->children();
+        $children
+            ->scalarNode('intrinsic_loa')
+                ->isRequired()
+            ->end()
+            ->arrayNode('enabled_second_factors')
+                ->isRequired()
+                ->prototype('scalar')
+            ->end();
+        $children
+            ->arrayNode('enabled_generic_second_factors')
+                ->isRequired()
+                ->prototype('array')
+                ->children()
+                    ->scalarNode('loa')
                     ->isRequired()
-                ->end()
-                ->arrayNode('enabled_second_factors')
-                    ->isRequired()
-                    ->prototype('scalar')
+                    ->info('The lao level of the Gssf')
                 ->end()
             ->end();
 

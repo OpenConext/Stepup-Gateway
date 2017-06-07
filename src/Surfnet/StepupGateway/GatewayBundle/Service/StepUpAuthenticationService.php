@@ -25,7 +25,7 @@ use Surfnet\SamlBundle\Entity\ServiceProvider;
 use Surfnet\StepupBundle\Command\SendSmsChallengeCommand as StepupSendSmsChallengeCommand;
 use Surfnet\StepupBundle\Command\VerifyPossessionOfPhoneCommand;
 use Surfnet\StepupBundle\Service\LoaResolutionService;
-use Surfnet\StepupBundle\Service\SecondFactorType\SecondFactorTypeFactory;
+use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupBundle\Service\SmsSecondFactor\OtpVerification;
 use Surfnet\StepupBundle\Service\SmsSecondFactorService;
 use Surfnet\StepupBundle\Value\Loa;
@@ -79,9 +79,9 @@ class StepUpAuthenticationService
     private $logger;
 
     /**
-     * @var SecondFactorTypeFactory
+     * @var SecondFactorTypeService
      */
-    private $secondFactorTypeFactory;
+    private $secondFactorTypeService;
 
     /**
      * @param LoaResolutionService $loaResolutionService
@@ -90,7 +90,7 @@ class StepUpAuthenticationService
      * @param SmsSecondFactorService $smsService
      * @param TranslatorInterface $translator
      * @param LoggerInterface $logger
-     * @param SecondFactorTypeFactory $secondFactorTypeFactory
+     * @param SecondFactorTypeService $secondFactorTypeService
      */
     public function __construct(
         LoaResolutionService $loaResolutionService,
@@ -99,7 +99,7 @@ class StepUpAuthenticationService
         SmsSecondFactorService $smsService,
         TranslatorInterface $translator,
         LoggerInterface $logger,
-        SecondFactorTypeFactory $secondFactorTypeFactory
+        SecondFactorTypeService $secondFactorTypeService
     ) {
         $this->loaResolutionService = $loaResolutionService;
         $this->secondFactorRepository = $secondFactorRepository;
@@ -107,7 +107,7 @@ class StepUpAuthenticationService
         $this->smsService = $smsService;
         $this->translator = $translator;
         $this->logger = $logger;
-        $this->secondFactorTypeFactory = $secondFactorTypeFactory;
+        $this->secondFactorTypeService = $secondFactorTypeService;
     }
 
     /**
@@ -123,7 +123,7 @@ class StepUpAuthenticationService
         $candidateSecondFactors = $this->secondFactorRepository->getAllMatchingFor(
             $requiredLoa,
             $identityNameId,
-            $this->secondFactorTypeFactory
+            $this->secondFactorTypeService
         );
         $this->logger->info(
             sprintf('Loaded %d matching candidate second factors', count($candidateSecondFactors))
