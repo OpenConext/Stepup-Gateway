@@ -48,20 +48,4 @@ class AssertionAdapter
 
         return $subjectConfirmation->SubjectConfirmationData->InResponseTo;
     }
-
-    /**
-     * @return bool
-     */
-    public function hasSubject()
-    {
-        return !empty($this->assertion->getSubjectConfirmation());
-    }
-
-    /**
-     * @return bool
-     */
-    public function hasSubjectNameId()
-    {
-        return !empty($this->assertion->getSubjectConfirmation()[0]->NameId);
-    }
 }

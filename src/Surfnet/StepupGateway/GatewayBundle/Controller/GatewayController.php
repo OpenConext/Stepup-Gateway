@@ -134,22 +134,6 @@ class GatewayController extends Controller
         }
 
         $adaptedAssertion = new AssertionAdapter($assertion);
-
-        if (!$adaptedAssertion->hasSubject()) {
-            $logger->error('Received Response without eduPersonTargetedID (EPTI) attribute.');
-            return $this->render('unrecoverableError', [
-                'message' => 'The "urn:mace:dir:attribute-def:eduPersonTargetedID" is not present'
-            ]);
-        }
-
-        if (!$adaptedAssertion->hasSubjectNameId()) {
-            $logger->error('Received Response with missing NameId in eduPersonTargetedID (EPTI) attribute');
-
-            return $this->render('unrecoverableError', [
-                'message' => 'The "urn:mace:dir:attribute-def:eduPersonTargetedID" attribute does not contain a NameID with a value.'
-            ]);
-        }
-
         $expectedInResponseTo = $responseContext->getExpectedInResponseTo();
         if (!$adaptedAssertion->inResponseToMatches($expectedInResponseTo)) {
             $logger->critical(sprintf(
