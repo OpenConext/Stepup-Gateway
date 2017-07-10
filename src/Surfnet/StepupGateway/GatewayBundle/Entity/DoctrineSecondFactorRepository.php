@@ -20,6 +20,7 @@ namespace Surfnet\StepupGateway\GatewayBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityRepository;
+use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupBundle\Value\Loa;
 
 class DoctrineSecondFactorRepository extends EntityRepository implements SecondFactorRepository
@@ -29,7 +30,7 @@ class DoctrineSecondFactorRepository extends EntityRepository implements SecondF
      */
     private $secondFactorsById = [];
 
-    public function getAllMatchingFor(Loa $highestLoa, $identityNameId)
+    public function getAllMatchingFor(Loa $highestLoa, $identityNameId, SecondFactorTypeService $service)
     {
         /** @var \Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor[] $secondFactors */
         $secondFactors = $this->createQueryBuilder('sf')
@@ -40,7 +41,7 @@ class DoctrineSecondFactorRepository extends EntityRepository implements SecondF
 
         $matches = new ArrayCollection();
         foreach ($secondFactors as $secondFactor) {
-            if ($secondFactor->canSatisfy($highestLoa)) {
+            if ($secondFactor->canSatisfy($highestLoa, $service)) {
                 $matches->add($secondFactor);
             }
         }

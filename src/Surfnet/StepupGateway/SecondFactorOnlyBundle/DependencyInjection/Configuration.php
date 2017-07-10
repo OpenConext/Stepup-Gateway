@@ -18,9 +18,6 @@
 
 namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\DependencyInjection;
 
-use Surfnet\StepupBundle\Exception\DomainException;
-use Surfnet\StepupBundle\Exception\InvalidArgumentException;
-use Surfnet\StepupBundle\Value\SecondFactorType;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 

@@ -19,7 +19,6 @@
 namespace Surfnet\StepupGateway\GatewayBundle\Controller;
 
 use Exception;
-use SAML2_Assertion;
 use SAML2_Const;
 use SAML2_Response;
 use Surfnet\SamlBundle\SAML2\AuthnRequest;
@@ -169,8 +168,9 @@ class GatewayController extends Controller
                 $responseContext->getSelectedSecondFactor()
             );
 
+            $secondFactorTypeService = $this->get('surfnet_stepup.service.second_factor_type');
             $grantedLoa = $this->get('surfnet_stepup.service.loa_resolution')->getLoaByLevel(
-                $secondFactor->getLoaLevel()
+                $secondFactor->getLoaLevel($secondFactorTypeService)
             );
         }
 

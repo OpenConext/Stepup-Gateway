@@ -20,6 +20,7 @@ namespace Surfnet\StepupGateway\GatewayBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Psr\Log\LoggerInterface;
+use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupBundle\Value\Loa;
 
 final class EnabledSecondFactorRepository implements SecondFactorRepository
@@ -54,11 +55,11 @@ final class EnabledSecondFactorRepository implements SecondFactorRepository
         $this->logger = $logger;
     }
 
-    public function getAllMatchingFor(Loa $highestLoa, $identityNameId)
+    public function getAllMatchingFor(Loa $highestLoa, $identityNameId, SecondFactorTypeService $service)
     {
         $enabledSecondFactors = new ArrayCollection();
 
-        foreach ($this->secondFactorRepository->getAllMatchingFor($highestLoa, $identityNameId) as $secondFactor) {
+        foreach ($this->secondFactorRepository->getAllMatchingFor($highestLoa, $identityNameId, $service) as $secondFactor) {
             if (!array_key_exists($secondFactor->secondFactorType, $this->enabledTypes)) {
                 $this->logger->info(
                     sprintf(

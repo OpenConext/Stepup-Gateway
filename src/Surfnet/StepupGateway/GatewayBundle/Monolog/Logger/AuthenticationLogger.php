@@ -20,6 +20,7 @@ namespace Surfnet\StepupGateway\GatewayBundle\Monolog\Logger;
 
 use Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger;
 use Surfnet\StepupBundle\Service\LoaResolutionService;
+use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupBundle\Value\Loa;
 use Surfnet\StepupGateway\GatewayBundle\Exception\InvalidArgumentException;
 use Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler;
@@ -47,16 +48,23 @@ class AuthenticationLogger
      */
     private $authenticationChannelLogger;
 
+    /**
+     * @var SecondFactorTypeService
+     */
+    private $secondFactorTypeService;
+
     public function __construct(
         LoaResolutionService $loaResolutionService,
         ProxyStateHandler $proxyStateHandler,
         SecondFactorService $secondFactorService,
-        SamlAuthenticationLogger $authenticationChannelLogger
+        SamlAuthenticationLogger $authenticationChannelLogger,
+        SecondFactorTypeService $service
     ) {
         $this->loaResolutionService = $loaResolutionService;
         $this->proxyStateHandler    = $proxyStateHandler;
         $this->secondFactorService  = $secondFactorService;
         $this->authenticationChannelLogger = $authenticationChannelLogger;
+        $this->secondFactorTypeService = $service;
     }
 
     /**
@@ -83,7 +91,7 @@ class AuthenticationLogger
         $secondFactor = $this->secondFactorService->findByUuid(
             $this->proxyStateHandler->getSelectedSecondFactorId()
         );
-        $loa = $this->loaResolutionService->getLoaByLevel($secondFactor->getLoaLevel());
+        $loa = $this->loaResolutionService->getLoaByLevel($secondFactor->getLoaLevel($this->secondFactorTypeService));
 
         $context = [
             'second_factor_id'      => $secondFactor->secondFactorId,

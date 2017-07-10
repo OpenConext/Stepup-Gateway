@@ -58,6 +58,7 @@ services:
             - @surfnet_stepup.service.sms_second_factor
             - @translator
             - @logger
+            - @surfnet_stepup.service.second_factor_type
             - [] # See extension
 
     gateway.service.gateway_api_sms:
@@ -92,6 +93,7 @@ services:
             - @gateway.proxy.state_handler
             - @gateway.service.second_factor_service
             - @gateway.authentication_logger.logger
+            - @surfnet_stepup.service.second_factor_type
 
     gateway.authentication_logger.logger:
         class: Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger
