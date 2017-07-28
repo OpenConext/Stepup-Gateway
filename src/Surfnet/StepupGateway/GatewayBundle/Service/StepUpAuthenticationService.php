@@ -20,7 +20,6 @@ namespace Surfnet\StepupGateway\GatewayBundle\Service;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Psr\Log\LoggerInterface;
-use Surfnet\SamlBundle\Entity\IdentityProvider;
 use Surfnet\SamlBundle\Entity\ServiceProvider;
 use Surfnet\StepupBundle\Command\SendSmsChallengeCommand as StepupSendSmsChallengeCommand;
 use Surfnet\StepupBundle\Command\VerifyPossessionOfPhoneCommand;
@@ -119,7 +118,7 @@ class StepUpAuthenticationService
     /**
      * @param string          $identityNameId
      * @param Loa             $requiredLoa
-     * @return \Doctrine\Common\Collections\ArrayCollection
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function determineViableSecondFactors(
         $identityNameId,
@@ -142,7 +141,6 @@ class StepUpAuthenticationService
      * @param string           $requestedLoa
      * @param string           $identityNameId
      * @param ServiceProvider  $serviceProvider
-     * @param IdentityProvider $authenticatingIdp
      * @return null|Loa
      *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity) see https://www.pivotaltracker.com/story/show/96065350
@@ -151,8 +149,7 @@ class StepUpAuthenticationService
     public function resolveHighestRequiredLoa(
         $requestedLoa,
         $identityNameId,
-        ServiceProvider $serviceProvider,
-        IdentityProvider $authenticatingIdp = null
+        ServiceProvider $serviceProvider
     ) {
         $loaCandidates = new ArrayCollection();
 
@@ -174,7 +171,7 @@ class StepUpAuthenticationService
         );
 
         if (count($matchingInstitutions) > 0) {
-            $this->logger->info(sprintf('Found matching SP configured LoA\'s'));
+            $this->logger->info('Found matching SP configured LoA\'s');
             foreach ($matchingInstitutions as $matchingInstitution) {
                 $loaCandidates->add($spConfiguredLoas[$matchingInstitution]);
                 $this->logger->info(sprintf(
