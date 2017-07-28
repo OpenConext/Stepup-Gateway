@@ -53,6 +53,7 @@ class SecondFactorController extends Controller
             ->getStepupService()
             ->resolveHighestRequiredLoa(
                 $context->getRequiredLoa(),
+                $context->getIdentityNameId(),
                 $context->getServiceProvider(),
                 $context->getAuthenticatingIdp()
             );
