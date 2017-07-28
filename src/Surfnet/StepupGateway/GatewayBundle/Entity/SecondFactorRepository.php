@@ -39,4 +39,12 @@ interface SecondFactorRepository
      * @return null|SecondFactor
      */
     public function findOneBySecondFactorId($secondFactorId);
+
+    /**
+     * Loads the institutions for a given identity name id
+     *
+     * @param $identityNameId
+     * @return array
+     */
+    public function getAllInstitutions($identityNameId);
 }

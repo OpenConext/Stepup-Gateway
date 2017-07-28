@@ -33,11 +33,7 @@ class DoctrineSecondFactorRepository extends EntityRepository implements SecondF
     public function getAllMatchingFor(Loa $highestLoa, $identityNameId, SecondFactorTypeService $service)
     {
         /** @var \Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor[] $secondFactors */
-        $secondFactors = $this->createQueryBuilder('sf')
-            ->where('sf.nameId = :nameId')
-            ->setParameter('nameId', $identityNameId)
-            ->getQuery()
-            ->getResult();
+        $secondFactors = $this->findAllByIdentityNameId($identityNameId);
 
         $matches = new ArrayCollection();
         foreach ($secondFactors as $secondFactor) {
@@ -56,5 +52,36 @@ class DoctrineSecondFactorRepository extends EntityRepository implements SecondF
         }
 
         return $this->secondFactorsById[$secondFactorId];
+    }
+
+    /**
+     * Loads the institutions for a given identity name id
+     *
+     * @param $identityNameId
+     * @return array
+     */
+    public function getAllInstitutions($identityNameId)
+    {
+        $institutions = [];
+        $secondFactors = $this->findAllByIdentityNameId($identityNameId);
+        foreach ($secondFactors as $secondFactor) {
+            $institutions[$secondFactor->institution] = $secondFactor->institution;
+        }
+
+        return $institutions;
+    }
+
+    /**
+     * @param $identityNameId
+     * @return \Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor[]
+     */
+    private function findAllByIdentityNameId($identityNameId)
+    {
+        /** @var \Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor[] $secondFactors */
+        return $this->createQueryBuilder('sf')
+            ->where('sf.nameId = :nameId')
+            ->setParameter('nameId', $identityNameId)
+            ->getQuery()
+            ->getResult();
     }
 }
