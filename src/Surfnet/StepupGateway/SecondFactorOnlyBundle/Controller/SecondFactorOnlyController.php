@@ -146,9 +146,9 @@ class SecondFactorOnlyController extends Controller
 
         $secondFactor = $this->get('gateway.service.second_factor_service')
             ->findByUuid($selectedSecondFactorUuid);
-
+        $secondFactorTypeService = $this->get('surfnet_stepup.service.second_factor_type');
         $grantedLoa = $this->get('surfnet_stepup.service.loa_resolution')
-            ->getLoaByLevel($secondFactor->getLoaLevel());
+            ->getLoaByLevel($secondFactor->getLoaLevel($secondFactorTypeService));
 
         /** @var LoaAliasLookupService $loaAliasLookup */
         $loaAliasLookup = $this->get('second_factor_only.loa_alias_lookup');

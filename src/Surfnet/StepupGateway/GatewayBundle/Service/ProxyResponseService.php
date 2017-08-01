@@ -24,6 +24,7 @@ use Surfnet\SamlBundle\Entity\ServiceProvider;
 use Surfnet\SamlBundle\SAML2\Attribute\AttributeDefinition;
 use Surfnet\SamlBundle\SAML2\Attribute\AttributeDictionary;
 use Surfnet\StepupBundle\Value\Loa;
+use Surfnet\StepupGateway\GatewayBundle\Exception\RuntimeException;
 use Surfnet\StepupGateway\GatewayBundle\Saml\AssertionSigningService;
 use Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler;
 
@@ -105,6 +106,20 @@ class ProxyResponseService
 
         $translatedAssertion = $this->attributeDictionary->translate($assertion);
         $eptiNameId = $translatedAssertion->getAttributeValue('eduPersonTargetedID');
+
+        // Perform some input validation on the eptiNameId that was received.
+        if (is_null($eptiNameId)) {
+            throw new RuntimeException('The "urn:mace:dir:attribute-def:eduPersonTargetedID" is not present.');
+        } elseif (
+            !array_key_exists(0, $eptiNameId) ||
+            !array_key_exists('Value', $eptiNameId[0]) ||
+            empty($eptiNameId[0]['Value'])
+        ) {
+            throw new RuntimeException(
+                'The "urn:mace:dir:attribute-def:eduPersonTargetedID" attribute does not contain a NameID with a value.'
+            );
+        }
+
         $newAssertion->setNameId($eptiNameId[0]);
 
         $newAssertion->setValidAudiences([$this->proxyStateHandler->getRequestServiceProvider()]);

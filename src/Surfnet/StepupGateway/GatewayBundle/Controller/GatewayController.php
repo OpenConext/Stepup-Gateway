@@ -19,11 +19,11 @@
 namespace Surfnet\StepupGateway\GatewayBundle\Controller;
 
 use Exception;
-use SAML2_Assertion;
 use SAML2_Const;
 use SAML2_Response;
 use Surfnet\SamlBundle\SAML2\AuthnRequest;
 use Surfnet\SamlBundle\SAML2\AuthnRequestFactory;
+use Surfnet\StepupGateway\GatewayBundle\Exception\RuntimeException;
 use Surfnet\StepupGateway\GatewayBundle\Saml\AssertionAdapter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -169,18 +169,26 @@ class GatewayController extends Controller
                 $responseContext->getSelectedSecondFactor()
             );
 
+            $secondFactorTypeService = $this->get('surfnet_stepup.service.second_factor_type');
             $grantedLoa = $this->get('surfnet_stepup.service.loa_resolution')->getLoaByLevel(
-                $secondFactor->getLoaLevel()
+                $secondFactor->getLoaLevel($secondFactorTypeService)
             );
         }
 
         /** @var \Surfnet\StepupGateway\GatewayBundle\Service\ProxyResponseService $proxyResponseService */
         $proxyResponseService = $this->get('gateway.service.response_proxy');
-        $response             = $proxyResponseService->createProxyResponse(
-            $responseContext->reconstituteAssertion(),
-            $responseContext->getServiceProvider(),
-            (string) $grantedLoa
-        );
+        try {
+            $response = $proxyResponseService->createProxyResponse(
+                $responseContext->reconstituteAssertion(),
+                $responseContext->getServiceProvider(),
+                (string)$grantedLoa
+            );
+        } catch (RuntimeException $e) {
+            $logger->error($e->getMessage());
+            return $this->render('unrecoverableError', [
+                'message' => $e->getMessage()
+            ]);
+        }
 
         $responseContext->responseSent();
 
