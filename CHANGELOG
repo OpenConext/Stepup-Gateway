@@ -2,6 +2,9 @@
 VERSION 2  REQUIRE PHP 5.6 AND FIX TIQR ISSUES
 ==============================================
 
+   Version 2.6 - Release of version 2.6.0
+      01/08/2017 09:15  2.6.0  initial release
+
    Version 2.5 - Updated Guzzle
       10/03/2017 10:01  2.5.0  initial release
 
