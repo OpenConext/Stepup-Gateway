@@ -85,7 +85,17 @@ final class ProxyResponseServiceTest extends PHPUnit_Framework_TestCase
         SAML2_Compat_ContainerSingleton::setContainer($container);
 
         $this->identityProvider->shouldReceive('getEntityId')->andReturn('https://gateway.example/metadata');
-        $this->attributeDictionary->shouldReceive('translate->getAttributeValue')->andReturnNull();
+        $this->attributeDictionary
+            ->shouldReceive('translate->getAttributeValue')
+            ->andReturn(
+                [
+                    [
+                        'Value' => 'John Doe',
+                        'Format' => 'Unspecified'
+                    ]
+                ]
+            )
+            ->byDefault();
     }
 
     /**
@@ -147,5 +157,65 @@ final class ProxyResponseServiceTest extends PHPUnit_Framework_TestCase
             ['https://previous.idp.example/metadata', 'https://idp.example/metadata'],
             $assertion->getAuthenticatingAuthority()
         );
+    }
+
+    /**
+     * @expectedException \Surfnet\StepupGateway\GatewayBundle\Exception\RuntimeException
+     * @expectedExceptionMessage The "urn:mace:dir:attribute-def:eduPersonTargetedID" is not present.
+     */
+    public function testCreateProxyResponseRequiresEpti()
+    {
+        $factory = new ProxyResponseService(
+            $this->identityProvider,
+            $this->proxyStateHandler,
+            $this->assertionSigningService,
+            $this->attributeDictionary,
+            $this->attributeDefinition,
+            $this->loa
+        );
+
+        $originalAssertion = new SAML2_Assertion();
+        $originalAssertion->setIssuer('https://idp.example/metadata');
+        $originalAssertion->setAuthenticatingAuthority(['https://previous.idp.example/metadata']);
+
+        $this->attributeDictionary
+            ->shouldReceive('translate->getAttributeValue')
+            ->andReturnNull();
+
+        $factory->createProxyResponse($originalAssertion, $this->targetServiceProvider);
+    }
+
+    /**
+     * @expectedException \Surfnet\StepupGateway\GatewayBundle\Exception\RuntimeException
+     * @expectedExceptionMessage The "urn:mace:dir:attribute-def:eduPersonTargetedID" attribute does not contain a
+     *                           NameID with a value.
+     */
+    public function testCreateProxyResponseRequiresEptiFilled()
+    {
+        $factory = new ProxyResponseService(
+            $this->identityProvider,
+            $this->proxyStateHandler,
+            $this->assertionSigningService,
+            $this->attributeDictionary,
+            $this->attributeDefinition,
+            $this->loa
+        );
+
+        $originalAssertion = new SAML2_Assertion();
+        $originalAssertion->setIssuer('https://idp.example/metadata');
+        $originalAssertion->setAuthenticatingAuthority(['https://previous.idp.example/metadata']);
+
+        $this->attributeDictionary
+            ->shouldReceive('translate->getAttributeValue')
+            ->andReturn(
+                [
+                    [
+                        'Value' => null,
+                        'Format' => 'urn.colab.Epti'
+                    ]
+                ]
+            );
+
+        $factory->createProxyResponse($originalAssertion, $this->targetServiceProvider);
     }
 }

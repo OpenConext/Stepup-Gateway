@@ -56,8 +56,10 @@ services:
             - @gateway.repository.second_factor
             - @surfnet_gateway_api.service.yubikey
             - @surfnet_stepup.service.sms_second_factor
+            - @gateway.service.institution_matching_helper
             - @translator
             - @logger
+            - @surfnet_stepup.service.second_factor_type
             - [] # See extension
 
     gateway.service.gateway_api_sms:
@@ -69,6 +71,9 @@ services:
         class: Surfnet\StepupGateway\GatewayBundle\Service\WhitelistService
         arguments:
             - @gateway.repository.whitelist_entry
+
+    gateway.service.institution_matching_helper:
+        class: Surfnet\StepupGateway\GatewayBundle\Service\InstitutionMatchingHelper
 
     gateway.session.u2f:
         class: Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag
@@ -92,6 +97,7 @@ services:
             - @gateway.proxy.state_handler
             - @gateway.service.second_factor_service
             - @gateway.authentication_logger.logger
+            - @surfnet_stepup.service.second_factor_type
 
     gateway.authentication_logger.logger:
         class: Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger

@@ -19,6 +19,7 @@
 namespace Surfnet\StepupGateway\GatewayBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupBundle\Value\Loa;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 
@@ -89,19 +90,23 @@ class SecondFactor
 
     /**
      * @param Loa $loa
+     * @param SecondFactorTypeService $service
      * @return bool
      */
-    public function canSatisfy(Loa $loa)
+    public function canSatisfy(Loa $loa, SecondFactorTypeService $service)
     {
-        return (new SecondFactorType($this->secondFactorType))->canSatisfy($loa);
+        $secondFactorType = new SecondFactorType($this->secondFactorType);
+        return $service->canSatisfy($secondFactorType, $loa);
     }
 
     /**
+     * @param SecondFactorTypeService $service
      * @return int
      */
-    public function getLoaLevel()
+    public function getLoaLevel(SecondFactorTypeService $service)
     {
-        return (new SecondFactorType($this->secondFactorType))->getLevel();
+        $secondFactorType = new SecondFactorType($this->secondFactorType);
+        return $service->getLevel($secondFactorType);
     }
 
     /**
@@ -109,6 +114,7 @@ class SecondFactor
      */
     public function isGssf()
     {
-        return (new SecondFactorType($this->secondFactorType))->isGssf();
+        $secondFactorType = new SecondFactorType($this->secondFactorType);
+        return $secondFactorType->isGssf();
     }
 }

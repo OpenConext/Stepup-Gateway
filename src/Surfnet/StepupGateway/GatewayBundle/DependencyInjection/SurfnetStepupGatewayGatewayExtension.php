@@ -18,7 +18,6 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\DependencyInjection;
 
-use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -40,8 +39,10 @@ class SurfnetStepupGatewayGatewayExtension extends Extension
             ->getDefinition('gateway.security.intrinsic_loa')
             ->addArgument($config['intrinsic_loa']);
 
+        // Enabled second factor types (specific and generic) are merged into 'ss.enabled_second_factors'
+        $gssfSecondFactors = array_keys($config['enabled_generic_second_factors']);
         $container
             ->getDefinition('gateway.repository.second_factor.enabled')
-            ->replaceArgument(1, $config['enabled_second_factors']);
+            ->replaceArgument(1, array_merge($config['enabled_second_factors'], $gssfSecondFactors));
     }
 }

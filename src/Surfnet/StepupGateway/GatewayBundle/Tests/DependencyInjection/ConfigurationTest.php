@@ -64,19 +64,6 @@ final class ConfigurationTest extends TestCase
         $this->assertConfigurationIsValid([['enabled_second_factors' => ['sms', 'yubikey']]], 'enabled_second_factors');
     }
 
-    /**
-     * @test
-     * @group configuration
-     */
-    public function it_rejects_invalid_second_factor_types()
-    {
-        $this->assertPartialConfigurationIsInvalid(
-            [['enabled_second_factors' => ['passport']]],
-            'enabled_second_factors',
-            'not one of the valid types'
-        );
-    }
-
     protected function getConfiguration()
     {
         return new Configuration();

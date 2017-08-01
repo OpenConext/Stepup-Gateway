@@ -20,11 +20,11 @@ namespace Surfnet\StepupGateway\GatewayBundle\Service;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Psr\Log\LoggerInterface;
-use Surfnet\SamlBundle\Entity\IdentityProvider;
 use Surfnet\SamlBundle\Entity\ServiceProvider;
 use Surfnet\StepupBundle\Command\SendSmsChallengeCommand as StepupSendSmsChallengeCommand;
 use Surfnet\StepupBundle\Command\VerifyPossessionOfPhoneCommand;
 use Surfnet\StepupBundle\Service\LoaResolutionService;
+use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupBundle\Service\SmsSecondFactor\OtpVerification;
 use Surfnet\StepupBundle\Service\SmsSecondFactorService;
 use Surfnet\StepupBundle\Value\Loa;
@@ -67,6 +67,9 @@ class StepUpAuthenticationService
      */
     private $smsService;
 
+    /** @var InstitutionMatchingHelper */
+    private $institutionMatchingHelper;
+
     /**
      * @var \Symfony\Component\Translation\TranslatorInterface
      */
@@ -78,39 +81,55 @@ class StepUpAuthenticationService
     private $logger;
 
     /**
+     * @var SecondFactorTypeService
+     */
+    private $secondFactorTypeService;
+
+    /**
      * @param LoaResolutionService   $loaResolutionService
      * @param SecondFactorRepository $secondFactorRepository
      * @param YubikeyService         $yubikeyService
      * @param SmsSecondFactorService $smsService
+     * @param InstitutionMatchingHelper $institutionMatchingHelper
      * @param TranslatorInterface    $translator
      * @param LoggerInterface        $logger
+     * @param SecondFactorTypeService $secondFactorTypeService
      */
     public function __construct(
         LoaResolutionService $loaResolutionService,
         SecondFactorRepository $secondFactorRepository,
         YubikeyService $yubikeyService,
         SmsSecondFactorService $smsService,
+        InstitutionMatchingHelper $institutionMatchingHelper,
         TranslatorInterface $translator,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        SecondFactorTypeService $secondFactorTypeService
     ) {
         $this->loaResolutionService = $loaResolutionService;
         $this->secondFactorRepository = $secondFactorRepository;
         $this->yubikeyService = $yubikeyService;
         $this->smsService = $smsService;
+        $this->institutionMatchingHelper = $institutionMatchingHelper;
         $this->translator = $translator;
         $this->logger = $logger;
+        $this->secondFactorTypeService = $secondFactorTypeService;
     }
 
     /**
      * @param string          $identityNameId
      * @param Loa             $requiredLoa
-     * @return \Doctrine\Common\Collections\ArrayCollection
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function determineViableSecondFactors(
         $identityNameId,
         Loa $requiredLoa
     ) {
-        $candidateSecondFactors = $this->secondFactorRepository->getAllMatchingFor($requiredLoa, $identityNameId);
+
+        $candidateSecondFactors = $this->secondFactorRepository->getAllMatchingFor(
+            $requiredLoa,
+            $identityNameId,
+            $this->secondFactorTypeService
+        );
         $this->logger->info(
             sprintf('Loaded %d matching candidate second factors', count($candidateSecondFactors))
         );
@@ -120,8 +139,8 @@ class StepUpAuthenticationService
 
     /**
      * @param string           $requestedLoa
+     * @param string           $identityNameId
      * @param ServiceProvider  $serviceProvider
-     * @param IdentityProvider $authenticatingIdp
      * @return null|Loa
      *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity) see https://www.pivotaltracker.com/story/show/96065350
@@ -129,8 +148,8 @@ class StepUpAuthenticationService
      */
     public function resolveHighestRequiredLoa(
         $requestedLoa,
-        ServiceProvider $serviceProvider,
-        IdentityProvider $authenticatingIdp = null
+        $identityNameId,
+        ServiceProvider $serviceProvider
     ) {
         $loaCandidates = new ArrayCollection();
 
@@ -143,26 +162,21 @@ class StepUpAuthenticationService
         $loaCandidates->add($spConfiguredLoas['__default__']);
         $this->logger->info(sprintf('Added SP\'s default Loa "%s" as candidate', $spConfiguredLoas['__default__']));
 
-        if ($authenticatingIdp) {
-            if (array_key_exists($authenticatingIdp->getEntityId(), $spConfiguredLoas)) {
-                $loaCandidates->add($spConfiguredLoas[$authenticatingIdp->getEntityId()]);
-                $this->logger->info(sprintf(
-                    'Added SP\'s Loa "%s" for this IdP as candidate',
-                    $spConfiguredLoas[$authenticatingIdp->getEntityId()]
-                ));
-            }
+        $institutions = $this->determineInstitutionsByIdentityNameId($identityNameId);
+        $this->logger->info(sprintf('Loaded institution(s) for "%s"', $identityNameId));
 
-            $idpConfiguredLoas = $authenticatingIdp->get('configuredLoas');
-            $loaCandidates->add($idpConfiguredLoas['__default__']);
-            $this->logger->info(
-                sprintf('Added authenticating IdP\'s default Loa "%s" as candidate', $spConfiguredLoas['__default__'])
-            );
+        $matchingInstitutions = $this->institutionMatchingHelper->findMatches(
+            array_keys($spConfiguredLoas),
+            $institutions
+        );
 
-            if (array_key_exists($serviceProvider->getEntityId(), $idpConfiguredLoas)) {
-                $loaCandidates->add($idpConfiguredLoas[$serviceProvider->getEntityId()]);
+        if (count($matchingInstitutions) > 0) {
+            $this->logger->info('Found matching SP configured LoA\'s');
+            foreach ($matchingInstitutions as $matchingInstitution) {
+                $loaCandidates->add($spConfiguredLoas[$matchingInstitution]);
                 $this->logger->info(sprintf(
-                    'Added authenticating IdP\'s Loa "%s" for this SP as candidate',
-                    $idpConfiguredLoas[$serviceProvider->getEntityId()]
+                    'Added SP\'s Loa "%s" as candidate',
+                    $spConfiguredLoas[$matchingInstitution]
                 ));
             }
         }
@@ -310,5 +324,10 @@ class StepUpAuthenticationService
     public function clearSmsVerificationState()
     {
         $this->smsService->clearSmsVerificationState();
+    }
+
+    private function determineInstitutionsByIdentityNameId($identityNameId)
+    {
+        return $this->secondFactorRepository->getAllInstitutions($identityNameId);
     }
 }
