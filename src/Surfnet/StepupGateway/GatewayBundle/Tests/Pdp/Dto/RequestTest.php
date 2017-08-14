@@ -25,6 +25,9 @@ use Surfnet\StepupGateway\GatewayBundle\Pdp\Dto\Request;
 use Surfnet\StepupGateway\GatewayBundle\Pdp\Dto\Request\AccessSubject;
 use Surfnet\StepupGateway\GatewayBundle\Pdp\Dto\Request\Resource;
 
+/**
+ * @group Pdp
+ */
 class RequestTest extends TestCase
 {
     const NAMEIDFORMAT_UNSPECIFIED = 'urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified';
@@ -40,7 +43,7 @@ class RequestTest extends TestCase
         $this->validIdpEntityId = 'https://my-idp.example';
         $this->validSpEntityId  = 'https://my-sp.example';
         $this->validResponseAttributes = [
-            ['urn:mace:dir:attribute-def:eduPersonAffiliation' => ['student', 'alumni']]
+            'urn:mace:dir:attribute-def:eduPersonAffiliation' => ['student', 'alumni']
         ];
     }
 
@@ -55,10 +58,12 @@ class RequestTest extends TestCase
         $this->setExpectedException(InvalidArgumentException::class, 'SubjectId must be a string');
 
         Request::from(
+            'SSA',
             123,
             $this->validIdpEntityId,
             $this->validSpEntityId,
-            $this->validResponseAttributes
+            $this->validResponseAttributes,
+            '192.168.1.255'
         );
     }
 
@@ -73,10 +78,12 @@ class RequestTest extends TestCase
         $this->setExpectedException(InvalidArgumentException::class, 'IDPentityID must be a string');
 
         Request::from(
+            'SSA',
             $this->validSubjectId,
             123,
             $this->validSpEntityId,
-            $this->validResponseAttributes
+            $this->validResponseAttributes,
+            '192.168.1.255'
         );
     }
 
@@ -90,7 +97,50 @@ class RequestTest extends TestCase
     {
         $this->setExpectedException(InvalidArgumentException::class, 'SPentityID must be a string');
 
-        Request::from($this->validSubjectId, $this->validIdpEntityId, 123, $this->validResponseAttributes);
+        Request::from(
+            'SSA',
+            $this->validSubjectId,
+            $this->validIdpEntityId,
+            123,
+            $this->validResponseAttributes,
+            '192.168.1.255'
+        );
+    }
+
+    /**
+     * @test
+     * @group Pdp
+     */
+    public function a_pdp_requests_client_id_must_be_a_string()
+    {
+        $this->setExpectedException(InvalidArgumentException::class, 'The client ID must be a string');
+
+        Request::from(
+            123,
+            $this->validSubjectId,
+            $this->validIdpEntityId,
+            $this->validSpEntityId,
+            $this->validResponseAttributes,
+            '192.168.1.255'
+        );
+    }
+
+    /**
+     * @test
+     * @group Pdp
+     */
+    public function a_pdp_requests_request_ip_must_be_a_string()
+    {
+        $this->setExpectedException(InvalidArgumentException::class, 'The request IP address must be a string');
+
+        Request::from(
+            'SSA',
+            $this->validSubjectId,
+            $this->validIdpEntityId,
+            $this->validSpEntityId,
+            $this->validResponseAttributes,
+            123
+        );
     }
 
     /**
@@ -103,14 +153,16 @@ class RequestTest extends TestCase
 
         $responseAttributesWithNonStringKeys = [
             1 => ['some-attribute', 'another-attribute'],
-            2 => ['an-unrelated-attribute']
+            2 => ['urn:collab:person:surfguest.nl:johndoe']
         ];
 
         Request::from(
+            'SSA',
             $this->validSubjectId,
             $this->validIdpEntityId,
             $this->validSpEntityId,
-            $responseAttributesWithNonStringKeys
+            $responseAttributesWithNonStringKeys,
+            '192.168.1.255'
         );
     }
 
@@ -129,10 +181,12 @@ class RequestTest extends TestCase
         ];
 
         Request::from(
+            'SSA',
             $this->validSubjectId,
             $this->validIdpEntityId,
             $this->validSpEntityId,
-            $responseAttributesWithNonArrayValues
+            $responseAttributesWithNonArrayValues,
+            '192.168.1.255'
         );
     }
 
@@ -156,21 +210,24 @@ class RequestTest extends TestCase
     public function a_pdp_request_is_built_correctly()
     {
         $resourceAttributeValues = [
+            'ClientID' => 'SSA',
             'SPentityID' => 'avans_sp',
             'IDPentityID' => 'avans_idp',
         ];
         $accessSubjectAttributeValues = [
-            self::NAMEIDFORMAT_UNSPECIFIED => 'an-unspecified-name-id',
-            'urn:mace:dir:attribute-def:eduPersonAffiliation' => 'student',
+            self::NAMEIDFORMAT_UNSPECIFIED => 'urn:collab:person:surfguest.nl:johndoe',
+            'urn:mace:surfnet.nl:collab:xacml-attribute:ip-address' => '192.168.1.255',
         ];
 
         $expectedRequest = $this->buildPdpRequest($resourceAttributeValues, $accessSubjectAttributeValues);
 
         $actualRequest = Request::from(
+            'SSA',
             $accessSubjectAttributeValues[self::NAMEIDFORMAT_UNSPECIFIED],
             $resourceAttributeValues['IDPentityID'],
             $resourceAttributeValues['SPentityID'],
-            ['urn:mace:dir:attribute-def:eduPersonAffiliation' => ['student']]
+            [],
+            '192.168.1.255'
         );
 
         $this->assertEquals($expectedRequest, $actualRequest);
@@ -191,12 +248,13 @@ class RequestTest extends TestCase
         );
 
         $resourceAttributeValues = [
+            'ClientID' => 'SSA',
             'SPentityID' => 'avans_sp',
             'IDPentityID' => 'avans_idp',
         ];
         $accessSubjectAttributeValues = [
-            self::NAMEIDFORMAT_UNSPECIFIED => 'an-unspecified-name-id',
-            'urn:mace:dir:attribute-def:eduPersonAffiliation' => 'student',
+            self::NAMEIDFORMAT_UNSPECIFIED => 'urn:collab:person:surfguest.nl:johndoe',
+            'urn:mace:surfnet.nl:collab:xacml-attribute:ip-address' => '192.168.1.255',
         ];
 
         $request = $this->buildPdpRequest($resourceAttributeValues, $accessSubjectAttributeValues);

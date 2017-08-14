@@ -48,45 +48,6 @@ class PolicyDecisionTest extends TestCase
      * @test
      * @group Pdp
      */
-    public function a_deny_policys_localized_messages_are_parsed_correctly()
-    {
-        $responseJson = json_decode(file_get_contents(__DIR__ . '/fixture/response_deny.json'), true);
-        $response = Response::fromData($responseJson);
-
-        $decision = PolicyDecision::fromResponse($response);
-
-        $expectedDenyMessageEn = 'Students do not have access to this resource';
-        $expectedDenyMessageNl = 'Studenten hebben geen toegang tot deze dienst';
-
-        $denyMessageEn = $decision->getLocalizedDenyMessage('en');
-        $denyMessageNl = $decision->getLocalizedDenyMessage('nl');
-
-        $this->assertEquals($expectedDenyMessageEn, $denyMessageEn);
-        $this->assertEquals($expectedDenyMessageNl, $denyMessageNl);
-    }
-
-    /**
-     * @test
-     * @group Pdp
-     */
-    public function a_deny_policys_localized_deny_message_correctly_falls_back_to_the_default_locale_if_the_given_locale_was_not_found()
-    {
-        $responseJson = json_decode(file_get_contents(__DIR__ . '/fixture/response_deny.json'), true);
-        $response = Response::fromData($responseJson);
-
-        $decision = PolicyDecision::fromResponse($response);
-
-        $expectedFallbackDenyMessage = 'Students do not have access to this resource';
-
-        $fallbackDenyMessage = $decision->getLocalizedDenyMessage('de', 'en');
-
-        $this->assertEquals($expectedFallbackDenyMessage, $fallbackDenyMessage);
-    }
-
-    /**
-     * @test
-     * @group Pdp
-     */
     public function an_indeterminate_policys_status_message_is_acquired_correctly()
     {
         $responseJson = json_decode(file_get_contents(__DIR__ . '/fixture/response_indeterminate.json'), true);
@@ -153,43 +114,15 @@ class PolicyDecisionTest extends TestCase
      * @test
      * @group Pdp
      */
-    public function a_localized_deny_message_cannot_be_acquired_if_the_chosen_and_the_default_locale_are_not_present()
+    public function permit_with_obligations_can_be_read()
     {
-        $nonPresentLocale = 'de';
-        $nonPresentDefaultLocale = 'fr';
-
-        $this->setExpectedException(
-            '\Surfnet\StepupGateway\GatewayBundle\Exception\RuntimeException',
-            sprintf(
-                'No localized deny message for locale "%s" or default locale "%s" found',
-                $nonPresentLocale,
-                $nonPresentDefaultLocale
-            )
-        );
-
-        $responseJson = json_decode(file_get_contents(__DIR__ . '/fixture/response_deny.json'), true);
+        $responseJson = json_decode(file_get_contents(__DIR__ . '/fixture/response_cbac_permit_multiple_obligations.json'), true);
         $response = Response::fromData($responseJson);
 
         $decision = PolicyDecision::fromResponse($response);
-        $decision->getLocalizedDenyMessage($nonPresentLocale, $nonPresentDefaultLocale);
-    }
 
-    /**
-     * @test
-     * @group Pdp
-     */
-    public function a_localized_deny_message_cannot_be_acquired_from_a_policy_decision_that_does_not_have_one()
-    {
-        $this->setExpectedException(
-            '\Surfnet\StepupGateway\GatewayBundle\Exception\RuntimeException',
-            'No localized deny messages present'
-        );
-
-        $responseJson = json_decode(file_get_contents(__DIR__ . '/fixture/response_permit.json'), true);
-        $response = Response::fromData($responseJson);
-
-        $decision = PolicyDecision::fromResponse($response);
-        $decision->getLocalizedDenyMessage('en');
+        $this->assertTrue($decision->hasLoaObligations());
+        $this->assertCount(2, $decision->getLoaObligations());
     }
 
     public function pdpResponseAndExpectedPermissionProvider()

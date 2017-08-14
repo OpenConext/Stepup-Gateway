@@ -21,7 +21,7 @@ namespace Surfnet\StepupGateway\GatewayBundle\Pdp;
 use Surfnet\StepupGateway\GatewayBundle\Pdp\Dto\Response;
 use Surfnet\StepupGateway\GatewayBundle\Exception\RuntimeException;
 
-final class PolicyDecision
+final class PolicyDecision implements PolicyDecisionInterface
 {
     const DECISION_DENY = 'Deny';
     const DECISION_INDETERMINATE = 'Indeterminate';
@@ -34,19 +34,19 @@ final class PolicyDecision
     private $decision;
 
     /**
-     * @var string[]
-     */
-    private $localizedDenyMessages = [];
-
-    /**
      * @var string|null
      */
     private $statusMessage;
 
     /**
-     * @var null
+     * @var string
      */
     private $statusCode;
+
+    /**
+     * @var string[]
+     */
+    public $loaObligations = [];
 
     /**
      * @param Response $response
@@ -63,22 +63,14 @@ final class PolicyDecision
             $policyDecision->statusMessage = $response->status->statusMessage;
         }
 
-        if ($policyDecision->permitsAccess()) {
-            return $policyDecision;
-        }
-
-        if (isset($response->associatedAdvices)) {
-            $localizedDenyMessages = [];
-            foreach ($response->associatedAdvices as $associatedAdvice) {
-                foreach ($associatedAdvice->attributeAssignments as $attributeAssignment) {
-                    list($identifier, $locale) = explode(':', $attributeAssignment->attributeId);
-
-                    if ($identifier === 'DenyMessage') {
-                        $localizedDenyMessages[$locale] = $attributeAssignment->value;
+        if (isset($response->obligations)) {
+            foreach ($response->obligations as $obligation) {
+                foreach ($obligation->attributeAssignments as $assignment) {
+                    if ($assignment->attributeId === 'urn:loa:level') {
+                        $policyDecision->loaObligations[] = $assignment->value;
                     }
                 }
             }
-            $policyDecision->localizedDenyMessages = $localizedDenyMessages;
         }
 
         return $policyDecision;
@@ -90,35 +82,6 @@ final class PolicyDecision
     public function permitsAccess()
     {
         return $this->decision === self::DECISION_PERMIT || $this->decision === self::DECISION_NOT_APPLICABLE;
-    }
-
-    /**
-     * @param string $locale
-     * @param string $defaultLocale
-     * @return string
-     */
-    public function getLocalizedDenyMessage($locale, $defaultLocale = 'en')
-    {
-        if (!$this->hasLocalizedDenyMessage()) {
-            throw new RuntimeException(sprintf(
-                'No localized deny messages present for decision "%s"',
-                $this->decision
-            ));
-        }
-
-        if (isset($this->localizedDenyMessages[$locale])) {
-            return $this->localizedDenyMessages[$locale];
-        }
-
-        if (!isset($this->localizedDenyMessages[$defaultLocale])) {
-            throw new RuntimeException(sprintf(
-                'No localized deny message for locale "%s" or default locale "%s" found',
-                $locale,
-                $defaultLocale
-            ));
-        }
-
-        return $this->localizedDenyMessages[$defaultLocale];
     }
 
     /**
@@ -153,16 +116,24 @@ final class PolicyDecision
     /**
      * @return bool
      */
-    public function hasLocalizedDenyMessage()
+    public function hasStatusMessage()
     {
-        return !empty($this->localizedDenyMessages);
+        return isset($this->statusMessage);
     }
 
     /**
      * @return bool
      */
-    public function hasStatusMessage()
+    public function hasLoaObligations()
     {
-        return isset($this->statusMessage);
+        return (bool) count($this->loaObligations);
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getLoaObligations()
+    {
+        return $this->loaObligations;
     }
 }

@@ -26,16 +26,7 @@ use Webmozart\Assert\Assert;
 final class Request implements JsonSerializable
 {
     const NAMEIDFORMAT_UNSPECIFIED = 'urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified';
-
-    /**
-     * @var bool
-     */
-    public $returnPolicyIdList = true;
-
-    /**
-     * @var bool
-     */
-    public $combinedDecision = false;
+    const XACML_ATTRIBUTE_IP_ADDRESS = 'urn:mace:surfnet.nl:collab:xacml-attribute:ip-address';
 
     /**
      * @var AccessSubject
@@ -48,14 +39,15 @@ final class Request implements JsonSerializable
     public $resource;
 
     /**
-     * @var string $subjectId
+     * @param string $clientId
      * @param string $subjectId
      * @param string $idpEntityId
      * @param string $spEntityId
      * @param array $responseAttributes
+     * @param string $requestIpAddress
      * @return Request $request
      */
-    public static function from($subjectId, $idpEntityId, $spEntityId, array $responseAttributes)
+    public static function from($clientId, $subjectId, $idpEntityId, $spEntityId, array $responseAttributes, $requestIpAddress)
     {
         Assert::string($subjectId, 'The SubjectId must be a string, received "%s"');
         Assert::string($idpEntityId, 'The IDPentityID must be a string, received "%s"');
@@ -65,6 +57,8 @@ final class Request implements JsonSerializable
             'The keys of the Response attributes must be strings'
         );
         Assert::allIsArray($responseAttributes, 'The values of the Response attributes must be arrays');
+        Assert::string($clientId, 'The client ID must be a string, received "%s"');
+        Assert::string($requestIpAddress, 'The request IP address must be a string, received "%s"');
 
         $request = new self;
 
@@ -83,8 +77,12 @@ final class Request implements JsonSerializable
         $idpEntityIdAttribute->attributeId = 'IDPentityID';
         $idpEntityIdAttribute->value = $idpEntityId;
 
+        $clientIdAttribute = new Attribute;
+        $clientIdAttribute->attributeId = 'ClientID';
+        $clientIdAttribute->value = $clientId;
+
         $request->resource = new Resource;
-        $request->resource->attributes = [$spEntityIdAttribute, $idpEntityIdAttribute];
+        $request->resource->attributes = [$clientIdAttribute, $spEntityIdAttribute, $idpEntityIdAttribute];
 
         foreach ($responseAttributes as $id => $values) {
             foreach ($values as $value) {
@@ -96,6 +94,12 @@ final class Request implements JsonSerializable
             }
         }
 
+        $ipAddressAttribute = new Attribute;
+        $ipAddressAttribute->attributeId = self::XACML_ATTRIBUTE_IP_ADDRESS;
+        $ipAddressAttribute->value = $requestIpAddress;
+
+        $request->accessSubject->attributes[] = $ipAddressAttribute;
+
         return $request;
     }
 
@@ -103,8 +107,6 @@ final class Request implements JsonSerializable
     {
         return [
             'Request' => [
-                'ReturnPolicyIdList' => $this->returnPolicyIdList,
-                'CombinedDecision'   => $this->combinedDecision,
                 'AccessSubject'      => $this->accessSubject,
                 'Resource'           => $this->resource,
             ]

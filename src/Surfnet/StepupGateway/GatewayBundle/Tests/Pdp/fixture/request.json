@@ -1,21 +1,23 @@
 {
   "Request": {
-    "ReturnPolicyIdList": true,
-    "CombinedDecision": false,
     "AccessSubject": {
       "Attribute": [
         {
           "AttributeId": "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified",
-          "Value": "an-unspecified-name-id"
+          "Value": "urn:collab:person:surfguest.nl:johndoe"
         },
         {
-          "AttributeId": "urn:mace:dir:attribute-def:eduPersonAffiliation",
-          "Value": "student"
+          "AttributeId": "urn:mace:surfnet.nl:collab:xacml-attribute:ip-address",
+          "Value": "192.168.1.255"
         }
       ]
     },
     "Resource": {
       "Attribute": [
+        {
+          "AttributeId": "ClientID",
+          "Value": "SSA"
+        },
         {
           "AttributeId": "SPentityID",
           "Value": "avans_sp"

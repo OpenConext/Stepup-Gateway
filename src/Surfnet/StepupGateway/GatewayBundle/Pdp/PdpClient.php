@@ -47,7 +47,7 @@ final class PdpClient implements PdpClientInterface
 
     /**
      * @param Request $request
-     * @return PolicyDecision
+     * @return PolicyDecisionInterface
      */
     public function requestDecisionFor(Request $request)
     {
