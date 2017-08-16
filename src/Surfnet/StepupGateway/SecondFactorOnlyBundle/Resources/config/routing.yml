@@ -5,5 +5,5 @@ gateway_second_factor_only_metadata:
 
 gateway_second_factor_only_identityprovider_sso:
     path:     /second-factor-only/single-sign-on
-    methods:  [GET]
+    methods:  [GET, POST]
     defaults: { _controller: SurfnetStepupGatewaySecondFactorOnlyBundle:SecondFactorOnly:sso }

@@ -63,9 +63,23 @@ services:
         arguments:
             - @second_factor_only.hosted.identity_provider
 
+    second_factor_only.http.binding_factory:
+        class: Surfnet\SamlBundle\Http\HttpBindingFactory
+        arguments:
+            - @second_factor_only.http.redirect_binding
+            - @second_factor_only.http.post_binding
+
     second_factor_only.http.redirect_binding:
         class: Surfnet\SamlBundle\Http\RedirectBinding
         arguments:
+            - @logger
+            - @surfnet_saml.signing.signature_verifier
+            - @second_factor_only.entity_service
+
+    second_factor_only.http.post_binding:
+        class: Surfnet\SamlBundle\Http\PostBinding
+        arguments:
+            - '@surfnet_saml.saml2.response_processor'
             - @logger
             - @surfnet_saml.signing.signature_verifier
             - @second_factor_only.entity_service

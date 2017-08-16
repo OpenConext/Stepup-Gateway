@@ -46,10 +46,12 @@ class SecondFactorOnlyController extends Controller
         $logger->notice('Received AuthnRequest on second-factor-only endpoint, started processing');
 
         /** @var \Surfnet\SamlBundle\Http\RedirectBinding $redirectBinding */
-        $redirectBinding = $this->get('second_factor_only.http.redirect_binding');
+        $bindingFactory = $this->get('second_factor_only.http.binding_factory');
 
         try {
-            $originalRequest = $redirectBinding->receiveSignedAuthnRequestFrom($httpRequest);
+            $logger->notice('Determine what type of Binding is used in the Request');
+            $binding = $bindingFactory->build($httpRequest);
+            $originalRequest = $binding->receiveSignedAuthnRequestFrom($httpRequest);
         } catch (Exception $e) {
             $logger->critical(sprintf('Could not process Request, error: "%s"', $e->getMessage()));
 
