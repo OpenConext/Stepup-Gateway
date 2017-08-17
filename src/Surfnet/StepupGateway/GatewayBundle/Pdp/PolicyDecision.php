@@ -44,6 +44,11 @@ final class PolicyDecision
     private $statusMessage;
 
     /**
+     * @var null
+     */
+    private $statusCode;
+
+    /**
      * @param Response $response
      * @return PolicyDecision
      */
@@ -51,6 +56,8 @@ final class PolicyDecision
     {
         $policyDecision = new self;
         $policyDecision->decision = $response->decision;
+
+        $policyDecision->statusCode = $response->status->statusCode->value;
 
         if (isset($response->status->statusMessage)) {
             $policyDecision->statusMessage = $response->status->statusMessage;
@@ -115,7 +122,7 @@ final class PolicyDecision
     }
 
     /**
-     * @return null|string
+     * @return string
      */
     public function getStatusMessage()
     {
@@ -124,6 +131,23 @@ final class PolicyDecision
         }
 
         return $this->statusMessage;
+    }
+
+    /**
+     * Get the status message or status code of the decision.
+     *
+     * If no status message was present in the response this method will
+     * return the status code instead.
+     *
+     * @return string
+     */
+    public function getFormattedStatus()
+    {
+        if ($this->hasStatusMessage()) {
+            return $this->statusMessage;
+        }
+
+        return $this->statusCode;
     }
 
     /**

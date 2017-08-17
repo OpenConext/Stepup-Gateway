@@ -123,6 +123,36 @@ class PolicyDecisionTest extends TestCase
      * @test
      * @group Pdp
      */
+    public function status_message_contains_status_code()
+    {
+        $responseJson = json_decode(file_get_contents(__DIR__ . '/fixture/response_deny.json'), true);
+        $response = Response::fromData($responseJson);
+
+        $decision = PolicyDecision::fromResponse($response);
+        $message = $decision->getFormattedStatus();
+
+        $this->assertEquals('urn:oasis:names:tc:xacml:1.0:status:ok', $message);
+    }
+
+    /**
+     * @test
+     * @group Pdp
+     */
+    public function formatted_status_message_contains_status_code_and_optional_message()
+    {
+        $responseJson = json_decode(file_get_contents(__DIR__ . '/fixture/response_indeterminate.json'), true);
+        $response = Response::fromData($responseJson);
+
+        $decision = PolicyDecision::fromResponse($response);
+        $message = $decision->getFormattedStatus();
+
+        $this->assertEquals('Missing required attribute', $message);
+    }
+
+    /**
+     * @test
+     * @group Pdp
+     */
     public function a_localized_deny_message_cannot_be_acquired_if_the_chosen_and_the_default_locale_are_not_present()
     {
         $nonPresentLocale = 'de';
