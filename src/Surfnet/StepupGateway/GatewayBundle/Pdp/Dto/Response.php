@@ -84,10 +84,6 @@ final class Response
             throw new InvalidPdpResponseException('Key "Status" was not found in the PDP response');
         }
 
-        if (!isset($responseData['PolicyIdentifier'])) {
-            throw new InvalidPdpResponseException('Key "PolicyIdentifier" was not found in the PDP response');
-        }
-
         if (!isset($responseData['Decision'])) {
             throw new InvalidPdpResponseException('Key "Decision" was not found in the PDP response');
         }

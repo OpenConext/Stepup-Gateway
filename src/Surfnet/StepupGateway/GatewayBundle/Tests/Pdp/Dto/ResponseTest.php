@@ -101,22 +101,6 @@ class ResponseTest extends TestCase
      * @test
      * @group Pdp
      */
-    public function a_pdp_response_without_a_policy_identifier_is_invalid()
-    {
-        $this->setExpectedException(
-            '\Surfnet\StepupGateway\GatewayBundle\Pdp\Exception\InvalidPdpResponseException',
-            'Key "PolicyIdentifier" was not found in the PDP response'
-        );
-
-        $responseJson = file_get_contents(__DIR__ . '/../fixture/invalid/response_without_policy_identifier_key.json');
-
-        Response::fromData(json_decode($responseJson, true));
-    }
-
-    /**
-     * @test
-     * @group Pdp
-     */
     public function a_pdp_response_without_a_decision_is_invalid()
     {
         $this->setExpectedException(
