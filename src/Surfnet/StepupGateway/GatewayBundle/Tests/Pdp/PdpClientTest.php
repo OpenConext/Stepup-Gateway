@@ -57,7 +57,12 @@ class PdpClientTest extends TestCase
             ['deny'],
             ['indeterminate'],
             ['not_applicable'],
-            ['permit']
+            ['permit'],
+            ['cbac_indeterminate'],
+            ['cbac_not_applicable'],
+            ['cbac_permit_multiple_obligations'],
+            ['cbac_permit_obligation'],
+            ['cbac_permit_without_obligation'],
         ];
     }
 }
