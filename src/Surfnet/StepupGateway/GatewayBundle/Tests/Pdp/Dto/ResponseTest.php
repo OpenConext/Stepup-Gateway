@@ -24,6 +24,7 @@ use Surfnet\StepupGateway\GatewayBundle\Pdp\Dto\Response;
 use Surfnet\StepupGateway\GatewayBundle\Pdp\Dto\Response\AssociatedAdvice;
 use Surfnet\StepupGateway\GatewayBundle\Pdp\Dto\Response\AttributeAssignment;
 use Surfnet\StepupGateway\GatewayBundle\Pdp\Dto\Response\Category;
+use Surfnet\StepupGateway\GatewayBundle\Pdp\Dto\Response\Obligation;
 use Surfnet\StepupGateway\GatewayBundle\Pdp\Dto\Response\PolicyIdReference;
 use Surfnet\StepupGateway\GatewayBundle\Pdp\Dto\Response\PolicyIdentifier;
 use Surfnet\StepupGateway\GatewayBundle\Pdp\Dto\Response\PolicySetIdReference;
@@ -137,10 +138,13 @@ class ResponseTest extends TestCase
     public function pdpResponseProvider()
     {
         return [
-            'Decision: Deny'          => ['deny', $this->buildDenyResponse()],
-            'Decision: Permit'        => ['permit', $this->buildPermitResponse()],
-            'Decision: NotApplicable' => ['not_applicable', $this->buildNotApplicableResponse()],
-            'Decision: Indeterminate' => ['indeterminate', $this->buildIndeterminateResponse()],
+            'Decision: Deny'                           => ['deny', $this->buildDenyResponse()],
+            'Decision: Permit'                         => ['permit', $this->buildPermitResponse()],
+            'Decision: NotApplicable'                  => ['not_applicable', $this->buildNotApplicableResponse()],
+            'Decision: Indeterminate'                  => ['indeterminate', $this->buildIndeterminateResponse()],
+            'Decision: Permit w. one obligation'       => ['cbac_permit_obligation', $this->buildPermitWithOneObligationResponse()],
+            'Decision: Permit w. multiple obligations' => ['cbac_permit_multiple_obligations', $this->buildPermitWithMultipleObligationsResponse()],
+            'Decision: Permit w/o. obligation'         => ['cbac_permit_without_obligation', $this->buildPermitWithoutObligationResponse()],
         ];
     }
 
@@ -263,6 +267,77 @@ class ResponseTest extends TestCase
         $response->policyIdentifier->policyIdReference = [$policyIdReference];
 
         $response->decision = PolicyDecision::DECISION_INDETERMINATE;
+
+        return $response;
+    }
+
+    private function buildPermitWithOneObligationResponse()
+    {
+        $response = new Response;
+
+        $response->status                    = new Status;
+        $response->status->statusCode        = new StatusCode;
+        $response->status->statusCode->value = 'urn:oasis:names:tc:xacml:1.0:status:ok';
+
+        $attributeAssignment              = new AttributeAssignment();
+        $attributeAssignment->category    = 'urn:oasis:names:tc:xacml:1.0:subject-category:access-subject';
+        $attributeAssignment->attributeId = 'urn:loa:level';
+        $attributeAssignment->value       = 'http://test2.surfconext.nl/assurance/loa2';
+        $attributeAssignment->dataType    = 'http://www.w3.org/2001/XMLSchema#string';
+
+        $obligation                         = new Obligation;
+        $obligation->attributeAssignments[] = $attributeAssignment;
+        $obligation->id = 'urn:openconext:ssa:loa';
+        $response->obligations[] = $obligation;
+
+        $response->decision = PolicyDecision::DECISION_PERMIT;
+
+        return $response;
+    }
+
+    private function buildPermitWithMultipleObligationsResponse()
+    {
+        $response = new Response;
+
+        $response->status                    = new Status;
+        $response->status->statusCode        = new StatusCode;
+        $response->status->statusCode->value = 'urn:oasis:names:tc:xacml:1.0:status:ok';
+
+        $attributeAssignment1              = new AttributeAssignment();
+        $attributeAssignment1->category    = 'urn:oasis:names:tc:xacml:1.0:subject-category:access-subject';
+        $attributeAssignment1->attributeId = 'urn:loa:level';
+        $attributeAssignment1->value       = 'http://test2.surfconext.nl/assurance/loa2';
+        $attributeAssignment1->dataType    = 'http://www.w3.org/2001/XMLSchema#string';
+        $attributeAssignment2              = new AttributeAssignment();
+        $attributeAssignment2->category    = 'urn:oasis:names:tc:xacml:1.0:subject-category:access-subject';
+        $attributeAssignment2->attributeId = 'urn:loa:level';
+        $attributeAssignment2->value       = 'http://test2.surfconext.nl/assurance/loa3';
+        $attributeAssignment2->dataType    = 'http://www.w3.org/2001/XMLSchema#string';
+
+        $obligation                         = new Obligation;
+        $obligation->attributeAssignments[] = $attributeAssignment1;
+        $obligation->id = 'urn:openconext:ssa:loa';
+        $response->obligations[] = $obligation;
+
+        $obligation                         = new Obligation;
+        $obligation->attributeAssignments[] = $attributeAssignment2;
+        $obligation->id = 'urn:openconext:ssa:loa';
+        $response->obligations[] = $obligation;
+
+        $response->decision = PolicyDecision::DECISION_PERMIT;
+
+        return $response;
+    }
+
+    private function buildPermitWithoutObligationResponse()
+    {
+        $response = new Response;
+
+        $response->status                    = new Status;
+        $response->status->statusCode        = new StatusCode;
+        $response->status->statusCode->value = 'urn:oasis:names:tc:xacml:1.0:status:ok';
+
+        $response->decision = PolicyDecision::DECISION_PERMIT;
 
         return $response;
     }
