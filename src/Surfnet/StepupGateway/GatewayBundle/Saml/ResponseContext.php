@@ -171,6 +171,11 @@ class ResponseContext
         $authenticatingAuthorities = $assertion->getAuthenticatingAuthority();
         if (!empty($authenticatingAuthorities)) {
             $this->stateHandler->setAuthenticatingIdp(reset($authenticatingAuthorities));
+        } else {
+            // In SURFconext, the gateway is always used as a proxy so an AuthenticationAuthority element
+            // is always present. But since the element is optional in the SAML specification, we fall back
+            // to the issuer. This is helpful for development.
+            $this->stateHandler->setAuthenticatingIdp($assertion->getIssuer());
         }
 
         $this->stateHandler->saveAssertion($assertion->toXML()->ownerDocument->saveXML());
