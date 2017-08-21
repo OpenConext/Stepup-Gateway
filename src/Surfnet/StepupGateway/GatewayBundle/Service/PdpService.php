@@ -19,11 +19,13 @@
 namespace Surfnet\StepupGateway\GatewayBundle\Service;
 
 use Psr\Log\LoggerInterface;
-use Surfnet\StepupBundle\Value\Loa;
 use Surfnet\StepupBundle\Service\LoaResolutionService;
+use Surfnet\StepupBundle\Value\Loa;
 use Surfnet\StepupGateway\GatewayBundle\Exception\RuntimeException;
 use Surfnet\StepupGateway\GatewayBundle\Pdp\Dto\Request;
+use Surfnet\StepupGateway\GatewayBundle\Pdp\Dto\Response;
 use Surfnet\StepupGateway\GatewayBundle\Pdp\PdpClientInterface;
+use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
 
 /**
  * Call the Policy Decision Point API.
@@ -58,6 +60,24 @@ final class PdpService
         $this->loaResolutionService = $loaResolutionService;
         $this->logger = $logger;
         $this->clientId = $clientId;
+    }
+
+    /**
+     * Check if PDP is enabled for given the SP or IdP in current context.
+     *
+     * @param ResponseContext $context
+     * @return bool
+     */
+    public function isEnabledForSpOrIdp(ResponseContext $context)
+    {
+        $idp = $context->getAuthenticatingIdp();
+        $sp = $context->getServiceProvider();
+
+        if ($idp && $idp->pdpEnabled()) {
+            return true;
+        }
+
+        return $sp->pdpEnabled();
     }
 
     /**

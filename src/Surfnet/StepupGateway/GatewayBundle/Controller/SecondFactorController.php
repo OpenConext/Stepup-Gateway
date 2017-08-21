@@ -67,14 +67,17 @@ class SecondFactorController extends Controller
             $logger->notice(sprintf('Determined that the required Loa is "%s"', $requiredLoa));
         }
 
-        $requiredLoa = $this->getPdpService()->enforceObligatoryLoa(
-            $requiredLoa,
-            $context->getIdentityNameId(),
-            $context->getIdentityProvider()->getEntityId(),
-            $context->getServiceProvider()->getEntityId(),
-            $context->reconstituteAssertion()->getAttributes(),
-            $request->getClientIp()
-        );
+        if ($this->getPdpService()->isEnabledForSpOrIdp($context)) {
+            $logger->notice('Policy decision point (PDP) is enabled for SP or IdP');
+            $requiredLoa = $this->getPdpService()->enforceObligatoryLoa(
+                $requiredLoa,
+                $context->getIdentityNameId(),
+                $context->getAuthenticatingIdpEntityId(),
+                $context->getServiceProvider()->getEntityId(),
+                $context->reconstituteAssertion()->getAttributes(),
+                $request->getClientIp()
+            );
+        }
 
         if ($this->getStepupService()->isIntrinsicLoa($requiredLoa)) {
             $this->get('gateway.authentication_logger')->logIntrinsicLoaAuthentication($originalRequestId);

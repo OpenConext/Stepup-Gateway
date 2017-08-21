@@ -23,10 +23,13 @@ use PHPUnit_Framework_TestCase;
 use Psr\Log\LoggerInterface;
 use Surfnet\StepupBundle\Service\LoaResolutionService;
 use Surfnet\StepupBundle\Value\Loa;
+use Surfnet\StepupGateway\GatewayBundle\Entity\IdentityProvider;
+use Surfnet\StepupGateway\GatewayBundle\Entity\ServiceProvider;
+use Surfnet\StepupGateway\GatewayBundle\Exception\RuntimeException;
 use Surfnet\StepupGateway\GatewayBundle\Pdp\PdpClientInterface;
 use Surfnet\StepupGateway\GatewayBundle\Pdp\PolicyDecision;
 use Surfnet\StepupGateway\GatewayBundle\Pdp\PolicyDecisionInterface;
-use Surfnet\StepupGateway\GatewayBundle\Exception\RuntimeException;
+use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
 use Surfnet\StepupGateway\GatewayBundle\Service\PdpService;
 
 /**
@@ -334,5 +337,94 @@ final class PdpServiceTest extends PHPUnit_Framework_TestCase
             [],
             '::1'
         );
+    }
+
+    /**
+     * @test
+     */
+    public function pdp_is_enabled_if_enabled_for_sp()
+    {
+        $service = new PdpService(
+            $this->pdpClient,
+            $this->loaResolutionService,
+            $this->logger,
+            'StepUp'
+        );
+
+        $idp = Mockery::mock(IdentityProvider::class);
+        $idp->shouldReceive('pdpEnabled')
+            ->andReturn(false);
+
+        $sp = Mockery::mock(IdentityProvider::class);
+        $sp ->shouldReceive('pdpEnabled')
+            ->andReturn(true);
+
+        $context = Mockery::mock(ResponseContext::class);
+        $context->shouldReceive('getAuthenticatingIdp')
+            ->andReturn($idp);
+        $context->shouldReceive('getServiceProvider')
+            ->andReturn($sp);
+
+        $enabled = $service->isEnabledForSpOrIdp($context);
+
+        $this->assertTrue($enabled);
+    }
+
+    /**
+     * @test
+     */
+    public function pdp_is_enabled_if_enabled_for_idp()
+    {
+        $service = new PdpService(
+            $this->pdpClient,
+            $this->loaResolutionService,
+            $this->logger,
+            'StepUp'
+        );
+
+        $idp = Mockery::mock(IdentityProvider::class);
+        $idp->shouldReceive('pdpEnabled')
+            ->andReturn(true);
+
+        $sp = Mockery::mock(IdentityProvider::class);
+        $sp ->shouldReceive('pdpEnabled')
+            ->andReturn(false);
+
+        $context = Mockery::mock(ResponseContext::class);
+        $context->shouldReceive('getAuthenticatingIdp')
+            ->andReturn($idp);
+        $context->shouldReceive('getServiceProvider')
+            ->andReturn($sp);
+
+        $enabled = $service->isEnabledForSpOrIdp($context);
+
+        $this->assertTrue($enabled);
+    }
+
+    /**
+     * @test
+     */
+    public function pdp_is_not_enabled_if_idp_unknown()
+    {
+        $service = new PdpService(
+            $this->pdpClient,
+            $this->loaResolutionService,
+            $this->logger,
+            'StepUp'
+        );
+
+        $sp = Mockery::mock(ServiceProvider::class);
+        $sp ->shouldReceive('pdpEnabled')
+            ->andReturn(false);
+
+        $context = Mockery::mock(ResponseContext::class);
+        $context->shouldReceive('getAuthenticatingIdp')
+            ->andReturnNull();
+        $context->shouldReceive('getServiceProvider')
+            ->andReturn($sp);
+
+        $enabled = $service->isEnabledForSpOrIdp($context);
+
+        $this->assertFalse($enabled);
     }
 }
