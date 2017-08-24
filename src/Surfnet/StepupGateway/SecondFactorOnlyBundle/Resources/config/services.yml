@@ -112,3 +112,21 @@ services:
         class: Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\LoaAliasLookupService
         arguments:
             - [] # See SurfnetStepupGatewaySecondFactorOnlyExtension::replaceLoaAliasConfig
+
+    second_factor_only.adfs.state_handler:
+        public: false
+        arguments:
+            - @session
+
+        class: Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\StateHandler
+
+    second_factor_only.adfs.request_helper:
+        arguments:
+            - @second_factor_only.adfs.state_handler
+            - @logger
+        class: Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\RequestHelper
+    second_factor_only.adfs.response_helper:
+        arguments:
+            - @second_factor_only.adfs.state_handler
+            - @logger
+        class: Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\ResponseHelper
