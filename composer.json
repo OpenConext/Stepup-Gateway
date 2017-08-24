@@ -32,7 +32,7 @@
         "jms/translation-bundle": "~1.1.0",
         "jms/di-extra-bundle": "~1.4.0",
         "mockery/mockery": "~0.9.0",
-        "surfnet/stepup-saml-bundle": "2.7.0",
+        "surfnet/stepup-saml-bundle": "~2.7",
         "surfnet/stepup-u2f-bundle": "dev-develop",
         "mopa/composer-bridge": "dev-master as v1.5.0",
         "surfnet/stepup-bundle": "^2.0",
