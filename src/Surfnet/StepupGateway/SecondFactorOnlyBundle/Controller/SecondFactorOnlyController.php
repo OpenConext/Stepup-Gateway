@@ -20,6 +20,7 @@ namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Controller;
 
 use Exception;
 use Surfnet\SamlBundle\SAML2\AuthnRequest;
+use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\ResponseHelper;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Saml\ResponseFactory;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\AdfsHelper;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\LoaAliasLookupService;
@@ -185,13 +186,30 @@ class SecondFactorOnlyController extends Controller
             $response->getId()
         ));
 
+        $responseRendering = $this->get('second_factor_only.response_rendering');
+
         $adfsHelper = $this->get('second_factor_only.adfs.response_helper');
         if ($adfsHelper->isAdfsResponse($originalRequestId)) {
-            $logger->notice('Sending response to ADFS plugin');
-            $response = $adfsHelper->transformResponse($response);
-        }
+            $xmlResponse = $responseRendering->getResponseAsXML($response);
+            try {
+                $adfsParameters = $adfsHelper->retrieveAdfsParameters();
+            } catch (Exception $e) {
+                $logger->critical(sprintf('Could not process ADFS Response parameters, error: "%s"', $e->getMessage()));
+                return $this->render('SurfnetStepupGatewayGatewayBundle:Gateway:unrecoverableError.html.twig');
+            }
 
-        $responseRendering = $this->get('second_factor_only.response_rendering');
+            $logger->notice('Sending ACS Response to ADFS plugin');
+            return $this->render(
+                '@SurfnetStepupGatewaySecondFactorOnly/Adfs/consumeAssertion.html.twig',
+                [
+                    'acu' => $responseContext->getDestination(),
+                    'response' => $xmlResponse,
+                    'context' => $adfsParameters->getContext(),
+                    'authMethod' => $adfsParameters->getAuthMethod(),
+                    'requestId' => $adfsParameters->getRequestId(),
+                ]
+            );
+        }
         return $responseRendering->renderResponse($responseContext, $response);
     }
 

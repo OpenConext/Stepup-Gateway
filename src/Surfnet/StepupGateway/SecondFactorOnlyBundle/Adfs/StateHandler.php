@@ -71,6 +71,44 @@ class StateHandler
     }
 
     /**
+     * @return mixed|null
+     */
+    public function getRequestId()
+    {
+        return $this->get('request_id');
+    }
+
+    /**
+     * @return mixed|null
+     */
+    public function getAuthMethod()
+    {
+        return $this->get('auth_method');
+    }
+
+    /**
+     * @return mixed|null
+     */
+    public function getContext()
+    {
+        return $this->get('context');
+    }
+
+    /**
+     * @param string $requestId
+     * @return bool
+     */
+    public function hasMatchingRequestId($requestId)
+    {
+        $requestIdFromSession = $this->get('request_id');
+        if ($requestIdFromSession && $requestIdFromSession == $requestId) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * @param string $key
      * @param mixed $value Any scalar
      */
