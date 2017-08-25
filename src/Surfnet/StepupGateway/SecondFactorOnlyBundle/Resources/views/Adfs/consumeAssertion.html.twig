@@ -20,10 +20,9 @@
     </noscript>
     One moment please...
     <form method="post" action="{{ acu }}">
-        <input type="hidden" name="Response" value="{{ response }}" />
+        <input type="hidden" name="SAMLResponse" value="{{ samlResponse }}" />
         <input type="hidden" name="AuthMethod" value="{{ authMethod|escape }}" />
         <input type="hidden" name="Context" value="{{ Context|escape }}" />
-        <input type="hidden" name="RequestId" value="{{ requestId|escape }}" />
         <input type="submit" class="hidden" />
         <noscript>
             <input type="submit" value="Submit"/>

@@ -20,7 +20,6 @@ namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Controller;
 
 use Exception;
 use Surfnet\SamlBundle\SAML2\AuthnRequest;
-use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\ResponseHelper;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Saml\ResponseFactory;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\AdfsHelper;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\LoaAliasLookupService;
@@ -203,10 +202,9 @@ class SecondFactorOnlyController extends Controller
                 '@SurfnetStepupGatewaySecondFactorOnly/Adfs/consumeAssertion.html.twig',
                 [
                     'acu' => $responseContext->getDestination(),
-                    'response' => $xmlResponse,
+                    'samlResponse' => $xmlResponse,
                     'context' => $adfsParameters->getContext(),
                     'authMethod' => $adfsParameters->getAuthMethod(),
-                    'requestId' => $adfsParameters->getRequestId(),
                 ]
             );
         }
