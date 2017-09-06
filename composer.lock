@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "c75ffeb4f4853b548bbeefb536e19284",
+    "content-hash": "d6a0a318f8d9fc246e540ef51bea7947",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -1958,7 +1958,7 @@
                 "Symfony2",
                 "composer"
             ],
-            "time": "2015-10-01 19:20:19"
+            "time": "2015-10-01T19:20:19+00:00"
         },
         {
             "name": "nelmio/security-bundle",
@@ -2621,16 +2621,16 @@
         },
         {
             "name": "surfnet/stepup-saml-bundle",
-            "version": "2.8.0-beta",
+            "version": "2.8.1-beta",
             "source": {
                 "type": "git",
                 "url": "https://github.com/OpenConext/Stepup-saml-bundle.git",
-                "reference": "bfdd4f1084e8e9b62ff36754127320314c4a3ea5"
+                "reference": "ecd24dcb3cbf03172600e742475cfee89ae2e808"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/OpenConext/Stepup-saml-bundle/zipball/bfdd4f1084e8e9b62ff36754127320314c4a3ea5",
-                "reference": "bfdd4f1084e8e9b62ff36754127320314c4a3ea5",
+                "url": "https://api.github.com/repos/OpenConext/Stepup-saml-bundle/zipball/ecd24dcb3cbf03172600e742475cfee89ae2e808",
+                "reference": "ecd24dcb3cbf03172600e742475cfee89ae2e808",
                 "shasum": ""
             },
             "require": {
@@ -2665,7 +2665,7 @@
                 "stepup",
                 "surfnet"
             ],
-            "time": "2017-08-24T14:04:12+00:00"
+            "time": "2017-09-06T12:27:40+00:00"
         },
         {
             "name": "surfnet/stepup-u2f-bundle",
@@ -2707,7 +2707,7 @@
                 "Apache-2.0"
             ],
             "description": "The SURFnet Step-up U2F bundle contains server-side device verification, and the necessary forms and resources to enable client-side U2F interaction with Step-up Identities",
-            "time": "2015-09-17 15:02:04"
+            "time": "2015-09-17T15:02:04+00:00"
         },
         {
             "name": "surfnet/yubikey-api-client",
@@ -5124,10 +5124,8 @@
             "package": "mopa/composer-bridge"
         }
     ],
-    "minimum-stability": "stable",
+    "minimum-stability": "beta",
     "stability-flags": {
-        "mopa/bootstrap-bundle": 5,
-        "surfnet/stepup-saml-bundle": 10,
         "surfnet/stepup-u2f-bundle": 20,
         "mopa/composer-bridge": 20
     },
