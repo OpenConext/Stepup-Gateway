@@ -78,7 +78,6 @@ class ResponseHelperTest extends \PHPUnit_Framework_TestCase
 
         $params = $this->helper->retrieveAdfsParameters();
         $this->assertEquals('ADFS:SCSA', $params->getAuthMethod());
-        $this->assertEquals('my-request-id', $params->getRequestId());
         $this->assertEquals('<blob></blob>', $params->getContext());
     }
 

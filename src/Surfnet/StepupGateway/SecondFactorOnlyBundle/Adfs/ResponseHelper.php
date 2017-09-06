@@ -70,6 +70,6 @@ final class ResponseHelper
         $context = $this->stateHandler->getContext();
         $requestId = $this->stateHandler->getRequestId();
         $this->logger->notice(sprintf('Retrieving ADFS Response parameters for RequestId: "%s"', $requestId));
-        return AdfsResponse::fromValues($authMethod, $context, $requestId);
+        return AdfsResponse::fromValues($authMethod, $context);
     }
 }
