@@ -22,7 +22,7 @@
     <form method="post" action="{{ acu }}">
         <input type="hidden" name="SAMLResponse" value="{{ samlResponse }}" />
         <input type="hidden" name="AuthMethod" value="{{ authMethod|escape }}" />
-        <input type="hidden" name="Context" value="{{ Context|escape }}" />
+        <input type="hidden" name="Context" value="{{ context|escape }}" />
         <input type="submit" class="hidden" />
         <noscript>
             <input type="submit" value="Submit"/>
