@@ -46,7 +46,6 @@ final class RequestHelper
     private static $requiredParams = [
         self::ADFS_PARAM_AUTH_METHOD,
         self::ADFS_PARAM_CONTEXT,
-        self::ADFS_PARAM_AUTHNREQUEST
     ];
 
     public function __construct(StateHandler $stateHandler, LoggerInterface $logger)
