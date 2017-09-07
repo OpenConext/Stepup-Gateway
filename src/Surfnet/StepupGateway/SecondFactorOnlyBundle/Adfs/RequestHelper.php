@@ -39,9 +39,6 @@ final class RequestHelper
 
     const ADFS_PARAM_AUTH_METHOD = 'AuthMethod';
     const ADFS_PARAM_CONTEXT = 'Context';
-    const ADFS_PARAM_AUTHNREQUEST = 'request';
-
-    const SAML_AUTHNREQUST_PARAM_REQUEST = 'SAMLRequest';
 
     private static $requiredParams = [
         self::ADFS_PARAM_AUTH_METHOD,
@@ -72,55 +69,30 @@ final class RequestHelper
      * Transforms the Adfs request to a valid Saml AuthnRequest
      *
      * @param Request $httpRequest
+     * @param string $requestId AuthnRequest ID
      * @return Request
      * @throws InvalidArgumentException
      */
-    public function transformRequest(Request $httpRequest)
+    public function transformRequest(Request $httpRequest, $requestId)
     {
         $this->logger->notice('Receiving and validating ADFS request parameters');
         $authMethod = $httpRequest->request->get(self::ADFS_PARAM_AUTH_METHOD);
         $context = $httpRequest->request->get(self::ADFS_PARAM_CONTEXT);
-        $authnRequest = $httpRequest->request->get(self::ADFS_PARAM_AUTHNREQUEST);
 
+        Assert::stringNotEmpty($requestId);
         Assert::stringNotEmpty($authMethod);
         Assert::stringNotEmpty($context);
-        Assert::stringNotEmpty($authnRequest);
-        $requestId = $this->getRequestIdFrom($authnRequest);
 
-        $this->logger->notice(sprintf('Store ADFS parameters for request id: "%s"', $requestId));
         $this->stateHandler
             ->setRequestId($requestId)
             ->setAuthMethod($authMethod)
             ->setContext($context);
 
         $this->logger->notice('Transforming ADFS Request to a valid AuthnRequest');
-        $httpRequest->request->set(
-            self::SAML_AUTHNREQUST_PARAM_REQUEST,
-            $authnRequest
-        );
 
         $httpRequest->request->remove(self::ADFS_PARAM_AUTH_METHOD);
         $httpRequest->request->remove(self::ADFS_PARAM_CONTEXT);
 
         return $httpRequest;
-    }
-
-    /**
-     * @param string $samlRequest
-     * @return string
-     * @throws InvalidArgumentException
-     */
-    private function getRequestIdFrom($samlRequest)
-    {
-        // additional security against XXE Processing vulnerability
-        $previous = libxml_disable_entity_loader(true);
-        $document = SAML2_DOMDocumentFactory::fromString(base64_decode($samlRequest));
-        libxml_disable_entity_loader($previous);
-        $samlRequestNode = $document->firstChild;
-
-        if (!$samlRequestNode->hasAttribute('ID')) {
-            throw new InvalidArgumentException('The received AuthnRequest does not have a request id');
-        }
-        return $samlRequestNode->getAttribute('ID');
     }
 }

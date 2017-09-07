@@ -45,18 +45,6 @@ class SecondFactorOnlyController extends Controller
 
         $logger->notice('Received AuthnRequest on second-factor-only endpoint, started processing');
 
-        // ADFS support
-        $adfsHelper = $this->get('second_factor_only.adfs.request_helper');
-        if ($adfsHelper->isAdfsRequest($httpRequest)) {
-            $logger->notice('Received AuthnRequest from an ADFS');
-            try {
-                $httpRequest = $adfsHelper->transformRequest($httpRequest);
-            } catch (Exception $e) {
-                $logger->critical(sprintf('Could not process ADFS Request, error: "%s"', $e->getMessage()));
-                return $this->render('SurfnetStepupGatewayGatewayBundle:Gateway:unrecoverableError.html.twig');
-            }
-        }
-
         /** @var \Surfnet\SamlBundle\Http\RedirectBinding $redirectBinding */
         $bindingFactory = $this->get('second_factor_only.http.binding_factory');
 
@@ -77,6 +65,18 @@ class SecondFactorOnlyController extends Controller
             $originalRequest->getServiceProvider(),
             $originalRequest->getRequestId()
         ));
+
+        // ADFS support
+        $adfsHelper = $this->get('second_factor_only.adfs.request_helper');
+        if ($adfsHelper->isAdfsRequest($httpRequest)) {
+            $logger->notice('Received AuthnRequest from an ADFS');
+            try {
+                $httpRequest = $adfsHelper->transformRequest($httpRequest, $originalRequest->getRequestId());
+            } catch (Exception $e) {
+                $logger->critical(sprintf('Could not process ADFS Request, error: "%s"', $e->getMessage()));
+                return $this->render('SurfnetStepupGatewayGatewayBundle:Gateway:unrecoverableError.html.twig');
+            }
+        }
 
         $stateHandler = $this->get('gateway.proxy.state_handler');
         $stateHandler
