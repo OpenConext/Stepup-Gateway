@@ -21,7 +21,6 @@ namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Controller;
 use Exception;
 use Surfnet\SamlBundle\SAML2\AuthnRequest;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Saml\ResponseFactory;
-use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\AdfsHelper;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\LoaAliasLookupService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
