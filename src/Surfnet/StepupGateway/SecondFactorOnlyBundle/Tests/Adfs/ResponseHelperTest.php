@@ -75,6 +75,7 @@ class ResponseHelperTest extends \PHPUnit_Framework_TestCase
         $this->stateHandler->shouldReceive('getAuthMethod')->andReturn('ADFS:SCSA');
         $this->stateHandler->shouldReceive('getContext')->andReturn('<blob></blob>');
         $this->stateHandler->shouldReceive('getRequestId')->andReturn('my-request-id');
+        $this->stateHandler->shouldReceive('getAssertionConsumerServiceUrl')->andReturn('http://test');
 
         $params = $this->helper->retrieveAdfsParameters();
         $this->assertEquals('ADFS:SCSA', $params->getAuthMethod());
@@ -90,6 +91,7 @@ class ResponseHelperTest extends \PHPUnit_Framework_TestCase
         $this->stateHandler->shouldReceive('getAuthMethod')->andReturn(null);
         $this->stateHandler->shouldReceive('getContext')->andReturn('<blob></blob>');
         $this->stateHandler->shouldReceive('getRequestId')->andReturn('my-request-id');
+        $this->stateHandler->shouldReceive('getAssertionConsumerServiceUrl')->andReturn('http://test');
         $this->helper->retrieveAdfsParameters();
     }
 }

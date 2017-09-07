@@ -51,6 +51,8 @@ class SecondFactorOnlyController extends Controller
         try {
             $logger->notice('Determine what type of Binding is used in the Request');
             $binding = $bindingFactory->build($httpRequest);
+
+            /** @var \Surfnet\SamlBundle\SAML2\ReceivedAuthnRequest $originalRequest */
             $originalRequest = $binding->receiveSignedAuthnRequestFrom($httpRequest);
         } catch (Exception $e) {
             $logger->critical(sprintf('Could not process Request, error: "%s"', $e->getMessage()));
@@ -71,7 +73,11 @@ class SecondFactorOnlyController extends Controller
         if ($adfsHelper->isAdfsRequest($httpRequest)) {
             $logger->notice('Received AuthnRequest from an ADFS');
             try {
-                $httpRequest = $adfsHelper->transformRequest($httpRequest, $originalRequest->getRequestId());
+                $httpRequest = $adfsHelper->transformRequest(
+                    $httpRequest,
+                    $originalRequest->getRequestId(),
+                    $originalRequest->getAssertionConsumerServiceURL()
+                );
             } catch (Exception $e) {
                 $logger->critical(sprintf('Could not process ADFS Request, error: "%s"', $e->getMessage()));
                 return $this->render('SurfnetStepupGatewayGatewayBundle:Gateway:unrecoverableError.html.twig');
@@ -200,7 +206,7 @@ class SecondFactorOnlyController extends Controller
             return $this->render(
                 '@SurfnetStepupGatewaySecondFactorOnly/Adfs/consumeAssertion.html.twig',
                 [
-                    'acu' => $responseContext->getDestination(),
+                    'acu' => $adfsParameters->getAssertionConsumerServiceUrl(),
                     'samlResponse' => $xmlResponse,
                     'context' => $adfsParameters->getContext(),
                     'authMethod' => $adfsParameters->getAuthMethod(),

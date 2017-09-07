@@ -2621,16 +2621,16 @@
         },
         {
             "name": "surfnet/stepup-saml-bundle",
-            "version": "2.8.1-beta",
+            "version": "2.8.2-beta",
             "source": {
                 "type": "git",
                 "url": "https://github.com/OpenConext/Stepup-saml-bundle.git",
-                "reference": "ecd24dcb3cbf03172600e742475cfee89ae2e808"
+                "reference": "ad7d7fcb4d697b5f65d23afea6b7e59a2fefebca"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/OpenConext/Stepup-saml-bundle/zipball/ecd24dcb3cbf03172600e742475cfee89ae2e808",
-                "reference": "ecd24dcb3cbf03172600e742475cfee89ae2e808",
+                "url": "https://api.github.com/repos/OpenConext/Stepup-saml-bundle/zipball/ad7d7fcb4d697b5f65d23afea6b7e59a2fefebca",
+                "reference": "ad7d7fcb4d697b5f65d23afea6b7e59a2fefebca",
                 "shasum": ""
             },
             "require": {
@@ -2665,7 +2665,7 @@
                 "stepup",
                 "surfnet"
             ],
-            "time": "2017-09-06T12:27:40+00:00"
+            "time": "2017-09-07T14:41:32+00:00"
         },
         {
             "name": "surfnet/stepup-u2f-bundle",

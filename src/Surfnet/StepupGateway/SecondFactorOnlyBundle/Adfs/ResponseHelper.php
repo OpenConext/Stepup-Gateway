@@ -69,7 +69,9 @@ final class ResponseHelper
         $authMethod = $this->stateHandler->getAuthMethod();
         $context = $this->stateHandler->getContext();
         $requestId = $this->stateHandler->getRequestId();
+        $acsUrl = $this->stateHandler->getAssertionConsumerServiceUrl();
+
         $this->logger->notice(sprintf('Retrieving ADFS Response parameters for RequestId: "%s"', $requestId));
-        return AdfsResponse::fromValues($authMethod, $context);
+        return AdfsResponse::fromValues($authMethod, $context, $acsUrl);
     }
 }
