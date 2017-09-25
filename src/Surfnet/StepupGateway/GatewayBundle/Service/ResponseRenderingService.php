@@ -117,7 +117,7 @@ final class ResponseRenderingService
      * @param SAML2_Response $response
      * @return string
      */
-    private function getResponseAsXML(SAML2_Response $response)
+    public function getResponseAsXML(SAML2_Response $response)
     {
         return base64_encode($response->toUnsignedXML()->ownerDocument->saveXML());
     }
