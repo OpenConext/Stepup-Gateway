@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "1461499d7f3b54ff3023304f5c3b40e6",
+    "content-hash": "38879583d98a8ce369f68dc8520ca680",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -2621,16 +2621,16 @@
         },
         {
             "name": "surfnet/stepup-saml-bundle",
-            "version": "2.8.2-beta",
+            "version": "2.8.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/OpenConext/Stepup-saml-bundle.git",
-                "reference": "ad7d7fcb4d697b5f65d23afea6b7e59a2fefebca"
+                "reference": "f2f14f8be692a350227372438c64518ca482086e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/OpenConext/Stepup-saml-bundle/zipball/ad7d7fcb4d697b5f65d23afea6b7e59a2fefebca",
-                "reference": "ad7d7fcb4d697b5f65d23afea6b7e59a2fefebca",
+                "url": "https://api.github.com/repos/OpenConext/Stepup-saml-bundle/zipball/f2f14f8be692a350227372438c64518ca482086e",
+                "reference": "f2f14f8be692a350227372438c64518ca482086e",
                 "shasum": ""
             },
             "require": {
@@ -2665,7 +2665,7 @@
                 "stepup",
                 "surfnet"
             ],
-            "time": "2017-09-07T14:41:32+00:00"
+            "time": "2017-09-25T11:09:05+00:00"
         },
         {
             "name": "surfnet/stepup-u2f-bundle",
@@ -5124,8 +5124,9 @@
             "package": "mopa/composer-bridge"
         }
     ],
-    "minimum-stability": "beta",
+    "minimum-stability": "stable",
     "stability-flags": {
+        "mopa/bootstrap-bundle": 5,
         "surfnet/stepup-u2f-bundle": 20,
         "mopa/composer-bridge": 20
     },
