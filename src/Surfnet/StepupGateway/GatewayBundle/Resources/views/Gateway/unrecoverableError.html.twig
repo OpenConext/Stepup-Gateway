@@ -5,7 +5,7 @@
 {% block content %}
     <p class="bg-danger">
         {{ 'gateway.error.unrecoverable_error'|trans }}
-        {% if message is not null %}
+        {% if message is defined %}
             <br>
             {{ 'gateway.error.unrecoverable_error_message_intro'|trans }}
             <br>
