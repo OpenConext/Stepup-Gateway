@@ -72,14 +72,14 @@ final class LoaResolutionService
     public function resolve($loaId)
     {
         if (empty($loaId)) {
-            $this->logger->info('No LOA requested, sending response with status Requester Error');
+            $this->logger->notice('No LOA requested, sending response with status Requester Error');
             return '';
         }
 
         $loaId = $this->loaAliasLookup->findLoaIdByAlias($loaId);
 
         if (!$loaId) {
-            $this->logger->info(sprintf(
+            $this->logger->notice(sprintf(
                 'Requested required Loa "%s" does not have a second factor alias',
                 $loaId
             ));
@@ -87,7 +87,7 @@ final class LoaResolutionService
         }
 
         if (!$this->loaResolution->hasLoa($loaId)) {
-            $this->logger->info(sprintf(
+            $this->logger->notice(sprintf(
                 'Requested required Loa "%s" does not exist',
                 $loaId
             ));
