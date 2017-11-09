@@ -117,6 +117,10 @@ services:
         class: Surfnet\StepupGateway\GatewayBundle\Form\Type\VerifyYubikeyOtpType
         tags: [{ name: form.type, alias: gateway_verify_yubikey_otp }]
 
+    gateway.form.choose_second_factor:
+        class: Surfnet\StepupGateway\GatewayBundle\Form\Type\ChooseSecondFactorType
+        tags: [{ name: form.type, alias: gateway_choose_second_factor }]
+
     gateway.form.send_sms_challenge:
         class: Surfnet\StepupGateway\GatewayBundle\Form\Type\SendSmsChallengeType
         tags: [{ name: form.type, alias: gateway_send_sms_challenge }]
