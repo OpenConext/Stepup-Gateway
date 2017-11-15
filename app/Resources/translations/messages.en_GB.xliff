@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:jms="urn:jms:translation" version="1.2">
-  <file date="2017-05-23T15:17:23Z" source-language="en" target-language="en_GB" datatype="plaintext" original="not.available">
+  <file date="2017-11-09T14:30:38Z" source-language="en" target-language="en_GB" datatype="plaintext" original="not.available">
     <header>
       <tool tool-id="JMSTranslationBundle" tool-name="JMSTranslationBundle" tool-version="1.1.0-DEV"/>
       <note>The source node in most cases contains the sample message as written by the developer. If it looks like a dot-delimitted string such as "form.label.firstname", then the developer has not provided a default message.</note>
@@ -64,9 +64,24 @@
         <target>Unrecoverable error</target>
       </trans-unit>
       <trans-unit id="ad7b85583eab0d11276cba0979bc97e4a45be68d" resname="gateway.error.unrecoverable_error_message_intro">
-        <jms:reference-file line="9">views/Gateway/unrecoverableError.html.twig</jms:reference-file>
+        <jms:reference-file line="10">views/Gateway/unrecoverableError.html.twig</jms:reference-file>
         <source>gateway.error.unrecoverable_error_message_intro</source>
         <target state="new">gateway.error.unrecoverable_error_message_intro</target>
+      </trans-unit>
+      <trans-unit id="6d6e665338c60db3539752789daa318cc72e8002" resname="gateway.form.choose_second_factor.button.cancel">
+        <jms:reference-file line="51">Form/Type/ChooseSecondFactorType.php</jms:reference-file>
+        <source>gateway.form.choose_second_factor.button.cancel</source>
+        <target>Cancel</target>
+      </trans-unit>
+      <trans-unit id="ee2f7d95292d7dd3cae91c7855aae08d37754b5a" resname="gateway.form.choose_second_factor.button.second_factor">
+        <jms:reference-file line="36">Form/Type/ChooseSecondFactorType.php</jms:reference-file>
+        <source>gateway.form.choose_second_factor.button.second_factor</source>
+        <target>Choose</target>
+      </trans-unit>
+      <trans-unit id="712389ad04974ac705f125ab79172fc63db959f5" resname="gateway.form.choose_second_factor.button.submit">
+        <jms:reference-file line="47">Form/Type/ChooseSecondFactorType.php</jms:reference-file>
+        <source>gateway.form.choose_second_factor.button.submit</source>
+        <target>Submit</target>
       </trans-unit>
       <trans-unit id="65f3ce4b0efbcaaaafd540e24188ea54d0851540" resname="gateway.form.gateway_cancel_second_factor_verification.button.cancel_verification">
         <jms:reference-file line="29">Form/Type/CancelSecondFactorVerificationType.php</jms:reference-file>
@@ -145,6 +160,7 @@
       </trans-unit>
       <trans-unit id="53c1b4469c10803f2e6bfb5fd31afb68c7f9556f" resname="gateway.gateway.consume_assertion.title">
         <jms:reference-file line="15">views/Gateway/consumeAssertion.html.twig</jms:reference-file>
+        <jms:reference-file line="15">views/Adfs/consumeAssertion.html.twig</jms:reference-file>
         <source>gateway.gateway.consume_assertion.title</source>
         <target>One moment please</target>
       </trans-unit>
@@ -211,8 +227,18 @@
         <source>gateway.gssp.unprocessable_response.title</source>
         <target>Unprocessable login response</target>
       </trans-unit>
+      <trans-unit id="75964b2f1748875ae1c270b8e25a9a5b2ea6b700" resname="gateway.second_factor.choose_second_factor.description">
+        <jms:reference-file line="8">views/SecondFactor/chooseSecondFactor.html.twig</jms:reference-file>
+        <source>gateway.second_factor.choose_second_factor.description</source>
+        <target>Please select your favourite token below and click the submit button.</target>
+      </trans-unit>
+      <trans-unit id="fdeeb4b0c6e2a94aec8a11728946c13a325f8366" resname="gateway.second_factor.choose_second_factor.title">
+        <jms:reference-file line="3">views/SecondFactor/chooseSecondFactor.html.twig</jms:reference-file>
+        <source>gateway.second_factor.choose_second_factor.title</source>
+        <target>Choose your favourite token</target>
+      </trans-unit>
       <trans-unit id="1c41e8d2b8040894426471450740d39af284d440" resname="gateway.second_factor.sms.challenge_body">
-        <jms:reference-file line="294">GatewayBundle/Service/StepUpAuthenticationService.php</jms:reference-file>
+        <jms:reference-file line="332">GatewayBundle/Service/StepUpAuthenticationService.php</jms:reference-file>
         <source>gateway.second_factor.sms.challenge_body</source>
         <target>Your SMS code: %challenge%</target>
       </trans-unit>
