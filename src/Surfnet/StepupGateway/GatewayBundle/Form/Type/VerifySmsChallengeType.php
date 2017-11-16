@@ -39,7 +39,7 @@ class VerifySmsChallengeType extends AbstractType
         ]);
         $builder->add('resend-challenge', 'anchor', [
             'label' => 'gateway.form.verify_sms_challenge.button.resend_challenge',
-            'attr'  => ['class' => 'btn btn-default'],
+            'attr'  => ['class' => 'btn btn-default pull-right'],
             'route' => 'gateway_verify_second_factor_sms',
         ]);
         $builder->add('cancel', 'submit', [
