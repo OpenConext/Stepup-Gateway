@@ -28,7 +28,7 @@ class SendSmsChallengeType extends AbstractType
     {
         $builder->add('send-challenge', 'submit', [
             'label' => 'gateway.form.gateway_send_sms_challenge.button.send_challenge',
-            'attr' => [ 'class' => 'btn btn-primary' ],
+            'attr' => [ 'class' => 'btn btn-primary pull-right' ],
         ]);
         $builder->add('cancel', 'submit', [
             'label' => 'gateway.form.send_sms_challenge.button.cancel',
