@@ -57,6 +57,7 @@ class SecondFactorController extends Controller
             ->resolveHighestRequiredLoa(
                 $context->getRequiredLoa(),
                 $context->getIdentityNameId(),
+                $context->getSchacHomeOrganization(),
                 $context->getServiceProvider()
             );
 
@@ -125,6 +126,7 @@ class SecondFactorController extends Controller
             ->resolveHighestRequiredLoa(
                 $context->getRequiredLoa(),
                 $context->getIdentityNameId(),
+                $context->getSchacHomeOrganization(),
                 $context->getServiceProvider()
             );
 
