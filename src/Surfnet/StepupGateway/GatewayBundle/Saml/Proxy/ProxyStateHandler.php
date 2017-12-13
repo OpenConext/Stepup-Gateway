@@ -252,12 +252,31 @@ class ProxyStateHandler
         $this->set('response_context_service_id', $serviceId);
         return $this;
     }
+
     /**
      * @return string|null
      */
     public function getResponseContextServiceId()
     {
         return $this->get('response_context_service_id');
+    }
+
+    /**
+     * @param $organization
+     * @return $this
+     */
+    public function setSchacHomeOrganization($organization)
+    {
+        $this->set('schac_home_organization', $organization);
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getSchacHomeOrganization()
+    {
+        return $this->get('schac_home_organization');
     }
 
     /**
