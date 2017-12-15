@@ -3,6 +3,7 @@ VERSION 2  REQUIRE PHP 5.6 AND FIX TIQR ISSUES
 ==============================================
 
    Version 2.7 - Support ADFS SFO plugin
+      15/12/2017 14:53  2.7.1  Stepup-bundle 3 integration
       25/09/2017 11:28  2.7.0  initial release
 
    Version 2.6 - Release of version 2.6.0
