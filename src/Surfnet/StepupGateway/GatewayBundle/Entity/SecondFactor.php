@@ -108,13 +108,4 @@ class SecondFactor
         $secondFactorType = new SecondFactorType($this->secondFactorType);
         return $service->getLevel($secondFactorType);
     }
-
-    /**
-     * @return bool
-     */
-    public function isGssf()
-    {
-        $secondFactorType = new SecondFactorType($this->secondFactorType);
-        return $secondFactorType->isGssf();
-    }
 }

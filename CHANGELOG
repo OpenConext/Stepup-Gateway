@@ -1,0 +1,69 @@
+
+VERSION 2  REQUIRE PHP 5.6 AND FIX TIQR ISSUES
+==============================================
+
+   Version 2.7 - Support ADFS SFO plugin
+      25/09/2017 11:28  2.7.0  initial release
+
+   Version 2.6 - Release of version 2.6.0
+      01/08/2017 09:15  2.6.0  initial release
+
+   Version 2.5 - Updated Guzzle
+      10/03/2017 10:01  2.5.0  initial release
+
+   Version 2.4 - Updated yubikey-api-client-bundle for security reasons. Updated stepup-saml-bundle to fix signature verification encoding issues.
+      27/02/2017 13:42  2.4.2  Make SFO request handling encoding agnostic
+      22/02/2017 17:53  2.4.1  Updated yubikey-api-client to fix nonce generation
+      20/02/2017 17:58  2.4.0  initial release
+
+   Version 2.3 - Updated SAML2 version in Composer lock-file, containing changes related to EPTI handling and security fixes
+      13/12/2016 11:20  2.3.0  initial release
+
+   Version 2.2 - Release of Stepup-Gateway 2.2.0. Fixes seting locale cookies for second factors.
+      18/10/2016 11:25  2.2.0  initial release
+
+   Version 2.1 - Improved logging
+      08/08/2016 17:34  2.1.0  initial release
+
+   Version 2.0 - Require PHP 5.6 and fix Tiqr issues
+      22/06/2016 11:38  2.0.0  initial release
+
+VERSION 1  RELEASE 1.0
+======================
+
+   Version 1.5 - Added Second Factor Only mode
+      07/06/2016 09:46  1.5.2  Single Factor Only improvements and security fixes
+      01/06/2016 10:27  1.5.1  Second Factor Only mode bugfixes and remove accidentally comitted local files
+      01/06/2016 09:37  1.5.0  initial release
+
+   Version 1.4 - New second factor type "biometric"
+      29/04/2016 11:35  1.4.0  initial release
+
+   Version 1.3 - U2F
+      02/02/2016 10:45  1.3.3  Pegging mopa bootstrapbundle to fix deploy
+      27/01/2016 17:39  1.3.2  Fix EPTI and NameID handling
+      12/11/2015 12:10  1.3.1  Update mopa/composer-bridge to address deployment issue
+      05/10/2015 11:47  1.3.0  initial release
+
+   Version 1.2 - Update layout and text, add button to cancel login, fix invalid SAML StatusCode
+      14/09/2015 15:09  1.2.1  Enable entering of Yubikey OTPs in Internet Explorer browsers
+      29/07/2015 18:59  1.2.0  initial release
+
+   Version 1.1 - Security improvements and bugfixes
+      15/07/2015 13:45  1.1.0  initial release
+
+   Version 1.0 - Release 1.0
+      23/06/2015 10:28  1.0.1  Switch back to original SAML2 library
+      19/06/2015 15:24  1.0.0  initial release
+
+VERSION 0  FIRST PILOT RELEASE
+==============================
+
+   Version 0.3 - Release for second Pilot
+      04/05/2015 14:28  0.3.0  initial release
+
+   Version 0.2 - SMS brute-force protection, secure OTPs
+      02/04/2015 18:01  0.2.0  initial release
+
+   Version 0.1 - First pilot release
+      26/03/2015 14:42  0.1.0  initial release

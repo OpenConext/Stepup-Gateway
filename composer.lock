@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "38879583d98a8ce369f68dc8520ca680",
+    "content-hash": "3362e8f6c9f17103407adef33c1f201f",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -1958,7 +1958,7 @@
                 "Symfony2",
                 "composer"
             ],
-            "time": "2015-10-01T19:20:19+00:00"
+            "time": "2015-10-01 19:20:19"
         },
         {
             "name": "nelmio/security-bundle",
@@ -2564,16 +2564,16 @@
         },
         {
             "name": "surfnet/stepup-bundle",
-            "version": "2.0.1",
+            "version": "3.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/OpenConext/Stepup-bundle.git",
-                "reference": "0766c91a6b391739d9fe4693f684ef1332342df4"
+                "reference": "4564d2b468a9a9a0bcfa6356e055aacbd3c4e4f0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/OpenConext/Stepup-bundle/zipball/0766c91a6b391739d9fe4693f684ef1332342df4",
-                "reference": "0766c91a6b391739d9fe4693f684ef1332342df4",
+                "url": "https://api.github.com/repos/OpenConext/Stepup-bundle/zipball/4564d2b468a9a9a0bcfa6356e055aacbd3c4e4f0",
+                "reference": "4564d2b468a9a9a0bcfa6356e055aacbd3c4e4f0",
                 "shasum": ""
             },
             "require": {
@@ -2617,7 +2617,7 @@
                 "suaas",
                 "surfnet"
             ],
-            "time": "2017-06-14T13:03:51+00:00"
+            "time": "2017-11-30T07:47:43+00:00"
         },
         {
             "name": "surfnet/stepup-saml-bundle",
@@ -2665,7 +2665,7 @@
                 "stepup",
                 "surfnet"
             ],
-            "time": "2017-09-25T11:09:05+00:00"
+            "time": "2017-09-25T11:23:36+00:00"
         },
         {
             "name": "surfnet/stepup-u2f-bundle",
@@ -2707,7 +2707,7 @@
                 "Apache-2.0"
             ],
             "description": "The SURFnet Step-up U2F bundle contains server-side device verification, and the necessary forms and resources to enable client-side U2F interaction with Step-up Identities",
-            "time": "2015-09-17T15:02:04+00:00"
+            "time": "2015-09-17 15:02:04"
         },
         {
             "name": "surfnet/yubikey-api-client",

@@ -22,6 +22,7 @@ use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Surfnet\StepupBundle\Command\VerifyPossessionOfPhoneCommand;
 use Surfnet\StepupBundle\Value\PhoneNumber\InternationalPhoneNumber;
+use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupGateway\GatewayBundle\Command\SendSmsChallengeCommand;
 use Surfnet\StepupGateway\GatewayBundle\Command\VerifyYubikeyOtpCommand;
 use Surfnet\StepupGateway\GatewayBundle\Exception\RuntimeException;
@@ -110,8 +111,11 @@ class SecondFactorController extends Controller
 
         $this->getStepupService()->clearSmsVerificationState();
 
+        $secondFactorTypeService = $this->get('surfnet_stepup.service.second_factor_type');
+        $secondFactorType = new SecondFactorType($secondFactor->secondFactorType);
+
         $route = 'gateway_verify_second_factor_';
-        if ($secondFactor->isGssf()) {
+        if ($secondFactorTypeService->isGssf($secondFactorType)) {
             $route .= 'gssf';
         } else {
             $route .= strtolower($secondFactor->secondFactorType);
