@@ -38,6 +38,7 @@ use Surfnet\StepupGateway\GatewayBundle\Command\SendSmsChallengeCommand;
 use Surfnet\StepupGateway\GatewayBundle\Command\VerifyYubikeyOtpCommand;
 use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor;
 use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactorRepository;
+use Surfnet\StepupGateway\GatewayBundle\Exception\LoaCannotBeGivenException;
 use Surfnet\StepupGateway\GatewayBundle\Exception\RuntimeException;
 use Surfnet\StepupGateway\GatewayBundle\Service\StepUp\YubikeyOtpVerificationResult;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -133,20 +134,6 @@ class StepUpAuthenticationService
         $this->logger->info(
             sprintf('Loaded %d matching candidate second factors', count($candidateSecondFactors))
         );
-
-        foreach ($candidateSecondFactors as $key => $secondFactor) {
-            if (!$whitelistService->contains($secondFactor->institution)) {
-                $this->logger->notice(
-                    sprintf(
-                        'Second factor "%s" is listed for institution "%s" which is not on the whitelist',
-                        $secondFactor->secondFactorId,
-                        $secondFactor->institution
-                    )
-                );
-
-                $candidateSecondFactors->remove($key);
-            }
-        }
 
         if ($candidateSecondFactors->isEmpty()) {
             $this->logger->alert('No suitable candidate second factors found, sending Loa cannot be given response');
@@ -405,13 +392,13 @@ class StepUpAuthenticationService
 
         // Validations are performed on the institutions
         if (empty($institutions) && array_key_exists($identityInstitution, $spConfiguredLoas)) {
-            throw new RuntimeException(
+            throw new LoaCannotBeGivenException(
                 'The authenticating user cannot provide a token for the institution it is authenticating for.'
             );
         }
 
         if (empty($institutions)) {
-            throw new RuntimeException(
+            throw new LoaCannotBeGivenException(
                 'The authenticating user does not have any vetted tokens.'
             );
         }
@@ -425,7 +412,7 @@ class StepUpAuthenticationService
             );
 
             if (empty($institutionMatches)) {
-                throw new RuntimeException(
+                throw new LoaCannotBeGivenException(
                     'None of the authenticating users tokens are registered at an institution the user is currently ' .
                     'authenticating from.'
                 );
