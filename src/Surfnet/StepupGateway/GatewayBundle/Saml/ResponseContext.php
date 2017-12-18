@@ -172,6 +172,13 @@ class ResponseContext
             $this->stateHandler->setAuthenticatingIdp(reset($authenticatingAuthorities));
         }
 
+        // And also attempt to save the user's schacHomeOrganization
+        $attributes = $assertion->getAttributes();
+        if (!empty($attributes['urn:mace:terena.org:attribute-def:schacHomeOrganization'])) {
+            $schacHomeOrganization = $attributes['urn:mace:terena.org:attribute-def:schacHomeOrganization'];
+            $this->stateHandler->setSchacHomeOrganization(reset($schacHomeOrganization));
+        }
+
         $this->stateHandler->saveAssertion($assertion->toXML()->ownerDocument->saveXML());
     }
 
@@ -193,6 +200,11 @@ class ResponseContext
     public function getIdentityNameId()
     {
         return $this->stateHandler->getIdentityNameId();
+    }
+
+    public function getSchacHomeOrganization()
+    {
+        return $this->stateHandler->getSchacHomeOrganization();
     }
 
     /**
