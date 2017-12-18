@@ -403,17 +403,17 @@ final class StepUpAuthenticationServiceTest extends PHPUnit_Framework_TestCase
     /**
      * This tests combinations of the following possibilities:
      *
-     * 1a. No sp-institution specific configuration provided (i.e. __default__ = LoA 1)
-     * 1b. An sp-institution specific configuration is provided for institution with a LoA = 2
-     * 2a. The user has a schacHomeOrganization attribute set
-     * 2b. The user has no schacHomeOrganization attribute set
-     * 2c. The user has a schacHomeOrganization attribute set that is different from the one used during registration
-     * 3a. The user has a vetted token (i.e. NameID exists in the second_factor table)
-     * 3b. The user does not not have a vetted token
-     * 4a. SP does not request a LoA (i.e. no AuthContexClassRef in AuthnRequest)
-     * 4b. SP requests LoA = 1
-     * 4c. SP requests LoA = 2
-     * 4c. SP requests LoA = 3
+     * a1. No sp-institution specific configuration provided (i.e. __default__ = LoA 1)
+     * a2. An sp-institution specific configuration is provided for institution with a LoA = 2
+     * b1. The user has a schacHomeOrganization attribute set
+     * b2. The user has no schacHomeOrganization attribute set
+     * b3. The user has a schacHomeOrganization attribute set that is different from the one used during registration
+     * c1. The user has a vetted token (i.e. NameID exists in the second_factor table)
+     * c2. The user does not not have a vetted token
+     * d1. SP does not request a LoA (i.e. no AuthContexClassRef in AuthnRequest)
+     * d2. SP requests LoA = 1
+     * d3. SP requests LoA = 2
+     * d4. SP requests LoA = 3
      *
      * These possibilities, and the expected outcome are described in an XLS spreadsheet which can be found in the docs
      * folder of this project. Please note that the expected outcome described in the sheet do not always reflect the
