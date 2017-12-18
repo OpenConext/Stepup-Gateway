@@ -415,6 +415,11 @@ final class StepUpAuthenticationServiceTest extends PHPUnit_Framework_TestCase
      * 4c. SP requests LoA = 2
      * 4c. SP requests LoA = 3
      *
+     * These possibilities, and the expected outcome are described in an XLS spreadsheet which can be found in the docs
+     * folder of this project. Please note that the expected outcome described in the sheet do not always reflect the
+     * expectancy configured in the data provider. This because the outcome described in XLS reflects the entire flow
+     * and this test just covers the resolveHighestRequiredLoa method.
+     *
      * @dataProvider combinationProvider
      * @param $configuredLoas
      * @param $identityOrganisation
