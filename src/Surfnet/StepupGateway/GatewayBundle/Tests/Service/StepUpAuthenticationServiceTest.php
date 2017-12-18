@@ -28,6 +28,7 @@ use Surfnet\StepupBundle\Service\SmsSecondFactorService;
 use Surfnet\StepupBundle\Value\Loa;
 use Surfnet\StepupGateway\ApiBundle\Service\YubikeyService;
 use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactorRepository;
+use Surfnet\StepupGateway\GatewayBundle\Exception\LoaCannotBeGivenException;
 use Surfnet\StepupGateway\GatewayBundle\Exception\RuntimeException;
 use Surfnet\StepupGateway\GatewayBundle\Service\InstitutionMatchingHelper;
 use Surfnet\StepupGateway\GatewayBundle\Service\StepUpAuthenticationService;
@@ -262,7 +263,7 @@ final class StepUpAuthenticationServiceTest extends PHPUnit_Framework_TestCase
      * Loa configuration
      *
      * @dataProvider configuredLoas
-     * @expectedException \Surfnet\StepupGateway\GatewayBundle\Exception\RuntimeException
+     * @expectedException \Surfnet\StepupGateway\GatewayBundle\Exception\LoaCannotBeGivenException
      * @expectedExceptionMessage None of the authenticating users tokens are registered at an institution the user is
      *                           currently authenticating from.
      */
@@ -456,7 +457,9 @@ final class StepUpAuthenticationServiceTest extends PHPUnit_Framework_TestCase
             );
             $this->assertEquals($expectedOutcome, (string) $loa, sprintf('Unexpected outcome in test: %d', $index));
         } catch (RuntimeException $e) {
-            $this->assertEquals($expectedOutcome, $e->getMessage(), sprintf('Unexpected outcome in test: %d', $index));
+            $this->assertEquals($expectedOutcome, $e->getMessage(), sprintf('Unexpected RuntimeException in test: %d', $index));
+        } catch (LoaCannotBeGivenException $e) {
+            $this->assertEquals($expectedOutcome, $e->getMessage(), sprintf('Unexpected LoaCannotBeGivenException in test: %d', $index));
         }
     }
 

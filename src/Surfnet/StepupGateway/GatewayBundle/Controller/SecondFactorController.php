@@ -26,6 +26,7 @@ use Surfnet\StepupGateway\GatewayBundle\Command\ChooseSecondFactorCommand;
 use Surfnet\StepupGateway\GatewayBundle\Command\SendSmsChallengeCommand;
 use Surfnet\StepupGateway\GatewayBundle\Command\VerifyYubikeyOtpCommand;
 use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor;
+use Surfnet\StepupGateway\GatewayBundle\Exception\LoaCannotBeGivenException;
 use Surfnet\StepupGateway\GatewayBundle\Exception\RuntimeException;
 use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
 use Surfnet\StepupGateway\U2fVerificationBundle\Value\KeyHandle;
@@ -52,15 +53,20 @@ class SecondFactorController extends Controller
         $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
         $logger->notice('Determining which second factor to use...');
 
-        $requiredLoa = $this
-            ->getStepupService()
-            ->resolveHighestRequiredLoa(
-                $context->getRequiredLoa(),
-                $context->getIdentityNameId(),
-                $context->getSchacHomeOrganization(),
-                $context->getServiceProvider()
-            );
-
+        try {
+            $requiredLoa = $this
+                ->getStepupService()
+                ->resolveHighestRequiredLoa(
+                    $context->getRequiredLoa(),
+                    $context->getIdentityNameId(),
+                    $context->getSchacHomeOrganization(),
+                    $context->getServiceProvider()
+                );
+        } catch (LoaCannotBeGivenException $e) {
+            // Log the message of the domain exception, this contains a meaningful message.
+            $logger->notice($e->getMessage());
+            return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:sendLoaCannotBeGiven');
+        }
         if ($requiredLoa === null) {
             $logger->notice(
                 'No valid required Loa can be determined, no authentication is possible, Loa cannot be given'
