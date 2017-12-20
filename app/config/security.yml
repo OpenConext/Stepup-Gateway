@@ -9,6 +9,9 @@ security:
             security: false
         default:
             anonymous: ~
+        monitor:
+            pattern: ^/(info|health)$
+            security: false
 
     access_control:
         - { path: ^/api/, roles: ROLE_API_CLIENT }
