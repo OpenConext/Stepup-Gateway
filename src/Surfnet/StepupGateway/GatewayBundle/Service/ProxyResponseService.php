@@ -18,7 +18,11 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Service;
 
-use SAML2_Assertion;
+use SAML2\Assertion;
+use SAML2\Constants;
+use SAML2\Response;
+use SAML2\XML\saml\SubjectConfirmation;
+use SAML2\XML\saml\SubjectConfirmationData;
 use Surfnet\SamlBundle\Entity\IdentityProvider;
 use Surfnet\SamlBundle\Entity\ServiceProvider;
 use Surfnet\SamlBundle\SAML2\Attribute\AttributeDefinition;
@@ -86,15 +90,15 @@ class ProxyResponseService
     }
 
     /**
-     * @param SAML2_Assertion $assertion
+     * @param Assertion $assertion
      * @param ServiceProvider $targetServiceProvider
      * @param string|null $loa
-     * @return \SAML2_Response
+     * @return Response
      */
-    public function createProxyResponse(SAML2_Assertion $assertion, ServiceProvider $targetServiceProvider, $loa = null)
+    public function createProxyResponse(Assertion $assertion, ServiceProvider $targetServiceProvider, $loa = null)
     {
 
-        $newAssertion = new SAML2_Assertion();
+        $newAssertion = new Assertion();
         $newAssertion->setNotBefore($this->currentTime->getTimestamp());
         $newAssertion->setNotOnOrAfter($this->getTimestamp('PT5M'));
         $newAssertion->setAttributes($assertion->getAttributes());
@@ -112,8 +116,7 @@ class ProxyResponseService
             throw new RuntimeException('The "urn:mace:dir:attribute-def:eduPersonTargetedID" is not present.');
         } elseif (
             !array_key_exists(0, $eptiNameId) ||
-            !array_key_exists('Value', $eptiNameId[0]) ||
-            empty($eptiNameId[0]['Value'])
+            !$eptiNameId[0]->value
         ) {
             throw new RuntimeException(
                 'The "urn:mace:dir:attribute-def:eduPersonTargetedID" attribute does not contain a NameID with a value.'
@@ -134,15 +137,15 @@ class ProxyResponseService
     }
 
     /**
-     * @param SAML2_Assertion $newAssertion
+     * @param Assertion $newAssertion
      * @param ServiceProvider $targetServiceProvider
      */
-    private function addSubjectConfirmationFor(SAML2_Assertion $newAssertion, ServiceProvider $targetServiceProvider)
+    private function addSubjectConfirmationFor(Assertion $newAssertion, ServiceProvider $targetServiceProvider)
     {
-        $confirmation         = new \SAML2_XML_saml_SubjectConfirmation();
-        $confirmation->Method = \SAML2_Const::CM_BEARER;
+        $confirmation         = new SubjectConfirmation();
+        $confirmation->Method = Constants::CM_BEARER;
 
-        $confirmationData                      = new \SAML2_XML_saml_SubjectConfirmationData();
+        $confirmationData                      = new SubjectConfirmationData();
         $confirmationData->InResponseTo        = $this->proxyStateHandler->getRequestId();
         $confirmationData->Recipient           = $targetServiceProvider->getAssertionConsumerUrl();
         $confirmationData->NotOnOrAfter        = $this->getTimestamp('PT8H');
@@ -153,10 +156,10 @@ class ProxyResponseService
     }
 
     /**
-     * @param SAML2_Assertion $newAssertion
-     * @param SAML2_Assertion $assertion
+     * @param Assertion $newAssertion
+     * @param Assertion $assertion
      */
-    private function addAuthenticationStatementTo(SAML2_Assertion $newAssertion, SAML2_Assertion $assertion)
+    private function addAuthenticationStatementTo(Assertion $newAssertion, Assertion $assertion)
     {
         $newAssertion->setAuthnInstant($assertion->getAuthnInstant());
         $newAssertion->setAuthnContextClassRef((string) $this->intrinsicLoa);
@@ -171,13 +174,13 @@ class ProxyResponseService
     }
 
     /**
-     * @param SAML2_Assertion $newAssertion
+     * @param Assertion $newAssertion
      * @param ServiceProvider $targetServiceProvider
-     * @return \SAML2_Response
+     * @return Response
      */
-    private function createNewAuthnResponse(SAML2_Assertion $newAssertion, ServiceProvider $targetServiceProvider)
+    private function createNewAuthnResponse(Assertion $newAssertion, ServiceProvider $targetServiceProvider)
     {
-        $response = new \SAML2_Response();
+        $response = new Response();
         $response->setAssertions([$newAssertion]);
         $response->setIssuer($this->hostedIdentityProvider->getEntityId());
         $response->setIssueInstant($this->getTimestamp());

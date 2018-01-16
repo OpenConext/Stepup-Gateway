@@ -18,14 +18,14 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Saml;
 
-use SAML2_Const;
-use SAML2_Response;
+use SAML2\Constants;
+use SAML2\Response;
 use Surfnet\SamlBundle\Exception\LogicException;
 
 class ResponseBuilder
 {
     /**
-     * @var \SAML2_Response
+     * @var Response
      */
     private $response;
 
@@ -42,7 +42,7 @@ class ResponseBuilder
 
         $this->responseContext = $context;
 
-        $response = new SAML2_Response();
+        $response = new Response();
         $response->setDestination($context->getDestination());
         $response->setIssuer($context->getIssuer());
         $response->setIssueInstant($context->getIssueInstant());
@@ -95,35 +95,35 @@ class ResponseBuilder
     private function isValidResponseStatus($status)
     {
         return in_array($status, [
-            SAML2_Const::STATUS_SUCCESS,            // weeee!
-            SAML2_Const::STATUS_REQUESTER,          // Something is wrong with the AuthnRequest
-            SAML2_Const::STATUS_RESPONDER,          // Something went wrong with the Response
-            SAML2_Const::STATUS_VERSION_MISMATCH,   // The version of the request message was incorrect
+            Constants::STATUS_SUCCESS,            // weeee!
+            Constants::STATUS_REQUESTER,          // Something is wrong with the AuthnRequest
+            Constants::STATUS_RESPONDER,          // Something went wrong with the Response
+            Constants::STATUS_VERSION_MISMATCH,   // The version of the request message was incorrect
         ]);
     }
 
     private function isValidResponseSubStatus($subStatus)
     {
         return in_array($subStatus, [
-            SAML2_Const::STATUS_AUTHN_FAILED,               // failed authentication
-            SAML2_Const::STATUS_INVALID_ATTR,
-            SAML2_Const::STATUS_INVALID_NAMEID_POLICY,
-            SAML2_Const::STATUS_NO_AUTHN_CONTEXT,           // insufficient Loa or Loa cannot be met
-            SAML2_Const::STATUS_NO_AVAILABLE_IDP,
-            SAML2_Const::STATUS_NO_PASSIVE,
-            SAML2_Const::STATUS_NO_SUPPORTED_IDP,
-            SAML2_Const::STATUS_PARTIAL_LOGOUT,
-            SAML2_Const::STATUS_PROXY_COUNT_EXCEEDED,
-            SAML2_Const::STATUS_REQUEST_DENIED,
-            SAML2_Const::STATUS_REQUEST_UNSUPPORTED,
-            SAML2_Const::STATUS_REQUEST_VERSION_DEPRECATED,
-            SAML2_Const::STATUS_REQUEST_VERSION_TOO_HIGH,
-            SAML2_Const::STATUS_REQUEST_VERSION_TOO_LOW,
-            SAML2_Const::STATUS_RESOURCE_NOT_RECOGNIZED,
-            SAML2_Const::STATUS_TOO_MANY_RESPONSES,
-            SAML2_Const::STATUS_UNKNOWN_ATTR_PROFILE,
-            SAML2_Const::STATUS_UNKNOWN_PRINCIPAL,
-            SAML2_Const::STATUS_UNSUPPORTED_BINDING,
+            Constants::STATUS_AUTHN_FAILED,               // failed authentication
+            Constants::STATUS_INVALID_ATTR,
+            Constants::STATUS_INVALID_NAMEID_POLICY,
+            Constants::STATUS_NO_AUTHN_CONTEXT,           // insufficient Loa or Loa cannot be met
+            Constants::STATUS_NO_AVAILABLE_IDP,
+            Constants::STATUS_NO_PASSIVE,
+            Constants::STATUS_NO_SUPPORTED_IDP,
+            Constants::STATUS_PARTIAL_LOGOUT,
+            Constants::STATUS_PROXY_COUNT_EXCEEDED,
+            Constants::STATUS_REQUEST_DENIED,
+            Constants::STATUS_REQUEST_UNSUPPORTED,
+            Constants::STATUS_REQUEST_VERSION_DEPRECATED,
+            Constants::STATUS_REQUEST_VERSION_TOO_HIGH,
+            Constants::STATUS_REQUEST_VERSION_TOO_LOW,
+            Constants::STATUS_RESOURCE_NOT_RECOGNIZED,
+            Constants::STATUS_TOO_MANY_RESPONSES,
+            Constants::STATUS_UNKNOWN_ATTR_PROFILE,
+            Constants::STATUS_UNKNOWN_PRINCIPAL,
+            Constants::STATUS_UNSUPPORTED_BINDING,
         ]);
     }
 }

@@ -21,7 +21,7 @@ namespace Surfnet\StepupGateway\GatewayBundle\Saml;
 use DateTime;
 use DateTimeZone;
 use DOMDocument;
-use SAML2_Assertion;
+use SAML2\Assertion;
 use Surfnet\SamlBundle\Entity\IdentityProvider;
 use Surfnet\SamlBundle\Entity\ServiceProvider;
 use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor;
@@ -156,14 +156,14 @@ class ResponseContext
     }
 
     /**
-     * @param SAML2_Assertion $assertion
+     * @param Assertion $assertion
      */
-    public function saveAssertion(SAML2_Assertion $assertion)
+    public function saveAssertion(Assertion $assertion)
     {
         // we pluck the NameId to make it easier to access it without having to reconstitute the assertion
         $nameId = $assertion->getNameId();
-        if (!empty($nameId['Value'])) {
-            $this->stateHandler->saveIdentityNameId($nameId['Value']);
+        if (!is_null($nameId->value)) {
+            $this->stateHandler->saveIdentityNameId($nameId->value);
         }
 
         // same for the entityId of the authenticating Authority
@@ -183,7 +183,7 @@ class ResponseContext
     }
 
     /**
-     * @return SAML2_Assertion
+     * @return Assertion
      */
     public function reconstituteAssertion()
     {
@@ -191,7 +191,7 @@ class ResponseContext
         $assertionDocument = new DOMDocument();
         $assertionDocument->loadXML($assertionAsXML);
 
-        return new SAML2_Assertion($assertionDocument->documentElement);
+        return new Assertion($assertionDocument->documentElement);
     }
 
     /**
