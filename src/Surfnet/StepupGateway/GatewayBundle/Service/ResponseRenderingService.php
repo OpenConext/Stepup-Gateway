@@ -18,8 +18,8 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Service;
 
-use SAML2_Const;
-use SAML2_Response;
+use SAML2\Constants;
+use SAML2\Response as SAMLResponse;
 use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseBuilder;
 use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
 use Symfony\Bundle\TwigBundle\TwigEngine;
@@ -51,6 +51,7 @@ final class ResponseRenderingService
     }
 
     /**
+     * @param ResponseContext $context
      * @return Response
      */
     public function renderRequesterFailureResponse(ResponseContext $context)
@@ -60,14 +61,15 @@ final class ResponseRenderingService
             $this->responseBuilder
                 ->createNewResponse($context)
                 ->setResponseStatus(
-                    SAML2_Const::STATUS_REQUESTER,
-                    SAML2_Const::STATUS_REQUEST_UNSUPPORTED
+                    Constants::STATUS_REQUESTER,
+                    Constants::STATUS_REQUEST_UNSUPPORTED
                 )
                 ->get()
         );
     }
 
     /**
+     * @param ResponseContext $context
      * @return Response
      */
     public function renderUnprocessableResponse(ResponseContext $context)
@@ -77,31 +79,33 @@ final class ResponseRenderingService
             'unprocessableResponse',
             $this->responseBuilder
                 ->createNewResponse($context)
-                ->setResponseStatus(SAML2_Const::STATUS_RESPONDER)
+                ->setResponseStatus(Constants::STATUS_RESPONDER)
                 ->get()
         );
     }
 
     /**
-     * @param SAML2_Response $response
+     * @param ResponseContext $context
+     * @param SAMLResponse $response
      * @return Response
      */
     public function renderResponse(
         ResponseContext $context,
-        SAML2_Response $response
+        SAMLResponse $response
     ) {
         return $this->renderSamlResponse($context, 'consumeAssertion', $response);
     }
 
     /**
-     * @param string         $view
-     * @param SAML2_Response $response
+     * @param ResponseContext $context
+     * @param string $view
+     * @param SAMLResponse $response
      * @return Response
      */
     private function renderSamlResponse(
         ResponseContext $context,
         $view,
-        SAML2_Response $response
+        SAMLResponse $response
     ) {
         return $this->twigEngine->renderResponse(
             'SurfnetStepupGatewayGatewayBundle:Gateway:' . $view . '.html.twig',
@@ -114,10 +118,10 @@ final class ResponseRenderingService
     }
 
     /**
-     * @param SAML2_Response $response
+     * @param SAMLResponse $response
      * @return string
      */
-    public function getResponseAsXML(SAML2_Response $response)
+    public function getResponseAsXML(SAMLResponse $response)
     {
         return base64_encode($response->toUnsignedXML()->ownerDocument->saveXML());
     }

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "9623b7eed6a6919bea4f4fb9df6b1a46",
+    "content-hash": "effec2409518ab8da41062a656b66394",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -1958,7 +1958,7 @@
                 "Symfony2",
                 "composer"
             ],
-            "time": "2015-10-01 19:20:19"
+            "time": "2015-10-01T19:20:19+00:00"
         },
         {
             "name": "nelmio/security-bundle",
@@ -2314,30 +2314,29 @@
         },
         {
             "name": "robrichards/xmlseclibs",
-            "version": "1.4.2",
+            "version": "3.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/robrichards/xmlseclibs.git",
-                "reference": "79fb5e03c4ee4dc3ec77e4b2628231374364a017"
+                "reference": "d937712f70f93a584eb0299ccd87dc6374003781"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/robrichards/xmlseclibs/zipball/79fb5e03c4ee4dc3ec77e4b2628231374364a017",
-                "reference": "79fb5e03c4ee4dc3ec77e4b2628231374364a017",
+                "url": "https://api.github.com/repos/robrichards/xmlseclibs/zipball/d937712f70f93a584eb0299ccd87dc6374003781",
+                "reference": "d937712f70f93a584eb0299ccd87dc6374003781",
                 "shasum": ""
             },
             "require": {
-                "php": ">= 5.2"
+                "php": ">= 5.4"
             },
             "suggest": {
-                "ext/mcrypt": "MCrypt extension",
-                "ext/openssl": "OpenSSL extension"
+                "ext-openssl": "OpenSSL extension"
             },
             "type": "library",
             "autoload": {
-                "classmap": [
-                    "src/"
-                ]
+                "psr-4": {
+                    "RobRichards\\XMLSecLibs\\": "src"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -2351,7 +2350,7 @@
                 "xml",
                 "xmldsig"
             ],
-            "time": "2016-09-08T13:31:44+00:00"
+            "time": "2017-08-31T09:27:07+00:00"
         },
         {
             "name": "sensio/distribution-bundle",
@@ -2522,39 +2521,47 @@
         },
         {
             "name": "simplesamlphp/saml2",
-            "version": "v1.10.3",
+            "version": "v3.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/simplesamlphp/saml2.git",
-                "reference": "3f268c25ca5e9748652834faad04525746227ef7"
+                "reference": "8c33205d0f42cef766d9803448935395da8ce86d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/simplesamlphp/saml2/zipball/3f268c25ca5e9748652834faad04525746227ef7",
-                "reference": "3f268c25ca5e9748652834faad04525746227ef7",
+                "url": "https://api.github.com/repos/simplesamlphp/saml2/zipball/8c33205d0f42cef766d9803448935395da8ce86d",
+                "reference": "8c33205d0f42cef766d9803448935395da8ce86d",
                 "shasum": ""
             },
             "require": {
                 "ext-dom": "*",
                 "ext-openssl": "*",
-                "php": ">=5.3.3",
+                "ext-zlib": "*",
+                "php": ">=5.4",
                 "psr/log": "~1.0",
-                "robrichards/xmlseclibs": "^1.3"
+                "robrichards/xmlseclibs": "^3.0"
             },
             "require-dev": {
                 "mockery/mockery": "~0.9",
                 "phpmd/phpmd": "~1.5",
                 "phpunit/phpunit": "~3.7",
-                "satooshi/php-coveralls": "~0.6.1",
                 "sebastian/phpcpd": "~1.4",
                 "sensiolabs/security-checker": "~1.1",
                 "squizlabs/php_codesniffer": "~1.4"
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "v3.0.x-dev"
+                }
+            },
             "autoload": {
                 "psr-0": {
-                    "SAML2_": "src/"
-                }
+                    "SAML2\\": "src/"
+                },
+                "files": [
+                    "src/_autoload.php"
+                ]
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -2567,7 +2574,7 @@
                 }
             ],
             "description": "SAML2 PHP library from SimpleSAMLphp",
-            "time": "2016-12-02T12:15:53+00:00"
+            "time": "2018-01-16T09:52:23+00:00"
         },
         {
             "name": "surfnet/messagebird-api-client-bundle",
@@ -2674,25 +2681,25 @@
         },
         {
             "name": "surfnet/stepup-saml-bundle",
-            "version": "2.8.2",
+            "version": "3.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/OpenConext/Stepup-saml-bundle.git",
-                "reference": "f2f14f8be692a350227372438c64518ca482086e"
+                "reference": "67e24599a6402fdf602304851bfff915c0c4609c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/OpenConext/Stepup-saml-bundle/zipball/f2f14f8be692a350227372438c64518ca482086e",
-                "reference": "f2f14f8be692a350227372438c64518ca482086e",
+                "url": "https://api.github.com/repos/OpenConext/Stepup-saml-bundle/zipball/67e24599a6402fdf602304851bfff915c0c4609c",
+                "reference": "67e24599a6402fdf602304851bfff915c0c4609c",
                 "shasum": ""
             },
             "require": {
                 "ext-openssl": "*",
-                "php": ">=5.4,<8.0-dev",
-                "robrichards/xmlseclibs": "^1.4.0",
-                "simplesamlphp/saml2": "^1.8",
-                "symfony/dependency-injection": "^2.7",
-                "symfony/framework-bundle": "^2.7"
+                "php": ">=5.6,<8.0-dev",
+                "robrichards/xmlseclibs": "^3.0",
+                "simplesamlphp/saml2": "^3.0",
+                "symfony/dependency-injection": ">=2.7,<4",
+                "symfony/framework-bundle": ">=2.7,<4"
             },
             "require-dev": {
                 "ibuildings/qa-tools": "~1.1",
@@ -2718,7 +2725,7 @@
                 "stepup",
                 "surfnet"
             ],
-            "time": "2017-09-25T11:23:36+00:00"
+            "time": "2018-01-17T12:59:03+00:00"
         },
         {
             "name": "surfnet/stepup-u2f-bundle",
@@ -2760,7 +2767,7 @@
                 "Apache-2.0"
             ],
             "description": "The SURFnet Step-up U2F bundle contains server-side device verification, and the necessary forms and resources to enable client-side U2F interaction with Step-up Identities",
-            "time": "2015-09-17 15:02:04"
+            "time": "2015-09-17T15:02:04+00:00"
         },
         {
             "name": "surfnet/yubikey-api-client",

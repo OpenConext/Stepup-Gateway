@@ -20,7 +20,6 @@ namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs;
 
 use InvalidArgumentException;
 use Psr\Log\LoggerInterface;
-use SAML2_DOMDocumentFactory;
 use Symfony\Component\HttpFoundation\Request;
 use Webmozart\Assert\Assert;
 

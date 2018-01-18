@@ -20,8 +20,8 @@ namespace Surfnet\StepupGateway\SamlStepupProviderBundle\Controller;
 
 use DateTime;
 use Exception;
-use SAML2_Const;
-use SAML2_Response;
+use SAML2\Constants;
+use SAML2\Response as SAMLResponse;
 use Surfnet\SamlBundle\Http\XMLResponse;
 use Surfnet\SamlBundle\SAML2\AuthnRequest;
 use Surfnet\SamlBundle\SAML2\AuthnRequestFactory;
@@ -59,7 +59,7 @@ class SamlProxyController extends Controller
         $redirectBinding = $this->get('surfnet_saml.http.redirect_binding');
 
         try {
-            $originalRequest = $redirectBinding->processRequest($httpRequest);
+            $originalRequest = $redirectBinding->processSignedRequest($httpRequest);
         } catch (Exception $e) {
             $logger->critical(sprintf('Could not process Request, error: "%s"', $e->getMessage()));
 
@@ -119,7 +119,7 @@ class SamlProxyController extends Controller
             $provider->getRemoteIdentityProvider()->getSsoUrl()
         ));
 
-        return $redirectBinding->createRedirectResponseFor($proxyRequest);
+        return $redirectBinding->createResponseFor($proxyRequest);
     }
 
     public function sendSecondFactorVerificationAuthnRequestAction($provider, $subjectNameId)
@@ -154,7 +154,7 @@ class SamlProxyController extends Controller
         /** @var \Surfnet\SamlBundle\Http\RedirectBinding $redirectBinding */
         $redirectBinding = $this->get('surfnet_saml.http.redirect_binding');
 
-        return $redirectBinding->createRedirectResponseFor($authnRequest);
+        return $redirectBinding->createResponseFor($authnRequest);
     }
 
     /**
@@ -177,7 +177,7 @@ class SamlProxyController extends Controller
         );
 
         try {
-            /** @var \SAML2_Assertion $assertion */
+            /** @var \SAML2\Assertion $assertion */
             $assertion = $this->get('surfnet_saml.http.post_binding')->processResponse(
                 $httpRequest,
                 $provider->getRemoteIdentityProvider(),
@@ -205,11 +205,11 @@ class SamlProxyController extends Controller
 
         $authenticatedNameId = $assertion->getNameId();
         $isSubjectRequested = $stateHandler->hasSubject();
-        if ($isSubjectRequested && ($stateHandler->getSubject() !== $authenticatedNameId['Value'])) {
+        if ($isSubjectRequested && ($stateHandler->getSubject() !== $authenticatedNameId->value)) {
             $logger->critical(sprintf(
                 'Requested Subject NameID "%s" and Response NameID "%s" do not match',
                 $stateHandler->getSubject(),
-                $authenticatedNameId['Value']
+                $authenticatedNameId->value
             ));
 
             if ($stateHandler->secondFactorVerificationRequested()) {
@@ -284,10 +284,10 @@ class SamlProxyController extends Controller
     /**
      * @param string         $view
      * @param StateHandler   $stateHandler
-     * @param SAML2_Response $response
+     * @param SAMLResponse $response
      * @return Response
      */
-    public function renderSamlResponse($view, StateHandler $stateHandler, SAML2_Response $response)
+    public function renderSamlResponse($view, StateHandler $stateHandler, SAMLResponse $response)
     {
         $response = $this->render($view, [
             'acu'        => $response->getDestination(),
@@ -317,10 +317,10 @@ class SamlProxyController extends Controller
     }
 
     /**
-     * @param SAML2_Response $response
+     * @param SAMLResponse $response
      * @return string
      */
-    private function getResponseAsXML(SAML2_Response $response)
+    private function getResponseAsXML(SAMLResponse $response)
     {
         return base64_encode($response->toUnsignedXML()->ownerDocument->saveXML());
     }
@@ -330,12 +330,12 @@ class SamlProxyController extends Controller
      * not process the response we received from the upstream GSSP
      *
      * @param Provider $provider
-     * @return SAML2_Response
+     * @return SAMLResponse
      */
     private function createResponseFailureResponse(Provider $provider)
     {
         $response = $this->createResponse($provider);
-        $response->setStatus(['Code' => SAML2_Const::STATUS_RESPONDER]);
+        $response->setStatus(['Code' => Constants::STATUS_RESPONDER]);
 
         return $response;
     }
@@ -345,14 +345,14 @@ class SamlProxyController extends Controller
      * that the upstream GSSP did not responsd with the same NameID as we request to authenticate in the AuthnRequest
      *
      * @param Provider $provider
-     * @return SAML2_Response
+     * @return SAMLResponse
      */
     private function createAuthnFailedResponse(Provider $provider)
     {
         $response = $this->createResponse($provider);
         $response->setStatus([
-            'Code'    => SAML2_Const::STATUS_RESPONDER,
-            'SubCode' => SAML2_Const::STATUS_AUTHN_FAILED
+            'Code'    => Constants::STATUS_RESPONDER,
+            'SubCode' => Constants::STATUS_AUTHN_FAILED
         ]);
 
         return $response;
@@ -362,13 +362,13 @@ class SamlProxyController extends Controller
      * Creates a standard response with default status Code (success)
      *
      * @param Provider $provider
-     * @return SAML2_Response
+     * @return SAMLResponse
      */
     private function createResponse(Provider $provider)
     {
         $serviceProvider = $this->getServiceProvider($provider->getStateHandler()->getRequestServiceProvider());
 
-        $response = new SAML2_Response();
+        $response = new SAMLResponse();
         $response->setDestination($serviceProvider->getAssertionConsumerUrl());
         $response->setIssuer($provider->getIdentityProvider()->getEntityId());
         $response->setIssueInstant((new DateTime('now'))->getTimestamp());
