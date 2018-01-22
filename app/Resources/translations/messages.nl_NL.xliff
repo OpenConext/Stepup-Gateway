@@ -1,357 +1,357 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:jms="urn:jms:translation" version="1.2">
-  <file date="2017-11-09T14:30:35Z" source-language="en" target-language="nl_NL" datatype="plaintext" original="not.available">
+  <file date="2018-01-22T13:41:26Z" source-language="en" target-language="nl_NL" datatype="plaintext" original="not.available">
     <header>
       <tool tool-id="JMSTranslationBundle" tool-name="JMSTranslationBundle" tool-version="1.1.0-DEV"/>
       <note>The source node in most cases contains the sample message as written by the developer. If it looks like a dot-delimitted string such as "form.label.firstname", then the developer has not provided a default message.</note>
     </header>
     <body>
       <trans-unit id="0c3112826a8c897ac0b6a3d3a8432059b74dd996" resname="app.name">
-        <jms:reference-file line="6">Resources/views/base.html.twig</jms:reference-file>
-        <jms:reference-file line="26">Resources/views/base.html.twig</jms:reference-file>
         <source>app.name</source>
         <target>SURFconext Sterke Authenticatie</target>
+        <jms:reference-file line="26">/Resources/views/base.html.twig</jms:reference-file>
+        <jms:reference-file line="6">/Resources/views/base.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="1aa7637939b9d85db5e1b5bb89ebb0dedbc01f7e" resname="gateway.error.click_to_go_back_to_sp">
-        <jms:reference-file line="9">views/Gateway/unprocessableResponse.html.twig</jms:reference-file>
         <source>gateway.error.click_to_go_back_to_sp</source>
         <target>Klik om terug te gaan naar de website.</target>
+        <jms:reference-file line="9">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/Gateway/unprocessableResponse.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="ddbfa4b7c63f6fda5392241c79d4842fe460ecbb" resname="gateway.error.page_not_found.title">
-        <jms:reference-file line="3">views/Exception/error404.html.twig</jms:reference-file>
         <source>gateway.error.page_not_found.title</source>
         <target>Pagina niet gevonden</target>
+        <jms:reference-file line="3">/Resources/SurfnetStepupBundle/views/Exception/error404.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="f69ac45057928febadf869f144e4d2e56449b326" resname="gateway.error.text.an_error_occurred">
-        <jms:reference-file line="8">views/Exception/error.html.twig</jms:reference-file>
         <source>gateway.error.text.an_error_occurred</source>
         <target>Er is een fout opgetreden door onbekende oorzaak. Ga terug om het opnieuw te proberen.</target>
+        <jms:reference-file line="8">/Resources/SurfnetStepupBundle/views/Exception/error.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="21ca83986f91793e943bbae8b73297e7b06146c5" resname="gateway.error.text.if_you_think_this_is_incorrect_report">
-        <jms:reference-file line="13">views/Exception/error404.html.twig</jms:reference-file>
         <source>gateway.error.text.if_you_think_this_is_incorrect_report</source>
         <target>Rapporteer deze fout met bovenstaande foutcode bij SURFnet als je denkt dat deze foutmelding ongerechtvaardigd is.</target>
+        <jms:reference-file line="13">/Resources/SurfnetStepupBundle/views/Exception/error404.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="aea98c18fcdb01a7f403f9d3d2bac09db573b1c6" resname="gateway.error.text.page_not_found">
-        <jms:reference-file line="8">views/Exception/error404.html.twig</jms:reference-file>
         <source>gateway.error.text.page_not_found</source>
         <target>De aangevraagde pagina bestaat niet. Ga terug en probeer het opnieuw.</target>
+        <jms:reference-file line="8">/Resources/SurfnetStepupBundle/views/Exception/error404.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="706344da8bbe9c21296992c5e0e74c68e546f191" resname="gateway.error.text.what_were_you_doing_well_fix_it">
-        <jms:reference-file line="13">views/Exception/error.html.twig</jms:reference-file>
         <source>gateway.error.text.what_were_you_doing_well_fix_it</source>
         <target>Rapporteer deze fout met bovenstaande foutcode bij SURFnet als je denkt dat deze foutmelding ongerechtvaardigd is.</target>
+        <jms:reference-file line="13">/Resources/SurfnetStepupBundle/views/Exception/error.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="b0c6c739ae28f825ab8beb19b0ac2a2fe3318c8b" resname="gateway.error.text.your_art_code">
-        <jms:reference-file line="12">views/Exception/error404.html.twig</jms:reference-file>
-        <jms:reference-file line="12">views/Exception/error.html.twig</jms:reference-file>
         <source>gateway.error.text.your_art_code</source>
         <target>De code voor deze foutmelding is</target>
+        <jms:reference-file line="12">/Resources/SurfnetStepupBundle/views/Exception/error.html.twig</jms:reference-file>
+        <jms:reference-file line="12">/Resources/SurfnetStepupBundle/views/Exception/error404.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="de592c959c17578aae221a2fc2c54d8122481dde" resname="gateway.error.title">
-        <jms:reference-file line="3">views/Exception/error.html.twig</jms:reference-file>
         <source>gateway.error.title</source>
         <target>Foutmelding</target>
+        <jms:reference-file line="3">/Resources/SurfnetStepupBundle/views/Exception/error.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="ed87648c28535e13d23c12e59d392bcfce791d21" resname="gateway.error.unprocessable_response">
-        <jms:reference-file line="7">views/Gateway/unprocessableResponse.html.twig</jms:reference-file>
         <source>gateway.error.unprocessable_response</source>
         <target>Login-response kan niet worden verwerkt.</target>
+        <jms:reference-file line="7">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/Gateway/unprocessableResponse.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="c52023939303136235bfd62d2df21bd984c4106e" resname="gateway.error.unrecoverable_error">
-        <jms:reference-file line="7">views/Gateway/unrecoverableError.html.twig</jms:reference-file>
         <source>gateway.error.unrecoverable_error</source>
         <target>Onherstelbare fout.</target>
+        <jms:reference-file line="7">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/Gateway/unrecoverableError.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="ad7b85583eab0d11276cba0979bc97e4a45be68d" resname="gateway.error.unrecoverable_error_message_intro">
-        <jms:reference-file line="10">views/Gateway/unrecoverableError.html.twig</jms:reference-file>
         <source>gateway.error.unrecoverable_error_message_intro</source>
         <target state="new">gateway.error.unrecoverable_error_message_intro</target>
+        <jms:reference-file line="10">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/Gateway/unrecoverableError.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="6d6e665338c60db3539752789daa318cc72e8002" resname="gateway.form.choose_second_factor.button.cancel">
-        <jms:reference-file line="51">Form/Type/ChooseSecondFactorType.php</jms:reference-file>
         <source>gateway.form.choose_second_factor.button.cancel</source>
         <target>Annuleren</target>
+        <jms:reference-file line="51">/../src/Surfnet/StepupGateway/GatewayBundle/Form/Type/ChooseSecondFactorType.php</jms:reference-file>
       </trans-unit>
       <trans-unit id="ee2f7d95292d7dd3cae91c7855aae08d37754b5a" resname="gateway.form.choose_second_factor.button.second_factor">
-        <jms:reference-file line="36">Form/Type/ChooseSecondFactorType.php</jms:reference-file>
         <source>gateway.form.choose_second_factor.button.second_factor</source>
         <target>Kies</target>
+        <jms:reference-file line="36">/../src/Surfnet/StepupGateway/GatewayBundle/Form/Type/ChooseSecondFactorType.php</jms:reference-file>
       </trans-unit>
       <trans-unit id="712389ad04974ac705f125ab79172fc63db959f5" resname="gateway.form.choose_second_factor.button.submit">
-        <jms:reference-file line="47">Form/Type/ChooseSecondFactorType.php</jms:reference-file>
         <source>gateway.form.choose_second_factor.button.submit</source>
         <target>Volgende</target>
+        <jms:reference-file line="47">/../src/Surfnet/StepupGateway/GatewayBundle/Form/Type/ChooseSecondFactorType.php</jms:reference-file>
       </trans-unit>
       <trans-unit id="65f3ce4b0efbcaaaafd540e24188ea54d0851540" resname="gateway.form.gateway_cancel_second_factor_verification.button.cancel_verification">
-        <jms:reference-file line="29">Form/Type/CancelSecondFactorVerificationType.php</jms:reference-file>
         <source>gateway.form.gateway_cancel_second_factor_verification.button.cancel_verification</source>
         <target>Annuleren</target>
+        <jms:reference-file line="29">/../src/Surfnet/StepupGateway/GatewayBundle/Form/Type/CancelSecondFactorVerificationType.php</jms:reference-file>
       </trans-unit>
       <trans-unit id="216da4e667c1127a830eadcac98926f5bd508efb" resname="gateway.form.gateway_send_sms_challenge.button.send_challenge">
-        <jms:reference-file line="30">Form/Type/SendSmsChallengeType.php</jms:reference-file>
         <source>gateway.form.gateway_send_sms_challenge.button.send_challenge</source>
         <target>Stuur code</target>
+        <jms:reference-file line="30">/../src/Surfnet/StepupGateway/GatewayBundle/Form/Type/SendSmsChallengeType.php</jms:reference-file>
       </trans-unit>
       <trans-unit id="7039a04e477c52544533b4969fb09c19f34d1452" resname="gateway.form.gateway_send_sms_challenge.label.phone_number">
-        <jms:reference-file line="28">views/SecondFactor/verifySmsSecondFactor.html.twig</jms:reference-file>
         <source>gateway.form.gateway_send_sms_challenge.label.phone_number</source>
         <target>Telefoonnummer</target>
+        <jms:reference-file line="28">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifySmsSecondFactor.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="ddf7dd3f1b77196052dad82522de3845661976fa" resname="gateway.form.send_sms_challenge.button.cancel">
-        <jms:reference-file line="34">Form/Type/SendSmsChallengeType.php</jms:reference-file>
         <source>gateway.form.send_sms_challenge.button.cancel</source>
         <target>Annuleren</target>
+        <jms:reference-file line="34">/../src/Surfnet/StepupGateway/GatewayBundle/Form/Type/SendSmsChallengeType.php</jms:reference-file>
       </trans-unit>
       <trans-unit id="369b2c8dea153b42d8dc01645e54140a83cb5f4f" resname="gateway.form.send_sms_challenge.sms_challenge_expired">
-        <jms:reference-file line="10">Resources/views/translations.html.twig</jms:reference-file>
         <source>gateway.form.send_sms_challenge.sms_challenge_expired</source>
         <target>Deze code is verlopen. Vraag een nieuwe code aan.</target>
+        <jms:reference-file line="10">/Resources/views/translations.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="ffeb09a45624fa2a2ce80cbdbe52cc274e7cb1a5" resname="gateway.form.send_sms_challenge.sms_challenge_incorrect">
-        <jms:reference-file line="9">Resources/views/translations.html.twig</jms:reference-file>
         <source>gateway.form.send_sms_challenge.sms_challenge_incorrect</source>
         <target>Deze code is niet juist. Probeer het nog eens, of vraag een nieuwe code op.</target>
+        <jms:reference-file line="9">/Resources/views/translations.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="b8020a5c4b1ce8f6a3cfa6854588499b9a6168ef" resname="gateway.form.send_sms_challenge.sms_sending_failed">
-        <jms:reference-file line="8">Resources/views/translations.html.twig</jms:reference-file>
         <source>gateway.form.send_sms_challenge.sms_sending_failed</source>
         <target>Het versturen van de SMS-code is mislukt.</target>
+        <jms:reference-file line="8">/Resources/views/translations.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="be86ce24f39578ecbfb3cf0ad710a5a96e819ff6" resname="gateway.form.send_sms_challenge.too_many_attempts">
-        <jms:reference-file line="11">Resources/views/translations.html.twig</jms:reference-file>
         <source>gateway.form.send_sms_challenge.too_many_attempts</source>
         <target>De limiet van tien pogingen is bereikt; je kunt geen codes meer verifiëren. Neem contact op met de helpdesk van je installing of probeer het later nog eens.</target>
+        <jms:reference-file line="11">/Resources/views/translations.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="815ec86e9c26021d75afe4356d9ae3bbb93e9582" resname="gateway.form.verify_sms_challenge.button.cancel">
-        <jms:reference-file line="46">Form/Type/VerifySmsChallengeType.php</jms:reference-file>
         <source>gateway.form.verify_sms_challenge.button.cancel</source>
         <target>Annuleren</target>
+        <jms:reference-file line="46">/../src/Surfnet/StepupGateway/GatewayBundle/Form/Type/VerifySmsChallengeType.php</jms:reference-file>
       </trans-unit>
       <trans-unit id="949d225017cfbb80ae094b1af62b758c4ab1cd2c" resname="gateway.form.verify_sms_challenge.button.resend_challenge">
-        <jms:reference-file line="41">Form/Type/VerifySmsChallengeType.php</jms:reference-file>
         <source>gateway.form.verify_sms_challenge.button.resend_challenge</source>
         <target>Vraag een nieuwe code aan</target>
+        <jms:reference-file line="41">/../src/Surfnet/StepupGateway/GatewayBundle/Form/Type/VerifySmsChallengeType.php</jms:reference-file>
       </trans-unit>
       <trans-unit id="c112fb5c4f9e2eca7afdf9e31f1eb7c17078b647" resname="gateway.form.verify_sms_challenge.button.verify_challenge">
-        <jms:reference-file line="37">Form/Type/VerifySmsChallengeType.php</jms:reference-file>
         <source>gateway.form.verify_sms_challenge.button.verify_challenge</source>
         <target>Code verifiëren</target>
+        <jms:reference-file line="37">/../src/Surfnet/StepupGateway/GatewayBundle/Form/Type/VerifySmsChallengeType.php</jms:reference-file>
       </trans-unit>
       <trans-unit id="1b12b51928c9eb9c6922fd0c910502698f0865f5" resname="gateway.form.verify_sms_challenge.text.challenge">
-        <jms:reference-file line="30">Form/Type/VerifySmsChallengeType.php</jms:reference-file>
         <source>gateway.form.verify_sms_challenge.text.challenge</source>
         <target>Code</target>
+        <jms:reference-file line="30">/../src/Surfnet/StepupGateway/GatewayBundle/Form/Type/VerifySmsChallengeType.php</jms:reference-file>
       </trans-unit>
       <trans-unit id="69e4a91f05f1619fc6326ff78659255bc0d4f7ce" resname="gateway.form.verify_yubikey.otp_verification_failed">
-        <jms:reference-file line="4">Resources/views/translations.html.twig</jms:reference-file>
         <source>gateway.form.verify_yubikey.otp_verification_failed</source>
         <target>De YubiKey code is ongeldig. Probeer het nog eens</target>
+        <jms:reference-file line="4">/Resources/views/translations.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="ff41865a3ee14ef7455ab11e77851280932ec1bb" resname="gateway.form.verify_yubikey.public_id_mismatch">
-        <jms:reference-file line="5">Resources/views/translations.html.twig</jms:reference-file>
         <source>gateway.form.verify_yubikey.public_id_mismatch</source>
         <target>Je gebruikt nu een andere YubiKey dan tijdens het registratieproces.</target>
+        <jms:reference-file line="5">/Resources/views/translations.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="4b7b462d7958d591725738f5b1e3334abeb57160" resname="gateway.form.verify_yubikey_otp.button.cancel">
-        <jms:reference-file line="46">Form/Type/VerifyYubikeyOtpType.php</jms:reference-file>
         <source>gateway.form.verify_yubikey_otp.button.cancel</source>
         <target>Annuleren</target>
+        <jms:reference-file line="46">/../src/Surfnet/StepupGateway/GatewayBundle/Form/Type/VerifyYubikeyOtpType.php</jms:reference-file>
       </trans-unit>
       <trans-unit id="53c1b4469c10803f2e6bfb5fd31afb68c7f9556f" resname="gateway.gateway.consume_assertion.title">
-        <jms:reference-file line="15">views/Gateway/consumeAssertion.html.twig</jms:reference-file>
-        <jms:reference-file line="15">views/Adfs/consumeAssertion.html.twig</jms:reference-file>
         <source>gateway.gateway.consume_assertion.title</source>
         <target>Een moment geduld alsjeblieft</target>
+        <jms:reference-file line="15">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/Gateway/consumeAssertion.html.twig</jms:reference-file>
+        <jms:reference-file line="15">/../src/Surfnet/StepupGateway/SecondFactorOnlyBundle/Resources/views/Adfs/consumeAssertion.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="189f85b546ea29bc943a11a82d0e270276518e9d" resname="gateway.gateway.unprocessable_response.title">
-        <jms:reference-file line="3">views/Gateway/unprocessableResponse.html.twig</jms:reference-file>
         <source>gateway.gateway.unprocessable_response.title</source>
         <target>Onverwerkbare login-response</target>
+        <jms:reference-file line="3">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/Gateway/unprocessableResponse.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="c3f04b0a835ab720ff87379b1edce78727cac5b4" resname="gateway.gateway.unrecoverable_error.title">
-        <jms:reference-file line="3">views/Gateway/unrecoverableError.html.twig</jms:reference-file>
         <source>gateway.gateway.unrecoverable_error.title</source>
         <target>Onherstelbare fout</target>
+        <jms:reference-file line="3">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/Gateway/unrecoverableError.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="622f2c7d57988587107f73336489ded1e06d2516" resname="gateway.gssp.consume_assertion.no_javascript_click_button">
-        <jms:reference-file line="19">views/SamlProxy/consumeAssertion.html.twig</jms:reference-file>
         <source>gateway.gssp.consume_assertion.no_javascript_click_button</source>
         <target>Doorgaan met inloggen</target>
+        <jms:reference-file line="19">/../src/Surfnet/StepupGateway/SamlStepupProviderBundle/Resources/views/SamlProxy/consumeAssertion.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="705f824eef098a0d957e06af812f80e7c5624772" resname="gateway.gssp.consume_assertion.one_moment_please">
-        <jms:reference-file line="21">views/SamlProxy/consumeAssertion.html.twig</jms:reference-file>
         <source>gateway.gssp.consume_assertion.one_moment_please</source>
         <target>Een moment geduld alsjeblieft...</target>
+        <jms:reference-file line="21">/../src/Surfnet/StepupGateway/SamlStepupProviderBundle/Resources/views/SamlProxy/consumeAssertion.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="dd0639f6ce42b824ec288bec780389ceb6840ad0" resname="gateway.gssp.consume_assertion.title">
-        <jms:reference-file line="15">views/SamlProxy/consumeAssertion.html.twig</jms:reference-file>
         <source>gateway.gssp.consume_assertion.title</source>
         <target>Inloggen...</target>
+        <jms:reference-file line="15">/../src/Surfnet/StepupGateway/SamlStepupProviderBundle/Resources/views/SamlProxy/consumeAssertion.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="c9695305e12382947a445cfdabbf54de15d8dc50" resname="gateway.gssp.error.an_error_occurred">
-        <jms:reference-file line="7">views/SamlProxy/recoverableError.html.twig</jms:reference-file>
         <source>gateway.gssp.error.an_error_occurred</source>
         <target>Er is een fout opgetreden door onbekende oorzaak. Ga terug om het opnieuw te proberen.</target>
+        <jms:reference-file line="7">/../src/Surfnet/StepupGateway/SamlStepupProviderBundle/Resources/views/SamlProxy/recoverableError.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="0c7ffdfd9ba3510ef02254282109d0e6fef8fa6c" resname="gateway.gssp.error.click_to_go_back_to_sp">
-        <jms:reference-file line="9">views/SamlProxy/recoverableError.html.twig</jms:reference-file>
-        <jms:reference-file line="9">views/SamlProxy/unprocessableResponse.html.twig</jms:reference-file>
         <source>gateway.gssp.error.click_to_go_back_to_sp</source>
         <target>Klik om terug te gaan naar de originele website.</target>
+        <jms:reference-file line="9">/../src/Surfnet/StepupGateway/SamlStepupProviderBundle/Resources/views/SamlProxy/recoverableError.html.twig</jms:reference-file>
+        <jms:reference-file line="9">/../src/Surfnet/StepupGateway/SamlStepupProviderBundle/Resources/views/SamlProxy/unprocessableResponse.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="af046dac1bc74ae441db3656693c4c1d2d89db28" resname="gateway.gssp.error.unprocessable_response">
-        <jms:reference-file line="7">views/SamlProxy/unprocessableResponse.html.twig</jms:reference-file>
         <source>gateway.gssp.error.unprocessable_response</source>
         <target>Login-response kan niet worden verwerkt.</target>
+        <jms:reference-file line="7">/../src/Surfnet/StepupGateway/SamlStepupProviderBundle/Resources/views/SamlProxy/unprocessableResponse.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="68fa294e0e385a155fd9dd2bdc22fc76e43382e3" resname="gateway.gssp.error.unrecoverable_error">
-        <jms:reference-file line="7">views/SamlProxy/unrecoverableError.html.twig</jms:reference-file>
         <source>gateway.gssp.error.unrecoverable_error</source>
         <target>Onherstelbare fout.</target>
+        <jms:reference-file line="7">/../src/Surfnet/StepupGateway/SamlStepupProviderBundle/Resources/views/SamlProxy/unrecoverableError.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="889370cf5357244ed23bc84218ffc2ba427cb6af" resname="gateway.gssp.error.unrecoverable_error.title">
-        <jms:reference-file line="3">views/SamlProxy/unrecoverableError.html.twig</jms:reference-file>
         <source>gateway.gssp.error.unrecoverable_error.title</source>
         <target>Onherstelbare fout</target>
+        <jms:reference-file line="3">/../src/Surfnet/StepupGateway/SamlStepupProviderBundle/Resources/views/SamlProxy/unrecoverableError.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="4d376b8ef14addcbce121d9cfebbe4d0795abad7" resname="gateway.gssp.submit.click_to_go_back_to_sp">
-        <jms:reference-file line="15">views/SamlProxy/recoverableError.html.twig</jms:reference-file>
-        <jms:reference-file line="15">views/SamlProxy/unprocessableResponse.html.twig</jms:reference-file>
         <source>gateway.gssp.submit.click_to_go_back_to_sp</source>
         <target>Klik om terug te gaan.</target>
+        <jms:reference-file line="15">/../src/Surfnet/StepupGateway/SamlStepupProviderBundle/Resources/views/SamlProxy/recoverableError.html.twig</jms:reference-file>
+        <jms:reference-file line="15">/../src/Surfnet/StepupGateway/SamlStepupProviderBundle/Resources/views/SamlProxy/unprocessableResponse.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="9fde40492d6e72cfb65112c6873e47bab8a0500e" resname="gateway.gssp.unprocessable_response.title">
-        <jms:reference-file line="3">views/SamlProxy/recoverableError.html.twig</jms:reference-file>
-        <jms:reference-file line="3">views/SamlProxy/unprocessableResponse.html.twig</jms:reference-file>
         <source>gateway.gssp.unprocessable_response.title</source>
         <target>Onverwerkbare login-response</target>
+        <jms:reference-file line="3">/../src/Surfnet/StepupGateway/SamlStepupProviderBundle/Resources/views/SamlProxy/recoverableError.html.twig</jms:reference-file>
+        <jms:reference-file line="3">/../src/Surfnet/StepupGateway/SamlStepupProviderBundle/Resources/views/SamlProxy/unprocessableResponse.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="75964b2f1748875ae1c270b8e25a9a5b2ea6b700" resname="gateway.second_factor.choose_second_factor.description">
-        <jms:reference-file line="8">views/SecondFactor/chooseSecondFactor.html.twig</jms:reference-file>
         <source>gateway.second_factor.choose_second_factor.description</source>
         <target>Kies een van de onderstaande tokens om door te gaan.</target>
+        <jms:reference-file line="8">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/chooseSecondFactor.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="fdeeb4b0c6e2a94aec8a11728946c13a325f8366" resname="gateway.second_factor.choose_second_factor.title">
-        <jms:reference-file line="3">views/SecondFactor/chooseSecondFactor.html.twig</jms:reference-file>
         <source>gateway.second_factor.choose_second_factor.title</source>
         <target>Kies uw favoriete token</target>
+        <jms:reference-file line="3">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/chooseSecondFactor.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="1c41e8d2b8040894426471450740d39af284d440" resname="gateway.second_factor.sms.challenge_body">
-        <jms:reference-file line="332">GatewayBundle/Service/StepUpAuthenticationService.php</jms:reference-file>
         <source>gateway.second_factor.sms.challenge_body</source>
         <target>Je SMS-code: %challenge%</target>
+        <jms:reference-file line="371">/../src/Surfnet/StepupGateway/GatewayBundle/Service/StepUpAuthenticationService.php</jms:reference-file>
       </trans-unit>
       <trans-unit id="fecb0bb6d9524901050c51767a3cf1eceb80da04" resname="gateway.second_factor.sms.send_challenge.title">
-        <jms:reference-file line="3">views/SecondFactor/verifySmsSecondFactor.html.twig</jms:reference-file>
         <source>gateway.second_factor.sms.send_challenge.title</source>
         <target>SMS verifiëren</target>
+        <jms:reference-file line="3">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifySmsSecondFactor.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="fbc134b1f4a8c33e94e122042462cd21c853204a" resname="gateway.second_factor.sms.text.after_pressing_proceed">
-        <jms:reference-file line="12">views/SecondFactor/verifySmsSecondFactor.html.twig</jms:reference-file>
         <source>gateway.second_factor.sms.text.after_pressing_proceed</source>
         <target>Na op “Stuur code” te hebben geklikt ontvang je een tekstbericht met een code. Vul deze code op de volgende pagina in.</target>
+        <jms:reference-file line="12">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifySmsSecondFactor.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="d80ea1ea4e3e600845fc1d86d0851f446f7a8908" resname="gateway.second_factor.sms.text.ensure_phone_has_signal">
-        <jms:reference-file line="11">views/SecondFactor/verifySmsSecondFactor.html.twig</jms:reference-file>
         <source>gateway.second_factor.sms.text.ensure_phone_has_signal</source>
         <target>Controleer dat je telefoon bereik heeft en tekstberichten kan ontvangen.</target>
+        <jms:reference-file line="11">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifySmsSecondFactor.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="125a385345b59621d0a18ef5608a775eb04b5f25" resname="gateway.second_factor.sms.text.enter_challenge_below">
-        <jms:reference-file line="11">views/SecondFactor/verifySmsSecondFactorChallenge.html.twig</jms:reference-file>
         <source>gateway.second_factor.sms.text.enter_challenge_below</source>
         <target>Voer de code hieronder in.</target>
+        <jms:reference-file line="11">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifySmsSecondFactorChallenge.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="b709c9885083cad3cea28a08aa1cf07d43fa186f" resname="gateway.second_factor.sms.text.help_user_enter_challenge">
-        <jms:reference-file line="8">views/SecondFactor/verifySmsSecondFactorChallenge.html.twig</jms:reference-file>
         <source>gateway.second_factor.sms.text.help_user_enter_challenge</source>
         <target>Je hebt net een SMS-code ontvangen. Gebruik deze om in te loggen:</target>
+        <jms:reference-file line="8">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifySmsSecondFactorChallenge.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="ae96304b72fa22655facaecca34b948409c3deaa" resname="gateway.second_factor.sms.text.help_user_enter_phone_number">
-        <jms:reference-file line="8">views/SecondFactor/verifySmsSecondFactor.html.twig</jms:reference-file>
         <source>gateway.second_factor.sms.text.help_user_enter_phone_number</source>
         <target>Volg onderstaande instructies om het bezit van je telefoon aan te tonen.</target>
+        <jms:reference-file line="8">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifySmsSecondFactor.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="0d06981098d22a2fa3428068bbc7e53d8cff3db7" resname="gateway.second_factor.sms.text.otp_requests_remaining">
-        <jms:reference-file line="19">views/SecondFactor/verifySmsSecondFactor.html.twig</jms:reference-file>
-        <jms:reference-file line="12">Resources/views/translations.html.twig</jms:reference-file>
         <source>gateway.second_factor.sms.text.otp_requests_remaining</source>
         <target>Aantal resterende pogingen: %count%</target>
+        <jms:reference-file line="19">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifySmsSecondFactor.html.twig</jms:reference-file>
+        <jms:reference-file line="12">/Resources/views/translations.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="a215b416978f2c35a0ffd4be8576c8a0bdf64718" resname="gateway.second_factor.sms.text.retry_if_not_received">
-        <jms:reference-file line="12">views/SecondFactor/verifySmsSecondFactorChallenge.html.twig</jms:reference-file>
         <source>gateway.second_factor.sms.text.retry_if_not_received</source>
         <target>Vraag een nieuwe code aan als je niet binnen een minuut een bericht ontvangt.</target>
+        <jms:reference-file line="12">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifySmsSecondFactorChallenge.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="c9ecf89d8bcda5d83b5a78f10fda52522011fcc7" resname="gateway.second_factor.sms.verify_challenge.title.page">
-        <jms:reference-file line="3">views/SecondFactor/verifySmsSecondFactorChallenge.html.twig</jms:reference-file>
         <source>gateway.second_factor.sms.verify_challenge.title.page</source>
         <target>Bevestig code</target>
+        <jms:reference-file line="3">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifySmsSecondFactorChallenge.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="d0af79ae0b3f333a17355d24f9fd8cea1311dc48" resname="gateway.second_factor.u2f.button.retry">
-        <jms:reference-file line="18">views/SecondFactor/initiateU2fAuthentication.html.twig</jms:reference-file>
         <source>gateway.second_factor.u2f.button.retry</source>
         <target>Nieuwe poging</target>
+        <jms:reference-file line="18">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/initiateU2fAuthentication.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="847f4fe9ebff36182e92bf5cfdb58ee68a3bbdba" resname="gateway.second_factor.u2f.text.activate_u2f_device">
-        <jms:reference-file line="10">views/SecondFactor/initiateU2fAuthentication.html.twig</jms:reference-file>
         <source>gateway.second_factor.u2f.text.activate_u2f_device</source>
         <target>Activeer het U2F-apparaat. Dit gebeurt meestal met behulp van een knop.</target>
+        <jms:reference-file line="10">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/initiateU2fAuthentication.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="d6c16ec06be9cc6266d1f8dd31086bdfa9fe4331" resname="gateway.second_factor.u2f.text.ensure_device_connected_to_pc">
-        <jms:reference-file line="9">views/SecondFactor/initiateU2fAuthentication.html.twig</jms:reference-file>
         <source>gateway.second_factor.u2f.text.ensure_device_connected_to_pc</source>
         <target>Zorg dat het U2F-apparaat gekoppeld is aan je computer.</target>
+        <jms:reference-file line="9">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/initiateU2fAuthentication.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="51f9749bdf254a6d5e6f7370c0b042d813f9f9f1" resname="gateway.second_factor.u2f.title.authenticate">
-        <jms:reference-file line="3">views/SecondFactor/initiateU2fAuthentication.html.twig</jms:reference-file>
         <source>gateway.second_factor.u2f.title.authenticate</source>
         <target>Authenticeren met je U2F-apparaat</target>
+        <jms:reference-file line="3">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/initiateU2fAuthentication.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="be12899784c0176e20b93e0030a2144365add26d" resname="gateway.second_factor.yubikey.text.connect_yubikey_to_pc">
-        <jms:reference-file line="11">views/SecondFactor/verifyYubikeySecondFactor.html.twig</jms:reference-file>
         <source>gateway.second_factor.yubikey.text.connect_yubikey_to_pc</source>
         <target>Stop je YubiKey in een USB-poort van je computer.</target>
+        <jms:reference-file line="11">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifyYubikeySecondFactor.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="6204e24e7c7b389809232589df868be2b511cdf5" resname="gateway.second_factor.yubikey.text.ensure_form_field_focus">
-        <jms:reference-file line="12">views/SecondFactor/verifyYubikeySecondFactor.html.twig</jms:reference-file>
         <source>gateway.second_factor.yubikey.text.ensure_form_field_focus</source>
         <target>Zorg dat het invulveld hieronder actief is.</target>
+        <jms:reference-file line="12">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifyYubikeySecondFactor.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="1445676eeee2335e0d37dad8c7d7bf883ea69c40" resname="gateway.second_factor.yubikey.text.help_user_enter_challenge">
-        <jms:reference-file line="8">views/SecondFactor/verifyYubikeySecondFactor.html.twig</jms:reference-file>
         <source>gateway.second_factor.yubikey.text.help_user_enter_challenge</source>
         <target>Gebruik je YubiKey om in te loggen:</target>
+        <jms:reference-file line="8">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifyYubikeySecondFactor.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="2845155cc34878dd2e86f19ca5ea1b01c2039d01" resname="gateway.second_factor.yubikey.text.press_once_form_auto_submitted">
-        <jms:reference-file line="13">views/SecondFactor/verifyYubikeySecondFactor.html.twig</jms:reference-file>
         <source>gateway.second_factor.yubikey.text.press_once_form_auto_submitted</source>
         <target>Druk op de knop van je YubiKey en houd even vast. Er verschijnt automatisch een eenmalige code in het invulveld.</target>
+        <jms:reference-file line="13">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifyYubikeySecondFactor.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="46afcd414845fe64dedd737b959f7cd327b85a63" resname="gateway.submit.click_to_go_back_to_sp">
-        <jms:reference-file line="15">views/Gateway/unprocessableResponse.html.twig</jms:reference-file>
         <source>gateway.submit.click_to_go_back_to_sp</source>
         <target>Klik om terug te gaan.</target>
+        <jms:reference-file line="15">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/Gateway/unprocessableResponse.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="9b27b207d4333411d2b69ba0b7827de90c8c1d16" resname="gateway.u2f.alert.device_reported_an_error">
-        <jms:reference-file line="17">Resources/views/translations.html.twig</jms:reference-file>
         <source>gateway.u2f.alert.device_reported_an_error</source>
         <target>Het U2F-apparaat heeft een foutmelding gerapporteerd. Probeer het opnieuw of neem contact op met de IT-helpdesk.</target>
+        <jms:reference-file line="17">/Resources/views/translations.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="48b1aeae580249687d55b44e22b613188803acdf" resname="gateway.u2f.alert.error">
-        <jms:reference-file line="16">Resources/views/translations.html.twig</jms:reference-file>
         <source>gateway.u2f.alert.error</source>
         <target>De authenticate met het U2F-apparaat is mislukt. Probeer het opnieuw of neem contact op met de IT-helpdesk.</target>
+        <jms:reference-file line="16">/Resources/views/translations.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="b5ef4b347f1b6489a162ecf06fd0c6a0acc1ac0b" resname="gateway.u2f.alert.unknown_registration">
-        <jms:reference-file line="15">Resources/views/translations.html.twig</jms:reference-file>
         <source>gateway.u2f.alert.unknown_registration</source>
         <target>De registratie van je U2F-apparaat is niet bekend. Registreer je U2F-apparaat opnieuw.</target>
+        <jms:reference-file line="15">/Resources/views/translations.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="ee8b15d139dd5ba69eb2bfbc1c540b03894bafd7" resname="ra.registration.yubikey.title.enter_challenge">
-        <jms:reference-file line="3">views/SecondFactor/verifyYubikeySecondFactor.html.twig</jms:reference-file>
         <source>ra.registration.yubikey.title.enter_challenge</source>
         <target>Log in met je YubiKey</target>
+        <jms:reference-file line="3">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifyYubikeySecondFactor.html.twig</jms:reference-file>
       </trans-unit>
     </body>
   </file>
