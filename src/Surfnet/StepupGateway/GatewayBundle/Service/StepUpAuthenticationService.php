@@ -20,7 +20,6 @@ namespace Surfnet\StepupGateway\GatewayBundle\Service;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Psr\Log\LoggerInterface;
-use Surfnet\SamlBundle\Entity\ServiceProvider;
 use Surfnet\StepupBundle\Command\SendSmsChallengeCommand as StepupSendSmsChallengeCommand;
 use Surfnet\StepupBundle\Command\VerifyPossessionOfPhoneCommand;
 use Surfnet\StepupBundle\Service\LoaResolutionService;
@@ -38,8 +37,9 @@ use Surfnet\StepupGateway\GatewayBundle\Command\SendSmsChallengeCommand;
 use Surfnet\StepupGateway\GatewayBundle\Command\VerifyYubikeyOtpCommand;
 use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor;
 use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactorRepository;
+use Surfnet\StepupGateway\GatewayBundle\Exception\InstitutionMismatchException;
 use Surfnet\StepupGateway\GatewayBundle\Exception\LoaCannotBeGivenException;
-use Surfnet\StepupGateway\GatewayBundle\Exception\RuntimeException;
+use Surfnet\StepupGateway\GatewayBundle\Exception\UnknownInstitutionException;
 use Surfnet\StepupGateway\GatewayBundle\Service\StepUp\YubikeyOtpVerificationResult;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -145,45 +145,68 @@ class StepUpAuthenticationService
     /**
      * Retrieves the required LoA for the authenticating user
      *
-     * The required LoA is based on several variables. These are:
+     * @see StepUpAuthenticationServiceTest::test_resolve_highest_required_loa_conbinations
+     *      The possible flows through the method are tested in this test case. Any additional possible outcomes should
+     *      be covered in this test.
      *
-     *  1. SP Requested LoA.
-     *  2. The optional SP/institution specific LoA configuration
-     *  3. The identity of the authenticating user (used to test if the user can provide a token for the institution
-     *     he is authenticating for). Only used when the SP/institution specific LoA configuration is in play.
-     *  4. The institution of the authenticating user, based on the schacHomeOrganization of the user. This is used
-     *     to validate the registered tokens are actually vetted by the correct institution. Only used when the
-     *     SP/institution specific LoA configuration is in play.
+     * @see https://github.com/OpenConext/Stepup-Deploy/wiki/Institution-Specific-LoA
+     *      The flow of the LoA determination is described in detail in this document. The parameters of this method
+     *      match the inputs described in the flow diagram.
      *
-     * These four variables determine the required LoA for the authenticating user. The possible outcomes are covered
-     * by unit tests. These tests can be found in the Test folder of this bundle.
+     * @param string $requestedLoa     <SP-LoA>   Optional. The value of the AuthnConextClassRef attribute in the
+     *                                            AuthnRequest from the SP.
      *
-     * @see: StepUpAuthenticationServiceTest::test_resolve_highest_required_loa_conbinations
+     *                                            Example: 'https://example.com/authentication/loa1'
      *
-     * @param string $requestedLoa The SP requested LoA
-     * @param $identityNameId
-     * @param string $identityInstitution
-     * @param ServiceProvider $serviceProvider
-     * @return null|Loa
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity) see https://www.pivotaltracker.com/story/show/96065350
-     * @SuppressWarnings(PHPMD.NPathComplexity)      see https://www.pivotaltracker.com/story/show/96065350
+     * @param array  $spConfiguredLoas <LoAs>     Optional. An associative array mapping schacHomeOrganization to LoA.
+     *                                            This array is configured on the gateway for each SP. All keys in the
+     *                                            spConfiguredLoas array should be normalized (lower cased).
+     *
+     *                                            Example:
+     *                                            [
+     *                                                '__default__'   => 'https://example.com/authentication/loa1',
+     *                                                'institution_a' => 'https://example.com/authentication/loa2',
+     *                                                'institution_b' => 'https://example.com/authentication/loa3',
+     *                                            ]
+     *
+     * @param string $idpSho           <IdP-SHO>  Optional. Value of the schacHomeOrganization attribute from the
+     *                                            Assertion from the IdP. The SHO should be normalized (lower cased) as
+     *                                            it will be used to be compared against the $spConfiguredLoas who have
+     *                                            also been normalized.
+     *
+     *                                            Example: 'institution_a', ''
+     *
+     * @param string $userSho          <User-SHO> Optional. The schacHomeOrganization that the user belongs to, this is
+     *                                            the schacHomeOrganization that was provided during registration of the
+     *                                            token. The SHO should be normalized (lower cased) as it will be used
+     *                                            to be compared against the $spConfiguredLoas who have also been
+     *                                            normalized.
+     *
+     *                                            Example: 'institution_b', ''
+     *
+     * @return Loa
+     *
+     * @throws UnknownInstitutionException        Raised when neither <User-SHO> or <IdP-SHO> is provided but <LoAs>
+     *                                            are configured for institutions other than __default__.
+     *
+     * @throws InstitutionMismatchException       <User-SHO> or <IdP-SHO> are configured and <LoAs> are provided for an
+     *                                            institution other than __default__ but the <User-SHO> and <IdP-SHO> do
+     *                                            not match.
+     *
+     * @throws LoaCannotBeGivenException          Raised when no LoA candidates are found or when none of the candidate
+     *                                            LoAs are valid (known to the application).
      */
     public function resolveHighestRequiredLoa(
         $requestedLoa,
-        $identityNameId,
-        $identityInstitution,
-        ServiceProvider $serviceProvider
+        array $spConfiguredLoas,
+        $idpSho,
+        $userSho
     ) {
+        // Candidate LoA's are stored in a collection. At the end of this procedure, the highest LoA is selected from
+        // this collection.
         $loaCandidates = new ArrayCollection();
 
-        if ($requestedLoa) {
-            $loaCandidates->add($requestedLoa);
-            $this->logger->info(sprintf('Added requested Loa "%s" as candidate', $requestedLoa));
-        }
-
-        // Load the SP/institution specific LoA configuration
-        $spConfiguredLoas = $serviceProvider->get('configuredLoas');
-
+        // Add the default LoA as configured for all SP's to the LoA candidates collection.
         if (array_key_exists('__default__', $spConfiguredLoas) &&
             !$loaCandidates->contains($spConfiguredLoas['__default__'])
         ) {
@@ -191,47 +214,42 @@ class StepUpAuthenticationService
             $this->logger->info(sprintf('Added SP\'s default Loa "%s" as candidate', $spConfiguredLoas['__default__']));
         }
 
-        if (count($spConfiguredLoas) > 1 && is_null($identityInstitution)) {
-            throw new RuntimeException(
-                'SP configured LOA\'s are applicable but the authenticating user has no ' .
-                'schacHomeOrganization in the assertion.'
-            );
+        // If AuthnContextClassRef was present in AuthnRequest, add the SP requested LoA to the candidates collection.
+        if ($requestedLoa) {
+            $loaCandidates->add($requestedLoa);
+            $this->logger->info(sprintf('Added requested Loa "%s" as candidate', $requestedLoa));
         }
 
-        // Load the authenticating users institutions based on its vetted tokens.
-        $institutionsBasedOnVettedTokens = [];
-        // But only do so if there are SP/institution specific LoA restrictions
-        if (!$this->hasDefaultSpConfig($spConfiguredLoas)) {
-            $institutionsBasedOnVettedTokens = $this->determineInstitutionsByIdentityNameId(
-                $identityNameId,
-                $identityInstitution,
-                $spConfiguredLoas
-            );
-        }
+        if ($this->hasNonDefaultSpConfiguredLoas($spConfiguredLoas)) {
+            // We need an userSho or idpSho to determine if any of the <LoAs> are applicable
+            if (empty($userSho) && empty($idpSho)) {
+                throw new UnknownInstitutionException('Unable to determine the institution for authenticating user.');
+            }
 
-        $this->logger->info(sprintf('Loaded institution(s) for "%s"', $identityNameId));
+            // If both user and IdP SHO are known, they should match
+            if (!empty($userSho) && !empty($idpSho) && $userSho != $idpSho) {
+                throw new InstitutionMismatchException('User and IdP SHO are set but do not match.');
+            }
 
-        // Match the users institutions LoA's against the SP configured institutions
-        $matchingInstitutions = $this->institutionMatchingHelper->findMatches(
-            array_keys($spConfiguredLoas),
-            $institutionsBasedOnVettedTokens
-        );
+            // If the user SHO is available in the <LoAs>, add the to the candidates collection.
+            if (isset($spConfiguredLoas[$userSho])) {
+                $this->logger->info(sprintf('Added Loa "%s" as candidate based on user SHO', $requestedLoa));
+                $loaCandidates->add($spConfiguredLoas[$userSho]);
+            }
 
-        if (count($matchingInstitutions) > 0) {
-            $this->logger->info('Found matching SP configured LoA\'s');
-            foreach ($matchingInstitutions as $matchingInstitution) {
-                $loaCandidates->add($spConfiguredLoas[$matchingInstitution]);
-                $this->logger->info(sprintf(
-                    'Added SP\'s Loa "%s" as candidate',
-                    $spConfiguredLoas[$matchingInstitution]
-                ));
+            // If the IdP SHO is available in the <LoAs>, add the to the candidates collection.
+            if (isset($spConfiguredLoas[$idpSho])) {
+                $this->logger->info(sprintf('Added Loa "%s" as candidate based on IdP SHO', $requestedLoa));
+                $loaCandidates->add($spConfiguredLoas[$idpSho]);
             }
         }
 
         if (!count($loaCandidates)) {
-            throw new RuntimeException('No Loa can be found, at least one Loa (SP default) should be found');
+            throw new LoaCannotBeGivenException('No Loa can be found, at least one Loa should be found');
         }
 
+        // The candidate LoA's are checked against the LoA resolution service. Any LoA that is not supported in the
+        // platform is rejected and not considered an actual LoA.
         $actualLoas = new ArrayCollection();
         foreach ($loaCandidates as $loaDefinition) {
             $loa = $this->loaResolutionService->getLoa($loaDefinition);
@@ -241,15 +259,15 @@ class StepUpAuthenticationService
         }
 
         if (!count($actualLoas)) {
-            $this->logger->info(sprintf(
-                'Out of "%d" candidates, no existing Loa could be found, no authentication is possible.',
-                count($loaCandidates)
-            ));
-
-            return null;
+            throw new LoaCannotBeGivenException(
+                sprintf(
+                    'Out of "%d" candidates, no existing Loa could be found, no authentication is possible.',
+                    count($loaCandidates)
+                )
+            );
         }
 
-        /** @var \Surfnet\StepupBundle\Value\Loa $highestLoa */
+        /** @var Loa $highestLoa */
         $highestLoa = $actualLoas->first();
         foreach ($actualLoas as $loa) {
             // if the current highest Loa cannot satisfy the next Loa, that must be of a higher level...
@@ -263,6 +281,20 @@ class StepUpAuthenticationService
         );
 
         return $highestLoa;
+    }
+
+    /**
+     * Test if the spConfiguredLoas has institution specific LoA configurations other than the
+     * default LoA configuration.
+     *
+     * @param array $spConfiguredLoas
+     *
+     * @return bool
+     */
+    private function hasNonDefaultSpConfiguredLoas(array $spConfiguredLoas)
+    {
+        unset($spConfiguredLoas['__default__']);
+        return (count($spConfiguredLoas) > 0);
     }
 
     /**
@@ -374,63 +406,13 @@ class StepUpAuthenticationService
     }
 
     /**
-     * Tests if the authenticating user has any vetted tokens for the institution he is authenticating for.
-     *
-     * The user needs to have a SHO and one or more vetted tokens for this method to return any institutions.
+     * Get the normalized (lowercase) schacHomeOrganisation of the authenticating user based on its vetted tokens.
      *
      * @param string $identityNameId Used to load vetted tokens
-     * @param string $identityInstitution Used to match against the institutions of vetted tokens
-     * @param array $spConfiguredLoas Used for validation (are users tokens applicable for any of the configured
-     * SP/institution configured institutions?)
-     * @return array
+     * @return string either the SHO or an empty string
      */
-    private function determineInstitutionsByIdentityNameId($identityNameId, $identityInstitution, $spConfiguredLoas)
+    public function getUserShoByIdentityNameId($identityNameId)
     {
-        // Load the institutions based on the nameId of the authenticating user. This information is extracted from
-        // the second factors projection in the Gateway. So the institutions are based on the vetted tokens of the user.
-        $institutions = $this->secondFactorRepository->getAllInstitutions($identityNameId);
-
-        // Validations are performed on the institutions
-        if (empty($institutions) && array_key_exists($identityInstitution, $spConfiguredLoas)) {
-            throw new LoaCannotBeGivenException(
-                'The authenticating user cannot provide a token for the institution it is authenticating for.'
-            );
-        }
-
-        if (empty($institutions)) {
-            throw new LoaCannotBeGivenException(
-                'The authenticating user does not have any vetted tokens.'
-            );
-        }
-
-        // The user has vetted tokens and it's SHO was loaded from the assertion
-        if (!is_null($identityInstitution) && !empty($institutions)) {
-
-            $institutionMatches = $this->institutionMatchingHelper->findMatches(
-                $institutions,
-                [$identityInstitution]
-            );
-
-            if (empty($institutionMatches)) {
-                throw new LoaCannotBeGivenException(
-                    'None of the authenticating users tokens are registered at an institution the user is currently ' .
-                    'authenticating from.'
-                );
-            }
-            // Add the SHO of the authenticating user to the list of institutions based on vetted tokens. This ensures
-            // the correct LOA can be based on the organisation of the user.
-            $institutions[] = $identityInstitution;
-        }
-
-
-        return $institutions;
-    }
-
-    private function hasDefaultSpConfig($spConfiguredLoas)
-    {
-        if (array_key_exists('__default__', $spConfiguredLoas) && count($spConfiguredLoas) === 1) {
-            return true;
-        }
-        return false;
+        return strtolower($this->secondFactorRepository->getInstitutionByNameId($identityNameId));
     }
 }
