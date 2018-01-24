@@ -88,8 +88,8 @@ final class EnabledSecondFactorRepository implements SecondFactorRepository
         return $secondFactor;
     }
 
-    public function getAllInstitutions($identityNameId)
+    public function getInstitutionByNameId($identityNameId)
     {
-        return $this->secondFactorRepository->getAllInstitutions($identityNameId);
+        return $this->secondFactorRepository->getInstitutionByNameId($identityNameId);
     }
 }

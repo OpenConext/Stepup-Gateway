@@ -41,10 +41,10 @@ interface SecondFactorRepository
     public function findOneBySecondFactorId($secondFactorId);
 
     /**
-     * Loads the institutions for a given identity name id
+     * Load the institution for a given identity name id based on the vetted tokens.
      *
      * @param $identityNameId
-     * @return array
+     * @return string
      */
-    public function getAllInstitutions($identityNameId);
+    public function getInstitutionByNameId($identityNameId);
 }
