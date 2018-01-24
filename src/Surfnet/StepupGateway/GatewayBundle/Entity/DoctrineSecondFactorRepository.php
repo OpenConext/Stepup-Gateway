@@ -55,33 +55,22 @@ class DoctrineSecondFactorRepository extends EntityRepository implements SecondF
     }
 
     /**
-     * Loads the institutions for a given identity name id
-     *
      * @param $identityNameId
-     * @return array
+     * @return string
      */
-    public function getAllInstitutions($identityNameId)
+    public function getInstitutionByNameId($identityNameId)
     {
-        $institutions = [];
-        $secondFactors = $this->findAllByIdentityNameId($identityNameId);
-        foreach ($secondFactors as $secondFactor) {
-            $institutions[$secondFactor->institution] = $secondFactor->institution;
-        }
-
-        return $institutions;
-    }
-
-    /**
-     * @param $identityNameId
-     * @return \Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor[]
-     */
-    private function findAllByIdentityNameId($identityNameId)
-    {
-        /** @var \Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor[] $secondFactors */
-        return $this->createQueryBuilder('sf')
+        /** @var \Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor $secondFactor **/
+        $secondFactor = $this->createQueryBuilder('sf')
             ->where('sf.nameId = :nameId')
             ->setParameter('nameId', $identityNameId)
+            ->setMaxResults(1)
             ->getQuery()
-            ->getResult();
+            ->getOneOrNullResult();
+
+        if ($secondFactor) {
+            return $secondFactor->institution;
+        }
+        return '';
     }
 }

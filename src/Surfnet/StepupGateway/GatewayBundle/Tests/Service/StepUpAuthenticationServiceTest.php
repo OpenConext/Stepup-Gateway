@@ -28,9 +28,8 @@ use Surfnet\StepupBundle\Service\SmsSecondFactorService;
 use Surfnet\StepupBundle\Value\Loa;
 use Surfnet\StepupGateway\ApiBundle\Service\YubikeyService;
 use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactorRepository;
+use Surfnet\StepupGateway\GatewayBundle\Exception\InvalidStepupShoFormatException;
 use Surfnet\StepupGateway\GatewayBundle\Exception\LoaCannotBeGivenException;
-use Surfnet\StepupGateway\GatewayBundle\Exception\RuntimeException;
-use Surfnet\StepupGateway\GatewayBundle\Service\InstitutionMatchingHelper;
 use Surfnet\StepupGateway\GatewayBundle\Service\StepUpAuthenticationService;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -45,7 +44,6 @@ final class StepUpAuthenticationServiceTest extends PHPUnit_Framework_TestCase
     private $secondFactorRepository;
     private $yubikeyService;
     private $smsSfService;
-    private $institutionMatchingHelper;
     private $translator;
 
     /**
@@ -69,7 +67,6 @@ final class StepUpAuthenticationServiceTest extends PHPUnit_Framework_TestCase
         $this->secondFactorRepository = m::mock(SecondFactorRepository::class);
         $this->yubikeyService = m::mock(YubikeyService::class);
         $this->smsSfService = m::mock(SmsSecondFactorService::class);
-        $this->institutionMatchingHelper = new InstitutionMatchingHelper();
         $this->translator = m::mock(TranslatorInterface::class);
         $this->logger = m::mock(LoggerInterface::class);
         $this->secondFactorTypeService = m::mock(SecondFactorTypeService::class);
@@ -82,7 +79,6 @@ final class StepUpAuthenticationServiceTest extends PHPUnit_Framework_TestCase
             $this->secondFactorRepository,
             $this->yubikeyService,
             $this->smsSfService,
-            $this->institutionMatchingHelper,
             $this->translator,
             $this->logger,
             $this->secondFactorTypeService
@@ -104,30 +100,19 @@ final class StepUpAuthenticationServiceTest extends PHPUnit_Framework_TestCase
             ->shouldReceive('info')
             ->with('Added requested Loa "https://gw-dev.stepup.coin.surf.net/authentication/loa1" as candidate');
 
-        $this->serviceProvider
-            ->shouldReceive('get')
-            ->with('configuredLoas')
-            ->andReturn([
-                '__default__' => 'https://gw-dev.stepup.coin.surf.net/authentication/loa1'
-            ]);
+        $this->logger
+            ->shouldReceive('info')
+            ->with('Added SP\'s default Loa "https://gw-dev.stepup.coin.surf.net/authentication/loa1" as candidate');
 
         $this->logger
             ->shouldReceive('info')
-            ->with('Loaded institution(s) for "john-doe"');
-
-        $this->logger
-            ->shouldReceive('info')
-            ->with('Out of 1 candidate Loa\'s, Loa "https://gw-dev.stepup.coin.surf.net/authentication/loa1" is the highest');
-
-        $this->secondFactorRepository
-            ->shouldReceive('getAllInstitutions')
-            ->andReturn(['institution-a.nl' => 'institution-a.nl']);
+            ->with('Out of 2 candidate Loa\'s, Loa "https://gw-dev.stepup.coin.surf.net/authentication/loa1" is the highest');
 
         $loa = $this->service->resolveHighestRequiredLoa(
             'https://gw-dev.stepup.coin.surf.net/authentication/loa1',
-            'john-doe',
+            ['__default__' => 'https://gw-dev.stepup.coin.surf.net/authentication/loa1'],
             'institution-a.nl',
-            $this->serviceProvider
+            'institution-a.nl'
         );
 
         $this->assertEquals('https://gw-dev.stepup.coin.surf.net/authentication/loa1', (string) $loa);
@@ -142,34 +127,19 @@ final class StepUpAuthenticationServiceTest extends PHPUnit_Framework_TestCase
             ->shouldReceive('info')
             ->with('Added requested Loa "https://gw-dev.stepup.coin.surf.net/authentication/loa2" as candidate');
 
-        $this->serviceProvider
-            ->shouldReceive('get')
-            ->with('configuredLoas')
-            ->andReturn([
-                '__default__' => 'https://gw-dev.stepup.coin.surf.net/authentication/loa1'
-            ]);
-
         $this->logger
             ->shouldReceive('info')
             ->with('Added SP\'s default Loa "https://gw-dev.stepup.coin.surf.net/authentication/loa1" as candidate');
 
         $this->logger
             ->shouldReceive('info')
-            ->with('Loaded institution(s) for "john-doe"');
-
-        $this->logger
-            ->shouldReceive('info')
             ->with('Out of 2 candidate Loa\'s, Loa "https://gw-dev.stepup.coin.surf.net/authentication/loa2" is the highest');
-
-        $this->secondFactorRepository
-            ->shouldReceive('getAllInstitutions')
-            ->andReturn(['institution-a.nl' => 'institution-a.nl']);
 
         $loa = $this->service->resolveHighestRequiredLoa(
             'https://gw-dev.stepup.coin.surf.net/authentication/loa2',
-            'john-doe',
+            ['__default__' => 'https://gw-dev.stepup.coin.surf.net/authentication/loa1'],
             'institution-a.nl',
-            $this->serviceProvider
+            'institution-a.nl'
         );
 
         $this->assertEquals('https://gw-dev.stepup.coin.surf.net/authentication/loa2', (string) $loa);
@@ -186,19 +156,17 @@ final class StepUpAuthenticationServiceTest extends PHPUnit_Framework_TestCase
             ->shouldReceive('info')
             ->with('Added requested Loa "https://gw-dev.stepup.coin.surf.net/authentication/loa1" as candidate');
 
-        // Users of institution-a.nl should provide loa2
-        $this->serviceProvider
-            ->shouldReceive('get')
-            ->with('configuredLoas')
-            ->andReturn($loaConfiguration);
+        $this->logger
+            ->shouldReceive('info')
+            ->with('Added SP\'s default Loa "https://gw-dev.stepup.coin.surf.net/authentication/loa1" as candidate');
 
         $this->logger
             ->shouldReceive('info')
-            ->with('Loaded institution(s) for "john-doe"');
+            ->with('Added Loa "https://gw-dev.stepup.coin.surf.net/authentication/loa1" as candidate based on user SHO');
 
         $this->logger
             ->shouldReceive('info')
-            ->with('Found matching SP configured LoA\'s');
+            ->with('Added Loa "https://gw-dev.stepup.coin.surf.net/authentication/loa1" as candidate based on IdP SHO');
 
         $this->logger
             ->shouldReceive('info')
@@ -206,17 +174,15 @@ final class StepUpAuthenticationServiceTest extends PHPUnit_Framework_TestCase
 
         $this->logger
             ->shouldReceive('info')
-            ->with('Out of 2 candidate Loa\'s, Loa "https://gw-dev.stepup.coin.surf.net/authentication/loa2" is the highest');
-
-        $this->secondFactorRepository
-            ->shouldReceive('getAllInstitutions')
-            ->andReturn(['institution-a.nl' => 'institution-a.nl']);
+            ->with(matchesPattern('/^Out of [3|4] candidate Loa\'s, Loa ' .
+                '"https:\/\/gw-dev.stepup.coin.surf.net\/authentication\/loa2" is the highest$/')
+            );
 
         $loa = $this->service->resolveHighestRequiredLoa(
             'https://gw-dev.stepup.coin.surf.net/authentication/loa1',
-            'john-doe',
+            $loaConfiguration,
             'institution-a.nl',
-            $this->serviceProvider
+            'institution-a.nl'
         );
 
         $this->assertEquals('https://gw-dev.stepup.coin.surf.net/authentication/loa2', (string) $loa);
@@ -227,74 +193,31 @@ final class StepUpAuthenticationServiceTest extends PHPUnit_Framework_TestCase
      * Loa configuration
      *
      * @dataProvider configuredLoas
-     * @expectedException \Surfnet\StepupGateway\GatewayBundle\Exception\RuntimeException
-     * @expectedExceptionMessage SP configured LOA's are applicable but the authenticating user has no
-     *                           schacHomeOrganization in the assertion.
-     */
-    public function test_resolve_highest_required_loa_no_schac_home_organization($loaConfiguration)
-    {
-        $this->logger
-            ->shouldReceive('info')
-            ->with('Added requested Loa "https://gw-dev.stepup.coin.surf.net/authentication/loa1" as candidate');
-
-        $this->serviceProvider
-            ->shouldReceive('get')
-            ->with('configuredLoas')
-            ->andReturn($loaConfiguration);
-
-        $this->secondFactorRepository
-            ->shouldReceive('getAllInstitutions')
-            ->andReturn(['institution-a.nl' => 'institution-a.nl']);
-
-        $this->logger
-            ->shouldReceive('info')
-            ->with('Loaded institution(s) for "john-doe"');
-
-        $this->service->resolveHighestRequiredLoa(
-            'https://gw-dev.stepup.coin.surf.net/authentication/loa1',
-            'john-doe',
-            null,
-            $this->serviceProvider
-        );
-    }
-
-    /**
-     * When the authenticating user has no schacHomeOrganization but the SP is configured with SP/institution specific
-     * Loa configuration
-     *
-     * @dataProvider configuredLoas
-     * @expectedException \Surfnet\StepupGateway\GatewayBundle\Exception\LoaCannotBeGivenException
-     * @expectedExceptionMessage None of the authenticating users tokens are registered at an institution the user is
-     *                           currently authenticating from.
+     * @expectedException \Surfnet\StepupGateway\GatewayBundle\Exception\InstitutionMismatchException
+     * @expectedExceptionMessage User and IdP SHO are set but do not match.
      */
     public function test_resolve_highest_required_loa_no_vetted_tokens_for_user_institution($loaConfiguration)
     {
         $this->logger
             ->shouldReceive('info')
             ->with('Added requested Loa "https://gw-dev.stepup.coin.surf.net/authentication/loa1" as candidate');
-
-        $this->serviceProvider
-            ->shouldReceive('get')
-            ->with('configuredLoas')
-            ->andReturn($loaConfiguration);
-
-        $this->secondFactorRepository
-            ->shouldReceive('getAllInstitutions')
-            ->andReturn(['institution-x.nl' => 'institution-x.nl']);
+        $this->logger
+            ->shouldReceive('info')
+            ->with('Added SP\'s default Loa "https://gw-dev.stepup.coin.surf.net/authentication/loa1" as candidate');
 
         $this->service->resolveHighestRequiredLoa(
             'https://gw-dev.stepup.coin.surf.net/authentication/loa1',
-            'john-doe',
+            $loaConfiguration,
             'institution-a.nl',
-            $this->serviceProvider
+            'institution-x.nl'
         );
     }
 
     /**
      * No default SP LOA config is provided for this SP
      *
-     * @expectedException \Surfnet\StepupGateway\GatewayBundle\Exception\RuntimeException
-     * @expectedExceptionMessage No Loa can be found, at least one Loa (SP default) should be found
+     * @expectedException \Surfnet\StepupGateway\GatewayBundle\Exception\LoaCannotBeGivenException
+     * @expectedExceptionMessage No Loa can be found, at least one Loa should be found
      */
     public function test_resolve_highest_required_loa_no_default_sp_configurated()
     {
@@ -302,64 +225,65 @@ final class StepUpAuthenticationServiceTest extends PHPUnit_Framework_TestCase
             ->shouldReceive('info')
             ->with('Added requested Loa "https://gw-dev.stepup.coin.surf.net/authentication/loa1" as candidate');
 
-        $this->serviceProvider
-            ->shouldReceive('get')
-            ->with('configuredLoas')
-            ->andReturn([]);
-
-        $this->secondFactorRepository
-            ->shouldReceive('getAllInstitutions')
-            ->andReturn(['institution-a.nl' => 'institution-a.nl']);
-
-        $this->logger
-            ->shouldReceive('info')
-            ->with('Loaded institution(s) for "john-doe"');
-
         $this->service->resolveHighestRequiredLoa(
             null,
-            'john-doe',
+            [],
             'institution-a.nl',
-            $this->serviceProvider
+            'institution-a.nl'
         );
     }
 
+    /**
+     * No default SP LOA config is provided for this SP
+     *
+     * @expectedException \Surfnet\StepupGateway\GatewayBundle\Exception\UnknownInstitutionException
+     * @expectedExceptionMessage Unable to determine the institution for authenticating user.
+     */
+    public function test_resolve_highest_required_loa_no_sho_can_be_found()
+    {
+        $this->logger
+            ->shouldReceive('info')
+            ->with('Added requested Loa "https://gw-dev.stepup.coin.surf.net/authentication/loa2" as candidate');
+
+      $this->logger
+            ->shouldReceive('info')
+            ->with('Added SP\'s default Loa "https://gw-dev.stepup.coin.surf.net/authentication/loa1" as candidate');
+
+        $this->service->resolveHighestRequiredLoa(
+            'https://gw-dev.stepup.coin.surf.net/authentication/loa2',
+            [
+                '__default__' => 'https://gw-dev.stepup.coin.surf.net/authentication/loa1',
+                'institution-a.nl' => 'https://gw-dev.stepup.coin.surf.net/authentication/loa1',
+            ],
+            '',
+            ''
+        );
+    }
+
+    /**
+     * @expectedException \Surfnet\StepupGateway\GatewayBundle\Exception\LoaCannotBeGivenException
+     * @expectedExceptionMessage Out of "2" candidates, no existing Loa could be found, no authentication is possible.
+     */
     public function test_resolve_highest_required_loa_no_viable_loa_found()
     {
         $this->logger
             ->shouldReceive('info')
             ->with('Added requested Loa "https://gw-dev.stepup.coin.ibuildings.nl/authentication/loa1" as candidate');
 
-        $this->serviceProvider
-            ->shouldReceive('get')
-            ->with('configuredLoas')
-            ->andReturn([
-                '__default__' => 'https://gw-dev.stepup.coin.ibuildings.nl/authentication/loa2',
-            ]);
-
         $this->logger
             ->shouldReceive('info')
             ->with('Added SP\'s default Loa "https://gw-dev.stepup.coin.ibuildings.nl/authentication/loa2" as candidate');
-
-        $this->secondFactorRepository
-            ->shouldReceive('getAllInstitutions')
-            ->andReturn(['institution-a.nl' => 'institution-a.nl']);
-
-        $this->logger
-            ->shouldReceive('info')
-            ->with('Loaded institution(s) for "john-doe"');
 
         $this->logger
             ->shouldReceive('info')
             ->with('Out of "2" candidates, no existing Loa could be found, no authentication is possible.');
 
-        $loa = $this->service->resolveHighestRequiredLoa(
+        $this->service->resolveHighestRequiredLoa(
             'https://gw-dev.stepup.coin.ibuildings.nl/authentication/loa1',
-            'john-doe',
+            ['__default__' => 'https://gw-dev.stepup.coin.ibuildings.nl/authentication/loa2'],
             'institution-a.nl',
-            $this->serviceProvider
+            'institution-a.nl'
         );
-
-        $this->assertNull($loa);
     }
 
     /**
@@ -401,6 +325,7 @@ final class StepUpAuthenticationServiceTest extends PHPUnit_Framework_TestCase
         ];
     }
 
+
     /**
      * This tests combinations of the following possibilities:
      *
@@ -437,12 +362,8 @@ final class StepUpAuthenticationServiceTest extends PHPUnit_Framework_TestCase
         $expectedOutcome,
         $index
     ) {
-        $this->logger->shouldReceive('info');
 
-        $this->serviceProvider
-            ->shouldReceive('get')
-            ->with('configuredLoas')
-            ->andReturn($configuredLoas);
+        $this->logger->shouldReceive('info');
 
         $this->secondFactorRepository
             ->shouldReceive('getAllInstitutions')
@@ -451,13 +372,11 @@ final class StepUpAuthenticationServiceTest extends PHPUnit_Framework_TestCase
         try {
             $loa = $this->service->resolveHighestRequiredLoa(
                 $spRequestedLoa,
-                'john-doe',
+                $configuredLoas,
                 $identityOrganisation,
-                $this->serviceProvider
+                $institutionsBasedOnVettedTokens
             );
             $this->assertEquals($expectedOutcome, (string) $loa, sprintf('Unexpected outcome in test: %d', $index));
-        } catch (RuntimeException $e) {
-            $this->assertEquals($expectedOutcome, $e->getMessage(), sprintf('Unexpected RuntimeException in test: %d', $index));
         } catch (LoaCannotBeGivenException $e) {
             $this->assertEquals($expectedOutcome, $e->getMessage(), sprintf('Unexpected LoaCannotBeGivenException in test: %d', $index));
         }
@@ -470,10 +389,8 @@ final class StepUpAuthenticationServiceTest extends PHPUnit_Framework_TestCase
         $expectedLoa2 = 'https://gw-dev.stepup.coin.surf.net/authentication/loa2';
         $expectedLoa3 = 'https://gw-dev.stepup.coin.surf.net/authentication/loa3';
 
-        $exceptionNoTokensFoundForInstitution = 'The authenticating user cannot provide a token for the institution it is authenticating for.';
-        $exceptionNoTokensFound = 'The authenticating user does not have any vetted tokens.';
-        $exceptionNoTokensRegistered = 'None of the authenticating users tokens are registered at an institution the user is currently authenticating from.';
-        $exceptionNoOrganization = 'SP configured LOA\'s are applicable but the authenticating user has no schacHomeOrganization in the assertion.';
+        $exceptionNoTokensRegistered = 'User and IdP SHO are set but do not match.';
+        $exceptionNoOrganization = 'Unable to determine the institution for authenticating user.';
 
         // a1. No sp-institution specific configuration provided (i.e. __default__ = LoA 1)
         $a1 = ['__default__' => 'https://gw-dev.stepup.coin.surf.net/authentication/loa1'];
@@ -485,20 +402,18 @@ final class StepUpAuthenticationServiceTest extends PHPUnit_Framework_TestCase
 
         // b1. The user has schacHomeOrganization attribute set to <A>
         $b1 = 'institution';
-        // b2. The user has schacHomeOrganization attribute set to <A>, but the case does not match
-        $b2 = 'instiTUTION';
-        // b3. The user has no schacHomeOrganization attribute set
-        $b3 = null;
-        // b4. The user has a schacHomeOrganization attribute set that is different from the one used during registration
-        $b4 = 'institution-x';
+        // b2. The user has no schacHomeOrganization attribute set
+        $b2 = '';
+        // b3. The user has a schacHomeOrganization attribute set that is different from the one used during registration
+        $b3 = 'institution-x';
 
         // c1. The user has a vetted token (i.e. NameID exists in the second_factor table)
-        $c1 = ['institution' => 'institution'];
+        $c1 = 'institution';
         // c2. The user does not not have a vetted token
-        $c2 = [];
+        $c2 = '';
 
         // d1. SP does not request a LoA (i.e. no AuthContexClassRef in AuthnRequest)
-        $d1 = null;
+        $d1 = '';
         // d2. SP requests LoA = 1
         $d2 = 'https://gw-dev.stepup.coin.surf.net/authentication/loa1';
         // d3. SP requests LoA = 2
@@ -506,82 +421,98 @@ final class StepUpAuthenticationServiceTest extends PHPUnit_Framework_TestCase
         // d4. SP requests LoA = 3
         $d4 = 'https://gw-dev.stepup.coin.surf.net/authentication/loa3';
 
-
         $combinations = [
 
-            [$a1, $b1, $c1, $d1, $expectedLoa1,                         1],
-            [$a2, $b1, $c1, $d1, $expectedLoa2,                         2],
-            [$a1, $b2, $c1, $d1, $expectedLoa1,                         3],
-            [$a2, $b2, $c1, $d1, $expectedLoa2,                         4],
-            [$a1, $b3, $c1, $d1, $expectedLoa1,                         5],
-            [$a2, $b3, $c1, $d1, $exceptionNoOrganization,              6],
-            [$a1, $b4, $c1, $d1, $expectedLoa1,                         7],
-            [$a2, $b4, $c1, $d1, $exceptionNoTokensRegistered,          8],
+            [$a1, $b1, $c1, $d1, $expectedLoa1,                  1],
+            [$a2, $b1, $c1, $d1, $expectedLoa2,                  2],
+            [$a1, $b2, $c1, $d1, $expectedLoa1,                  3],
+            [$a2, $b2, $c1, $d1, $expectedLoa2,                  4],
+            [$a1, $b3, $c1, $d1, $expectedLoa1,                  5],
+            [$a2, $b3, $c1, $d1, $exceptionNoTokensRegistered,   6],
 
-            [$a1, $b1, $c2, $d1, $expectedLoa1,                         9],
-            [$a2, $b1, $c2, $d1, $exceptionNoTokensFoundForInstitution, 10],
-            [$a1, $b2, $c2, $d1, $expectedLoa1,                         11],
-            [$a2, $b2, $c2, $d1, $exceptionNoTokensFound,               12],
-            [$a1, $b3, $c2, $d1, $expectedLoa1,                         13],
-            [$a2, $b3, $c2, $d1, $exceptionNoOrganization,              14],
-            [$a1, $b4, $c2, $d1, $expectedLoa1,                         15],
-            [$a2, $b4, $c2, $d1, $exceptionNoTokensFound,               16],
+            [$a1, $b1, $c2, $d1, $expectedLoa1,                  7],
+            [$a2, $b1, $c2, $d1, $expectedLoa2,                  8],
+            [$a1, $b2, $c2, $d1, $expectedLoa1,                  9],
+            [$a2, $b2, $c2, $d1, $exceptionNoOrganization,       10],
+            [$a1, $b3, $c2, $d1, $expectedLoa1,                  11],
+            [$a2, $b3, $c2, $d1, $expectedLoa1,                  12],
 
-            [$a1, $b1, $c1, $d2, $expectedLoa1,                         17],
-            [$a2, $b1, $c1, $d2, $expectedLoa2,                         18],
-            [$a1, $b2, $c1, $d2, $expectedLoa1,                         19],
-            [$a2, $b2, $c1, $d2, $expectedLoa2,                         20],
-            [$a1, $b3, $c1, $d2, $expectedLoa1,                         21],
-            [$a2, $b3, $c1, $d2, $exceptionNoOrganization,              22],
-            [$a1, $b4, $c1, $d2, $expectedLoa1,                         23],
-            [$a2, $b4, $c1, $d2, $exceptionNoTokensRegistered,          24],
+            [$a1, $b1, $c1, $d2, $expectedLoa1,                  13],
+            [$a2, $b1, $c1, $d2, $expectedLoa2,                  14],
+            [$a1, $b2, $c1, $d2, $expectedLoa1,                  15],
+            [$a2, $b2, $c1, $d2, $expectedLoa2,                  16],
+            [$a1, $b3, $c1, $d2, $expectedLoa1,                  17],
+            [$a2, $b3, $c1, $d2, $exceptionNoTokensRegistered,   18],
 
-            [$a1, $b1, $c2, $d2, $expectedLoa1,                         25],
-            [$a2, $b1, $c2, $d2, $exceptionNoTokensFoundForInstitution, 26],
-            [$a1, $b2, $c2, $d2, $expectedLoa1,                         27],
-            [$a2, $b2, $c2, $d2, $exceptionNoTokensFound,               28],
-            [$a1, $b3, $c2, $d2, $expectedLoa1,                         29],
-            [$a2, $b3, $c2, $d2, $exceptionNoOrganization,              30],
-            [$a1, $b4, $c2, $d2, $expectedLoa1,                         31],
-            [$a2, $b4, $c2, $d2, $exceptionNoTokensFound,               32],
+            [$a1, $b1, $c2, $d2, $expectedLoa1,                  19],
+            [$a2, $b1, $c2, $d2, $expectedLoa2,                  20],
+            [$a1, $b2, $c2, $d2, $expectedLoa1,                  21],
+            [$a2, $b2, $c2, $d2, $exceptionNoOrganization,       22],
+            [$a1, $b3, $c2, $d2, $expectedLoa1,                  23],
+            [$a2, $b3, $c2, $d2, $expectedLoa1,                  24],
 
-            [$a1, $b1, $c1, $d3, $expectedLoa2,                         33],
-            [$a2, $b1, $c1, $d3, $expectedLoa2,                         34],
-            [$a1, $b2, $c1, $d3, $expectedLoa2,                         35],
-            [$a2, $b2, $c1, $d3, $expectedLoa2,                         36],
-            [$a1, $b3, $c1, $d3, $expectedLoa2,                         37],
-            [$a2, $b3, $c1, $d3, $exceptionNoOrganization,              38],
-            [$a1, $b4, $c1, $d3, $expectedLoa2,                         39],
-            [$a2, $b4, $c1, $d3, $exceptionNoTokensRegistered,          40],
+            [$a1, $b1, $c1, $d3, $expectedLoa2,                  25],
+            [$a2, $b1, $c1, $d3, $expectedLoa2,                  26],
+            [$a1, $b2, $c1, $d3, $expectedLoa2,                  27],
+            [$a2, $b2, $c1, $d3, $expectedLoa2,                  28],
+            [$a1, $b3, $c1, $d3, $expectedLoa2,                  29],
+            [$a2, $b3, $c1, $d3, $exceptionNoTokensRegistered,   30],
 
-            [$a1, $b1, $c2, $d3, $expectedLoa2,                         41],
-            [$a2, $b1, $c2, $d3, $exceptionNoTokensFoundForInstitution, 42],
-            [$a1, $b2, $c2, $d3, $expectedLoa2,                         43],
-            [$a2, $b2, $c2, $d3, $exceptionNoTokensFound,               44],
-            [$a1, $b3, $c2, $d3, $expectedLoa2,                         45],
-            [$a2, $b3, $c2, $d3, $exceptionNoOrganization,              46],
-            [$a1, $b4, $c2, $d3, $expectedLoa2,                         47],
-            [$a2, $b4, $c2, $d3, $exceptionNoTokensFound,               48],
+            [$a1, $b1, $c2, $d3, $expectedLoa2,                  31],
+            [$a2, $b1, $c2, $d3, $expectedLoa2,                  32],
+            [$a1, $b2, $c2, $d3, $expectedLoa2,                  33],
+            [$a2, $b2, $c2, $d3, $exceptionNoOrganization,       34],
+            [$a1, $b3, $c2, $d3, $expectedLoa2,                  35],
+            [$a2, $b3, $c2, $d3, $expectedLoa2,                  36],
 
-            [$a1, $b1, $c1, $d4, $expectedLoa3,                         49],
-            [$a2, $b1, $c1, $d4, $expectedLoa3,                         50],
-            [$a1, $b2, $c1, $d4, $expectedLoa3,                         51],
-            [$a2, $b2, $c1, $d4, $expectedLoa3,                         52],
-            [$a1, $b3, $c1, $d4, $expectedLoa3,                         53],
-            [$a2, $b3, $c1, $d4, $exceptionNoOrganization,              54],
-            [$a1, $b4, $c1, $d4, $expectedLoa3,                         55],
-            [$a2, $b4, $c1, $d4, $exceptionNoTokensRegistered,          56],
+            [$a1, $b1, $c1, $d4, $expectedLoa3,                  37],
+            [$a2, $b1, $c1, $d4, $expectedLoa3,                  38],
+            [$a1, $b2, $c1, $d4, $expectedLoa3,                  39],
+            [$a2, $b2, $c1, $d4, $expectedLoa3,                  40],
+            [$a1, $b3, $c1, $d4, $expectedLoa3,                  41],
+            [$a2, $b3, $c1, $d4, $exceptionNoTokensRegistered,   42],
 
-            [$a1, $b1, $c2, $d4, $expectedLoa3,                         57],
-            [$a2, $b1, $c2, $d4, $exceptionNoTokensFoundForInstitution, 58],
-            [$a1, $b2, $c2, $d4, $expectedLoa3,                         59],
-            [$a2, $b2, $c2, $d4, $exceptionNoTokensFound,               60],
-            [$a1, $b3, $c2, $d4, $expectedLoa3,                         61],
-            [$a2, $b3, $c2, $d4, $exceptionNoOrganization,              62],
-            [$a1, $b4, $c2, $d4, $expectedLoa3,                         63],
-            [$a2, $b4, $c2, $d4, $exceptionNoTokensFound,               64],
+            [$a1, $b1, $c2, $d4, $expectedLoa3,                  43],
+            [$a2, $b1, $c2, $d4, $expectedLoa3,                  44],
+            [$a1, $b2, $c2, $d4, $expectedLoa3,                  45],
+            [$a2, $b2, $c2, $d4, $exceptionNoOrganization,       46],
+            [$a1, $b3, $c2, $d4, $expectedLoa3,                  47],
+            [$a2, $b3, $c2, $d4, $expectedLoa3,                  48],
         ];
 
         return $combinations;
     }
+
+    public function test_assert_valid_sho()
+    {
+        $result = $this->service->assertValidShoFormat('valid.sho');
+        $this->assertNull($result);
+
+        $result = $this->service->assertValidShoFormat('');
+        $this->assertNull($result);
+    }
+
+    /**
+     * @dataProvider invalidShoProvider
+     * @param $invalidSho
+     */
+    public function test_assert_invalid_sho($invalidSho)
+    {
+        $this->setExpectedException(
+            InvalidStepupShoFormatException::class,
+            sprintf('Encountered an invalid schacHomeOrganization value "%s".', $invalidSho)
+        );
+        $this->service->assertValidShoFormat($invalidSho);
+    }
+
+    public function invalidShoProvider()
+    {
+        return [
+            ['INVALID'],
+            ['iNvAlId'],
+            ['iNvÄlId'],
+            ['in.valiD'],
+        ];
+    }
+
 }
