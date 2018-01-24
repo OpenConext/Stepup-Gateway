@@ -69,9 +69,6 @@ class StepUpAuthenticationService
      */
     private $smsService;
 
-    /** @var InstitutionMatchingHelper */
-    private $institutionMatchingHelper;
-
     /**
      * @var \Symfony\Component\Translation\TranslatorInterface
      */
@@ -92,7 +89,6 @@ class StepUpAuthenticationService
      * @param SecondFactorRepository $secondFactorRepository
      * @param YubikeyService         $yubikeyService
      * @param SmsSecondFactorService $smsService
-     * @param InstitutionMatchingHelper $institutionMatchingHelper
      * @param TranslatorInterface    $translator
      * @param LoggerInterface        $logger
      * @param SecondFactorTypeService $secondFactorTypeService
@@ -102,7 +98,6 @@ class StepUpAuthenticationService
         SecondFactorRepository $secondFactorRepository,
         YubikeyService $yubikeyService,
         SmsSecondFactorService $smsService,
-        InstitutionMatchingHelper $institutionMatchingHelper,
         TranslatorInterface $translator,
         LoggerInterface $logger,
         SecondFactorTypeService $secondFactorTypeService
@@ -111,7 +106,6 @@ class StepUpAuthenticationService
         $this->secondFactorRepository = $secondFactorRepository;
         $this->yubikeyService = $yubikeyService;
         $this->smsService = $smsService;
-        $this->institutionMatchingHelper = $institutionMatchingHelper;
         $this->translator = $translator;
         $this->logger = $logger;
         $this->secondFactorTypeService = $secondFactorTypeService;
@@ -212,6 +206,9 @@ class StepUpAuthenticationService
      *
      * @throws LoaCannotBeGivenException          Raised when no LoA candidates are found or when none of the candidate
      *                                            LoAs are valid (known to the application).
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     public function resolveHighestRequiredLoa(
         $requestedLoa,
