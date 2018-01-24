@@ -55,28 +55,27 @@ class SecondFactorController extends Controller
         $logger->notice('Determining which second factor to use...');
 
         try {
+            // Retrieve all requirements to determine the required LoA
+            $requestedLoa = $context->getRequiredLoa();
+            $spConfiguredLoas = $context->getServiceProvider()->get('configuredLoas');
+            $idpSho = $context->getSchacHomeOrganization();
+            $userSho = $this->getStepupService()->getUserShoByIdentityNameId($context->getIdentityNameId());
+
             $requiredLoa = $this
                 ->getStepupService()
                 ->resolveHighestRequiredLoa(
-                    $context->getRequiredLoa(),
-                    $context->getIdentityNameId(),
-                    $context->getSchacHomeOrganization(),
-                    $context->getServiceProvider()
+                    $requestedLoa,
+                    $spConfiguredLoas,
+                    $idpSho,
+                    $userSho
                 );
         } catch (LoaCannotBeGivenException $e) {
             // Log the message of the domain exception, this contains a meaningful message.
             $logger->notice($e->getMessage());
             return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:sendLoaCannotBeGiven');
         }
-        if ($requiredLoa === null) {
-            $logger->notice(
-                'No valid required Loa can be determined, no authentication is possible, Loa cannot be given'
-            );
 
-            return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:sendLoaCannotBeGiven');
-        } else {
-            $logger->notice(sprintf('Determined that the required Loa is "%s"', $requiredLoa));
-        }
+        $logger->notice(sprintf('Determined that the required Loa is "%s"', $requiredLoa));
 
         if ($this->getStepupService()->isIntrinsicLoa($requiredLoa)) {
             $this->get('gateway.authentication_logger')->logIntrinsicLoaAuthentication($originalRequestId);
@@ -128,14 +127,29 @@ class SecondFactorController extends Controller
         $context = $this->getResponseContext();
         $originalRequestId = $context->getInResponseTo();
 
-        $requiredLoa = $this
-            ->getStepupService()
-            ->resolveHighestRequiredLoa(
-                $context->getRequiredLoa(),
-                $context->getIdentityNameId(),
-                $context->getSchacHomeOrganization(),
-                $context->getServiceProvider()
-            );
+        $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
+
+        // Retrieve all requirements to determine the required LoA
+        $requestedLoa = $context->getRequiredLoa();
+        $spConfiguredLoas = $context->getServiceProvider()->get('configuredLoas');
+        $idpSho = $context->getSchacHomeOrganization();
+        $userSho = $this->getStepupService()->getUserShoByIdentityNameId($context->getIdentityNameId());
+
+        try {
+            $requiredLoa = $this
+                ->getStepupService()
+                ->resolveHighestRequiredLoa(
+                    $requestedLoa,
+                    $spConfiguredLoas,
+                    $idpSho,
+                    $userSho
+                );
+        } catch (LoaCannotBeGivenException $e) {
+            $logger->notice($e->getMessage());
+            return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:sendLoaCannotBeGiven');
+        }
+
+        $logger->notice(sprintf('Determined that the required Loa is "%s"', $requiredLoa));
 
         $secondFactors = $this
             ->getStepupService()
@@ -147,8 +161,6 @@ class SecondFactorController extends Controller
 
         $command = new ChooseSecondFactorCommand();
         $command->secondFactors = $secondFactors;
-
-        $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
 
         $form = $this
             ->createForm(
