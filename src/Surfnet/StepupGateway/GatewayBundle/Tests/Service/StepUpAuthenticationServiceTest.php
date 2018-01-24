@@ -329,6 +329,7 @@ final class StepUpAuthenticationServiceTest extends PHPUnit_Framework_TestCase
         ];
     }
 
+
     /**
      * This tests combinations of the following possibilities:
      *
@@ -366,9 +367,6 @@ final class StepUpAuthenticationServiceTest extends PHPUnit_Framework_TestCase
         $index
     ) {
 
-        // TODO: See skip message..
-        $this->markTestSkipped('Validate with Pieter if my original assumption is invalid.');
-
         $this->logger->shouldReceive('info');
 
         $this->secondFactorRepository
@@ -383,8 +381,6 @@ final class StepUpAuthenticationServiceTest extends PHPUnit_Framework_TestCase
                 $institutionsBasedOnVettedTokens
             );
             $this->assertEquals($expectedOutcome, (string) $loa, sprintf('Unexpected outcome in test: %d', $index));
-        } catch (RuntimeException $e) {
-            $this->assertEquals($expectedOutcome, $e->getMessage(), sprintf('Unexpected RuntimeException in test: %d', $index));
         } catch (LoaCannotBeGivenException $e) {
             $this->assertEquals($expectedOutcome, $e->getMessage(), sprintf('Unexpected LoaCannotBeGivenException in test: %d', $index));
         }
@@ -397,10 +393,8 @@ final class StepUpAuthenticationServiceTest extends PHPUnit_Framework_TestCase
         $expectedLoa2 = 'https://gw-dev.stepup.coin.surf.net/authentication/loa2';
         $expectedLoa3 = 'https://gw-dev.stepup.coin.surf.net/authentication/loa3';
 
-        $exceptionNoTokensFoundForInstitution = 'The authenticating user cannot provide a token for the institution it is authenticating for.';
-        $exceptionNoTokensFound = 'The authenticating user does not have any vetted tokens.';
-        $exceptionNoTokensRegistered = 'None of the authenticating users tokens are registered at an institution the user is currently authenticating from.';
-        $exceptionNoOrganization = 'SP configured LOA\'s are applicable but the authenticating user has no schacHomeOrganization in the assertion.';
+        $exceptionNoTokensRegistered = 'User and IdP SHO are set but do not match.';
+        $exceptionNoOrganization = 'Unable to determine the institution for authenticating user.';
 
         // a1. No sp-institution specific configuration provided (i.e. __default__ = LoA 1)
         $a1 = ['__default__' => 'https://gw-dev.stepup.coin.surf.net/authentication/loa1'];
@@ -433,61 +427,61 @@ final class StepUpAuthenticationServiceTest extends PHPUnit_Framework_TestCase
 
         $combinations = [
 
-            [$a1, $b1, $c1, $d1, $expectedLoa1,                         1],
-            [$a2, $b1, $c1, $d1, $expectedLoa2,                         2],
-            [$a1, $b2, $c1, $d1, $expectedLoa1,                         3],
-            [$a2, $b2, $c1, $d1, $expectedLoa2,                         4],
-            [$a1, $b3, $c1, $d1, $expectedLoa1,                         5],
-            [$a2, $b3, $c1, $d1, $exceptionNoTokensRegistered,          6],
+            [$a1, $b1, $c1, $d1, $expectedLoa1,                  1],
+            [$a2, $b1, $c1, $d1, $expectedLoa2,                  2],
+            [$a1, $b2, $c1, $d1, $expectedLoa1,                  3],
+            [$a2, $b2, $c1, $d1, $expectedLoa2,                  4],
+            [$a1, $b3, $c1, $d1, $expectedLoa1,                  5],
+            [$a2, $b3, $c1, $d1, $exceptionNoTokensRegistered,   6],
 
-            [$a1, $b1, $c2, $d1, $expectedLoa1,                         9],
-            [$a2, $b1, $c2, $d1, $exceptionNoTokensFoundForInstitution, 10],
-            [$a1, $b2, $c2, $d1, $expectedLoa1,                         13],
-            [$a2, $b2, $c2, $d1, $exceptionNoOrganization,              14],
-            [$a1, $b3, $c2, $d1, $expectedLoa1,                         15],
-            [$a2, $b3, $c2, $d1, $exceptionNoTokensFound,               16],
+            [$a1, $b1, $c2, $d1, $expectedLoa1,                  7],
+            [$a2, $b1, $c2, $d1, $expectedLoa2,                  8],
+            [$a1, $b2, $c2, $d1, $expectedLoa1,                  9],
+            [$a2, $b2, $c2, $d1, $exceptionNoOrganization,       10],
+            [$a1, $b3, $c2, $d1, $expectedLoa1,                  11],
+            [$a2, $b3, $c2, $d1, $expectedLoa1,                  12],
 
-            [$a1, $b1, $c1, $d2, $expectedLoa1,                         17],
-            [$a2, $b1, $c1, $d2, $expectedLoa2,                         18],
-            [$a1, $b2, $c1, $d2, $expectedLoa1,                         21],
-            [$a2, $b2, $c1, $d2, $exceptionNoOrganization,              22],
-            [$a1, $b3, $c1, $d2, $expectedLoa1,                         23],
-            [$a2, $b3, $c1, $d2, $exceptionNoTokensRegistered,          24],
+            [$a1, $b1, $c1, $d2, $expectedLoa1,                  13],
+            [$a2, $b1, $c1, $d2, $expectedLoa2,                  14],
+            [$a1, $b2, $c1, $d2, $expectedLoa1,                  15],
+            [$a2, $b2, $c1, $d2, $expectedLoa2,                  16],
+            [$a1, $b3, $c1, $d2, $expectedLoa1,                  17],
+            [$a2, $b3, $c1, $d2, $exceptionNoTokensRegistered,   18],
 
-            [$a1, $b1, $c2, $d2, $expectedLoa1,                         25],
-            [$a2, $b1, $c2, $d2, $exceptionNoTokensFoundForInstitution, 26],
-            [$a1, $b2, $c2, $d2, $expectedLoa1,                         29],
-            [$a2, $b2, $c2, $d2, $exceptionNoOrganization,              30],
-            [$a1, $b3, $c2, $d2, $expectedLoa1,                         31],
-            [$a2, $b3, $c2, $d2, $exceptionNoTokensFound,               32],
+            [$a1, $b1, $c2, $d2, $expectedLoa1,                  19],
+            [$a2, $b1, $c2, $d2, $expectedLoa2,                  20],
+            [$a1, $b2, $c2, $d2, $expectedLoa1,                  21],
+            [$a2, $b2, $c2, $d2, $exceptionNoOrganization,       22],
+            [$a1, $b3, $c2, $d2, $expectedLoa1,                  23],
+            [$a2, $b3, $c2, $d2, $expectedLoa1,                  24],
 
-            [$a1, $b1, $c1, $d3, $expectedLoa2,                         33],
-            [$a2, $b1, $c1, $d3, $expectedLoa2,                         34],
-            [$a1, $b2, $c1, $d3, $expectedLoa2,                         37],
-            [$a2, $b2, $c1, $d3, $exceptionNoOrganization,              38],
-            [$a1, $b3, $c1, $d3, $expectedLoa2,                         39],
-            [$a2, $b3, $c1, $d3, $exceptionNoTokensRegistered,          40],
+            [$a1, $b1, $c1, $d3, $expectedLoa2,                  25],
+            [$a2, $b1, $c1, $d3, $expectedLoa2,                  26],
+            [$a1, $b2, $c1, $d3, $expectedLoa2,                  27],
+            [$a2, $b2, $c1, $d3, $expectedLoa2,                  28],
+            [$a1, $b3, $c1, $d3, $expectedLoa2,                  29],
+            [$a2, $b3, $c1, $d3, $exceptionNoTokensRegistered,   30],
 
-            [$a1, $b1, $c2, $d3, $expectedLoa2,                         41],
-            [$a2, $b1, $c2, $d3, $exceptionNoTokensFoundForInstitution, 42],
-            [$a1, $b2, $c2, $d3, $expectedLoa2,                         45],
-            [$a2, $b2, $c2, $d3, $exceptionNoOrganization,              46],
-            [$a1, $b3, $c2, $d3, $expectedLoa2,                         47],
-            [$a2, $b3, $c2, $d3, $exceptionNoTokensFound,               48],
+            [$a1, $b1, $c2, $d3, $expectedLoa2,                  31],
+            [$a2, $b1, $c2, $d3, $expectedLoa2,                  32],
+            [$a1, $b2, $c2, $d3, $expectedLoa2,                  33],
+            [$a2, $b2, $c2, $d3, $exceptionNoOrganization,       34],
+            [$a1, $b3, $c2, $d3, $expectedLoa2,                  35],
+            [$a2, $b3, $c2, $d3, $expectedLoa2,                  36],
 
-            [$a1, $b1, $c1, $d4, $expectedLoa3,                         49],
-            [$a2, $b1, $c1, $d4, $expectedLoa3,                         50],
-            [$a1, $b2, $c1, $d4, $expectedLoa3,                         53],
-            [$a2, $b2, $c1, $d4, $exceptionNoOrganization,              54],
-            [$a1, $b3, $c1, $d4, $expectedLoa3,                         55],
-            [$a2, $b3, $c1, $d4, $exceptionNoTokensRegistered,          56],
+            [$a1, $b1, $c1, $d4, $expectedLoa3,                  37],
+            [$a2, $b1, $c1, $d4, $expectedLoa3,                  38],
+            [$a1, $b2, $c1, $d4, $expectedLoa3,                  39],
+            [$a2, $b2, $c1, $d4, $expectedLoa3,                  40],
+            [$a1, $b3, $c1, $d4, $expectedLoa3,                  41],
+            [$a2, $b3, $c1, $d4, $exceptionNoTokensRegistered,   42],
 
-            [$a1, $b1, $c2, $d4, $expectedLoa3,                         57],
-            [$a2, $b1, $c2, $d4, $exceptionNoTokensFoundForInstitution, 58],
-            [$a1, $b2, $c2, $d4, $expectedLoa3,                         61],
-            [$a2, $b2, $c2, $d4, $exceptionNoOrganization,              62],
-            [$a1, $b3, $c2, $d4, $expectedLoa3,                         63],
-            [$a2, $b3, $c2, $d4, $exceptionNoTokensFound,               64],
+            [$a1, $b1, $c2, $d4, $expectedLoa3,                  43],
+            [$a2, $b1, $c2, $d4, $expectedLoa3,                  44],
+            [$a1, $b2, $c2, $d4, $expectedLoa3,                  45],
+            [$a2, $b2, $c2, $d4, $exceptionNoOrganization,       46],
+            [$a1, $b3, $c2, $d4, $expectedLoa3,                  47],
+            [$a2, $b3, $c2, $d4, $expectedLoa3,                  48],
         ];
 
         return $combinations;
