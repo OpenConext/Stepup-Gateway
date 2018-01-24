@@ -61,6 +61,9 @@ class SecondFactorController extends Controller
             $idpSho = $context->getSchacHomeOrganization();
             $userSho = $this->getStepupService()->getUserShoByIdentityNameId($context->getIdentityNameId());
 
+            $this->getStepupService()->assertValidShoFormat($idpSho);
+            $this->getStepupService()->assertValidShoFormat($userSho);
+
             $requiredLoa = $this
                 ->getStepupService()
                 ->resolveHighestRequiredLoa(
@@ -134,6 +137,9 @@ class SecondFactorController extends Controller
         $spConfiguredLoas = $context->getServiceProvider()->get('configuredLoas');
         $idpSho = $context->getSchacHomeOrganization();
         $userSho = $this->getStepupService()->getUserShoByIdentityNameId($context->getIdentityNameId());
+
+        $this->getStepupService()->assertValidShoFormat($idpSho);
+        $this->getStepupService()->assertValidShoFormat($userSho);
 
         try {
             $requiredLoa = $this
