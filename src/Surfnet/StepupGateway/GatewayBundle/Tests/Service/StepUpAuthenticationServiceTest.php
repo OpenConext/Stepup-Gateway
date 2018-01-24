@@ -30,7 +30,6 @@ use Surfnet\StepupGateway\ApiBundle\Service\YubikeyService;
 use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactorRepository;
 use Surfnet\StepupGateway\GatewayBundle\Exception\InvalidStepupShoFormatException;
 use Surfnet\StepupGateway\GatewayBundle\Exception\LoaCannotBeGivenException;
-use Surfnet\StepupGateway\GatewayBundle\Service\InstitutionMatchingHelper;
 use Surfnet\StepupGateway\GatewayBundle\Service\StepUpAuthenticationService;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -45,7 +44,6 @@ final class StepUpAuthenticationServiceTest extends PHPUnit_Framework_TestCase
     private $secondFactorRepository;
     private $yubikeyService;
     private $smsSfService;
-    private $institutionMatchingHelper;
     private $translator;
 
     /**
@@ -69,7 +67,6 @@ final class StepUpAuthenticationServiceTest extends PHPUnit_Framework_TestCase
         $this->secondFactorRepository = m::mock(SecondFactorRepository::class);
         $this->yubikeyService = m::mock(YubikeyService::class);
         $this->smsSfService = m::mock(SmsSecondFactorService::class);
-        $this->institutionMatchingHelper = new InstitutionMatchingHelper();
         $this->translator = m::mock(TranslatorInterface::class);
         $this->logger = m::mock(LoggerInterface::class);
         $this->secondFactorTypeService = m::mock(SecondFactorTypeService::class);
@@ -82,7 +79,6 @@ final class StepUpAuthenticationServiceTest extends PHPUnit_Framework_TestCase
             $this->secondFactorRepository,
             $this->yubikeyService,
             $this->smsSfService,
-            $this->institutionMatchingHelper,
             $this->translator,
             $this->logger,
             $this->secondFactorTypeService
