@@ -38,6 +38,7 @@ use Surfnet\StepupGateway\GatewayBundle\Command\VerifyYubikeyOtpCommand;
 use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor;
 use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactorRepository;
 use Surfnet\StepupGateway\GatewayBundle\Exception\InstitutionMismatchException;
+use Surfnet\StepupGateway\GatewayBundle\Exception\InvalidStepupShoFormatException;
 use Surfnet\StepupGateway\GatewayBundle\Exception\LoaCannotBeGivenException;
 use Surfnet\StepupGateway\GatewayBundle\Exception\UnknownInstitutionException;
 use Surfnet\StepupGateway\GatewayBundle\Service\StepUp\YubikeyOtpVerificationResult;
@@ -406,13 +407,33 @@ class StepUpAuthenticationService
     }
 
     /**
-     * Get the normalized (lowercase) schacHomeOrganisation of the authenticating user based on its vetted tokens.
+     * Get the schacHomeOrganisation of the authenticating user based on its vetted tokens.
      *
      * @param string $identityNameId Used to load vetted tokens
      * @return string either the SHO or an empty string
      */
     public function getUserShoByIdentityNameId($identityNameId)
     {
-        return strtolower($this->secondFactorRepository->getInstitutionByNameId($identityNameId));
+        return $this->secondFactorRepository->getInstitutionByNameId($identityNameId);
+    }
+
+    /**
+     * In Stepup, the schacHomeOrganization must be in a lower case format. Please note that empty string values are
+     * considered valid SHO in this method.
+     *
+     * @param string $schacHomeOrganization
+     * @throws InvalidStepupShoFormatException Raised when the SHO is not compatible with the Stepup standard (lower
+     *                                         cased string)
+     */
+    public function assertValidShoFormat($schacHomeOrganization)
+    {
+        if (!empty($schacHomeOrganization) && strtolower($schacHomeOrganization) !== $schacHomeOrganization) {
+            throw new InvalidStepupShoFormatException(
+                sprintf(
+                    'Encountered an invalid schacHomeOrganization value "%s".',
+                    $schacHomeOrganization
+                )
+            );
+        }
     }
 }

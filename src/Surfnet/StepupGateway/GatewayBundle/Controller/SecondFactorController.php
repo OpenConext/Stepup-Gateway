@@ -58,6 +58,9 @@ class SecondFactorController extends Controller
             $idpSho = $context->getSchacHomeOrganization();
             $userSho = $this->getStepupService()->getUserShoByIdentityNameId($context->getIdentityNameId());
 
+            $this->getStepupService()->assertValidShoFormat($idpSho);
+            $this->getStepupService()->assertValidShoFormat($userSho);
+
             $requiredLoa = $this
                 ->getStepupService()
                 ->resolveHighestRequiredLoa(
