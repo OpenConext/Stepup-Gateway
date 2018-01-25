@@ -73,4 +73,18 @@ class DoctrineSecondFactorRepository extends EntityRepository implements SecondF
         }
         return '';
     }
+
+    /**
+     * @param $identityNameId
+     * @return \Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor[]
+     */
+    private function findAllByIdentityNameId($identityNameId)
+    {
+        /** @var \Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor[] $secondFactors */
+        return $this->createQueryBuilder('sf')
+            ->where('sf.nameId = :nameId')
+            ->setParameter('nameId', $identityNameId)
+            ->getQuery()
+            ->getResult();
+    }
 }
