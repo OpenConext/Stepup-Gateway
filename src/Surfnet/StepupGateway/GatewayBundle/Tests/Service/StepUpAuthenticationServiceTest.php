@@ -365,10 +365,6 @@ final class StepUpAuthenticationServiceTest extends PHPUnit_Framework_TestCase
 
         $this->logger->shouldReceive('info');
 
-        $this->secondFactorRepository
-            ->shouldReceive('getAllInstitutions')
-            ->andReturn($institutionsBasedOnVettedTokens);
-
         try {
             $loa = $this->service->resolveHighestRequiredLoa(
                 $spRequestedLoa,
