@@ -202,9 +202,22 @@ class ResponseContext
         return $this->stateHandler->getIdentityNameId();
     }
 
-    public function getSchacHomeOrganization()
+    /**
+     * Return the lower-cased schacHomeOrganization value from the assertion.
+     *
+     * Comparisons on SHO values should always be case insensitive. Stepup
+     * configuration always contains SHO values lower-cased, so this getter
+     * can be used to compare the SHO with configured values.
+     *
+     * @see StepUpAuthenticationService::resolveHighestRequiredLoa()
+     *
+     * @return null|string
+     */
+    public function getNormalizedSchacHomeOrganization()
     {
-        return $this->stateHandler->getSchacHomeOrganization();
+        return strtolower(
+            $this->stateHandler->getSchacHomeOrganization()
+        );
     }
 
     /**
