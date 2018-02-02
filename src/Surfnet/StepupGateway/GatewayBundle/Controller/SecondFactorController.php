@@ -55,19 +55,17 @@ class SecondFactorController extends Controller
             // Retrieve all requirements to determine the required LoA
             $requestedLoa = $context->getRequiredLoa();
             $spConfiguredLoas = $context->getServiceProvider()->get('configuredLoas');
-            $idpSho = $context->getSchacHomeOrganization();
-            $userSho = $this->getStepupService()->getUserShoByIdentityNameId($context->getIdentityNameId());
 
-            $this->getStepupService()->assertValidShoFormat($idpSho);
-            $this->getStepupService()->assertValidShoFormat($userSho);
+            $normalizedIdpSho = $context->getNormalizedSchacHomeOrganization();
+            $normalizedUserSho = $this->getStepupService()->getNormalizedUserShoByIdentityNameId($context->getIdentityNameId());
 
             $requiredLoa = $this
                 ->getStepupService()
                 ->resolveHighestRequiredLoa(
                     $requestedLoa,
                     $spConfiguredLoas,
-                    $idpSho,
-                    $userSho
+                    $normalizedIdpSho,
+                    $normalizedUserSho
                 );
         } catch (LoaCannotBeGivenException $e) {
             // Log the message of the domain exception, this contains a meaningful message.
