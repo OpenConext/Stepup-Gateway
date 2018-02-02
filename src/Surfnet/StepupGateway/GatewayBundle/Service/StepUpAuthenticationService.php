@@ -180,14 +180,14 @@ class StepUpAuthenticationService
      *                                                'institution_b' => 'https://example.com/authentication/loa3',
      *                                            ]
      *
-     * @param string $idpSho           <IdP-SHO>  Optional. Value of the schacHomeOrganization attribute from the
+     * @param string $normalizedIdpSho            <IdP-SHO>  Optional. Value of the schacHomeOrganization attribute from the
      *                                            Assertion from the IdP. The SHO should be normalized (lower cased) as
      *                                            it will be used to be compared against the $spConfiguredLoas who have
      *                                            also been normalized.
      *
      *                                            Example: 'institution_a', ''
      *
-     * @param string $userSho          <User-SHO> Optional. The schacHomeOrganization that the user belongs to, this is
+     * @param string $normalizedUserSho           <User-SHO> Optional. The schacHomeOrganization that the user belongs to, this is
      *                                            the schacHomeOrganization that was provided during registration of the
      *                                            token. The SHO should be normalized (lower cased) as it will be used
      *                                            to be compared against the $spConfiguredLoas who have also been
@@ -213,8 +213,8 @@ class StepUpAuthenticationService
     public function resolveHighestRequiredLoa(
         $requestedLoa,
         array $spConfiguredLoas,
-        $idpSho,
-        $userSho
+        $normalizedIdpSho,
+        $normalizedUserSho
     ) {
         // Candidate LoA's are stored in a collection. At the end of this procedure, the highest LoA is selected from
         // this collection.
@@ -236,25 +236,25 @@ class StepUpAuthenticationService
 
         if ($this->hasNonDefaultSpConfiguredLoas($spConfiguredLoas)) {
             // We need an userSho or idpSho to determine if any of the <LoAs> are applicable
-            if (empty($userSho) && empty($idpSho)) {
+            if (empty($normalizedUserSho) && empty($normalizedIdpSho)) {
                 throw new UnknownInstitutionException('Unable to determine the institution for authenticating user.');
             }
 
             // If both user and IdP SHO are known, they should match
-            if (!empty($userSho) && !empty($idpSho) && $userSho != $idpSho) {
+            if (!empty($normalizedUserSho) && !empty($normalizedIdpSho) && $normalizedUserSho != $normalizedIdpSho) {
                 throw new InstitutionMismatchException('User and IdP SHO are set but do not match.');
             }
 
-            // If the user SHO is available in the <LoAs>, add the to the candidates collection.
-            if (isset($spConfiguredLoas[$userSho])) {
+            // If the user SHO is available in the <LoAs>, add to the candidates collection.
+            if (isset($spConfiguredLoas[$normalizedUserSho])) {
                 $this->logger->info(sprintf('Added Loa "%s" as candidate based on user SHO', $requestedLoa));
-                $loaCandidates->add($spConfiguredLoas[$userSho]);
+                $loaCandidates->add($spConfiguredLoas[$normalizedUserSho]);
             }
 
             // If the IdP SHO is available in the <LoAs>, add the to the candidates collection.
-            if (isset($spConfiguredLoas[$idpSho])) {
+            if (isset($spConfiguredLoas[$normalizedIdpSho])) {
                 $this->logger->info(sprintf('Added Loa "%s" as candidate based on IdP SHO', $requestedLoa));
-                $loaCandidates->add($spConfiguredLoas[$idpSho]);
+                $loaCandidates->add($spConfiguredLoas[$normalizedIdpSho]);
             }
         }
 
@@ -420,33 +420,21 @@ class StepUpAuthenticationService
     }
 
     /**
-     * Get the schacHomeOrganisation of the authenticating user based on its vetted tokens.
+     * Return the lower-cased schacHomeOrganization of the user based on his vetted tokens.
+     *
+     * Comparisons on SHO values should always be case insensitive. Stepup
+     * configuration always contains SHO values lower-cased, so this getter
+     * can be used to compare the SHO with configured values.
+     *
+     * @see StepUpAuthenticationService::resolveHighestRequiredLoa()
      *
      * @param string $identityNameId Used to load vetted tokens
      * @return string either the SHO or an empty string
      */
-    public function getUserShoByIdentityNameId($identityNameId)
+    public function getNormalizedUserShoByIdentityNameId($identityNameId)
     {
-        return $this->secondFactorRepository->getInstitutionByNameId($identityNameId);
-    }
-
-    /**
-     * In Stepup, the schacHomeOrganization must be in a lower case format. Please note that empty string values are
-     * considered valid SHO in this method.
-     *
-     * @param string $schacHomeOrganization
-     * @throws InvalidStepupShoFormatException Raised when the SHO is not compatible with the Stepup standard (lower
-     *                                         cased string)
-     */
-    public function assertValidShoFormat($schacHomeOrganization)
-    {
-        if (!empty($schacHomeOrganization) && strtolower($schacHomeOrganization) !== $schacHomeOrganization) {
-            throw new InvalidStepupShoFormatException(
-                sprintf(
-                    'Encountered an invalid schacHomeOrganization value "%s".',
-                    $schacHomeOrganization
-                )
-            );
-        }
+        return strtolower(
+            $this->secondFactorRepository->getInstitutionByNameId($identityNameId)
+        );
     }
 }
