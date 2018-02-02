@@ -479,36 +479,4 @@ final class StepUpAuthenticationServiceTest extends PHPUnit_Framework_TestCase
         return $combinations;
     }
 
-    public function test_assert_valid_sho()
-    {
-        $result = $this->service->assertValidShoFormat('valid.sho');
-        $this->assertNull($result);
-
-        $result = $this->service->assertValidShoFormat('');
-        $this->assertNull($result);
-    }
-
-    /**
-     * @dataProvider invalidShoProvider
-     * @param $invalidSho
-     */
-    public function test_assert_invalid_sho($invalidSho)
-    {
-        $this->setExpectedException(
-            InvalidStepupShoFormatException::class,
-            sprintf('Encountered an invalid schacHomeOrganization value "%s".', $invalidSho)
-        );
-        $this->service->assertValidShoFormat($invalidSho);
-    }
-
-    public function invalidShoProvider()
-    {
-        return [
-            ['INVALID'],
-            ['iNvAlId'],
-            ['iNvÄlId'],
-            ['in.valiD'],
-        ];
-    }
-
 }
