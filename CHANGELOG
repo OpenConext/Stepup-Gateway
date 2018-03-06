@@ -3,6 +3,7 @@ VERSION 2  REQUIRE PHP 5.6 AND FIX TIQR ISSUES
 ==============================================
 
    Version 2.7 - Support ADFS SFO plugin, better LoA handling
+      06/03/2018 10:00  2.7.5  security update for https://simplesamlphp.org/security/201803-01
       02/02/2018 10:00  2.7.4  security update for https://simplesamlphp.org/security/201802-01
       02/02/2018 10:00  2.7.3  Allow mixed-case schacHomeOrganization values (https://www.pivotaltracker.com/story/show/154845486)
       25/01/2018 10:00  2.7.2  Better LoA resolution handling (https://github.com/OpenConext/Stepup-Deploy/wiki/Institution-Specific-LoA)
