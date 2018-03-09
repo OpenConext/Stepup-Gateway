@@ -61,6 +61,11 @@ class GatewayController extends Controller
 
         /** @var \Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler $stateHandler */
         $stateHandler = $this->get('gateway.proxy.state_handler');
+
+        // Clear the state of the previous SSO action. Request data of previous
+        // SSO actions should not have any effect in subsequent SSO actions.
+        $stateHandler->clear();
+
         $stateHandler
             ->setRequestId($originalRequestId)
             ->setRequestServiceProvider($originalRequest->getServiceProvider())
