@@ -295,9 +295,6 @@ class SamlProxyController extends Controller
             'relayState' => $stateHandler->getRelayState()
         ]);
 
-        // clear the state so we can call again :)
-        $stateHandler->clear();
-
         return $response;
     }
 
