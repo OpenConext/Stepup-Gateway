@@ -71,6 +71,13 @@ services:
         arguments:
             - @gateway.repository.whitelist_entry
 
+    gateway.service.global_view_parameters:
+        class: Surfnet\StepupGateway\GatewayBundle\Service\GlobalViewParameters
+        arguments:
+            - "@translator"
+            - "%locales%"
+            - "%manual_url%"
+
     gateway.session.u2f:
         class: Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag
         factory: ['@session', 'getBag']

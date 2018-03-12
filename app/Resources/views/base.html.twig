@@ -22,7 +22,7 @@
 
         {% block page_header %}
             <div class="page-header clearfix">
-                <img src="/images/header-logo.png" class="pull-right logo" alt="SURFconext">
+                <img src="/images/header-logo.png" class="pull-right logo" alt="OpenConext Stepup">
                 <h1>{{ 'app.name'|trans }}</h1>
             </div>
         {% endblock page_header %}
@@ -43,7 +43,7 @@
         {% endblock content_row %}
 
         {% block footer %}
-            <p><a href="{{ 'app.support_url'|trans }}" target="_blank">Help</a></p>
+            <p><a href="{{ global_view_parameters.manualUrl }}" target="_blank">Help</a></p>
         {% endblock footer %}
 
 {% block foot_script %}
