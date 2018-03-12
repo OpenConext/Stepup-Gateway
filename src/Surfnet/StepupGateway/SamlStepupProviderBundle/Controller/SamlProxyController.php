@@ -90,6 +90,12 @@ class SamlProxyController extends Controller
 
         /** @var StateHandler $stateHandler */
         $stateHandler = $provider->getStateHandler();
+
+        // Clear the state of the previous SSO action. Request data of
+        // previous SSO actions should not have any effect in subsequent SSO
+        // actions.
+        $stateHandler->clear();
+
         $stateHandler
             ->setRequestId($originalRequestId)
             ->setRequestServiceProvider($originalRequest->getServiceProvider())
