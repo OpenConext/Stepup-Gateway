@@ -59,9 +59,6 @@ parameters:
     # Password for the "selfservice" Gateway API user
     registration_authority_api_password: ~
 
-    # Deprecated. Used in development only. Hostname of the graylog log server
-    graylog_hostname: graylog.host.tld
-
     # Message originator as displayed in SMS
     # "This can be a telephone number (including country code) or an alphanumeric string.
     #  In case of an alphanumeric string, the maximum length is 11 characters."

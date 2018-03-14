@@ -1,52 +1,30 @@
 imports:
     - { resource: config.yml }
 
-# Be careful not to remove the prod-signaler handler, which overwrites
-# the prod-signaler handler defined in logging.yml. The handler defined
-# in logging.yml disables bubbling which means that none of the handlers
-# below are invoked. Since the current dev setup is incompatible with the
-# prod setup defined in logging.yml, this means we won't see any logs in
-# the infrastructure currently used (graylog). Overwriting the handler
-# here resolves that and reinstates the dev logging setup.
-#
-# this configuration must be replaced to reflect production setup
-# see https://www.pivotaltracker.com/story/show/96056010
-#
+# The monolog configuration below overwrites the in logging.yml that
+# is normally used for production.
 monolog:
     channels: [authentication]
     handlers:
         prod-signaler:
-            type: group
-            members:
-                - main_graylog
-                - main_logfile
-                - main_debuglog
-        main_graylog:
-            type:    buffer
-            handler: graylog
-            level:   NOTICE
-        main_logfile:
-            type:    stream
-            handler: logfile
-            level:   NOTICE
-            path:    %kernel.logs_dir%/%kernel.environment%.log
+            type: fingers_crossed
+            action_level: ERROR
+            passthru_level: DEBUG # DEV setting: this means that all message of level DEBUG or higher are always logged
+            #passthru_level: NOTICE # PROD setting this means that all message of level NOTICE or higher are always logged
+            handler: main_syslog
+            bubble: false # if we handle it, nothing else should
+            channels: ["!authentication"] # the auth channel is logged by the next handler
+        main_syslog:
+            type: syslog
+            ident: stepup-gateway
+            facility: user
             formatter: surfnet_stepup.monolog.json_formatter
-        main_debuglog:
-            type:    stream
-            handler: logfile
-            level:   DEBUG
-            path:    "%kernel.logs_dir%/%kernel.environment%.debug.log"
-            formatter: surfnet_stepup.monolog.json_formatter
-        graylog:
-            type:      gelf
-            publisher: { hostname: %graylog_hostname% }
-            formatter: surfnet_stepup.monolog.full_message_exception_gelf_message_formatter
-        authentication:
-            type:      stream
-            handler:   logfile
-            level:     INFO
-            path:      %kernel.logs_dir%/%kernel.environment%_authentication.log
-            channels:  [authentication]
+        authenthentication_syslog:
+            type: syslog
+            ident: stepup-authentication
+            facility: user
+            level: INFO
+            channels: [authentication]
             formatter: gateway.monolog.gelf_to_string_formatter
 
 framework:
