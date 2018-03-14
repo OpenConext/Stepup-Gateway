@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2014 SURFnet bv
+ * Copyright 2018 SURFnet bv
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,18 +16,10 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupGateway\GatewayBundle\Saml\Exception;
+namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\Exception;
 
-class UnknownInResponseToException extends RuntimeException
+use Exception;
+
+class InvalidAdfsResponseException extends Exception
 {
-    public function __construct($actual, $expected)
-    {
-        parent::__construct(
-            sprintf(
-                'Received SAMLResponse in response to an unknown Request identified by "%s", "%s".',
-                $actual,
-                ($expected ? 'expected "' . $expected . '"' : ' no response expected')
-            )
-        );
-    }
 }
