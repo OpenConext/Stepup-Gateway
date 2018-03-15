@@ -23,8 +23,10 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Surfnet\StepupBundle\Command\VerifyPossessionOfPhoneCommand;
 use Surfnet\StepupBundle\Value\PhoneNumber\InternationalPhoneNumber;
 use Surfnet\StepupBundle\Value\SecondFactorType;
+use Surfnet\StepupGateway\GatewayBundle\Command\ChooseSecondFactorCommand;
 use Surfnet\StepupGateway\GatewayBundle\Command\SendSmsChallengeCommand;
 use Surfnet\StepupGateway\GatewayBundle\Command\VerifyYubikeyOtpCommand;
+use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor;
 use Surfnet\StepupGateway\GatewayBundle\Exception\LoaCannotBeGivenException;
 use Surfnet\StepupGateway\GatewayBundle\Exception\RuntimeException;
 use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
@@ -32,6 +34,7 @@ use Surfnet\StepupGateway\U2fVerificationBundle\Value\KeyHandle;
 use Surfnet\StepupU2fBundle\Dto\SignResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\FormError;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
@@ -83,52 +86,111 @@ class SecondFactorController extends Controller
 
         $secondFactorCollection = $this
             ->getStepupService()
-            ->determineViableSecondFactors($context->getIdentityNameId(), $requiredLoa);
+            ->determineViableSecondFactors(
+                $context->getIdentityNameId(),
+                $requiredLoa,
+                $this->get('gateway.service.whitelist')
+            );
 
-        if (count($secondFactorCollection) === 0) {
-            $logger->notice('No second factors can give the determined Loa');
+        switch (count($secondFactorCollection)) {
+            case 0:
+                $logger->notice('No second factors can give the determined Loa');
+                return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:sendLoaCannotBeGiven');
+                break;
 
+            case 1:
+                $secondFactor = $secondFactorCollection->first();
+                $logger->notice(sprintf(
+                    'Found "%d" second factors, using second factor of type "%s"',
+                    count($secondFactorCollection),
+                    $secondFactor->secondFactorType
+                ));
+
+                return $this->selectAndRedirectTo($secondFactor, $context);
+                break;
+
+            default:
+                return $this->forward(
+                    'SurfnetStepupGatewayGatewayBundle:SecondFactor:chooseSecondFactor',
+                    ['secondFactors' => $secondFactorCollection]
+                );
+                break;
+        }
+    }
+
+    /**
+     * @Template
+     * @param Request $request
+     * @return array|RedirectResponse|Response
+     */
+    public function chooseSecondFactorAction(Request $request)
+    {
+        $context = $this->getResponseContext();
+        $originalRequestId = $context->getInResponseTo();
+
+        $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
+
+        // Retrieve all requirements to determine the required LoA
+        $requestedLoa = $context->getRequiredLoa();
+        $spConfiguredLoas = $context->getServiceProvider()->get('configuredLoas');
+        $idpSho = $context->getSchacHomeOrganization();
+        $userSho = $this->getStepupService()->getUserShoByIdentityNameId($context->getIdentityNameId());
+
+        $this->getStepupService()->assertValidShoFormat($idpSho);
+        $this->getStepupService()->assertValidShoFormat($userSho);
+
+        try {
+            $requiredLoa = $this
+                ->getStepupService()
+                ->resolveHighestRequiredLoa(
+                    $requestedLoa,
+                    $spConfiguredLoas,
+                    $idpSho,
+                    $userSho
+                );
+        } catch (LoaCannotBeGivenException $e) {
+            $logger->notice($e->getMessage());
             return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:sendLoaCannotBeGiven');
         }
 
-        // will be replaced by a second factor selection screen once we support multiple
-        /** @var \Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor $secondFactor */
-        $secondFactor = $secondFactorCollection->first();
-        // when multiple second factors are supported this should be moved into the
-        // StepUpAuthenticationService::determineViableSecondFactors and handled in a performant way
-        // currently keeping this here for visibility
-        if (!$this->get('gateway.service.whitelist')->contains($secondFactor->institution)) {
+        $logger->notice(sprintf('Determined that the required Loa is "%s"', $requiredLoa));
+
+        $secondFactors = $this
+            ->getStepupService()
+            ->determineViableSecondFactors(
+                $context->getIdentityNameId(),
+                $requiredLoa,
+                $this->get('gateway.service.whitelist')
+            );
+
+        $command = new ChooseSecondFactorCommand();
+        $command->secondFactors = $secondFactors;
+
+        $form = $this
+            ->createForm(
+                'gateway_choose_second_factor',
+                $command,
+                ['action' => $this->generateUrl('gateway_verify_second_factor_choose_second_factor')]
+            )
+            ->handleRequest($request);
+
+        if ($form->get('cancel')->isClicked()) {
+            return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:sendAuthenticationCancelledByUser');
+        }
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $secondFactorIndex = $command->selectedSecondFactor;
+            $secondFactor = $secondFactors->get($secondFactorIndex);
             $logger->notice(sprintf(
-                'Second factor "%s" is listed for institution "%s" which is not on the whitelist, sending Loa '
-                . 'cannot be given response',
-                $secondFactor->secondFactorId,
-                $secondFactor->institution
+                'User chose "%s" to use as second factor',
+                $secondFactor->secondFactorType
             ));
 
-            return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:sendLoaCannotBeGiven');
+            // Forward to action to verify possession of second factor
+            return $this->selectAndRedirectTo($secondFactor, $context);
         }
 
-        $logger->notice(sprintf(
-            'Found "%d" second factors, using second factor of type "%s"',
-            count($secondFactorCollection),
-            $secondFactor->secondFactorType
-        ));
-
-        $context->saveSelectedSecondFactor($secondFactor);
-
-        $this->getStepupService()->clearSmsVerificationState();
-
-        $secondFactorTypeService = $this->get('surfnet_stepup.service.second_factor_type');
-        $secondFactorType = new SecondFactorType($secondFactor->secondFactorType);
-
-        $route = 'gateway_verify_second_factor_';
-        if ($secondFactorTypeService->isGssf($secondFactorType)) {
-            $route .= 'gssf';
-        } else {
-            $route .= strtolower($secondFactor->secondFactorType);
-        }
-
-        return $this->redirect($this->generateUrl($route));
+        return ['form' => $form->createView()];
     }
 
     public function verifyGssfAction()
@@ -534,5 +596,24 @@ class SecondFactorController extends Controller
         }
 
         return $selectedSecondFactor;
+    }
+
+    private function selectAndRedirectTo(SecondFactor $secondFactor, ResponseContext $context)
+    {
+        $context->saveSelectedSecondFactor($secondFactor);
+
+        $this->getStepupService()->clearSmsVerificationState();
+
+        $secondFactorTypeService = $this->get('surfnet_stepup.service.second_factor_type');
+        $secondFactorType = new SecondFactorType($secondFactor->secondFactorType);
+
+        $route = 'gateway_verify_second_factor_';
+        if ($secondFactorTypeService->isGssf($secondFactorType)) {
+            $route .= 'gssf';
+        } else {
+            $route .= strtolower($secondFactor->secondFactorType);
+        }
+
+        return $this->redirect($this->generateUrl($route));
     }
 }

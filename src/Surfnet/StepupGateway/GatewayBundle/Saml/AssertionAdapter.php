@@ -18,7 +18,7 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Saml;
 
-use SAML2_Assertion as Assertion;
+use SAML2\Assertion;
 
 class AssertionAdapter
 {
@@ -39,11 +39,11 @@ class AssertionAdapter
     }
 
     /**
-     * @return NULL|string
+     * @return null|string
      */
     public function getInResponseTo()
     {
-        /** @var \SAML2_XML_saml_SubjectConfirmation $subjectConfirmation */
+        /** @var \SAML2\XML\saml\SubjectConfirmation $subjectConfirmation */
         $subjectConfirmation = $this->assertion->getSubjectConfirmation()[0];
 
         return $subjectConfirmation->SubjectConfirmationData->InResponseTo;

@@ -76,9 +76,9 @@ final class LoaResolutionService
             return '';
         }
 
-        $loaId = $this->loaAliasLookup->findLoaIdByAlias($loaId);
+        $derefLoaId = $this->loaAliasLookup->findLoaIdByAlias($loaId);
 
-        if (!$loaId) {
+        if (!$derefLoaId) {
             $this->logger->notice(sprintf(
                 'Requested required Loa "%s" does not have a second factor alias',
                 $loaId
@@ -86,14 +86,14 @@ final class LoaResolutionService
             return '';
         }
 
-        if (!$this->loaResolution->hasLoa($loaId)) {
+        if (!$this->loaResolution->hasLoa($derefLoaId)) {
             $this->logger->notice(sprintf(
                 'Requested required Loa "%s" does not exist',
-                $loaId
+                $derefLoaId
             ));
             return '';
         }
 
-        return $loaId;
+        return $derefLoaId;
     }
 }

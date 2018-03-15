@@ -18,20 +18,37 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Form\Type;
 
+use Surfnet\StepupGateway\GatewayBundle\Command\ChooseSecondFactorCommand;
+use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class SendSmsChallengeType extends AbstractType
+class ChooseSecondFactorType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('send-challenge', 'submit', [
-            'label' => 'gateway.form.gateway_send_sms_challenge.button.send_challenge',
+        /** @var ChooseSecondFactorCommand $data */
+        $data = $builder->getData();
+        $secondFactors = array_values($data->secondFactors->getValues());
+
+        $builder->add('selectedSecondFactor', 'choice', [
+            'label' => 'gateway.form.choose_second_factor.button.second_factor',
+            'expanded' => true,
+            'multiple' => false,
+            'choices' => $secondFactors,
+            'choice_label' => function ($index) use ($secondFactors) {
+                /** @var SecondFactor[] $secondFactors */
+                return ucfirst($secondFactors[$index]->secondFactorType);
+            }
+        ]);
+
+        $builder->add('choose', 'submit', [
+            'label' => 'gateway.form.choose_second_factor.button.submit',
             'attr' => [ 'class' => 'btn btn-primary pull-right' ],
         ]);
         $builder->add('cancel', 'submit', [
-            'label' => 'gateway.form.send_sms_challenge.button.cancel',
+            'label' => 'gateway.form.choose_second_factor.button.cancel',
             'attr'  => ['class' => 'btn btn-danger', 'formnovalidate' => 'formnovalidate'],
         ]);
     }
@@ -39,12 +56,12 @@ class SendSmsChallengeType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => 'Surfnet\StepupGateway\GatewayBundle\Command\SendSmsChallengeCommand',
+            'data_class' => 'Surfnet\StepupGateway\GatewayBundle\Command\ChooseSecondFactorCommand',
         ]);
     }
 
     public function getName()
     {
-        return 'gateway_send_sms_challenge';
+        return 'gateway_choose_second_factor';
     }
 }

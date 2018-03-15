@@ -18,7 +18,11 @@
 
 namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Saml;
 
-use SAML2_Assertion;
+use SAML2\Assertion;
+use SAML2\Constants;
+use SAML2\Response;
+use SAML2\XML\saml\SubjectConfirmation;
+use SAML2\XML\saml\SubjectConfirmationData;
 use Surfnet\SamlBundle\Entity\IdentityProvider;
 use Surfnet\SamlBundle\Entity\ServiceProvider;
 use Surfnet\StepupGateway\GatewayBundle\Saml\AssertionSigningService;
@@ -61,7 +65,7 @@ final class ResponseFactory
      * @param string $nameId
      * @param ServiceProvider $targetServiceProvider
      * @param string|null $authnContextClassRef
-     * @return \SAML2_Response
+     * @return Response
      */
     public function createSecondFactorOnlyResponse(
         $nameId,
@@ -80,13 +84,13 @@ final class ResponseFactory
     }
 
     /**
-     * @param SAML2_Assertion $newAssertion
+     * @param Assertion $newAssertion
      * @param ServiceProvider $targetServiceProvider
-     * @return \SAML2_Response
+     * @return Response
      */
-    private function createNewAuthnResponse(SAML2_Assertion $newAssertion, ServiceProvider $targetServiceProvider)
+    private function createNewAuthnResponse(Assertion $newAssertion, ServiceProvider $targetServiceProvider)
     {
-        $response = new \SAML2_Response();
+        $response = new Response();
         $response->setAssertions([$newAssertion]);
         $response->setIssuer($this->hostedIdentityProvider->getEntityId());
         $response->setIssueInstant($this->getTimestamp());
@@ -100,14 +104,14 @@ final class ResponseFactory
      * @param string $nameId
      * @param ServiceProvider $targetServiceProvider
      * @param string $authnContextClassRef
-     * @return SAML2_Assertion
+     * @return Assertion
      */
     private function createNewAssertion(
         $nameId,
         ServiceProvider $targetServiceProvider,
         $authnContextClassRef
     ) {
-        $newAssertion = new SAML2_Assertion();
+        $newAssertion = new Assertion();
         $newAssertion->setNotBefore($this->currentTime->getTimestamp());
         $newAssertion->setNotOnOrAfter($this->getTimestamp('PT5M'));
         $newAssertion->setIssuer($this->hostedIdentityProvider->getEntityId());
@@ -115,8 +119,8 @@ final class ResponseFactory
         $this->assertionSigningService->signAssertion($newAssertion);
         $this->addSubjectConfirmationFor($newAssertion, $targetServiceProvider);
         $newAssertion->setNameId([
-            'Format' => \SAML2_Const::NAMEID_UNSPECIFIED,
-            'Value' => $nameId,
+            'Format' => Constants::NAMEID_UNSPECIFIED,
+            'ValueValue' => $nameId,
         ]);
         $newAssertion->setValidAudiences([$this->proxyStateHandler->getRequestServiceProvider()]);
         $this->addAuthenticationStatementTo($newAssertion, $authnContextClassRef);
@@ -125,15 +129,15 @@ final class ResponseFactory
     }
 
     /**
-     * @param SAML2_Assertion $newAssertion
+     * @param Assertion $newAssertion
      * @param ServiceProvider $targetServiceProvider
      */
-    private function addSubjectConfirmationFor(SAML2_Assertion $newAssertion, ServiceProvider $targetServiceProvider)
+    private function addSubjectConfirmationFor(Assertion $newAssertion, ServiceProvider $targetServiceProvider)
     {
-        $confirmation         = new \SAML2_XML_saml_SubjectConfirmation();
-        $confirmation->Method = \SAML2_Const::CM_BEARER;
+        $confirmation         = new SubjectConfirmation();
+        $confirmation->Method = Constants::CM_BEARER;
 
-        $confirmationData                      = new \SAML2_XML_saml_SubjectConfirmationData();
+        $confirmationData                      = new SubjectConfirmationData();
         $confirmationData->InResponseTo        = $this->proxyStateHandler->getRequestId();
         $confirmationData->Recipient           = $targetServiceProvider->getAssertionConsumerUrl();
         $confirmationData->NotOnOrAfter        = $this->getTimestamp('PT8H');
@@ -144,10 +148,10 @@ final class ResponseFactory
     }
 
     /**
-     * @param SAML2_Assertion $assertion
-     * @param SAML2_Assertion $assertion
+     * @param Assertion $assertion
+     * @param $authnContextClassRef
      */
-    private function addAuthenticationStatementTo(SAML2_Assertion $assertion, $authnContextClassRef)
+    private function addAuthenticationStatementTo(Assertion $assertion, $authnContextClassRef)
     {
         $assertion->setAuthnInstant($this->getTimestamp());
         $assertion->setAuthnContextClassRef($authnContextClassRef);

@@ -112,13 +112,15 @@ class StepUpAuthenticationService
     }
 
     /**
-     * @param string          $identityNameId
-     * @param Loa             $requiredLoa
+     * @param string $identityNameId
+     * @param Loa $requiredLoa
+     * @param WhitelistService $whitelistService
      * @return \Doctrine\Common\Collections\Collection
      */
     public function determineViableSecondFactors(
         $identityNameId,
-        Loa $requiredLoa
+        Loa $requiredLoa,
+        WhitelistService $whitelistService
     ) {
 
         $candidateSecondFactors = $this->secondFactorRepository->getAllMatchingFor(
@@ -129,6 +131,20 @@ class StepUpAuthenticationService
         $this->logger->info(
             sprintf('Loaded %d matching candidate second factors', count($candidateSecondFactors))
         );
+
+        foreach ($candidateSecondFactors as $key => $secondFactor) {
+            if (!$whitelistService->contains($secondFactor->institution)) {
+                $this->logger->notice(
+                    sprintf(
+                        'Second factor "%s" is listed for institution "%s" which is not on the whitelist',
+                        $secondFactor->secondFactorId,
+                        $secondFactor->institution
+                    )
+                );
+
+                $candidateSecondFactors->remove($key);
+            }
+        }
 
         if ($candidateSecondFactors->isEmpty()) {
             $this->logger->alert('No suitable candidate second factors found, sending Loa cannot be given response');

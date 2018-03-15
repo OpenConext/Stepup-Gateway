@@ -21,8 +21,9 @@ namespace Surfnet\StepupGateway\GatewayBundle\Tests\Service;
 use Mockery;
 use PHPUnit_Framework_TestCase;
 use Psr\Log\NullLogger;
-use SAML2_Assertion;
-use SAML2_Compat_ContainerSingleton;
+use SAML2\Assertion;
+use SAML2\Compat\ContainerSingleton;
+use SAML2\XML\saml\NameID;
 use Surfnet\SamlBundle\Entity\IdentityProvider;
 use Surfnet\SamlBundle\SAML2\Attribute\AttributeDefinition;
 use Surfnet\SamlBundle\SAML2\Attribute\AttributeDictionary;
@@ -82,19 +83,18 @@ final class ProxyResponseServiceTest extends PHPUnit_Framework_TestCase
         $this->targetServiceProvider = Mockery::mock(ServiceProvider::class)->shouldIgnoreMissing();
 
         $container = new TestSaml2Container(new NullLogger());
-        SAML2_Compat_ContainerSingleton::setContainer($container);
+        ContainerSingleton::setContainer($container);
 
         $this->identityProvider->shouldReceive('getEntityId')->andReturn('https://gateway.example/metadata');
+
+        $nameId = NameID::fromArray([
+            'Value' => 'John Doe',
+            'Format' => 'Unspecified'
+        ]);
+
         $this->attributeDictionary
             ->shouldReceive('translate->getAttributeValue')
-            ->andReturn(
-                [
-                    [
-                        'Value' => 'John Doe',
-                        'Format' => 'Unspecified'
-                    ]
-                ]
-            )
+            ->andReturn([$nameId])
             ->byDefault();
     }
 
@@ -112,15 +112,15 @@ final class ProxyResponseServiceTest extends PHPUnit_Framework_TestCase
             $this->loa
         );
 
-        $originalAssertion = new SAML2_Assertion();
+        $originalAssertion = new Assertion();
         $originalAssertion->setIssuer('https://idp.example/metadata');
 
         $response = $factory->createProxyResponse($originalAssertion, $this->targetServiceProvider);
 
-        /** @var SAML2_Assertion $assertion */
+        /** @var Assertion $assertion */
         $assertion = $response->getAssertions()[0];
 
-        $this->assertInstanceOf(SAML2_Assertion::class, $assertion);
+        $this->assertInstanceOf(Assertion::class, $assertion);
 
         $this->assertEquals(
             ['https://idp.example/metadata'],
@@ -142,16 +142,16 @@ final class ProxyResponseServiceTest extends PHPUnit_Framework_TestCase
             $this->loa
         );
 
-        $originalAssertion = new SAML2_Assertion();
+        $originalAssertion = new Assertion();
         $originalAssertion->setIssuer('https://idp.example/metadata');
         $originalAssertion->setAuthenticatingAuthority(['https://previous.idp.example/metadata']);
 
         $response = $factory->createProxyResponse($originalAssertion, $this->targetServiceProvider);
 
-        /** @var SAML2_Assertion $assertion */
+        /** @var Assertion $assertion */
         $assertion = $response->getAssertions()[0];
 
-        $this->assertInstanceOf(SAML2_Assertion::class, $assertion);
+        $this->assertInstanceOf(Assertion::class, $assertion);
 
         $this->assertEquals(
             ['https://previous.idp.example/metadata', 'https://idp.example/metadata'],
@@ -174,7 +174,7 @@ final class ProxyResponseServiceTest extends PHPUnit_Framework_TestCase
             $this->loa
         );
 
-        $originalAssertion = new SAML2_Assertion();
+        $originalAssertion = new Assertion();
         $originalAssertion->setIssuer('https://idp.example/metadata');
         $originalAssertion->setAuthenticatingAuthority(['https://previous.idp.example/metadata']);
 
@@ -201,20 +201,18 @@ final class ProxyResponseServiceTest extends PHPUnit_Framework_TestCase
             $this->loa
         );
 
-        $originalAssertion = new SAML2_Assertion();
+        $originalAssertion = new Assertion();
         $originalAssertion->setIssuer('https://idp.example/metadata');
         $originalAssertion->setAuthenticatingAuthority(['https://previous.idp.example/metadata']);
 
+        $nameId = NameID::fromArray([
+            'Value' => null,
+            'Format' => 'urn.colab.Epti'
+        ]);
+
         $this->attributeDictionary
             ->shouldReceive('translate->getAttributeValue')
-            ->andReturn(
-                [
-                    [
-                        'Value' => null,
-                        'Format' => 'urn.colab.Epti'
-                    ]
-                ]
-            );
+            ->andReturn([$nameId]);
 
         $factory->createProxyResponse($originalAssertion, $this->targetServiceProvider);
     }

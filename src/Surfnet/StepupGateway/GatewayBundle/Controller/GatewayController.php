@@ -19,8 +19,8 @@
 namespace Surfnet\StepupGateway\GatewayBundle\Controller;
 
 use Exception;
-use SAML2_Const;
-use SAML2_Response;
+use SAML2\Constants;
+use SAML2\Response as SAMLResponse;
 use Surfnet\SamlBundle\SAML2\AuthnRequest;
 use Surfnet\SamlBundle\SAML2\AuthnRequestFactory;
 use Surfnet\StepupGateway\GatewayBundle\Exception\RuntimeException;
@@ -97,7 +97,7 @@ class GatewayController extends Controller
             $originalRequest->getRequestId()
         ));
 
-        return $redirectBinding->createRedirectResponseFor($proxyRequest);
+        return $redirectBinding->createResponseFor($proxyRequest);
     }
 
     public function proxySsoAction()
@@ -119,7 +119,7 @@ class GatewayController extends Controller
         $logger->notice('Received SAMLResponse, attempting to process for Proxy Response');
 
         try {
-            /** @var \SAML2_Assertion $assertion */
+            /** @var \SAML2\Assertion $assertion */
             $assertion = $this->get('surfnet_saml.http.post_binding')->processResponse(
                 $request,
                 $this->get('surfnet_saml.remote.idp'),
@@ -215,7 +215,7 @@ class GatewayController extends Controller
 
         $response = $responseBuilder
             ->createNewResponse($responseContext)
-            ->setResponseStatus(SAML2_Const::STATUS_RESPONDER, SAML2_Const::STATUS_NO_AUTHN_CONTEXT)
+            ->setResponseStatus(Constants::STATUS_RESPONDER, Constants::STATUS_NO_AUTHN_CONTEXT)
             ->get();
 
         $logger->notice(sprintf(
@@ -242,8 +242,8 @@ class GatewayController extends Controller
         $response = $responseBuilder
             ->createNewResponse($responseContext)
             ->setResponseStatus(
-                SAML2_Const::STATUS_RESPONDER,
-                SAML2_Const::STATUS_AUTHN_FAILED,
+                Constants::STATUS_RESPONDER,
+                Constants::STATUS_AUTHN_FAILED,
                 'Authentication cancelled by user'
             )
             ->get();
@@ -259,10 +259,10 @@ class GatewayController extends Controller
 
     /**
      * @param string         $view
-     * @param SAML2_Response $response
+     * @param SAMLResponse $response
      * @return Response
      */
-    public function renderSamlResponse($view, SAML2_Response $response)
+    public function renderSamlResponse($view, SAMLResponse $response)
     {
         $responseContext = $this->getResponseContext();
 
@@ -304,16 +304,16 @@ class GatewayController extends Controller
     }
 
     /**
-     * @param SAML2_Response $response
+     * @param SAMLResponse $response
      * @return string
      */
-    private function getResponseAsXML(SAML2_Response $response)
+    private function getResponseAsXML(SAMLResponse $response)
     {
         return base64_encode($response->toUnsignedXML()->ownerDocument->saveXML());
     }
 
     /**
-     * @return SAML2_Response
+     * @return SAMLResponse
      */
     private function createRequesterFailureResponse()
     {
@@ -323,7 +323,7 @@ class GatewayController extends Controller
 
         $response = $responseBuilder
             ->createNewResponse($context)
-            ->setResponseStatus(SAML2_Const::STATUS_REQUESTER, SAML2_Const::STATUS_REQUEST_UNSUPPORTED)
+            ->setResponseStatus(Constants::STATUS_REQUESTER, Constants::STATUS_REQUEST_UNSUPPORTED)
             ->get();
 
         return $response;
@@ -332,7 +332,7 @@ class GatewayController extends Controller
 
     /**
      * @param $context
-     * @return SAML2_Response
+     * @return SAMLResponse
      */
     private function createResponseFailureResponse($context)
     {
@@ -341,7 +341,7 @@ class GatewayController extends Controller
 
         $response = $responseBuilder
             ->createNewResponse($context)
-            ->setResponseStatus(SAML2_Const::STATUS_RESPONDER)
+            ->setResponseStatus(Constants::STATUS_RESPONDER)
             ->get();
 
         return $response;

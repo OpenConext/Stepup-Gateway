@@ -52,3 +52,8 @@ gateway_verify_second_factor_u2f_cancel_authentication:
     path:     /verify-second-factor/u2f/cancel
     methods:  [POST]
     defaults: { _controller: SurfnetStepupGatewayGatewayBundle:SecondFactor:cancelU2fAuthentication }
+
+gateway_verify_second_factor_choose_second_factor:
+    path:     /choose-second-factor
+    methods:  [GET, POST]
+    defaults: { _controller: SurfnetStepupGatewayGatewayBundle:SecondFactor:chooseSecondFactor }

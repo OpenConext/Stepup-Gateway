@@ -1,0 +1,12 @@
+{% extends "::base.html.twig" %}
+
+{% block page_title %}{{ 'gateway.second_factor.choose_second_factor.title'|trans }}{% endblock %}
+
+{% block content %}
+    <h2>{{ block('page_title') }}</h2>
+
+    <p>{{ 'gateway.second_factor.choose_second_factor.description'|trans }}</p>
+
+    {{ form(form) }}
+
+{% endblock %}

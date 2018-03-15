@@ -16,8 +16,19 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupGateway\GatewayBundle\Exception;
+namespace Surfnet\StepupGateway\GatewayBundle\Command;
 
-class LoaCannotBeGivenException extends DomainException
+use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor;
+
+class ChooseSecondFactorCommand
 {
+    /**
+     * @var SecondFactor[]
+     */
+    public $secondFactors;
+
+    /**
+     * @var SecondFactor
+     */
+    public $selectedSecondFactor;
 }

@@ -24,11 +24,29 @@ use Surfnet\StepupBundle\Value\Loa;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 
 /**
+ * WARNING: Any schema change made to this entity should also be applied to the Middleware SecondFactor entity!
+ *          Migrations are managed by Middleware.
+ *
+ * @see Surfnet\StepupMiddleware\GatewayBundle\Entity\SecondFactor (in OpenConext/Stepup-Middleware project)
+ *
  * @ORM\Entity(repositoryClass="Surfnet\StepupGateway\GatewayBundle\Entity\DoctrineSecondFactorRepository")
- * @ORM\Table
+ * @ORM\Table(
+ *      indexes={
+ *          @ORM\Index(name="idx_secondfactor_nameid", columns={"name_id"}),
+ *      }
+ * )
+ * @SuppressWarnings(PHPMD.UnusedPrivateFields)
  */
 class SecondFactor
 {
+    /**
+     * @var int
+     *
+     * @ORM\Id
+     * @ORM\Column(length=36)
+     */
+    private $id;
+
     /**
      * @var string
      *
