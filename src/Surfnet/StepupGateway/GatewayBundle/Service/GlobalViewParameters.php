@@ -36,27 +36,27 @@ final class GlobalViewParameters
     /**
      * @var string[]
      */
-    private $manualUrl;
+    private $supportUrl;
 
     /**
      * @param TranslatorInterface $translator
      * @param string[] $locales
-     * @param string[] $manualUrl
+     * @param string[] $supportUrl
      */
-    public function __construct(TranslatorInterface $translator, array $locales, array $manualUrl)
+    public function __construct(TranslatorInterface $translator, array $locales, array $supportUrl)
     {
-        Assert::keysAre($manualUrl, $locales);
+        Assert::keysAre($supportUrl, $locales);
 
         $this->translator = $translator;
         $this->locales = $locales;
-        $this->manualUrl = $manualUrl;
+        $this->supportUrl = $supportUrl;
     }
 
     /**
      * @return string
      */
-    public function getManualUrl()
+    public function getSupportUrl()
     {
-        return $this->manualUrl[$this->translator->getLocale()];
+        return $this->supportUrl[$this->translator->getLocale()];
     }
 }

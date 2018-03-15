@@ -76,7 +76,7 @@ services:
         arguments:
             - "@translator"
             - "%locales%"
-            - "%manual_url%"
+            - "%support_url%"
 
     gateway.session.u2f:
         class: Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag
