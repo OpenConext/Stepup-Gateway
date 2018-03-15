@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:jms="urn:jms:translation" version="1.2">
-  <file date="2018-03-12T13:44:28Z" source-language="en" target-language="nl_NL" datatype="plaintext" original="not.available">
+  <file date="2018-03-15T13:09:17Z" source-language="en" target-language="nl_NL" datatype="plaintext" original="not.available">
     <header>
       <tool tool-id="JMSTranslationBundle" tool-name="JMSTranslationBundle" tool-version="1.1.0-DEV"/>
       <note>The source node in most cases contains the sample message as written by the developer. If it looks like a dot-delimitted string such as "form.label.firstname", then the developer has not provided a default message.</note>
@@ -11,11 +11,6 @@
         <target>OpenConext Stepup</target>
         <jms:reference-file line="26">/Resources/views/base.html.twig</jms:reference-file>
         <jms:reference-file line="6">/Resources/views/base.html.twig</jms:reference-file>
-      </trans-unit>
-      <trans-unit id="4c9bb99f21fbd3d0e6dc17b1a7f96e4f9eaef7b5" resname="app.support_url">
-        <source>app.support_url</source>
-        <target>https://support.example.org</target>
-        <jms:reference-file line="46">/Resources/views/base.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="1aa7637939b9d85db5e1b5bb89ebb0dedbc01f7e" resname="gateway.error.click_to_go_back_to_sp">
         <source>gateway.error.click_to_go_back_to_sp</source>
@@ -34,18 +29,14 @@
       </trans-unit>
       <trans-unit id="21ca83986f91793e943bbae8b73297e7b06146c5" resname="gateway.error.text.if_you_think_this_is_incorrect_report">
         <source>gateway.error.text.if_you_think_this_is_incorrect_report</source>
-        <target>Rapporteer deze fout met bovenstaande foutcode bij SURFnet als je denkt dat deze foutmelding ongerechtvaardigd is.</target>
+        <target>Bezoek &lt;a href="%support_url%" target="_blank"&gt;de support pagina&lt;/a&gt; als dit je probleem niet oplost. Op deze pagina vind je meer informatie over de mogelijk oorzaken en hoe je contact kan opnemen met het supportteam.</target>
+        <jms:reference-file line="13">/Resources/SurfnetStepupBundle/views/Exception/error.html.twig</jms:reference-file>
         <jms:reference-file line="13">/Resources/SurfnetStepupBundle/views/Exception/error404.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="aea98c18fcdb01a7f403f9d3d2bac09db573b1c6" resname="gateway.error.text.page_not_found">
         <source>gateway.error.text.page_not_found</source>
         <target>De aangevraagde pagina bestaat niet. Ga terug en probeer het opnieuw.</target>
         <jms:reference-file line="8">/Resources/SurfnetStepupBundle/views/Exception/error404.html.twig</jms:reference-file>
-      </trans-unit>
-      <trans-unit id="706344da8bbe9c21296992c5e0e74c68e546f191" resname="gateway.error.text.what_were_you_doing_well_fix_it">
-        <source>gateway.error.text.what_were_you_doing_well_fix_it</source>
-        <target>Rapporteer deze fout met bovenstaande foutcode bij SURFnet als je denkt dat deze foutmelding ongerechtvaardigd is.</target>
-        <jms:reference-file line="13">/Resources/SurfnetStepupBundle/views/Exception/error.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="b0c6c739ae28f825ab8beb19b0ac2a2fe3318c8b" resname="gateway.error.text.your_art_code">
         <source>gateway.error.text.your_art_code</source>
