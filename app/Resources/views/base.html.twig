@@ -23,7 +23,7 @@
         {% block page_header %}
             <div class="page-header clearfix">
                 <img src="/images/header-logo.png" class="pull-right logo" alt="OpenConext Stepup">
-                <h1>{{ 'app.name'|trans }}</h1>
+                <h1>{% block application_name %}{{ 'app.name'|trans }}{% endblock %}</h1>
             </div>
         {% endblock page_header %}
 
