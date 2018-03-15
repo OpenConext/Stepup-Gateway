@@ -43,7 +43,6 @@
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3",
-        "liip/rmt": "1.1.*",
         "matthiasnoback/symfony-config-test": "^1.2.1",
         "phpmd/phpmd": "^2.0",
         "phpunit/phpunit": "^4.0",
