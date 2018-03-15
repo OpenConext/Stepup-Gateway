@@ -210,7 +210,7 @@ jms_translation:
             dirs: [%kernel.root_dir%/../src, %kernel.root_dir%]
             output_dir: %kernel.root_dir%/Resources/translations
             ignored_domains: []
-            excluded_names: ['*TestCase.php', '*Test.php']
+            excluded_names: ['*TestCase.php', '*Test.php', 'Assert.php']
             excluded_dirs: [cache, data, logs, Tests]
             extractors: []
 

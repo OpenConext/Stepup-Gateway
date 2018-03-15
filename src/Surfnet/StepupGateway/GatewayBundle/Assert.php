@@ -21,6 +21,11 @@ namespace Surfnet\StepupGateway\GatewayBundle;
 use Assert\Assertion;
 use Surfnet\StepupGateway\GatewayBundle\Exception\AssertionFailedException;
 
+/**
+ * Note: this file is excluded from translation scanning because the partent
+ * Assertion classes uses an aliasOf annotation not supported by
+ * JMSTranslationBundle.
+ */
 final class Assert extends Assertion
 {
     protected static $exceptionClass = '\Surfnet\StepupGateway\GatewayBundle\Exception\AssertionFailedException';
