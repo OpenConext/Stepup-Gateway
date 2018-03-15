@@ -10,5 +10,5 @@
     <hr>
     <p><i class="fa fa-clock-o"></i> {{ "now"|date('Y-m-d H:i:s') }}</p>
     <p>{{ 'gateway.error.text.your_art_code'|trans }}: <span class="art">#{{ art }}</span></p>
-    <p>{{ 'gateway.error.text.if_you_think_this_is_incorrect_report'|trans }}</p>
+    <p>{{ 'gateway.error.text.if_you_think_this_is_incorrect_report'|trans({'%support_url%': global_view_parameters.supportUrl })|raw }}</p>
 {% endblock %}

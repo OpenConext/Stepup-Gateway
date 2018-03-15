@@ -38,6 +38,7 @@
         "surfnet/stepup-bundle": "^3.0",
         "surfnet/messagebird-api-client-bundle": "^3.0",
         "surfnet/yubikey-api-client-bundle": "^3.0",
+        "beberlei/assert": "^2.0",
         "webmozart/assert": "^1.2",
         "openconext/monitor-bundle": "^1.0"
     },
@@ -78,6 +79,9 @@
             },
             {
                 "file": "app/config/samlstepupproviders_parameters.yml"
+            },
+            {
+                "file": "app/config/global_view_parameters.yml"
             }
         ]
     }

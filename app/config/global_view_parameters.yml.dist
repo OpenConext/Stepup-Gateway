@@ -1,0 +1,7 @@
+# These parameters are to be rendered into the view according to a specific locale
+# A typical example would be showing locale-dependent external URLs
+# Strings containing '%' should be escaped by prepending '%'
+parameters:
+    support_url:
+        en_GB: "https://support.example.org"
+        nl_NL: "https://support.example.org"

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:jms="urn:jms:translation" version="1.2">
-  <file date="2018-01-22T13:41:28Z" source-language="en" target-language="en_GB" datatype="plaintext" original="not.available">
+  <file date="2018-03-15T13:09:19Z" source-language="en" target-language="en_GB" datatype="plaintext" original="not.available">
     <header>
       <tool tool-id="JMSTranslationBundle" tool-name="JMSTranslationBundle" tool-version="1.1.0-DEV"/>
       <note>The source node in most cases contains the sample message as written by the developer. If it looks like a dot-delimitted string such as "form.label.firstname", then the developer has not provided a default message.</note>
@@ -8,7 +8,7 @@
     <body>
       <trans-unit id="0c3112826a8c897ac0b6a3d3a8432059b74dd996" resname="app.name">
         <source>app.name</source>
-        <target>SURFconext Strong Authentication</target>
+        <target>OpenConext Stepup</target>
         <jms:reference-file line="26">/Resources/views/base.html.twig</jms:reference-file>
         <jms:reference-file line="6">/Resources/views/base.html.twig</jms:reference-file>
       </trans-unit>
@@ -29,18 +29,14 @@
       </trans-unit>
       <trans-unit id="21ca83986f91793e943bbae8b73297e7b06146c5" resname="gateway.error.text.if_you_think_this_is_incorrect_report">
         <source>gateway.error.text.if_you_think_this_is_incorrect_report</source>
-        <target>If you think this error is a mistake, please report it to SURFnet, along with the above error code.</target>
+        <target>Visit &lt;a href="%support_url%" target="_blank"&gt;the support page&lt;/a&gt; if this does not fix your problem. On this page you will find more information about possible causes of the error and how to contact the support team.</target>
+        <jms:reference-file line="13">/Resources/SurfnetStepupBundle/views/Exception/error.html.twig</jms:reference-file>
         <jms:reference-file line="13">/Resources/SurfnetStepupBundle/views/Exception/error404.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="aea98c18fcdb01a7f403f9d3d2bac09db573b1c6" resname="gateway.error.text.page_not_found">
         <source>gateway.error.text.page_not_found</source>
         <target>The page you requested was not found. Go back to try again.</target>
         <jms:reference-file line="8">/Resources/SurfnetStepupBundle/views/Exception/error404.html.twig</jms:reference-file>
-      </trans-unit>
-      <trans-unit id="706344da8bbe9c21296992c5e0e74c68e546f191" resname="gateway.error.text.what_were_you_doing_well_fix_it">
-        <source>gateway.error.text.what_were_you_doing_well_fix_it</source>
-        <target>If you think this error is a mistake, please report it to SURFnet, along with the above error code.</target>
-        <jms:reference-file line="13">/Resources/SurfnetStepupBundle/views/Exception/error.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="b0c6c739ae28f825ab8beb19b0ac2a2fe3318c8b" resname="gateway.error.text.your_art_code">
         <source>gateway.error.text.your_art_code</source>
@@ -240,7 +236,7 @@
       <trans-unit id="1c41e8d2b8040894426471450740d39af284d440" resname="gateway.second_factor.sms.challenge_body">
         <source>gateway.second_factor.sms.challenge_body</source>
         <target>Your SMS code: %challenge%</target>
-        <jms:reference-file line="371">/../src/Surfnet/StepupGateway/GatewayBundle/Service/StepUpAuthenticationService.php</jms:reference-file>
+        <jms:reference-file line="401">/../src/Surfnet/StepupGateway/GatewayBundle/Service/StepUpAuthenticationService.php</jms:reference-file>
       </trans-unit>
       <trans-unit id="fecb0bb6d9524901050c51767a3cf1eceb80da04" resname="gateway.second_factor.sms.send_challenge.title">
         <source>gateway.second_factor.sms.send_challenge.title</source>

@@ -154,7 +154,7 @@ Example:
                 Destination="https://your-sp.example.com/acs-location"
                 InResponseTo="_6d93f735ccfb8d98454999b4016d515834211b0dde"
                 >
-    <saml:Issuer>https://sa-gw.surfconext.nl/authentication/metadata</saml:Issuer>
+    <saml:Issuer>https://gw.example.org/authentication/metadata</saml:Issuer>
     <samlp:Status>
         <samlp:StatusCode Value="urn:oasis:names:tc:SAML:2.0:status:Responder">
             <samlp:StatusCode Value="urn:oasis:names:tc:SAML:2.0:status:AuthnFailed" />
@@ -178,7 +178,7 @@ Example:
                 Destination="https://your-sp.example.com/acs-location"
                 InResponseTo="_6d93f735ccfb8d98454999b4016d515834211b0dde"
                 >
-    <saml:Issuer>https://sa-gw.surfconext.nl/authentication/metadata</saml:Issuer>
+    <saml:Issuer>https://gw.example.org/authentication/metadata</saml:Issuer>
     <samlp:Status>
         <samlp:StatusCode Value="urn:oasis:names:tc:SAML:2.0:status:Requester">
             <samlp:StatusCode Value="urn:oasis:names:tc:SAML:2.0:status:NoAuthnContext" />

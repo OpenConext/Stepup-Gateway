@@ -7,6 +7,7 @@
 /app/cache/*
 /app/config/parameters.yml
 /app/config/samlstepupproviders_parameters.yml
+/app/config/global_view_parameters.yml
 /app/logs/*
 !app/cache/.gitkeep
 !app/logs/.gitkeep
