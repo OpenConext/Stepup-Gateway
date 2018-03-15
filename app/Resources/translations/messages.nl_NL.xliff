@@ -173,7 +173,7 @@
       </trans-unit>
       <trans-unit id="fdeeb4b0c6e2a94aec8a11728946c13a325f8366" resname="gateway.second_factor.choose_second_factor.title">
         <source>gateway.second_factor.choose_second_factor.title</source>
-        <target>Kies uw favoriete token</target>
+        <target>Selecteer token voor login</target>
         <jms:reference-file line="3">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/chooseSecondFactor.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="1c41e8d2b8040894426471450740d39af284d440" resname="gateway.second_factor.sms.challenge_body">
