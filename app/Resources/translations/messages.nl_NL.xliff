@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:jms="urn:jms:translation" version="1.2">
-  <file date="2018-03-15T15:59:48Z" source-language="en" target-language="nl_NL" datatype="plaintext" original="not.available">
+  <file date="2018-03-23T09:43:26Z" source-language="en" target-language="nl_NL" datatype="plaintext" original="not.available">
     <header>
       <tool tool-id="JMSTranslationBundle" tool-name="JMSTranslationBundle" tool-version="1.1.0-DEV"/>
       <note>The source node in most cases contains the sample message as written by the developer. If it looks like a dot-delimitted string such as "form.label.firstname", then the developer has not provided a default message.</note>
@@ -168,13 +168,28 @@
       </trans-unit>
       <trans-unit id="75964b2f1748875ae1c270b8e25a9a5b2ea6b700" resname="gateway.second_factor.choose_second_factor.description">
         <source>gateway.second_factor.choose_second_factor.description</source>
-        <target>Kies een van de onderstaande tokens om door te gaan.</target>
+        <target state="new">gateway.second_factor.choose_second_factor.description</target>
         <jms:reference-file line="8">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/chooseSecondFactor.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="fdeeb4b0c6e2a94aec8a11728946c13a325f8366" resname="gateway.second_factor.choose_second_factor.title">
         <source>gateway.second_factor.choose_second_factor.title</source>
         <target>Selecteer token voor login</target>
         <jms:reference-file line="3">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/chooseSecondFactor.html.twig</jms:reference-file>
+      </trans-unit>
+      <trans-unit id="7b77bca359dd095ce5a10f57ed44386bf8aac3a1" resname="gateway.second_factor.search.type.sms">
+        <source>gateway.second_factor.search.type.sms</source>
+        <target>SMS</target>
+        <jms:reference-file line="20">/Resources/views/translations.html.twig</jms:reference-file>
+      </trans-unit>
+      <trans-unit id="72a21f0cbb338b0b94a2e55e9d1f8e48baf34eaa" resname="gateway.second_factor.search.type.u2f">
+        <source>gateway.second_factor.search.type.u2f</source>
+        <target>U2F</target>
+        <jms:reference-file line="22">/Resources/views/translations.html.twig</jms:reference-file>
+      </trans-unit>
+      <trans-unit id="31046bc21aed40f037eebc23b0487eadb196b931" resname="gateway.second_factor.search.type.yubikey">
+        <source>gateway.second_factor.search.type.yubikey</source>
+        <target>Yubikey</target>
+        <jms:reference-file line="21">/Resources/views/translations.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="1c41e8d2b8040894426471450740d39af284d440" resname="gateway.second_factor.sms.challenge_body">
         <source>gateway.second_factor.sms.challenge_body</source>
@@ -324,11 +339,6 @@
         <target>Inloggen</target>
         <jms:reference-file line="129">/../vendor/surfnet/stepup-bundle/src/Controller/ExceptionController.php</jms:reference-file>
       </trans-unit>
-      <trans-unit id="e40ed00c2f742d44908a389c9dbeacfa6defc84a" resname="stepup.error.back_button">
-        <source>stepup.error.back_button</source>
-        <target>Terug</target>
-        <jms:reference-file line="11">/../vendor/surfnet/stepup-bundle/src/Resources/views/Exception/error404.html.twig</jms:reference-file>
-      </trans-unit>
       <trans-unit id="45278127b39b1029ff5941470adcab5cc0358c58" resname="stepup.error.error_code">
         <source>stepup.error.error_code</source>
         <target>Foutcode</target>
@@ -352,7 +362,7 @@
       <trans-unit id="9bb9f4a8016a17f539ff6d1aeee607b0ce5760b4" resname="stepup.error.ip_address">
         <source>stepup.error.ip_address</source>
         <target>IP-adres</target>
-        <jms:reference-file line="32">/../vendor/surfnet/stepup-bundle/src/Resources/views/Exception/error.html.twig</jms:reference-file>
+        <jms:reference-file line="34">/../vendor/surfnet/stepup-bundle/src/Resources/views/Exception/error.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="b4809e818f782127b31392936e35593812543700" resname="stepup.error.page_not_found.text">
         <source>stepup.error.page_not_found.text</source>
@@ -392,8 +402,8 @@
       <trans-unit id="13cca787752c500356fbd62690001b8cb2a04e9a" resname="stepup.error.support_page.text">
         <source>stepup.error.support_page.text</source>
         <target><![CDATA[Bezoek <a href="%support_url%" target="_blank">de support pagina</a> als dit je probleem niet oplost. Op deze pagina vind je meer informatie over de mogelijk oorzaken en hoe je contact kan opnemen met het supportteam.]]></target>
-        <jms:reference-file line="37">/../vendor/surfnet/stepup-bundle/src/Resources/views/Exception/error.html.twig</jms:reference-file>
-        <jms:reference-file line="16">/../vendor/surfnet/stepup-bundle/src/Resources/views/Exception/error404.html.twig</jms:reference-file>
+        <jms:reference-file line="39">/../vendor/surfnet/stepup-bundle/src/Resources/views/Exception/error.html.twig</jms:reference-file>
+        <jms:reference-file line="12">/../vendor/surfnet/stepup-bundle/src/Resources/views/Exception/error404.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="27518086f13a0c4f33e2e1f4c118187a4e41ce53" resname="stepup.error.timestamp">
         <source>stepup.error.timestamp</source>
@@ -428,7 +438,7 @@
       <trans-unit id="0b18df78a6a355c42f216da4a98d1afaac5e5aba" resname="stepup.error.user_agent">
         <source>stepup.error.user_agent</source>
         <target>User agent</target>
-        <jms:reference-file line="28">/../vendor/surfnet/stepup-bundle/src/Resources/views/Exception/error.html.twig</jms:reference-file>
+        <jms:reference-file line="29">/../vendor/surfnet/stepup-bundle/src/Resources/views/Exception/error.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="fcbfd9e643bb8d8f3fcf3ca0380a73bb9dffee2b" resname="stepup_middleware_client.form.switch_locale.switch">
         <source>stepup_middleware_client.form.switch_locale.switch</source>
