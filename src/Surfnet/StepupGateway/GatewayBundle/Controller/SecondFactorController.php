@@ -27,6 +27,7 @@ use Surfnet\StepupGateway\GatewayBundle\Command\ChooseSecondFactorCommand;
 use Surfnet\StepupGateway\GatewayBundle\Command\SendSmsChallengeCommand;
 use Surfnet\StepupGateway\GatewayBundle\Command\VerifyYubikeyOtpCommand;
 use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor;
+use Surfnet\StepupGateway\GatewayBundle\Exception\InvalidArgumentException;
 use Surfnet\StepupGateway\GatewayBundle\Exception\LoaCannotBeGivenException;
 use Surfnet\StepupGateway\GatewayBundle\Exception\RuntimeException;
 use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
@@ -175,23 +176,49 @@ class SecondFactorController extends Controller
             )
             ->handleRequest($request);
 
-        if ($form->get('cancel')->isClicked()) {
-            return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:sendAuthenticationCancelledByUser');
-        }
-
         if ($form->isSubmitted() && $form->isValid()) {
-            $secondFactorIndex = $command->selectedSecondFactor;
-            $secondFactor = $secondFactors->get($secondFactorIndex);
-            $logger->notice(sprintf(
-                'User chose "%s" to use as second factor',
-                $secondFactor->secondFactorType
-            ));
+            $buttonName = $form->getClickedButton()->getName();
+            $formResults = $request->request->get('gateway_choose_second_factor', false);
+
+            if (!isset($formResults[$buttonName])) {
+                throw new InvalidArgumentException(
+                    sprintf(
+                        'Second factor type "%s" could not be found in the posted form results.',
+                        $buttonName
+                    )
+                );
+            }
+
+            $secondFactorType = $formResults[$buttonName];
+
+            // Filter the selected second factor from the array collection
+            $secondFactorFiltered = $secondFactors->filter(function($secondFactor) use ($secondFactorType){
+                return $secondFactorType === $secondFactor->secondFactorType;
+            });
+
+            if ($secondFactorFiltered->isEmpty()) {
+                throw new InvalidArgumentException(
+                    sprintf(
+                        'Second factor type "%s" could not be found in the collection of available second factors.',
+                        $secondFactorType
+                    )
+                );
+            }
+
+            $secondFactor = $secondFactorFiltered->first();
+
+            $logger->notice(sprintf('User chose "%s" to use as second factor', $secondFactorType));
 
             // Forward to action to verify possession of second factor
             return $this->selectAndRedirectTo($secondFactor, $context);
+        } else if ($form->isSubmitted() && !$form->isValid()) {
+            $form->addError(new FormError('gateway.form.gateway_choose_second_factor.unknown_second_factor_type'));
         }
 
-        return ['form' => $form->createView()];
+        return [
+            'form' => $form->createView(),
+            'secondFactors' => $secondFactors,
+        ];
     }
 
     public function verifyGssfAction()

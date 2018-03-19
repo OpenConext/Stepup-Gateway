@@ -25,6 +25,11 @@ use Symfony\Component\HttpFoundation\RequestStack;
 class ViewConfig implements ViewConfigInterface
 {
     /**
+     * @var
+     */
+    private $requestStack;
+
+    /**
      * @var string
      */
     private $logo;
@@ -46,6 +51,7 @@ class ViewConfig implements ViewConfigInterface
         $logo,
         array $title
     ) {
+        $this->requestStack = $requestStack;
         $this->logo = $logo;
         $this->title = $title;
     }
