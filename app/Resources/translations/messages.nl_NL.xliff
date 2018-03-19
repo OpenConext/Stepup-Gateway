@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:jms="urn:jms:translation" version="1.2">
-  <file date="2018-03-23T09:43:26Z" source-language="en" target-language="nl_NL" datatype="plaintext" original="not.available">
+  <file date="2018-03-23T09:48:46Z" source-language="en" target-language="nl_NL" datatype="plaintext" original="not.available">
     <header>
       <tool tool-id="JMSTranslationBundle" tool-name="JMSTranslationBundle" tool-version="1.1.0-DEV"/>
       <note>The source node in most cases contains the sample message as written by the developer. If it looks like a dot-delimitted string such as "form.label.firstname", then the developer has not provided a default message.</note>
@@ -22,25 +22,15 @@
         <target>Login-response kan niet worden verwerkt.</target>
         <jms:reference-file line="7">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/Gateway/unprocessableResponse.html.twig</jms:reference-file>
       </trans-unit>
-      <trans-unit id="6d6e665338c60db3539752789daa318cc72e8002" resname="gateway.form.choose_second_factor.button.cancel">
-        <source>gateway.form.choose_second_factor.button.cancel</source>
-        <target>Annuleren</target>
-        <jms:reference-file line="51">/../src/Surfnet/StepupGateway/GatewayBundle/Form/Type/ChooseSecondFactorType.php</jms:reference-file>
-      </trans-unit>
-      <trans-unit id="ee2f7d95292d7dd3cae91c7855aae08d37754b5a" resname="gateway.form.choose_second_factor.button.second_factor">
-        <source>gateway.form.choose_second_factor.button.second_factor</source>
-        <target>Kies</target>
-        <jms:reference-file line="36">/../src/Surfnet/StepupGateway/GatewayBundle/Form/Type/ChooseSecondFactorType.php</jms:reference-file>
-      </trans-unit>
-      <trans-unit id="712389ad04974ac705f125ab79172fc63db959f5" resname="gateway.form.choose_second_factor.button.submit">
-        <source>gateway.form.choose_second_factor.button.submit</source>
-        <target>Volgende</target>
-        <jms:reference-file line="47">/../src/Surfnet/StepupGateway/GatewayBundle/Form/Type/ChooseSecondFactorType.php</jms:reference-file>
-      </trans-unit>
       <trans-unit id="65f3ce4b0efbcaaaafd540e24188ea54d0851540" resname="gateway.form.gateway_cancel_second_factor_verification.button.cancel_verification">
         <source>gateway.form.gateway_cancel_second_factor_verification.button.cancel_verification</source>
         <target>Annuleren</target>
         <jms:reference-file line="29">/../src/Surfnet/StepupGateway/GatewayBundle/Form/Type/CancelSecondFactorVerificationType.php</jms:reference-file>
+      </trans-unit>
+      <trans-unit id="5e4867e59d97ee38f4007e1478afc70d9d251d5b" resname="gateway.form.gateway_choose_second_factor.unknown_second_factor_type">
+        <source>gateway.form.gateway_choose_second_factor.unknown_second_factor_type</source>
+        <target>Het gekozen token kan niet gebruikt worden. Probeer het opnieuw.</target>
+        <jms:reference-file line="20">/Resources/views/translations.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="216da4e667c1127a830eadcac98926f5bd508efb" resname="gateway.form.gateway_send_sms_challenge.button.send_challenge">
         <source>gateway.form.gateway_send_sms_challenge.button.send_challenge</source>
@@ -166,10 +156,10 @@
         <jms:reference-file line="3">/../src/Surfnet/StepupGateway/SamlStepupProviderBundle/Resources/views/SamlProxy/recoverableError.html.twig</jms:reference-file>
         <jms:reference-file line="3">/../src/Surfnet/StepupGateway/SamlStepupProviderBundle/Resources/views/SamlProxy/unprocessableResponse.html.twig</jms:reference-file>
       </trans-unit>
-      <trans-unit id="75964b2f1748875ae1c270b8e25a9a5b2ea6b700" resname="gateway.second_factor.choose_second_factor.description">
-        <source>gateway.second_factor.choose_second_factor.description</source>
-        <target state="new">gateway.second_factor.choose_second_factor.description</target>
-        <jms:reference-file line="8">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/chooseSecondFactor.html.twig</jms:reference-file>
+      <trans-unit id="155f607ba28a7167c6f072d22ebb77042c52f759" resname="gateway.second_factor.choose_second_factor.select">
+        <source>gateway.second_factor.choose_second_factor.select</source>
+        <target>Selecteer</target>
+        <jms:reference-file line="36">/../src/Surfnet/StepupGateway/GatewayBundle/Form/Type/ChooseSecondFactorType.php</jms:reference-file>
       </trans-unit>
       <trans-unit id="fdeeb4b0c6e2a94aec8a11728946c13a325f8366" resname="gateway.second_factor.choose_second_factor.title">
         <source>gateway.second_factor.choose_second_factor.title</source>
@@ -179,17 +169,17 @@
       <trans-unit id="7b77bca359dd095ce5a10f57ed44386bf8aac3a1" resname="gateway.second_factor.search.type.sms">
         <source>gateway.second_factor.search.type.sms</source>
         <target>SMS</target>
-        <jms:reference-file line="20">/Resources/views/translations.html.twig</jms:reference-file>
+        <jms:reference-file line="23">/Resources/views/translations.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="72a21f0cbb338b0b94a2e55e9d1f8e48baf34eaa" resname="gateway.second_factor.search.type.u2f">
         <source>gateway.second_factor.search.type.u2f</source>
         <target>U2F</target>
-        <jms:reference-file line="22">/Resources/views/translations.html.twig</jms:reference-file>
+        <jms:reference-file line="25">/Resources/views/translations.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="31046bc21aed40f037eebc23b0487eadb196b931" resname="gateway.second_factor.search.type.yubikey">
         <source>gateway.second_factor.search.type.yubikey</source>
         <target>Yubikey</target>
-        <jms:reference-file line="21">/Resources/views/translations.html.twig</jms:reference-file>
+        <jms:reference-file line="24">/Resources/views/translations.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="1c41e8d2b8040894426471450740d39af284d440" resname="gateway.second_factor.sms.challenge_body">
         <source>gateway.second_factor.sms.challenge_body</source>

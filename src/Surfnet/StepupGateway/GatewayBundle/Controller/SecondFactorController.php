@@ -192,9 +192,11 @@ class SecondFactorController extends Controller
             $secondFactorType = $formResults[$buttonName];
 
             // Filter the selected second factor from the array collection
-            $secondFactorFiltered = $secondFactors->filter(function($secondFactor) use ($secondFactorType){
-                return $secondFactorType === $secondFactor->secondFactorType;
-            });
+            $secondFactorFiltered = $secondFactors->filter(
+                function ($secondFactor) use ($secondFactorType) {
+                    return $secondFactorType === $secondFactor->secondFactorType;
+                }
+            );
 
             if ($secondFactorFiltered->isEmpty()) {
                 throw new InvalidArgumentException(

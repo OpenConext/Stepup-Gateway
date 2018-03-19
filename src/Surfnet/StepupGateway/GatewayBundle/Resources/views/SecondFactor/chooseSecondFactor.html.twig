@@ -5,6 +5,9 @@
 {% block content %}
     <h2>{{ block('page_title') }}</h2>
     {{ form_start(form, {'attr': {'class': 'form-horizontal choose-second-factor-type'}}) }}
+
+    {{ form_errors(form) }}
+
     {% for secondFactor in secondFactors %}
     <div class="row middle">
         <div class="col-sm-1 logo"><img src="{{ second_factor_logo(secondFactor.secondFactorType) }}" class="img-responsive"></div>
