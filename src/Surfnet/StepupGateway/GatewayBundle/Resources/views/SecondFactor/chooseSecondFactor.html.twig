@@ -4,9 +4,18 @@
 
 {% block content %}
     <h2>{{ block('page_title') }}</h2>
+    {{ form_start(form, {'attr': {'class': 'form-horizontal choose-second-factor-type'}}) }}
+    {% for secondFactor in secondFactors %}
+    <div class="row middle">
+        <div class="col-sm-1 logo"><img src="{{ second_factor_logo(secondFactor.secondFactorType) }}" class="img-responsive"></div>
+        <div class="col-sm-2 title">{{ secondFactor.secondFactorType|trans_second_factor_type }}</div>
+        <div class="col-sm-9">{{ form_widget(form.offsetGet('choose_' ~ secondFactor.secondFactorType)) }}</div>
+    </div>
+    {% endfor %}
 
-    <p>{{ 'gateway.second_factor.choose_second_factor.description'|trans }}</p>
+    {{ form_rest(form) }}
 
-    {{ form(form) }}
+    {{ form_end(form) }}
+    <hr>
 
 {% endblock %}
