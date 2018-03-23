@@ -86,6 +86,7 @@ class Configuration implements ConfigurationInterface
 
     /**
      * @param ArrayNodeDefinition $rootNode
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     private function addProvidersSection(ArrayNodeDefinition $rootNode)
     {
@@ -164,6 +165,26 @@ class Configuration implements ConfigurationInterface
                                 'The contents of the certificate used to sign the AuthnResponse with, if different from'
                                 . ' the public key configured below'
                             )
+                        ->end()
+                    ->end()
+                ->end()
+                ->arrayNode('view_config')
+                    ->children()
+                        ->scalarNode('logo')
+                            ->isRequired()
+                            ->info('The absolute path to the logo of the gssp')
+                        ->end()
+                        ->arrayNode('title')
+                            ->children()
+                                ->scalarNode('en_GB')
+                                    ->isRequired()
+                                    ->info('English title of the gssp')
+                                ->end()
+                                ->scalarNode('nl_NL')
+                                    ->isRequired()
+                                    ->info('Dutch title of the gssp')
+                                ->end()
+                            ->end()
                         ->end()
                     ->end()
                 ->end()

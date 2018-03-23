@@ -19,7 +19,6 @@
 namespace Surfnet\StepupGateway\GatewayBundle\Form\Type;
 
 use Surfnet\StepupGateway\GatewayBundle\Command\ChooseSecondFactorCommand;
-use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -30,27 +29,17 @@ class ChooseSecondFactorType extends AbstractType
     {
         /** @var ChooseSecondFactorCommand $data */
         $data = $builder->getData();
-        $secondFactors = array_values($data->secondFactors->getValues());
 
-        $builder->add('selectedSecondFactor', 'choice', [
-            'label' => 'gateway.form.choose_second_factor.button.second_factor',
-            'expanded' => true,
-            'multiple' => false,
-            'choices' => $secondFactors,
-            'choice_label' => function ($index) use ($secondFactors) {
-                /** @var SecondFactor[] $secondFactors */
-                return ucfirst($secondFactors[$index]->secondFactorType);
-            }
-        ]);
-
-        $builder->add('choose', 'submit', [
-            'label' => 'gateway.form.choose_second_factor.button.submit',
-            'attr' => [ 'class' => 'btn btn-primary pull-right' ],
-        ]);
-        $builder->add('cancel', 'submit', [
-            'label' => 'gateway.form.choose_second_factor.button.cancel',
-            'attr'  => ['class' => 'btn btn-danger', 'formnovalidate' => 'formnovalidate'],
-        ]);
+        foreach ($data->secondFactors->getValues() as $secondFactor) {
+            $type = $secondFactor->secondFactorType;
+            $builder->add('choose_' . $type, 'submit', [
+                'label' => 'gateway.second_factor.choose_second_factor.select',
+                'attr' => [
+                    'class' => 'btn btn-primary',
+                    'value' => $secondFactor->secondFactorType
+                ],
+            ]);
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver)

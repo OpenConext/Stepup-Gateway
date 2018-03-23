@@ -27,6 +27,7 @@ cache:
 before_script:
   - phpenv config-add .travis.php.ini
   - composer self-update
+  - cp app/config/samlstepupproviders.yml{.dist,}
   - composer install --prefer-dist
 
 script:

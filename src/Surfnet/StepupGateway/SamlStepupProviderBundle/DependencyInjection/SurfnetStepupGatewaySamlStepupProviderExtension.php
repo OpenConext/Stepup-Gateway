@@ -28,6 +28,8 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 class SurfnetStepupGatewaySamlStepupProviderExtension extends Extension
 {
+    const VIEW_CONFIG_TAG_NAME = 'gssp.view_config';
+
     /**
      * {@inheritdoc}
      */
@@ -103,6 +105,15 @@ class SurfnetStepupGatewaySamlStepupProviderExtension extends Extension
         $container
             ->getDefinition('gssp.provider_repository')
             ->addMethodCall('addProvider', [new Reference('gssp.provider.' . $provider)]);
+
+        $viewConfigDefinition = new Definition('Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\ViewConfig', [
+            new Reference('request_stack'),
+            $configuration['view_config']['logo'],
+            $configuration['view_config']['title'],
+        ]);
+        $viewConfigDefinition->addTag(self::VIEW_CONFIG_TAG_NAME);
+
+        $container->setDefinition('gssp.view_config.' . $provider, $viewConfigDefinition);
     }
 
     /**
