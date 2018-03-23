@@ -215,12 +215,10 @@ class SecondFactorController extends Controller
         /** @var \Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor $secondFactor */
         $secondFactor = $secondFactorService->findByUuid($selectedSecondFactor);
         if (!$secondFactor) {
-            $logger->critical(sprintf(
+            throw new RuntimeException(sprintf(
                 'Requested verification of GSSF "%s", however that Second Factor no longer exists',
                 $selectedSecondFactor
             ));
-
-            throw new RuntimeException('Verification of selected second factor that no longer exists');
         }
 
         return $this->forward(
@@ -246,12 +244,12 @@ class SecondFactorController extends Controller
         /** @var \Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor $secondFactor */
         $secondFactor = $this->get('gateway.service.second_factor_service')->findByUuid($selectedSecondFactor);
         if (!$secondFactor) {
-            $logger->critical(sprintf(
-                'Verification of GSSF "%s" succeeded, however that Second Factor no longer exists',
-                $selectedSecondFactor
-            ));
-
-            throw new RuntimeException('Verification of selected second factor that no longer exists');
+            throw new RuntimeException(
+                sprintf(
+                    'Verification of GSSF "%s" succeeded, however that Second Factor no longer exists',
+                    $selectedSecondFactor
+                )
+            );
         }
 
         $context->markSecondFactorVerified();

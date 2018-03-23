@@ -26,6 +26,7 @@ use Surfnet\SamlBundle\Http\XMLResponse;
 use Surfnet\SamlBundle\SAML2\AuthnRequest;
 use Surfnet\SamlBundle\SAML2\AuthnRequestFactory;
 use Surfnet\StepupGateway\GatewayBundle\Saml\AssertionAdapter;
+use Surfnet\StepupGateway\GatewayBundle\Saml\Exception\UnknownInResponseToException;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\Provider;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Saml\StateHandler;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -58,13 +59,7 @@ class SamlProxyController extends Controller
         /** @var \Surfnet\SamlBundle\Http\RedirectBinding $redirectBinding */
         $redirectBinding = $this->get('surfnet_saml.http.redirect_binding');
 
-        try {
-            $originalRequest = $redirectBinding->processSignedRequest($httpRequest);
-        } catch (Exception $e) {
-            $logger->critical(sprintf('Could not process Request, error: "%s"', $e->getMessage()));
-
-            return $this->render('unrecoverableError');
-        }
+        $originalRequest = $redirectBinding->processSignedRequest($httpRequest);
 
         $originalRequestId = $originalRequest->getRequestId();
         $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
@@ -200,13 +195,10 @@ class SamlProxyController extends Controller
         $adaptedAssertion = new AssertionAdapter($assertion);
         $expectedResponse = $stateHandler->getGatewayRequestId();
         if (!$adaptedAssertion->inResponseToMatches($expectedResponse)) {
-            $logger->critical(sprintf(
-                'Received Response with unexpected InResponseTo: "%s", %s',
+            throw new UnknownInResponseToException(
                 $adaptedAssertion->getInResponseTo(),
-                ($expectedResponse ? 'expected "' . $expectedResponse . '"' : ' no response expected')
-            ));
-
-            return $this->render('unrecoverableError');
+                $expectedResponse
+            );
         }
 
         $authenticatedNameId = $assertion->getNameId();
@@ -279,9 +271,9 @@ class SamlProxyController extends Controller
         $providerRepository = $this->get('gssp.provider_repository');
 
         if (!$providerRepository->has($provider)) {
-            $this->get('logger')->info(sprintf('Requested GSSP "%s" does not exist or is not registered', $provider));
-
-            throw new NotFoundHttpException('Requested provider does not exist');
+            throw new NotFoundHttpException(
+                sprintf('Requested GSSP "%s" does not exist or is not registered', $provider)
+            );
         }
 
         return $providerRepository->get($provider);

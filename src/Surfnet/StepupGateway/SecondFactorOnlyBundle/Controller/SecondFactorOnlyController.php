@@ -20,6 +20,8 @@ namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Controller;
 
 use Exception;
 use Surfnet\SamlBundle\SAML2\AuthnRequest;
+use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\Exception\InvalidAdfsRequestException;
+use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\Exception\InvalidAdfsResponseException;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Saml\ResponseFactory;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\LoaAliasLookupService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -48,17 +50,11 @@ class SecondFactorOnlyController extends Controller
         /** @var \Surfnet\SamlBundle\Http\RedirectBinding $redirectBinding */
         $bindingFactory = $this->get('second_factor_only.http.binding_factory');
 
-        try {
-            $logger->notice('Determine what type of Binding is used in the Request');
-            $binding = $bindingFactory->build($httpRequest);
+        $logger->notice('Determine what type of Binding is used in the Request');
+        $binding = $bindingFactory->build($httpRequest);
 
-            /** @var \Surfnet\SamlBundle\SAML2\ReceivedAuthnRequest $originalRequest */
-            $originalRequest = $binding->receiveSignedAuthnRequestFrom($httpRequest);
-        } catch (Exception $e) {
-            $logger->critical(sprintf('Could not process Request, error: "%s"', $e->getMessage()));
-
-            return $this->render('SurfnetStepupGatewayGatewayBundle:Gateway:unrecoverableError.html.twig');
-        }
+        /** @var \Surfnet\SamlBundle\SAML2\ReceivedAuthnRequest $originalRequest */
+        $originalRequest = $binding->receiveSignedAuthnRequestFrom($httpRequest);
 
         $originalRequestId = $originalRequest->getRequestId();
         $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
@@ -79,8 +75,9 @@ class SecondFactorOnlyController extends Controller
                     $originalRequest->getAssertionConsumerServiceURL()
                 );
             } catch (Exception $e) {
-                $logger->critical(sprintf('Could not process ADFS Request, error: "%s"', $e->getMessage()));
-                return $this->render('SurfnetStepupGatewayGatewayBundle:Gateway:unrecoverableError.html.twig');
+                throw new InvalidAdfsRequestException(
+                    sprintf('Could not process ADFS Request, error: "%s"', $e->getMessage())
+                );
             }
         }
 
@@ -155,17 +152,12 @@ class SecondFactorOnlyController extends Controller
 
         $selectedSecondFactorUuid = $this->getResponseContext()->getSelectedSecondFactor();
         if (!$selectedSecondFactorUuid) {
-            $logger->error(
-                'Cannot verify possession of an unknown second factor'
-            );
-
             throw new BadRequestHttpException('Cannot verify possession of an unknown second factor.');
         }
 
         if (!$responseContext->isSecondFactorVerified()) {
-            $logger->error('Second factor was not verified');
             throw new BadRequestHttpException(
-                'Cannot verify possession of an unknown second factor.'
+                'Second factor was not verified'
             );
         }
 
@@ -203,8 +195,9 @@ class SecondFactorOnlyController extends Controller
             try {
                 $adfsParameters = $adfsHelper->retrieveAdfsParameters();
             } catch (Exception $e) {
-                $logger->critical(sprintf('Could not process ADFS Response parameters, error: "%s"', $e->getMessage()));
-                return $this->render('SurfnetStepupGatewayGatewayBundle:Gateway:unrecoverableError.html.twig');
+                throw new InvalidAdfsResponseException(
+                    sprintf('Could not process ADFS Response parameters, error: "%s"', $e->getMessage())
+                );
             }
 
             $logger->notice('Sending ACS Response to ADFS plugin');

@@ -25,6 +25,7 @@ use Surfnet\SamlBundle\SAML2\AuthnRequest;
 use Surfnet\SamlBundle\SAML2\AuthnRequestFactory;
 use Surfnet\StepupGateway\GatewayBundle\Exception\RuntimeException;
 use Surfnet\StepupGateway\GatewayBundle\Saml\AssertionAdapter;
+use Surfnet\StepupGateway\GatewayBundle\Saml\Exception\UnknownInResponseToException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -43,13 +44,7 @@ class GatewayController extends Controller
         /** @var \Surfnet\SamlBundle\Http\RedirectBinding $redirectBinding */
         $redirectBinding = $this->get('surfnet_saml.http.redirect_binding');
 
-        try {
-            $originalRequest = $redirectBinding->receiveSignedAuthnRequestFrom($httpRequest);
-        } catch (Exception $e) {
-            $logger->critical(sprintf('Could not process Request, error: "%s"', $e->getMessage()));
-
-            return $this->render('unrecoverableError');
-        }
+        $originalRequest = $redirectBinding->receiveSignedAuthnRequestFrom($httpRequest);
 
         $originalRequestId = $originalRequest->getRequestId();
         $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
@@ -141,13 +136,10 @@ class GatewayController extends Controller
         $adaptedAssertion = new AssertionAdapter($assertion);
         $expectedInResponseTo = $responseContext->getExpectedInResponseTo();
         if (!$adaptedAssertion->inResponseToMatches($expectedInResponseTo)) {
-            $logger->critical(sprintf(
-                'Received Response with unexpected InResponseTo: "%s", %s',
+            throw new UnknownInResponseToException(
                 $adaptedAssertion->getInResponseTo(),
-                ($expectedInResponseTo ? 'expected "' . $expectedInResponseTo . '"' : ' no response expected')
-            ));
-
-            return $this->render('unrecoverableError');
+                $expectedInResponseTo
+            );
         }
 
         $logger->notice('Successfully processed SAMLResponse');
@@ -182,18 +174,12 @@ class GatewayController extends Controller
 
         /** @var \Surfnet\StepupGateway\GatewayBundle\Service\ProxyResponseService $proxyResponseService */
         $proxyResponseService = $this->get('gateway.service.response_proxy');
-        try {
-            $response = $proxyResponseService->createProxyResponse(
-                $responseContext->reconstituteAssertion(),
-                $responseContext->getServiceProvider(),
-                (string)$grantedLoa
-            );
-        } catch (RuntimeException $e) {
-            $logger->error($e->getMessage());
-            return $this->render('unrecoverableError', [
-                'message' => $e->getMessage()
-            ]);
-        }
+
+        $response = $proxyResponseService->createProxyResponse(
+            $responseContext->reconstituteAssertion(),
+            $responseContext->getServiceProvider(),
+            (string)$grantedLoa
+        );
 
         $responseContext->responseSent();
 

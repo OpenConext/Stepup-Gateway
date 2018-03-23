@@ -35,7 +35,7 @@ framework:
 twig:
     debug:            "%kernel.debug%"
     strict_variables: "%kernel.debug%"
-    exception_controller:  SurfnetStepupBundle:Exception:show
+    exception_controller: SurfnetStepupGatewayGatewayBundle:Exception:show
     globals:
         global_view_parameters: "@gateway.service.global_view_parameters"
 
@@ -207,7 +207,7 @@ jms_translation:
     locales: %locales%
     configs:
         default:
-            dirs: [%kernel.root_dir%/../src, %kernel.root_dir%]
+            dirs: [%kernel.root_dir%/../src, %kernel.root_dir%, %kernel.root_dir%/../vendor/surfnet]
             output_dir: %kernel.root_dir%/Resources/translations
             ignored_domains: []
             excluded_names: ['*TestCase.php', '*Test.php', 'Assert.php']
