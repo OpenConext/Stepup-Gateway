@@ -128,27 +128,28 @@ class SecondFactorController extends Controller
         $context = $this->getResponseContext();
         $originalRequestId = $context->getInResponseTo();
 
+        /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
         $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
-
-        // Retrieve all requirements to determine the required LoA
-        $requestedLoa = $context->getRequiredLoa();
-        $spConfiguredLoas = $context->getServiceProvider()->get('configuredLoas');
-        $idpSho = $context->getSchacHomeOrganization();
-        $userSho = $this->getStepupService()->getUserShoByIdentityNameId($context->getIdentityNameId());
-
-        $this->getStepupService()->assertValidShoFormat($idpSho);
-        $this->getStepupService()->assertValidShoFormat($userSho);
+        $logger->notice('Ask the user which one of his suitable second factor tokens to use...');
 
         try {
+            // Retrieve all requirements to determine the required LoA
+            $requestedLoa = $context->getRequiredLoa();
+            $spConfiguredLoas = $context->getServiceProvider()->get('configuredLoas');
+
+            $normalizedIdpSho = $context->getNormalizedSchacHomeOrganization();
+            $normalizedUserSho = $this->getStepupService()->getNormalizedUserShoByIdentityNameId($context->getIdentityNameId());
+
             $requiredLoa = $this
                 ->getStepupService()
                 ->resolveHighestRequiredLoa(
                     $requestedLoa,
                     $spConfiguredLoas,
-                    $idpSho,
-                    $userSho
+                    $normalizedIdpSho,
+                    $normalizedUserSho
                 );
         } catch (LoaCannotBeGivenException $e) {
+            // Log the message of the domain exception, this contains a meaningful message.
             $logger->notice($e->getMessage());
             return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:sendLoaCannotBeGiven');
         }
