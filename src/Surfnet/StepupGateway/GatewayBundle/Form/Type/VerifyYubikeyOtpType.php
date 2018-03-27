@@ -42,10 +42,6 @@ class VerifyYubikeyOtpType extends AbstractType
         $builder->add('submit', 'submit', [
             'attr'  => ['class' => 'btn btn-off-screen'],
         ]);
-        $builder->add('cancel', 'submit', [
-            'label' => 'gateway.form.verify_yubikey_otp.button.cancel',
-            'attr'  => ['class' => 'btn btn-danger', 'formnovalidate' => 'formnovalidate'],
-        ]);
     }
 
     public function configureOptions(OptionsResolver $resolver)

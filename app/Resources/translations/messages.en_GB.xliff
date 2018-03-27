@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:jms="urn:jms:translation" version="1.2">
-  <file date="2018-03-27T14:47:28Z" source-language="en" target-language="en_GB" datatype="plaintext" original="not.available">
+  <file date="2018-03-27T15:58:01Z" source-language="en" target-language="en_GB" datatype="plaintext" original="not.available">
     <header>
       <tool tool-id="JMSTranslationBundle" tool-name="JMSTranslationBundle" tool-version="1.1.0-DEV"/>
       <note>The source node in most cases contains the sample message as written by the developer. If it looks like a dot-delimitted string such as "form.label.firstname", then the developer has not provided a default message.</note>
@@ -86,11 +86,6 @@
         <source>gateway.form.verify_yubikey.public_id_mismatch</source>
         <target>You used another Yubikey than you used during your registration process.</target>
         <jms:reference-file line="5">/Resources/views/translations.html.twig</jms:reference-file>
-      </trans-unit>
-      <trans-unit id="4b7b462d7958d591725738f5b1e3334abeb57160" resname="gateway.form.verify_yubikey_otp.button.cancel">
-        <source>gateway.form.verify_yubikey_otp.button.cancel</source>
-        <target>Cancel</target>
-        <jms:reference-file line="46">/../src/Surfnet/StepupGateway/GatewayBundle/Form/Type/VerifyYubikeyOtpType.php</jms:reference-file>
       </trans-unit>
       <trans-unit id="53c1b4469c10803f2e6bfb5fd31afb68c7f9556f" resname="gateway.gateway.consume_assertion.title">
         <source>gateway.gateway.consume_assertion.title</source>
@@ -234,23 +229,28 @@
       </trans-unit>
       <trans-unit id="be12899784c0176e20b93e0030a2144365add26d" resname="gateway.second_factor.yubikey.text.connect_yubikey_to_pc">
         <source>gateway.second_factor.yubikey.text.connect_yubikey_to_pc</source>
-        <target>Connect your personal YubiKey with the computer.</target>
-        <jms:reference-file line="11">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifyYubikeySecondFactor.html.twig</jms:reference-file>
+        <target>Connect your YubiKey to the USB-port of your computer.</target>
+        <jms:reference-file line="19">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifyYubikeySecondFactor.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="6204e24e7c7b389809232589df868be2b511cdf5" resname="gateway.second_factor.yubikey.text.ensure_form_field_focus">
         <source>gateway.second_factor.yubikey.text.ensure_form_field_focus</source>
-        <target>Please ensure that the form field below is focussed.</target>
-        <jms:reference-file line="12">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifyYubikeySecondFactor.html.twig</jms:reference-file>
+        <target>Make sure that the form field above has focus.</target>
+        <jms:reference-file line="20">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifyYubikeySecondFactor.html.twig</jms:reference-file>
+      </trans-unit>
+      <trans-unit id="96f63ed3f7e0e48ded0b2214a9b2b1a60c8b8b29" resname="gateway.second_factor.yubikey.text.enter_challenge">
+        <source>gateway.second_factor.yubikey.text.enter_challenge</source>
+        <target>Your YubiKey-code:</target>
+        <jms:reference-file line="7">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifyYubikeySecondFactor.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="1445676eeee2335e0d37dad8c7d7bf883ea69c40" resname="gateway.second_factor.yubikey.text.help_user_enter_challenge">
         <source>gateway.second_factor.yubikey.text.help_user_enter_challenge</source>
-        <target>Use your YubiKey to login:</target>
-        <jms:reference-file line="8">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifyYubikeySecondFactor.html.twig</jms:reference-file>
+        <target>How to use your YubiKey:</target>
+        <jms:reference-file line="17">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifyYubikeySecondFactor.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="2845155cc34878dd2e86f19ca5ea1b01c2039d01" resname="gateway.second_factor.yubikey.text.press_once_form_auto_submitted">
         <source>gateway.second_factor.yubikey.text.press_once_form_auto_submitted</source>
-        <target>Press the button on your YubiKey once to enter an OTP in the field below.</target>
-        <jms:reference-file line="13">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifyYubikeySecondFactor.html.twig</jms:reference-file>
+        <target>Press the button on your YubiKey and hold shortly. A code is automatically generated and entered into the field above.</target>
+        <jms:reference-file line="21">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifyYubikeySecondFactor.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="46afcd414845fe64dedd737b959f7cd327b85a63" resname="gateway.submit.click_to_go_back_to_sp">
         <source>gateway.submit.click_to_go_back_to_sp</source>
@@ -284,7 +284,7 @@
       </trans-unit>
       <trans-unit id="ee8b15d139dd5ba69eb2bfbc1c540b03894bafd7" resname="ra.registration.yubikey.title.enter_challenge">
         <source>ra.registration.yubikey.title.enter_challenge</source>
-        <target>Use your YubiKey to login</target>
+        <target>Log in with YubiKey</target>
         <jms:reference-file line="3">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifyYubikeySecondFactor.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="c50aaca50072a446eab71327c6bfc5e5de8698f5" resname="stepup.error.authentication_error.description">

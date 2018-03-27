@@ -34,6 +34,7 @@ use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
 use Surfnet\StepupGateway\U2fVerificationBundle\Value\KeyHandle;
 use Surfnet\StepupU2fBundle\Dto\SignResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -313,14 +314,11 @@ class SecondFactorController extends Controller
         $command->secondFactorId = $selectedSecondFactor;
 
         $form = $this->createForm('gateway_verify_yubikey_otp', $command)->handleRequest($request);
-
-        if ($form->get('cancel')->isClicked()) {
-            return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:sendAuthenticationCancelledByUser');
-        }
+        $cancelForm = $this->buildCancelAuthenticationForm()->handleRequest($request);
 
         if (!$form->isValid()) {
             // OTP field is rendered empty in the template.
-            return ['form' => $form->createView()];
+            return ['form' => $form->createView(), 'cancelForm' => $cancelForm->createView()];
         }
 
         $result = $this->getStepupService()->verifyYubikeyOtp($command);
@@ -329,12 +327,12 @@ class SecondFactorController extends Controller
             $form->addError(new FormError('gateway.form.verify_yubikey.otp_verification_failed'));
 
             // OTP field is rendered empty in the template.
-            return ['form' => $form->createView()];
+            return ['form' => $form->createView(), 'cancelForm' => $cancelForm->createView()];
         } elseif (!$result->didPublicIdMatch()) {
             $form->addError(new FormError('gateway.form.verify_yubikey.public_id_mismatch'));
 
             // OTP field is rendered empty in the template.
-            return ['form' => $form->createView()];
+            return ['form' => $form->createView(), 'cancelForm' => $cancelForm->createView()];
         }
 
         $this->getResponseContext()->markSecondFactorVerified();
@@ -371,13 +369,7 @@ class SecondFactorController extends Controller
         $command->secondFactorId = $selectedSecondFactor;
 
         $form = $this->createForm('gateway_send_sms_challenge', $command)->handleRequest($request);
-
-        $cancelFormAction = $this->generateUrl('gateway_cancel_authentication');
-        $cancelForm = $this->createForm(
-            'gateway_cancel_authentication',
-            null,
-            ['action' => $cancelFormAction]
-        )->handleRequest($request);
+        $cancelForm = $this->buildCancelAuthenticationForm()->handleRequest($request);
 
         $stepupService = $this->getStepupService();
         $phoneNumber = InternationalPhoneNumber::fromStringFormat(
@@ -426,13 +418,7 @@ class SecondFactorController extends Controller
 
         $command = new VerifyPossessionOfPhoneCommand();
         $form = $this->createForm('gateway_verify_sms_challenge', $command)->handleRequest($request);
-
-        $cancelFormAction = $this->generateUrl('gateway_cancel_authentication');
-        $cancelForm = $this->createForm(
-            'gateway_cancel_authentication',
-            null,
-            ['action' => $cancelFormAction]
-        )->handleRequest($request);
+        $cancelForm = $this->buildCancelAuthenticationForm()->handleRequest($request);
 
         if (!$form->isValid()) {
             return ['form' => $form->createView(), 'cancelForm' => $cancelForm->createView()];
@@ -655,5 +641,19 @@ class SecondFactorController extends Controller
         }
 
         return $this->redirect($this->generateUrl($route));
+    }
+
+    /**
+     * @return Form
+     */
+    private function buildCancelAuthenticationForm()
+    {
+        $cancelFormAction = $this->generateUrl('gateway_cancel_authentication');
+        $cancelForm = $this->createForm(
+            'gateway_cancel_authentication',
+            null,
+            ['action' => $cancelFormAction]
+        );
+        return $cancelForm;
     }
 }
