@@ -116,6 +116,10 @@ services:
         class: Surfnet\StepupGateway\GatewayBundle\Form\Type\AnchorType
         tags: [{ name: form.type, alias: anchor }]
 
+    gateway_cancel_authentication:
+        class: Surfnet\StepupGateway\GatewayBundle\Form\Type\CancelAuthenticationType
+        tags: [{ name: form.type, alias: gateway_cancel_authentication }]
+
     gateway.form.verify_yubikey:
         class: Surfnet\StepupGateway\GatewayBundle\Form\Type\VerifyYubikeyOtpType
         tags: [{ name: form.type, alias: gateway_verify_yubikey_otp }]
