@@ -427,12 +427,15 @@ class SecondFactorController extends Controller
         $command = new VerifyPossessionOfPhoneCommand();
         $form = $this->createForm('gateway_verify_sms_challenge', $command)->handleRequest($request);
 
-        if ($form->get('cancel')->isClicked()) {
-            return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:sendAuthenticationCancelledByUser');
-        }
+        $cancelFormAction = $this->generateUrl('gateway_cancel_authentication');
+        $cancelForm = $this->createForm(
+            'gateway_cancel_authentication',
+            null,
+            ['action' => $cancelFormAction]
+        )->handleRequest($request);
 
         if (!$form->isValid()) {
-            return ['form' => $form->createView()];
+            return ['form' => $form->createView(), 'cancelForm' => $cancelForm->createView()];
         }
 
         $logger->notice('Verifying input SMS challenge matches');
@@ -464,7 +467,7 @@ class SecondFactorController extends Controller
             $form->addError(new FormError('gateway.form.send_sms_challenge.sms_challenge_incorrect'));
         }
 
-        return ['form' => $form->createView()];
+        return ['form' => $form->createView(), 'cancelForm' => $cancelForm->createView()];
     }
 
     /**

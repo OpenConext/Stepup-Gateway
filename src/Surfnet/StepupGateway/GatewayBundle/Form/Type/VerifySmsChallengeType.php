@@ -27,24 +27,21 @@ class VerifySmsChallengeType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('challenge', 'text', [
-            'label'    => 'gateway.form.verify_sms_challenge.text.challenge',
+            'label'    => false,
             'required' => true,
             'attr'     => array(
                 'autofocus' => true,
+                'placeholder' => 'gateway.form.verify_sms_challenge.button.challenge_placeholder'
             )
         ]);
-        $builder->add('verify-challenge', 'submit', [
+        $builder->add('verify_challenge', 'submit', [
             'label' => 'gateway.form.verify_sms_challenge.button.verify_challenge',
-            'attr'  => ['class' => 'btn btn-primary pull-right'],
+            'attr'  => ['class' => 'btn btn-primary'],
         ]);
-        $builder->add('resend-challenge', 'anchor', [
+        $builder->add('resend_challenge', 'anchor', [
             'label' => 'gateway.form.verify_sms_challenge.button.resend_challenge',
-            'attr'  => ['class' => 'btn btn-default pull-right'],
+            'attr'  => ['class' => 'btn btn-link'],
             'route' => 'gateway_verify_second_factor_sms',
-        ]);
-        $builder->add('cancel', 'submit', [
-            'label' => 'gateway.form.verify_sms_challenge.button.cancel',
-            'attr'  => ['class' => 'btn btn-danger', 'formnovalidate' => 'formnovalidate'],
         ]);
     }
 

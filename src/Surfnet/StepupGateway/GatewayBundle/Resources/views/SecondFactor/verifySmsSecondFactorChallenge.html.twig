@@ -1,19 +1,19 @@
-{% extends "::base.html.twig" %}
+{% extends "@SurfnetStepupGatewayGateway/SecondFactor/secondFactorAuthentication.html.twig" %}
 
-{% block page_title %}{{ 'gateway.second_factor.sms.verify_challenge.title.page'|trans }}{% endblock %}
-
+{% block application_name %}{{ 'gateway.second_factor.sms.verify_challenge.title.page'|trans }}{% endblock application_name %}
 {% block content %}
-    <h2>{{ block('page_title') }}</h2>
 
     <p>{{ 'gateway.second_factor.sms.text.help_user_enter_challenge'|trans }}</p>
 
-    <ol>
-        <li>{{ 'gateway.second_factor.sms.text.enter_challenge_below'|trans }}</li>
-        <li>{{ 'gateway.second_factor.sms.text.retry_if_not_received'|trans }}</li>
-    </ol>
-
-    <hr>
-
-    {{ form(form) }}
+    <div class="form-gateway-verify-sms-challenge">
+        {{ form_start(form) }}
+        {{ form_errors(form) }}
+        <div class="row">
+        {{ form_widget(form.challenge) }}
+        {{ form_widget(form.verify_challenge) }}
+        </div>
+        <p>{{ 'gateway.second_factor.sms.text.resend_challenge_text'|trans }} {{ form_widget(form.resend_challenge) }}
+        {{ form_end(form) }}
+    </div>
 
 {% endblock %}
