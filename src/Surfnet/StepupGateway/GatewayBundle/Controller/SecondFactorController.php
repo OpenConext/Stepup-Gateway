@@ -372,6 +372,13 @@ class SecondFactorController extends Controller
 
         $form = $this->createForm('gateway_send_sms_challenge', $command)->handleRequest($request);
 
+        $cancelFormAction = $this->generateUrl('gateway_cancel_authentication');
+        $cancelForm = $this->createForm(
+            'gateway_cancel_authentication',
+            null,
+            ['action' => $cancelFormAction]
+        )->handleRequest($request);
+
         $stepupService = $this->getStepupService();
         $phoneNumber = InternationalPhoneNumber::fromStringFormat(
             $stepupService->getSecondFactorIdentifier($selectedSecondFactor)
@@ -381,12 +388,11 @@ class SecondFactorController extends Controller
         $maximumOtpRequests = $stepupService->getSmsMaximumOtpRequestsCount();
         $viewVariables = ['otpRequestsRemaining' => $otpRequestsRemaining, 'maximumOtpRequests' => $maximumOtpRequests];
 
-        if ($form->get('cancel')->isClicked()) {
-            return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:sendAuthenticationCancelledByUser');
-        }
-
         if (!$form->isValid()) {
-            return array_merge($viewVariables, ['phoneNumber' => $phoneNumber, 'form' => $form->createView()]);
+            return array_merge(
+                $viewVariables,
+                ['phoneNumber' => $phoneNumber, 'form' => $form->createView(), 'cancelForm' => $cancelForm->createView()]
+            );
         }
 
         $logger->notice('Verifying possession of SMS second factor, sending challenge per SMS');
@@ -394,7 +400,10 @@ class SecondFactorController extends Controller
         if (!$stepupService->sendSmsChallenge($command)) {
             $form->addError(new FormError('gateway.form.send_sms_challenge.sms_sending_failed'));
 
-            return array_merge($viewVariables, ['phoneNumber' => $phoneNumber, 'form' => $form->createView()]);
+            return array_merge(
+                $viewVariables,
+                ['phoneNumber' => $phoneNumber, 'form' => $form->createView(), 'cancelForm' => $cancelForm->createView()]
+            );
         }
 
         return $this->redirect($this->generateUrl('gateway_verify_second_factor_sms_verify_challenge'));
@@ -579,7 +588,7 @@ class SecondFactorController extends Controller
         return ['authenticationFailed' => true, 'cancelForm' => $cancelForm->createView()];
     }
 
-    public function cancelU2fAuthenticationAction()
+    public function cancelAuthenticationAction()
     {
         return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:sendAuthenticationCancelledByUser');
     }

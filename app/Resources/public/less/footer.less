@@ -1,0 +1,8 @@
+footer .containing-cancel button.nav-link {
+    // The button component extends the behaviour of a navigation anchor
+    &:extend(.nav > li > a);
+    &:hover {
+        &:extend(.nav > li > a:hover);
+    }
+    padding: 9px 12px;
+}

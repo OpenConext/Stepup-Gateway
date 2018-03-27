@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:jms="urn:jms:translation" version="1.2">
-  <file date="2018-03-23T09:48:49Z" source-language="en" target-language="en_GB" datatype="plaintext" original="not.available">
+  <file date="2018-03-27T11:03:27Z" source-language="en" target-language="en_GB" datatype="plaintext" original="not.available">
     <header>
       <tool tool-id="JMSTranslationBundle" tool-name="JMSTranslationBundle" tool-version="1.1.0-DEV"/>
       <note>The source node in most cases contains the sample message as written by the developer. If it looks like a dot-delimitted string such as "form.label.firstname", then the developer has not provided a default message.</note>
@@ -22,6 +22,11 @@
         <target>Login response could not be processed.</target>
         <jms:reference-file line="7">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/Gateway/unprocessableResponse.html.twig</jms:reference-file>
       </trans-unit>
+      <trans-unit id="7ae5055bfdf6e6100256f6148115dfaa4b06ac52" resname="gateway.form.cancel_authentication.button.cancel">
+        <source>gateway.form.cancel_authentication.button.cancel</source>
+        <target>Cancel</target>
+        <jms:reference-file line="30">/../src/Surfnet/StepupGateway/GatewayBundle/Form/Type/CancelAuthenticationType.php</jms:reference-file>
+      </trans-unit>
       <trans-unit id="65f3ce4b0efbcaaaafd540e24188ea54d0851540" resname="gateway.form.gateway_cancel_second_factor_verification.button.cancel_verification">
         <source>gateway.form.gateway_cancel_second_factor_verification.button.cancel_verification</source>
         <target>Cancel</target>
@@ -36,16 +41,6 @@
         <source>gateway.form.gateway_send_sms_challenge.button.send_challenge</source>
         <target>Send code</target>
         <jms:reference-file line="30">/../src/Surfnet/StepupGateway/GatewayBundle/Form/Type/SendSmsChallengeType.php</jms:reference-file>
-      </trans-unit>
-      <trans-unit id="7039a04e477c52544533b4969fb09c19f34d1452" resname="gateway.form.gateway_send_sms_challenge.label.phone_number">
-        <source>gateway.form.gateway_send_sms_challenge.label.phone_number</source>
-        <target>Phone number</target>
-        <jms:reference-file line="28">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifySmsSecondFactor.html.twig</jms:reference-file>
-      </trans-unit>
-      <trans-unit id="ddf7dd3f1b77196052dad82522de3845661976fa" resname="gateway.form.send_sms_challenge.button.cancel">
-        <source>gateway.form.send_sms_challenge.button.cancel</source>
-        <target>Cancel</target>
-        <jms:reference-file line="34">/../src/Surfnet/StepupGateway/GatewayBundle/Form/Type/SendSmsChallengeType.php</jms:reference-file>
       </trans-unit>
       <trans-unit id="369b2c8dea153b42d8dc01645e54140a83cb5f4f" resname="gateway.form.send_sms_challenge.sms_challenge_expired">
         <source>gateway.form.send_sms_challenge.sms_challenge_expired</source>
@@ -69,7 +64,7 @@
       </trans-unit>
       <trans-unit id="815ec86e9c26021d75afe4356d9ae3bbb93e9582" resname="gateway.form.verify_sms_challenge.button.cancel">
         <source>gateway.form.verify_sms_challenge.button.cancel</source>
-        <target>Cancel</target>
+        <target state="new">gateway.form.verify_sms_challenge.button.cancel</target>
         <jms:reference-file line="46">/../src/Surfnet/StepupGateway/GatewayBundle/Form/Type/VerifySmsChallengeType.php</jms:reference-file>
       </trans-unit>
       <trans-unit id="949d225017cfbb80ae094b1af62b758c4ab1cd2c" resname="gateway.form.verify_sms_challenge.button.resend_challenge">
@@ -188,18 +183,8 @@
       </trans-unit>
       <trans-unit id="fecb0bb6d9524901050c51767a3cf1eceb80da04" resname="gateway.second_factor.sms.send_challenge.title">
         <source>gateway.second_factor.sms.send_challenge.title</source>
-        <target>Verify SMS</target>
-        <jms:reference-file line="3">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifySmsSecondFactor.html.twig</jms:reference-file>
-      </trans-unit>
-      <trans-unit id="fbc134b1f4a8c33e94e122042462cd21c853204a" resname="gateway.second_factor.sms.text.after_pressing_proceed">
-        <source>gateway.second_factor.sms.text.after_pressing_proceed</source>
-        <target>After clicking “Send code”, you will receive a text message with a code. On the next page, please enter this code.</target>
-        <jms:reference-file line="12">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifySmsSecondFactor.html.twig</jms:reference-file>
-      </trans-unit>
-      <trans-unit id="d80ea1ea4e3e600845fc1d86d0851f446f7a8908" resname="gateway.second_factor.sms.text.ensure_phone_has_signal">
-        <source>gateway.second_factor.sms.text.ensure_phone_has_signal</source>
-        <target>Please ensure your mobile phone has a signal and can receive text messages.</target>
-        <jms:reference-file line="11">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifySmsSecondFactor.html.twig</jms:reference-file>
+        <target>Login with SMS</target>
+        <jms:reference-file line="5">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifySmsSecondFactor.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="125a385345b59621d0a18ef5608a775eb04b5f25" resname="gateway.second_factor.sms.text.enter_challenge_below">
         <source>gateway.second_factor.sms.text.enter_challenge_below</source>
@@ -213,13 +198,18 @@
       </trans-unit>
       <trans-unit id="ae96304b72fa22655facaecca34b948409c3deaa" resname="gateway.second_factor.sms.text.help_user_enter_phone_number">
         <source>gateway.second_factor.sms.text.help_user_enter_phone_number</source>
-        <target>Follow the instructions below to verify the possession of your phone:</target>
-        <jms:reference-file line="8">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifySmsSecondFactor.html.twig</jms:reference-file>
+        <target>Send a SMS text message to my mobile phonenumber ending in %phone_number%:</target>
+        <jms:reference-file line="9">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifySmsSecondFactor.html.twig</jms:reference-file>
+      </trans-unit>
+      <trans-unit id="9051ae99f49586015373858f030ea4fe3b097729" resname="gateway.second_factor.sms.text.next_step">
+        <source>gateway.second_factor.sms.text.next_step</source>
+        <target>Enter the received code on the next page</target>
+        <jms:reference-file line="23">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifySmsSecondFactor.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="0d06981098d22a2fa3428068bbc7e53d8cff3db7" resname="gateway.second_factor.sms.text.otp_requests_remaining">
         <source>gateway.second_factor.sms.text.otp_requests_remaining</source>
         <target>Attempts remaining: %count%</target>
-        <jms:reference-file line="19">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifySmsSecondFactor.html.twig</jms:reference-file>
+        <jms:reference-file line="13">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifySmsSecondFactor.html.twig</jms:reference-file>
         <jms:reference-file line="12">/Resources/views/translations.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="a215b416978f2c35a0ffd4be8576c8a0bdf64718" resname="gateway.second_factor.sms.text.retry_if_not_received">
