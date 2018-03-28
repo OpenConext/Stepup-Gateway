@@ -34,5 +34,6 @@ script:
 
 branches:
   only:
+    - release/2.7
     - master
     - develop
