@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "3362e8f6c9f17103407adef33c1f201f",
+    "content-hash": "d583ec97160632a73e3a7f9240e03eb4",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -2621,16 +2621,16 @@
         },
         {
             "name": "surfnet/stepup-saml-bundle",
-            "version": "2.8.2",
+            "version": "2.11.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/OpenConext/Stepup-saml-bundle.git",
-                "reference": "f2f14f8be692a350227372438c64518ca482086e"
+                "reference": "dbc2685f1aac66697d2c867d529608ff036cb28b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/OpenConext/Stepup-saml-bundle/zipball/f2f14f8be692a350227372438c64518ca482086e",
-                "reference": "f2f14f8be692a350227372438c64518ca482086e",
+                "url": "https://api.github.com/repos/OpenConext/Stepup-saml-bundle/zipball/dbc2685f1aac66697d2c867d529608ff036cb28b",
+                "reference": "dbc2685f1aac66697d2c867d529608ff036cb28b",
                 "shasum": ""
             },
             "require": {
@@ -2638,8 +2638,8 @@
                 "php": ">=5.4,<8.0-dev",
                 "robrichards/xmlseclibs": "^1.4.0",
                 "simplesamlphp/saml2": "^1.8",
-                "symfony/dependency-injection": "^2.7",
-                "symfony/framework-bundle": "^2.7"
+                "symfony/dependency-injection": ">=2.7,<4",
+                "symfony/framework-bundle": ">=2.7,<4"
             },
             "require-dev": {
                 "ibuildings/qa-tools": "~1.1",
@@ -2665,7 +2665,7 @@
                 "stepup",
                 "surfnet"
             ],
-            "time": "2017-09-25T11:23:36+00:00"
+            "time": "2018-01-09T14:13:18+00:00"
         },
         {
             "name": "surfnet/stepup-u2f-bundle",
