@@ -54,7 +54,7 @@
       </trans-unit>
       <trans-unit id="b8020a5c4b1ce8f6a3cfa6854588499b9a6168ef" resname="gateway.form.send_sms_challenge.sms_sending_failed">
         <source>gateway.form.send_sms_challenge.sms_sending_failed</source>
-        <target>Het versturen van de SMS-code is mislukt.</target>
+        <target>Het versturen van de sms-code is mislukt.</target>
         <jms:reference-file line="8">/Resources/views/translations.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="be86ce24f39578ecbfb3cf0ad710a5a96e819ff6" resname="gateway.form.send_sms_challenge.too_many_attempts">
@@ -153,7 +153,7 @@
       </trans-unit>
       <trans-unit id="7b77bca359dd095ce5a10f57ed44386bf8aac3a1" resname="gateway.second_factor.search.type.sms">
         <source>gateway.second_factor.search.type.sms</source>
-        <target>SMS</target>
+        <target>sms</target>
         <jms:reference-file line="23">/Resources/views/translations.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="72a21f0cbb338b0b94a2e55e9d1f8e48baf34eaa" resname="gateway.second_factor.search.type.u2f">
@@ -168,12 +168,12 @@
       </trans-unit>
       <trans-unit id="1c41e8d2b8040894426471450740d39af284d440" resname="gateway.second_factor.sms.challenge_body">
         <source>gateway.second_factor.sms.challenge_body</source>
-        <target>Je SMS-code: %challenge%</target>
+        <target>Je sms-code: %challenge%</target>
         <jms:reference-file line="401">/../src/Surfnet/StepupGateway/GatewayBundle/Service/StepUpAuthenticationService.php</jms:reference-file>
       </trans-unit>
       <trans-unit id="fecb0bb6d9524901050c51767a3cf1eceb80da04" resname="gateway.second_factor.sms.send_challenge.title">
         <source>gateway.second_factor.sms.send_challenge.title</source>
-        <target>Login met SMS</target>
+        <target>Login met sms</target>
         <jms:reference-file line="3">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifySmsSecondFactor.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="b709c9885083cad3cea28a08aa1cf07d43fa186f" resname="gateway.second_factor.sms.text.help_user_enter_challenge">
@@ -183,7 +183,7 @@
       </trans-unit>
       <trans-unit id="ae96304b72fa22655facaecca34b948409c3deaa" resname="gateway.second_factor.sms.text.help_user_enter_phone_number">
         <source>gateway.second_factor.sms.text.help_user_enter_phone_number</source>
-        <target>Stuur een SMS login code naar mijn mobiel nummer eindigend op %phone_number%:</target>
+        <target>Stuur een code naar mijn mobiel nummer eindigend op %phone_number%:</target>
         <jms:reference-file line="6">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifySmsSecondFactor.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="9051ae99f49586015373858f030ea4fe3b097729" resname="gateway.second_factor.sms.text.next_step">
@@ -204,7 +204,7 @@
       </trans-unit>
       <trans-unit id="c9ecf89d8bcda5d83b5a78f10fda52522011fcc7" resname="gateway.second_factor.sms.verify_challenge.title.page">
         <source>gateway.second_factor.sms.verify_challenge.title.page</source>
-        <target>Log in met SMS</target>
+        <target>Log in met sms</target>
         <jms:reference-file line="3">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifySmsSecondFactorChallenge.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="d0af79ae0b3f333a17355d24f9fd8cea1311dc48" resname="gateway.second_factor.u2f.button.retry">

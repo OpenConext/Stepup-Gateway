@@ -173,7 +173,7 @@
       </trans-unit>
       <trans-unit id="fecb0bb6d9524901050c51767a3cf1eceb80da04" resname="gateway.second_factor.sms.send_challenge.title">
         <source>gateway.second_factor.sms.send_challenge.title</source>
-        <target>Login with SMS</target>
+        <target>Log in with SMS</target>
         <jms:reference-file line="3">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifySmsSecondFactor.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="b709c9885083cad3cea28a08aa1cf07d43fa186f" resname="gateway.second_factor.sms.text.help_user_enter_challenge">
@@ -183,12 +183,12 @@
       </trans-unit>
       <trans-unit id="ae96304b72fa22655facaecca34b948409c3deaa" resname="gateway.second_factor.sms.text.help_user_enter_phone_number">
         <source>gateway.second_factor.sms.text.help_user_enter_phone_number</source>
-        <target>Send a SMS text message to my mobile phonenumber ending in %phone_number%:</target>
+        <target>Send a code to my mobile phone number ending in %phone_number%:</target>
         <jms:reference-file line="6">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifySmsSecondFactor.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="9051ae99f49586015373858f030ea4fe3b097729" resname="gateway.second_factor.sms.text.next_step">
         <source>gateway.second_factor.sms.text.next_step</source>
-        <target>Enter the received code on the next page</target>
+        <target>Enter the received code on the next page.</target>
         <jms:reference-file line="18">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifySmsSecondFactor.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="0d06981098d22a2fa3428068bbc7e53d8cff3db7" resname="gateway.second_factor.sms.text.otp_requests_remaining">
