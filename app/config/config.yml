@@ -178,6 +178,8 @@ surfnet_stepup_gateway_second_factor_only:
 
 surfnet_saml:
     hosted:
+        attribute_dictionary:
+            ignore_unknown_attributes: true
         service_provider:
             enabled: true
             assertion_consumer_route: gateway_serviceprovider_consume_assertion
