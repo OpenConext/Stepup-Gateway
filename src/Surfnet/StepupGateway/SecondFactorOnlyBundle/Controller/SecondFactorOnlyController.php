@@ -86,8 +86,7 @@ class SecondFactorOnlyController extends Controller
             try {
                 $httpRequest = $adfsHelper->transformRequest(
                     $httpRequest,
-                    $originalRequest->getRequestId(),
-                    $originalRequest->getAssertionConsumerServiceURL()
+                    $originalRequest->getRequestId()
                 );
             } catch (Exception $e) {
                 throw new InvalidAdfsRequestException(
@@ -96,6 +95,7 @@ class SecondFactorOnlyController extends Controller
             }
         }
 
+        /** @var \Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler $stateHandler */
         $stateHandler = $this->get('gateway.proxy.state_handler');
 
         // Clear the state of the previous SSO action. Request data of previous
@@ -105,6 +105,7 @@ class SecondFactorOnlyController extends Controller
         $stateHandler
             ->setRequestId($originalRequestId)
             ->setRequestServiceProvider($originalRequest->getServiceProvider())
+            ->setRequestAssertionConsumerServiceUrl($originalRequest->getAssertionConsumerServiceURL())
             ->setRelayState($httpRequest->get(AuthnRequest::PARAMETER_RELAY_STATE, ''))
             ->setResponseAction('SurfnetStepupGatewaySecondFactorOnlyBundle:SecondFactorOnly:respond')
             ->setResponseContextServiceId('second_factor_only.response_context');
@@ -195,9 +196,10 @@ class SecondFactorOnlyController extends Controller
 
         /** @var ResponseFactory $response_factory */
         $responseFactory = $this->get('second_factor_only.saml_response_factory');
+
         $response = $responseFactory->createSecondFactorOnlyResponse(
             $responseContext->getIdentityNameId(),
-            $responseContext->getServiceProvider(),
+            $responseContext->getDestination(),
             $authnContextClassRef
         );
 
@@ -223,10 +225,11 @@ class SecondFactorOnlyController extends Controller
             }
 
             $logger->notice('Sending ACS Response to ADFS plugin');
+
             return $this->render(
                 '@SurfnetStepupGatewaySecondFactorOnly/Adfs/consumeAssertion.html.twig',
                 [
-                    'acu' => $adfsParameters->getAssertionConsumerServiceUrl(),
+                    'acu' => $responseContext->getDestinationForAdfs(),
                     'samlResponse' => $xmlResponse,
                     'context' => $adfsParameters->getContext(),
                     'authMethod' => $adfsParameters->getAuthMethod(),

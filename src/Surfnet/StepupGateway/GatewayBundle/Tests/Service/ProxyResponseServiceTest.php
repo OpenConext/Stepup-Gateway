@@ -53,11 +53,6 @@ final class ProxyResponseServiceTest extends PHPUnit_Framework_TestCase
     private $assertionSigningService;
 
     /**
-     * @var Mockery\MockInterface|ServiceProvider
-     */
-    private $targetServiceProvider;
-
-    /**
      * @var Mockery\MockInterface|AttributeDictionary
      */
     private $attributeDictionary;
@@ -80,7 +75,6 @@ final class ProxyResponseServiceTest extends PHPUnit_Framework_TestCase
         $this->attributeDictionary = Mockery::mock(AttributeDictionary::class);
         $this->attributeDefinition = Mockery::mock(AttributeDefinition::class);
         $this->loa = Mockery::mock(Loa::class);
-        $this->targetServiceProvider = Mockery::mock(ServiceProvider::class)->shouldIgnoreMissing();
 
         $container = new TestSaml2Container(new NullLogger());
         ContainerSingleton::setContainer($container);
@@ -115,7 +109,7 @@ final class ProxyResponseServiceTest extends PHPUnit_Framework_TestCase
         $originalAssertion = new Assertion();
         $originalAssertion->setIssuer('https://idp.example/metadata');
 
-        $response = $factory->createProxyResponse($originalAssertion, $this->targetServiceProvider);
+        $response = $factory->createProxyResponse($originalAssertion, 'https://acs');
 
         /** @var Assertion $assertion */
         $assertion = $response->getAssertions()[0];
@@ -146,7 +140,7 @@ final class ProxyResponseServiceTest extends PHPUnit_Framework_TestCase
         $originalAssertion->setIssuer('https://idp.example/metadata');
         $originalAssertion->setAuthenticatingAuthority(['https://previous.idp.example/metadata']);
 
-        $response = $factory->createProxyResponse($originalAssertion, $this->targetServiceProvider);
+        $response = $factory->createProxyResponse($originalAssertion, 'https://acs');
 
         /** @var Assertion $assertion */
         $assertion = $response->getAssertions()[0];
@@ -182,7 +176,7 @@ final class ProxyResponseServiceTest extends PHPUnit_Framework_TestCase
             ->shouldReceive('translate->getAttributeValue')
             ->andReturnNull();
 
-        $factory->createProxyResponse($originalAssertion, $this->targetServiceProvider);
+        $factory->createProxyResponse($originalAssertion,'https://acs');
     }
 
     /**
@@ -214,6 +208,6 @@ final class ProxyResponseServiceTest extends PHPUnit_Framework_TestCase
             ->shouldReceive('translate->getAttributeValue')
             ->andReturn([$nameId]);
 
-        $factory->createProxyResponse($originalAssertion, $this->targetServiceProvider);
+        $factory->createProxyResponse($originalAssertion, 'https://acs');
     }
 }

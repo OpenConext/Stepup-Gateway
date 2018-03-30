@@ -103,11 +103,17 @@ class SamlEntity
 
         $decodedConfiguration = $this->decodeConfiguration();
 
-        // index based will be supported later on
-        $configuration['assertionConsumerUrl'] = reset($decodedConfiguration['acs']);
-        $configuration['certificateData']      = $decodedConfiguration['public_key'];
-        $configuration['entityId']             = $this->entityId;
-        $configuration['configuredLoas']       = $decodedConfiguration['loa'];
+        // Note that we don't set 'assertionConsumerUrl',
+        // getAssertionConsumerUrl() on this service provider entity will
+        // yield null. The ACS URL in the AuthnRequest is used instead, and
+        // this URL is validated by matching against the configured 'allowed
+        // ACS locations'. If it doesn't match, the gateway will fall back to
+        // the first configured ACS location.
+
+        $configuration['allowedAcsLocations'] = $decodedConfiguration['acs'];
+        $configuration['certificateData']     = $decodedConfiguration['public_key'];
+        $configuration['entityId']            = $this->entityId;
+        $configuration['configuredLoas']      = $decodedConfiguration['loa'];
 
         $configuration['secondFactorOnly'] = false;
         if (isset($decodedConfiguration['second_factor_only'])) {

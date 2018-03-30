@@ -49,6 +49,7 @@ services:
             - @second_factor_only.hosted.identity_provider
             - @second_factor_only.entity_service
             - @gateway.proxy.state_handler
+            - @logger
 
     second_factor_only.saml_response_factory:
         class: Surfnet\StepupGateway\SecondFactorOnlyBundle\Saml\ResponseFactory

@@ -95,6 +95,7 @@ class SurfnetStepupGatewaySamlStepupProviderExtension extends Extension
         $proxyResponseFactory = new Definition(
             'Surfnet\StepupGateway\SamlStepupProviderBundle\Saml\ProxyResponseFactory',
             [
+                new Reference('logger'),
                 new Reference('gssp.provider.' . $provider . '.hosted.idp'),
                 new Reference('gssp.provider.' . $provider . '.statehandler'),
                 new Reference('gssp.provider.' . $provider . '.assertion_signing')

@@ -75,7 +75,7 @@ class RequestHelperTest extends \PHPUnit_Framework_TestCase
     {
         $this->request->request->shouldReceive('get')->with(RequestHelper::ADFS_PARAM_AUTH_METHOD)->andReturn('');
         $this->request->request->shouldReceive('get')->with(RequestHelper::ADFS_PARAM_CONTEXT)->andReturn('context');
-        $this->helper->transformRequest($this->request, 'my-request-id', 'http://acs');
+        $this->helper->transformRequest($this->request, 'my-request-id');
     }
 
     /**
@@ -101,9 +101,8 @@ AUTHNREQUEST;
         $this->stateHandler->shouldReceive('setRequestId')->with('my-request-id')->andReturn($this->stateHandler);
         $this->stateHandler->shouldReceive('setAuthMethod')->with('ADFS.SCSA')->andReturn($this->stateHandler);
         $this->stateHandler->shouldReceive('setContext')->with('<EncryptedData></EncryptedData>')->andReturn($this->stateHandler);;
-        $this->stateHandler->shouldReceive('setAssertionConsumerServiceUrl')->with('http://acs')->andReturn($this->stateHandler);;
 
-        $this->helper->transformRequest($this->request, 'my-request-id', 'http://acs');
+        $this->helper->transformRequest($this->request, 'my-request-id');
 
     }
 }

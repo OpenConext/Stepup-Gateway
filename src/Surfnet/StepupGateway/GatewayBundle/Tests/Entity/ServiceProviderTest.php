@@ -19,6 +19,7 @@
 namespace Surfnet\StepupGateway\GatewayBundle\Test\Entity;
 
 use Surfnet\StepupGateway\GatewayBundle\Entity\ServiceProvider;
+use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\Exception\AcsLocationNotAllowedException;
 
 class ServiceProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -107,5 +108,75 @@ class ServiceProviderTest extends \PHPUnit_Framework_TestCase
         );
         $this->assertTrue($sp->isAllowedToUseSecondFactorOnlyFor('urn:collab:person:ibuildings.nl:boy'));
         $this->assertTrue($sp->isAllowedToUseSecondFactorOnlyFor('urn:collab:person:surfnet.nl:pieter'));
+    }
+
+    /**
+     * @test
+     */
+    public function it_allows_request_acs_url_if_configured()
+    {
+        $sp = new ServiceProvider([
+            'allowedAcsLocations' => ['https://example.org/acs', 'https://example.com/acs'],
+        ]);
+
+        $url = $sp->determineAcsLocation(
+            'https://example.com/acs'
+        );
+
+        $this->assertEquals('https://example.com/acs', $url);
+    }
+
+    /**
+     * @test
+     */
+    public function it_falls_back_to_configured_acs_url_if_request_acs_url_is_not_allowed()
+    {
+        $sp = new ServiceProvider([
+            'allowedAcsLocations' => ['https://example.org/acs', 'https://example.com/acs'],
+        ]);
+
+        $url = $sp->determineAcsLocation(
+            'https://example.nl/acs'
+        );
+
+        $this->assertEquals('https://example.org/acs', $url);
+    }
+
+    /**
+     * @test
+     */
+    public function it_allows_adfs_request_acs_url_if_configured()
+    {
+        $sp = new ServiceProvider([
+            'allowedAcsLocations' => ['https://example.org/acs', 'https://example.com/acs'],
+        ]);
+
+        $url = $sp->determineAcsLocationForAdfs(
+            'https://example.com/acs/this/is/ignored'
+        );
+
+        $this->assertEquals('https://example.com/acs/this/is/ignored', $url);
+
+        $url = $sp->determineAcsLocationForAdfs(
+            'https://example.com/acs?this=is&ignored'
+        );
+
+        $this->assertEquals('https://example.com/acs?this=is&ignored', $url);
+    }
+
+    /**
+     * @test
+     */
+    public function it_throws_exception_if_adfs_request_acs_url_is_not_allowed()
+    {
+        $this->setExpectedException(AcsLocationNotAllowedException::class);
+
+        $sp = new ServiceProvider([
+            'allowedAcsLocations' => ['https://example.org/acs', 'https://example.com/acs'],
+        ]);
+
+        $sp->determineAcsLocationForAdfs(
+            'https://example.nl/acs'
+        );
     }
 }

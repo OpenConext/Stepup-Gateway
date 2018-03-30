@@ -23,6 +23,7 @@ services:
             - @surfnet_saml.hosted.identity_provider
             - @gateway.entity_service
             - @gateway.proxy.state_handler
+            - @logger
 
     gateway.service.second_factor_service:
         class: Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorService

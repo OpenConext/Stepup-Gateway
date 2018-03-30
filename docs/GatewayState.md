@@ -34,6 +34,7 @@ activate SP
             **Store to state:**
 
               - request ID of <AR1>
+              - ACS location of <AR1>
               - request ID of <AR2> (gateway request ID)
               - entity ID of service provider
               - relay state <AR1>
@@ -104,6 +105,7 @@ activate SP
             **Read from state:**
 
               - request ID of <AR1>
+              - ACS location of <AR1>
               - entity ID of service provider
               - assertion in response to <AR2>
                 used to generate response to <AR1>
@@ -148,6 +150,7 @@ activate SP
             **Store to state:**
 
               - request ID of <AR1>
+              - ACS location of <AR1>
               - entity ID of service provider
               - relay state <AR1>
               - required LoA found in <AR1>
@@ -158,7 +161,6 @@ activate SP
             **Additional, in case of ADFS:**
 
               - request ID of <AR1>
-              - ACS URL
               - Auth method
               - context
             end note
@@ -202,6 +204,7 @@ activate SP
             **Read from state:**
 
               - request ID of <AR1>
+              - ACS location of <AR1>
               - entity ID of service provider
               - name ID found in <AR1>
               - token ID and verification result
@@ -210,7 +213,6 @@ activate SP
             **Additional, in case of ADFS:**
 
               - request ID of <AR1>
-              - ACS URL
               - Auth method
               - context
             end note
@@ -225,14 +227,14 @@ deactivate SP
 @enduml
 --->
 
-## Gateway GSSP flow
+## Gateway GSSP verification flow
 
-![flow](diagrams/gateway-state-gssp-flow.png)
+![flow](diagrams/gateway-state-gssp-verification-flow.png)
 <!---
 regenerate this diagram with `plantuml GatewayState.md` or with http://www.plantuml.com/plantuml
-@startuml diagrams/gateway-state-gssp-flow.png
+@startuml diagrams/gateway-state-gssp-verification-flow.png
 
-title Stepup Gateway GSSP flow
+title Stepup Gateway GSSP verification flow
 actor User
 
 box "Details omitted, see login flow diagram"
@@ -262,17 +264,16 @@ activate SP
             SF -> PROXY: Internal redirect
             activate PROXY
                 rnote over PROXY
-                Internal redirect to
-                sendSecondFactorVerificationAuthnRequestAction().
-                A new AuthnRequest <AR3> is sent to
-                the singleSignOnAction() endpoint.
+                Internal redirect to the SamlProxyController
+                A new AuthnRequest <AR3> is sent to the GSSP
+                application.
                 end note
 
                 group sendSecondFactorVerificationAuthnRequestAction()
                     rnote over PROXY #green
                     **Read from login/SFO state:**
 
-                      - request ID <AR1>
+                      - request ID <AR1> (for logging)
                     end note
 
                     rnote over PROXY #aqua
@@ -286,58 +287,28 @@ activate SP
                     end note
                 end
 
-                PROXY -> PROXY: AuthnRequest <AR3>
-
-                rnote over PROXY
-                AuthnRequest <AR3> is received in
-                singleSignOnAction(), a new
-                AuthnRequest <AR4> is sent to the
-                GSSP application.
-                end note
-
-                group singleSignOnAction()
-                    rnote over PROXY #aqua
-                    **Store to state:**
-
-                      - request ID <AR3>
-                      - request ID <AR4> ("gateway request ID", overwrites previous)
-                      - enitity ID of service provider <AR3>
-                      - relay state
-                      - name ID
-                    end note
-                end
-
-                PROXY -> GSSP: AuthnRequest <AR4>
+                PROXY -> GSSP: AuthnRequest <AR3>
 
                 activate GSSP
-                    GSSP -> PROXY: AuthnResponse <AR4>
+                    GSSP -> PROXY: AuthnResponse <AR3>
                 deactivate GSSP
-
-                rnote over PROXY
-                In case of registration:
-                  The assertion from the GSSP application
-                  is sent back to the ACS location of the SP.
-
-                In case of verification:
-                  An internal redirect to the GatewayController
-                  where the successful verification is handles.
-                end note
 
                 group consumeAssertionAction()
                     rnote over PROXY #green
-                    **Read from login/SFO state:**
+                    **Read from state:**
 
-                      - request ID <AR3>
+                      - request ID <AR3> (in response to check)
                       - name ID
                       - indicator (registration or verification)
-                      - entity ID of service provider
-                        (in case of error or alternative registration flow)
+
+                    **Read from GW login/SFO state (error case):**
+
+                      - ACS URL <AR1>
+                      - entity ID of SP <AR1>
                     end note
                 end
 
-                PROXY -> SP: Error AuthnResponse <AR3> (verification failed, error page on GW -> button back to SP)
-                PROXY -> SP: Error AuthnResponse <AR3> (name ID does not match)
-                PROXY -> SP: AuthnResponse <AR3> (alternative registration flow)
+                PROXY -> SP: Error AuthnResponse <AR3> (verification failed)
                 PROXY -> SF: Internal redirect to gssfVerified() (main flow)
             deactivate PROXY
 
@@ -346,6 +317,76 @@ activate SP
 
         GW -> SP: AuthnResponse <AR1>
     deactivate GW
+
+    SP -> User
+deactivate SP
+
+@enduml
+--->
+
+## Gateway GSSP registration flow
+
+![flow](diagrams/gateway-state-gssp-registration-flow.png)
+<!---
+regenerate this diagram with `plantuml GatewayState.md` or with http://www.plantuml.com/plantuml
+@startuml diagrams/gateway-state-gssp-registration-flow.png
+
+title Stepup Gateway GSSP registration flow
+actor User
+
+participant "Service provider" as SP
+box "Stepup"
+    participant "SamlProxyController" as PROXY
+end box
+participant "GSSP application" as GSSP
+
+User -> SP: Login
+activate SP
+
+    SP -> PROXY: AuthnRequest <AR1>
+    activate PROXY 
+
+        rnote over PROXY
+        AuthnRequest <AR1> is received in
+        singleSignOnAction(), a new
+        AuthnRequest <AR2> is sent to the
+        GSSP application.
+        end note
+
+        group singleSignOnAction()
+            rnote over PROXY #aqua
+            **Store to state:**
+
+             - request ID <AR1>
+             - ACS location of <AR1>
+             - request ID <AR2> ("gateway request ID", overwrites previous)
+             - enitity ID of service provider <AR2>
+             - relay state
+             - name ID
+            end note
+        end
+
+        PROXY -> GSSP: AuthnRequest <AR2>
+
+        activate GSSP
+            GSSP -> PROXY: AuthnResponse <AR2>
+        deactivate GSSP
+
+        group consumeAssertionAction()
+            rnote over PROXY #green
+            **Read from state:**
+
+             - request ID <AR1>
+             - request ID <AR2> (in response to check)
+             - ACS location of <AR1>
+             - name ID
+             - indicator (registration or verification)
+             - entity ID of service provider <AR1>
+            end note
+        end
+
+        PROXY -> SP: AuthnResponse <AR1>
+    deactivate PROXY
 
     SP -> User
 deactivate SP

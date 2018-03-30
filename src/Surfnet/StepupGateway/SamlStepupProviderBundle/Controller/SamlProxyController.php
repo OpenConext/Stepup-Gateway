@@ -51,10 +51,11 @@ class SamlProxyController extends Controller
     /**
      * Proxy a GSSP authentication request to the remote GSSP SSO endpoint.
      *
-     * The user is about to be sent to the remote GSSP application. An authn
-     * request was created in ::sendSecondFactorVerificationAuthnRequestAction() and this method
-     * proxies the authn request to the remote SSO URL. The remote application
-     * will send an assertion back to consumeAssertionAction().
+     * The user is about to be sent to the remote GSSP application for
+     * registration. Verification is not initiated with a SAML AUthnRequest,
+     * see sendSecondFactorVerificationAuthnRequestAction().
+     *
+     * The service provider in this context is SelfService.
      *
      * @param string  $provider
      * @param Request $httpRequest
@@ -64,7 +65,6 @@ class SamlProxyController extends Controller
     {
         $provider = $this->getProvider($provider);
 
-        /** @var \Psr\Log\LoggerInterface $logger */
         $logger = $this->get('logger');
         $logger->notice('Received AuthnRequest, started processing');
 
@@ -106,6 +106,7 @@ class SamlProxyController extends Controller
         $stateHandler
             ->setRequestId($originalRequestId)
             ->setRequestServiceProvider($originalRequest->getServiceProvider())
+            ->setRequestAssertionConsumerServiceUrl($originalRequest->getAssertionConsumerServiceURL())
             ->setRelayState($httpRequest->get(AuthnRequest::PARAMETER_RELAY_STATE, ''));
 
         $proxyRequest = AuthnRequestFactory::createNewRequest(
@@ -142,9 +143,9 @@ class SamlProxyController extends Controller
      * a GSSP token. The SecondFactorController therefor did an internal
      * redirect (see SecondFactorController::verifyGssfAction) to this method.
      *
-     * In this method, an authn request is created. This authn request is not
-     * sent directly to the GSSP SSO URL, but proxied trough the gateway first
-     * (see SamlProxyController::ssoAction).
+     * In this method, an authn request is created. This authn request is sent
+     * directly to the remote GSSP SSO URL, and the response is handled in
+     * consumeAssertionAction().
      *
      * @param $provider
      * @param $subjectNameId
@@ -189,8 +190,10 @@ class SamlProxyController extends Controller
      * Process an assertion received from the remote GSSP application.
      *
      * The GSSP application sent an assertion back to the gateway. When
-     * successful, the user is sent back to the
-     * SecondFactorController:gssfVerifiedAction.
+     * successful, the user is sent back to:
+     *
+     *  1. in case of registration: back to the originating SP (SelfService)
+     *  2. in case of verification: internal redirect to SecondFactorController
      *
      * @param string  $provider
      * @param Request $httpRequest
@@ -267,9 +270,16 @@ class SamlProxyController extends Controller
         }
 
         /** @var \Surfnet\StepupGateway\SamlStepupProviderBundle\Saml\ProxyResponseFactory $proxyResponseFactory */
+        $proxyResponseFactory  = $this->get('gssp.provider.' . $provider->getName() . '.response_proxy');
         $targetServiceProvider = $this->getServiceProvider($stateHandler->getRequestServiceProvider());
-        $proxyResponseFactory = $this->get('gssp.provider.' . $provider->getName() . '.response_proxy');
-        $response             = $proxyResponseFactory->createProxyResponse($assertion, $targetServiceProvider);
+
+        $response = $proxyResponseFactory->createProxyResponse(
+            $assertion,
+            $targetServiceProvider->determineAcsLocation(
+                $stateHandler->getRequestAssertionConsumerServiceUrl(),
+                $this->get('logger')
+            )
+        );
 
         $logger->notice(sprintf(
             'Responding to request "%s" with response based on response from the remote IdP with response "%s"',
@@ -319,11 +329,18 @@ class SamlProxyController extends Controller
     private function getDestination(StateHandler $stateHandler)
     {
         if ($stateHandler->secondFactorVerificationRequested()) {
+            // GSSP verification action, return to SP from GatewayController state!
             $destination = $this->get('gateway.proxy.response_context')->getDestination();
         } else {
-            $destination = $this->getServiceProvider(
+            // GSSP registration action, return to SP remembered in ssoAction().
+            $serviceProvider = $this->getServiceProvider(
                 $stateHandler->getRequestServiceProvider()
-            )->getAssertionConsumerUrl();
+            );
+
+            $destination = $serviceProvider->determineAcsLocation(
+                $stateHandler->getRequestAssertionConsumerServiceUrl(),
+                $this->get('logger')
+            );
         }
 
         return $destination;
@@ -428,7 +445,7 @@ class SamlProxyController extends Controller
 
     /**
      * @param string $serviceProvider
-     * @return \Surfnet\SamlBundle\Entity\ServiceProvider
+     * @return \Surfnet\StepupGateway\GatewayBundle\Entity\ServiceProvider
      */
     private function getServiceProvider($serviceProvider)
     {

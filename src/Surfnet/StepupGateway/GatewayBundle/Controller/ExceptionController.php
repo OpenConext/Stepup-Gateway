@@ -20,6 +20,7 @@ namespace Surfnet\StepupGateway\GatewayBundle\Controller;
 
 use Exception;
 use Surfnet\StepupBundle\Controller\ExceptionController as BaseExceptionController;
+use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\Exception\AcsLocationNotAllowedException;
 
 final class ExceptionController extends BaseExceptionController
 {
@@ -29,8 +30,14 @@ final class ExceptionController extends BaseExceptionController
      */
     protected function getPageTitleAndDescription(Exception $exception)
     {
-        // This is the place to map specific exceptiont to user-facing
-        // messages.
+        $translator = $this->getTranslator();
+
+        if ($exception instanceof AcsLocationNotAllowedException) {
+            return [
+                'title' => $translator->trans('gateway.error.acs_location_not_allowed.title'),
+                'description' => $exception->getMessage(),
+            ];
+        }
 
         return parent::getPageTitleAndDescription($exception);
     }
