@@ -1,24 +1,9 @@
-
 body.authentication {
-  background-color: @gray-lighter;
-  font-size: 15px;
-  line-height: 20px;
-
-  h1 {
-    font-size: 24px;
-    line-height: 26px;
-  }
 
   .container.authentication {
     background: #fff;
+    max-width: 75rem;
     padding: 0 2rem;
-
-    @media (min-width: @medium) {
-      border-radius: 4px;
-      box-shadow: 0 1px 4px rgba(0, 0, 0, .2);
-      margin-top: 2rem;
-      max-width: 75rem;
-    }
   }
   .page-header {
     margin: 0;
@@ -27,22 +12,6 @@ body.authentication {
 
   .authentication-content {
     padding: 4rem;
-
-    @media (max-width: @small) {
-      padding: 2rem 0;
-    }
-  }
-
-  footer {
-    padding-bottom: 2rem;
-
-    form {
-      display: inline;
-
-      button {
-        padding: 0;
-      }
-    }
   }
 
   form[name="gateway_verify_yubikey_otp"] {

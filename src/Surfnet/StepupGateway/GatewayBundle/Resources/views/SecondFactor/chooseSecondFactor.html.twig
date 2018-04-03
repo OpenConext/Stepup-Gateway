@@ -10,9 +10,9 @@
 
     {% for secondFactor in secondFactors %}
     <div class="row middle">
-        <div class="col-lg-1 col-sm-2 logo"><img src="{{ second_factor_logo(secondFactor.secondFactorType) }}"></div>
+        <div class="col-lg-2 col-sm-2 logo"><img src="{{ second_factor_logo(secondFactor.secondFactorType) }}"></div>
         <div class="col-lg-2 col-sm-2 col-xs-5 title">{{ secondFactor.secondFactorType|trans_second_factor_type }}</div>
-        <div class="col-lg-9 col-sm-8 col-xs-5">{{ form_widget(form.offsetGet('choose_' ~ secondFactor.secondFactorType)) }}</div>
+        <div class="col-lg-8 col-sm-8 col-xs-5">{{ form_widget(form.offsetGet('choose_' ~ secondFactor.secondFactorType)) }}</div>
     </div>
     {% endfor %}
 
