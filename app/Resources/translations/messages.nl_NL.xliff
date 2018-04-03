@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:jms="urn:jms:translation" version="1.2">
-  <file date="2018-03-23T09:48:46Z" source-language="en" target-language="nl_NL" datatype="plaintext" original="not.available">
+  <file date="2018-03-27T15:57:58Z" source-language="en" target-language="nl_NL" datatype="plaintext" original="not.available">
     <header>
       <tool tool-id="JMSTranslationBundle" tool-name="JMSTranslationBundle" tool-version="1.1.0-DEV"/>
       <note>The source node in most cases contains the sample message as written by the developer. If it looks like a dot-delimitted string such as "form.label.firstname", then the developer has not provided a default message.</note>
@@ -22,6 +22,11 @@
         <target>Login-response kan niet worden verwerkt.</target>
         <jms:reference-file line="7">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/Gateway/unprocessableResponse.html.twig</jms:reference-file>
       </trans-unit>
+      <trans-unit id="7ae5055bfdf6e6100256f6148115dfaa4b06ac52" resname="gateway.form.cancel_authentication.button.cancel">
+        <source>gateway.form.cancel_authentication.button.cancel</source>
+        <target>Annuleren</target>
+        <jms:reference-file line="29">/../src/Surfnet/StepupGateway/GatewayBundle/Form/Type/CancelAuthenticationType.php</jms:reference-file>
+      </trans-unit>
       <trans-unit id="65f3ce4b0efbcaaaafd540e24188ea54d0851540" resname="gateway.form.gateway_cancel_second_factor_verification.button.cancel_verification">
         <source>gateway.form.gateway_cancel_second_factor_verification.button.cancel_verification</source>
         <target>Annuleren</target>
@@ -37,16 +42,6 @@
         <target>Stuur code</target>
         <jms:reference-file line="30">/../src/Surfnet/StepupGateway/GatewayBundle/Form/Type/SendSmsChallengeType.php</jms:reference-file>
       </trans-unit>
-      <trans-unit id="7039a04e477c52544533b4969fb09c19f34d1452" resname="gateway.form.gateway_send_sms_challenge.label.phone_number">
-        <source>gateway.form.gateway_send_sms_challenge.label.phone_number</source>
-        <target>Telefoonnummer</target>
-        <jms:reference-file line="28">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifySmsSecondFactor.html.twig</jms:reference-file>
-      </trans-unit>
-      <trans-unit id="ddf7dd3f1b77196052dad82522de3845661976fa" resname="gateway.form.send_sms_challenge.button.cancel">
-        <source>gateway.form.send_sms_challenge.button.cancel</source>
-        <target>Annuleren</target>
-        <jms:reference-file line="34">/../src/Surfnet/StepupGateway/GatewayBundle/Form/Type/SendSmsChallengeType.php</jms:reference-file>
-      </trans-unit>
       <trans-unit id="369b2c8dea153b42d8dc01645e54140a83cb5f4f" resname="gateway.form.send_sms_challenge.sms_challenge_expired">
         <source>gateway.form.send_sms_challenge.sms_challenge_expired</source>
         <target>Deze code is verlopen. Vraag een nieuwe code aan.</target>
@@ -59,7 +54,7 @@
       </trans-unit>
       <trans-unit id="b8020a5c4b1ce8f6a3cfa6854588499b9a6168ef" resname="gateway.form.send_sms_challenge.sms_sending_failed">
         <source>gateway.form.send_sms_challenge.sms_sending_failed</source>
-        <target>Het versturen van de SMS-code is mislukt.</target>
+        <target>Het versturen van de sms-code is mislukt.</target>
         <jms:reference-file line="8">/Resources/views/translations.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="be86ce24f39578ecbfb3cf0ad710a5a96e819ff6" resname="gateway.form.send_sms_challenge.too_many_attempts">
@@ -67,25 +62,20 @@
         <target>De limiet van tien pogingen is bereikt; je kunt geen codes meer verifiëren. Neem contact op met de helpdesk van je installing of probeer het later nog eens.</target>
         <jms:reference-file line="11">/Resources/views/translations.html.twig</jms:reference-file>
       </trans-unit>
-      <trans-unit id="815ec86e9c26021d75afe4356d9ae3bbb93e9582" resname="gateway.form.verify_sms_challenge.button.cancel">
-        <source>gateway.form.verify_sms_challenge.button.cancel</source>
-        <target>Annuleren</target>
-        <jms:reference-file line="46">/../src/Surfnet/StepupGateway/GatewayBundle/Form/Type/VerifySmsChallengeType.php</jms:reference-file>
+      <trans-unit id="794d606d42626487d338b79f4b39ece27fd6da94" resname="gateway.form.verify_sms_challenge.button.challenge_placeholder">
+        <source>gateway.form.verify_sms_challenge.button.challenge_placeholder</source>
+        <target>code</target>
+        <jms:reference-file line="34">/../src/Surfnet/StepupGateway/GatewayBundle/Form/Type/VerifySmsChallengeType.php</jms:reference-file>
       </trans-unit>
       <trans-unit id="949d225017cfbb80ae094b1af62b758c4ab1cd2c" resname="gateway.form.verify_sms_challenge.button.resend_challenge">
         <source>gateway.form.verify_sms_challenge.button.resend_challenge</source>
-        <target>Vraag een nieuwe code aan</target>
-        <jms:reference-file line="41">/../src/Surfnet/StepupGateway/GatewayBundle/Form/Type/VerifySmsChallengeType.php</jms:reference-file>
+        <target>Stuur nogmaals.</target>
+        <jms:reference-file line="42">/../src/Surfnet/StepupGateway/GatewayBundle/Form/Type/VerifySmsChallengeType.php</jms:reference-file>
       </trans-unit>
       <trans-unit id="c112fb5c4f9e2eca7afdf9e31f1eb7c17078b647" resname="gateway.form.verify_sms_challenge.button.verify_challenge">
         <source>gateway.form.verify_sms_challenge.button.verify_challenge</source>
-        <target>Code verifiëren</target>
-        <jms:reference-file line="37">/../src/Surfnet/StepupGateway/GatewayBundle/Form/Type/VerifySmsChallengeType.php</jms:reference-file>
-      </trans-unit>
-      <trans-unit id="1b12b51928c9eb9c6922fd0c910502698f0865f5" resname="gateway.form.verify_sms_challenge.text.challenge">
-        <source>gateway.form.verify_sms_challenge.text.challenge</source>
-        <target>Code</target>
-        <jms:reference-file line="30">/../src/Surfnet/StepupGateway/GatewayBundle/Form/Type/VerifySmsChallengeType.php</jms:reference-file>
+        <target>Verifieer code</target>
+        <jms:reference-file line="38">/../src/Surfnet/StepupGateway/GatewayBundle/Form/Type/VerifySmsChallengeType.php</jms:reference-file>
       </trans-unit>
       <trans-unit id="69e4a91f05f1619fc6326ff78659255bc0d4f7ce" resname="gateway.form.verify_yubikey.otp_verification_failed">
         <source>gateway.form.verify_yubikey.otp_verification_failed</source>
@@ -96,11 +86,6 @@
         <source>gateway.form.verify_yubikey.public_id_mismatch</source>
         <target>Je gebruikt nu een andere YubiKey dan tijdens het registratieproces.</target>
         <jms:reference-file line="5">/Resources/views/translations.html.twig</jms:reference-file>
-      </trans-unit>
-      <trans-unit id="4b7b462d7958d591725738f5b1e3334abeb57160" resname="gateway.form.verify_yubikey_otp.button.cancel">
-        <source>gateway.form.verify_yubikey_otp.button.cancel</source>
-        <target>Annuleren</target>
-        <jms:reference-file line="46">/../src/Surfnet/StepupGateway/GatewayBundle/Form/Type/VerifyYubikeyOtpType.php</jms:reference-file>
       </trans-unit>
       <trans-unit id="53c1b4469c10803f2e6bfb5fd31afb68c7f9556f" resname="gateway.gateway.consume_assertion.title">
         <source>gateway.gateway.consume_assertion.title</source>
@@ -168,7 +153,7 @@
       </trans-unit>
       <trans-unit id="7b77bca359dd095ce5a10f57ed44386bf8aac3a1" resname="gateway.second_factor.search.type.sms">
         <source>gateway.second_factor.search.type.sms</source>
-        <target>SMS</target>
+        <target>sms</target>
         <jms:reference-file line="23">/Resources/views/translations.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="72a21f0cbb338b0b94a2e55e9d1f8e48baf34eaa" resname="gateway.second_factor.search.type.u2f">
@@ -183,53 +168,43 @@
       </trans-unit>
       <trans-unit id="1c41e8d2b8040894426471450740d39af284d440" resname="gateway.second_factor.sms.challenge_body">
         <source>gateway.second_factor.sms.challenge_body</source>
-        <target>Je SMS-code: %challenge%</target>
+        <target>Je sms-code: %challenge%</target>
         <jms:reference-file line="401">/../src/Surfnet/StepupGateway/GatewayBundle/Service/StepUpAuthenticationService.php</jms:reference-file>
       </trans-unit>
       <trans-unit id="fecb0bb6d9524901050c51767a3cf1eceb80da04" resname="gateway.second_factor.sms.send_challenge.title">
         <source>gateway.second_factor.sms.send_challenge.title</source>
-        <target>SMS verifiëren</target>
+        <target>Login met sms</target>
         <jms:reference-file line="3">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifySmsSecondFactor.html.twig</jms:reference-file>
-      </trans-unit>
-      <trans-unit id="fbc134b1f4a8c33e94e122042462cd21c853204a" resname="gateway.second_factor.sms.text.after_pressing_proceed">
-        <source>gateway.second_factor.sms.text.after_pressing_proceed</source>
-        <target>Na op “Stuur code” te hebben geklikt ontvang je een tekstbericht met een code. Vul deze code op de volgende pagina in.</target>
-        <jms:reference-file line="12">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifySmsSecondFactor.html.twig</jms:reference-file>
-      </trans-unit>
-      <trans-unit id="d80ea1ea4e3e600845fc1d86d0851f446f7a8908" resname="gateway.second_factor.sms.text.ensure_phone_has_signal">
-        <source>gateway.second_factor.sms.text.ensure_phone_has_signal</source>
-        <target>Controleer dat je telefoon bereik heeft en tekstberichten kan ontvangen.</target>
-        <jms:reference-file line="11">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifySmsSecondFactor.html.twig</jms:reference-file>
-      </trans-unit>
-      <trans-unit id="125a385345b59621d0a18ef5608a775eb04b5f25" resname="gateway.second_factor.sms.text.enter_challenge_below">
-        <source>gateway.second_factor.sms.text.enter_challenge_below</source>
-        <target>Voer de code hieronder in.</target>
-        <jms:reference-file line="11">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifySmsSecondFactorChallenge.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="b709c9885083cad3cea28a08aa1cf07d43fa186f" resname="gateway.second_factor.sms.text.help_user_enter_challenge">
         <source>gateway.second_factor.sms.text.help_user_enter_challenge</source>
-        <target>Je hebt net een SMS-code ontvangen. Gebruik deze om in te loggen:</target>
-        <jms:reference-file line="8">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifySmsSecondFactorChallenge.html.twig</jms:reference-file>
+        <target>Vul de ontvangen sms-code in:</target>
+        <jms:reference-file line="6">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifySmsSecondFactorChallenge.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="ae96304b72fa22655facaecca34b948409c3deaa" resname="gateway.second_factor.sms.text.help_user_enter_phone_number">
         <source>gateway.second_factor.sms.text.help_user_enter_phone_number</source>
-        <target>Volg onderstaande instructies om het bezit van je telefoon aan te tonen.</target>
-        <jms:reference-file line="8">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifySmsSecondFactor.html.twig</jms:reference-file>
+        <target>Stuur een code naar mijn mobiel nummer eindigend op %phone_number%:</target>
+        <jms:reference-file line="6">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifySmsSecondFactor.html.twig</jms:reference-file>
+      </trans-unit>
+      <trans-unit id="9051ae99f49586015373858f030ea4fe3b097729" resname="gateway.second_factor.sms.text.next_step">
+        <source>gateway.second_factor.sms.text.next_step</source>
+        <target>Vul de ontvangen code in op de volgende pagina.</target>
+        <jms:reference-file line="18">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifySmsSecondFactor.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="0d06981098d22a2fa3428068bbc7e53d8cff3db7" resname="gateway.second_factor.sms.text.otp_requests_remaining">
         <source>gateway.second_factor.sms.text.otp_requests_remaining</source>
         <target>Aantal resterende pogingen: %count%</target>
-        <jms:reference-file line="19">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifySmsSecondFactor.html.twig</jms:reference-file>
+        <jms:reference-file line="10">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifySmsSecondFactor.html.twig</jms:reference-file>
         <jms:reference-file line="12">/Resources/views/translations.html.twig</jms:reference-file>
       </trans-unit>
-      <trans-unit id="a215b416978f2c35a0ffd4be8576c8a0bdf64718" resname="gateway.second_factor.sms.text.retry_if_not_received">
-        <source>gateway.second_factor.sms.text.retry_if_not_received</source>
-        <target>Vraag een nieuwe code aan als je niet binnen een minuut een bericht ontvangt.</target>
-        <jms:reference-file line="12">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifySmsSecondFactorChallenge.html.twig</jms:reference-file>
+      <trans-unit id="c2e588b8944c77908c7aa5d45de4123f29ffc1f6" resname="gateway.second_factor.sms.text.resend_challenge_text">
+        <source>gateway.second_factor.sms.text.resend_challenge_text</source>
+        <target>Geen code ontvangen?</target>
+        <jms:reference-file line="15">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifySmsSecondFactorChallenge.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="c9ecf89d8bcda5d83b5a78f10fda52522011fcc7" resname="gateway.second_factor.sms.verify_challenge.title.page">
         <source>gateway.second_factor.sms.verify_challenge.title.page</source>
-        <target>Bevestig code</target>
+        <target>Log in met sms</target>
         <jms:reference-file line="3">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifySmsSecondFactorChallenge.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="d0af79ae0b3f333a17355d24f9fd8cea1311dc48" resname="gateway.second_factor.u2f.button.retry">
@@ -255,22 +230,27 @@
       <trans-unit id="be12899784c0176e20b93e0030a2144365add26d" resname="gateway.second_factor.yubikey.text.connect_yubikey_to_pc">
         <source>gateway.second_factor.yubikey.text.connect_yubikey_to_pc</source>
         <target>Stop je YubiKey in een USB-poort van je computer.</target>
-        <jms:reference-file line="11">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifyYubikeySecondFactor.html.twig</jms:reference-file>
+        <jms:reference-file line="19">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifyYubikeySecondFactor.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="6204e24e7c7b389809232589df868be2b511cdf5" resname="gateway.second_factor.yubikey.text.ensure_form_field_focus">
         <source>gateway.second_factor.yubikey.text.ensure_form_field_focus</source>
         <target>Zorg dat het invulveld hieronder actief is.</target>
-        <jms:reference-file line="12">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifyYubikeySecondFactor.html.twig</jms:reference-file>
+        <jms:reference-file line="20">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifyYubikeySecondFactor.html.twig</jms:reference-file>
+      </trans-unit>
+      <trans-unit id="96f63ed3f7e0e48ded0b2214a9b2b1a60c8b8b29" resname="gateway.second_factor.yubikey.text.enter_challenge">
+        <source>gateway.second_factor.yubikey.text.enter_challenge</source>
+        <target>Je YubiKey-code:</target>
+        <jms:reference-file line="7">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifyYubikeySecondFactor.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="1445676eeee2335e0d37dad8c7d7bf883ea69c40" resname="gateway.second_factor.yubikey.text.help_user_enter_challenge">
         <source>gateway.second_factor.yubikey.text.help_user_enter_challenge</source>
-        <target>Gebruik je YubiKey om in te loggen:</target>
-        <jms:reference-file line="8">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifyYubikeySecondFactor.html.twig</jms:reference-file>
+        <target>Je YubiKey gebruik je zo:</target>
+        <jms:reference-file line="17">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifyYubikeySecondFactor.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="2845155cc34878dd2e86f19ca5ea1b01c2039d01" resname="gateway.second_factor.yubikey.text.press_once_form_auto_submitted">
         <source>gateway.second_factor.yubikey.text.press_once_form_auto_submitted</source>
         <target>Druk op de knop van je YubiKey en houd even vast. Er verschijnt automatisch een eenmalige code in het invulveld.</target>
-        <jms:reference-file line="13">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifyYubikeySecondFactor.html.twig</jms:reference-file>
+        <jms:reference-file line="21">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifyYubikeySecondFactor.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="46afcd414845fe64dedd737b959f7cd327b85a63" resname="gateway.submit.click_to_go_back_to_sp">
         <source>gateway.submit.click_to_go_back_to_sp</source>
@@ -304,7 +284,7 @@
       </trans-unit>
       <trans-unit id="ee8b15d139dd5ba69eb2bfbc1c540b03894bafd7" resname="ra.registration.yubikey.title.enter_challenge">
         <source>ra.registration.yubikey.title.enter_challenge</source>
-        <target>Log in met je YubiKey</target>
+        <target>Log in met YubiKey</target>
         <jms:reference-file line="3">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifyYubikeySecondFactor.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="c50aaca50072a446eab71327c6bfc5e5de8698f5" resname="stepup.error.authentication_error.description">

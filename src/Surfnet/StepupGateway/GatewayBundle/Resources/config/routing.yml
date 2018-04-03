@@ -3,6 +3,11 @@ gateway_saml_metadata:
     methods:  [GET]
     defaults: { _controller: SurfnetStepupGatewayGatewayBundle:Metadata:metadata}
 
+gateway_cancel_authentication:
+    path:     /authentication/cancel
+    methods:  [POST]
+    defaults: { _controller: SurfnetStepupGatewayGatewayBundle:SecondFactor:cancelAuthentication }
+
 gateway_serviceprovider_consume_assertion:
     path:     /authentication/consume-assertion
     methods:  [POST]
@@ -51,7 +56,7 @@ gateway_verify_second_factor_u2f_verify_authentication:
 gateway_verify_second_factor_u2f_cancel_authentication:
     path:     /verify-second-factor/u2f/cancel
     methods:  [POST]
-    defaults: { _controller: SurfnetStepupGatewayGatewayBundle:SecondFactor:cancelU2fAuthentication }
+    defaults: { _controller: SurfnetStepupGatewayGatewayBundle:SecondFactor:cancelAuthentication }
 
 gateway_verify_second_factor_choose_second_factor:
     path:     /choose-second-factor

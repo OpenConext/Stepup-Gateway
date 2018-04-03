@@ -1,38 +1,20 @@
-{% extends "::base.html.twig" %}
+{% extends "@SurfnetStepupGatewayGateway/SecondFactor/secondFactorAuthentication.html.twig" %}
 
-{% block page_title %}{{ 'gateway.second_factor.sms.send_challenge.title'|trans }}{% endblock %}
-
+{% block application_name %}{{ 'gateway.second_factor.sms.send_challenge.title'|trans }}{% endblock application_name %}
 {% block content %}
-    <h2>{{ block('page_title') }}</h2>
 
-    <p>{{ 'gateway.second_factor.sms.text.help_user_enter_phone_number'|trans }}</p>
-
-    <ol>
-        <li>{{ 'gateway.second_factor.sms.text.ensure_phone_has_signal'|trans }}</li>
-        <li>{{ 'gateway.second_factor.sms.text.after_pressing_proceed'|trans }}</li>
-    </ol>
-
-    <hr>
+    <p>{{ 'gateway.second_factor.sms.text.help_user_enter_phone_number'|trans({"%phone_number%": phoneNumber|slice(-4)}) }}</p>
 
     {% if otpRequestsRemaining != maximumOtpRequests %}
         <div class="alert alert-{% if otpRequestsRemaining == 0 %}error{% elseif otpRequestsRemaining == 1 %}warning{% else %}info{% endif %}">
-                {{ 'gateway.second_factor.sms.text.otp_requests_remaining'|trans({ '%count%': otpRequestsRemaining }) }}
-            </div>
+            {{ 'gateway.second_factor.sms.text.otp_requests_remaining'|trans({ '%count%': otpRequestsRemaining }) }}
+        </div>
     {% endif %}
 
     <div class="form-gateway-send-sms-challenge">
-
-        <table class="table table-bordered table-hover">
-            <tbody>
-            <tr>
-                <th scope="row">{{ 'gateway.form.gateway_send_sms_challenge.label.phone_number'|trans }}</th>
-                <td>{{ phoneNumber }}</td>
-            </tr>
-            </tbody>
-        </table>
-
         {{ form(form) }}
-
     </div>
+
+    <p>{{ 'gateway.second_factor.sms.text.next_step'|trans }}</p>
 
 {% endblock %}

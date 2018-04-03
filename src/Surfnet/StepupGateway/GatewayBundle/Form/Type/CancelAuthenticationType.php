@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2014 SURFnet bv
+ * Copyright 2018 SURFnet bv
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,27 +20,19 @@ namespace Surfnet\StepupGateway\GatewayBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class SendSmsChallengeType extends AbstractType
+class CancelAuthenticationType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('send_challenge', 'submit', [
-            'label' => 'gateway.form.gateway_send_sms_challenge.button.send_challenge',
-            'attr' => [ 'class' => 'btn btn-primary' ],
-        ]);
-    }
-
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        $resolver->setDefaults([
-            'data_class' => 'Surfnet\StepupGateway\GatewayBundle\Command\SendSmsChallengeCommand',
+        $builder->add('cancel', 'submit', [
+            'label' => 'gateway.form.cancel_authentication.button.cancel',
+            'attr'  => ['class' => 'btn-link nav-link', 'formnovalidate' => 'formnovalidate'],
         ]);
     }
 
     public function getName()
     {
-        return 'gateway_send_sms_challenge';
+        return 'gateway_cancel_authentication';
     }
 }
