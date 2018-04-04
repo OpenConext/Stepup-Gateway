@@ -120,7 +120,7 @@ final class ResponseFactory
         $this->addSubjectConfirmationFor($newAssertion, $targetServiceProvider);
         $newAssertion->setNameId([
             'Format' => Constants::NAMEID_UNSPECIFIED,
-            'ValueValue' => $nameId,
+            'Value' => $nameId,
         ]);
         $newAssertion->setValidAudiences([$this->proxyStateHandler->getRequestServiceProvider()]);
         $this->addAuthenticationStatementTo($newAssertion, $authnContextClassRef);
