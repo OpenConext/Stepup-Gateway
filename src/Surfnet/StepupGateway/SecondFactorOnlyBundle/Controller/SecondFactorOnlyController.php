@@ -29,9 +29,24 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
+/**
+ * Entry point for the Stepup SFO flow.
+ *
+ * See docs/GatewayState.md for a high-level diagram on how this controller
+ * interacts with outside actors and other parts of Stepup.
+ */
 class SecondFactorOnlyController extends Controller
 {
     /**
+     * Receive an AuthnRequest from a service provider.
+     *
+     * This action will forward the user using an internal redirect to the
+     * SecondFactorController to start the actual second factor verification.
+     *
+     * This action also detects if the request is made by ADFS, and tracks
+     * some additional information in the session of the user in order to send
+     * a non-standard response back to ADFS.
+     *
      * @param Request $httpRequest
      * @return Response
      */
@@ -131,6 +146,13 @@ class SecondFactorOnlyController extends Controller
     }
 
     /**
+     * Send a SAML response back to the service provider.
+     *
+     * Second factor verification handled by SecondFactorController is
+     * finished. The user was forwarded back to this action with an internal
+     * redirect. This method sends a AuthnResponse back to the service
+     * provider in response to the AuthnRequest received in ssoAction().
+     *
      * @return Response
      */
     public function respondAction()

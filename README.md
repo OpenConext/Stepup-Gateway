@@ -27,6 +27,7 @@ The Gateway is configured to only accept connections over SSL. Disable this unde
 
 Documentation specific to this component is located in the [docs](./docs) directory in this repository:
 - [Gateway API](./docs/GatewayAPI.md)
+- [Gateway State](./docs/GatewayState.md) (diagrams of main flows and user session data)
 - [SAML Proxy](./docs/SAMLProxy.md) with:
   - [GSSP](./docs/GSSP.md)
   - [SFO](./docs/SFO.md)

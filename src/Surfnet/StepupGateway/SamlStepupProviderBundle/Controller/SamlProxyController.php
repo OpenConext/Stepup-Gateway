@@ -36,14 +36,26 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @SuppressWarnings(PHPMD.NPathComplexity)
+ * Handling of GSSP registration and verification.
+ *
+ * See docs/GatewayState.md for a high-level diagram on how this controller
+ * interacts with outside actors and other parts of Stepup.
  *
  * Should be refactored, {@see https://www.pivotaltracker.com/story/show/90169776}
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.NPathComplexity)
  */
 class SamlProxyController extends Controller
 {
     /**
+     * Proxy a GSSP authentication request to the remote GSSP SSO endpoint.
+     *
+     * The user is about to be sent to the remote GSSP application. An authn
+     * request was created in ::sendSecondFactorVerificationAuthnRequestAction() and this method
+     * proxies the authn request to the remote SSO URL. The remote application
+     * will send an assertion back to consumeAssertionAction().
+     *
      * @param string  $provider
      * @param Request $httpRequest
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
@@ -123,6 +135,21 @@ class SamlProxyController extends Controller
         return $redirectBinding->createResponseFor($proxyRequest);
     }
 
+    /**
+     * Start a GSSP single sign-on.
+     *
+     * The user has selected a second factor token and the token happens to be
+     * a GSSP token. The SecondFactorController therefor did an internal
+     * redirect (see SecondFactorController::verifyGssfAction) to this method.
+     *
+     * In this method, an authn request is created. This authn request is not
+     * sent directly to the GSSP SSO URL, but proxied trough the gateway first
+     * (see SamlProxyController::ssoAction).
+     *
+     * @param $provider
+     * @param $subjectNameId
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
     public function sendSecondFactorVerificationAuthnRequestAction($provider, $subjectNameId)
     {
         $provider = $this->getProvider($provider);
@@ -159,6 +186,12 @@ class SamlProxyController extends Controller
     }
 
     /**
+     * Process an assertion received from the remote GSSP application.
+     *
+     * The GSSP application sent an assertion back to the gateway. When
+     * successful, the user is sent back to the
+     * SecondFactorController:gssfVerifiedAction.
+     *
      * @param string  $provider
      * @param Request $httpRequest
      * @return \Symfony\Component\HttpFoundation\Response

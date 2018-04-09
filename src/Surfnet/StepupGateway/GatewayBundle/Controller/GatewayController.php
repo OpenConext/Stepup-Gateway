@@ -31,10 +31,29 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
+/**
+ * Entry point for the Stepup login flow.
+ *
+ * See docs/GatewayState.md for a high-level diagram on how this controller
+ * interacts with outside actors and other parts of Stepup.
+ */
 class GatewayController extends Controller
 {
     const RESPONSE_CONTEXT_SERVICE_ID = 'gateway.proxy.response_context';
 
+    /**
+     * Receive an AuthnRequest from a service provider.
+     *
+     * The service provider is either a Stepup component (SelfService, RA) or
+     * an external service provider.
+     *
+     * This single sign-on action will start a new SAML request to the remote
+     * IDP configured in Stepup (most likely to be an instance of OpenConext
+     * EngineBlock).
+     *
+     * @param Request $httpRequest
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
+     */
     public function ssoAction(Request $httpRequest)
     {
         /** @var \Psr\Log\LoggerInterface $logger */
@@ -106,6 +125,13 @@ class GatewayController extends Controller
     }
 
     /**
+     * Receive an AuthnResponse from an identity provider.
+     *
+     * The AuthnRequest started in ssoAction() resulted in an AuthnResponse
+     * from the IDP. This method handles the assertion and forwards the user
+     * using an internal redirect to the SecondFactorController to start the
+     * actual second factor verification.
+     *
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\Response
      */
@@ -151,6 +177,14 @@ class GatewayController extends Controller
         return $this->forward('SurfnetStepupGatewayGatewayBundle:SecondFactor:selectSecondFactorForVerification');
     }
 
+    /**
+     * Send a SAML response back to the service provider.
+     *
+     * Second factor verification handled by SecondFactorController is
+     * finished. The user was forwarded back to this action with an internal
+     * redirect. This method sends a AuthnResponse back to the service
+     * provider in response to the AuthnRequest received in ssoAction().
+     */
     public function respondAction()
     {
         $responseContext = $this->getResponseContext();
