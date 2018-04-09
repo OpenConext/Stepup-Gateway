@@ -40,7 +40,8 @@
         "surfnet/yubikey-api-client-bundle": "^3.0",
         "beberlei/assert": "^2.0",
         "webmozart/assert": "^1.2",
-        "openconext/monitor-bundle": "^1.0"
+        "openconext/monitor-bundle": "^1.0",
+        "graylog2/gelf-php": "^1.5"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3",

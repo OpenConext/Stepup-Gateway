@@ -107,6 +107,15 @@ services:
         arguments:
             - @monolog.logger.authentication
 
+    gateway.monolog.gelf_to_string_formatter:
+        class: Surfnet\StepupGateway\GatewayBundle\Monolog\Formatter\GelfMessageToStringFormatter
+        arguments:
+            - "@gateway.monolog.gelf_message_formatter"
+
+    gateway.monolog.gelf_message_formatter:
+        public: false
+        class: Monolog\Formatter\GelfMessageFormatter
+
     # Forms
     gateway.form.type.anchor:
         class: Surfnet\StepupGateway\GatewayBundle\Form\Type\AnchorType

@@ -25,7 +25,7 @@ monolog:
             facility: user
             level: INFO
             channels: [authentication]
-            formatter: surfnet_stepup.monolog.json_formatter
+            formatter: gateway.monolog.gelf_to_string_formatter
         main_logfile:
             type: stream
             handler: logfile
