@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "e27017912c262e11fa9b9c3fa3782e91",
+    "content-hash": "028715f6bb57a5e8a4debb1343e3c95e",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -1010,16 +1010,16 @@
         },
         {
             "name": "graylog2/gelf-php",
-            "version": "1.5.3",
+            "version": "1.5.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/bzikarsky/gelf-php.git",
-                "reference": "0cb872928246bada1b6a5f504a7c3589f1c1174d"
+                "reference": "c4e0743ba323459b6e62222107a0898e77d2fd6e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/bzikarsky/gelf-php/zipball/0cb872928246bada1b6a5f504a7c3589f1c1174d",
-                "reference": "0cb872928246bada1b6a5f504a7c3589f1c1174d",
+                "url": "https://api.github.com/repos/bzikarsky/gelf-php/zipball/c4e0743ba323459b6e62222107a0898e77d2fd6e",
+                "reference": "c4e0743ba323459b6e62222107a0898e77d2fd6e",
                 "shasum": ""
             },
             "require": {
@@ -1062,7 +1062,7 @@
                 }
             ],
             "description": "A php implementation to send log-messages to a GELF compatible backend like Graylog2.",
-            "time": "2016-11-21T13:31:39+00:00"
+            "time": "2017-06-24T10:38:25+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -2684,22 +2684,21 @@
         },
         {
             "name": "surfnet/stepup-bundle",
-            "version": "3.3.3",
+            "version": "3.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/OpenConext/Stepup-bundle.git",
-                "reference": "6ac86cdcf6bbc2e0c50408fff7cafa7a5445a8fb"
+                "reference": "e0afaa26ffd0a38bb89b55e95761fe9555b6670f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/OpenConext/Stepup-bundle/zipball/6ac86cdcf6bbc2e0c50408fff7cafa7a5445a8fb",
-                "reference": "6ac86cdcf6bbc2e0c50408fff7cafa7a5445a8fb",
+                "url": "https://api.github.com/repos/OpenConext/Stepup-bundle/zipball/e0afaa26ffd0a38bb89b55e95761fe9555b6670f",
+                "reference": "e0afaa26ffd0a38bb89b55e95761fe9555b6670f",
                 "shasum": ""
             },
             "require": {
                 "ext-gmp": "*",
                 "ext-openssl": "*",
-                "graylog2/gelf-php": "^1.5",
                 "guzzlehttp/guzzle": "^6.0",
                 "monolog/monolog": "~1.11",
                 "php": "^5.6|^7.0",
@@ -2714,7 +2713,6 @@
                 "symfony/validator": "^2.7"
             },
             "require-dev": {
-                "liip/rmt": "1.1.*",
                 "mockery/mockery": "0.9.*",
                 "phpmd/phpmd": "^2.0",
                 "phpunit/phpunit": "^4.0",
@@ -2738,7 +2736,7 @@
                 "suaas",
                 "surfnet"
             ],
-            "time": "2018-03-22T14:15:12+00:00"
+            "time": "2018-04-09T11:13:53+00:00"
         },
         {
             "name": "surfnet/stepup-saml-bundle",

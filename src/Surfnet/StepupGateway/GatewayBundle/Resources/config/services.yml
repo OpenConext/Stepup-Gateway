@@ -109,7 +109,12 @@ services:
 
     gateway.monolog.gelf_to_string_formatter:
         class: Surfnet\StepupGateway\GatewayBundle\Monolog\Formatter\GelfMessageToStringFormatter
-        parent: surfnet_stepup.monolog.full_message_exception_gelf_message_formatter
+        arguments:
+            - "@gateway.monolog.gelf_message_formatter"
+
+    gateway.monolog.gelf_message_formatter:
+        public: false
+        class: Monolog\Formatter\GelfMessageFormatter
 
     # Forms
     gateway.form.type.anchor:
