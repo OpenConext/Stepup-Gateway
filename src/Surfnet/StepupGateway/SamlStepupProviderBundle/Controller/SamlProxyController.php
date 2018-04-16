@@ -220,9 +220,12 @@ class SamlProxyController extends Controller
         } catch (Exception $exception) {
             $logger->error(sprintf('Could not process received Response, error: "%s"', $exception->getMessage()));
 
-            $response = $this->createResponseFailureResponse($provider);
+            $response = $this->createResponseFailureResponse(
+                $provider,
+                $this->getDestination($provider->getStateHandler())
+            );
 
-            return $this->renderSamlResponse('unprocessableResponse', $stateHandler, $response);
+            return $this->renderSamlResponse('consumeAssertion', $stateHandler, $response);
         }
 
         $adaptedAssertion = new AssertionAdapter($assertion);
@@ -243,16 +246,13 @@ class SamlProxyController extends Controller
                 $authenticatedNameId->value
             ));
 
-            if ($stateHandler->secondFactorVerificationRequested()) {
-                // the error should go to the original requesting service provider
-                $targetServiceProvider = $this->get('gateway.proxy.response_context')->getServiceProvider();
-                $stateHandler->setRequestServiceProvider($targetServiceProvider->getEntityId());
-            }
-
             return $this->renderSamlResponse(
                 'recoverableError',
                 $stateHandler,
-                $this->createAuthnFailedResponse($provider)
+                $this->createAuthnFailedResponse(
+                    $provider,
+                    $this->getDestination($provider->getStateHandler())
+                )
             );
         }
 
@@ -313,6 +313,23 @@ class SamlProxyController extends Controller
     }
 
     /**
+     * @param StateHandler $stateHandler
+     * @return string
+     */
+    private function getDestination(StateHandler $stateHandler)
+    {
+        if ($stateHandler->secondFactorVerificationRequested()) {
+            $destination = $this->get('gateway.proxy.response_context')->getDestination();
+        } else {
+            $destination = $this->getServiceProvider(
+                $stateHandler->getRequestServiceProvider()
+            )->getAssertionConsumerUrl();
+        }
+
+        return $destination;
+    }
+
+    /**
      * @param string         $view
      * @param StateHandler   $stateHandler
      * @param SAMLResponse $response
@@ -361,11 +378,12 @@ class SamlProxyController extends Controller
      * not process the response we received from the upstream GSSP
      *
      * @param Provider $provider
+     * @param string $destination
      * @return SAMLResponse
      */
-    private function createResponseFailureResponse(Provider $provider)
+    private function createResponseFailureResponse(Provider $provider, $destination)
     {
-        $response = $this->createResponse($provider);
+        $response = $this->createResponse($provider, $destination);
         $response->setStatus(['Code' => Constants::STATUS_RESPONDER]);
 
         return $response;
@@ -376,11 +394,12 @@ class SamlProxyController extends Controller
      * that the upstream GSSP did not responsd with the same NameID as we request to authenticate in the AuthnRequest
      *
      * @param Provider $provider
+     * @param string $destination
      * @return SAMLResponse
      */
-    private function createAuthnFailedResponse(Provider $provider)
+    private function createAuthnFailedResponse(Provider $provider, $destination)
     {
-        $response = $this->createResponse($provider);
+        $response = $this->createResponse($provider, $destination);
         $response->setStatus([
             'Code'    => Constants::STATUS_RESPONDER,
             'SubCode' => Constants::STATUS_AUTHN_FAILED
@@ -393,14 +412,13 @@ class SamlProxyController extends Controller
      * Creates a standard response with default status Code (success)
      *
      * @param Provider $provider
+     * @param string $destination
      * @return SAMLResponse
      */
-    private function createResponse(Provider $provider)
+    private function createResponse(Provider $provider, $destination)
     {
-        $serviceProvider = $this->getServiceProvider($provider->getStateHandler()->getRequestServiceProvider());
-
         $response = new SAMLResponse();
-        $response->setDestination($serviceProvider->getAssertionConsumerUrl());
+        $response->setDestination($destination);
         $response->setIssuer($provider->getIdentityProvider()->getEntityId());
         $response->setIssueInstant((new DateTime('now'))->getTimestamp());
         $response->setInResponseTo($provider->getStateHandler()->getRequestId());
