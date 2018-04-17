@@ -18,8 +18,10 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Entity;
 
+use Psr\Log\LoggerInterface;
 use Surfnet\SamlBundle\Entity\ServiceProvider as BaseServiceProvider;
 use Surfnet\StepupGateway\GatewayBundle\Exception\InvalidArgumentException;
+use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\Exception\AcsLocationNotAllowedException;
 
 class ServiceProvider extends BaseServiceProvider
 {
@@ -64,5 +66,85 @@ class ServiceProvider extends BaseServiceProvider
             }
         }
         return false;
+    }
+
+    /**
+     * Determine the ACS location to send the response to.
+     *
+     * The get getAssertionConsumerUrl() method returns a trusted ACS location
+     * for this service provider. This value is set when the service provider
+     * is "internal", for example when it is configured in yaml
+     * configuration.
+     *
+     * Methods like Surfnet\SamlBundle\Http\PostBinding::processResponse use
+     * this trusted value. When the ServiceProvider is external, this value is
+     * empty and the ACS location found in the AuthnRequest should be used, if
+     * it matches one of the configured allowed ACS locations for the service
+     * provider. This methods checks if a given URL matches the allowed URLs.
+     *
+     * @param $acsLocationInAuthnRequest
+     * @param LoggerInterface $logger Optional
+     * @return string
+     */
+    public function determineAcsLocation($acsLocationInAuthnRequest, LoggerInterface $logger = null)
+    {
+        // List of allowed ACS locations configured in middleware.
+        $allowedAcsLocations = $this->get('allowedAcsLocations');
+
+        if (in_array($acsLocationInAuthnRequest, $allowedAcsLocations)) {
+            return $acsLocationInAuthnRequest;
+        }
+
+        if ($logger !== null) {
+            $logger->warning(
+                sprintf(
+                    'AuthnRequest requests ACS location "%s" but it is not configured in the list of allowed ACS locations',
+                    $acsLocationInAuthnRequest
+                )
+            );
+        }
+
+        return reset($allowedAcsLocations);
+    }
+
+    /**
+     * Determine the ACS location for ADFS to send the response to.
+     *
+     * This method is similar to determineAcsLocation(), but does not check
+     * for the requested ACS location to be identical to one of the configured
+     * ACS locations, but only if matches the first part of an allowed URL.
+     *
+     * For example, ADFS might send an ACS location like:
+     *
+     *     https://example.com/consume-assertion?key=value
+     *
+     * Above URL is allowed if one of the configured URLs is:
+     *
+     *     https://example.com/consume-assertion
+     *
+     * Or:
+     *
+     *     https://example.com/consume
+     *
+     *
+     * @param $acsLocationInAuthnRequest
+     * @return string
+     */
+    public function determineAcsLocationForAdfs($acsLocationInAuthnRequest)
+    {
+        // List of allowed ACS locations configured in middleware.
+        $allowedAcsLocations = $this->get('allowedAcsLocations');
+
+        foreach ($allowedAcsLocations as $allowedAcsLocation) {
+            if (strpos($acsLocationInAuthnRequest, $allowedAcsLocation) === 0) {
+                return $acsLocationInAuthnRequest;
+            }
+        }
+
+        // The exception listener will log relevant information to the log.
+
+        throw new AcsLocationNotAllowedException(
+            $acsLocationInAuthnRequest
+        );
     }
 }

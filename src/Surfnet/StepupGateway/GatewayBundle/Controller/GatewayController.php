@@ -83,6 +83,7 @@ class GatewayController extends Controller
         $stateHandler
             ->setRequestId($originalRequestId)
             ->setRequestServiceProvider($originalRequest->getServiceProvider())
+            ->setRequestAssertionConsumerServiceUrl($originalRequest->getAssertionConsumerServiceURL())
             ->setRelayState($httpRequest->get(AuthnRequest::PARAMETER_RELAY_STATE, ''))
             ->setResponseAction('SurfnetStepupGatewayGatewayBundle:Gateway:respond')
             ->setResponseContextServiceId(static::RESPONSE_CONTEXT_SERVICE_ID);
@@ -211,7 +212,7 @@ class GatewayController extends Controller
 
         $response = $proxyResponseService->createProxyResponse(
             $responseContext->reconstituteAssertion(),
-            $responseContext->getServiceProvider(),
+            $responseContext->getDestination(),
             (string)$grantedLoa
         );
 

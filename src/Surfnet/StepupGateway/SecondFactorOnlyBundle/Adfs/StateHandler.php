@@ -71,17 +71,6 @@ class StateHandler
     }
 
     /**
-     * @param string $acsUrl
-     * @return $this
-     */
-    public function setAssertionConsumerServiceUrl($acsUrl)
-    {
-        $this->set('acs_url', $acsUrl);
-
-        return $this;
-    }
-
-    /**
      * @return mixed|null
      */
     public function getRequestId()
@@ -103,14 +92,6 @@ class StateHandler
     public function getContext()
     {
         return $this->get('context');
-    }
-
-    /**
-     * @return mixed|null
-     */
-    public function getAssertionConsumerServiceUrl()
-    {
-        return $this->get('acs_url');
     }
 
     /**

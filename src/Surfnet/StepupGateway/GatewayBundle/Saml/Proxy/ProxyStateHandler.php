@@ -90,6 +90,25 @@ class ProxyStateHandler
     }
 
     /**
+     * @param string $url
+     * @return $this
+     */
+    public function setRequestAssertionConsumerServiceUrl($url)
+    {
+        $this->set('assertion_consumer_service_url', $url);
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getRequestAssertionConsumerServiceUrl()
+    {
+        return $this->get('assertion_consumer_service_url');
+    }
+
+    /**
      * @param string $relayState
      * @return $this
      */

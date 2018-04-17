@@ -24,7 +24,6 @@ use SAML2\Response;
 use SAML2\XML\saml\SubjectConfirmation;
 use SAML2\XML\saml\SubjectConfirmationData;
 use Surfnet\SamlBundle\Entity\IdentityProvider;
-use Surfnet\SamlBundle\Entity\ServiceProvider;
 use Surfnet\StepupGateway\GatewayBundle\Saml\AssertionSigningService;
 use Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler;
 
@@ -63,38 +62,34 @@ final class ResponseFactory
 
     /**
      * @param string $nameId
-     * @param ServiceProvider $targetServiceProvider
+     * @param string $destination
      * @param string|null $authnContextClassRef
      * @return Response
      */
-    public function createSecondFactorOnlyResponse(
-        $nameId,
-        ServiceProvider $targetServiceProvider,
-        $authnContextClassRef
-    ) {
-
+    public function createSecondFactorOnlyResponse($nameId, $destination, $authnContextClassRef)
+    {
         return $this->createNewAuthnResponse(
             $this->createNewAssertion(
                 $nameId,
-                $targetServiceProvider,
-                $authnContextClassRef
+                $authnContextClassRef,
+                $destination
             ),
-            $targetServiceProvider
+            $destination
         );
     }
 
     /**
      * @param Assertion $newAssertion
-     * @param ServiceProvider $targetServiceProvider
+     * @param string $destination The ACS location
      * @return Response
      */
-    private function createNewAuthnResponse(Assertion $newAssertion, ServiceProvider $targetServiceProvider)
+    private function createNewAuthnResponse(Assertion $newAssertion, $destination)
     {
         $response = new Response();
         $response->setAssertions([$newAssertion]);
         $response->setIssuer($this->hostedIdentityProvider->getEntityId());
         $response->setIssueInstant($this->getTimestamp());
-        $response->setDestination($targetServiceProvider->getAssertionConsumerUrl());
+        $response->setDestination($destination);
         $response->setInResponseTo($this->proxyStateHandler->getRequestId());
 
         return $response;
@@ -102,22 +97,19 @@ final class ResponseFactory
 
     /**
      * @param string $nameId
-     * @param ServiceProvider $targetServiceProvider
      * @param string $authnContextClassRef
+     * @param string $destination The ACS location
      * @return Assertion
      */
-    private function createNewAssertion(
-        $nameId,
-        ServiceProvider $targetServiceProvider,
-        $authnContextClassRef
-    ) {
+    private function createNewAssertion($nameId, $authnContextClassRef, $destination)
+    {
         $newAssertion = new Assertion();
         $newAssertion->setNotBefore($this->currentTime->getTimestamp());
         $newAssertion->setNotOnOrAfter($this->getTimestamp('PT5M'));
         $newAssertion->setIssuer($this->hostedIdentityProvider->getEntityId());
         $newAssertion->setIssueInstant($this->getTimestamp());
         $this->assertionSigningService->signAssertion($newAssertion);
-        $this->addSubjectConfirmationFor($newAssertion, $targetServiceProvider);
+        $this->addSubjectConfirmationFor($newAssertion, $destination);
         $newAssertion->setNameId([
             'Format' => Constants::NAMEID_UNSPECIFIED,
             'Value' => $nameId,
@@ -130,16 +122,16 @@ final class ResponseFactory
 
     /**
      * @param Assertion $newAssertion
-     * @param ServiceProvider $targetServiceProvider
+     * @param string $destination The ACS location
      */
-    private function addSubjectConfirmationFor(Assertion $newAssertion, ServiceProvider $targetServiceProvider)
+    private function addSubjectConfirmationFor(Assertion $newAssertion, $destination)
     {
         $confirmation         = new SubjectConfirmation();
         $confirmation->Method = Constants::CM_BEARER;
 
         $confirmationData                      = new SubjectConfirmationData();
         $confirmationData->InResponseTo        = $this->proxyStateHandler->getRequestId();
-        $confirmationData->Recipient           = $targetServiceProvider->getAssertionConsumerUrl();
+        $confirmationData->Recipient           = $destination;
         $confirmationData->NotOnOrAfter        = $this->getTimestamp('PT8H');
 
         $confirmation->SubjectConfirmationData = $confirmationData;

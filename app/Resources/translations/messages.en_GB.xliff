@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:jms="urn:jms:translation" version="1.2">
-  <file date="2018-03-27T15:58:01Z" source-language="en" target-language="en_GB" datatype="plaintext" original="not.available">
+  <file date="2018-04-13T09:47:07Z" source-language="en" target-language="en_GB" datatype="plaintext" original="not.available">
     <header>
       <tool tool-id="JMSTranslationBundle" tool-name="JMSTranslationBundle" tool-version="1.1.0-DEV"/>
       <note>The source node in most cases contains the sample message as written by the developer. If it looks like a dot-delimitted string such as "form.label.firstname", then the developer has not provided a default message.</note>
@@ -11,6 +11,11 @@
         <target>OpenConext Stepup</target>
         <jms:reference-file line="26">/Resources/views/base.html.twig</jms:reference-file>
         <jms:reference-file line="6">/Resources/views/base.html.twig</jms:reference-file>
+      </trans-unit>
+      <trans-unit id="3de180bb225dee1f882575f1a61a4cedd0fdc50b" resname="gateway.error.acs_location_not_allowed.title">
+        <source>gateway.error.acs_location_not_allowed.title</source>
+        <target>ACS location not allowed</target>
+        <jms:reference-file line="37">/../src/Surfnet/StepupGateway/GatewayBundle/Controller/ExceptionController.php</jms:reference-file>
       </trans-unit>
       <trans-unit id="1aa7637939b9d85db5e1b5bb89ebb0dedbc01f7e" resname="gateway.error.click_to_go_back_to_sp">
         <source>gateway.error.click_to_go_back_to_sp</source>
