@@ -321,7 +321,7 @@
       </trans-unit>
       <trans-unit id="91d524414db2193ad8462909ec5da4c9a732b595" resname="stepup.error.generic_error.description">
         <source>stepup.error.generic_error.description</source>
-        <target>Something went wrong. Please try again.</target>
+        <target>Er is iets mis gegaan. Probeer het opnieuw.</target>
         <jms:reference-file line="144">/../vendor/surfnet/stepup-bundle/src/Controller/ExceptionController.php</jms:reference-file>
       </trans-unit>
       <trans-unit id="5dac3939e990d8ad764c06634b14adf85517d4f1" resname="stepup.error.generic_error.title">
