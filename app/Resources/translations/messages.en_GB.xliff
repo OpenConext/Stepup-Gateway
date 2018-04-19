@@ -6,12 +6,6 @@
       <note>The source node in most cases contains the sample message as written by the developer. If it looks like a dot-delimitted string such as "form.label.firstname", then the developer has not provided a default message.</note>
     </header>
     <body>
-      <trans-unit id="0c3112826a8c897ac0b6a3d3a8432059b74dd996" resname="app.name">
-        <source>app.name</source>
-        <target>OpenConext Stepup</target>
-        <jms:reference-file line="26">/Resources/views/base.html.twig</jms:reference-file>
-        <jms:reference-file line="6">/Resources/views/base.html.twig</jms:reference-file>
-      </trans-unit>
       <trans-unit id="3de180bb225dee1f882575f1a61a4cedd0fdc50b" resname="gateway.error.acs_location_not_allowed.title">
         <source>gateway.error.acs_location_not_allowed.title</source>
         <target>ACS location not allowed</target>

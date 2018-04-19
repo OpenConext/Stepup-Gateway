@@ -3,7 +3,7 @@
 
 {% block title %}
     {%  if block('page_title') is not empty %}{{ block('page_title') }} &mdash; {% endif %}
-    {{ 'app.name'|trans }}
+    {{ app_name }}
 {% endblock title %}
 {% block head_style %}
     {% stylesheets
@@ -23,7 +23,7 @@
         {% block page_header %}
             <div class="page-header clearfix">
                 <img src="/images/header-logo.png" class="pull-right logo" alt="OpenConext Stepup">
-                <h1>{% block application_name %}{{ 'app.name'|trans }}{% endblock %}</h1>
+                <h1>{% block application_name %}{{ app_name }}{% endblock %}</h1>
             </div>
         {% endblock page_header %}
 
