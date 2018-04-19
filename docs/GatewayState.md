@@ -33,15 +33,15 @@ activate SP
             rnote over GW #aqua
             **Store to state:**
 
-              - request ID of <AR1>
-              - ACS location of <AR1>
-              - request ID of <AR2> (gateway request ID)
-              - entity ID of service provider
-              - relay state <AR1>
-              - required LoA found in <AR1>
-              - some internal configuration
-                so gateway knows the request
-                was not SFO or GSSP
+              - ""[setRequestId]                          ""request ID of <AR1>
+              - ""[setRequestServiceProvider]             ""entity ID of service provider
+              - ""[setRequestAssertionConsumerServiceUrl] ""ACS location of <AR1>
+              - ""[setRelayState]                         ""relay state <AR1>
+              - ""[setResponse*]                          ""some internal configuration
+                ""                                        ""so gateway knows the request
+                ""                                        ""was not SFO or GSSP
+              - ""[setRequiredLoaIdentifier]              ""required LoA found in <AR1>
+              - ""[setGatewayRequestId]                   ""request ID of <AR2>
             end note
         end
 
@@ -54,17 +54,21 @@ activate SP
             rnote over GW #green
             **Read from state:**
 
-              - request ID <AR1>
-              - request ID <AR2> (gateway request ID)
+              - ""[getRequestId]        ""request ID <AR1>
+              - ""[getGatewayRequestId] ""request ID <AR2>
+
+            **In case of error:**
+              - ""[getRequestAssertionConsumerServiceUrl] ""ACS location of <AR1>
+              - ""[getRequestId]                          ""request ID of <AR1>
             end note
 
             rnote over GW #aqua
             **Store to state:**
 
-              - the assertion in response to <AR2>
-              - schacHomeOrg of IDP
-              - name ID of authenticated user
-              - entity ID of the IDP
+              - ""[saveAssertion]            ""the assertion in response to <AR2>
+              - ""[setSchacHomeOrganization] ""schacHomeOrg of IDP
+              - ""[saveIdentityNameId]       ""name ID of authenticated user
+              - ""[setAuthenticatingIdp]     ""entity ID of the IDP
             end note
         end
 
@@ -80,21 +84,20 @@ activate SP
             rnote over SF #green
             **Read from state:**
 
-              - entity ID of service provider
-                to determine SP-specific
-                configuration
-              - required LoA
-              - schacHomeOrg of IDP
-              - name ID of authenticated user
-              - request ID of <AR1>
+              - ""[getRequestId]              ""request ID of <AR1>
+              - ""[getRequestServiceProvider] ""entity ID of service provider
+                ""                            ""to determine SP-specific configuration
+              - ""[getRequiredLoaIdentifier]  ""required LoA
+              - ""[getSchacHomeOrganization]  ""schacHomeOrg of IDP
+              - ""[getIdentityNameId]         ""name ID of authenticated user
             end note
 
             rnote over SF #aqua
             **Store to state:**
 
-              - unique ID of selected token
-              - preffered locale of token
-              - verification success or fail
+              - ""[setSelectedSecondFactorId] ""unique ID of selected token
+              - ""[setPreferredLocale]        ""preffered locale of token
+              - ""[setSecondFactorVerified]   ""verification success or fail
             end note
 
             SF -> GW: Process verification result
@@ -104,14 +107,22 @@ activate SP
             rnote over GW #green
             **Read from state:**
 
-              - request ID of <AR1>
-              - ACS location of <AR1>
-              - entity ID of service provider
-              - assertion in response to <AR2>
-                used to generate response to <AR1>
-              - token ID and verification result
-                to determine granted LoA
+              - ""[getRequestId]                          ""request ID of <AR1>
+              - ""[getRequestAssertionConsumerServiceUrl] ""ACS location of <AR1>
+              - ""[getRequestServiceProvider]             ""entity ID of service provider
+              - ""[getAssertion]                          ""assertion in response to <AR2>
+                ""                                        ""used to generate response to <AR1>
+              - ""[getSelectedSecondFactorId]             ""token ID
+              - ""[isSecondFactorVerified]                ""verification result
             end note
+
+            rnote over SF #aqua
+            **Store to state:**
+
+              - ""[setSelectedSecondFactorId] ""clear the tokenID
+              - ""[setSecondFactorVerified]   ""clear the verification flag
+            end note
+
         end
 
         GW -> SP: AuthnResponse <AR1>
@@ -149,20 +160,19 @@ activate SP
             rnote over SFO #aqua
             **Store to state:**
 
-              - request ID of <AR1>
-              - ACS location of <AR1>
-              - entity ID of service provider
-              - relay state <AR1>
-              - required LoA found in <AR1>
-              - some internal configuration
-                so gateway knows the request
-                was not SFO or GSSP
+              - ""[setRequestId]                          ""request ID of <AR1>
+              - ""[setRequestServiceProvider]             ""entity ID of service provider
+              - ""[setRequestAssertionConsumerServiceUrl] ""ACS location of <AR1>
+              - ""[setRelayState]                         ""relay state <AR1>
+              - ""[setResponse*]                          ""some internal configuration so 
+                ""                                        ""gateway knows the request was SFO
+              - ""[saveIdentityNameId]                    ""name ID in <AR1>
+              - ""[setRequiredLoaIdentifier]              ""required LoA found in <AR1>
 
             **Additional, in case of ADFS:**
 
-              - request ID of <AR1>
-              - Auth method
-              - context
+              - ""[Adfs::setAuthMethod] ""Auth method
+              - ""[Adfs::setContext]    ""Context
             end note
         end
 
@@ -176,24 +186,24 @@ activate SP
             is started to an external GSSP
             application (tiqr, irma, ...).
             end note
+
             rnote over SF #green
             **Read from state:**
 
-              - entity ID of service provider
-                to determine SP-specific
-                configuration
-              - required LoA
-              - schacHomeOrg of IDP
-              - name ID of authenticated user
-              - request ID of <AR1>
+              - ""[getRequestId]              ""request ID of <AR1>
+              - ""[getRequestServiceProvider] ""entity ID of service provider
+                ""                            ""to determine SP-specific configuration
+              - ""[getRequiredLoaIdentifier]  ""required LoA
+              - ""[getSchacHomeOrganization]  ""schacHomeOrg of IDP
+              - ""[getIdentityNameId]         ""name ID of authenticated user
             end note
 
             rnote over SF #aqua
             **Store to state:**
 
-              - unique ID of selected token
-              - preffered locale of token
-              - verification success or fail
+              - ""[setSelectedSecondFactorId] ""unique ID of selected token
+              - ""[setPreferredLocale]        ""preffered locale of token
+              - ""[setSecondFactorVerified]   ""verification success or fail
             end note
 
             SF -> SFO: Process verification result
@@ -203,18 +213,24 @@ activate SP
             rnote over SFO #green
             **Read from state:**
 
-              - request ID of <AR1>
-              - ACS location of <AR1>
-              - entity ID of service provider
-              - name ID found in <AR1>
-              - token ID and verification result
-                to determine granted LoA
+              - ""[getRequestId]                          ""request ID of <AR1>
+              - ""[getRequestAssertionConsumerServiceUrl] ""ACS location of <AR1>
+              - ""[getRequestServiceProvider]             ""entity ID of service provider
+              - ""[getIdentityNameId]                     ""name ID of authenticated user
+              - ""[getSelectedSecondFactorId]             ""token ID
+              - ""[isSecondFactorVerified]                ""verification result
 
             **Additional, in case of ADFS:**
 
-              - request ID of <AR1>
-              - Auth method
-              - context
+              - ""[Adfs::getAuthMethod] ""Auth method
+              - ""[Adfs::getContext]    ""context
+            end note
+
+            rnote over SF #aqua
+            **Store to state:**
+
+              - ""[setSelectedSecondFactorId] ""clear the tokenID
+              - ""[setSecondFactorVerified]   ""clear the verification flag
             end note
         end
 
@@ -273,17 +289,18 @@ activate SP
                     rnote over PROXY #green
                     **Read from login/SFO state:**
 
-                      - request ID <AR1> (for logging)
+                      - ""[getRequestId] ""request ID <AR1> (for logging)
                     end note
 
                     rnote over PROXY #aqua
                     **Store to GSSP-specific state:**
 
-                      - request ID <AR1>
-                      - request ID <AR3> ("gateway request ID")
-                      - name ID on token (argument to internal redirect)
-                      - relay state
-                      - mark to indicate this is not an registration request
+                      - ""[setRequestId]                          ""request ID <AR1>
+                      - ""[setGatewayRequestId]                   ""request ID <AR3>
+                      - ""[setSubject]                            ""name ID on token
+                      - ""[setRelayState]                         ""relay state
+                      - ""[markRequestAsSecondFactorVerification] ""flag to
+                        ""                                        ""indicate this is not registration
                     end note
                 end
 
@@ -297,14 +314,16 @@ activate SP
                     rnote over PROXY #green
                     **Read from state:**
 
-                      - request ID <AR3> (in response to check)
-                      - name ID
-                      - indicator (registration or verification)
+                      - ""[getRequestId]                      ""request ID <AR2> (logging)
+                      - ""[getGatewayRequestId]               ""request ID <AR3> (in-response-to check)
+                      - ""[getSubject]                        ""name ID <AR2>
+                      - ""[getRelayState]                     ""Relay state <AR2>
+                      - ""[secondFactorVerificationRequested] ""flag (registration or verification)
 
                     **Read from GW login/SFO state (error case):**
 
-                      - ACS URL <AR1>
-                      - entity ID of SP <AR1>
+                      - ""[getRequestAssertionConsumerServiceUrl] ""ACS location of <AR1>
+                      - ""[getRequestServiceProvider]             ""entity ID of SP <AR1>
                     end note
                 end
 
@@ -344,7 +363,7 @@ User -> SP: Login
 activate SP
 
     SP -> PROXY: AuthnRequest <AR1>
-    activate PROXY 
+    activate PROXY
 
         rnote over PROXY
         AuthnRequest <AR1> is received in
@@ -355,14 +374,14 @@ activate SP
 
         group singleSignOnAction()
             rnote over PROXY #aqua
-            **Store to state:**
+            **Store to GSSP-specific state:**
 
-             - request ID <AR1>
-             - ACS location of <AR1>
-             - request ID <AR2> ("gateway request ID", overwrites previous)
-             - enitity ID of service provider <AR2>
-             - relay state
-             - name ID
+             - ""[setRequestId]                          ""request ID <AR1> (in-response-to check)
+             - ""[setRequestAssertionConsumerServiceUrl] ""ACS location of <AR1>
+             - ""[setRequestServiceProvider]             ""entity ID of service provider <AR1>
+             - ""[setRelayState]                         ""relay state <AR1>
+             - ""[setSubject]                            ""name ID <AR1>
+             - ""[setGatewayRequestId]                   ""request ID <AR2>
             end note
         end
 
@@ -376,12 +395,16 @@ activate SP
             rnote over PROXY #green
             **Read from state:**
 
-             - request ID <AR1>
-             - request ID <AR2> (in response to check)
-             - ACS location of <AR1>
-             - name ID
-             - indicator (registration or verification)
-             - entity ID of service provider <AR1>
+              - ""[getRequestId]                      ""request ID <AR1> (logging)
+              - ""[getGatewayRequestId]               ""request ID <AR2> (in-response-to check)
+              - ""[getSubject]                        ""name ID <AR1>
+              - ""[getRelayState]                     ""Relay state <AR1>
+              - ""[secondFactorVerificationRequested] ""flag (registration or verification)
+
+            **In case of error**
+
+              - ""[getRequestAssertionConsumerServiceUrl] ""ACS location of <AR1>
+              - ""[getRequestServiceProvider]             ""entity ID of service provider <AR1>
             end note
         end
 
