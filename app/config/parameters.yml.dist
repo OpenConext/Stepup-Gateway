@@ -9,6 +9,9 @@ parameters:
     debug_toolbar:          true
     debug_redirects:        false
 
+    # Display name of application
+    app_name: "Stepup Gateway"
+
     use_assetic_controller: true
     # IP addresses of any HTTP proxies that are sitting in from of the application
     # See: http://symfony.com/doc/current/request/load_balancer_reverse_proxy.html
@@ -41,7 +44,7 @@ parameters:
     locales:                [nl_NL, en_GB]
     # Domain for the locale cookie that is set by the Gateway, SelfService and the RA and that is used to share the
     # user's locale preference with other (stepup) components
-    locale_cookie_domain:   surfconext.nl
+    locale_cookie_domain:   openconext.org
 
     # Messagebird (www.messagebird.com) REST API (v2 and above) access key
     # Reuired for sending SMS messages
@@ -58,9 +61,6 @@ parameters:
     selfservice_api_password: ~
     # Password for the "selfservice" Gateway API user
     registration_authority_api_password: ~
-
-    # Deprecated. Used in development only. Hostname of the graylog log server
-    graylog_hostname: graylog.host.tld
 
     # Message originator as displayed in SMS
     # "This can be a telephone number (including country code) or an alphanumeric string.

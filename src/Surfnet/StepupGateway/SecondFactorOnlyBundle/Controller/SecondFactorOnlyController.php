@@ -20,6 +20,8 @@ namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Controller;
 
 use Exception;
 use Surfnet\SamlBundle\SAML2\AuthnRequest;
+use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\Exception\InvalidAdfsRequestException;
+use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\Exception\InvalidAdfsResponseException;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Saml\ResponseFactory;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\LoaAliasLookupService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -27,9 +29,24 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
+/**
+ * Entry point for the Stepup SFO flow.
+ *
+ * See docs/GatewayState.md for a high-level diagram on how this controller
+ * interacts with outside actors and other parts of Stepup.
+ */
 class SecondFactorOnlyController extends Controller
 {
     /**
+     * Receive an AuthnRequest from a service provider.
+     *
+     * This action will forward the user using an internal redirect to the
+     * SecondFactorController to start the actual second factor verification.
+     *
+     * This action also detects if the request is made by ADFS, and tracks
+     * some additional information in the session of the user in order to send
+     * a non-standard response back to ADFS.
+     *
      * @param Request $httpRequest
      * @return Response
      */
@@ -48,17 +65,11 @@ class SecondFactorOnlyController extends Controller
         /** @var \Surfnet\SamlBundle\Http\RedirectBinding $redirectBinding */
         $bindingFactory = $this->get('second_factor_only.http.binding_factory');
 
-        try {
-            $logger->notice('Determine what type of Binding is used in the Request');
-            $binding = $bindingFactory->build($httpRequest);
+        $logger->notice('Determine what type of Binding is used in the Request');
+        $binding = $bindingFactory->build($httpRequest);
 
-            /** @var \Surfnet\SamlBundle\SAML2\ReceivedAuthnRequest $originalRequest */
-            $originalRequest = $binding->receiveSignedAuthnRequestFrom($httpRequest);
-        } catch (Exception $e) {
-            $logger->critical(sprintf('Could not process Request, error: "%s"', $e->getMessage()));
-
-            return $this->render('SurfnetStepupGatewayGatewayBundle:Gateway:unrecoverableError.html.twig');
-        }
+        /** @var \Surfnet\SamlBundle\SAML2\ReceivedAuthnRequest $originalRequest */
+        $originalRequest = $binding->receiveSignedAuthnRequestFrom($httpRequest);
 
         $originalRequestId = $originalRequest->getRequestId();
         $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
@@ -75,19 +86,26 @@ class SecondFactorOnlyController extends Controller
             try {
                 $httpRequest = $adfsHelper->transformRequest(
                     $httpRequest,
-                    $originalRequest->getRequestId(),
-                    $originalRequest->getAssertionConsumerServiceURL()
+                    $originalRequest->getRequestId()
                 );
             } catch (Exception $e) {
-                $logger->critical(sprintf('Could not process ADFS Request, error: "%s"', $e->getMessage()));
-                return $this->render('SurfnetStepupGatewayGatewayBundle:Gateway:unrecoverableError.html.twig');
+                throw new InvalidAdfsRequestException(
+                    sprintf('Could not process ADFS Request, error: "%s"', $e->getMessage())
+                );
             }
         }
 
+        /** @var \Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler $stateHandler */
         $stateHandler = $this->get('gateway.proxy.state_handler');
+
+        // Clear the state of the previous SSO action. Request data of previous
+        // SSO actions should not have any effect in subsequent SSO actions.
+        $stateHandler->clear();
+
         $stateHandler
             ->setRequestId($originalRequestId)
             ->setRequestServiceProvider($originalRequest->getServiceProvider())
+            ->setRequestAssertionConsumerServiceUrl($originalRequest->getAssertionConsumerServiceURL())
             ->setRelayState($httpRequest->get(AuthnRequest::PARAMETER_RELAY_STATE, ''))
             ->setResponseAction('SurfnetStepupGatewaySecondFactorOnlyBundle:SecondFactorOnly:respond')
             ->setResponseContextServiceId('second_factor_only.response_context');
@@ -129,6 +147,13 @@ class SecondFactorOnlyController extends Controller
     }
 
     /**
+     * Send a SAML response back to the service provider.
+     *
+     * Second factor verification handled by SecondFactorController is
+     * finished. The user was forwarded back to this action with an internal
+     * redirect. This method sends a AuthnResponse back to the service
+     * provider in response to the AuthnRequest received in ssoAction().
+     *
      * @return Response
      */
     public function respondAction()
@@ -150,17 +175,12 @@ class SecondFactorOnlyController extends Controller
 
         $selectedSecondFactorUuid = $this->getResponseContext()->getSelectedSecondFactor();
         if (!$selectedSecondFactorUuid) {
-            $logger->error(
-                'Cannot verify possession of an unknown second factor'
-            );
-
             throw new BadRequestHttpException('Cannot verify possession of an unknown second factor.');
         }
 
         if (!$responseContext->isSecondFactorVerified()) {
-            $logger->error('Second factor was not verified');
             throw new BadRequestHttpException(
-                'Cannot verify possession of an unknown second factor.'
+                'Second factor was not verified'
             );
         }
 
@@ -176,9 +196,10 @@ class SecondFactorOnlyController extends Controller
 
         /** @var ResponseFactory $response_factory */
         $responseFactory = $this->get('second_factor_only.saml_response_factory');
+
         $response = $responseFactory->createSecondFactorOnlyResponse(
             $responseContext->getIdentityNameId(),
-            $responseContext->getServiceProvider(),
+            $responseContext->getDestination(),
             $authnContextClassRef
         );
 
@@ -198,15 +219,17 @@ class SecondFactorOnlyController extends Controller
             try {
                 $adfsParameters = $adfsHelper->retrieveAdfsParameters();
             } catch (Exception $e) {
-                $logger->critical(sprintf('Could not process ADFS Response parameters, error: "%s"', $e->getMessage()));
-                return $this->render('SurfnetStepupGatewayGatewayBundle:Gateway:unrecoverableError.html.twig');
+                throw new InvalidAdfsResponseException(
+                    sprintf('Could not process ADFS Response parameters, error: "%s"', $e->getMessage())
+                );
             }
 
             $logger->notice('Sending ACS Response to ADFS plugin');
+
             return $this->render(
                 '@SurfnetStepupGatewaySecondFactorOnly/Adfs/consumeAssertion.html.twig',
                 [
-                    'acu' => $adfsParameters->getAssertionConsumerServiceUrl(),
+                    'acu' => $responseContext->getDestinationForAdfs(),
                     'samlResponse' => $xmlResponse,
                     'context' => $adfsParameters->getContext(),
                     'authMethod' => $adfsParameters->getAuthMethod(),

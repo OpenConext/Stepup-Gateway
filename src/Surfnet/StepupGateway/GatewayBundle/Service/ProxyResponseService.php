@@ -91,11 +91,11 @@ class ProxyResponseService
 
     /**
      * @param Assertion $assertion
-     * @param ServiceProvider $targetServiceProvider
+     * @param string $destination ACS URL
      * @param string|null $loa
      * @return Response
      */
-    public function createProxyResponse(Assertion $assertion, ServiceProvider $targetServiceProvider, $loa = null)
+    public function createProxyResponse(Assertion $assertion, $destination, $loa = null)
     {
 
         $newAssertion = new Assertion();
@@ -106,7 +106,7 @@ class ProxyResponseService
         $newAssertion->setIssueInstant($this->getTimestamp());
 
         $this->assertionSigningService->signAssertion($newAssertion);
-        $this->addSubjectConfirmationFor($newAssertion, $targetServiceProvider);
+        $this->addSubjectConfirmationFor($newAssertion, $destination);
 
         $translatedAssertion = $this->attributeDictionary->translate($assertion);
         $eptiNameId = $translatedAssertion->getAttributeValue('eduPersonTargetedID');
@@ -133,21 +133,21 @@ class ProxyResponseService
             $newAssertion->setAuthnContextClassRef($loa);
         }
 
-        return $this->createNewAuthnResponse($newAssertion, $targetServiceProvider);
+        return $this->createNewAuthnResponse($newAssertion, $destination);
     }
 
     /**
      * @param Assertion $newAssertion
-     * @param ServiceProvider $targetServiceProvider
+     * @param string $destination ACS URL
      */
-    private function addSubjectConfirmationFor(Assertion $newAssertion, ServiceProvider $targetServiceProvider)
+    private function addSubjectConfirmationFor(Assertion $newAssertion, $destination)
     {
         $confirmation         = new SubjectConfirmation();
         $confirmation->Method = Constants::CM_BEARER;
 
         $confirmationData                      = new SubjectConfirmationData();
         $confirmationData->InResponseTo        = $this->proxyStateHandler->getRequestId();
-        $confirmationData->Recipient           = $targetServiceProvider->getAssertionConsumerUrl();
+        $confirmationData->Recipient           = $destination;
         $confirmationData->NotOnOrAfter        = $this->getTimestamp('PT8H');
 
         $confirmation->SubjectConfirmationData = $confirmationData;
@@ -175,16 +175,16 @@ class ProxyResponseService
 
     /**
      * @param Assertion $newAssertion
-     * @param ServiceProvider $targetServiceProvider
+     * @param string $destination ACS URL
      * @return Response
      */
-    private function createNewAuthnResponse(Assertion $newAssertion, ServiceProvider $targetServiceProvider)
+    private function createNewAuthnResponse(Assertion $newAssertion, $destination)
     {
         $response = new Response();
         $response->setAssertions([$newAssertion]);
         $response->setIssuer($this->hostedIdentityProvider->getEntityId());
         $response->setIssueInstant($this->getTimestamp());
-        $response->setDestination($targetServiceProvider->getAssertionConsumerUrl());
+        $response->setDestination($destination);
         $response->setInResponseTo($this->proxyStateHandler->getRequestId());
 
         return $response;

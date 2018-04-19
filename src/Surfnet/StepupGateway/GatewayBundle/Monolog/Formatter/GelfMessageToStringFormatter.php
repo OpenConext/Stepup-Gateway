@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2014 SURFnet bv
+ * Copyright 2018 SURFnet bv
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,22 +18,41 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Monolog\Formatter;
 
-use GuzzleHttp;
-use Surfnet\StepupBundle\Monolog\Formatter\FullMessageExceptionGelfMessageFormatter;
+use Monolog\Formatter\GelfMessageFormatter;
+use Monolog\Formatter\FormatterInterface;
 
-class GelfMessageToStringFormatter extends FullMessageExceptionGelfMessageFormatter
+class GelfMessageToStringFormatter implements FormatterInterface
 {
+    /**
+     * @param GelfMessageFormatter $formatter
+     */
+    public function __construct(GelfMessageFormatter $formatter)
+    {
+        $this->formatter = $formatter;
+    }
+
     /**
      * {@inheritdoc} the gelf message is an array which cannot be logged into a single line
      * By jsonencoding the message we can write it on a single line
      */
     public function format(array $record)
     {
-        $message = parent::format($record);
+        $message = $this->formatter->format($record);
 
         // we need to keep the last new line, otherwise everything is appended on the same line :)
         $message->setFullMessage(str_replace("\n", ', ', $message->getFullMessage()) . "\n");
 
         return json_encode($message->toArray());
+    }
+
+    /**
+     * Formats a set of log records.
+     *
+     * @param  array $records A set of records to format
+     * @return mixed The formatted set of records
+     */
+    public function formatBatch(array $records)
+    {
+        return array_map([$this, 'format'], $records);
     }
 }

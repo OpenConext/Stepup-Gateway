@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:jms="urn:jms:translation" version="1.2">
-  <file date="2018-01-22T13:41:26Z" source-language="en" target-language="nl_NL" datatype="plaintext" original="not.available">
+  <file date="2018-03-23T09:48:46Z" source-language="en" target-language="nl_NL" datatype="plaintext" original="not.available">
     <header>
       <tool tool-id="JMSTranslationBundle" tool-name="JMSTranslationBundle" tool-version="1.1.0-DEV"/>
       <note>The source node in most cases contains the sample message as written by the developer. If it looks like a dot-delimitted string such as "form.label.firstname", then the developer has not provided a default message.</note>
@@ -9,6 +9,78 @@
       <trans-unit id="d3eed7dad6fb7610f30c9cd66a4a85d0049a7fe7" resname="Key handle must be a string">
         <source>Key handle must be a string</source>
         <target>Key handle must be a string</target>
+      </trans-unit>
+      <trans-unit id="f355e0c035e0e8362f7611a9930422626e700f74" resname="Register request AppID may not be empty">
+        <source>Register request AppID may not be empty</source>
+        <target state="new">Register request AppID may not be empty</target>
+      </trans-unit>
+      <trans-unit id="f3906b0e1bebad711e4bba22dd9281fa61146d80" resname="Register request AppID must be a string">
+        <source>Register request AppID must be a string</source>
+        <target state="new">Register request AppID must be a string</target>
+      </trans-unit>
+      <trans-unit id="a3f7066aa1d6b17f96feff05f283de5c4165316d" resname="Register request challenge may not be empty">
+        <source>Register request challenge may not be empty</source>
+        <target state="new">Register request challenge may not be empty</target>
+      </trans-unit>
+      <trans-unit id="9537f2c187fa0e1055fe3729127c5e3fe404d035" resname="Register request challenge must be a string">
+        <source>Register request challenge must be a string</source>
+        <target state="new">Register request challenge must be a string</target>
+      </trans-unit>
+      <trans-unit id="5f8000a432b5dbbb22737b05b912f394614eaf40" resname="Register request error code may not be empty">
+        <source>Register request error code may not be empty</source>
+        <target state="new">Register request error code may not be empty</target>
+      </trans-unit>
+      <trans-unit id="34d1187450443fb124755556abf3360597bb7235" resname="Register request error code must be numeric">
+        <source>Register request error code must be numeric</source>
+        <target state="new">Register request error code must be numeric</target>
+      </trans-unit>
+      <trans-unit id="1b7093014274b51ad46f81ea7eccd64e76a330ca" resname="Register request version may not be empty">
+        <source>Register request version may not be empty</source>
+        <target state="new">Register request version may not be empty</target>
+      </trans-unit>
+      <trans-unit id="3b4e7a9012fa48f1769da4f74f487b2e899ce8b7" resname="Register request version must be a string">
+        <source>Register request version must be a string</source>
+        <target state="new">Register request version must be a string</target>
+      </trans-unit>
+      <trans-unit id="f5516c222dcfc96645a2765479938f0969d3fb24" resname="Sign request AppID may not be empty">
+        <source>Sign request AppID may not be empty</source>
+        <target state="new">Sign request AppID may not be empty</target>
+      </trans-unit>
+      <trans-unit id="cbac0930208f5bb7971822bda488b8c28bcf5e3e" resname="Sign request AppID must be a string">
+        <source>Sign request AppID must be a string</source>
+        <target state="new">Sign request AppID must be a string</target>
+      </trans-unit>
+      <trans-unit id="f49116f9b0eb18c71eb7f162161453abee7bd411" resname="Sign request challenge may not be empty">
+        <source>Sign request challenge may not be empty</source>
+        <target state="new">Sign request challenge may not be empty</target>
+      </trans-unit>
+      <trans-unit id="1118c1e6f037f7d2fa511d5a2d5fcc36ecfd6146" resname="Sign request challenge must be a string">
+        <source>Sign request challenge must be a string</source>
+        <target state="new">Sign request challenge must be a string</target>
+      </trans-unit>
+      <trans-unit id="165f7d40c1bdff8e1a1d421bc926772e8512eb68" resname="Sign request error code may not be empty">
+        <source>Sign request error code may not be empty</source>
+        <target state="new">Sign request error code may not be empty</target>
+      </trans-unit>
+      <trans-unit id="5edf1a4da208953d8ffae31d1ff5638546dba9cd" resname="Sign request error code must be numeric">
+        <source>Sign request error code must be numeric</source>
+        <target state="new">Sign request error code must be numeric</target>
+      </trans-unit>
+      <trans-unit id="82750383d4971841ceacc90807bfaee082d181d1" resname="Sign request key handle may not be empty">
+        <source>Sign request key handle may not be empty</source>
+        <target state="new">Sign request key handle may not be empty</target>
+      </trans-unit>
+      <trans-unit id="df642ff75bdc48f2e4105c880652486e30efd6fd" resname="Sign request key handle must be a string">
+        <source>Sign request key handle must be a string</source>
+        <target state="new">Sign request key handle must be a string</target>
+      </trans-unit>
+      <trans-unit id="3b20add2755bfe8e1d0562ad9bdb709d83249890" resname="Sign request version may not be empty">
+        <source>Sign request version may not be empty</source>
+        <target state="new">Sign request version may not be empty</target>
+      </trans-unit>
+      <trans-unit id="04ee7b5ea8d828fb35d8e2dee4cdb236aede6d0a" resname="Sign request version must be a string">
+        <source>Sign request version must be a string</source>
+        <target state="new">Sign request version must be a string</target>
       </trans-unit>
       <trans-unit id="d7d536e4daf0156dcf5724414c59214bae223843" resname="gateway.verify_yubikey_command.otp.may_not_be_empty">
         <source>gateway.verify_yubikey_command.otp.may_not_be_empty</source>
@@ -65,6 +137,26 @@
       <trans-unit id="365b549b98686b9cace3ae029d14948f0de5beaf" resname="sms_message.recipient.must_consist_of_numbers">
         <source>sms_message.recipient.must_consist_of_numbers</source>
         <target>De ontvanger van het SMS-bericht mag enkel uit getallen bestaan.</target>
+      </trans-unit>
+      <trans-unit id="049f2b52bc9cf777280bbfc8b787f6e69a701beb" resname="stepup.send_sms_command.recipient.may_not_be_empty">
+        <source>stepup.send_sms_command.recipient.may_not_be_empty</source>
+        <target state="new">stepup.send_sms_command.recipient.may_not_be_empty</target>
+      </trans-unit>
+      <trans-unit id="9e988968acb8506939fa9b6c5d15b6e65cdcdb9f" resname="stepup.send_sms_command.recipient.must_be_string">
+        <source>stepup.send_sms_command.recipient.must_be_string</source>
+        <target state="new">stepup.send_sms_command.recipient.must_be_string</target>
+      </trans-unit>
+      <trans-unit id="f40a78148c674a1d7961ef7ca5d048664caf70b7" resname="stepup.send_sms_command.recipient.must_consist_of_digits">
+        <source>stepup.send_sms_command.recipient.must_consist_of_digits</source>
+        <target state="new">stepup.send_sms_command.recipient.must_consist_of_digits</target>
+      </trans-unit>
+      <trans-unit id="b7bcb89ad4b6ed61daa138541702c67ce7dd63c9" resname="stepup.verify_possession_of_phone_command.challenge.may_not_be_empty">
+        <source>stepup.verify_possession_of_phone_command.challenge.may_not_be_empty</source>
+        <target state="new">stepup.verify_possession_of_phone_command.challenge.may_not_be_empty</target>
+      </trans-unit>
+      <trans-unit id="8b87f20ba80c487ed07070e32d031343571d34b9" resname="stepup.verify_possession_of_phone_command.challenge.must_be_string">
+        <source>stepup.verify_possession_of_phone_command.challenge.must_be_string</source>
+        <target state="new">stepup.verify_possession_of_phone_command.challenge.must_be_string</target>
       </trans-unit>
     </body>
   </file>

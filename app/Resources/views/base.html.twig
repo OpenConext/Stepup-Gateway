@@ -3,7 +3,7 @@
 
 {% block title %}
     {%  if block('page_title') is not empty %}{{ block('page_title') }} &mdash; {% endif %}
-    {{ 'app.name'|trans }}
+    {{ app_name }}
 {% endblock title %}
 {% block head_style %}
     {% stylesheets
@@ -22,8 +22,8 @@
 
         {% block page_header %}
             <div class="page-header clearfix">
-                <img src="/images/SURFconext.png" class="pull-right logo" alt="SURFconext">
-                <h1>{{ 'app.name'|trans }}</h1>
+                <img src="/images/header-logo.png" class="pull-right logo" alt="OpenConext Stepup">
+                <h1>{% block application_name %}{{ app_name }}{% endblock %}</h1>
             </div>
         {% endblock page_header %}
 
@@ -43,7 +43,7 @@
         {% endblock content_row %}
 
         {% block footer %}
-            <p><a href="https://support.surfconext.nl" target="_blank">Help</a></p>
+            <p><a href="{{ global_view_parameters.supportUrl }}" target="_blank">Help</a></p>
         {% endblock footer %}
 
 {% block foot_script %}

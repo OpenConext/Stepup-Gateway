@@ -25,15 +25,35 @@ use Surfnet\SamlBundle\SAML2\AuthnRequest;
 use Surfnet\SamlBundle\SAML2\AuthnRequestFactory;
 use Surfnet\StepupGateway\GatewayBundle\Exception\RuntimeException;
 use Surfnet\StepupGateway\GatewayBundle\Saml\AssertionAdapter;
+use Surfnet\StepupGateway\GatewayBundle\Saml\Exception\UnknownInResponseToException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
+/**
+ * Entry point for the Stepup login flow.
+ *
+ * See docs/GatewayState.md for a high-level diagram on how this controller
+ * interacts with outside actors and other parts of Stepup.
+ */
 class GatewayController extends Controller
 {
     const RESPONSE_CONTEXT_SERVICE_ID = 'gateway.proxy.response_context';
 
+    /**
+     * Receive an AuthnRequest from a service provider.
+     *
+     * The service provider is either a Stepup component (SelfService, RA) or
+     * an external service provider.
+     *
+     * This single sign-on action will start a new SAML request to the remote
+     * IDP configured in Stepup (most likely to be an instance of OpenConext
+     * EngineBlock).
+     *
+     * @param Request $httpRequest
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
+     */
     public function ssoAction(Request $httpRequest)
     {
         /** @var \Psr\Log\LoggerInterface $logger */
@@ -43,13 +63,7 @@ class GatewayController extends Controller
         /** @var \Surfnet\SamlBundle\Http\RedirectBinding $redirectBinding */
         $redirectBinding = $this->get('surfnet_saml.http.redirect_binding');
 
-        try {
-            $originalRequest = $redirectBinding->receiveSignedAuthnRequestFrom($httpRequest);
-        } catch (Exception $e) {
-            $logger->critical(sprintf('Could not process Request, error: "%s"', $e->getMessage()));
-
-            return $this->render('unrecoverableError');
-        }
+        $originalRequest = $redirectBinding->receiveSignedAuthnRequestFrom($httpRequest);
 
         $originalRequestId = $originalRequest->getRequestId();
         $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
@@ -61,9 +75,15 @@ class GatewayController extends Controller
 
         /** @var \Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler $stateHandler */
         $stateHandler = $this->get('gateway.proxy.state_handler');
+
+        // Clear the state of the previous SSO action. Request data of previous
+        // SSO actions should not have any effect in subsequent SSO actions.
+        $stateHandler->clear();
+
         $stateHandler
             ->setRequestId($originalRequestId)
             ->setRequestServiceProvider($originalRequest->getServiceProvider())
+            ->setRequestAssertionConsumerServiceUrl($originalRequest->getAssertionConsumerServiceURL())
             ->setRelayState($httpRequest->get(AuthnRequest::PARAMETER_RELAY_STATE, ''))
             ->setResponseAction('SurfnetStepupGatewayGatewayBundle:Gateway:respond')
             ->setResponseContextServiceId(static::RESPONSE_CONTEXT_SERVICE_ID);
@@ -106,6 +126,13 @@ class GatewayController extends Controller
     }
 
     /**
+     * Receive an AuthnResponse from an identity provider.
+     *
+     * The AuthnRequest started in ssoAction() resulted in an AuthnResponse
+     * from the IDP. This method handles the assertion and forwards the user
+     * using an internal redirect to the SecondFactorController to start the
+     * actual second factor verification.
+     *
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\Response
      */
@@ -136,13 +163,10 @@ class GatewayController extends Controller
         $adaptedAssertion = new AssertionAdapter($assertion);
         $expectedInResponseTo = $responseContext->getExpectedInResponseTo();
         if (!$adaptedAssertion->inResponseToMatches($expectedInResponseTo)) {
-            $logger->critical(sprintf(
-                'Received Response with unexpected InResponseTo: "%s", %s',
+            throw new UnknownInResponseToException(
                 $adaptedAssertion->getInResponseTo(),
-                ($expectedInResponseTo ? 'expected "' . $expectedInResponseTo . '"' : ' no response expected')
-            ));
-
-            return $this->render('unrecoverableError');
+                $expectedInResponseTo
+            );
         }
 
         $logger->notice('Successfully processed SAMLResponse');
@@ -154,6 +178,14 @@ class GatewayController extends Controller
         return $this->forward('SurfnetStepupGatewayGatewayBundle:SecondFactor:selectSecondFactorForVerification');
     }
 
+    /**
+     * Send a SAML response back to the service provider.
+     *
+     * Second factor verification handled by SecondFactorController is
+     * finished. The user was forwarded back to this action with an internal
+     * redirect. This method sends a AuthnResponse back to the service
+     * provider in response to the AuthnRequest received in ssoAction().
+     */
     public function respondAction()
     {
         $responseContext = $this->getResponseContext();
@@ -177,18 +209,12 @@ class GatewayController extends Controller
 
         /** @var \Surfnet\StepupGateway\GatewayBundle\Service\ProxyResponseService $proxyResponseService */
         $proxyResponseService = $this->get('gateway.service.response_proxy');
-        try {
-            $response = $proxyResponseService->createProxyResponse(
-                $responseContext->reconstituteAssertion(),
-                $responseContext->getServiceProvider(),
-                (string)$grantedLoa
-            );
-        } catch (RuntimeException $e) {
-            $logger->error($e->getMessage());
-            return $this->render('unrecoverableError', [
-                'message' => $e->getMessage()
-            ]);
-        }
+
+        $response = $proxyResponseService->createProxyResponse(
+            $responseContext->reconstituteAssertion(),
+            $responseContext->getDestination(),
+            (string)$grantedLoa
+        );
 
         $responseContext->responseSent();
 

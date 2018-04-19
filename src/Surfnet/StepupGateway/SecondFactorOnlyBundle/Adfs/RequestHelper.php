@@ -69,26 +69,23 @@ final class RequestHelper
      *
      * @param Request $httpRequest
      * @param string $requestId AuthnRequest ID
-     * @param string $acsUrl AuthnRequest assertion consumer service URL
      * @return Request
      * @throws InvalidArgumentException
      */
-    public function transformRequest(Request $httpRequest, $requestId, $acsUrl)
+    public function transformRequest(Request $httpRequest, $requestId)
     {
         $this->logger->notice('Receiving and validating ADFS request parameters');
         $authMethod = $httpRequest->request->get(self::ADFS_PARAM_AUTH_METHOD);
         $context = $httpRequest->request->get(self::ADFS_PARAM_CONTEXT);
 
         Assert::stringNotEmpty($requestId);
-        Assert::stringNotEmpty($acsUrl);
         Assert::stringNotEmpty($authMethod);
         Assert::stringNotEmpty($context);
 
         $this->stateHandler
             ->setRequestId($requestId)
             ->setAuthMethod($authMethod)
-            ->setContext($context)
-            ->setAssertionConsumerServiceUrl($acsUrl);
+            ->setContext($context);
 
         $this->logger->notice('Transforming ADFS Request to a valid AuthnRequest');
 

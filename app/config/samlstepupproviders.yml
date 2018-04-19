@@ -25,6 +25,9 @@ surfnet_stepup_gateway_saml_stepup_provider:
                 entity_id: %gssp_tiqr_remote_entity_id%
                 sso_url: %gssp_tiqr_remote_sso_url%
                 certificate: %gssp_tiqr_remote_certificate%
+            view_config:
+                logo: %gssp_tiqr_logo%
+                title: %gssp_tiqr_title%
         biometric:
             enabled: %gssp_biometric_enabled%
             hosted:
@@ -42,3 +45,6 @@ surfnet_stepup_gateway_saml_stepup_provider:
                 entity_id: %gssp_biometric_remote_entity_id%
                 sso_url: %gssp_biometric_remote_sso_url%
                 certificate: %gssp_biometric_remote_certificate%
+            view_config:
+                logo: %gssp_biometric_logo%
+                title: %gssp_biometric_title%

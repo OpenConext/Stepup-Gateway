@@ -181,7 +181,7 @@ To be able to support the ADFS MFA extension a variation on the `urn:oasis:names
 
 ## The SP must do a first factor authentication before starting a SFO authentication
 
-Starting an SFO authentication will immediately start an authentication at the SURFconext Strong Authentication gateway. This means that a push notification (Tiqr) or an SMS can be sent to the user being authenticated depending on the available second factors for the user. If authentication
+Starting an SFO authentication will immediately start an authentication at the OpenConext Stepup gateway. This means that a push notification (Tiqr) or an SMS can be sent to the user being authenticated depending on the available second factors for the user. If authentication
 is started for the wrong user, this will derange the targeted user and in case of SMS, incur a cost to the institution and possibly to the user.
 
 By observing the behavior of the SFO authentication it is possible to determine whether a user identifier exists and what second factor types are avaiable to a user.

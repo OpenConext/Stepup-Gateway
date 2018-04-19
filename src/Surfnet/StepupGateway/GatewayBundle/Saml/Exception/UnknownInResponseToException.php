@@ -20,15 +20,14 @@ namespace Surfnet\StepupGateway\GatewayBundle\Saml\Exception;
 
 class UnknownInResponseToException extends RuntimeException
 {
-    public function __construct($inResponseTo, $code = 0, $previous = null)
+    public function __construct($actual, $expected)
     {
         parent::__construct(
             sprintf(
-                'Received SAMLResponse in response to an unknown Request identified by "%s".',
-                $inResponseTo
-            ),
-            $code,
-            $previous
+                'Received SAMLResponse in response to an unknown Request identified by "%s", "%s".',
+                $actual,
+                ($expected ? 'expected "' . $expected . '"' : ' no response expected')
+            )
         );
     }
 }

@@ -21,6 +21,7 @@ namespace Surfnet\StepupGateway\SamlStepupProviderBundle\Saml;
 use DateInterval;
 use DateTime;
 use DateTimeZone;
+use Psr\Log\LoggerInterface;
 use SAML2\Assertion;
 use SAML2\Constants;
 use SAML2\Response;
@@ -28,7 +29,6 @@ use SAML2\Response as SAMLResponse;
 use SAML2\XML\saml\SubjectConfirmation;
 use SAML2\XML\saml\SubjectConfirmationData;
 use Surfnet\SamlBundle\Entity\IdentityProvider;
-use Surfnet\SamlBundle\Entity\ServiceProvider;
 use Surfnet\StepupGateway\GatewayBundle\Saml\AssertionSigningService;
 
 /**
@@ -36,6 +36,11 @@ use Surfnet\StepupGateway\GatewayBundle\Saml\AssertionSigningService;
  */
 class ProxyResponseFactory
 {
+    /**
+     * @var \Psr\Log\LoggerInterface
+     */
+    private $logger;
+
     /**
      * @var \Surfnet\SamlBundle\Entity\IdentityProvider
      */
@@ -57,10 +62,12 @@ class ProxyResponseFactory
     private $currentTime;
 
     public function __construct(
+        LoggerInterface $logger,
         IdentityProvider $hostedIdentityProvider,
         StateHandler $stateHandler,
         AssertionSigningService $assertionSigningService
     ) {
+        $this->logger                  = $logger;
         $this->hostedIdentityProvider  = $hostedIdentityProvider;
         $this->stateHandler            = $stateHandler;
         $this->assertionSigningService = $assertionSigningService;
@@ -70,10 +77,10 @@ class ProxyResponseFactory
 
     /**
      * @param Assertion $assertion
-     * @param ServiceProvider $targetServiceProvider
+     * @param string $destination
      * @return Response
      */
-    public function createProxyResponse(Assertion $assertion, ServiceProvider $targetServiceProvider)
+    public function createProxyResponse(Assertion $assertion, $destination)
     {
         $newAssertion = new Assertion();
         $newAssertion->setNotBefore($this->currentTime->getTimestamp());
@@ -83,28 +90,28 @@ class ProxyResponseFactory
         $newAssertion->setIssueInstant($this->getTimestamp());
 
         $this->assertionSigningService->signAssertion($newAssertion);
-        $this->addSubjectConfirmationFor($newAssertion, $targetServiceProvider);
+        $this->addSubjectConfirmationFor($newAssertion, $destination);
 
         $newAssertion->setNameId($assertion->getNameId());
         $newAssertion->setValidAudiences([$this->stateHandler->getRequestServiceProvider()]);
 
         $this->addAuthenticationStatementTo($newAssertion, $assertion);
 
-        return $this->createNewAuthnResponse($newAssertion, $targetServiceProvider);
+        return $this->createNewAuthnResponse($newAssertion, $destination);
     }
 
     /**
      * @param Assertion $newAssertion
-     * @param ServiceProvider $targetServiceProvider
+     * @param string $destination
      */
-    private function addSubjectConfirmationFor(Assertion $newAssertion, ServiceProvider $targetServiceProvider)
+    private function addSubjectConfirmationFor(Assertion $newAssertion, $destination)
     {
         $confirmation         = new SubjectConfirmation();
         $confirmation->Method = Constants::CM_BEARER;
 
         $confirmationData                      = new SubjectConfirmationData();
         $confirmationData->InResponseTo        = $this->stateHandler->getRequestId();
-        $confirmationData->Recipient           = $targetServiceProvider->getAssertionConsumerUrl();
+        $confirmationData->Recipient           = $destination;
         $confirmationData->NotOnOrAfter        = $this->getTimestamp('PT8H');
 
         $confirmation->SubjectConfirmationData = $confirmationData;
@@ -125,16 +132,16 @@ class ProxyResponseFactory
 
     /**
      * @param Assertion $newAssertion
-     * @param ServiceProvider $targetServiceProvider
+     * @param string $destination
      * @return SAMLResponse
      */
-    private function createNewAuthnResponse(Assertion $newAssertion, ServiceProvider $targetServiceProvider)
+    private function createNewAuthnResponse(Assertion $newAssertion, $destination)
     {
         $response = new SAMLResponse();
         $response->setAssertions([$newAssertion]);
         $response->setIssuer($this->hostedIdentityProvider->getEntityId());
         $response->setIssueInstant($this->getTimestamp());
-        $response->setDestination($targetServiceProvider->getAssertionConsumerUrl());
+        $response->setDestination($destination);
         $response->setInResponseTo($this->stateHandler->getRequestId());
 
         return $response;

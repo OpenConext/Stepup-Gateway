@@ -55,7 +55,7 @@ final class ConnectedServiceProviders
 
     /**
      * @param string $serviceProvider
-     * @return \Surfnet\SamlBundle\Entity\ServiceProvider
+     * @return \Surfnet\StepupGateway\GatewayBundle\Entity\ServiceProvider
      */
     public function getConfigurationOf($serviceProvider)
     {

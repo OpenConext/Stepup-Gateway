@@ -21,10 +21,11 @@ namespace Surfnet\StepupGateway\GatewayBundle\Saml;
 use DateTime;
 use DateTimeZone;
 use DOMDocument;
+use Psr\Log\LoggerInterface;
 use SAML2\Assertion;
 use Surfnet\SamlBundle\Entity\IdentityProvider;
-use Surfnet\SamlBundle\Entity\ServiceProvider;
 use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor;
+use Surfnet\StepupGateway\GatewayBundle\Entity\ServiceProvider;
 use Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler;
 use Surfnet\StepupGateway\GatewayBundle\Service\SamlEntityService;
 
@@ -46,6 +47,11 @@ class ResponseContext
     private $stateHandler;
 
     /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
      * @var DateTime
      */
     private $generationTime;
@@ -63,11 +69,13 @@ class ResponseContext
     public function __construct(
         IdentityProvider $identityProvider,
         SamlEntityService $samlEntityService,
-        ProxyStateHandler $stateHandler
+        ProxyStateHandler $stateHandler,
+        LoggerInterface $logger
     ) {
         $this->hostedIdentityProvider = $identityProvider;
         $this->samlEntityService      = $samlEntityService;
         $this->stateHandler           = $stateHandler;
+        $this->logger                 = $logger;
         $this->generationTime         = new DateTime('now', new DateTimeZone('UTC'));
     }
 
@@ -76,13 +84,19 @@ class ResponseContext
      */
     public function getDestination()
     {
-        $serviceProvider = $this->getServiceProvider();
+        $requestAcsUrl = $this->stateHandler->getRequestAssertionConsumerServiceUrl();
 
-        if (!$serviceProvider) {
-            return null;
-        }
+        return $this->getServiceProvider()->determineAcsLocation($requestAcsUrl, $this->logger);
+    }
 
-        return $serviceProvider->getAssertionConsumerUrl();
+    /**
+     * @return string
+     */
+    public function getDestinationForAdfs()
+    {
+        $requestAcsUrl = $this->stateHandler->getRequestAssertionConsumerServiceUrl();
+
+        return $this->getServiceProvider()->determineAcsLocationForAdfs($requestAcsUrl);
     }
 
     /**

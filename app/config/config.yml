@@ -2,6 +2,7 @@ imports:
     - { resource: parameters.yml }
     - { resource: security.yml }
     - { resource: samlstepupproviders.yml }
+    - { resource: global_view_parameters.yml }
     - { resource: logging.yml }
 
 framework:
@@ -34,7 +35,10 @@ framework:
 twig:
     debug:            "%kernel.debug%"
     strict_variables: "%kernel.debug%"
-    exception_controller:  SurfnetStepupBundle:Exception:show
+    exception_controller: SurfnetStepupGatewayGatewayBundle:Exception:show
+    globals:
+        global_view_parameters: "@gateway.service.global_view_parameters"
+        app_name: "%app_name%"
 
 # Assetic Configuration
 assetic:
@@ -206,10 +210,10 @@ jms_translation:
     locales: %locales%
     configs:
         default:
-            dirs: [%kernel.root_dir%/../src, %kernel.root_dir%]
+            dirs: [%kernel.root_dir%/../src, %kernel.root_dir%, %kernel.root_dir%/../vendor/surfnet]
             output_dir: %kernel.root_dir%/Resources/translations
             ignored_domains: []
-            excluded_names: ['*TestCase.php', '*Test.php']
+            excluded_names: ['*TestCase.php', '*Test.php', 'Assert.php']
             excluded_dirs: [cache, data, logs, Tests]
             extractors: []
 

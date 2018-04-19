@@ -38,28 +38,20 @@ class Response
     private $context;
 
     /**
-     * @var string
-     */
-    private $acsUrl;
-
-    /**
      * Creates and validates an Adfs response value object
      *
      * @param string $authMethod
      * @param string $context
-     * @param string $acsUrl
      * @return Response
      */
-    public static function fromValues($authMethod, $context, $acsUrl)
+    public static function fromValues($authMethod, $context)
     {
         Assert::stringNotEmpty($authMethod);
         Assert::stringNotEmpty($context);
-        Assert::stringNotEmpty($acsUrl);
 
         $response = new Response();
         $response->authMethod = $authMethod;
         $response->context = $context;
-        $response->acsUrl = $acsUrl;
 
         return $response;
     }
@@ -78,13 +70,5 @@ class Response
     public function getContext()
     {
         return $this->context;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getAssertionConsumerServiceUrl()
-    {
-        return $this->acsUrl;
     }
 }

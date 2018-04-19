@@ -38,7 +38,13 @@ parameters:
     gssp_tiqr_remote_sso_url: 'https://tiqr.tld//saml/sso'
     gssp_tiqr_remote_certificate: 'The contents of the certificate published by the gssp, excluding PEM headers'
 
+    # The logo used for tiqr, shown in the choose second factor screen (WAYG)
+    gssp_tiqr_logo: '/full/path/to/tiqr_logo.png'
 
+    # The title of the GSSP, translatable in the available languages of the application.
+    gssp_tiqr_title:
+        en_GB: Tiqr
+        nl_NL: Tiqr
 
     # Configuration of the "biometric" GSSP
     # Authentication flow:
@@ -65,3 +71,9 @@ parameters:
     gssp_biometric_remote_entity_id: 'https://actual-gssp.entity-id.tld'
     gssp_biometric_remote_sso_url: 'https://actual-gssp.entity-id.tld/single-sign-on/url'
     gssp_biometric_remote_certificate: 'The contents of the certificate published by the gssp, excluding PEM headers'
+
+    # The logo used for biometric, shown in the choose second factor screen (WAYG)
+    gssp_biometric_logo: '/full/path/to/bio_logo.png'
+    gssp_biometric_title:
+        en_GB: Biometric
+        nl_NL: Biometrisch

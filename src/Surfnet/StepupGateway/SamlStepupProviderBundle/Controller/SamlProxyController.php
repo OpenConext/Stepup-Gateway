@@ -26,6 +26,7 @@ use Surfnet\SamlBundle\Http\XMLResponse;
 use Surfnet\SamlBundle\SAML2\AuthnRequest;
 use Surfnet\SamlBundle\SAML2\AuthnRequestFactory;
 use Surfnet\StepupGateway\GatewayBundle\Saml\AssertionAdapter;
+use Surfnet\StepupGateway\GatewayBundle\Saml\Exception\UnknownInResponseToException;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\Provider;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Saml\StateHandler;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -35,14 +36,27 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @SuppressWarnings(PHPMD.NPathComplexity)
+ * Handling of GSSP registration and verification.
+ *
+ * See docs/GatewayState.md for a high-level diagram on how this controller
+ * interacts with outside actors and other parts of Stepup.
  *
  * Should be refactored, {@see https://www.pivotaltracker.com/story/show/90169776}
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.NPathComplexity)
  */
 class SamlProxyController extends Controller
 {
     /**
+     * Proxy a GSSP authentication request to the remote GSSP SSO endpoint.
+     *
+     * The user is about to be sent to the remote GSSP application for
+     * registration. Verification is not initiated with a SAML AUthnRequest,
+     * see sendSecondFactorVerificationAuthnRequestAction().
+     *
+     * The service provider in this context is SelfService.
+     *
      * @param string  $provider
      * @param Request $httpRequest
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
@@ -51,20 +65,13 @@ class SamlProxyController extends Controller
     {
         $provider = $this->getProvider($provider);
 
-        /** @var \Psr\Log\LoggerInterface $logger */
         $logger = $this->get('logger');
         $logger->notice('Received AuthnRequest, started processing');
 
         /** @var \Surfnet\SamlBundle\Http\RedirectBinding $redirectBinding */
         $redirectBinding = $this->get('surfnet_saml.http.redirect_binding');
 
-        try {
-            $originalRequest = $redirectBinding->processSignedRequest($httpRequest);
-        } catch (Exception $e) {
-            $logger->critical(sprintf('Could not process Request, error: "%s"', $e->getMessage()));
-
-            return $this->render('unrecoverableError');
-        }
+        $originalRequest = $redirectBinding->processSignedRequest($httpRequest);
 
         $originalRequestId = $originalRequest->getRequestId();
         $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
@@ -99,6 +106,7 @@ class SamlProxyController extends Controller
         $stateHandler
             ->setRequestId($originalRequestId)
             ->setRequestServiceProvider($originalRequest->getServiceProvider())
+            ->setRequestAssertionConsumerServiceUrl($originalRequest->getAssertionConsumerServiceURL())
             ->setRelayState($httpRequest->get(AuthnRequest::PARAMETER_RELAY_STATE, ''));
 
         $proxyRequest = AuthnRequestFactory::createNewRequest(
@@ -128,6 +136,21 @@ class SamlProxyController extends Controller
         return $redirectBinding->createResponseFor($proxyRequest);
     }
 
+    /**
+     * Start a GSSP single sign-on.
+     *
+     * The user has selected a second factor token and the token happens to be
+     * a GSSP token. The SecondFactorController therefor did an internal
+     * redirect (see SecondFactorController::verifyGssfAction) to this method.
+     *
+     * In this method, an authn request is created. This authn request is sent
+     * directly to the remote GSSP SSO URL, and the response is handled in
+     * consumeAssertionAction().
+     *
+     * @param $provider
+     * @param $subjectNameId
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
     public function sendSecondFactorVerificationAuthnRequestAction($provider, $subjectNameId)
     {
         $provider = $this->getProvider($provider);
@@ -164,6 +187,14 @@ class SamlProxyController extends Controller
     }
 
     /**
+     * Process an assertion received from the remote GSSP application.
+     *
+     * The GSSP application sent an assertion back to the gateway. When
+     * successful, the user is sent back to:
+     *
+     *  1. in case of registration: back to the originating SP (SelfService)
+     *  2. in case of verification: internal redirect to SecondFactorController
+     *
      * @param string  $provider
      * @param Request $httpRequest
      * @return \Symfony\Component\HttpFoundation\Response
@@ -192,21 +223,21 @@ class SamlProxyController extends Controller
         } catch (Exception $exception) {
             $logger->error(sprintf('Could not process received Response, error: "%s"', $exception->getMessage()));
 
-            $response = $this->createResponseFailureResponse($provider);
+            $response = $this->createResponseFailureResponse(
+                $provider,
+                $this->getDestination($provider->getStateHandler())
+            );
 
-            return $this->renderSamlResponse('unprocessableResponse', $stateHandler, $response);
+            return $this->renderSamlResponse('consumeAssertion', $stateHandler, $response);
         }
 
         $adaptedAssertion = new AssertionAdapter($assertion);
         $expectedResponse = $stateHandler->getGatewayRequestId();
         if (!$adaptedAssertion->inResponseToMatches($expectedResponse)) {
-            $logger->critical(sprintf(
-                'Received Response with unexpected InResponseTo: "%s", %s',
+            throw new UnknownInResponseToException(
                 $adaptedAssertion->getInResponseTo(),
-                ($expectedResponse ? 'expected "' . $expectedResponse . '"' : ' no response expected')
-            ));
-
-            return $this->render('unrecoverableError');
+                $expectedResponse
+            );
         }
 
         $authenticatedNameId = $assertion->getNameId();
@@ -218,16 +249,13 @@ class SamlProxyController extends Controller
                 $authenticatedNameId->value
             ));
 
-            if ($stateHandler->secondFactorVerificationRequested()) {
-                // the error should go to the original requesting service provider
-                $targetServiceProvider = $this->get('gateway.proxy.response_context')->getServiceProvider();
-                $stateHandler->setRequestServiceProvider($targetServiceProvider->getEntityId());
-            }
-
             return $this->renderSamlResponse(
                 'recoverableError',
                 $stateHandler,
-                $this->createAuthnFailedResponse($provider)
+                $this->createAuthnFailedResponse(
+                    $provider,
+                    $this->getDestination($provider->getStateHandler())
+                )
             );
         }
 
@@ -242,9 +270,16 @@ class SamlProxyController extends Controller
         }
 
         /** @var \Surfnet\StepupGateway\SamlStepupProviderBundle\Saml\ProxyResponseFactory $proxyResponseFactory */
+        $proxyResponseFactory  = $this->get('gssp.provider.' . $provider->getName() . '.response_proxy');
         $targetServiceProvider = $this->getServiceProvider($stateHandler->getRequestServiceProvider());
-        $proxyResponseFactory = $this->get('gssp.provider.' . $provider->getName() . '.response_proxy');
-        $response             = $proxyResponseFactory->createProxyResponse($assertion, $targetServiceProvider);
+
+        $response = $proxyResponseFactory->createProxyResponse(
+            $assertion,
+            $targetServiceProvider->determineAcsLocation(
+                $stateHandler->getRequestAssertionConsumerServiceUrl(),
+                $this->get('logger')
+            )
+        );
 
         $logger->notice(sprintf(
             'Responding to request "%s" with response based on response from the remote IdP with response "%s"',
@@ -279,12 +314,36 @@ class SamlProxyController extends Controller
         $providerRepository = $this->get('gssp.provider_repository');
 
         if (!$providerRepository->has($provider)) {
-            $this->get('logger')->info(sprintf('Requested GSSP "%s" does not exist or is not registered', $provider));
-
-            throw new NotFoundHttpException('Requested provider does not exist');
+            throw new NotFoundHttpException(
+                sprintf('Requested GSSP "%s" does not exist or is not registered', $provider)
+            );
         }
 
         return $providerRepository->get($provider);
+    }
+
+    /**
+     * @param StateHandler $stateHandler
+     * @return string
+     */
+    private function getDestination(StateHandler $stateHandler)
+    {
+        if ($stateHandler->secondFactorVerificationRequested()) {
+            // GSSP verification action, return to SP from GatewayController state!
+            $destination = $this->get('gateway.proxy.response_context')->getDestination();
+        } else {
+            // GSSP registration action, return to SP remembered in ssoAction().
+            $serviceProvider = $this->getServiceProvider(
+                $stateHandler->getRequestServiceProvider()
+            );
+
+            $destination = $serviceProvider->determineAcsLocation(
+                $stateHandler->getRequestAssertionConsumerServiceUrl(),
+                $this->get('logger')
+            );
+        }
+
+        return $destination;
     }
 
     /**
@@ -336,11 +395,12 @@ class SamlProxyController extends Controller
      * not process the response we received from the upstream GSSP
      *
      * @param Provider $provider
+     * @param string $destination
      * @return SAMLResponse
      */
-    private function createResponseFailureResponse(Provider $provider)
+    private function createResponseFailureResponse(Provider $provider, $destination)
     {
-        $response = $this->createResponse($provider);
+        $response = $this->createResponse($provider, $destination);
         $response->setStatus(['Code' => Constants::STATUS_RESPONDER]);
 
         return $response;
@@ -351,11 +411,12 @@ class SamlProxyController extends Controller
      * that the upstream GSSP did not responsd with the same NameID as we request to authenticate in the AuthnRequest
      *
      * @param Provider $provider
+     * @param string $destination
      * @return SAMLResponse
      */
-    private function createAuthnFailedResponse(Provider $provider)
+    private function createAuthnFailedResponse(Provider $provider, $destination)
     {
-        $response = $this->createResponse($provider);
+        $response = $this->createResponse($provider, $destination);
         $response->setStatus([
             'Code'    => Constants::STATUS_RESPONDER,
             'SubCode' => Constants::STATUS_AUTHN_FAILED
@@ -368,14 +429,13 @@ class SamlProxyController extends Controller
      * Creates a standard response with default status Code (success)
      *
      * @param Provider $provider
+     * @param string $destination
      * @return SAMLResponse
      */
-    private function createResponse(Provider $provider)
+    private function createResponse(Provider $provider, $destination)
     {
-        $serviceProvider = $this->getServiceProvider($provider->getStateHandler()->getRequestServiceProvider());
-
         $response = new SAMLResponse();
-        $response->setDestination($serviceProvider->getAssertionConsumerUrl());
+        $response->setDestination($destination);
         $response->setIssuer($provider->getIdentityProvider()->getEntityId());
         $response->setIssueInstant((new DateTime('now'))->getTimestamp());
         $response->setInResponseTo($provider->getStateHandler()->getRequestId());
@@ -385,7 +445,7 @@ class SamlProxyController extends Controller
 
     /**
      * @param string $serviceProvider
-     * @return \Surfnet\SamlBundle\Entity\ServiceProvider
+     * @return \Surfnet\StepupGateway\GatewayBundle\Entity\ServiceProvider
      */
     private function getServiceProvider($serviceProvider)
     {

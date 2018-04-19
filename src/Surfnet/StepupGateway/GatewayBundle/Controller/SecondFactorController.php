@@ -27,12 +27,14 @@ use Surfnet\StepupGateway\GatewayBundle\Command\ChooseSecondFactorCommand;
 use Surfnet\StepupGateway\GatewayBundle\Command\SendSmsChallengeCommand;
 use Surfnet\StepupGateway\GatewayBundle\Command\VerifyYubikeyOtpCommand;
 use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor;
+use Surfnet\StepupGateway\GatewayBundle\Exception\InvalidArgumentException;
 use Surfnet\StepupGateway\GatewayBundle\Exception\LoaCannotBeGivenException;
 use Surfnet\StepupGateway\GatewayBundle\Exception\RuntimeException;
 use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
 use Surfnet\StepupGateway\U2fVerificationBundle\Value\KeyHandle;
 use Surfnet\StepupU2fBundle\Dto\SignResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -175,23 +177,51 @@ class SecondFactorController extends Controller
             )
             ->handleRequest($request);
 
-        if ($form->get('cancel')->isClicked()) {
-            return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:sendAuthenticationCancelledByUser');
-        }
-
         if ($form->isSubmitted() && $form->isValid()) {
-            $secondFactorIndex = $command->selectedSecondFactor;
-            $secondFactor = $secondFactors->get($secondFactorIndex);
-            $logger->notice(sprintf(
-                'User chose "%s" to use as second factor',
-                $secondFactor->secondFactorType
-            ));
+            $buttonName = $form->getClickedButton()->getName();
+            $formResults = $request->request->get('gateway_choose_second_factor', false);
+
+            if (!isset($formResults[$buttonName])) {
+                throw new InvalidArgumentException(
+                    sprintf(
+                        'Second factor type "%s" could not be found in the posted form results.',
+                        $buttonName
+                    )
+                );
+            }
+
+            $secondFactorType = $formResults[$buttonName];
+
+            // Filter the selected second factor from the array collection
+            $secondFactorFiltered = $secondFactors->filter(
+                function ($secondFactor) use ($secondFactorType) {
+                    return $secondFactorType === $secondFactor->secondFactorType;
+                }
+            );
+
+            if ($secondFactorFiltered->isEmpty()) {
+                throw new InvalidArgumentException(
+                    sprintf(
+                        'Second factor type "%s" could not be found in the collection of available second factors.',
+                        $secondFactorType
+                    )
+                );
+            }
+
+            $secondFactor = $secondFactorFiltered->first();
+
+            $logger->notice(sprintf('User chose "%s" to use as second factor', $secondFactorType));
 
             // Forward to action to verify possession of second factor
             return $this->selectAndRedirectTo($secondFactor, $context);
+        } else if ($form->isSubmitted() && !$form->isValid()) {
+            $form->addError(new FormError('gateway.form.gateway_choose_second_factor.unknown_second_factor_type'));
         }
 
-        return ['form' => $form->createView()];
+        return [
+            'form' => $form->createView(),
+            'secondFactors' => $secondFactors,
+        ];
     }
 
     public function verifyGssfAction()
@@ -215,12 +245,10 @@ class SecondFactorController extends Controller
         /** @var \Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor $secondFactor */
         $secondFactor = $secondFactorService->findByUuid($selectedSecondFactor);
         if (!$secondFactor) {
-            $logger->critical(sprintf(
+            throw new RuntimeException(sprintf(
                 'Requested verification of GSSF "%s", however that Second Factor no longer exists',
                 $selectedSecondFactor
             ));
-
-            throw new RuntimeException('Verification of selected second factor that no longer exists');
         }
 
         return $this->forward(
@@ -246,12 +274,12 @@ class SecondFactorController extends Controller
         /** @var \Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor $secondFactor */
         $secondFactor = $this->get('gateway.service.second_factor_service')->findByUuid($selectedSecondFactor);
         if (!$secondFactor) {
-            $logger->critical(sprintf(
-                'Verification of GSSF "%s" succeeded, however that Second Factor no longer exists',
-                $selectedSecondFactor
-            ));
-
-            throw new RuntimeException('Verification of selected second factor that no longer exists');
+            throw new RuntimeException(
+                sprintf(
+                    'Verification of GSSF "%s" succeeded, however that Second Factor no longer exists',
+                    $selectedSecondFactor
+                )
+            );
         }
 
         $context->markSecondFactorVerified();
@@ -286,14 +314,11 @@ class SecondFactorController extends Controller
         $command->secondFactorId = $selectedSecondFactor;
 
         $form = $this->createForm('gateway_verify_yubikey_otp', $command)->handleRequest($request);
-
-        if ($form->get('cancel')->isClicked()) {
-            return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:sendAuthenticationCancelledByUser');
-        }
+        $cancelForm = $this->buildCancelAuthenticationForm()->handleRequest($request);
 
         if (!$form->isValid()) {
             // OTP field is rendered empty in the template.
-            return ['form' => $form->createView()];
+            return ['form' => $form->createView(), 'cancelForm' => $cancelForm->createView()];
         }
 
         $result = $this->getStepupService()->verifyYubikeyOtp($command);
@@ -302,12 +327,12 @@ class SecondFactorController extends Controller
             $form->addError(new FormError('gateway.form.verify_yubikey.otp_verification_failed'));
 
             // OTP field is rendered empty in the template.
-            return ['form' => $form->createView()];
+            return ['form' => $form->createView(), 'cancelForm' => $cancelForm->createView()];
         } elseif (!$result->didPublicIdMatch()) {
             $form->addError(new FormError('gateway.form.verify_yubikey.public_id_mismatch'));
 
             // OTP field is rendered empty in the template.
-            return ['form' => $form->createView()];
+            return ['form' => $form->createView(), 'cancelForm' => $cancelForm->createView()];
         }
 
         $this->getResponseContext()->markSecondFactorVerified();
@@ -344,6 +369,7 @@ class SecondFactorController extends Controller
         $command->secondFactorId = $selectedSecondFactor;
 
         $form = $this->createForm('gateway_send_sms_challenge', $command)->handleRequest($request);
+        $cancelForm = $this->buildCancelAuthenticationForm()->handleRequest($request);
 
         $stepupService = $this->getStepupService();
         $phoneNumber = InternationalPhoneNumber::fromStringFormat(
@@ -354,12 +380,11 @@ class SecondFactorController extends Controller
         $maximumOtpRequests = $stepupService->getSmsMaximumOtpRequestsCount();
         $viewVariables = ['otpRequestsRemaining' => $otpRequestsRemaining, 'maximumOtpRequests' => $maximumOtpRequests];
 
-        if ($form->get('cancel')->isClicked()) {
-            return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:sendAuthenticationCancelledByUser');
-        }
-
         if (!$form->isValid()) {
-            return array_merge($viewVariables, ['phoneNumber' => $phoneNumber, 'form' => $form->createView()]);
+            return array_merge(
+                $viewVariables,
+                ['phoneNumber' => $phoneNumber, 'form' => $form->createView(), 'cancelForm' => $cancelForm->createView()]
+            );
         }
 
         $logger->notice('Verifying possession of SMS second factor, sending challenge per SMS');
@@ -367,7 +392,10 @@ class SecondFactorController extends Controller
         if (!$stepupService->sendSmsChallenge($command)) {
             $form->addError(new FormError('gateway.form.send_sms_challenge.sms_sending_failed'));
 
-            return array_merge($viewVariables, ['phoneNumber' => $phoneNumber, 'form' => $form->createView()]);
+            return array_merge(
+                $viewVariables,
+                ['phoneNumber' => $phoneNumber, 'form' => $form->createView(), 'cancelForm' => $cancelForm->createView()]
+            );
         }
 
         return $this->redirect($this->generateUrl('gateway_verify_second_factor_sms_verify_challenge'));
@@ -390,13 +418,10 @@ class SecondFactorController extends Controller
 
         $command = new VerifyPossessionOfPhoneCommand();
         $form = $this->createForm('gateway_verify_sms_challenge', $command)->handleRequest($request);
-
-        if ($form->get('cancel')->isClicked()) {
-            return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:sendAuthenticationCancelledByUser');
-        }
+        $cancelForm = $this->buildCancelAuthenticationForm()->handleRequest($request);
 
         if (!$form->isValid()) {
-            return ['form' => $form->createView()];
+            return ['form' => $form->createView(), 'cancelForm' => $cancelForm->createView()];
         }
 
         $logger->notice('Verifying input SMS challenge matches');
@@ -428,7 +453,7 @@ class SecondFactorController extends Controller
             $form->addError(new FormError('gateway.form.send_sms_challenge.sms_challenge_incorrect'));
         }
 
-        return ['form' => $form->createView()];
+        return ['form' => $form->createView(), 'cancelForm' => $cancelForm->createView()];
     }
 
     /**
@@ -552,7 +577,7 @@ class SecondFactorController extends Controller
         return ['authenticationFailed' => true, 'cancelForm' => $cancelForm->createView()];
     }
 
-    public function cancelU2fAuthenticationAction()
+    public function cancelAuthenticationAction()
     {
         return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:sendAuthenticationCancelledByUser');
     }
@@ -616,5 +641,19 @@ class SecondFactorController extends Controller
         }
 
         return $this->redirect($this->generateUrl($route));
+    }
+
+    /**
+     * @return Form
+     */
+    private function buildCancelAuthenticationForm()
+    {
+        $cancelFormAction = $this->generateUrl('gateway_cancel_authentication');
+        $cancelForm = $this->createForm(
+            'gateway_cancel_authentication',
+            null,
+            ['action' => $cancelFormAction]
+        );
+        return $cancelForm;
     }
 }

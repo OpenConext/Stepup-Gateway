@@ -1,0 +1,21 @@
+{% extends "::base.html.twig" %}
+{% block container_class %}{{ parent() }} authentication{% endblock container_class %}
+
+{% block body_tag %}
+<body class="authentication">
+{% endblock body_tag %}
+
+{% block content_row %}
+    <div class="authentication-content">
+        {% block content %}
+        {% endblock content %}
+    </div>
+{% endblock content_row %}
+
+{% block footer %}
+    <hr>
+    {{ form_start(cancelForm) }}
+    {{ form_widget(cancelForm.cancel, {}) }}
+    {{ form_end(cancelForm) }}
+    <a class="pull-right" href="{{ global_view_parameters.supportUrl }}" target="_blank">Help</a>
+{% endblock footer %}

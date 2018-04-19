@@ -23,6 +23,7 @@ services:
             - @surfnet_saml.hosted.identity_provider
             - @gateway.entity_service
             - @gateway.proxy.state_handler
+            - @logger
 
     gateway.service.second_factor_service:
         class: Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorService
@@ -71,6 +72,13 @@ services:
         arguments:
             - @gateway.repository.whitelist_entry
 
+    gateway.service.global_view_parameters:
+        class: Surfnet\StepupGateway\GatewayBundle\Service\GlobalViewParameters
+        arguments:
+            - "@translator"
+            - "%locales%"
+            - "%support_url%"
+
     gateway.session.u2f:
         class: Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag
         factory: ['@session', 'getBag']
@@ -102,12 +110,21 @@ services:
 
     gateway.monolog.gelf_to_string_formatter:
         class: Surfnet\StepupGateway\GatewayBundle\Monolog\Formatter\GelfMessageToStringFormatter
-        parent: surfnet_stepup.monolog.full_message_exception_gelf_message_formatter
+        arguments:
+            - "@gateway.monolog.gelf_message_formatter"
+
+    gateway.monolog.gelf_message_formatter:
+        public: false
+        class: Monolog\Formatter\GelfMessageFormatter
 
     # Forms
     gateway.form.type.anchor:
         class: Surfnet\StepupGateway\GatewayBundle\Form\Type\AnchorType
         tags: [{ name: form.type, alias: anchor }]
+
+    gateway_cancel_authentication:
+        class: Surfnet\StepupGateway\GatewayBundle\Form\Type\CancelAuthenticationType
+        tags: [{ name: form.type, alias: gateway_cancel_authentication }]
 
     gateway.form.verify_yubikey:
         class: Surfnet\StepupGateway\GatewayBundle\Form\Type\VerifyYubikeyOtpType
@@ -151,3 +168,11 @@ services:
             - @logger
         tags:
             - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse }
+    # Twig
+    ra.twig.second_factor_type:
+        class: Surfnet\StepupGateway\GatewayBundle\Twig\Extensions\Extension\SecondFactorType
+        arguments:
+            - "@surfnet_stepup.service.second_factor_type_translator"
+            - "@surfnet_stepup.provider.collection"
+        tags:
+            - { name : twig.extension }

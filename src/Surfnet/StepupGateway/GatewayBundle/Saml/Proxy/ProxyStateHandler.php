@@ -38,6 +38,20 @@ class ProxyStateHandler
     }
 
     /**
+     * Clear the complete state, leaving other states intact.
+     */
+    public function clear()
+    {
+        $all = $this->session->all();
+
+        foreach (array_keys($all) as $key) {
+            if (strpos($key, self::SESSION_PATH) === 0) {
+                $this->session->remove($key);
+            }
+        }
+    }
+
+    /**
      * @param string $originalRequestId
      * @return $this
      */
@@ -73,6 +87,25 @@ class ProxyStateHandler
     public function getRequestServiceProvider()
     {
         return $this->get('service_provider');
+    }
+
+    /**
+     * @param string $url
+     * @return $this
+     */
+    public function setRequestAssertionConsumerServiceUrl($url)
+    {
+        $this->set('assertion_consumer_service_url', $url);
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getRequestAssertionConsumerServiceUrl()
+    {
+        return $this->get('assertion_consumer_service_url');
     }
 
     /**

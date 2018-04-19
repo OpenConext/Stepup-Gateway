@@ -32,14 +32,16 @@
         "jms/translation-bundle": "~1.3.0",
         "jms/di-extra-bundle": "~1.4.0",
         "mockery/mockery": "~0.9.0",
-        "surfnet/stepup-saml-bundle": "^3.0",
+        "surfnet/stepup-saml-bundle": "^4.0",
         "surfnet/stepup-u2f-bundle": "dev-develop",
         "mopa/composer-bridge": "dev-master as v1.5.0",
-        "surfnet/stepup-bundle": "^3.0",
+        "surfnet/stepup-bundle": "^3.4.0",
         "surfnet/messagebird-api-client-bundle": "^3.0",
         "surfnet/yubikey-api-client-bundle": "^3.0",
+        "beberlei/assert": "^2.0",
         "webmozart/assert": "^1.2",
-        "openconext/monitor-bundle": "^1.0"
+        "openconext/monitor-bundle": "^1.0",
+        "graylog2/gelf-php": "^1.5"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3",
@@ -78,6 +80,9 @@
             },
             {
                 "file": "app/config/samlstepupproviders_parameters.yml"
+            },
+            {
+                "file": "app/config/global_view_parameters.yml"
             }
         ]
     }

@@ -26,13 +26,9 @@ class SendSmsChallengeType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('send-challenge', 'submit', [
+        $builder->add('send_challenge', 'submit', [
             'label' => 'gateway.form.gateway_send_sms_challenge.button.send_challenge',
-            'attr' => [ 'class' => 'btn btn-primary pull-right' ],
-        ]);
-        $builder->add('cancel', 'submit', [
-            'label' => 'gateway.form.send_sms_challenge.button.cancel',
-            'attr'  => ['class' => 'btn btn-danger', 'formnovalidate' => 'formnovalidate'],
+            'attr' => [ 'class' => 'btn btn-primary' ],
         ]);
     }
 
