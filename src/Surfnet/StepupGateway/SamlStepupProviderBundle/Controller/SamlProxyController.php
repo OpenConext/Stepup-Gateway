@@ -55,7 +55,8 @@ class SamlProxyController extends Controller
      * registration. Verification is not initiated with a SAML AUthnRequest,
      * see sendSecondFactorVerificationAuthnRequestAction().
      *
-     * The service provider in this context is SelfService.
+     * The service provider in this context is SelfService (when registering
+     * a token) or RA (when vetting a token).
      *
      * @param string  $provider
      * @param Request $httpRequest
@@ -192,7 +193,7 @@ class SamlProxyController extends Controller
      * The GSSP application sent an assertion back to the gateway. When
      * successful, the user is sent back to:
      *
-     *  1. in case of registration: back to the originating SP (SelfService)
+     *  1. in case of registration: back to the originating SP (SelfService or RA)
      *  2. in case of verification: internal redirect to SecondFactorController
      *
      * @param string  $provider
