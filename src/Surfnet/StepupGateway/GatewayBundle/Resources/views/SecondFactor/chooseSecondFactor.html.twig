@@ -19,8 +19,14 @@
     {% endfor %}
 
     {{ form_rest(form) }}
-
     {{ form_end(form) }}
-    <hr>
 
 {% endblock %}
+
+{% block footer %}
+    <hr>
+    {{ form_start(cancelForm) }}
+    {{ form_widget(cancelForm.cancel, {}) }}
+    {{ form_end(cancelForm) }}
+    <a class="pull-right" href="{{ global_view_parameters.supportUrl }}" target="_blank">Help</a>
+{% endblock footer %}

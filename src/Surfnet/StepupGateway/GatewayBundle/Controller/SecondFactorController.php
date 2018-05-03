@@ -124,6 +124,7 @@ class SecondFactorController extends Controller
      * @Template
      * @param Request $request
      * @return array|RedirectResponse|Response
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function chooseSecondFactorAction(Request $request)
     {
@@ -176,6 +177,7 @@ class SecondFactorController extends Controller
                 ['action' => $this->generateUrl('gateway_verify_second_factor_choose_second_factor')]
             )
             ->handleRequest($request);
+        $cancelForm = $this->buildCancelAuthenticationForm()->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $buttonName = $form->getClickedButton()->getName();
@@ -220,6 +222,7 @@ class SecondFactorController extends Controller
 
         return [
             'form' => $form->createView(),
+            'cancelForm' => $cancelForm->createView(),
             'secondFactors' => $secondFactors,
         ];
     }
