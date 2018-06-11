@@ -245,6 +245,10 @@ deactivate SP
 
 ## Gateway GSSP verification flow
 
+This flow happens when a user is asked to verify his second factor token,
+the service provider in this diagram can be any (external) service provider,
+or SelfService when the "Test a token" button is used.
+
 ![flow](diagrams/gateway-state-gssp-verification-flow.png)
 <!---
 regenerate this diagram with `plantuml GatewayState.md` or with http://www.plantuml.com/plantuml
@@ -344,6 +348,9 @@ deactivate SP
 --->
 
 ## Gateway GSSP registration flow
+
+This flow happens when users register their token in SelfService and when this token is
+verified in RA. So the service provider in this diagram is always SelfService or RA.
 
 ![flow](diagrams/gateway-state-gssp-registration-flow.png)
 <!---
