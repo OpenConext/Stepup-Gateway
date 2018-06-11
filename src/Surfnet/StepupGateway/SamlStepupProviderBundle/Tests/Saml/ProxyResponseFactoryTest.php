@@ -1,16 +1,19 @@
 <?php
 
-namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Test\Adfs;
+namespace Surfnet\StepupGateway\SamlStepupProviderBundle\Test\Saml;
 
 use Mockery as m;
 use Mockery\Mock;
+use Psr\Log\NullLogger;
+use SAML2\Assertion;
+use SAML2\Constants;
 use SAML2\Response;
 use Surfnet\SamlBundle\Entity\IdentityProvider;
 use Surfnet\StepupGateway\GatewayBundle\Saml\AssertionSigningService;
-use Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler;
-use Surfnet\StepupGateway\SecondFactorOnlyBundle\Saml\ResponseFactory;
+use Surfnet\StepupGateway\SamlStepupProviderBundle\Saml\ProxyResponseFactory;
+use Surfnet\StepupGateway\SamlStepupProviderBundle\Saml\StateHandler;
 
-class ResponseFactoryTest extends \PHPUnit_Framework_TestCase
+class ProxyResponseFactoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var IdentityProvider|Mock
@@ -18,7 +21,7 @@ class ResponseFactoryTest extends \PHPUnit_Framework_TestCase
     private $idp;
 
     /**
-     * @var ProxyStateHandler|Mock
+     * @var StateHandler|Mock
      */
     private $stateHandler;
 
@@ -34,11 +37,12 @@ class ResponseFactoryTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->stateHandler = m::mock(ProxyStateHandler::class);
+        $this->stateHandler = m::mock(StateHandler::class);
         $this->idp = m::mock(IdentityProvider::class);
         $this->assertionSigningService = m::mock(AssertionSigningService::class);
 
-        $this->factory = new ResponseFactory(
+        $this->factory = new ProxyResponseFactory(
+            new NullLogger(),
             $this->idp,
             $this->stateHandler,
             $this->assertionSigningService
@@ -62,10 +66,15 @@ class ResponseFactoryTest extends \PHPUnit_Framework_TestCase
             ->shouldReceive('getRequestServiceProvider')
             ->andReturn('https://sp');
 
-        $response = $this->factory->createSecondFactorOnlyResponse(
-            'e3d2948',
-            'https://acs',
-            null
+        $originalAssertion = new Assertion();
+        $originalAssertion->setNameId([
+            'Value' => 'e3d2948',
+            'Format' => Constants::NAMEID_TRANSIENT,
+        ]);
+
+        $response = $this->factory->createProxyResponse(
+            $originalAssertion,
+            'https://acs'
         );
 
         $assertions = $response->getAssertions();
