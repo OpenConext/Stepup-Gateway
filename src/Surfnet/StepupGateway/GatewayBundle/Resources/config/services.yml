@@ -152,6 +152,7 @@ services:
         arguments:
             - @gateway.proxy.response_context
             - @gateway.service.second_factor_service
+            - @surfnet_stepup.locale_cookie_helper
         tags: [{ name: kernel.event_subscriber }]
 
     gateway.locale_provider:

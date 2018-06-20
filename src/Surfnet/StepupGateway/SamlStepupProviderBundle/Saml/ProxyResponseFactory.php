@@ -112,7 +112,7 @@ class ProxyResponseFactory
         $confirmationData                      = new SubjectConfirmationData();
         $confirmationData->InResponseTo        = $this->stateHandler->getRequestId();
         $confirmationData->Recipient           = $destination;
-        $confirmationData->NotOnOrAfter        = $this->getTimestamp('PT8H');
+        $confirmationData->NotOnOrAfter        = $newAssertion->getNotOnOrAfter();
 
         $confirmation->SubjectConfirmationData = $confirmationData;
 

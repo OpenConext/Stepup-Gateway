@@ -18,9 +18,11 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\EventListener;
 
+use Surfnet\StepupBundle\Http\CookieHelper;
 use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
 use Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorService;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
@@ -36,13 +38,38 @@ final class SecondFactorLocaleListener implements EventSubscriberInterface
      */
     private $secondFactorService;
 
-    public function __construct(ResponseContext $responseContext, SecondFactorService $secondFactorService)
-    {
+    /**
+     * @var CookieHelper
+     */
+    private $cookieHelper;
+
+    public function __construct(
+        ResponseContext $responseContext,
+        SecondFactorService $secondFactorService,
+        CookieHelper $cookieHelper
+    ) {
         $this->responseContext = $responseContext;
         $this->secondFactorService = $secondFactorService;
+        $this->cookieHelper = $cookieHelper;
     }
 
     public function setRequestLocale(GetResponseEvent $event)
+    {
+        $locale = $this->getLocaleFromSelectedSecondFactor();
+
+        if (!$locale) {
+            $locale = $this->getLocaleFromCookie($event->getRequest());
+        }
+
+        if ($locale) {
+            $event->getRequest()->setLocale($locale);
+        }
+    }
+
+    /**
+     * @return string|void
+     */
+    public function getLocaleFromSelectedSecondFactor()
     {
         $secondFactorId = $this->responseContext->getSelectedSecondFactor();
         if (!$secondFactorId) {
@@ -50,11 +77,20 @@ final class SecondFactorLocaleListener implements EventSubscriberInterface
         }
 
         $secondFactor = $this->secondFactorService->findByUuid($secondFactorId);
-        if (!$secondFactor) {
-            return;
+        if ($secondFactor) {
+            return $secondFactor->displayLocale;
         }
+    }
 
-        $event->getRequest()->setLocale($secondFactor->displayLocale);
+    /**
+     * @return string|void
+     */
+    public function getLocaleFromCookie(Request $request)
+    {
+        $requestCookie = $this->cookieHelper->read($request);
+        if ($requestCookie) {
+            return $requestCookie->getValue();
+        }
     }
 
     public static function getSubscribedEvents()

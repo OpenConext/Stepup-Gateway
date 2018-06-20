@@ -210,4 +210,37 @@ final class ProxyResponseServiceTest extends PHPUnit_Framework_TestCase
 
         $factory->createProxyResponse($originalAssertion, 'https://acs');
     }
+
+    /**
+     * Limit SubjectConfirmationData validity to Assertion validity.
+     *
+     * See https://www.pivotaltracker.com/story/show/157880479
+     */
+    public function testSubjectConfirmationNotOnOrAfterEqualsAssertionNotOnOrAfter()
+    {
+        $factory = new ProxyResponseService(
+            $this->identityProvider,
+            $this->proxyStateHandler,
+            $this->assertionSigningService,
+            $this->attributeDictionary,
+            $this->attributeDefinition,
+            $this->loa
+        );
+
+        $originalAssertion = new Assertion();
+
+        $response = $factory->createProxyResponse($originalAssertion, 'https://acs');
+
+        $assertions = $response->getAssertions();
+
+        /** @var \SAML2\Assertion $assertion */
+        $assertion = reset($assertions);
+
+        $subjects = $assertion->getSubjectConfirmation();
+
+        /** @var \SAML2\XML\saml\SubjectConfirmation $subjectConfirmation */
+        $subjectConfirmation = reset($subjects);
+
+        $this->assertEquals($assertion->getNotOnOrAfter(), $subjectConfirmation->SubjectConfirmationData->NotOnOrAfter);
+    }
 }
