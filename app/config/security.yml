@@ -12,7 +12,9 @@ security:
         monitor:
             pattern: ^/(info|health)$
             security: false
-
+        csp_report:
+            pattern: ^/csp/report$
+            security: false
     access_control:
         - { path: ^/api/, roles: ROLE_API_CLIENT }
 

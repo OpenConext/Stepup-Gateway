@@ -228,12 +228,12 @@
       </trans-unit>
       <trans-unit id="be12899784c0176e20b93e0030a2144365add26d" resname="gateway.second_factor.yubikey.text.connect_yubikey_to_pc">
         <source>gateway.second_factor.yubikey.text.connect_yubikey_to_pc</source>
-        <target>Stop je YubiKey in een USB-poort van je computer.</target>
+        <target>Steek je YubiKey in een USB-poort van je computer.</target>
         <jms:reference-file line="19">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifyYubikeySecondFactor.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="6204e24e7c7b389809232589df868be2b511cdf5" resname="gateway.second_factor.yubikey.text.ensure_form_field_focus">
         <source>gateway.second_factor.yubikey.text.ensure_form_field_focus</source>
-        <target>Zorg dat het invulveld hieronder actief is.</target>
+        <target>Zorg dat het invulveld hierboven actief is.</target>
         <jms:reference-file line="20">/../src/Surfnet/StepupGateway/GatewayBundle/Resources/views/SecondFactor/verifyYubikeySecondFactor.html.twig</jms:reference-file>
       </trans-unit>
       <trans-unit id="96f63ed3f7e0e48ded0b2214a9b2b1a60c8b8b29" resname="gateway.second_factor.yubikey.text.enter_challenge">
