@@ -2,11 +2,13 @@
 
 ![GSSP](GSSP.png).
 
-OpenConext Stepup offers a generic SAML 2.0 WEB-SSO based method to add new providers of stepup mechanisms in a way that requires minimal changes in the Stepup-Gateway, the Stepup-RA and the Stepup-SelfService. Such a Generic SAML Stepup Provider (GSSP) behaves as an SAML IdP towards the Stepup-Gateway. Currently a "biometric" GSSP can be configured in addition to the "tiqr" GSSP. To add more GSSPs some coding is required in the Stepup applications, but it would certainly be feasible to implement a way to add new GSSPs to Stepup though configuration only.
+OpenConext Stepup offers a generic SAML 2.0 WEB-SSO based method to add new providers of stepup mechanisms in a way that requires minimal changes in the Stepup-Gateway, the Stepup-RA and the Stepup-SelfService. Such a Generic SAML Stepup Provider (GSSP) behaves as an SAML IdP towards the Stepup-Gateway. Since Release 15 adding a new GSSP mechanisms can be added though configuration only.
 
 The GSSP interface in the Stepup-Gateway allows both the authentication of users and the enrolment of new users for a step-up method to be delegated to a separate component that functions as part of the step up authentication service. This allows new step-up methods to be changed or added to the Stepup service without having to change any of the existing components. Any web based authentication method can be added to Stepup in this way.
 
-To turn an authentication method (i.e. tiqr, biometric, ...) into an GSSP it must implement a SAML 2.0 Identity Provider (IdP) interface. Each authentication method becomes a different GSSP in the Stepup-Gateway. The EnityID of a GSSP is `https://gateway.tld/gssp/<method>/metadata`, which is also the metadata URL. The metadata contains an IDPSSODescriptor and an SPSSODescriptor. The IDPSSODescriptor is the endpoint that used by the Stepup-Selfservice and Stepup-RA during enrollment and authentication. The SPSSODescriptor is for the GSSP. Note that the SPSSODescriptor currently only contains the most basic information and lacks the SAML signing certificate, this must be configured in the GSSP IdP by hand.
+To turn an authentication method (i.e. tiqr, biometric, ...) into an GSSP it must implement a SAML 2.0 Identity Provider (IdP) interface. Each authentication method becomes a different GSSP in the Stepup-Gateway. The EnityID of a GSSP is `https://gateway.tld/gssp/<method>/metadata`, which is also the metadata URL. The metadata contains an IDPSSODescriptor and an SPSSODescriptor. The IDPSSODescriptor is the endpoint that used by the Stepup-Selfservice and Stepup-RA during enrollment and authentication. The SPSSODescriptor is for the GSSP. Note that the SPSSODescriptor currently only contains the most basic information and lacks the SAML signing certificate, this must be configured in the GSSP IdP by some other means.
+
+An example GSSP (https://github.com/OpenConext/Stepup-gssp-example) and a PHP library for implmenting GSSPs (https://github.com/OpenConext/Stepup-gssp-bundle) are available.
 
 ## Enrollment
 
