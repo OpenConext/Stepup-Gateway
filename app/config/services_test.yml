@@ -1,0 +1,6 @@
+
+# Use this service definition file to override services in the test environment. For example to mock certain services
+
+services:
+  surfnet_gateway_api.service.yubikey:
+    class: Surfnet\StepupGateway\ApiBundle\Tests\TestDouble\Service\YubikeyService
