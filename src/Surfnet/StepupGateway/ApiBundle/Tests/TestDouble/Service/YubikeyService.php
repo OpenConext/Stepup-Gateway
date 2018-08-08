@@ -21,8 +21,8 @@ namespace Surfnet\StepupGateway\ApiBundle\Tests\TestDouble\Service;
 use Surfnet\StepupBundle\Value\YubikeyPublicId;
 use Surfnet\StepupGateway\ApiBundle\Dto\Otp as OtpDto;
 use Surfnet\StepupGateway\ApiBundle\Dto\Requester;
+use Surfnet\StepupGateway\ApiBundle\Dto\YubikeyOtpVerificationResult;
 use Surfnet\StepupGateway\ApiBundle\Service\YubikeyServiceInterface;
-use Surfnet\StepupGateway\GatewayBundle\Service\StepUp\YubikeyOtpVerificationResult;
 
 /**
  * Serves a test double for : ApiBundle/Service/YubikeyService

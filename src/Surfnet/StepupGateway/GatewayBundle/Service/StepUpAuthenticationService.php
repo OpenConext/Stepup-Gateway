@@ -28,20 +28,17 @@ use Surfnet\StepupBundle\Service\SmsSecondFactor\OtpVerification;
 use Surfnet\StepupBundle\Service\SmsSecondFactorService;
 use Surfnet\StepupBundle\Value\Loa;
 use Surfnet\StepupBundle\Value\PhoneNumber\InternationalPhoneNumber;
-use Surfnet\StepupBundle\Value\YubikeyOtp;
-use Surfnet\StepupBundle\Value\YubikeyPublicId;
 use Surfnet\StepupGateway\ApiBundle\Dto\Otp as ApiOtp;
 use Surfnet\StepupGateway\ApiBundle\Dto\Requester;
-use Surfnet\StepupGateway\ApiBundle\Service\YubikeyService;
+use Surfnet\StepupGateway\ApiBundle\Dto\YubikeyOtpVerificationResult;
+use Surfnet\StepupGateway\ApiBundle\Service\YubikeyServiceInterface;
 use Surfnet\StepupGateway\GatewayBundle\Command\SendSmsChallengeCommand;
 use Surfnet\StepupGateway\GatewayBundle\Command\VerifyYubikeyOtpCommand;
 use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor;
 use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactorRepository;
 use Surfnet\StepupGateway\GatewayBundle\Exception\InstitutionMismatchException;
-use Surfnet\StepupGateway\GatewayBundle\Exception\InvalidStepupShoFormatException;
 use Surfnet\StepupGateway\GatewayBundle\Exception\LoaCannotBeGivenException;
 use Surfnet\StepupGateway\GatewayBundle\Exception\UnknownInstitutionException;
-use Surfnet\StepupGateway\GatewayBundle\Service\StepUp\YubikeyOtpVerificationResult;
 use Symfony\Component\Translation\TranslatorInterface;
 
 /**
@@ -87,7 +84,7 @@ class StepUpAuthenticationService
     /**
      * @param LoaResolutionService   $loaResolutionService
      * @param SecondFactorRepository $secondFactorRepository
-     * @param YubikeyService         $yubikeyService
+     * @param YubikeyServiceInterface $yubikeyService
      * @param SmsSecondFactorService $smsService
      * @param TranslatorInterface    $translator
      * @param LoggerInterface        $logger
@@ -96,7 +93,7 @@ class StepUpAuthenticationService
     public function __construct(
         LoaResolutionService $loaResolutionService,
         SecondFactorRepository $secondFactorRepository,
-        YubikeyService $yubikeyService,
+        YubikeyServiceInterface $yubikeyService,
         SmsSecondFactorService $smsService,
         TranslatorInterface $translator,
         LoggerInterface $logger,
@@ -338,23 +335,7 @@ class StepUpAuthenticationService
         $otp = new ApiOtp();
         $otp->value = $command->otp;
 
-        $result = $this->yubikeyService->verify($otp, $requester);
-
-        if (!$result->isSuccessful()) {
-            return new YubikeyOtpVerificationResult(YubikeyOtpVerificationResult::RESULT_OTP_VERIFICATION_FAILED, null);
-        }
-
-        $otp = YubikeyOtp::fromString($command->otp);
-        $publicId = YubikeyPublicId::fromOtp($otp);
-
-        if (!$publicId->equals(new YubikeyPublicId($secondFactor->secondFactorIdentifier))) {
-            return new YubikeyOtpVerificationResult(
-                YubikeyOtpVerificationResult::RESULT_PUBLIC_ID_DID_NOT_MATCH,
-                $publicId
-            );
-        }
-
-        return new YubikeyOtpVerificationResult(YubikeyOtpVerificationResult::RESULT_PUBLIC_ID_MATCHED, $publicId);
+        return $this->yubikeyService->verify($otp, $requester, $secondFactor->secondFactorIdentifier);
     }
 
     /**

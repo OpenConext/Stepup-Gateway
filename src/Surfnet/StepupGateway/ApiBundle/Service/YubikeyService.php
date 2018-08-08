@@ -19,13 +19,15 @@
 namespace Surfnet\StepupGateway\ApiBundle\Service;
 
 use Psr\Log\LoggerInterface;
+use Surfnet\StepupBundle\Value\YubikeyOtp;
+use Surfnet\StepupBundle\Value\YubikeyPublicId;
 use Surfnet\StepupGateway\ApiBundle\Dto\Otp as OtpDto;
 use Surfnet\StepupGateway\ApiBundle\Dto\Requester;
+use Surfnet\StepupGateway\ApiBundle\Dto\YubikeyOtpVerificationResult;
 use Surfnet\YubikeyApiClient\Otp;
-use Surfnet\YubikeyApiClient\Service\OtpVerificationResult;
 use Surfnet\YubikeyApiClientBundle\Service\VerificationService;
 
-class YubikeyService
+class YubikeyService implements YubikeyServiceInterface
 {
     /**
      * @var VerificationService
@@ -50,14 +52,16 @@ class YubikeyService
     /**
      * @param OtpDto $otp
      * @param Requester $requester
-     * @return OtpVerificationResult
+     * @param string $secondFactorIdentifier
+     * @return YubikeyOtpVerificationResult
      */
-    public function verify(OtpDto $otp, Requester $requester)
+    public function verify(OtpDto $otp, Requester $requester, $secondFactorIdentifier)
     {
+        $otpValue = $otp->value;
         $this->logger->notice('Verifying Yubikey OTP.');
 
         if (!Otp::isValid($otp->value)) {
-            return new OtpVerificationResult(OtpVerificationResult::ERROR_BAD_OTP);
+            return new YubikeyOtpVerificationResult(YubikeyOtpVerificationResult::RESULT_OTP_VERIFICATION_FAILED, null);
         }
 
         $otp = Otp::fromString($otp->value);
@@ -65,8 +69,19 @@ class YubikeyService
 
         if (!$result->isSuccessful()) {
             $this->logger->warning(sprintf('Yubikey OTP verification failed (%s)', $result->getError()));
+            return new YubikeyOtpVerificationResult(YubikeyOtpVerificationResult::RESULT_OTP_VERIFICATION_FAILED, null);
         }
 
-        return $result;
+        $otp = YubikeyOtp::fromString($otpValue);
+        $publicId = YubikeyPublicId::fromOtp($otp);
+
+        if (!$publicId->equals(new YubikeyPublicId($secondFactorIdentifier))) {
+            return new YubikeyOtpVerificationResult(
+                YubikeyOtpVerificationResult::RESULT_PUBLIC_ID_DID_NOT_MATCH,
+                $publicId
+            );
+        }
+
+        return new YubikeyOtpVerificationResult(YubikeyOtpVerificationResult::RESULT_PUBLIC_ID_MATCHED, $publicId);
     }
 }
