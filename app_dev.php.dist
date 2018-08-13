@@ -8,25 +8,7 @@ Debug::enable(~E_USER_DEPRECATED);
 
 require_once __DIR__.'/../app/AppKernel.php';
 
-// The .env file can be in the suite root folder (/src) or in the application root folder (/src/Stepup-Gateway)
-// Application specific configuration wil take precedence over the global config.
-try {
-    $dotenv = new Dotenv\Dotenv(__DIR__.'/../');
-    $dotenv->load();
-} catch (InvalidPathException $e) {
-    try {
-        // Fall back on the globally set settings in /src/.env
-        $dotenv = new Dotenv\Dotenv(__DIR__.'/../../');
-        $dotenv->load();
-    } catch (InvalidPathException $e) {
-        // No .env file was found. Set sensible defaults
-        putenv('APP_ENV=dev');
-        putenv('APP_ENABLE_DEBUG=true');
-    }
-}
-
-require_once __DIR__.'/../app/AppKernel.php';
-$kernel = new AppKernel(getenv('APP_ENV'), getenv('APP_ENABLE_DEBUG'));
+$kernel = new AppKernel('dev', true);
 $kernel->loadClassCache();
 
 $request = Request::createFromGlobals();
