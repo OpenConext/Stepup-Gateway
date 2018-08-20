@@ -25,6 +25,39 @@ services:
             - @gateway.proxy.state_handler
             - @logger
 
+    gateway.service.gateway.login:
+        class: Surfnet\StepupGateway\GatewayBundle\Service\Gateway\LoginService
+        arguments:
+            - @surfnet_saml.logger
+            - @gateway.proxy.state_handler
+            - @surfnet_stepup.service.loa_resolution
+            - @surfnet_saml.hosted.service_provider
+            - @surfnet_saml.remote.idp
+            - @surfnet_saml.http.redirect_binding
+
+    gateway.service.gateway.consume_assertion:
+        class: Surfnet\StepupGateway\GatewayBundle\Service\Gateway\ConsumeAssertionService
+        arguments:
+            - @surfnet_saml.http.post_binding
+            - @surfnet_saml.logger
+            - @surfnet_saml.hosted.service_provider
+            - @surfnet_saml.remote.idp
+
+    gateway.service.gateway.respond:
+        class: Surfnet\StepupGateway\GatewayBundle\Service\Gateway\RespondService
+        arguments:
+            - @surfnet_saml.logger
+            - @surfnet_stepup.service.loa_resolution
+            - @gateway.service.response_proxy
+            - @gateway.service.second_factor_service
+            - @surfnet_stepup.service.second_factor_type
+
+    gateway.service.gateway.failed_response:
+        class: Surfnet\StepupGateway\GatewayBundle\Service\Gateway\FailedResponseService
+        arguments:
+            - @surfnet_saml.logger
+            - @gateway.proxy.response_builder
+
     gateway.service.second_factor_service:
         class: Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorService
         arguments:
