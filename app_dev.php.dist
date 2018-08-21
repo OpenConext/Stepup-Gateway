@@ -8,7 +8,12 @@ Debug::enable(~E_USER_DEPRECATED);
 
 require_once __DIR__.'/../app/AppKernel.php';
 
-$kernel = new AppKernel('dev', true);
+$env = 'dev';
+if (isset($_SERVER['APP_DEV'])) {
+    $env = $_SERVER['APP_DEV'];
+}
+
+$kernel = new AppKernel($env, true);
 $kernel->loadClassCache();
 
 $request = Request::createFromGlobals();

@@ -16,8 +16,9 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupGateway\GatewayBundle\Service\StepUp;
+namespace Surfnet\StepupGateway\ApiBundle\Dto;
 
+use DomainException;
 use Surfnet\StepupBundle\Value\YubikeyPublicId;
 
 class YubikeyOtpVerificationResult
@@ -40,7 +41,6 @@ class YubikeyOtpVerificationResult
      * @param int $result
      * @param YubikeyPublicId|null $publicId
      * @throws DomainException When $result is not one of the RESULT constants.
-     * @throws InvalidArgumentException When the public ID is not a string.
      */
     public function __construct($result, YubikeyPublicId $publicId = null)
     {
