@@ -5,11 +5,9 @@ services:
             - "@gateway.repository.saml_entity"
 
     gateway.repository.saml_entity:
-        class:           Surfnet\StepupGateway\GatewayBundle\Entity\SamlEntityRepository
-        factory_service: doctrine.orm.gateway_entity_manager
-        factory_method:  getRepository
-        arguments:
-            - 'Surfnet\StepupGateway\GatewayBundle\Entity\SamlEntity'
+        class: Surfnet\StepupGateway\GatewayBundle\Entity\SamlEntityRepository
+        factory: ['@doctrine', 'getRepository']
+        arguments: [Surfnet\StepupGateway\GatewayBundle\Entity\SamlEntity]
 
     gateway.repository.second_factor:
         alias: gateway.repository.second_factor.enabled
@@ -22,15 +20,11 @@ services:
             - "@logger"
 
     gateway.repository.second_factor.doctrine:
-        class:           Surfnet\StepupGateway\GatewayBundle\Entity\DoctrineSecondFactorRepository
-        factory_service: doctrine.orm.gateway_entity_manager
-        factory_method:  getRepository
-        arguments:
-            - 'Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor'
+        class: Surfnet\StepupGateway\GatewayBundle\Entity\DoctrineSecondFactorRepository
+        factory: ['@doctrine', 'getRepository']
+        arguments: [Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor]
 
     gateway.repository.whitelist_entry:
         class:           Surfnet\StepupGateway\GatewayBundle\Entity\WhitelistEntryRepository
-        factory_service: doctrine.orm.gateway_entity_manager
-        factory_method:  getRepository
-        arguments:
-            - 'Surfnet\StepupGateway\GatewayBundle\Entity\WhitelistEntry'
+        factory: ['@doctrine', 'getRepository']
+        arguments: [Surfnet\StepupGateway\GatewayBundle\Entity\WhitelistEntry]
