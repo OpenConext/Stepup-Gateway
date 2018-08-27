@@ -30,9 +30,16 @@ use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor;
 use Surfnet\StepupGateway\GatewayBundle\Exception\InvalidArgumentException;
 use Surfnet\StepupGateway\GatewayBundle\Exception\LoaCannotBeGivenException;
 use Surfnet\StepupGateway\GatewayBundle\Exception\RuntimeException;
+use Surfnet\StepupGateway\GatewayBundle\Form\Type\CancelAuthenticationType;
+use Surfnet\StepupGateway\GatewayBundle\Form\Type\CancelSecondFactorVerificationType;
+use Surfnet\StepupGateway\GatewayBundle\Form\Type\ChooseSecondFactorType;
+use Surfnet\StepupGateway\GatewayBundle\Form\Type\SendSmsChallengeType;
+use Surfnet\StepupGateway\GatewayBundle\Form\Type\VerifySmsChallengeType;
+use Surfnet\StepupGateway\GatewayBundle\Form\Type\VerifyYubikeyOtpType;
 use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
 use Surfnet\StepupGateway\U2fVerificationBundle\Value\KeyHandle;
 use Surfnet\StepupU2fBundle\Dto\SignResponse;
+use Surfnet\StepupU2fBundle\Form\Type\VerifyDeviceAuthenticationType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormError;
@@ -172,7 +179,7 @@ class SecondFactorController extends Controller
 
         $form = $this
             ->createForm(
-                'gateway_choose_second_factor',
+                ChooseSecondFactorType::class,
                 $command,
                 ['action' => $this->generateUrl('gateway_verify_second_factor_choose_second_factor')]
             )
@@ -316,7 +323,7 @@ class SecondFactorController extends Controller
         $command = new VerifyYubikeyOtpCommand();
         $command->secondFactorId = $selectedSecondFactor;
 
-        $form = $this->createForm('gateway_verify_yubikey_otp', $command)->handleRequest($request);
+        $form = $this->createForm(VerifyYubikeyOtpType::class, $command)->handleRequest($request);
         $cancelForm = $this->buildCancelAuthenticationForm()->handleRequest($request);
 
         if (!$form->isValid()) {
@@ -371,7 +378,7 @@ class SecondFactorController extends Controller
         $command = new SendSmsChallengeCommand();
         $command->secondFactorId = $selectedSecondFactor;
 
-        $form = $this->createForm('gateway_send_sms_challenge', $command)->handleRequest($request);
+        $form = $this->createForm(SendSmsChallengeType::class, $command)->handleRequest($request);
         $cancelForm = $this->buildCancelAuthenticationForm()->handleRequest($request);
 
         $stepupService = $this->getStepupService();
@@ -420,7 +427,7 @@ class SecondFactorController extends Controller
         $selectedSecondFactor = $this->getSelectedSecondFactor($context, $logger);
 
         $command = new VerifyPossessionOfPhoneCommand();
-        $form = $this->createForm('gateway_verify_sms_challenge', $command)->handleRequest($request);
+        $form = $this->createForm(VerifySmsChallengeType::class, $command)->handleRequest($request);
         $cancelForm = $this->buildCancelAuthenticationForm()->handleRequest($request);
 
         if (!$form->isValid()) {
@@ -475,7 +482,7 @@ class SecondFactorController extends Controller
 
         $cancelFormAction = $this->generateUrl('gateway_verify_second_factor_u2f_cancel_authentication');
         $cancelForm =
-            $this->createForm('gateway_cancel_second_factor_verification', null, ['action' => $cancelFormAction]);
+            $this->createForm(CancelSecondFactorVerificationType::class, null, ['action' => $cancelFormAction]);
 
         $logger->notice('Verifying possession of U2F second factor, looking for registration matching key handle');
 
@@ -503,7 +510,7 @@ class SecondFactorController extends Controller
 
         $formAction = $this->generateUrl('gateway_verify_second_factor_u2f_verify_authentication');
         $form = $this->createForm(
-            'surfnet_stepup_u2f_verify_device_authentication',
+            VerifyDeviceAuthenticationType::class,
             $signResponse,
             ['sign_request' => $signRequest, 'action' => $formAction]
         );
@@ -537,7 +544,7 @@ class SecondFactorController extends Controller
         $formAction = $this->generateUrl('gateway_verify_second_factor_u2f_verify_authentication');
         $form = $this
             ->createForm(
-                'surfnet_stepup_u2f_verify_device_authentication',
+                VerifyDeviceAuthenticationType::class,
                 $signResponse,
                 ['sign_request' => $signRequest, 'action' => $formAction]
             )
@@ -545,7 +552,7 @@ class SecondFactorController extends Controller
 
         $cancelFormAction = $this->generateUrl('gateway_verify_second_factor_u2f_cancel_authentication');
         $cancelForm =
-            $this->createForm('gateway_cancel_second_factor_verification', null, ['action' => $cancelFormAction]);
+            $this->createForm(CancelSecondFactorVerificationType::class, null, ['action' => $cancelFormAction]);
 
         if (!$form->isValid()) {
             $logger->error('U2F authentication verification could not be started because device send illegal data');
@@ -653,7 +660,7 @@ class SecondFactorController extends Controller
     {
         $cancelFormAction = $this->generateUrl('gateway_cancel_authentication');
         $cancelForm = $this->createForm(
-            'gateway_cancel_authentication',
+            CancelAuthenticationType::class,
             null,
             ['action' => $cancelFormAction]
         );

@@ -19,6 +19,8 @@
 namespace Surfnet\StepupGateway\GatewayBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -26,7 +28,7 @@ class VerifyYubikeyOtpType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('otp', 'text', [
+        $builder->add('otp', TextType::class, [
             'label' => /** @Ignore */ false,
             'required' => true,
             'widget_addon_prepend' => [
@@ -39,7 +41,7 @@ class VerifyYubikeyOtpType extends AbstractType
         ]);
         // This button is the form's default button, so as to prevent the form being submitted as if the cancel button
         // has been pressed.
-        $builder->add('submit', 'submit', [
+        $builder->add('submit', SubmitType::class, [
             'attr'  => ['class' => 'btn btn-off-screen'],
         ]);
     }
@@ -51,7 +53,7 @@ class VerifyYubikeyOtpType extends AbstractType
         ]);
     }
 
-    public function getName()
+    public function getBlockPrefix()
     {
         return 'gateway_verify_yubikey_otp';
     }

@@ -49,7 +49,7 @@ class ChooseSecondFactorType extends AbstractType
         ]);
     }
 
-    public function getName()
+    public function getBlockPrefix()
     {
         return 'gateway_choose_second_factor';
     }
