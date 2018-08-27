@@ -5,52 +5,75 @@
     "autoload": {
         "psr-4": {
             "Surfnet\\": "src\\Surfnet"
-        }
+        },
+        "classmap": [
+            "app/AppKernel.php",
+            "app/AppCache.php"
+        ]
     },
     "minimum-stability": "stable",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/OpenConext/Stepup-u2f-bundle"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/OpenConext/Stepup-bundle"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/OpenConext/Stepup-saml-bundle"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/SURFnet/messagebird-api-client-bundle"
+        }
+    ],
     "require": {
         "php": "~5.6|~7.0",
-        "symfony/symfony": "~2.7.0",
-        "doctrine/dbal": "~2.5",
-        "doctrine/orm": "~2.5",
-        "doctrine/doctrine-bundle": "~1.4",
-        "doctrine/common": "~2.5",
-        "doctrine/cache": "~1.4",
-        "twig/extensions": "~1.0",
+        "symfony/symfony": "3.4.*",
         "symfony/assetic-bundle": "~2.3",
         "symfony/swiftmailer-bundle": "~2.3",
         "symfony/monolog-bundle": "~2.4",
-        "sensio/distribution-bundle": "^3.0.21",
+        "twig/twig": "^1.35",
+        "twig/extensions": "~1.5",
+        "doctrine/doctrine-migrations-bundle": "^1.1",
+        "doctrine/doctrine-bundle": "^1.6",
+        "doctrine/dbal": "~2.5",
+        "doctrine/orm": "~2.5",
+        "doctrine/common": "~2.5",
+        "doctrine/cache": "~1.4",
+        "doctrine/migrations": "~1.4",
+        "sensio/distribution-bundle": "^5.0",
         "sensio/framework-extra-bundle": "~3.0",
         "incenteev/composer-parameter-handler": "~2.0",
         "nelmio/security-bundle": "~1.4",
-        "doctrine/doctrine-migrations-bundle": "~1.0.0",
-        "doctrine/migrations": "~1.4",
-        "mopa/bootstrap-bundle": "3.0.0-RC2",
-        "twbs/bootstrap": "~3.2.0",
+        "mopa/bootstrap-bundle": "^3.2",
+        "twbs/bootstrap": "^3.3.0",
         "fortawesome/font-awesome": "~4.2.0",
         "jms/translation-bundle": "~1.3.0",
-        "jms/di-extra-bundle": "~1.4.0",
-        "mockery/mockery": "~0.9.0",
-        "surfnet/stepup-saml-bundle": "^4.0",
-        "surfnet/stepup-u2f-bundle": "dev-develop",
-        "mopa/composer-bridge": "dev-master as v1.5.0",
-        "surfnet/stepup-bundle": "^3.4.0",
-        "surfnet/messagebird-api-client-bundle": "^3.0",
+        "mopa/composer-bridge": "~1.5",
+        "surfnet/messagebird-api-client-bundle": "dev-develop",
+        "surfnet/stepup-bundle": "dev-feature/symfony-34-compat as 3.5.3",
+        "surfnet/stepup-saml-bundle": "dev-feature/symfony-34-compat as 4.1.1",
+        "surfnet/stepup-u2f-bundle": "dev-feature/symfony-34-upgrade",
         "surfnet/yubikey-api-client-bundle": "^3.0",
+        "openconext/monitor-bundle": "^1.0",
         "beberlei/assert": "^2.0",
         "webmozart/assert": "^1.2",
-        "openconext/monitor-bundle": "^1.0",
         "graylog2/gelf-php": "^1.5"
     },
     "require-dev": {
-        "sensio/generator-bundle": "~2.3",
-        "matthiasnoback/symfony-config-test": "^1.2.1",
-        "phpmd/phpmd": "^2.0",
-        "phpunit/phpunit": "^4.0",
-        "sensiolabs/security-checker": "^2.0",
+        "matthiasnoback/symfony-config-test": "^2.2",
+        "mockery/mockery": "~0.9",
+        "phpmd/phpmd": "^2.6",
+        "phpunit/phpunit": "^5.7",
+        "sebastian/exporter": "~2.0",
+        "sensiolabs/security-checker": "^3.0",
         "sebastian/phpcpd": "^2.0",
-        "squizlabs/php_codesniffer": "^1.0"
+        "squizlabs/php_codesniffer": "^1.0",
+        "symfony/phpunit-bridge": "^3.0"
     },
     "scripts": {
         "post-install-cmd": [
@@ -70,10 +93,18 @@
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::removeSymfonyStandardFiles"
         ]
     },
+    "config": {
+        "optimize-autoloader": true,
+        "platform": {
+            "php": "5.6"
+        }
+    },
     "extra": {
         "symfony-app-dir": "app",
+        "symfony-var-dir": "app",
+        "symfony-bin-dir": "app",
         "symfony-web-dir": "web",
-        "symfony-assets-install": "symlink",
+        "symfony-assets-install": "relative",
         "incenteev-parameters": [
             {
                 "file": "app/config/parameters.yml"
