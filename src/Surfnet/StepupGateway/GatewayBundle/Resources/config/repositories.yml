@@ -2,7 +2,7 @@ services:
     gateway.repository.gateway_saml_entity:
         class: Surfnet\StepupGateway\GatewayBundle\Entity\GatewaySamlEntityRepositoryDecorator
         arguments:
-            - @gateway.repository.saml_entity
+            - "@gateway.repository.saml_entity"
 
     gateway.repository.saml_entity:
         class:           Surfnet\StepupGateway\GatewayBundle\Entity\SamlEntityRepository
@@ -17,9 +17,9 @@ services:
     gateway.repository.second_factor.enabled:
         class: Surfnet\StepupGateway\GatewayBundle\Entity\EnabledSecondFactorRepository
         arguments:
-            - @gateway.repository.second_factor.doctrine
+            - "@gateway.repository.second_factor.doctrine"
             - [] # Enabled second factor types, see extension
-            - @logger
+            - "@logger"
 
     gateway.repository.second_factor.doctrine:
         class:           Surfnet\StepupGateway\GatewayBundle\Entity\DoctrineSecondFactorRepository

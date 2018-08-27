@@ -18,7 +18,7 @@ framework:
     templating:
         engines: ['twig']
     assets:
-        version: %asset_version%
+        version: "%asset_version%"
     default_locale:  "%default_locale%"
     trusted_hosts:   ~
     trusted_proxies: "%trusted_proxies%"
@@ -146,39 +146,39 @@ mopa_bootstrap:
         icon_set: fontawesome4
 
 surfnet_message_bird_api_client:
-    authorization: %messagebird_authorization%
+    authorization: "%messagebird_authorization%"
 
 surfnet_yubikey_api_client:
     credentials:
-        client_id: %yubikey_client_id%
-        client_secret: %yubikey_client_secret%
+        client_id: "%yubikey_client_id%"
+        client_secret: "%yubikey_client_secret%"
 
 surfnet_stepup:
     logging:
         application_name: stepup-gateway
     loa_definition:
-        loa1: %gateway_loa_loa1%
-        loa2: %gateway_loa_loa2%
-        loa3: %gateway_loa_loa3%
+        loa1: "%gateway_loa_loa1%"
+        loa2: "%gateway_loa_loa2%"
+        loa3: "%gateway_loa_loa3%"
     sms:
         service: gateway.service.gateway_api_sms
-        originator: %sms_originator%
-        otp_expiry_interval: %sms_otp_expiry_interval%
-        maximum_otp_requests: %sms_maximum_otp_requests%
+        originator: "%sms_originator%"
+        otp_expiry_interval: "%sms_otp_expiry_interval%"
+        maximum_otp_requests: "%sms_maximum_otp_requests%"
     locale_cookie:
-        domain: %locale_cookie_domain%
+        domain: "%locale_cookie_domain%"
 
 surfnet_stepup_gateway_gateway:
-    intrinsic_loa: %gateway_loa_loa1%
-    enabled_second_factors: %enabled_second_factors%
-    enabled_generic_second_factors: %enabled_generic_second_factors%
+    intrinsic_loa: "%gateway_loa_loa1%"
+    enabled_second_factors: "%enabled_second_factors%"
+    enabled_generic_second_factors: "%enabled_generic_second_factors%"
 
 surfnet_stepup_gateway_second_factor_only:
     loa_aliases:
-        - loa: %gateway_loa_loa2%
-          alias: %second_factor_only_loa_loa2%
-        - loa: %gateway_loa_loa3%
-          alias: %second_factor_only_loa_loa3%
+        - loa: "%gateway_loa_loa2%"
+          alias: "%second_factor_only_loa_loa2%"
+        - loa: "%gateway_loa_loa3%"
+          alias: "%second_factor_only_loa_loa3%"
 
 surfnet_saml:
     hosted:
@@ -187,38 +187,38 @@ surfnet_saml:
         service_provider:
             enabled: true
             assertion_consumer_route: gateway_serviceprovider_consume_assertion
-            public_key: %saml_sp_publickey%
-            private_key: %saml_sp_privatekey%
+            public_key: "%saml_sp_publickey%"
+            private_key: "%saml_sp_privatekey%"
         identity_provider:
             enabled: true
             service_provider_repository: gateway.entity_service
             sso_route: gateway_identityprovider_sso
-            public_key: %saml_idp_publickey%
-            private_key: %saml_idp_privatekey%
+            public_key: "%saml_idp_publickey%"
+            private_key: "%saml_idp_privatekey%"
         metadata:
             entity_id_route: gateway_saml_metadata
-            public_key: %saml_metadata_publickey%
-            private_key: %saml_metadata_privatekey%
+            public_key: "%saml_metadata_publickey%"
+            private_key: "%saml_metadata_privatekey%"
     remote:
         identity_provider:
             enabled: true
-            entity_id: %saml_remote_idp_entity_id%
-            sso_url: %saml_remote_idp_sso_url%
-            certificate: %saml_remote_idp_certificate%
+            entity_id: "%saml_remote_idp_entity_id%"
+            sso_url: "%saml_remote_idp_sso_url%"
+            certificate: "%saml_remote_idp_certificate%"
 
 jms_translation:
     locales: %locales%
     configs:
         default:
-            dirs: [%kernel.root_dir%/../src, %kernel.root_dir%, %kernel.root_dir%/../vendor/surfnet]
-            output_dir: %kernel.root_dir%/Resources/translations
+            dirs: ["%kernel.root_dir%/../src", "%kernel.root_dir%", "%kernel.root_dir%/../vendor/surfnet"]
+            output_dir: "%kernel.root_dir%/Resources/translations"
             ignored_domains: []
             excluded_names: ['*TestCase.php', '*Test.php', 'Assert.php']
             excluded_dirs: [cache, data, logs, Tests]
             extractors: []
 
 surfnet_stepup_u2f:
-    app_id: %u2f_app_id%
+    app_id: "%u2f_app_id%"
 
 surfnet_stepup_gateway_u2f_verification:
     migrations:

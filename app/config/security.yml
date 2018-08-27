@@ -23,10 +23,10 @@ security:
             memory:
                 users:
                     ss:
-                        password: %selfservice_api_password%
+                        password: "%selfservice_api_password%"
                         roles: 'ROLE_API_CLIENT'
                     ra:
-                        password: %registration_authority_api_password%
+                        password: "%registration_authority_api_password%"
                         roles: 'ROLE_API_CLIENT'
 
     encoders:

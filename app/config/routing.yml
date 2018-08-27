@@ -20,5 +20,5 @@ nelmio_security_report:
     methods: [POST]
 
 surf_stepup:
-    resource: @SurfnetStepupGatewayApiBundle/Resources/config/routing.yml
+    resource: "@SurfnetStepupGatewayApiBundle/Resources/config/routing.yml"
     prefix: /api

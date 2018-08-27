@@ -2,17 +2,17 @@ services:
     saml.entity_repository:
         class: Surfnet\StepupGateway\GatewayBundle\Service\SamlEntityService
         arguments:
-            - @gateway.repository.saml_entity
+            - "@gateway.repository.saml_entity"
 
     gateway.entity_service:
         class: Surfnet\StepupGateway\GatewayBundle\Service\SamlEntityService
         arguments:
-            - @gateway.repository.gateway_saml_entity
+            - "@gateway.repository.gateway_saml_entity"
 
     gateway.proxy.state_handler:
         class: Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler
         arguments:
-            - @session
+            - "@session"
 
     gateway.proxy.response_builder:
         class: Surfnet\StepupGateway\GatewayBundle\Saml\ResponseBuilder
@@ -20,57 +20,57 @@ services:
     gateway.proxy.response_context:
         class: Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext
         arguments:
-            - @surfnet_saml.hosted.identity_provider
-            - @gateway.entity_service
-            - @gateway.proxy.state_handler
-            - @logger
+            - "@surfnet_saml.hosted.identity_provider"
+            - "@gateway.entity_service"
+            - "@gateway.proxy.state_handler"
+            - "@logger"
 
     gateway.service.second_factor_service:
         class: Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorService
         arguments:
-            - @gateway.repository.second_factor
+            - "@gateway.repository.second_factor"
 
     gateway.service.response_proxy:
         class: Surfnet\StepupGateway\GatewayBundle\Service\ProxyResponseService
         arguments:
-            - @surfnet_saml.hosted.identity_provider
-            - @gateway.proxy.state_handler
-            - @gateway.service.assertion_signing
-            - @surfnet_saml.saml.attribute_dictionary
-            - @saml.attribute.eduPersonTargetedID
-            - @gateway.security.intrinsic_loa
+            - "@surfnet_saml.hosted.identity_provider"
+            - "@gateway.proxy.state_handler"
+            - "@gateway.service.assertion_signing"
+            - "@surfnet_saml.saml.attribute_dictionary"
+            - "@saml.attribute.eduPersonTargetedID"
+            - "@gateway.security.intrinsic_loa"
 
     gateway.security.intrinsic_loa:
         public: false
         class: Surfnet\StepupBundle\Value\Loa
-        factory: [@surfnet_stepup.service.loa_resolution, getLoa]
+        factory: ["@surfnet_stepup.service.loa_resolution", getLoa]
 
     gateway.service.assertion_signing:
         class: Surfnet\StepupGateway\GatewayBundle\Saml\AssertionSigningService
         arguments:
-            - @surfnet_saml.hosted.identity_provider
+            - "@surfnet_saml.hosted.identity_provider"
 
     gateway.service.stepup_authentication:
         class: Surfnet\StepupGateway\GatewayBundle\Service\StepUpAuthenticationService
         arguments:
-            - @surfnet_stepup.service.loa_resolution
-            - @gateway.repository.second_factor
-            - @surfnet_gateway_api.service.yubikey
-            - @surfnet_stepup.service.sms_second_factor
-            - @translator
-            - @logger
-            - @surfnet_stepup.service.second_factor_type
+            - "@surfnet_stepup.service.loa_resolution"
+            - "@gateway.repository.second_factor"
+            - "@surfnet_gateway_api.service.yubikey"
+            - "@surfnet_stepup.service.sms_second_factor"
+            - "@translator"
+            - "@logger"
+            - "@surfnet_stepup.service.second_factor_type"
             - [] # See extension
 
     gateway.service.gateway_api_sms:
         class: Surfnet\StepupGateway\GatewayBundle\Service\GatewayApiSmsService
         arguments:
-            - @surfnet_gateway_api.service.sms
+            - "@surfnet_gateway_api.service.sms"
 
     gateway.service.whitelist:
         class: Surfnet\StepupGateway\GatewayBundle\Service\WhitelistService
         arguments:
-            - @gateway.repository.whitelist_entry
+            - "@gateway.repository.whitelist_entry"
 
     gateway.service.global_view_parameters:
         class: Surfnet\StepupGateway\GatewayBundle\Service\GlobalViewParameters
@@ -97,16 +97,16 @@ services:
     gateway.authentication_logger:
         class: Surfnet\StepupGateway\GatewayBundle\Monolog\Logger\AuthenticationLogger
         arguments:
-            - @surfnet_stepup.service.loa_resolution
-            - @gateway.proxy.state_handler
-            - @gateway.service.second_factor_service
-            - @gateway.authentication_logger.logger
-            - @surfnet_stepup.service.second_factor_type
+            - "@surfnet_stepup.service.loa_resolution"
+            - "@gateway.proxy.state_handler"
+            - "@gateway.service.second_factor_service"
+            - "@gateway.authentication_logger.logger"
+            - "@surfnet_stepup.service.second_factor_type"
 
     gateway.authentication_logger.logger:
         class: Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger
         arguments:
-            - @monolog.logger.authentication
+            - "@monolog.logger.authentication"
 
     gateway.monolog.gelf_to_string_formatter:
         class: Surfnet\StepupGateway\GatewayBundle\Monolog\Formatter\GelfMessageToStringFormatter
@@ -150,23 +150,23 @@ services:
     gateway.event_listener.locale:
         class: Surfnet\StepupGateway\GatewayBundle\EventListener\SecondFactorLocaleListener
         arguments:
-            - @gateway.proxy.response_context
-            - @gateway.service.second_factor_service
-            - @surfnet_stepup.locale_cookie_helper
+            - "@gateway.proxy.response_context"
+            - "@gateway.service.second_factor_service"
+            - "@surfnet_stepup.locale_cookie_helper"
         tags: [{ name: kernel.event_subscriber }]
 
     gateway.locale_provider:
         public: false
         class: Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorLocaleProvider
         arguments:
-            - @gateway.proxy.state_handler
+            - "@gateway.proxy.state_handler"
 
     gateway.locale_cookie_listener:
         class: Surfnet\StepupBundle\EventListener\LocaleCookieListener
         arguments:
-            - @surfnet_stepup.locale_cookie_helper
-            - @gateway.locale_provider
-            - @logger
+            - "@surfnet_stepup.locale_cookie_helper"
+            - "@gateway.locale_provider"
+            - "@logger"
         tags:
             - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse }
     # Twig
