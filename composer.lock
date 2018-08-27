@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "7bdf1c8052a63714dfd535ae38aae5db",
+    "content-hash": "f98888c482db9fb3eeb1a344363af058",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -2578,16 +2578,16 @@
         },
         {
             "name": "surfnet/messagebird-api-client-bundle",
-            "version": "dev-develop",
+            "version": "4.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SURFnet/messagebird-api-client-bundle.git",
-                "reference": "ef99a023e880a392a97e07f6bff497f0320c1773"
+                "reference": "7eb26aa77e676538afe413c799905a2f6f9b16eb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SURFnet/messagebird-api-client-bundle/zipball/ef99a023e880a392a97e07f6bff497f0320c1773",
-                "reference": "ef99a023e880a392a97e07f6bff497f0320c1773",
+                "url": "https://api.github.com/repos/SURFnet/messagebird-api-client-bundle/zipball/7eb26aa77e676538afe413c799905a2f6f9b16eb",
+                "reference": "7eb26aa77e676538afe413c799905a2f6f9b16eb",
                 "shasum": ""
             },
             "require": {
@@ -2616,6 +2616,7 @@
                     "Surfnet\\MessageBirdApiClientBundle\\": "src"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "Apache-2.0"
             ],
@@ -2625,11 +2626,7 @@
                 "sms",
                 "surfnet"
             ],
-            "support": {
-                "source": "https://github.com/SURFnet/messagebird-api-client-bundle/tree/develop",
-                "issues": "https://github.com/SURFnet/messagebird-api-client-bundle/issues"
-            },
-            "time": "2018-08-27T13:32:02+00:00"
+            "time": "2018-08-27T14:26:07+00:00"
         },
         {
             "name": "surfnet/stepup-bundle",
@@ -5756,7 +5753,6 @@
     ],
     "minimum-stability": "stable",
     "stability-flags": {
-        "surfnet/messagebird-api-client-bundle": 20,
         "surfnet/stepup-bundle": 20,
         "surfnet/stepup-saml-bundle": 20,
         "surfnet/stepup-u2f-bundle": 20

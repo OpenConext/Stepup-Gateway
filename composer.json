@@ -24,10 +24,6 @@
         {
             "type": "vcs",
             "url": "https://github.com/OpenConext/Stepup-saml-bundle"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/SURFnet/messagebird-api-client-bundle"
         }
     ],
     "require": {
@@ -54,7 +50,7 @@
         "fortawesome/font-awesome": "~4.2.0",
         "jms/translation-bundle": "~1.3.0",
         "mopa/composer-bridge": "~1.5",
-        "surfnet/messagebird-api-client-bundle": "dev-develop",
+        "surfnet/messagebird-api-client-bundle": "^4.0",
         "surfnet/stepup-bundle": "dev-feature/symfony-34-compat as 3.5.3",
         "surfnet/stepup-saml-bundle": "dev-feature/symfony-34-compat as 4.1.1",
         "surfnet/stepup-u2f-bundle": "dev-feature/symfony-34-upgrade",
