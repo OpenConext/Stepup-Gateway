@@ -7,6 +7,7 @@ use PHPUnit\Framework\TestCase;
 use SAML2\Compat\ContainerSingleton;
 use SAML2\Configuration\PrivateKey;
 use Surfnet\StepupGateway\GatewayBundle\Tests\Mock\Saml2ContainerMock;
+use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 use Symfony\Component\HttpKernel\Tests\Logger;
 
 class GatewaySamlTestCase extends TestCase
@@ -16,6 +17,9 @@ class GatewaySamlTestCase extends TestCase
     /** @var Logger */
     protected $logger;
 
+    /** @var MockArraySessionStorage */
+    protected $sessionStorage;
+
     /**
      *
      */
@@ -24,6 +28,8 @@ class GatewaySamlTestCase extends TestCase
         parent::setUp();
 
         $this->logger = new Logger();
+
+        $this->sessionStorage = new MockArraySessionStorage();
 
         ContainerSingleton::setContainer(new Saml2ContainerMock($this->logger));
         $this->mockSamlTemporalTime(static::MOCK_TIMESTAMP);
@@ -65,6 +71,28 @@ class GatewaySamlTestCase extends TestCase
             ->shouldReceive('getPassPhrase')
             ->andReturn($passPhrase)
             ->getMock();
+    }
+
+    /**
+     * @param $bag
+     * @return array
+     */
+    protected function getSessionData($bag)
+    {
+        return $this->sessionStorage->getBag($bag)->getBag()->all();
+    }
+
+    /**
+     * @param string $bag
+     * @param array $data
+     */
+    protected function mockSessionData($bag, array $data)
+    {
+        $this->sessionStorage->setSessionData([$bag => $data]);
+        if ($this->sessionStorage->isStarted()) {
+            $this->sessionStorage->save();
+        }
+        $this->sessionStorage->start();
     }
 
     /**

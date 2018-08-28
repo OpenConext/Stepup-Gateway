@@ -37,13 +37,9 @@ use Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorService;
 use Surfnet\StepupGateway\GatewayBundle\Tests\TestCase\GatewaySamlTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 
 final class LoginServiceTest extends GatewaySamlTestCase
 {
-    /** @var MockArraySessionStorage */
-    private $sessionStorage;
-
     /** @var Mockery\Mock|LoginService */
     private $gatewayLoginService;
 
@@ -125,7 +121,7 @@ final class LoginServiceTest extends GatewaySamlTestCase
   </samlp:RequestedAuthnContext>
 </samlp:AuthnRequest>';
 
-        $this->mockSessionData([]);
+        $this->mockSessionData('_sf2_attributes', []);
 
         $this->mockRedirectBinding($originalRequest);
 
@@ -165,7 +161,7 @@ final class LoginServiceTest extends GatewaySamlTestCase
             'surfnet/gateway/requestresponse_context_service_id' => 'gateway.proxy.response_context',
             'surfnet/gateway/requestloa_identifier' => 'http://stepup.example.com/assurance/loa2',
             'surfnet/gateway/requestgateway_request_id' => '_mocked_generated_id',
-        ], $this->sessionStorage->getBag('attributes')->all());
+        ], $this->getSessionData('attributes'));
     }
 
     /**
@@ -192,7 +188,7 @@ final class LoginServiceTest extends GatewaySamlTestCase
   </samlp:RequestedAuthnContext>
 </samlp:AuthnRequest>';
 
-        $this->mockSessionData([]);
+        $this->mockSessionData('_sf2_attributes', []);
 
         $this->mockRedirectBinding($originalRequest);
 
@@ -211,7 +207,6 @@ final class LoginServiceTest extends GatewaySamlTestCase
      */
     private function initGatewayService(array $idpConfiguration, array $spConfiguration, array $loaLevels, DateTime $now)
     {
-        $this->sessionStorage = new MockArraySessionStorage();
         $session = new Session($this->sessionStorage);
         $this->stateHandler = new ProxyStateHandler($session);
         $samlLogger = new SamlAuthenticationLogger($this->logger);
@@ -263,17 +258,5 @@ final class LoginServiceTest extends GatewaySamlTestCase
 
         $this->redirectBinding->shouldReceive('receiveSignedAuthnRequestFrom')
             ->andReturn($authnRequest);
-    }
-
-    /**
-     * @param array $data
-     */
-    private function mockSessionData(array $data)
-    {
-        $this->sessionStorage->setSessionData(['_sf2_attributes' => $data]);
-        if ($this->sessionStorage->isStarted()) {
-            $this->sessionStorage->save();
-        }
-        $this->sessionStorage->start();
     }
 }

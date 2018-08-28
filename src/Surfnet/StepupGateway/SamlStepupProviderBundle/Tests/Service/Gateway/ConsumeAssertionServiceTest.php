@@ -23,13 +23,9 @@ use Surfnet\StepupGateway\SamlStepupProviderBundle\Service\Gateway\ConsumeAssert
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag;
 use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 
 class ConsumeAssertionServiceTest extends GatewaySamlTestCase
 {
-    /** @var MockArraySessionStorage */
-    private $sessionStorage;
-
     /** @var Mockery\Mock|ConsumeAssertionService */
     private $samlProxyConsumeAssertionService;
 
@@ -179,7 +175,7 @@ class ConsumeAssertionServiceTest extends GatewaySamlTestCase
   </saml:Assertion>
 </samlp:Response>';
 
-        $this->mockSessionData([
+        $this->mockSessionData('__gssp_session', [
             'test_provider' => [
                 'request_id' => '_1b8f282a9c194b264ef68761171539380de78b45038f65b8609df868f55e',
                 'service_provider' => 'https://gateway.tld/authentication/metadata',
@@ -243,7 +239,7 @@ class ConsumeAssertionServiceTest extends GatewaySamlTestCase
                 'relay_state' => '',
                 'gateway_request_id' => '_mocked_generated_id',
             ],
-        ], $this->sessionStorage->getBag('attributes')->all());
+        ], $this->getSessionData('attributes'));
     }
 
     /**
@@ -327,7 +323,7 @@ class ConsumeAssertionServiceTest extends GatewaySamlTestCase
   </saml:Assertion>
 </samlp:Response>';
 
-        $this->mockSessionData([
+        $this->mockSessionData('__gssp_session', [
             'test_provider' => [
                 'request_id' => '_1b8f282a9c194b264ef68761171539380de78b45038f65b8609df868f55e',
                 'service_provider' => 'https://gateway.tld/authentication/metadata',
@@ -438,7 +434,7 @@ class ConsumeAssertionServiceTest extends GatewaySamlTestCase
   </saml:Assertion>
 </samlp:Response>';
 
-        $this->mockSessionData([
+        $this->mockSessionData('__gssp_session', [
             'test_provider' => [
                 'request_id' => '_1b8f282a9c194b264ef68761171539380de78b45038f65b8609df868f55e',
                 'service_provider' => 'https://gateway.tld/authentication/metadata',
@@ -548,7 +544,7 @@ class ConsumeAssertionServiceTest extends GatewaySamlTestCase
   </saml:Assertion>
 </samlp:Response>';
 
-        $this->mockSessionData([
+        $this->mockSessionData('__gssp_session', [
             'test_provider' => [
                 'request_id' => '_1b8f282a9c194b264ef68761171539380de78b45038f65b8609df868f55e',
                 'service_provider' => 'https://gateway.tld/authentication/metadata',
@@ -659,7 +655,7 @@ class ConsumeAssertionServiceTest extends GatewaySamlTestCase
   </saml:Assertion>
 </samlp:Response>';
 
-        $this->mockSessionData([
+        $this->mockSessionData('__gssp_session', [
             'test_provider' => [
                 'request_id' => '_1b8f282a9c194b264ef68761171539380de78b45038f65b8609df868f55e',
                 'service_provider' => 'https://gateway.tld/authentication/metadata',
@@ -699,7 +695,6 @@ class ConsumeAssertionServiceTest extends GatewaySamlTestCase
      */
     private function initSamlProxyService(array $remoteIdpConfiguration, array $idpConfiguration, array $spConfiguration, array $connectedServiceProviders, DateTime $now)
     {
-        $this->sessionStorage = new MockArraySessionStorage();
         $session = new Session($this->sessionStorage);
         $namespacedSessionBag = new NamespacedAttributeBag('__gssp_session');
         $session->registerBag($namespacedSessionBag);
@@ -754,17 +749,5 @@ class ConsumeAssertionServiceTest extends GatewaySamlTestCase
 
         $this->postBinding->shouldReceive('processResponse')
             ->andReturn($assertion);
-    }
-
-    /**
-     * @param array $data
-     */
-    private function mockSessionData(array $data)
-    {
-        $this->sessionStorage->setSessionData(['__gssp_session' => $data]);
-        if ($this->sessionStorage->isStarted()) {
-            $this->sessionStorage->save();
-        }
-        $this->sessionStorage->start();
     }
 }

@@ -33,13 +33,9 @@ use Surfnet\StepupGateway\GatewayBundle\Service\SamlEntityService;
 use Surfnet\StepupGateway\GatewayBundle\Tests\TestCase\GatewaySamlTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 
 final class ConsumeAssertionServiceTest extends GatewaySamlTestCase
 {
-    /** @var MockArraySessionStorage */
-    private $sessionStorage;
-
     /** @var Mockery\Mock|ConsumeAssertionService */
     private $gatewayConsumeAssertionService;
 
@@ -173,7 +169,7 @@ final class ConsumeAssertionServiceTest extends GatewaySamlTestCase
 </samlp:Response>
 ';
 
-        $this->mockSessionData([
+        $this->mockSessionData('_sf2_attributes', [
             'surfnet/gateway/requestrequest_id' => '_123456789012345678901234567890123456789012',
             'surfnet/gateway/requestservice_provider' => 'https://sp.com/metadata',
             'surfnet/gateway/requestassertion_consumer_service_url' => 'https://sp.com/acs',
@@ -225,7 +221,7 @@ final class ConsumeAssertionServiceTest extends GatewaySamlTestCase
             'surfnet/gateway/requestresponse_assertion' => '<?xml version="1.0"?>
 <saml:Assertion xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" ID="CORTOaabbccddeeaabbccddeeaabbccddeeaabbccddee" Version="2.0" IssueInstant="2014-10-22T11:09:59Z"><saml:Issuer>https://idp.edu/metadata</saml:Issuer><saml:Subject><saml:NameID Format="urn:oasis:names:tc:SAML:2.0:nameid-format:persistent">724cca6778a1d3db16b65c40d4c378d011f220be</saml:NameID><saml:SubjectConfirmation Method="urn:oasis:names:tc:SAML:2.0:cm:bearer"><saml:SubjectConfirmationData Recipient="https://gateway.org/acs" InResponseTo="_mocked_generated_id"/></saml:SubjectConfirmation></saml:Subject><saml:Conditions NotBefore="2014-10-22T11:07:07Z" NotOnOrAfter="2014-10-22T11:12:08Z"><saml:AudienceRestriction><saml:Audience>https://gateway.org/metadata</saml:Audience></saml:AudienceRestriction></saml:Conditions><saml:AuthnStatement AuthnInstant="2014-10-22T11:07:07Z" SessionNotOnOrAfter="2014-10-22T19:07:07Z" SessionIndex="_1dad5d4bf289a5761a62fedf91143816d323a0604b"><saml:AuthnContext><saml:AuthnContextClassRef>urn:oasis:names:tc:SAML:2.0:ac:classes:Password</saml:AuthnContextClassRef><saml:AuthenticatingAuthority>https://proxied-idp.edu/</saml:AuthenticatingAuthority></saml:AuthnContext></saml:AuthnStatement><saml:AttributeStatement><saml:Attribute Name="urn:oid:0.9.2342.19200300.100.1.3" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri"><saml:AttributeValue xsi:type="xs:string">john.doe@example.edu</saml:AttributeValue></saml:Attribute><saml:Attribute Name="urn:oid:1.3.6.1.4.1.5923.1.1.1.10" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri"><saml:AttributeValue><saml:NameID Format="urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified">urn:collab:person:example.edu:jdoe</saml:NameID></saml:AttributeValue></saml:Attribute></saml:AttributeStatement></saml:Assertion>
 ',
-        ], $this->sessionStorage->getBag('attributes')->all());
+        ], $this->getSessionData('attributes'));
     }
 
     /**
@@ -316,7 +312,7 @@ final class ConsumeAssertionServiceTest extends GatewaySamlTestCase
 </samlp:Response>
 ';
 
-        $this->mockSessionData([
+        $this->mockSessionData('_sf2_attributes', [
             'surfnet/gateway/requestrequest_id' => '_123456789012345678901234567890123456789012',
             'surfnet/gateway/requestservice_provider' => 'https://sp.com/metadata',
             'surfnet/gateway/requestassertion_consumer_service_url' => 'https://sp.com/acs',
@@ -427,7 +423,7 @@ final class ConsumeAssertionServiceTest extends GatewaySamlTestCase
 </samlp:Response>
 ';
 
-        $this->mockSessionData([
+        $this->mockSessionData('_sf2_attributes', [
             'surfnet/gateway/requestrequest_id' => '_123456789012345678901234567890123456789012',
             'surfnet/gateway/requestservice_provider' => 'https://sp.com/metadata',
             'surfnet/gateway/requestassertion_consumer_service_url' => 'https://sp.com/acs',
@@ -456,7 +452,6 @@ final class ConsumeAssertionServiceTest extends GatewaySamlTestCase
      */
     private function initGatewayService(array $idpConfiguration, array $spConfiguration, DateTime $now)
     {
-        $this->sessionStorage = new MockArraySessionStorage();
         $session = new Session($this->sessionStorage);
         $this->stateHandler = new ProxyStateHandler($session);
         $samlLogger = new SamlAuthenticationLogger($this->logger);
@@ -496,17 +491,5 @@ final class ConsumeAssertionServiceTest extends GatewaySamlTestCase
 
         $this->postBinding->shouldReceive('processResponse')
             ->andReturn($assertion);
-    }
-
-    /**
-     * @param array $data
-     */
-    private function mockSessionData(array $data)
-    {
-        $this->sessionStorage->setSessionData(['_sf2_attributes' => $data]);
-        if ($this->sessionStorage->isStarted()) {
-            $this->sessionStorage->save();
-        }
-        $this->sessionStorage->start();
     }
 }

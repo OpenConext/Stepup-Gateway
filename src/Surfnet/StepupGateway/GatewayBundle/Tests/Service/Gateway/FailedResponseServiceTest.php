@@ -31,13 +31,9 @@ use Surfnet\StepupGateway\GatewayBundle\Service\Gateway\FailedResponseService;
 use Surfnet\StepupGateway\GatewayBundle\Service\SamlEntityService;
 use Surfnet\StepupGateway\GatewayBundle\Tests\TestCase\GatewaySamlTestCase;
 use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 
 final class FailedResponseServiceTest extends GatewaySamlTestCase
 {
-    /** @var MockArraySessionStorage */
-    private $sessionStorage;
-
     /** @var Mockery\Mock|FailedResponseService */
     private $gatewayFailedResponseService;
 
@@ -88,7 +84,7 @@ final class FailedResponseServiceTest extends GatewaySamlTestCase
             ->with('https://sp.com/metadata')
             ->andReturn($serviceProvider);
 
-        $this->mockSessionData([
+        $this->mockSessionData('_sf2_attributes', [
             'surfnet/gateway/requestrequest_id' => '_123456789012345678901234567890123456789012',
             'surfnet/gateway/requestservice_provider' => 'https://sp.com/metadata',
             'surfnet/gateway/requestassertion_consumer_service_url' => 'https://sp.com/acs',
@@ -123,7 +119,7 @@ final class FailedResponseServiceTest extends GatewaySamlTestCase
             'surfnet/gateway/requestrequest_id' => '_123456789012345678901234567890123456789012',
             'surfnet/gateway/requestservice_provider' => 'https://sp.com/metadata',
             'surfnet/gateway/requestassertion_consumer_service_url' => 'https://sp.com/acs',
-        ], $this->sessionStorage->getBag('attributes')->all());
+        ], $this->getSessionData('attributes'));
     }
 
 
@@ -142,7 +138,7 @@ final class FailedResponseServiceTest extends GatewaySamlTestCase
             ->with('https://sp.com/metadata')
             ->andReturn($serviceProvider);
 
-        $this->mockSessionData([
+        $this->mockSessionData('_sf2_attributes', [
             'surfnet/gateway/requestrequest_id' => '_123456789012345678901234567890123456789012',
             'surfnet/gateway/requestservice_provider' => 'https://sp.com/metadata',
             'surfnet/gateway/requestassertion_consumer_service_url' => 'https://sp.com/acs',
@@ -177,7 +173,7 @@ final class FailedResponseServiceTest extends GatewaySamlTestCase
             'surfnet/gateway/requestrequest_id' => '_123456789012345678901234567890123456789012',
             'surfnet/gateway/requestservice_provider' => 'https://sp.com/metadata',
             'surfnet/gateway/requestassertion_consumer_service_url' => 'https://sp.com/acs',
-        ], $this->sessionStorage->getBag('attributes')->all());
+        ], $this->getSessionData('attributes'));
     }
 
 
@@ -186,7 +182,6 @@ final class FailedResponseServiceTest extends GatewaySamlTestCase
      */
     private function initGatewayService(array $idpConfiguration, DateTime $now)
     {
-        $this->sessionStorage = new MockArraySessionStorage();
         $session = new Session($this->sessionStorage);
         $this->stateHandler = new ProxyStateHandler($session);
         $samlLogger = new SamlAuthenticationLogger($this->logger);
@@ -207,17 +202,5 @@ final class FailedResponseServiceTest extends GatewaySamlTestCase
             $samlLogger,
             $responseBuilder
         );
-    }
-
-    /**
-     * @param array $data
-     */
-    private function mockSessionData(array $data)
-    {
-        $this->sessionStorage->setSessionData(['_sf2_attributes' => $data]);
-        if ($this->sessionStorage->isStarted()) {
-            $this->sessionStorage->save();
-        }
-        $this->sessionStorage->start();
     }
 }

@@ -37,13 +37,9 @@ use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\LoaResolutionService as
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\SecondFactorOnlyNameIdValidationService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 
 final class LoginServiceTest extends GatewaySamlTestCase
 {
-    /** @var MockArraySessionStorage */
-    private $sessionStorage;
-
     /** @var Mockery\Mock|LoginService */
     private $gatewayLoginService;
 
@@ -109,7 +105,7 @@ final class LoginServiceTest extends GatewaySamlTestCase
   </samlp:RequestedAuthnContext>
 </samlp:AuthnRequest>');
 
-        $this->mockSessionData([]);
+        $this->mockSessionData('_sf2_attributes', []);
 
         // Mock service provider
         $serviceProvider = Mockery::mock(ServiceProvider::class)
@@ -149,7 +145,7 @@ final class LoginServiceTest extends GatewaySamlTestCase
             'surfnet/gateway/requestresponse_context_service_id' => 'second_factor_only.response_context',
             'surfnet/gateway/requestname_id' => 'oom60v-3art',
             'surfnet/gateway/requestloa_identifier' => 'http://stepup.example.com/assurance/loa2',
-        ], $this->sessionStorage->getBag('attributes')->all());
+        ], $this->getSessionData('attributes'));
     }
 
 
@@ -181,7 +177,7 @@ final class LoginServiceTest extends GatewaySamlTestCase
   </samlp:RequestedAuthnContext>
 </samlp:AuthnRequest>');
 
-        $this->mockSessionData([]);
+        $this->mockSessionData('_sf2_attributes', []);
 
         // Mock service provider
         $serviceProvider = Mockery::mock(ServiceProvider::class)
@@ -227,7 +223,7 @@ final class LoginServiceTest extends GatewaySamlTestCase
   </samlp:RequestedAuthnContext>
 </samlp:AuthnRequest>');
 
-        $this->mockSessionData([]);
+        $this->mockSessionData('_sf2_attributes', []);
 
         // Mock service provider
         $serviceProvider = Mockery::mock(ServiceProvider::class)
@@ -253,7 +249,6 @@ final class LoginServiceTest extends GatewaySamlTestCase
      */
     private function initGatewayLoginService(array $loaLevels,  array $loaAliases, DateTime $now)
     {
-        $this->sessionStorage = new MockArraySessionStorage();
         $session = new Session($this->sessionStorage);
         $this->stateHandler = new ProxyStateHandler($session);
         $samlLogger = new SamlAuthenticationLogger($this->logger);
@@ -289,17 +284,5 @@ final class LoginServiceTest extends GatewaySamlTestCase
             $loaLevelObjects[] = new Loa($level[0], $level[1]);
         }
         return new LoaResolutionService($loaLevelObjects);
-    }
-
-    /**
-     * @param array $data
-     */
-    private function mockSessionData(array $data)
-    {
-        $this->sessionStorage->setSessionData(['_sf2_attributes' => $data]);
-        if ($this->sessionStorage->isStarted()) {
-            $this->sessionStorage->save();
-        }
-        $this->sessionStorage->start();
     }
 }

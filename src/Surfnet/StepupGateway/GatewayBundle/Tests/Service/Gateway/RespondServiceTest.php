@@ -41,13 +41,9 @@ use Surfnet\StepupGateway\GatewayBundle\Service\SamlEntityService;
 use Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorService;
 use Surfnet\StepupGateway\GatewayBundle\Tests\TestCase\GatewaySamlTestCase;
 use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 
 final class RespondServiceTest extends GatewaySamlTestCase
 {
-    /** @var MockArraySessionStorage */
-    private $sessionStorage;
-
     /** @var Mockery\Mock|RespondService */
     private $gatewayRespondService;
 
@@ -145,7 +141,7 @@ final class RespondServiceTest extends GatewaySamlTestCase
             ->with('mocked-second-factor-id')
             ->andReturn($secondFactor);
 
-        $this->mockSessionData([
+        $this->mockSessionData('_sf2_attributes', [
             'surfnet/gateway/requestrequest_id' => '_123456789012345678901234567890123456789012',
             'surfnet/gateway/requestservice_provider' => 'https://sp.com/metadata',
             'surfnet/gateway/requestassertion_consumer_service_url' => 'https://sp.com/acs',
@@ -211,7 +207,7 @@ final class RespondServiceTest extends GatewaySamlTestCase
             'surfnet/gateway/requestselected_second_factor' => 'mocked-second-factor-id',
             'surfnet/gateway/requestselected_second_factor_verified' => true,
             'surfnet/gateway/requestlocale' => 'nl_NL',
-        ], $this->sessionStorage->getBag('attributes')->all());
+        ], $this->getSessionData('attributes'));
 
 
         /** reset state */
@@ -235,7 +231,7 @@ final class RespondServiceTest extends GatewaySamlTestCase
             'surfnet/gateway/requestselected_second_factor' => null,
             'surfnet/gateway/requestselected_second_factor_verified' => false,
             'surfnet/gateway/requestlocale' => 'nl_NL',
-        ], $this->sessionStorage->getBag('attributes')->all());
+        ], $this->getSessionData('attributes'));
     }
 
     /**
@@ -247,7 +243,6 @@ final class RespondServiceTest extends GatewaySamlTestCase
      */
     private function initGatewayService(array $idpConfiguration, array $dictionaryAttributes, array $loaLevels, DateTime $now)
     {
-        $this->sessionStorage = new MockArraySessionStorage();
         $session = new Session($this->sessionStorage);
         $this->stateHandler = new ProxyStateHandler($session);
         $samlLogger = new SamlAuthenticationLogger($this->logger);
@@ -317,17 +312,5 @@ final class RespondServiceTest extends GatewaySamlTestCase
             $loaLevelObjects[] = new Loa($level[0], $level[1]);
         }
         return new LoaResolutionService($loaLevelObjects);
-    }
-
-    /**
-     * @param array $data
-     */
-    private function mockSessionData(array $data)
-    {
-        $this->sessionStorage->setSessionData(['_sf2_attributes' => $data]);
-        if ($this->sessionStorage->isStarted()) {
-            $this->sessionStorage->save();
-        }
-        $this->sessionStorage->start();
     }
 }

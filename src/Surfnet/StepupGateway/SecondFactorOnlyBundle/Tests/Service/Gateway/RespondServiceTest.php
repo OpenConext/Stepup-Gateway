@@ -38,13 +38,9 @@ use Surfnet\StepupGateway\SecondFactorOnlyBundle\Saml\ResponseFactory;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\Gateway\RespondService;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\LoaAliasLookupService;
 use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 
 final class RespondServiceTest extends GatewaySamlTestCase
 {
-    /** @var MockArraySessionStorage */
-    private $sessionStorage;
-
     /** @var Mockery\Mock|RespondService */
     private $gatewayRespondService;
 
@@ -104,7 +100,7 @@ final class RespondServiceTest extends GatewaySamlTestCase
      */
     public function it_should_return_a_valid_saml_response_and_update_state_when_the_verification_is_succeeded_on_sfo_login_flow() {
 
-        $this->mockSessionData([
+        $this->mockSessionData('_sf2_attributes', [
             'surfnet/gateway/requestrequest_id' => '_7179b234fc69f75724c83cab795fc87475d2f6d88e97e43368c3966e398c',
             'surfnet/gateway/requestservice_provider' => 'https://gateway.tld/gssp/tiqr/metadata',
             'surfnet/gateway/requestassertion_consumer_service_url' => 'https://gateway.tld/gssp/tiqr/consume-assertion',
@@ -183,7 +179,7 @@ final class RespondServiceTest extends GatewaySamlTestCase
             'surfnet/gateway/requestselected_second_factor' => 'mocked-second-factor-id',
             'surfnet/gateway/requestselected_second_factor_verified' => true,
             'surfnet/gateway/requestlocale' => 'nl_NL',
-        ], $this->sessionStorage->getBag('attributes')->all());
+        ], $this->getSessionData('attributes'));
 
 
         /** reset state */
@@ -202,7 +198,7 @@ final class RespondServiceTest extends GatewaySamlTestCase
             'surfnet/gateway/requestselected_second_factor' => null,
             'surfnet/gateway/requestselected_second_factor_verified' => false,
             'surfnet/gateway/requestlocale' => 'nl_NL',
-        ], $this->sessionStorage->getBag('attributes')->all());
+        ], $this->getSessionData('attributes'));
     }
 
     /**
@@ -211,7 +207,7 @@ final class RespondServiceTest extends GatewaySamlTestCase
      */
     public function it_should_throw_an_exception_when_the_second_factor_method_is_unknown_when_the_verification_is_succeeded_on_sfo_login_flow() {
 
-        $this->mockSessionData([
+        $this->mockSessionData('_sf2_attributes', [
             'surfnet/gateway/requestrequest_id' => '_7179b234fc69f75724c83cab795fc87475d2f6d88e97e43368c3966e398c',
             'surfnet/gateway/requestservice_provider' => 'https://gateway.tld/gssp/tiqr/metadata',
             'surfnet/gateway/requestassertion_consumer_service_url' => 'https://gateway.tld/gssp/tiqr/consume-assertion',
@@ -249,7 +245,7 @@ final class RespondServiceTest extends GatewaySamlTestCase
      */
     public function it_should_throw_an_exception_when_the_second_factor_is_not_verified_when_the_verification_is_succeeded_on_sfo_login_flow() {
 
-        $this->mockSessionData([
+        $this->mockSessionData('_sf2_attributes', [
             'surfnet/gateway/requestrequest_id' => '_7179b234fc69f75724c83cab795fc87475d2f6d88e97e43368c3966e398c',
             'surfnet/gateway/requestservice_provider' => 'https://gateway.tld/gssp/tiqr/metadata',
             'surfnet/gateway/requestassertion_consumer_service_url' => 'https://gateway.tld/gssp/tiqr/consume-assertion',
@@ -299,7 +295,6 @@ final class RespondServiceTest extends GatewaySamlTestCase
      */
     private function initGatewayLoginService(array $idpConfiguration, array $loaLevels,  array $loaAliases, DateTime $now)
     {
-        $this->sessionStorage = new MockArraySessionStorage();
         $session = new Session($this->sessionStorage);
         $this->stateHandler = new ProxyStateHandler($session);
 
@@ -343,17 +338,5 @@ final class RespondServiceTest extends GatewaySamlTestCase
             $loaLevelObjects[] = new Loa($level[0], $level[1]);
         }
         return new LoaResolutionService($loaLevelObjects);
-    }
-
-    /**
-     * @param array $data
-     */
-    private function mockSessionData(array $data)
-    {
-        $this->sessionStorage->setSessionData(['_sf2_attributes' => $data]);
-        if ($this->sessionStorage->isStarted()) {
-            $this->sessionStorage->save();
-        }
-        $this->sessionStorage->start();
     }
 }

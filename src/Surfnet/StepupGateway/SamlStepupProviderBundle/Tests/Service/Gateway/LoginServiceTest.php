@@ -21,13 +21,9 @@ use Surfnet\StepupGateway\SamlStepupProviderBundle\Service\Gateway\LoginService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag;
 use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 
 class LoginServiceTest extends GatewaySamlTestCase
 {
-    /** @var MockArraySessionStorage */
-    private $sessionStorage;
-
     /** @var Mockery\Mock|LoginService */
     private $samlProxyLoginService;
 
@@ -116,7 +112,7 @@ class LoginServiceTest extends GatewaySamlTestCase
 
         $this->mockRedirectBinding($authnRequest);
 
-        $this->mockSessionData([]);
+        $this->mockSessionData('__gssp_session', []);
 
         // Init request
         $proxyRequest = $this->samlProxyLoginService->singleSignOn($this->provider, $httpRequest);
@@ -155,7 +151,7 @@ class LoginServiceTest extends GatewaySamlTestCase
                 'relay_state' => '',
                 'gateway_request_id' => '_mocked_generated_id',
             ],
-        ], $this->sessionStorage->getBag('attributes')->all());
+        ], $this->getSessionData('attributes'));
     }
 
 
@@ -184,7 +180,7 @@ class LoginServiceTest extends GatewaySamlTestCase
 
         $this->mockRedirectBinding($authnRequest);
 
-        $this->mockSessionData([]);
+        $this->mockSessionData('__gssp_session', []);
 
         // Init request
         $this->samlProxyLoginService->singleSignOn($this->provider, $httpRequest);
@@ -199,7 +195,6 @@ class LoginServiceTest extends GatewaySamlTestCase
      */
     private function initSamlProxyService(array $remoteIdpConfiguration, array $idpConfiguration, array $spConfiguration, array $connectedServiceProviders)
     {
-        $this->sessionStorage = new MockArraySessionStorage();
         $session = new Session($this->sessionStorage);
         $namespacedSessionBag = new NamespacedAttributeBag('__gssp_session');
         $session->registerBag($namespacedSessionBag);
@@ -238,17 +233,5 @@ class LoginServiceTest extends GatewaySamlTestCase
 
         $this->redirectBinding->shouldReceive('processSignedRequest')
             ->andReturn($authnRequest);
-    }
-
-    /**
-     * @param array $data
-     */
-    private function mockSessionData(array $data)
-    {
-        $this->sessionStorage->setSessionData(['__gssp_session' => $data]);
-        if ($this->sessionStorage->isStarted()) {
-            $this->sessionStorage->save();
-        }
-        $this->sessionStorage->start();
     }
 }
