@@ -215,7 +215,12 @@ jms_translation:
             dirs: ["%kernel.root_dir%/../src", "%kernel.root_dir%", "%kernel.root_dir%/../vendor/surfnet"]
             output_dir: "%kernel.root_dir%/Resources/translations"
             ignored_domains: []
-            excluded_names: ['*TestCase.php', '*Test.php', 'Assert.php']
+            excluded_names:
+                - '*TestCase.php'
+                - '*Test.php'
+                - 'Assert.php'
+                - 'RegistrationExpirationHelper.php'
+                - 'SecondFactorTypeTranslationService.php'
             excluded_dirs: [cache, data, logs, Tests]
             extractors: []
 
