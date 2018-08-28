@@ -71,6 +71,7 @@ doctrine:
                 user:     "%database_gateway_user%"
                 password: "%database_gateway_password%"
                 charset:  UTF8
+                server_version: '5.6'
             u2f:
                 driver:   "%database_driver%"
                 host:     "%database_host%"
@@ -79,6 +80,7 @@ doctrine:
                 user:     "%database_u2f_user%"
                 password: "%database_u2f_password%"
                 charset:  UTF8
+                server_version: '5.6'
             deploy:
                 driver:   "%database_driver%"
                 host:     "%database_host%"
@@ -87,6 +89,7 @@ doctrine:
                 user:     "%database_deploy_user%"
                 password: "%database_deploy_password%"
                 charset:  UTF8
+                server_version: '5.6'
         types:
             u2f_key_handle: Surfnet\StepupGateway\U2fVerificationBundle\Doctrine\Type\KeyHandleType
             u2f_public_key:  Surfnet\StepupGateway\U2fVerificationBundle\Doctrine\Type\PublicKeyType
