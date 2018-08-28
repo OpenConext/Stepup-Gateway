@@ -20,6 +20,7 @@ namespace Surfnet\StepupGateway\GatewayBundle\Form\Type;
 
 use Surfnet\StepupGateway\GatewayBundle\Command\ChooseSecondFactorCommand;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -32,7 +33,7 @@ class ChooseSecondFactorType extends AbstractType
 
         foreach ($data->secondFactors->getValues() as $secondFactor) {
             $type = $secondFactor->secondFactorType;
-            $builder->add('choose_' . $type, 'submit', [
+            $builder->add('choose_' . $type, SubmitType::class, [
                 'label' => 'gateway.second_factor.choose_second_factor.select',
                 'attr' => [
                     'class' => 'btn btn-primary',
