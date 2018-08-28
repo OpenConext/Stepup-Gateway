@@ -227,31 +227,22 @@ class SamlProxyController extends Controller
      */
     public function renderSamlResponse($view, StateHandler $stateHandler, SAMLResponse $response)
     {
-        $response = $this->render($view, [
+        $parameters = [
             'acu'        => $response->getDestination(),
             'response'   => $this->getResponseAsXML($response),
             'relayState' => $stateHandler->getRelayState()
-        ]);
+        ];
+
+        $response = parent::render(
+            'SurfnetStepupGatewaySamlStepupProviderBundle:SamlProxy:' . $view . '.html.twig',
+            $parameters,
+            $response
+        );
 
         // clear the state so we can call again :)
         $stateHandler->clear();
 
         return $response;
-    }
-
-    /**
-     * @param string   $view
-     * @param array    $parameters
-     * @param Response $response
-     * @return Response
-     */
-    public function render($view, array $parameters = array(), Response $response = null)
-    {
-        return parent::render(
-            'SurfnetStepupGatewaySamlStepupProviderBundle:SamlProxy:' . $view . '.html.twig',
-            $parameters,
-            $response
-        );
     }
 
     /**
