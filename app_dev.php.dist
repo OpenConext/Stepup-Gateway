@@ -1,12 +1,13 @@
 <?php
 
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Debug\Debug;
-
-$loader = require_once __DIR__.'/../app/bootstrap.php.cache';
-Debug::enable(~E_USER_DEPRECATED);
+use Symfony\Component\HttpFoundation\Request;
+$loader = require __DIR__.'/../app/autoload.php';
+Debug::enable();
 
 require_once __DIR__.'/../app/AppKernel.php';
+
+$request = Request::createFromGlobals();
 
 $env = 'dev';
 if (isset($_SERVER['APP_DEV'])) {
@@ -14,9 +15,11 @@ if (isset($_SERVER['APP_DEV'])) {
 }
 
 $kernel = new AppKernel($env, true);
-$kernel->loadClassCache();
+$kernel->boot();
 
-$request = Request::createFromGlobals();
+$trustedProxies = $kernel->getContainer()->getParameter('trusted_proxies');
+Request::setTrustedProxies($trustedProxies, Request::HEADER_X_FORWARDED_ALL);
+
 $response = $kernel->handle($request);
 $response->send();
 $kernel->terminate($request, $response);

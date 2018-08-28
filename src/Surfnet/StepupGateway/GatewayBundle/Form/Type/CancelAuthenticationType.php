@@ -19,19 +19,20 @@
 namespace Surfnet\StepupGateway\GatewayBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 class CancelAuthenticationType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('cancel', 'submit', [
+        $builder->add('cancel', SubmitType::class, [
             'label' => 'gateway.form.cancel_authentication.button.cancel',
             'attr'  => ['class' => 'btn-link nav-link', 'formnovalidate' => 'formnovalidate'],
         ]);
     }
 
-    public function getName()
+    public function getBlockPrefix()
     {
         return 'gateway_cancel_authentication';
     }
