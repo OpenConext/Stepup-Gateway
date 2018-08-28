@@ -131,3 +131,29 @@ services:
             - "@second_factor_only.adfs.state_handler"
             - "@logger"
         class: Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\ResponseHelper
+
+    second_factor_only.login_service:
+        class: Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\Gateway\LoginService
+        arguments:
+            - @logger
+            - @surfnet_saml.logger
+            - @gateway.proxy.state_handler
+            - @second_factor_only.http.binding_factory
+            - @second_factor_only.validate_nameid
+            - @second_factor_only.loa_resolution
+
+    second_factor_only.respond_service:
+        class: Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\Gateway\RespondService
+        arguments:
+            - @surfnet_saml.logger
+            - @surfnet_stepup.service.loa_resolution
+            - @second_factor_only.loa_alias_lookup
+            - @second_factor_only.saml_response_factory
+            - @gateway.service.second_factor_service
+            - @surfnet_stepup.service.second_factor_type
+
+    second_factor_only.adfs_service:
+        class: Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\Gateway\AdfsService
+        arguments:
+            - @second_factor_only.adfs.request_helper
+            - @second_factor_only.adfs.response_helper

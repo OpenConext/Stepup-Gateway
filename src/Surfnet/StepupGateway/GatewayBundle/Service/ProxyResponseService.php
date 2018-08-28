@@ -18,13 +18,14 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Service;
 
+use DateTime;
+use DateTimeZone;
 use SAML2\Assertion;
 use SAML2\Constants;
 use SAML2\Response;
 use SAML2\XML\saml\SubjectConfirmation;
 use SAML2\XML\saml\SubjectConfirmationData;
 use Surfnet\SamlBundle\Entity\IdentityProvider;
-use Surfnet\SamlBundle\Entity\ServiceProvider;
 use Surfnet\SamlBundle\SAML2\Attribute\AttributeDefinition;
 use Surfnet\SamlBundle\SAML2\Attribute\AttributeDictionary;
 use Surfnet\StepupBundle\Value\Loa;
@@ -78,7 +79,8 @@ class ProxyResponseService
         AssertionSigningService $assertionSigningService,
         AttributeDictionary $attributeDictionary,
         AttributeDefinition $eptiAttribute,
-        Loa $intrinsicLoa
+        Loa $intrinsicLoa,
+        DateTime $now = null
     ) {
         $this->hostedIdentityProvider    = $hostedIdentityProvider;
         $this->proxyStateHandler         = $proxyStateHandler;
@@ -86,7 +88,7 @@ class ProxyResponseService
         $this->attributeDictionary       = $attributeDictionary;
         $this->eptiAttribute             = $eptiAttribute;
         $this->intrinsicLoa              = $intrinsicLoa;
-        $this->currentTime = new \DateTime('now', new \DateTimeZone('UTC'));
+        $this->currentTime = is_null($now) ? new DateTime('now', new DateTimeZone('UTC')): $now;
     }
 
     /**

@@ -29,13 +29,13 @@ use Surfnet\SamlBundle\SAML2\Attribute\AttributeDefinition;
 use Surfnet\SamlBundle\SAML2\Attribute\AttributeDictionary;
 use Surfnet\SamlBundle\Tests\TestSaml2Container;
 use Surfnet\StepupBundle\Value\Loa;
-use Surfnet\StepupGateway\GatewayBundle\Entity\ServiceProvider;
 use Surfnet\StepupGateway\GatewayBundle\Saml\AssertionSigningService;
 use Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler;
 use Surfnet\StepupGateway\GatewayBundle\Service\ProxyResponseService;
+use Surfnet\StepupGateway\GatewayBundle\Tests\TestCase\GatewaySamlTestCase;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Saml\StateHandler;
 
-final class ProxyResponseServiceTest extends PHPUnit_Framework_TestCase
+final class ProxyResponseServiceTest extends GatewaySamlTestCase
 {
     /**
      * @var Mockery\MockInterface|IdentityProvider
@@ -67,8 +67,10 @@ final class ProxyResponseServiceTest extends PHPUnit_Framework_TestCase
      */
     private $loa;
 
-    protected function setUp()
+    public function setUp()
     {
+        parent::setUp();
+
         $this->identityProvider = Mockery::mock(IdentityProvider::class)->shouldIgnoreMissing();
         $this->proxyStateHandler = Mockery::mock(ProxyStateHandler::class)->shouldIgnoreMissing();
         $this->assertionSigningService = Mockery::mock(AssertionSigningService::class)->shouldIgnoreMissing();
