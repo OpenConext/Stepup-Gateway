@@ -1,4 +1,8 @@
 services:
+    # Remove the public: true default once DI is implemented throughout the StepUp applications. See Pivotal #138225085
+    _defaults:
+        public: true
+
     second_factor_only.configuration.hosted_entities:
         public: false
         class: Surfnet\SamlBundle\Entity\HostedEntities
