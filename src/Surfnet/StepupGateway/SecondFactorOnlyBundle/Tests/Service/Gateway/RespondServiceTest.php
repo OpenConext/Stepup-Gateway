@@ -23,6 +23,7 @@ use Mockery;
 use SAML2\Response;
 use Surfnet\SamlBundle\Entity\IdentityProvider;
 use Surfnet\SamlBundle\Entity\ServiceProvider;
+use Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger;
 use Surfnet\StepupBundle\Service\LoaResolutionService;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupBundle\Value\Loa;
@@ -295,6 +296,7 @@ final class RespondServiceTest extends GatewaySamlTestCase
      */
     private function initGatewayLoginService(array $idpConfiguration, array $loaLevels,  array $loaAliases, DateTime $now)
     {
+        $samlLogger = new SamlAuthenticationLogger($this->logger);
         $session = new Session($this->sessionStorage);
         $this->stateHandler = new ProxyStateHandler($session);
 
@@ -318,7 +320,7 @@ final class RespondServiceTest extends GatewaySamlTestCase
         $loaAliasLookup = new LoaAliasLookupService($loaAliases);
 
         $this->gatewayRespondService = new RespondService(
-            $this->logger,
+            $samlLogger,
             $this->loaResolutionService,
             $loaAliasLookup,
             $this->proxyResponseFactory,

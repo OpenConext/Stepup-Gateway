@@ -62,8 +62,6 @@ final class LoginServiceTest extends GatewaySamlTestCase
     {
         parent::setUp();
 
-        $now = new \DateTime('@'.static::MOCK_TIMESTAMP);
-
         $loaLevels = [
             [1, 'http://stepup.example.com/assurance/loa1'],
             [2, 'http://stepup.example.com/assurance/loa2'],
@@ -75,7 +73,7 @@ final class LoginServiceTest extends GatewaySamlTestCase
         ];
 
         // init gateway service
-        $this->initGatewayLoginService($loaLevels, $loaAliases, $now);
+        $this->initGatewayLoginService($loaLevels, $loaAliases);
     }
 
     /**
@@ -247,7 +245,7 @@ final class LoginServiceTest extends GatewaySamlTestCase
      * @param DateTime $now
      * @param array $sessionData
      */
-    private function initGatewayLoginService(array $loaLevels,  array $loaAliases, DateTime $now)
+    private function initGatewayLoginService(array $loaLevels,  array $loaAliases)
     {
         $session = new Session($this->sessionStorage);
         $this->stateHandler = new ProxyStateHandler($session);

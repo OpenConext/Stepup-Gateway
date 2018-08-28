@@ -18,8 +18,8 @@
 
 namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\Gateway;
 
-use Psr\Log\LoggerInterface;
 use SAML2\Response;
+use Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
 use Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorService;
@@ -30,8 +30,8 @@ use Surfnet\StepupBundle\Service\LoaResolutionService;
 
 class RespondService
 {
-    /** @var LoggerInterface */
-    private $logger;
+    /** @var SamlAuthenticationLogger */
+    private $samlLogger;
 
     /** @var LoaResolutionService */
     private $loaResolutionService;
@@ -50,7 +50,7 @@ class RespondService
 
     /**
      * SecondFactorRespondService constructor.
-     * @param LoggerInterface $logger
+     * @param SamlAuthenticationLogger $samlLogger
      * @param LoaResolutionService $loaResolutionService
      * @param LoaAliasLookupService $loaAliasLookupService
      * @param ResponseFactory $responseFactory
@@ -58,14 +58,14 @@ class RespondService
      * @param SecondFactorTypeService $secondFactorTypeService
      */
     public function __construct(
-        LoggerInterface $logger,
+        SamlAuthenticationLogger $samlLogger,
         LoaResolutionService $loaResolutionService,
         LoaAliasLookupService $loaAliasLookupService,
         ResponseFactory $responseFactory,
         SecondFactorService $secondFactorService,
         SecondFactorTypeService $secondFactorTypeService
     ) {
-        $this->logger = $logger;
+        $this->samlLogger = $samlLogger;
         $this->loaResolutionService = $loaResolutionService;
         $this->loaAliasLookupService = $loaAliasLookupService;
         $this->responseFactory = $responseFactory;
@@ -86,7 +86,10 @@ class RespondService
      */
     public function respond(ResponseContext $responseContext)
     {
-        $this->logger->notice('Creating second-factor-only Response');
+        $originalRequestId = $responseContext->getInResponseTo();
+        $logger = $this->samlLogger->forAuthentication($originalRequestId);
+
+        $logger->notice('Creating second-factor-only Response');
 
         $selectedSecondFactorUuid = $responseContext->getSelectedSecondFactor();
         if (!$selectedSecondFactorUuid) {
@@ -113,7 +116,7 @@ class RespondService
             $authnContextClassRef
         );
 
-        $this->logger->notice(sprintf(
+        $logger->notice(sprintf(
             'Responding to request "%s" with newly created response "%s"',
             $responseContext->getInResponseTo(),
             $response->getId()
