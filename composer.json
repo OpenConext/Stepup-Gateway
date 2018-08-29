@@ -12,20 +12,6 @@
         ]
     },
     "minimum-stability": "stable",
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/OpenConext/Stepup-u2f-bundle"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/OpenConext/Stepup-bundle"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/OpenConext/Stepup-saml-bundle"
-        }
-    ],
     "require": {
         "php": "~5.6|~7.0",
         "symfony/symfony": "3.4.*",
@@ -51,9 +37,9 @@
         "jms/translation-bundle": "~1.3.0",
         "mopa/composer-bridge": "~1.5",
         "surfnet/messagebird-api-client-bundle": "^4.0",
-        "surfnet/stepup-bundle": "dev-feature/symfony-34-compat as 3.5.3",
-        "surfnet/stepup-saml-bundle": "dev-feature/symfony-34-compat as 4.1.1",
-        "surfnet/stepup-u2f-bundle": "dev-feature/symfony-34-upgrade",
+        "surfnet/stepup-bundle": "^4.0",
+        "surfnet/stepup-saml-bundle": "^4.1",
+        "surfnet/stepup-u2f-bundle": "dev-develop",
         "surfnet/yubikey-api-client-bundle": "^3.0",
         "openconext/monitor-bundle": "^1.0",
         "beberlei/assert": "^2.0",
@@ -90,10 +76,7 @@
         ]
     },
     "config": {
-        "optimize-autoloader": true,
-        "platform": {
-            "php": "5.6"
-        }
+        "optimize-autoloader": true
     },
     "extra": {
         "symfony-app-dir": "app",
