@@ -25,6 +25,7 @@ use Surfnet\StepupGateway\ApiBundle\Dto\Otp as OtpDto;
 use Surfnet\StepupGateway\ApiBundle\Dto\Requester;
 use Surfnet\StepupGateway\ApiBundle\Dto\YubikeyOtpVerificationResult;
 use Surfnet\YubikeyApiClient\Otp;
+use Surfnet\YubikeyApiClient\Service\OtpVerificationResult;
 use Surfnet\YubikeyApiClientBundle\Service\VerificationService;
 
 class YubikeyService implements YubikeyServiceInterface
@@ -52,16 +53,14 @@ class YubikeyService implements YubikeyServiceInterface
     /**
      * @param OtpDto $otp
      * @param Requester $requester
-     * @param string $secondFactorIdentifier
-     * @return YubikeyOtpVerificationResult
+     * @return OtpVerificationResult
      */
-    public function verify(OtpDto $otp, Requester $requester, $secondFactorIdentifier)
+    public function verifyOtp(OtpDto $otp, Requester $requester)
     {
-        $otpValue = $otp->value;
         $this->logger->notice('Verifying Yubikey OTP.');
 
         if (!Otp::isValid($otp->value)) {
-            return new YubikeyOtpVerificationResult(YubikeyOtpVerificationResult::RESULT_OTP_VERIFICATION_FAILED, null);
+            return new OtpVerificationResult(OtpVerificationResult::ERROR_BAD_OTP);
         }
 
         $otp = Otp::fromString($otp->value);
@@ -69,13 +68,25 @@ class YubikeyService implements YubikeyServiceInterface
 
         if (!$result->isSuccessful()) {
             $this->logger->warning(sprintf('Yubikey OTP verification failed (%s)', $result->getError()));
-            return new YubikeyOtpVerificationResult(YubikeyOtpVerificationResult::RESULT_OTP_VERIFICATION_FAILED, null);
         }
 
-        $otp = YubikeyOtp::fromString($otpValue);
+        return $result;
+    }
+
+    /**
+     * @param OtpDto $otp
+     * @param string $secondFactorIdentifier
+     * @return YubikeyOtpVerificationResult
+     */
+    public function verifyPublicId(OtpDto $otp, $secondFactorIdentifier)
+    {
+        $this->logger->notice('Verifying Yubikey OTP public id matches that of the second factor identifier');
+
+        $otp = YubikeyOtp::fromString($otp->value);
         $publicId = YubikeyPublicId::fromOtp($otp);
 
         if (!$publicId->equals(new YubikeyPublicId($secondFactorIdentifier))) {
+            $this->logger->warning('Yubikey OTP verification failed (Public Id did not match)');
             return new YubikeyOtpVerificationResult(
                 YubikeyOtpVerificationResult::RESULT_PUBLIC_ID_DID_NOT_MATCH,
                 $publicId
