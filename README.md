@@ -34,6 +34,10 @@ mock service was created for end to end test purposes, but could be utilized in 
 3. Update the service definition to point to this class: `class: Surfnet\StepupGateway\ApiBundle\Tests\TestDouble\Service\YubikeyService` 
 4. Do not commit/push this change!
 
+
+## Release strategy
+Please read: https://github.com/OpenConext/Stepup-Deploy/wiki/Release-Management fro more information on the release strategy used in Stepup projects.
+
 ## Documentation
 
 Documentation specific to this component is located in the [docs](./docs) directory in this repository:
