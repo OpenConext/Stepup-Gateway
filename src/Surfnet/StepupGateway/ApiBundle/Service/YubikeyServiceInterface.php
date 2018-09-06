@@ -20,15 +20,28 @@ namespace Surfnet\StepupGateway\ApiBundle\Service;
 
 use Surfnet\StepupGateway\ApiBundle\Dto\Otp as OtpDto;
 use Surfnet\StepupGateway\ApiBundle\Dto\Requester;
-use Surfnet\StepupGateway\GatewayBundle\Service\StepUp\YubikeyOtpVerificationResult;
+use Surfnet\StepupGateway\ApiBundle\Dto\YubikeyOtpVerificationResult;
+use Surfnet\YubikeyApiClient\Service\OtpVerificationResult;
 
 interface YubikeyServiceInterface
 {
     /**
+     * Verifies the OTP result status
+     *
+     * Returns an OtpVerificationResult which can be queried whether or not the OTP verification was successful.
+     *
      * @param OtpDto $otp
      * @param Requester $requester
-     * @param string $secondFactorIdentifier
+     * @return OtpVerificationResult
+     */
+    public function verifyOtp(OtpDto $otp, Requester $requester);
+
+    /**
+     * Verifies the OTP public id matches that of the registered token
+     *
+     * @param OtpDto $otp
+     * @param $secondFactorIdentifier
      * @return YubikeyOtpVerificationResult
      */
-    public function verify(OtpDto $otp, Requester $requester, $secondFactorIdentifier);
+    public function verifyPublicId(OtpDto $otp, $secondFactorIdentifier);
 }
