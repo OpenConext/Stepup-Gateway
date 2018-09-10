@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "cb3e83aaec4c4823a3d7d7264c9f634f",
+    "content-hash": "0353e9765be2fa8d8d09b16b88a6d138",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -2825,30 +2825,33 @@
         },
         {
             "name": "surfnet/yubikey-api-client-bundle",
-            "version": "3.0.0",
+            "version": "3.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SURFnet/yubikey-api-client-bundle.git",
-                "reference": "d9d9990b63f321745caa2290645b7660aeb3f95f"
+                "reference": "02a5dae83ba83a6362d3279cb9930a42faa2444b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SURFnet/yubikey-api-client-bundle/zipball/d9d9990b63f321745caa2290645b7660aeb3f95f",
-                "reference": "d9d9990b63f321745caa2290645b7660aeb3f95f",
+                "url": "https://api.github.com/repos/SURFnet/yubikey-api-client-bundle/zipball/02a5dae83ba83a6362d3279cb9930a42faa2444b",
+                "reference": "02a5dae83ba83a6362d3279cb9930a42faa2444b",
                 "shasum": ""
             },
             "require": {
                 "php": "^5.6|^7.0",
-                "surfnet/yubikey-api-client": "^2.0",
+                "surfnet/yubikey-api-client": "^2.1",
                 "symfony/config": "^2.7|^3.0",
                 "symfony/dependency-injection": "^2.7|^3.0",
                 "symfony/http-kernel": "^2.7|^3.0"
             },
             "require-dev": {
-                "ibuildings/qa-tools": "~1.1",
-                "liip/rmt": "1.1.*",
                 "matthiasnoback/symfony-config-test": "^1.4",
                 "mockery/mockery": "0.9.*",
+                "phpmd/phpmd": "^2.0",
+                "phpunit/phpunit": "^4.0",
+                "sebastian/phpcpd": "^2.0",
+                "sensiolabs/security-checker": "^4.0",
+                "squizlabs/php_codesniffer": "^1.0",
                 "symfony/framework-bundle": ">=2.3,<4",
                 "symfony/monolog-bundle": "^2.11"
             },
@@ -2868,7 +2871,7 @@
                 "yubico",
                 "yubikey"
             ],
-            "time": "2017-02-20T15:47:38+00:00"
+            "time": "2018-09-10T09:01:56+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",
