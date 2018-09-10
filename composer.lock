@@ -1924,16 +1924,16 @@
         },
         {
             "name": "openconext/monitor-bundle",
-            "version": "1.0.3",
+            "version": "1.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/OpenConext/Monitor-bundle.git",
-                "reference": "1455a292376a03e28465195202c572aa243f0ddb"
+                "reference": "7dfec45d5f5dc6c101383fbef2c6c347adec59a1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/OpenConext/Monitor-bundle/zipball/1455a292376a03e28465195202c572aa243f0ddb",
-                "reference": "1455a292376a03e28465195202c572aa243f0ddb",
+                "url": "https://api.github.com/repos/OpenConext/Monitor-bundle/zipball/7dfec45d5f5dc6c101383fbef2c6c347adec59a1",
+                "reference": "7dfec45d5f5dc6c101383fbef2c6c347adec59a1",
                 "shasum": ""
             },
             "require": {
@@ -1944,7 +1944,6 @@
             },
             "require-dev": {
                 "jakub-onderka/php-parallel-lint": "^0.9.2",
-                "liip/rmt": "^1.1",
                 "malukenho/docheader": "^0.1.6",
                 "matthiasnoback/symfony-config-test": "^2.1",
                 "mockery/mockery": "~0.9",
@@ -1973,7 +1972,7 @@
                 "stepup",
                 "surfnet"
             ],
-            "time": "2018-08-16T13:07:30+00:00"
+            "time": "2018-09-04T10:09:23+00:00"
         },
         {
             "name": "paragonie/random_compat",
@@ -2578,16 +2577,16 @@
         },
         {
             "name": "surfnet/messagebird-api-client-bundle",
-            "version": "4.0.0",
+            "version": "4.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SURFnet/messagebird-api-client-bundle.git",
-                "reference": "7eb26aa77e676538afe413c799905a2f6f9b16eb"
+                "reference": "3de66896a04bd6faab045f8d63fe7f0a84747342"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SURFnet/messagebird-api-client-bundle/zipball/7eb26aa77e676538afe413c799905a2f6f9b16eb",
-                "reference": "7eb26aa77e676538afe413c799905a2f6f9b16eb",
+                "url": "https://api.github.com/repos/SURFnet/messagebird-api-client-bundle/zipball/3de66896a04bd6faab045f8d63fe7f0a84747342",
+                "reference": "3de66896a04bd6faab045f8d63fe7f0a84747342",
                 "shasum": ""
             },
             "require": {
@@ -2598,7 +2597,6 @@
                 "symfony/http-kernel": ">=2.7,<4.0"
             },
             "require-dev": {
-                "liip/rmt": "1.1.*",
                 "matthiasnoback/symfony-config-test": "0.*",
                 "mockery/mockery": "~0.9.5",
                 "phpmd/phpmd": "^2.6",
@@ -2626,20 +2624,20 @@
                 "sms",
                 "surfnet"
             ],
-            "time": "2018-08-27T14:26:07+00:00"
+            "time": "2018-09-04T11:41:19+00:00"
         },
         {
             "name": "surfnet/stepup-bundle",
-            "version": "4.0.0",
+            "version": "4.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/OpenConext/Stepup-bundle.git",
-                "reference": "064c96ad28877221e1100a81477f14dbf43d0b90"
+                "reference": "5946dde19d5e095a5836d602b7abfa64cb71d6f1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/OpenConext/Stepup-bundle/zipball/064c96ad28877221e1100a81477f14dbf43d0b90",
-                "reference": "064c96ad28877221e1100a81477f14dbf43d0b90",
+                "url": "https://api.github.com/repos/OpenConext/Stepup-bundle/zipball/5946dde19d5e095a5836d602b7abfa64cb71d6f1",
+                "reference": "5946dde19d5e095a5836d602b7abfa64cb71d6f1",
                 "shasum": ""
             },
             "require": {
@@ -2682,20 +2680,20 @@
                 "suaas",
                 "surfnet"
             ],
-            "time": "2018-08-29T11:45:58+00:00"
+            "time": "2018-09-06T12:43:15+00:00"
         },
         {
             "name": "surfnet/stepup-saml-bundle",
-            "version": "4.1.1",
+            "version": "4.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/OpenConext/Stepup-saml-bundle.git",
-                "reference": "e6115d07eccc905fcf522552ee186f89686045cf"
+                "reference": "1ce8e74a7e35963e60378da8c8647656e382cef9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/OpenConext/Stepup-saml-bundle/zipball/e6115d07eccc905fcf522552ee186f89686045cf",
-                "reference": "e6115d07eccc905fcf522552ee186f89686045cf",
+                "url": "https://api.github.com/repos/OpenConext/Stepup-saml-bundle/zipball/1ce8e74a7e35963e60378da8c8647656e382cef9",
+                "reference": "1ce8e74a7e35963e60378da8c8647656e382cef9",
                 "shasum": ""
             },
             "require": {
@@ -2708,7 +2706,6 @@
             },
             "require-dev": {
                 "ibuildings/qa-tools": "~1.1",
-                "liip/rmt": "~1.1",
                 "mockery/mockery": "~0.9",
                 "psr/log": "~1.0"
             },
@@ -2730,7 +2727,7 @@
                 "stepup",
                 "surfnet"
             ],
-            "time": "2018-08-29T12:18:23+00:00"
+            "time": "2018-09-04T10:06:38+00:00"
         },
         {
             "name": "surfnet/stepup-u2f-bundle",
@@ -5734,8 +5731,5 @@
     "platform": {
         "php": "~5.6|~7.0"
     },
-    "platform-dev": [],
-    "platform-overrides": {
-        "php": "5.6"
-    }
+    "platform-dev": []
 }
