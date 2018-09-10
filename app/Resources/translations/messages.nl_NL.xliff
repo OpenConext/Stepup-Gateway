@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:jms="urn:jms:translation" version="1.2">
-  <file date="2018-04-13T09:47:03Z" source-language="en" target-language="nl_NL" datatype="plaintext" original="not.available">
+  <file date="2018-08-28T16:36:51Z" source-language="en" target-language="nl_NL" datatype="plaintext" original="not.available">
     <header>
       <tool tool-id="JMSTranslationBundle" tool-name="JMSTranslationBundle" tool-version="1.1.0-DEV"/>
       <note>The source node in most cases contains the sample message as written by the developer. If it looks like a dot-delimitted string such as "form.label.firstname", then the developer has not provided a default message.</note>
@@ -24,12 +24,12 @@
       <trans-unit id="7ae5055bfdf6e6100256f6148115dfaa4b06ac52" resname="gateway.form.cancel_authentication.button.cancel">
         <source>gateway.form.cancel_authentication.button.cancel</source>
         <target>Annuleren</target>
-        <jms:reference-file line="29">/../src/Surfnet/StepupGateway/GatewayBundle/Form/Type/CancelAuthenticationType.php</jms:reference-file>
+        <jms:reference-file line="30">/../src/Surfnet/StepupGateway/GatewayBundle/Form/Type/CancelAuthenticationType.php</jms:reference-file>
       </trans-unit>
       <trans-unit id="65f3ce4b0efbcaaaafd540e24188ea54d0851540" resname="gateway.form.gateway_cancel_second_factor_verification.button.cancel_verification">
         <source>gateway.form.gateway_cancel_second_factor_verification.button.cancel_verification</source>
         <target>Annuleren</target>
-        <jms:reference-file line="29">/../src/Surfnet/StepupGateway/GatewayBundle/Form/Type/CancelSecondFactorVerificationType.php</jms:reference-file>
+        <jms:reference-file line="30">/../src/Surfnet/StepupGateway/GatewayBundle/Form/Type/CancelSecondFactorVerificationType.php</jms:reference-file>
       </trans-unit>
       <trans-unit id="5e4867e59d97ee38f4007e1478afc70d9d251d5b" resname="gateway.form.gateway_choose_second_factor.unknown_second_factor_type">
         <source>gateway.form.gateway_choose_second_factor.unknown_second_factor_type</source>
@@ -39,7 +39,7 @@
       <trans-unit id="216da4e667c1127a830eadcac98926f5bd508efb" resname="gateway.form.gateway_send_sms_challenge.button.send_challenge">
         <source>gateway.form.gateway_send_sms_challenge.button.send_challenge</source>
         <target>Stuur code</target>
-        <jms:reference-file line="30">/../src/Surfnet/StepupGateway/GatewayBundle/Form/Type/SendSmsChallengeType.php</jms:reference-file>
+        <jms:reference-file line="31">/../src/Surfnet/StepupGateway/GatewayBundle/Form/Type/SendSmsChallengeType.php</jms:reference-file>
       </trans-unit>
       <trans-unit id="369b2c8dea153b42d8dc01645e54140a83cb5f4f" resname="gateway.form.send_sms_challenge.sms_challenge_expired">
         <source>gateway.form.send_sms_challenge.sms_challenge_expired</source>
@@ -64,17 +64,17 @@
       <trans-unit id="794d606d42626487d338b79f4b39ece27fd6da94" resname="gateway.form.verify_sms_challenge.button.challenge_placeholder">
         <source>gateway.form.verify_sms_challenge.button.challenge_placeholder</source>
         <target>code</target>
-        <jms:reference-file line="34">/../src/Surfnet/StepupGateway/GatewayBundle/Form/Type/VerifySmsChallengeType.php</jms:reference-file>
+        <jms:reference-file line="36">/../src/Surfnet/StepupGateway/GatewayBundle/Form/Type/VerifySmsChallengeType.php</jms:reference-file>
       </trans-unit>
       <trans-unit id="949d225017cfbb80ae094b1af62b758c4ab1cd2c" resname="gateway.form.verify_sms_challenge.button.resend_challenge">
         <source>gateway.form.verify_sms_challenge.button.resend_challenge</source>
         <target>Stuur nogmaals.</target>
-        <jms:reference-file line="42">/../src/Surfnet/StepupGateway/GatewayBundle/Form/Type/VerifySmsChallengeType.php</jms:reference-file>
+        <jms:reference-file line="44">/../src/Surfnet/StepupGateway/GatewayBundle/Form/Type/VerifySmsChallengeType.php</jms:reference-file>
       </trans-unit>
       <trans-unit id="c112fb5c4f9e2eca7afdf9e31f1eb7c17078b647" resname="gateway.form.verify_sms_challenge.button.verify_challenge">
         <source>gateway.form.verify_sms_challenge.button.verify_challenge</source>
         <target>Verifieer code</target>
-        <jms:reference-file line="38">/../src/Surfnet/StepupGateway/GatewayBundle/Form/Type/VerifySmsChallengeType.php</jms:reference-file>
+        <jms:reference-file line="40">/../src/Surfnet/StepupGateway/GatewayBundle/Form/Type/VerifySmsChallengeType.php</jms:reference-file>
       </trans-unit>
       <trans-unit id="69e4a91f05f1619fc6326ff78659255bc0d4f7ce" resname="gateway.form.verify_yubikey.otp_verification_failed">
         <source>gateway.form.verify_yubikey.otp_verification_failed</source>
@@ -143,7 +143,7 @@
       <trans-unit id="155f607ba28a7167c6f072d22ebb77042c52f759" resname="gateway.second_factor.choose_second_factor.select">
         <source>gateway.second_factor.choose_second_factor.select</source>
         <target>Selecteer</target>
-        <jms:reference-file line="36">/../src/Surfnet/StepupGateway/GatewayBundle/Form/Type/ChooseSecondFactorType.php</jms:reference-file>
+        <jms:reference-file line="37">/../src/Surfnet/StepupGateway/GatewayBundle/Form/Type/ChooseSecondFactorType.php</jms:reference-file>
       </trans-unit>
       <trans-unit id="fdeeb4b0c6e2a94aec8a11728946c13a325f8366" resname="gateway.second_factor.choose_second_factor.title">
         <source>gateway.second_factor.choose_second_factor.title</source>
@@ -168,7 +168,7 @@
       <trans-unit id="1c41e8d2b8040894426471450740d39af284d440" resname="gateway.second_factor.sms.challenge_body">
         <source>gateway.second_factor.sms.challenge_body</source>
         <target>Je sms-code: %challenge%</target>
-        <jms:reference-file line="401">/../src/Surfnet/StepupGateway/GatewayBundle/Service/StepUpAuthenticationService.php</jms:reference-file>
+        <jms:reference-file line="382">/../src/Surfnet/StepupGateway/GatewayBundle/Service/StepUpAuthenticationService.php</jms:reference-file>
       </trans-unit>
       <trans-unit id="fecb0bb6d9524901050c51767a3cf1eceb80da04" resname="gateway.second_factor.sms.send_challenge.title">
         <source>gateway.second_factor.sms.send_challenge.title</source>
@@ -412,7 +412,7 @@
       <trans-unit id="fcbfd9e643bb8d8f3fcf3ca0380a73bb9dffee2b" resname="stepup_middleware_client.form.switch_locale.switch">
         <source>stepup_middleware_client.form.switch_locale.switch</source>
         <target state="new">stepup_middleware_client.form.switch_locale.switch</target>
-        <jms:reference-file line="59">/../vendor/surfnet/stepup-bundle/src/Form/Type/SwitchLocaleType.php</jms:reference-file>
+        <jms:reference-file line="61">/../vendor/surfnet/stepup-bundle/src/Form/Type/SwitchLocaleType.php</jms:reference-file>
       </trans-unit>
     </body>
   </file>

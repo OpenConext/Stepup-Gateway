@@ -335,7 +335,13 @@ class StepUpAuthenticationService
         $otp = new ApiOtp();
         $otp->value = $command->otp;
 
-        return $this->yubikeyService->verify($otp, $requester, $secondFactor->secondFactorIdentifier);
+        $result = $this->yubikeyService->verifyOtp($otp, $requester);
+
+        if (!$result->isSuccessful()) {
+            return new YubikeyOtpVerificationResult(YubikeyOtpVerificationResult::RESULT_OTP_VERIFICATION_FAILED, null);
+        }
+
+        return $this->yubikeyService->verifyPublicId($otp, $secondFactor->secondFactorIdentifier);
     }
 
     /**

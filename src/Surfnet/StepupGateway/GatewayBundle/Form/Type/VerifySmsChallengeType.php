@@ -19,6 +19,8 @@
 namespace Surfnet\StepupGateway\GatewayBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -26,7 +28,7 @@ class VerifySmsChallengeType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('challenge', 'text', [
+        $builder->add('challenge', TextType::class, [
             'label'    => false,
             'required' => true,
             'attr'     => array(
@@ -34,7 +36,7 @@ class VerifySmsChallengeType extends AbstractType
                 'placeholder' => 'gateway.form.verify_sms_challenge.button.challenge_placeholder'
             )
         ]);
-        $builder->add('verify_challenge', 'submit', [
+        $builder->add('verify_challenge', SubmitType::class, [
             'label' => 'gateway.form.verify_sms_challenge.button.verify_challenge',
             'attr'  => ['class' => 'btn btn-primary'],
         ]);
@@ -52,7 +54,7 @@ class VerifySmsChallengeType extends AbstractType
         ]);
     }
 
-    public function getName()
+    public function getBlockPrefix()
     {
         return 'gateway_verify_sms_challenge';
     }

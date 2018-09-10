@@ -70,13 +70,14 @@ class ResponseContext
         IdentityProvider $identityProvider,
         SamlEntityService $samlEntityService,
         ProxyStateHandler $stateHandler,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        DateTime $now = null
     ) {
         $this->hostedIdentityProvider = $identityProvider;
         $this->samlEntityService      = $samlEntityService;
         $this->stateHandler           = $stateHandler;
         $this->logger                 = $logger;
-        $this->generationTime         = new DateTime('now', new DateTimeZone('UTC'));
+        $this->generationTime         = is_null($now) ? new DateTime('now', new DateTimeZone('UTC')): $now;
     }
 
     /**

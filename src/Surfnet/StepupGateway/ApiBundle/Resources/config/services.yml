@@ -1,15 +1,19 @@
 services:
+    # Remove the public: true default once DI is implemented throughout the StepUp applications. See Pivotal #138225085
+    _defaults:
+        public: true
+
     surfnet_gateway_api.service.sms:
         class: Surfnet\StepupGateway\ApiBundle\Service\SmsService
         arguments:
-            - @surfnet_message_bird_api_client.messaging
-            - @logger
+            - "@surfnet_message_bird_api_client.messaging"
+            - "@logger"
 
     surfnet_gateway_api.service.yubikey:
         class: Surfnet\StepupGateway\ApiBundle\Service\YubikeyService
         arguments:
-            - @surfnet_yubikey_api_client.verification_service
-            - @logger
+            - "@surfnet_yubikey_api_client.verification_service"
+            - "@logger"
 
     surfnet_gateway_api.security.json_basic_auth_entry_point:
         class: Surfnet\StepupGateway\ApiBundle\Security\Http\EntryPoint\JsonBasicAuthenticationEntryPoint
@@ -18,21 +22,21 @@ services:
 
     surfnet_stepup.register_request_param_converter:
         class: Surfnet\StepupGateway\ApiBundle\Request\RegisterRequestParamConverter
-        arguments: [@validator]
+        arguments: ["@validator"]
         tags: [{ name: request.param_converter, priority: -1, converter: surfnet_stepup.json_convertible }]
 
     surfnet_stepup.register_response_param_converter:
         class: Surfnet\StepupGateway\ApiBundle\Request\RegisterResponseParamConverter
-        arguments: [@validator]
+        arguments: ["@validator"]
         tags: [{ name: request.param_converter, priority: -1, converter: surfnet_stepup.json_convertible }]
 
     surfnet_stepup.sign_request_param_converter:
         class: Surfnet\StepupGateway\ApiBundle\Request\SignRequestParamConverter
-        arguments: [@validator]
+        arguments: ["@validator"]
         tags: [{ name: request.param_converter, priority: -1, converter: surfnet_stepup.json_convertible }]
 
     surfnet_stepup.sign_response_param_converter:
         class: Surfnet\StepupGateway\ApiBundle\Request\SignResponseParamConverter
-        arguments: [@validator]
+        arguments: ["@validator"]
         tags: [{ name: request.param_converter, priority: -1, converter: surfnet_stepup.json_convertible }]
 

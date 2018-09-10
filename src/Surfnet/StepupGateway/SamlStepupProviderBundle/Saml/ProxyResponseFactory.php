@@ -65,14 +65,15 @@ class ProxyResponseFactory
         LoggerInterface $logger,
         IdentityProvider $hostedIdentityProvider,
         StateHandler $stateHandler,
-        AssertionSigningService $assertionSigningService
+        AssertionSigningService $assertionSigningService,
+        DateTime $now = null
     ) {
         $this->logger                  = $logger;
         $this->hostedIdentityProvider  = $hostedIdentityProvider;
         $this->stateHandler            = $stateHandler;
         $this->assertionSigningService = $assertionSigningService;
 
-        $this->currentTime = new DateTime('now', new DateTimeZone('UTC'));
+        $this->currentTime = is_null($now) ? new DateTime('now', new DateTimeZone('UTC')): $now;
     }
 
     /**

@@ -36,7 +36,7 @@ class YubikeyController extends Controller
     {
         /** @var YubikeyService $yubikeyService */
         $yubikeyService = $this->get('surfnet_gateway_api.service.yubikey');
-        $result = $yubikeyService->verify($otp, $requester);
+        $result = $yubikeyService->verifyOtp($otp, $requester);
 
         return $this->createJsonResponseFromVerifyYubikeyResult($result);
     }

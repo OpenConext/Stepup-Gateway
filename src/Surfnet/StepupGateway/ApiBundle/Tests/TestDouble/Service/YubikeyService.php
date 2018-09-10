@@ -23,6 +23,7 @@ use Surfnet\StepupGateway\ApiBundle\Dto\Otp as OtpDto;
 use Surfnet\StepupGateway\ApiBundle\Dto\Requester;
 use Surfnet\StepupGateway\ApiBundle\Dto\YubikeyOtpVerificationResult;
 use Surfnet\StepupGateway\ApiBundle\Service\YubikeyServiceInterface;
+use Surfnet\YubikeyApiClient\Service\OtpVerificationResult;
 
 /**
  * Serves a test double for : ApiBundle/Service/YubikeyService
@@ -34,10 +35,19 @@ class YubikeyService implements YubikeyServiceInterface
     /**
      * @param OtpDto $otp
      * @param Requester $requester
+     * @return OtpVerificationResult
+     */
+    public function verifyOtp(OtpDto $otp, Requester $requester)
+    {
+        return new OtpVerificationResult(OtpVerificationResult::STATUS_OK);
+    }
+
+    /**
+     * @param OtpDto $otp
      * @param Requester $secondFactorIdentifier
      * @return YubikeyOtpVerificationResult
      */
-    public function verify(OtpDto $otp, Requester $requester, $secondFactorIdentifier)
+    public function verifyPublicId(OtpDto $otp, $secondFactorIdentifier)
     {
         return new YubikeyOtpVerificationResult(
             YubikeyOtpVerificationResult::RESULT_PUBLIC_ID_MATCHED,
