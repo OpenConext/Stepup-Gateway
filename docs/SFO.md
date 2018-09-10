@@ -4,9 +4,9 @@ Second Factor Only (SFO) Authentication exposes the second factor authentication
 
 ![SAML Proxy](SFO.png)
 
-Because for SFO the Stepup-Gateway does not do a first factor authentication, which would provide it with the unique identier of the user in Stepup, the SP has to provide this unique identifier in the authentication request to the Stepup-Gateway. For this the RequesterID element in the SAML AuthnRequest is used. This is similar to the method employed by [GSSP](GSSP.md), except that instead of an identifier for the second factor, the identifier of the user is passed in the AuthnRequest.
+Because for SFO the Stepup-Gateway does not do a first factor authentication, which would provide it with the unique identier of the user in Stepup, the SP has to provide this unique identifier in the authentication request to the Stepup-Gateway. For this the `Subject` element in the SAML AuthnRequest is used. The `Subject` must contain the `NameID` of the user to be authenticated. This is the same `Subject/NameID` that was used when the user authenticated to Stepup-SelfService to register their second factor. This use of the Subject in a AuthnRequest is similar to the method employed by [GSSP](GSSP.md), except that in GSSP the `Subject` contains the identifier of the second factor instead if the identifier of the user.
 
-In the Stepup-Gateway on or more filters can be configured that limit the NameID's for which a specific SFO SP may request authentication. An SP, identified by it's EntityID, can use either the normal authentication endpoint or the SFO endpoint. It cannot use both.
+In the Stepup-Gateway one or more filters can be configured that limit the NameID's for which a specific SFO SP may request authentication. An SP, identified by it's EntityID, can use either the normal authentication endpoint or the SFO endpoint. It cannot use both.
 
 
 ## SAML AuthnRequest

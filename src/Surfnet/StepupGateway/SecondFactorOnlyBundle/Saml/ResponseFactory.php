@@ -18,6 +18,8 @@
 
 namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Saml;
 
+use DateTime;
+use DateTimeZone;
 use SAML2\Assertion;
 use SAML2\Constants;
 use SAML2\Response;
@@ -52,12 +54,13 @@ final class ResponseFactory
     public function __construct(
         IdentityProvider $hostedIdentityProvider,
         ProxyStateHandler $proxyStateHandler,
-        AssertionSigningService $assertionSigningService
+        AssertionSigningService $assertionSigningService,
+        DateTime $now = null
     ) {
         $this->hostedIdentityProvider    = $hostedIdentityProvider;
         $this->proxyStateHandler         = $proxyStateHandler;
         $this->assertionSigningService   = $assertionSigningService;
-        $this->currentTime = new \DateTime('now', new \DateTimeZone('UTC'));
+        $this->currentTime = is_null($now) ? new DateTime('now', new DateTimeZone('UTC')): $now;
     }
 
     /**

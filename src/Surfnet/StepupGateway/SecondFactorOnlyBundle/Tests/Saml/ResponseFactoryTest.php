@@ -8,9 +8,10 @@ use SAML2\Response;
 use Surfnet\SamlBundle\Entity\IdentityProvider;
 use Surfnet\StepupGateway\GatewayBundle\Saml\AssertionSigningService;
 use Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler;
+use Surfnet\StepupGateway\GatewayBundle\Tests\TestCase\GatewaySamlTestCase;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Saml\ResponseFactory;
 
-class ResponseFactoryTest extends \PHPUnit_Framework_TestCase
+class ResponseFactoryTest extends GatewaySamlTestCase
 {
     /**
      * @var IdentityProvider|Mock
@@ -34,6 +35,8 @@ class ResponseFactoryTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        parent::setUp();
+
         $this->stateHandler = m::mock(ProxyStateHandler::class);
         $this->idp = m::mock(IdentityProvider::class);
         $this->assertionSigningService = m::mock(AssertionSigningService::class);

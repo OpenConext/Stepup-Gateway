@@ -23,6 +23,21 @@ Run `app/console mopa:bootstrap:symlink:less` to configure Bootstrap symlinks.
 
 The Gateway is configured to only accept connections over SSL. Disable this under `nelmio_security` in `config.yml` or run the web server using a (self-signed) certificate.
 
+## Developer options
+
+### Mock Yubikey service
+If you are not in possession of an actual Yubikey device, using the Mock Yubikey service might prove useful. This
+mock service was created for end to end test purposes, but could be utilized in this situation. To use the mock service:
+
+1. Update your `src/Surfnet/StepupGateway/ApiBundle/Resources/config/services.yml`
+2. Find the `surfnet_gateway_api.service.yubikey` service
+3. Update the service definition to point to this class: `class: Surfnet\StepupGateway\ApiBundle\Tests\TestDouble\Service\YubikeyService` 
+4. Do not commit/push this change!
+
+
+## Release strategy
+Please read: https://github.com/OpenConext/Stepup-Deploy/wiki/Release-Management fro more information on the release strategy used in Stepup projects.
+
 ## Documentation
 
 Documentation specific to this component is located in the [docs](./docs) directory in this repository:

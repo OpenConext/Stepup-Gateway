@@ -26,9 +26,8 @@ use Surfnet\StepupBundle\Service\LoaResolutionService;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupBundle\Service\SmsSecondFactorService;
 use Surfnet\StepupBundle\Value\Loa;
-use Surfnet\StepupGateway\ApiBundle\Service\YubikeyService;
+use Surfnet\StepupGateway\ApiBundle\Service\YubikeyServiceInterface;
 use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactorRepository;
-use Surfnet\StepupGateway\GatewayBundle\Exception\InvalidStepupShoFormatException;
 use Surfnet\StepupGateway\GatewayBundle\Exception\LoaCannotBeGivenException;
 use Surfnet\StepupGateway\GatewayBundle\Service\StepUpAuthenticationService;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -65,7 +64,7 @@ final class StepUpAuthenticationServiceTest extends PHPUnit_Framework_TestCase
             new Loa(3,'https://gw-dev.stepup.coin.surf.net/authentication/loa3'),
         ]);
         $this->secondFactorRepository = m::mock(SecondFactorRepository::class);
-        $this->yubikeyService = m::mock(YubikeyService::class);
+        $this->yubikeyService = m::mock(YubikeyServiceInterface::class);
         $this->smsSfService = m::mock(SmsSecondFactorService::class);
         $this->translator = m::mock(TranslatorInterface::class);
         $this->logger = m::mock(LoggerInterface::class);
@@ -174,7 +173,7 @@ final class StepUpAuthenticationServiceTest extends PHPUnit_Framework_TestCase
 
         $this->logger
             ->shouldReceive('info')
-            ->with(matchesPattern('/^Out of [3|4] candidate Loa\'s, Loa ' .
+            ->with(\Hamcrest\Text\MatchesPattern::matchesPattern('/^Out of [3|4] candidate Loa\'s, Loa ' .
                 '"https:\/\/gw-dev.stepup.coin.surf.net\/authentication\/loa2" is the highest$/')
             );
 

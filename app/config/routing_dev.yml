@@ -6,12 +6,8 @@ _profiler:
     resource: "@WebProfilerBundle/Resources/config/routing/profiler.xml"
     prefix:   /_profiler
 
-_configurator:
-    resource: "@SensioDistributionBundle/Resources/config/routing/webconfigurator.xml"
-    prefix:   /_configurator
-
 JMSTranslationBundle_ui:
-    resource: @JMSTranslationBundle/Controller/
+    resource: "@JMSTranslationBundle/Controller/"
     type:     annotation
     prefix:   /_trans
 
@@ -23,5 +19,5 @@ _errors:
     prefix:   /_error
 
 _u2f:
-    resource: @SurfnetStepupGatewayU2fVerificationBundle/Resources/config/routing_dev.yml
+    resource: "@SurfnetStepupGatewayU2fVerificationBundle/Resources/config/routing_dev.yml"
     prefix:   /u2f

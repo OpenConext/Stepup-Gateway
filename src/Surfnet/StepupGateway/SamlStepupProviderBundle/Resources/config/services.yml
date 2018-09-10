@@ -1,11 +1,15 @@
 services:
+    # Remove the public: true default once DI is implemented throughout the StepUp applications. See Pivotal #138225085
+    _defaults:
+        public: true
+
     gssp.provider_repository:
         class: Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\ProviderRepository
 
     gssp.connected_service_providers:
         class: Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\ConnectedServiceProviders
         arguments:
-            - @saml.entity_repository
+            - "@saml.entity_repository"
             - []
 
     gssp.session:
@@ -21,3 +25,24 @@ services:
             - '/'
         calls:
             - [setName, ['gssp']]
+
+    gssp.service.gssp.login:
+        class: Surfnet\StepupGateway\SamlStepupProviderBundle\Service\Gateway\LoginService
+        arguments:
+            - "@surfnet_saml.logger"
+            - "@surfnet_saml.http.redirect_binding"
+            - "@gssp.connected_service_providers"
+
+    gssp.service.gssp.second_factor_verification:
+        class: Surfnet\StepupGateway\SamlStepupProviderBundle\Service\Gateway\SecondFactorVerificationService
+        arguments:
+            - "@surfnet_saml.logger"
+            - "@gateway.proxy.response_context"
+
+    gssp.service.gssp.consume_assertion:
+        class: Surfnet\StepupGateway\SamlStepupProviderBundle\Service\Gateway\ConsumeAssertionService
+        arguments:
+            - "@logger"
+            - "@surfnet_saml.logger"
+            - "@surfnet_saml.http.post_binding"
+            - "@gssp.connected_service_providers"
