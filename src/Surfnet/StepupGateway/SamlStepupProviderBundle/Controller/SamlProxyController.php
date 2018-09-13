@@ -235,8 +235,7 @@ class SamlProxyController extends Controller
 
         $response = parent::render(
             'SurfnetStepupGatewaySamlStepupProviderBundle:SamlProxy:' . $view . '.html.twig',
-            $parameters,
-            $response
+            $parameters
         );
 
         // clear the state so we can call again :)
