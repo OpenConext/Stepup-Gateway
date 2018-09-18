@@ -1,5 +1,5 @@
 imports:
-    - { resource: config_dev.yml }
+    - { resource: config.yml }
     - { resource: services_test.yml }
 
 framework:
@@ -8,10 +8,6 @@ framework:
         storage_id: session.storage.mock_file
     profiler:
         collect: false
-
-web_profiler:
-    toolbar: false
-    intercept_redirects: false
 
 nelmio_security:
     csp:
@@ -27,7 +23,7 @@ doctrine:
                 driver:   "%database_driver%"
                 host:     "%database_host%"
                 port:     "%database_port%"
-                dbname:   gateway_test
+                dbname:   "%database_gateway_name%_test"
                 user:     "%database_gateway_user%"
                 password: "%database_gateway_password%"
                 charset:  UTF8
@@ -35,7 +31,7 @@ doctrine:
                 driver:   "%database_driver%"
                 host:     "%database_host%"
                 port:     "%database_port%"
-                dbname:   u2f_test
+                dbname:   "%database_u2f_name%_test"
                 user:     "%database_u2f_user%"
                 password: "%database_u2f_password%"
                 charset:  UTF8
@@ -43,7 +39,7 @@ doctrine:
                 driver:   "%database_driver%"
                 host:     "%database_host%"
                 port:     "%database_port%"
-                dbname:   u2f_test
+                dbname:   "%database_u2f_name%_test"
                 user:     "%database_deploy_user%"
                 password: "%database_deploy_password%"
                 charset:  UTF8
