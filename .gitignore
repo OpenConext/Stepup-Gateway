@@ -3,6 +3,7 @@
 /web/css/
 /web/app_dev.php
 /web/app_dev.php.dist
+/web/app_test.php
 /app/bootstrap.php.cache
 /app/cache/*
 /app/config/parameters.yml
