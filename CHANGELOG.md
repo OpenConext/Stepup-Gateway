@@ -1,5 +1,8 @@
 # Changelog
 
+## Develop
+* The previously hardcoded "server_version" config option (Doctrine DBAL) is now configurable
+
 ## 2.10.0
 **Improvements**
 * Added Controller tests #167
