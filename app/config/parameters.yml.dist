@@ -65,7 +65,7 @@ parameters:
 
     # Password for the "selfservice" Gateway API user
     selfservice_api_password: ~
-    # Password for the "selfservice" Gateway API user
+    # Password for the "ra" Gateway API user
     registration_authority_api_password: ~
 
     # Message originator as displayed in SMS
