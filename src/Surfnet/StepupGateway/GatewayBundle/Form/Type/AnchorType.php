@@ -46,9 +46,7 @@ class AnchorType extends AbstractType implements ButtonTypeInterface
 
         $resolver->setRequired(['route']);
 
-        $resolver->setAllowedTypes([
-            'route' => 'string',
-        ]);
+        $resolver->setAllowedTypes('route', 'string');
     }
 
     public function buildView(FormView $view, FormInterface $form, array $options)
