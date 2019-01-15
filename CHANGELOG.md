@@ -1,7 +1,15 @@
 # Changelog
 
-## Develop
+## 2.10.2
+**Bugfixes**
+* Remove incorrect third parameter from render call #170
+* Fix copy-paste mistake #173 Thanks @tvdijen
+* Fix sms challenge form #175 
+
+**Improvements**
 * The previously hardcoded "server_version" config option (Doctrine DBAL) is now configurable
+* Provide behat support #171
+* Adjust test config to allow smoke testing #172
 
 ## 2.10.1
 **Bugfix**
