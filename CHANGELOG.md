@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.10.3
+* Rebuild the Compser lockfile
+
 ## 2.10.2
 **Bugfixes**
 * Remove incorrect third parameter from render call #170
