@@ -1,7 +1,11 @@
 # Changelog
 
+## 2.10.4
+**Improvements**
+* Install security upgrades
+
 ## 2.10.3
-* Rebuild the Compser lockfile
+* Rebuild the Composer lockfile
 
 ## 2.10.2
 **Bugfixes**
