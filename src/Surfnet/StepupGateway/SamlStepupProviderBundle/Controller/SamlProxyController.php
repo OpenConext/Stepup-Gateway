@@ -141,7 +141,8 @@ class SamlProxyController extends Controller
         } catch (ResponseFailureException $e) {
             $response = $this->createResponseFailureResponse(
                 $provider,
-                $this->getDestination($provider->getStateHandler())
+                $this->getDestination($provider->getStateHandler()),
+                $e->getMessage()
             );
             return $this->renderSamlResponse('consumeAssertion', $provider->getStateHandler(), $response);
 
@@ -261,10 +262,14 @@ class SamlProxyController extends Controller
      * @param string $destination
      * @return SAMLResponse
      */
-    private function createResponseFailureResponse(Provider $provider, $destination)
+    private function createResponseFailureResponse(Provider $provider, $destination, $message)
     {
         $response = $this->createResponse($provider, $destination);
-        $response->setStatus(['Code' => Constants::STATUS_RESPONDER]);
+        $response->setStatus([
+            'Code' => Constants::STATUS_RESPONDER,
+            'SubCode' => Constants::STATUS_AUTHN_FAILED,
+            'Message' => $message
+        ]);
 
         return $response;
     }
