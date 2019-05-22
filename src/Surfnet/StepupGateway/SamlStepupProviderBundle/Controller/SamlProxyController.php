@@ -23,6 +23,7 @@ use Exception;
 use SAML2\Constants;
 use SAML2\Response as SAMLResponse;
 use Surfnet\SamlBundle\Http\XMLResponse;
+use Surfnet\StepupGateway\GatewayBundle\Controller\GatewayController;
 use Surfnet\StepupGateway\GatewayBundle\Exception\ResponseFailureException;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Exception\InvalidSubjectException;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Exception\NotConnectedServiceProviderException;
@@ -302,9 +303,11 @@ class SamlProxyController extends Controller
      */
     private function createResponse(Provider $provider, $destination)
     {
+        $context = $this->getResponseContext();
+
         $response = new SAMLResponse();
         $response->setDestination($destination);
-        $response->setIssuer($provider->getIdentityProvider()->getEntityId());
+        $response->setIssuer($context->getIssuer());
         $response->setIssueInstant((new DateTime('now'))->getTimestamp());
         $response->setInResponseTo($provider->getStateHandler()->getRequestId());
 
@@ -355,5 +358,21 @@ class SamlProxyController extends Controller
     private function getProxyResponseFactory(Provider $provider)
     {
         return $this->get('gssp.provider.' . $provider->getName() . '.response_proxy');
+    }
+
+    /**
+     * @return \Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext
+     */
+    public function getResponseContext()
+    {
+        $stateHandler = $this->get('gateway.proxy.state_handler');
+
+        $responseContextServiceId = $stateHandler->getResponseContextServiceId();
+
+        if (!$responseContextServiceId) {
+            return $this->get(GatewayController::RESPONSE_CONTEXT_SERVICE_ID);
+        }
+
+        return $this->get($responseContextServiceId);
     }
 }
