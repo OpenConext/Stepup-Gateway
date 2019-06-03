@@ -1,7 +1,7 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
     "content-hash": "0353e9765be2fa8d8d09b16b88a6d138",
@@ -2684,30 +2684,35 @@
         },
         {
             "name": "surfnet/stepup-saml-bundle",
-            "version": "4.1.2",
+            "version": "4.1.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/OpenConext/Stepup-saml-bundle.git",
-                "reference": "1ce8e74a7e35963e60378da8c8647656e382cef9"
+                "reference": "bcac100da97865c30e8e079bf824b5e4452a268d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/OpenConext/Stepup-saml-bundle/zipball/1ce8e74a7e35963e60378da8c8647656e382cef9",
-                "reference": "1ce8e74a7e35963e60378da8c8647656e382cef9",
+                "url": "https://api.github.com/repos/OpenConext/Stepup-saml-bundle/zipball/bcac100da97865c30e8e079bf824b5e4452a268d",
+                "reference": "bcac100da97865c30e8e079bf824b5e4452a268d",
                 "shasum": ""
             },
             "require": {
                 "ext-openssl": "*",
                 "php": ">=5.6,<8.0-dev",
                 "robrichards/xmlseclibs": "^3.0",
-                "simplesamlphp/saml2": "^3.0",
+                "simplesamlphp/saml2": "3.2.*",
                 "symfony/dependency-injection": ">=2.7,<4",
                 "symfony/framework-bundle": ">=2.7,<4"
             },
             "require-dev": {
-                "ibuildings/qa-tools": "~1.1",
                 "mockery/mockery": "~0.9",
-                "psr/log": "~1.0"
+                "phpmd/phpmd": "^2.6",
+                "phpunit/phpunit": "^5.7",
+                "psr/log": "~1.0",
+                "sebastian/exporter": "~2.0",
+                "sebastian/phpcpd": "^2.0",
+                "sensiolabs/security-checker": "^5.0",
+                "squizlabs/php_codesniffer": "^3.0"
             },
             "type": "symfony-bundle",
             "autoload": {
@@ -2727,7 +2732,7 @@
                 "stepup",
                 "surfnet"
             ],
-            "time": "2018-09-04T10:06:38+00:00"
+            "time": "2019-05-28T08:15:22+00:00"
         },
         {
             "name": "surfnet/stepup-u2f-bundle",
