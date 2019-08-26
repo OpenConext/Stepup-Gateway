@@ -1,8 +1,8 @@
 {
     "devDependencies": {
-        "@symfony/webpack-encore": "^1`",
+        "@symfony/webpack-encore": "^1",
         "@types/bootstrap": "^5.0.0",
-        "@types/jest": "^24",
+        "@types/jest": "^27",
         "@types/jquery": "^3.3.9",
         "@types/node": "^10",
         "@types/popper.js": "^1.11.0",
@@ -12,7 +12,7 @@
         "less": "^3.12.2",
         "less-loader": "^10",
         "node-sass": "^4.5.3",
-        "postcss": "^8.3.8",
+        "postcss": ">=8.3.8",
         "sass-loader": "^9",
         "ts-jest": "^27",
         "ts-loader": "^8.0.0",
