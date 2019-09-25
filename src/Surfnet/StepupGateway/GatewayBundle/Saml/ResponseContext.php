@@ -302,4 +302,17 @@ class ResponseContext
         $this->stateHandler->setSelectedSecondFactorId(null);
         $this->stateHandler->setSecondFactorVerified(false);
     }
+
+    /**
+     * Retrieve the ResponseContextServiceId from state
+     *
+     * Used to determine we are dealing with a SFO or regular authentication. Both have different ResponseContext
+     * instances, and it's imperative that successive consumers use the correct service.
+     *
+     * @return string|null
+     */
+    public function getResponseContextServiceId()
+    {
+        return $this->stateHandler->getResponseContextServiceId();
+    }
 }
