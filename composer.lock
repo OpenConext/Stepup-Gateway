@@ -1,7 +1,7 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
     "content-hash": "0353e9765be2fa8d8d09b16b88a6d138",
@@ -2327,7 +2327,6 @@
                 "shasum": ""
             },
             "require": {
-                "ext-openssl": "*",
                 "php": ">= 5.4"
             },
             "type": "library",
@@ -2348,7 +2347,7 @@
                 "xml",
                 "xmldsig"
             ],
-            "time": "2019-11-05T11:44:22+00:00"
+            "time": "2017-08-31T09:27:07+00:00"
         },
         {
             "name": "sensio/distribution-bundle",
@@ -2626,16 +2625,16 @@
         },
         {
             "name": "surfnet/stepup-bundle",
-            "version": "4.0.2",
+            "version": "4.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/OpenConext/Stepup-bundle.git",
-                "reference": "3329ca027f57208d7a20882707ef4a01dd2a4fb6"
+                "reference": "5946dde19d5e095a5836d602b7abfa64cb71d6f1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/OpenConext/Stepup-bundle/zipball/3329ca027f57208d7a20882707ef4a01dd2a4fb6",
-                "reference": "3329ca027f57208d7a20882707ef4a01dd2a4fb6",
+                "url": "https://api.github.com/repos/OpenConext/Stepup-bundle/zipball/5946dde19d5e095a5836d602b7abfa64cb71d6f1",
+                "reference": "5946dde19d5e095a5836d602b7abfa64cb71d6f1",
                 "shasum": ""
             },
             "require": {
@@ -2678,26 +2677,26 @@
                 "suaas",
                 "surfnet"
             ],
-            "time": "2018-09-13T14:13:26+00:00"
+            "time": "2018-09-06T12:43:15+00:00"
         },
         {
             "name": "surfnet/stepup-saml-bundle",
-            "version": "4.1.8",
+            "version": "4.1.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/OpenConext/Stepup-saml-bundle.git",
-                "reference": "cf88eb328a31d30a3b94deea7931a759bd362aab"
+                "reference": "bcac100da97865c30e8e079bf824b5e4452a268d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/OpenConext/Stepup-saml-bundle/zipball/cf88eb328a31d30a3b94deea7931a759bd362aab",
-                "reference": "cf88eb328a31d30a3b94deea7931a759bd362aab",
+                "url": "https://api.github.com/repos/OpenConext/Stepup-saml-bundle/zipball/bcac100da97865c30e8e079bf824b5e4452a268d",
+                "reference": "bcac100da97865c30e8e079bf824b5e4452a268d",
                 "shasum": ""
             },
             "require": {
                 "ext-openssl": "*",
                 "php": ">=5.6,<8.0-dev",
-                "robrichards/xmlseclibs": "^3.0.4",
+                "robrichards/xmlseclibs": "^3.0",
                 "simplesamlphp/saml2": "3.2.*",
                 "symfony/dependency-injection": ">=2.7,<4",
                 "symfony/framework-bundle": ">=2.7,<4"
@@ -2730,7 +2729,7 @@
                 "stepup",
                 "surfnet"
             ],
-            "time": "2019-11-06T13:09:53+00:00"
+            "time": "2019-05-28T08:15:22+00:00"
         },
         {
             "name": "surfnet/stepup-u2f-bundle",
@@ -4940,7 +4939,6 @@
                 "mock",
                 "xunit"
             ],
-            "abandoned": true,
             "time": "2017-06-30T09:13:00+00:00"
         },
         {
