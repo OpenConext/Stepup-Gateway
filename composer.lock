@@ -2314,23 +2314,21 @@
         },
         {
             "name": "robrichards/xmlseclibs",
-            "version": "3.0.1",
+            "version": "3.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/robrichards/xmlseclibs.git",
-                "reference": "d937712f70f93a584eb0299ccd87dc6374003781"
+                "reference": "0a53d3c3aa87564910cae4ed01416441d3ae0db5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/robrichards/xmlseclibs/zipball/d937712f70f93a584eb0299ccd87dc6374003781",
-                "reference": "d937712f70f93a584eb0299ccd87dc6374003781",
+                "url": "https://api.github.com/repos/robrichards/xmlseclibs/zipball/0a53d3c3aa87564910cae4ed01416441d3ae0db5",
+                "reference": "0a53d3c3aa87564910cae4ed01416441d3ae0db5",
                 "shasum": ""
             },
             "require": {
+                "ext-openssl": "*",
                 "php": ">= 5.4"
-            },
-            "suggest": {
-                "ext-openssl": "OpenSSL extension"
             },
             "type": "library",
             "autoload": {
@@ -2350,7 +2348,7 @@
                 "xml",
                 "xmldsig"
             ],
-            "time": "2017-08-31T09:27:07+00:00"
+            "time": "2019-11-05T11:44:22+00:00"
         },
         {
             "name": "sensio/distribution-bundle",
@@ -2628,16 +2626,16 @@
         },
         {
             "name": "surfnet/stepup-bundle",
-            "version": "4.0.1",
+            "version": "4.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/OpenConext/Stepup-bundle.git",
-                "reference": "5946dde19d5e095a5836d602b7abfa64cb71d6f1"
+                "reference": "3329ca027f57208d7a20882707ef4a01dd2a4fb6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/OpenConext/Stepup-bundle/zipball/5946dde19d5e095a5836d602b7abfa64cb71d6f1",
-                "reference": "5946dde19d5e095a5836d602b7abfa64cb71d6f1",
+                "url": "https://api.github.com/repos/OpenConext/Stepup-bundle/zipball/3329ca027f57208d7a20882707ef4a01dd2a4fb6",
+                "reference": "3329ca027f57208d7a20882707ef4a01dd2a4fb6",
                 "shasum": ""
             },
             "require": {
@@ -2680,34 +2678,39 @@
                 "suaas",
                 "surfnet"
             ],
-            "time": "2018-09-06T12:43:15+00:00"
+            "time": "2018-09-13T14:13:26+00:00"
         },
         {
             "name": "surfnet/stepup-saml-bundle",
-            "version": "4.1.2",
+            "version": "4.1.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/OpenConext/Stepup-saml-bundle.git",
-                "reference": "1ce8e74a7e35963e60378da8c8647656e382cef9"
+                "reference": "cf88eb328a31d30a3b94deea7931a759bd362aab"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/OpenConext/Stepup-saml-bundle/zipball/1ce8e74a7e35963e60378da8c8647656e382cef9",
-                "reference": "1ce8e74a7e35963e60378da8c8647656e382cef9",
+                "url": "https://api.github.com/repos/OpenConext/Stepup-saml-bundle/zipball/cf88eb328a31d30a3b94deea7931a759bd362aab",
+                "reference": "cf88eb328a31d30a3b94deea7931a759bd362aab",
                 "shasum": ""
             },
             "require": {
                 "ext-openssl": "*",
                 "php": ">=5.6,<8.0-dev",
-                "robrichards/xmlseclibs": "^3.0",
-                "simplesamlphp/saml2": "^3.0",
+                "robrichards/xmlseclibs": "^3.0.4",
+                "simplesamlphp/saml2": "3.2.*",
                 "symfony/dependency-injection": ">=2.7,<4",
                 "symfony/framework-bundle": ">=2.7,<4"
             },
             "require-dev": {
-                "ibuildings/qa-tools": "~1.1",
                 "mockery/mockery": "~0.9",
-                "psr/log": "~1.0"
+                "phpmd/phpmd": "^2.6",
+                "phpunit/phpunit": "^5.7",
+                "psr/log": "~1.0",
+                "sebastian/exporter": "~2.0",
+                "sebastian/phpcpd": "^2.0",
+                "sensiolabs/security-checker": "^5.0",
+                "squizlabs/php_codesniffer": "^3.0"
             },
             "type": "symfony-bundle",
             "autoload": {
@@ -2727,7 +2730,7 @@
                 "stepup",
                 "surfnet"
             ],
-            "time": "2018-09-04T10:06:38+00:00"
+            "time": "2019-11-06T13:09:53+00:00"
         },
         {
             "name": "surfnet/stepup-u2f-bundle",
@@ -3517,16 +3520,16 @@
         },
         {
             "name": "symfony/symfony",
-            "version": "v3.4.15",
+            "version": "v3.4.26",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/symfony.git",
-                "reference": "5bb5c2d4b0d5cf10672015b68519a199e6ac27c1"
+                "reference": "1b89e7baec9891c323bbf1ec81af77d901fc60c9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/symfony/zipball/5bb5c2d4b0d5cf10672015b68519a199e6ac27c1",
-                "reference": "5bb5c2d4b0d5cf10672015b68519a199e6ac27c1",
+                "url": "https://api.github.com/repos/symfony/symfony/zipball/1b89e7baec9891c323bbf1ec81af77d901fc60c9",
+                "reference": "1b89e7baec9891c323bbf1ec81af77d901fc60c9",
                 "shasum": ""
             },
             "require": {
@@ -3668,7 +3671,7 @@
             "keywords": [
                 "framework"
             ],
-            "time": "2018-08-28T06:06:28+00:00"
+            "time": "2019-04-17T15:57:27+00:00"
         },
         {
             "name": "twbs/bootstrap",
@@ -3778,31 +3781,31 @@
         },
         {
             "name": "twig/twig",
-            "version": "v1.35.4",
+            "version": "v1.39.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twigphp/Twig.git",
-                "reference": "7e081e98378a1e78c29cc9eba4aefa5d78a05d2a"
+                "reference": "23e7b6f0cfa1d7ba3de69f30d8e05cf957412fec"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/Twig/zipball/7e081e98378a1e78c29cc9eba4aefa5d78a05d2a",
-                "reference": "7e081e98378a1e78c29cc9eba4aefa5d78a05d2a",
+                "url": "https://api.github.com/repos/twigphp/Twig/zipball/23e7b6f0cfa1d7ba3de69f30d8e05cf957412fec",
+                "reference": "23e7b6f0cfa1d7ba3de69f30d8e05cf957412fec",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.3",
+                "php": ">=5.4.0",
                 "symfony/polyfill-ctype": "^1.8"
             },
             "require-dev": {
                 "psr/container": "^1.0",
                 "symfony/debug": "^2.7",
-                "symfony/phpunit-bridge": "^3.3"
+                "symfony/phpunit-bridge": "^3.4.19|^4.1.8"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.35-dev"
+                    "dev-master": "1.39-dev"
                 }
             },
             "autoload": {
@@ -3840,7 +3843,7 @@
             "keywords": [
                 "templating"
             ],
-            "time": "2018-07-13T07:12:17+00:00"
+            "time": "2019-04-16T17:12:57+00:00"
         },
         {
             "name": "webmozart/assert",
@@ -4937,6 +4940,7 @@
                 "mock",
                 "xunit"
             ],
+            "abandoned": true,
             "time": "2017-06-30T09:13:00+00:00"
         },
         {
