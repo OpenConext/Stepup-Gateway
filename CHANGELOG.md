@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.10.5
+This is a security release that will harden the application against CVE 2019-346
+ * Upgrade Stepup-saml-bundle to version 4.1.8 #185
+
 ## 2.10.4
 **Improvements**
 * Install security upgrades
