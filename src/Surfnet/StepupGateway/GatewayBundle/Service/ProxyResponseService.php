@@ -116,10 +116,7 @@ class ProxyResponseService
         // Perform some input validation on the eptiNameId that was received.
         if (is_null($eptiNameId)) {
             throw new RuntimeException('The "urn:mace:dir:attribute-def:eduPersonTargetedID" is not present.');
-        } elseif (
-            !array_key_exists(0, $eptiNameId) ||
-            !$eptiNameId[0]->value
-        ) {
+        } elseif (!array_key_exists(0, $eptiNameId) || !$eptiNameId[0]->value) {
             throw new RuntimeException(
                 'The "urn:mace:dir:attribute-def:eduPersonTargetedID" attribute does not contain a NameID with a value.'
             );

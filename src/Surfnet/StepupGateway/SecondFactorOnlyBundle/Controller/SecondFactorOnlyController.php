@@ -129,7 +129,6 @@ class SecondFactorOnlyController extends Controller
         $adfsParameters = $this->getSecondFactorAdfsService()->handleAdfsResponse($logger, $responseContext);
 
         if (!is_null($adfsParameters)) {
-
             // Handle Adfs response
             $responseRendering = $this->get('second_factor_only.response_rendering');
             $xmlResponse = $responseRendering->getResponseAsXML($response);

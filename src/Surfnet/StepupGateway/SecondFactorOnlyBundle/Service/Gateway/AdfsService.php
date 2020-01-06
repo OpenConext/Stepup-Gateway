@@ -92,7 +92,6 @@ class AdfsService
     public function handleAdfsResponse(LoggerInterface $logger, ResponseContext $responseContext)
     {
         if ($this->adfsResponseHelper->isAdfsResponse($responseContext->getInResponseTo())) {
-
             try {
                 $adfsParameters = $this->adfsResponseHelper->retrieveAdfsParameters();
             } catch (Exception $e) {
