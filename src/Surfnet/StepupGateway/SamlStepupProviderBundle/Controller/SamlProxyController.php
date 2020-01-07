@@ -146,7 +146,6 @@ class SamlProxyController extends Controller
                 $e->getMessage()
             );
             return $this->renderSamlResponse('consumeAssertion', $provider->getStateHandler(), $response);
-
         } catch (InvalidSubjectException $e) {
             return $this->renderSamlResponse(
                 'recoverableError',
