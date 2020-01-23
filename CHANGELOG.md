@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.10.6
+**Bugfixes**
+* Use correct ResponseContext service identifier #183
+* Various security related updates #189
+
 ## 2.10.5
 This is a security release that will harden the application against CVE 2019-346
  * Upgrade xmlseclibs to version 3.0.4 #186
