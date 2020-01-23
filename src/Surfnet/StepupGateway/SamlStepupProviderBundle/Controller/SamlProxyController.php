@@ -63,7 +63,7 @@ class SamlProxyController extends Controller
      * The service provider in this context is SelfService (when registering
      * a token) or RA (when vetting a token).
      *
-     * @param string  $provider
+     * @param string $provider
      * @param Request $httpRequest
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
@@ -98,17 +98,22 @@ class SamlProxyController extends Controller
      * directly to the remote GSSP SSO URL, and the response is handled in
      * consumeAssertionAction().
      *
-     * @param $provider
-     * @param $subjectNameId
+     * @param string $provider
+     * @param string $subjectNameId
+     * @param string $responseContextServiceId
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function sendSecondFactorVerificationAuthnRequestAction($provider, $subjectNameId)
+    public function sendSecondFactorVerificationAuthnRequestAction($provider, $subjectNameId, $responseContextServiceId)
     {
         $provider = $this->getProvider($provider);
 
         $gsspSecondFactorVerificationService = $this->getGsspSecondFactorVerificationService();
 
-        $authnRequest = $gsspSecondFactorVerificationService->sendSecondFactorVerificationAuthnRequest($provider, $subjectNameId);
+        $authnRequest = $gsspSecondFactorVerificationService->sendSecondFactorVerificationAuthnRequest(
+            $provider,
+            $subjectNameId,
+            $responseContextServiceId
+        );
 
         /** @var \Surfnet\SamlBundle\Http\RedirectBinding $redirectBinding */
         $redirectBinding = $this->get('surfnet_saml.http.redirect_binding');
@@ -203,8 +208,10 @@ class SamlProxyController extends Controller
     private function getDestination(StateHandler $stateHandler)
     {
         if ($stateHandler->secondFactorVerificationRequested()) {
+            // This can either be a SFO or 'regular' SSO authentication. Both use a ResponseContext service of their own
+            $responseContextServiceId = $stateHandler->getResponseContextServiceId();
             // GSSP verification action, return to SP from GatewayController state!
-            $destination = $this->get('gateway.proxy.response_context')->getDestination();
+            $destination = $this->get($responseContextServiceId)->getDestination();
         } else {
             // GSSP registration action, return to SP remembered in ssoAction().
             $serviceProvider = $this->getServiceProvider(
@@ -221,17 +228,17 @@ class SamlProxyController extends Controller
     }
 
     /**
-     * @param string         $view
-     * @param StateHandler   $stateHandler
+     * @param string $view
+     * @param StateHandler $stateHandler
      * @param SAMLResponse $response
      * @return Response
      */
     public function renderSamlResponse($view, StateHandler $stateHandler, SAMLResponse $response)
     {
         $parameters = [
-            'acu'        => $response->getDestination(),
-            'response'   => $this->getResponseAsXML($response),
-            'relayState' => $stateHandler->getRelayState()
+            'acu' => $response->getDestination(),
+            'response' => $this->getResponseAsXML($response),
+            'relayState' => $stateHandler->getRelayState(),
         ];
 
         $response = parent::render(
@@ -285,10 +292,12 @@ class SamlProxyController extends Controller
     private function createAuthnFailedResponse(Provider $provider, $destination)
     {
         $response = $this->createResponse($provider, $destination);
-        $response->setStatus([
-            'Code'    => Constants::STATUS_RESPONDER,
-            'SubCode' => Constants::STATUS_AUTHN_FAILED
-        ]);
+        $response->setStatus(
+            [
+                'Code' => Constants::STATUS_RESPONDER,
+                'SubCode' => Constants::STATUS_AUTHN_FAILED,
+            ]
+        );
 
         return $response;
     }

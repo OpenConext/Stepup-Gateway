@@ -38,10 +38,15 @@ class SecondFactorVerificationService
      *
      * @param Provider $provider
      * @param string $subjectNameId
+     * @param string $responseContextServiceId
+     *
      * @return AuthnRequest
      */
-    public function sendSecondFactorVerificationAuthnRequest(Provider $provider, $subjectNameId)
-    {
+    public function sendSecondFactorVerificationAuthnRequest(
+        Provider $provider,
+        $subjectNameId,
+        $responseContextServiceId
+    ) {
         $stateHandler = $provider->getStateHandler();
 
         $originalRequestId = $this->responseContext->getInResponseTo();
@@ -56,6 +61,7 @@ class SecondFactorVerificationService
             ->setRequestId($originalRequestId)
             ->setGatewayRequestId($authnRequest->getRequestId())
             ->setSubject($subjectNameId)
+            ->setResponseContextServiceId($responseContextServiceId)
             ->markRequestAsSecondFactorVerification();
 
         /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */

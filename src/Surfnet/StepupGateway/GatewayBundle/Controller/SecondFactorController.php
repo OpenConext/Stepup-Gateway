@@ -261,11 +261,15 @@ class SecondFactorController extends Controller
             ));
         }
 
+        // Also send the response context service id, as later we need to know if this is regular SSO or SFO authn.
+        $responseContextServiceId = $context->getResponseContextServiceId();
+
         return $this->forward(
             'SurfnetStepupGatewaySamlStepupProviderBundle:SamlProxy:sendSecondFactorVerificationAuthnRequest',
             [
                 'provider' => $secondFactor->secondFactorType,
-                'subjectNameId' => $secondFactor->secondFactorIdentifier
+                'subjectNameId' => $secondFactor->secondFactorIdentifier,
+                'responseContextServiceId' => $responseContextServiceId,
             ]
         );
     }
