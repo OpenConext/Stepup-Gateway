@@ -17,6 +17,13 @@ services:
         class: Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler
         arguments:
             - "@session"
+            - "surfnet/gateway/request"
+
+    gateway.proxy.sfo.state_handler:
+        class: Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler
+        arguments:
+            - "@session"
+            - "surfnet/gateway/sfo/request"
 
     gateway.proxy.response_builder:
         class: Surfnet\StepupGateway\GatewayBundle\Saml\ResponseBuilder
