@@ -43,6 +43,7 @@ use Surfnet\StepupU2fBundle\Form\Type\VerifyDeviceAuthenticationType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -120,13 +121,13 @@ class SecondFactorController extends Controller
                     $secondFactor->secondFactorType
                 ));
 
-                return $this->selectAndRedirectTo($secondFactor, $context);
+                return $this->selectAndRedirectTo($secondFactor, $context, $authenticationMode);
                 break;
 
             default:
                 return $this->forward(
                     'SurfnetStepupGatewayGatewayBundle:SecondFactor:chooseSecondFactor',
-                    ['secondFactors' => $secondFactorCollection]
+                    ['authenticationMode' => $authenticationMode, 'secondFactors' => $secondFactorCollection]
                 );
                 break;
         }
@@ -188,10 +189,10 @@ class SecondFactorController extends Controller
             ->createForm(
                 ChooseSecondFactorType::class,
                 $command,
-                ['action' => $this->generateUrl('gateway_verify_second_factor_choose_second_factor')]
+                ['action' => $this->generateUrl('gateway_verify_second_factor_choose_second_factor', ['authenticationMode' => $authenticationMode])]
             )
             ->handleRequest($request);
-        $cancelForm = $this->buildCancelAuthenticationForm()->handleRequest($request);
+        $cancelForm = $this->buildCancelAuthenticationForm($authenticationMode)->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $buttonName = $form->getClickedButton()->getName();
@@ -229,7 +230,7 @@ class SecondFactorController extends Controller
             $logger->notice(sprintf('User chose "%s" to use as second factor', $secondFactorType));
 
             // Forward to action to verify possession of second factor
-            return $this->selectAndRedirectTo($secondFactor, $context);
+            return $this->selectAndRedirectTo($secondFactor, $context, $authenticationMode);
         } else if ($form->isSubmitted() && !$form->isValid()) {
             $form->addError(new FormError('gateway.form.gateway_choose_second_factor.unknown_second_factor_type'));
         }
@@ -241,8 +242,12 @@ class SecondFactorController extends Controller
         ];
     }
 
-    public function verifyGssfAction($authenticationMode)
+    public function verifyGssfAction(Request $request)
     {
+        if (!$request->get('authenticationMode', false)) {
+            throw new RuntimeException('Unable to determine the authentication mode in the GSSP verification action');
+        }
+        $authenticationMode = $request->get('authenticationMode');
         $this->supportsAuthenticationMode($authenticationMode);
         $context = $this->getResponseContext($authenticationMode);
 
@@ -317,11 +322,14 @@ class SecondFactorController extends Controller
     /**
      * @Template
      * @param Request $request
-     * @param string $authenticationMode
      * @return array|Response
      */
-    public function verifyYubiKeySecondFactorAction(Request $request, $authenticationMode)
+    public function verifyYubiKeySecondFactorAction(Request $request)
     {
+        if (!$request->get('authenticationMode', false)) {
+            throw new RuntimeException('Unable to determine the authentication mode in Yubikey verification action');
+        }
+        $authenticationMode = $request->get('authenticationMode');
         $this->supportsAuthenticationMode($authenticationMode);
         $context = $this->getResponseContext($authenticationMode);
         $originalRequestId = $context->getInResponseTo();
@@ -337,7 +345,7 @@ class SecondFactorController extends Controller
         $command->secondFactorId = $selectedSecondFactor;
 
         $form = $this->createForm(VerifyYubikeyOtpType::class, $command)->handleRequest($request);
-        $cancelForm = $this->buildCancelAuthenticationForm()->handleRequest($request);
+        $cancelForm = $this->buildCancelAuthenticationForm($authenticationMode)->handleRequest($request);
 
         if (!$form->isValid()) {
             // OTP field is rendered empty in the template.
@@ -358,7 +366,7 @@ class SecondFactorController extends Controller
             return ['form' => $form->createView(), 'cancelForm' => $cancelForm->createView()];
         }
 
-        $this->getResponseContext()->markSecondFactorVerified();
+        $this->getResponseContext($authenticationMode)->markSecondFactorVerified();
         $this->getAuthenticationLogger()->logSecondFactorAuthentication($originalRequestId);
 
         $logger->info(
@@ -377,8 +385,12 @@ class SecondFactorController extends Controller
      * @param string $authenticationMode
      * @return array|Response
      */
-    public function verifySmsSecondFactorAction(Request $request, $authenticationMode)
+    public function verifySmsSecondFactorAction(Request $request)
     {
+        if (!$request->get('authenticationMode', false)) {
+            throw new RuntimeException('Unable to determine the authentication mode in the SMS verification action');
+        }
+        $authenticationMode = $request->get('authenticationMode');
         $this->supportsAuthenticationMode($authenticationMode);
         $context = $this->getResponseContext($authenticationMode);
         $originalRequestId = $context->getInResponseTo();
@@ -394,7 +406,7 @@ class SecondFactorController extends Controller
         $command->secondFactorId = $selectedSecondFactor;
 
         $form = $this->createForm(SendSmsChallengeType::class, $command)->handleRequest($request);
-        $cancelForm = $this->buildCancelAuthenticationForm()->handleRequest($request);
+        $cancelForm = $this->buildCancelAuthenticationForm($authenticationMode)->handleRequest($request);
 
         $stepupService = $this->getStepupService();
         $phoneNumber = InternationalPhoneNumber::fromStringFormat(
@@ -423,7 +435,7 @@ class SecondFactorController extends Controller
             );
         }
 
-        return $this->redirect($this->generateUrl('gateway_verify_second_factor_sms_verify_challenge'));
+        return $this->redirect($this->generateUrl('gateway_verify_second_factor_sms_verify_challenge', ['authenticationMode' => $authenticationMode]));
     }
 
     /**
@@ -432,8 +444,12 @@ class SecondFactorController extends Controller
      * @param string $authenticationMode
      * @return array|Response
      */
-    public function verifySmsSecondFactorChallengeAction(Request $request, $authenticationMode)
+    public function verifySmsSecondFactorChallengeAction(Request $request)
     {
+        if (!$request->get('authenticationMode', false)) {
+            throw new RuntimeException('Unable to determine the authentication mode in the SMS challenge action');
+        }
+        $authenticationMode = $request->get('authenticationMode');
         $this->supportsAuthenticationMode($authenticationMode);
         $context = $this->getResponseContext($authenticationMode);
         $originalRequestId = $context->getInResponseTo();
@@ -445,7 +461,7 @@ class SecondFactorController extends Controller
 
         $command = new VerifyPossessionOfPhoneCommand();
         $form = $this->createForm(VerifySmsChallengeType::class, $command)->handleRequest($request);
-        $cancelForm = $this->buildCancelAuthenticationForm()->handleRequest($request);
+        $cancelForm = $this->buildCancelAuthenticationForm($authenticationMode)->handleRequest($request);
 
         if (!$form->isValid()) {
             return ['form' => $form->createView(), 'cancelForm' => $cancelForm->createView()];
@@ -501,7 +517,7 @@ class SecondFactorController extends Controller
         $selectedSecondFactor = $this->getSelectedSecondFactor($context, $logger);
         $stepupService = $this->getStepupService();
 
-        $cancelFormAction = $this->generateUrl('gateway_verify_second_factor_u2f_cancel_authentication');
+        $cancelFormAction = $this->generateUrl('gateway_verify_second_factor_u2f_cancel_authentication', ['authenticationMode' => $authenticationMode]);
         $cancelForm =
             $this->createForm(CancelSecondFactorVerificationType::class, null, ['action' => $cancelFormAction]);
 
@@ -529,7 +545,10 @@ class SecondFactorController extends Controller
         $session = $this->get('gateway.session.u2f');
         $session->set('request', $signRequest);
 
-        $formAction = $this->generateUrl('gateway_verify_second_factor_u2f_verify_authentication');
+        $formAction = $this->generateUrl(
+            'gateway_verify_second_factor_u2f_verify_authentication',
+            ['authenticationMode' => $authenticationMode]
+        );
         $form = $this->createForm(
             VerifyDeviceAuthenticationType::class,
             $signResponse,
@@ -546,7 +565,7 @@ class SecondFactorController extends Controller
      * @param string $authenticationMode
      * @return array|Response
      */
-    public function verifyU2fAuthenticationAction(Request $request, $authenticationMode)
+    public function verifyU2fAuthenticationAction(Request $request)
     {
         $this->supportsAuthenticationMode($authenticationMode);
         $context = $this->getResponseContext($authenticationMode);
@@ -565,7 +584,10 @@ class SecondFactorController extends Controller
         $signRequest = $session->get('request');
         $signResponse = new SignResponse();
 
-        $formAction = $this->generateUrl('gateway_verify_second_factor_u2f_verify_authentication');
+        $formAction = $this->generateUrl(
+            'gateway_verify_second_factor_u2f_verify_authentication',
+            ['authenticationMode' => $authenticationMode]
+        );
         $form = $this
             ->createForm(
                 VerifyDeviceAuthenticationType::class,
@@ -574,7 +596,10 @@ class SecondFactorController extends Controller
             )
             ->handleRequest($request);
 
-        $cancelFormAction = $this->generateUrl('gateway_verify_second_factor_u2f_cancel_authentication');
+        $cancelFormAction = $this->generateUrl(
+            'gateway_verify_second_factor_u2f_cancel_authentication',
+            ['authenticationMode' => $authenticationMode]
+        );
         $cancelForm =
             $this->createForm(CancelSecondFactorVerificationType::class, null, ['action' => $cancelFormAction]);
 
@@ -668,7 +693,7 @@ class SecondFactorController extends Controller
         return $selectedSecondFactor;
     }
 
-    private function selectAndRedirectTo(SecondFactor $secondFactor, ResponseContext $context)
+    private function selectAndRedirectTo(SecondFactor $secondFactor, ResponseContext $context, $authenticationMode)
     {
         $context->saveSelectedSecondFactor($secondFactor);
 
@@ -684,21 +709,25 @@ class SecondFactorController extends Controller
             $route .= strtolower($secondFactor->secondFactorType);
         }
 
-        return $this->redirect($this->generateUrl($route));
+        return $this->redirect($this->generateUrl($route, ['authenticationMode' => $authenticationMode]));
     }
 
     /**
-     * @return Form
+     * @param string $authenticationMode
+     * @return FormInterface
      */
-    private function buildCancelAuthenticationForm()
+    private function buildCancelAuthenticationForm($authenticationMode)
     {
-        $cancelFormAction = $this->generateUrl('gateway_cancel_authentication');
-        $cancelForm = $this->createForm(
+        $cancelFormAction = $this->generateUrl(
+            'gateway_cancel_authentication',
+            ['authenticationMode' => $authenticationMode]
+        );
+
+        return $this->createForm(
             CancelAuthenticationType::class,
             null,
             ['action' => $cancelFormAction]
         );
-        return $cancelForm;
     }
 
     private function supportsAuthenticationMode($authenticationMode)
