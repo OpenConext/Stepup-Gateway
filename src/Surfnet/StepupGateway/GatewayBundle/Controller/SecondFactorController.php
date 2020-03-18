@@ -54,9 +54,14 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
  */
 class SecondFactorController extends Controller
 {
-    public function selectSecondFactorForVerificationAction()
+    const MODE_SFO = 'sfo';
+    const MODE_SSO = 'sso';
+
+    public function selectSecondFactorForVerificationAction($authenticationMode)
     {
-        $context = $this->getResponseContext();
+        $this->supportsAuthenticationMode($authenticationMode);
+        $context = $this->getResponseContext($authenticationMode);
+
         $originalRequestId = $context->getInResponseTo();
 
         /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
@@ -130,12 +135,14 @@ class SecondFactorController extends Controller
     /**
      * @Template
      * @param Request $request
+     * @param string $authenticationMode
      * @return array|RedirectResponse|Response
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function chooseSecondFactorAction(Request $request)
+    public function chooseSecondFactorAction(Request $request, $authenticationMode)
     {
-        $context = $this->getResponseContext();
+        $this->supportsAuthenticationMode($authenticationMode);
+        $context = $this->getResponseContext($authenticationMode);
         $originalRequestId = $context->getInResponseTo();
 
         /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
@@ -234,9 +241,11 @@ class SecondFactorController extends Controller
         ];
     }
 
-    public function verifyGssfAction()
+    public function verifyGssfAction($authenticationMode)
     {
-        $context = $this->getResponseContext();
+        $this->supportsAuthenticationMode($authenticationMode);
+        $context = $this->getResponseContext($authenticationMode);
+
         $originalRequestId = $context->getInResponseTo();
 
         /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
@@ -274,9 +283,11 @@ class SecondFactorController extends Controller
         );
     }
 
-    public function gssfVerifiedAction()
+    public function gssfVerifiedAction($authenticationMode)
     {
-        $context = $this->getResponseContext();
+        $this->supportsAuthenticationMode($authenticationMode);
+        $context = $this->getResponseContext($authenticationMode);
+
         $originalRequestId = $context->getInResponseTo();
 
         /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
@@ -310,11 +321,13 @@ class SecondFactorController extends Controller
     /**
      * @Template
      * @param Request $request
+     * @param string $authenticationMode
      * @return array|Response
      */
-    public function verifyYubiKeySecondFactorAction(Request $request)
+    public function verifyYubiKeySecondFactorAction(Request $request, $authenticationMode)
     {
-        $context = $this->getResponseContext();
+        $this->supportsAuthenticationMode($authenticationMode);
+        $context = $this->getResponseContext($authenticationMode);
         $originalRequestId = $context->getInResponseTo();
 
         /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
@@ -365,11 +378,13 @@ class SecondFactorController extends Controller
     /**
      * @Template
      * @param Request $request
+     * @param string $authenticationMode
      * @return array|Response
      */
-    public function verifySmsSecondFactorAction(Request $request)
+    public function verifySmsSecondFactorAction(Request $request, $authenticationMode)
     {
-        $context = $this->getResponseContext();
+        $this->supportsAuthenticationMode($authenticationMode);
+        $context = $this->getResponseContext($authenticationMode);
         $originalRequestId = $context->getInResponseTo();
 
         /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
@@ -418,11 +433,13 @@ class SecondFactorController extends Controller
     /**
      * @Template
      * @param Request $request
+     * @param string $authenticationMode
      * @return array|Response
      */
-    public function verifySmsSecondFactorChallengeAction(Request $request)
+    public function verifySmsSecondFactorChallengeAction(Request $request, $authenticationMode)
     {
-        $context = $this->getResponseContext();
+        $this->supportsAuthenticationMode($authenticationMode);
+        $context = $this->getResponseContext($authenticationMode);
         $originalRequestId = $context->getInResponseTo();
 
         /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
@@ -472,10 +489,14 @@ class SecondFactorController extends Controller
 
     /**
      * @Template
+     * @param string $authenticationMode
+     * @return array
      */
-    public function initiateU2fAuthenticationAction()
+    public function initiateU2fAuthenticationAction($authenticationMode)
     {
-        $context = $this->getResponseContext();
+        $this->supportsAuthenticationMode($authenticationMode);
+        $context = $this->getResponseContext($authenticationMode);
+
         $originalRequestId = $context->getInResponseTo();
 
         /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
@@ -526,11 +547,14 @@ class SecondFactorController extends Controller
      * @Template("SurfnetStepupGatewayGatewayBundle:SecondFactor:initiateU2fAuthentication.html.twig")
      *
      * @param Request $request
+     * @param string $authenticationMode
      * @return array|Response
      */
-    public function verifyU2fAuthenticationAction(Request $request)
+    public function verifyU2fAuthenticationAction(Request $request, $authenticationMode)
     {
-        $context = $this->getResponseContext();
+        $this->supportsAuthenticationMode($authenticationMode);
+        $context = $this->getResponseContext($authenticationMode);
+
         $originalRequestId = $context->getInResponseTo();
 
         /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
@@ -591,8 +615,11 @@ class SecondFactorController extends Controller
         return ['authenticationFailed' => true, 'cancelForm' => $cancelForm->createView()];
     }
 
-    public function cancelAuthenticationAction()
+    public function cancelAuthenticationAction($authenticationMode)
     {
+        // Might not need the authenticationMode?
+        $this->supportsAuthenticationMode($authenticationMode);
+
         return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:sendAuthenticationCancelledByUser');
     }
 
@@ -607,9 +634,16 @@ class SecondFactorController extends Controller
     /**
      * @return ResponseContext
      */
-    private function getResponseContext()
+    private function getResponseContext($authenticationMode)
     {
-        return $this->get($this->get('gateway.proxy.state_handler')->getResponseContextServiceId());
+        switch ($authenticationMode) {
+            case self::MODE_SFO:
+                return $this->get($this->get('gateway.proxy.sfo.state_handler')->getResponseContextServiceId());
+                break;
+            case self::MODE_SSO:
+                return $this->get($this->get('gateway.proxy.state_handler')->getResponseContextServiceId());
+                break;
+        }
     }
 
     /**
@@ -669,5 +703,13 @@ class SecondFactorController extends Controller
             ['action' => $cancelFormAction]
         );
         return $cancelForm;
+    }
+
+    private function supportsAuthenticationMode($authenticationMode)
+    {
+        if ($authenticationMode === self::MODE_SSO || $authenticationMode === self::MODE_SFO) {
+            return true;
+        }
+        return false;
     }
 }
