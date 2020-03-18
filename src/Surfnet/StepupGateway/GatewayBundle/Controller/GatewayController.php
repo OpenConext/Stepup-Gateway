@@ -106,7 +106,10 @@ class GatewayController extends Controller
             return $this->renderSamlResponse('unprocessableResponse', $response);
         }
 
-        return $this->forward('SurfnetStepupGatewayGatewayBundle:SecondFactor:selectSecondFactorForVerification');
+        return $this->forward(
+            'SurfnetStepupGatewayGatewayBundle:SecondFactor:selectSecondFactorForVerification',
+            ['authenticationMode' => SecondFactorController::MODE_SSO]
+        );
     }
 
     /**

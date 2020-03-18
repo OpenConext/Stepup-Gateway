@@ -24,8 +24,10 @@ gateway_identityprovider_sso_proxy:
     defaults: { _controller: SurfnetStepupGatewayGatewayBundle:Gateway:proxySso }
 
 gateway_verify_second_factor_yubikey:
-    path:     /verify-second-factor/yubikey
+    path:     /verify-second-factor/{authenticationMode}/yubikey
     methods:  [GET,POST]
+    requirements:
+        authenticationMode: 'sso|sfo'
     defaults: { _controller: SurfnetStepupGatewayGatewayBundle:SecondFactor:verifyYubikeySecondFactor }
 
 gateway_verify_second_factor_sms:
@@ -59,6 +61,8 @@ gateway_verify_second_factor_u2f_cancel_authentication:
     defaults: { _controller: SurfnetStepupGatewayGatewayBundle:SecondFactor:cancelAuthentication }
 
 gateway_verify_second_factor_choose_second_factor:
-    path:     /choose-second-factor
+    path:     /choose-second-factor/{authenticationMode}
+    requirements:
+        authenticationMode: 'sso|sfo'
     methods:  [GET, POST]
     defaults: { _controller: SurfnetStepupGatewayGatewayBundle:SecondFactor:chooseSecondFactor }
