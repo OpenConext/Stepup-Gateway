@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Controller;
 
+use Surfnet\StepupGateway\GatewayBundle\Controller\SecondFactorController;
 use Surfnet\StepupGateway\GatewayBundle\Exception\RequesterFailureException;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\Exception\InvalidAdfsRequestException;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\Exception\InvalidAdfsResponseException;
@@ -84,7 +85,10 @@ class SecondFactorOnlyController extends Controller
 
         $logger->notice('Forwarding to second factor controller for loa determination and handling');
 
-        return $this->forward('SurfnetStepupGatewayGatewayBundle:SecondFactor:selectSecondFactorForVerification');
+        return $this->forward(
+            'SurfnetStepupGatewayGatewayBundle:SecondFactor:selectSecondFactorForVerification',
+            ['authenticationMode' => SecondFactorController::MODE_SFO]
+        );
     }
 
     /**
@@ -100,7 +104,6 @@ class SecondFactorOnlyController extends Controller
      */
     public function respondAction()
     {
-
         $responseContext = $this->getResponseContext();
         $originalRequestId = $responseContext->getInResponseTo();
 
