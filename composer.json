@@ -4,7 +4,8 @@
     "description": "The SURFnet Step-up Gateway sits between a SAML Service Provider and Identity Provider and can provide a certain Level of Assurance by performing second-factor authentication.",
     "autoload": {
         "psr-4": {
-            "Surfnet\\": "src\\Surfnet"
+            "Surfnet\\": "src\\Surfnet",
+            "Surfnet\\StepupGateway\\Behat\\": "tests/features/bootstrap"
         },
         "classmap": [
             "app/AppKernel.php",
@@ -47,6 +48,11 @@
         "webmozart/assert": "^1.2"
     },
     "require-dev": {
+        "behat/behat": "^3.6",
+        "behat/mink": "^1.8",
+        "behat/mink-extension": "^2.3",
+        "behat/mink-goutte-driver": "^1.2",
+        "behat/symfony2-extension": "^2.1",
         "matthiasnoback/symfony-config-test": "^2.2",
         "mockery/mockery": "~0.9",
         "phpmd/phpmd": "^2.6",
