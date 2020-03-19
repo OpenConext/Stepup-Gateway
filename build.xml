@@ -85,7 +85,6 @@
     <target name="behat-ci"
             description="Run the Behat acceptance tests">
         <exec executable="vendor/bin/behat" failonerror="true">
-            <arg value="-c ./behat.yml"/>
         </exec>
     </target>
 

@@ -6,6 +6,9 @@
 /web/app_test.php
 /app/bootstrap.php.cache
 /app/cache/*
+/app/*.crt
+/app/*.key
+/app/*.pem
 /app/config/parameters.yml
 /app/config/samlstepupproviders.yml
 /app/config/samlstepupproviders_parameters.yml

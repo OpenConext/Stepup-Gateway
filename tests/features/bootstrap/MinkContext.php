@@ -57,6 +57,7 @@ class MinkContext extends BaseMinkContext
         $xpathObj = new DOMXPath($document);
         $xpathObj->registerNamespace('ds', XMLSecurityDSig::XMLDSIGNS);
         $xpathObj->registerNamespace('mdui', Common::NS);
+        $xpathObj->registerNamespace('mdash', Common::NS);
         $xpathObj->registerNamespace('shibmd', Scope::NS);
         $nodeList = $xpathObj->query($xpath);
 
