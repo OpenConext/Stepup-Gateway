@@ -22,8 +22,7 @@ jobs:
             - name: Run CI tests
               run: |
                   cd ci/docker && docker-compose exec -T php-fpm.stepup.example.com bash -c '
-                      ./vendor/bin/phpunit -c app/phpunit.xml.dist
-                      ./vendor/bin/behat
+                      composer check
                   '
               env:
                   SYMFONY_ENV: test
