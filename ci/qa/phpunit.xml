@@ -5,22 +5,26 @@
          xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/4.1/phpunit.xsd"
          backupGlobals="false"
          colors="true"
-         bootstrap="bootstrap.php.cache"
+         bootstrap="../../app/bootstrap.php.cache"
 >
     <testsuites>
         <testsuite name="Project Test Suite">
-            <directory suffix="Test.php">../src</directory>
+            <directory suffix="Test.php">../../src</directory>
         </testsuite>
     </testsuites>
     <filter>
         <whitelist>
-            <directory>../src</directory>
+            <directory>../../src</directory>
             <exclude>
-                <directory suffix="Test.php">../src</directory>
+                <directory suffix="Test.php">../../src</directory>
             </exclude>
         </whitelist>
     </filter>
     <listeners>
         <listener class="\Mockery\Adapter\Phpunit\TestListener"></listener>
     </listeners>
+    <php>
+        <ini name="error_reporting" value="-1" />
+        <env name="SYMFONY_DEPRECATIONS_HELPER" value="disabled" />
+    </php>
 </phpunit>

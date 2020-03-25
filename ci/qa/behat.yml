@@ -2,13 +2,7 @@ default:
   suites:
     default:
       paths:
-        - '%paths.base%/tests/features'
-      formatter:
-        name: progress
-        parameters:
-          decorated: true
-          verbose: true
-          time: true
+        - '%paths.base%/../../tests/features'
       filters:
         tags: "~@WIP&&~@SKIP"
       contexts:

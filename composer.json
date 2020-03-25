@@ -55,6 +55,7 @@
         "behat/symfony2-extension": "^2.1",
         "matthiasnoback/symfony-config-test": "^2.2",
         "mockery/mockery": "~0.9",
+        "overtrue/phplint": "^1.2",
         "phpmd/phpmd": "^2.6",
         "phpunit/phpunit": "^5.7",
         "sebastian/exporter": "~2.0",
@@ -78,7 +79,22 @@
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installAssets",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installRequirementsFile",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::removeSymfonyStandardFiles"
-        ]
+        ],
+        "check": [
+            "@phplint",
+            "@phpcs",
+            "@phpmd",
+            "@test",
+            "@behat",
+            "@security"
+        ],
+        "security": "./ci/qa/security",
+        "phplint": "./ci/qa/phplint",
+        "phpcs": "./ci/qa/phpcs",
+        "phpcbf": "./ci/qa/phpcbf",
+        "phpmd": "./ci/qa/phpmd",
+        "behat": "./ci/qa/behat",
+        "test": "./ci/qa/phpunit"
     },
     "config": {
         "optimize-autoloader": true,
