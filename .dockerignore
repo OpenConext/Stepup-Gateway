@@ -8,6 +8,3 @@
 !bin
 !composer.json
 !composer.lock
-!behat.yml
-!phpcs.xml
-!phpmd.xml
