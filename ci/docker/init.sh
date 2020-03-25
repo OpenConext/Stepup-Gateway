@@ -10,8 +10,7 @@ docker-compose exec -T php-fpm.stepup.example.com bash -c '
   cp ./ci/config/*.yml ./app/config/
   cp ./ci/certificates/* ./app/
   composer install --prefer-dist -n -o --no-scripts && \
-  ./app/console assets:install --env=test && \
+  composer distribution-bundle-scripts && \
   ./app/console mopa:bootstrap:symlink:less --env=test && \
-  ./app/console assetic:dump --env=test --verbose && \
-  ./app/console cache:clear --env=test
+  ./app/console assetic:dump --env=test --verbose
 '
