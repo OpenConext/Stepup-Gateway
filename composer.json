@@ -5,7 +5,10 @@
     "autoload": {
         "psr-4": {
             "Surfnet\\": "src\\Surfnet",
-            "Surfnet\\StepupGateway\\Behat\\": "tests/features/bootstrap"
+            "Surfnet\\StepupGateway\\Behat\\": [
+                "tests/features/bootstrap",
+                "tests/src"
+            ]
         },
         "classmap": [
             "app/AppKernel.php",
@@ -48,6 +51,8 @@
         "webmozart/assert": "^1.2"
     },
     "require-dev": {
+        "ext-pdo": "*",
+        "ext-libxml": "*",
         "behat/behat": "^3.6",
         "behat/mink": "^1.8",
         "behat/mink-extension": "^2.3",
@@ -58,6 +63,7 @@
         "overtrue/phplint": "^1.2",
         "phpmd/phpmd": "^2.6",
         "phpunit/phpunit": "^5.7",
+        "ramsey/uuid": "^3.9",
         "sebastian/exporter": "~2.0",
         "sebastian/phpcpd": "^2.0",
         "squizlabs/php_codesniffer": "^3.4",

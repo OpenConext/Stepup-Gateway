@@ -1,13 +1,34 @@
 # Use this service definition file to override services in the test environment. For example to mock certain services
 
 parameters:
-  saml_metadata_publickey: /vagrant/deploy/tests/behat/fixtures/test_public_key.crt
-  saml_metadata_privatekey: /vagrant/deploy/tests/behat/fixtures/test_private_key.key
-  saml_sp_publickey: /vagrant/deploy/tests/behat/fixtures/test_public_key.crt
-  saml_sp_privatekey: /vagrant/deploy/tests/behat/fixtures/test_private_key.key
-  saml_idp_publickey: /vagrant/deploy/tests/behat/fixtures/test_public_key.crt
-  saml_idp_privatekey: /vagrant/deploy/tests/behat/fixtures/test_private_key.key
+  saml_metadata_publickey: /var/www/app/sp.crt
+  saml_metadata_privatekey: /var/www/app/sp.pem
+  saml_sp_publickey: /var/www/app/sp.crt
+  saml_sp_privatekey: /var/www/app/sp.pem
+  saml_idp_publickey: /var/www/app/idp.crt
+  saml_idp_privatekey: /var/www/app/idp.key
 
 services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+
   surfnet_gateway_api.service.yubikey:
     class: Surfnet\StepupGateway\ApiBundle\Tests\TestDouble\Service\YubikeyService
+
+  Surfnet\StepupGateway\Behat\MinkContext:
+    class: Surfnet\StepupGateway\Behat\MinkContext
+
+  Surfnet\StepupGateway\Behat\Repository\Connection:
+    class: Surfnet\StepupGateway\Behat\Repository\Connection
+    arguments:
+      - '%database_gateway_user%'
+      - '%database_gateway_password%'
+      - '%database_gateway_name%'
+      - '%database_host%'
+
+  Surfnet\StepupGateway\Behat\Service\FixtureService:
+    class: Surfnet\StepupGateway\Behat\Service\FixtureService
+
+  Surfnet\StepupGateway\Behat\Controller\ServiceProviderController:
+    class: Surfnet\StepupGateway\Behat\Controller\ServiceProviderController
