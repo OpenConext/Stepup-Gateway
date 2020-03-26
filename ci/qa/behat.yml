@@ -7,7 +7,10 @@ default:
         tags: "~@WIP&&~@SKIP"
       contexts:
         - Surfnet\StepupGateway\Behat\MinkContext
-        - Surfnet\StepupGateway\Behat\FeatureContext
+        - Surfnet\StepupGateway\Behat\FeatureContext:
+            fixtureService: '@Surfnet\StepupGateway\Behat\Service\FixtureService'
+        - Surfnet\StepupGateway\Behat\ServiceProviderContext:
+            fixtureService: '@Surfnet\StepupGateway\Behat\Service\FixtureService'
   extensions:
     Behat\MinkExtension:
       base_url: https://gateway.stepup.example.com/
@@ -17,7 +20,4 @@ default:
           goutte:
             guzzle_parameters:
               verify: False
-    Behat\Symfony2Extension:
-      kernel:
-        env: test
-        debug: true
+    Behat\Symfony2Extension: ~
