@@ -19,10 +19,87 @@
 namespace Surfnet\StepupGateway\Behat;
 
 use Behat\Behat\Context\Context;
+use Behat\Behat\Hook\Scope\BeforeFeatureScope;
+use Behat\Behat\Hook\Scope\BeforeScenarioScope;
+use Behat\Behat\Tester\Exception\PendingException;
+use Surfnet\StepupGateway\Behat\Service\FixtureService;
 
 class FeatureContext implements Context
 {
-    public function __construct()
+    /**
+     * @var FixtureService
+     */
+    private $fixtureService;
+
+    private $whitelistedInstitutions = [];
+
+    /**
+     * @var MinkContext
+     */
+    private $minkContext;
+
+    public function __construct(FixtureService $fixtureService)
     {
+        $this->fixtureService = $fixtureService;
+    }
+
+    /**
+     * @BeforeFeature
+     */
+    public static function setupDatabase(BeforeFeatureScope $scope)
+    {
+        // Generate test databases
+        echo "Preparing test schemas\n";
+        shell_exec("/var/www/app/console doctrine:schema:drop --env=test --force");
+        shell_exec("/var/www/app/console doctrine:schema:create --env=test");
+    }
+
+    /**
+     * @BeforeScenario
+     */
+    public function gatherContexts(BeforeScenarioScope $scope)
+    {
+        $environment = $scope->getEnvironment();
+        $this->minkContext = $environment->getContext(MinkContext::class);
+    }
+
+    /**
+     * @Given /^a user from ([^"]*) identified by ([^"]*) with a vetted ([^"]*) token$/
+     */
+    public function aUserIdentifiedByWithAVettedToken($institution, $nameId, $tokenType)
+    {
+        switch (strtolower($tokenType)) {
+            case "yubikey":
+                $tokenInformation = $this->fixtureService->registerYubikeyToken($nameId, $institution);
+                break;
+        }
+    }
+
+    /**
+     * @Then I should see the Yubikey OTP screen
+     */
+    public function iShouldSeeTheYubikeyOtpScreen()
+    {
+        $this->minkContext->assertPageContainsText('Log in with YubiKey');
+        $this->minkContext->assertPageContainsText('Your YubiKey-code');
+
+    }
+
+    /**
+     * @When I enter the OTP
+     */
+    public function iEnterTheOtp()
+    {
+        $this->minkContext->fillField('gateway_verify_yubikey_otp_otp', 'bogus-otp-we-use-a-mock-yubikey-service');
+        $this->minkContext->pressButton('gateway_verify_yubikey_otp_submit');
+        $this->minkContext->pressButton('Submit');
+    }
+
+    /**
+     * @Given /^a whitelisted institution ([^"]*)$/
+     */
+    public function aWhitelistedInstitution($institution)
+    {
+        $this->whitelistedInstitutions[] = $this->fixtureService->whitelist($institution)['institution'];
     }
 }
