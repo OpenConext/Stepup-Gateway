@@ -1,0 +1,7 @@
+_main:
+    resource: routing.yml
+
+surfnet_stepup_gateway_behat_service_provider_acs:
+    path:     /test/authentication/consume-assertion
+    methods:  [POST]
+    defaults: { _controller: Surfnet\StepupGateway\Behat\Controller\ServiceProviderController:acsAction }
