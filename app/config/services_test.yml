@@ -16,6 +16,12 @@ services:
   surfnet_gateway_api.service.yubikey:
     class: Surfnet\StepupGateway\ApiBundle\Tests\TestDouble\Service\YubikeyService
 
+  gateway.service.gateway_api_sms:
+    class: Surfnet\StepupGateway\ApiBundle\Tests\TestDouble\Service\SmsService
+
+  surfnet_stepup.service.challenge_handler:
+    class: Surfnet\StepupGateway\ApiBundle\Tests\TestDouble\Service\SessionSmsVerificationStateHandler
+
   Surfnet\StepupGateway\Behat\MinkContext:
     class: Surfnet\StepupGateway\Behat\MinkContext
 
