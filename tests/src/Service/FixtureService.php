@@ -37,6 +37,17 @@ class FixtureService
     }
 
     /**
+     * @param string $nameId
+     * @param string $institution
+     * @return array
+     * @throws Exception
+     */
+    public function registerSmsToken($nameId, $institution)
+    {
+        return $this->secondFactorRepository->create($nameId, 'sms', $institution, '+31 (0) 606060606');
+    }
+
+    /**
      * @param string $entityId
      * @param string $certificate
      * @param bool $sfoEnabled
@@ -45,7 +56,7 @@ class FixtureService
      */
     public function registerSP($entityId, $certificate, $sfoEnabled)
     {
-        return $this->samlEntityRepository->createSp($entityId, $certificate, $sfoEnabled);
+        return $this->samlEntityRepository->createSpIfNotExists($entityId, $certificate, $sfoEnabled);
     }
 
     /**

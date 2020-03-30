@@ -38,6 +38,11 @@ class FeatureContext implements Context
      */
     private $minkContext;
 
+    /**
+     * @var array
+     */
+    private $currentToken;
+
     public function __construct(FixtureService $fixtureService)
     {
         $this->fixtureService = $fixtureService;
@@ -70,7 +75,10 @@ class FeatureContext implements Context
     {
         switch (strtolower($tokenType)) {
             case "yubikey":
-                $tokenInformation = $this->fixtureService->registerYubikeyToken($nameId, $institution);
+                $this->currentToken = $this->fixtureService->registerYubikeyToken($nameId, $institution);
+                break;
+            case "sms":
+                $this->currentToken = $this->fixtureService->registerSmsToken($nameId, $institution);
                 break;
         }
     }
@@ -82,6 +90,18 @@ class FeatureContext implements Context
     {
         $this->minkContext->assertPageContainsText('Log in with YubiKey');
         $this->minkContext->assertPageContainsText('Your YubiKey-code');
+    }
+
+    /**
+     * @Then I should see the SMS verification screen
+     */
+    public function iShouldSeeTheSMSScreen()
+    {
+        $this->minkContext->assertPageContainsText('Log in with SMS');
+        $this->minkContext->assertPageContainsText('Enter the received code on the next page');
+        $this->minkContext->pressButton('gateway_send_sms_challenge_send_challenge');
+        $this->minkContext->assertPageContainsText('Enter the received SMS-code');
+        $this->minkContext->assertPageContainsText('Send again');
 
     }
 
@@ -96,10 +116,36 @@ class FeatureContext implements Context
     }
 
     /**
+     * @When I enter the SMS verification code
+     */
+    public function iEnterTheSmsVerificationCode()
+    {
+        $this->minkContext->fillField('gateway_verify_sms_challenge_challenge', '432543');
+        $this->minkContext->pressButton('gateway_verify_sms_challenge_verify_challenge');
+        $this->minkContext->pressButton('Submit');
+    }
+
+    /**
      * @Given /^a whitelisted institution ([^"]*)$/
      */
     public function aWhitelistedInstitution($institution)
     {
         $this->whitelistedInstitutions[] = $this->fixtureService->whitelist($institution)['institution'];
+    }
+
+    /**
+     * @Then /^I select my ([^"]*) token on the WAYG$/
+     */
+    public function iShouldSelectMyTokenOnTheWAYG($tokenType)
+    {
+        $this->minkContext->assertPageContainsText('Choose a token for login');
+        switch (strtolower($tokenType)) {
+            case "yubikey":
+                $this->minkContext->pressButton('gateway_choose_second_factor_choose_yubikey');
+                break;
+            case "sms":
+                $this->minkContext->pressButton('gateway_choose_second_factor_choose_sms');
+                break;
+        }
     }
 }

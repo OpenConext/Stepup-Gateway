@@ -20,16 +20,22 @@ class SecondFactorRepository
         $this->connection = $connection;
     }
 
-    public function create($nameId, $tokenType, $institution)
+    public function create($nameId, $tokenType, $institution, $identifier = null)
     {
         $uuid = Uuid::uuid4()->toString();
+
+        // If an identifier is not importand, simply use the UUID, otherwise use the provide one
+        if (!$identifier) {
+            $identifier = $uuid;
+        }
+
         $data = [
             'identityId' => $uuid,
             'nameId' => $nameId,
             'institution' => $institution,
             'secondFactorId' => $uuid,
             'secondFactorType' => $tokenType,
-            'secondFactorIdentifier' => $uuid,
+            'secondFactorIdentifier' => $identifier,
             'id' => $uuid,
             'displayLocale' => 'en_GB',
         ];
