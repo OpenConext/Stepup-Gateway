@@ -17,6 +17,8 @@
     },
     "minimum-stability": "stable",
     "require": {
+        "ext-libxml": "*",
+        "ext-pdo": "*",
         "php": "~5.6|~7.0",
         "beberlei/assert": "^2.0",
         "doctrine/cache": "~1.4",
@@ -51,8 +53,6 @@
         "webmozart/assert": "^1.2"
     },
     "require-dev": {
-        "ext-libxml": "*",
-        "ext-pdo": "*",
         "behat/behat": "^3.6",
         "behat/mink": "^1.8",
         "behat/mink-extension": "^2.3",
