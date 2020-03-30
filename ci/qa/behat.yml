@@ -4,13 +4,20 @@ default:
       paths:
         - '%paths.base%/../../tests/features'
       filters:
-        tags: "~@WIP&&~@SKIP"
-      contexts:
+        tags: "~@selenium"
+      contexts: &defaultContexts
         - Surfnet\StepupGateway\Behat\MinkContext
         - Surfnet\StepupGateway\Behat\FeatureContext:
             fixtureService: '@Surfnet\StepupGateway\Behat\Service\FixtureService'
         - Surfnet\StepupGateway\Behat\ServiceProviderContext:
             fixtureService: '@Surfnet\StepupGateway\Behat\Service\FixtureService'
+    selenium:
+      paths:
+        - '%paths.base%/../../tests/features'
+      formatter:
+      filters:
+        tags: "@selenium"
+      contexts: *defaultContexts
   extensions:
     Behat\MinkExtension:
       base_url: https://gateway.stepup.example.com/
@@ -20,4 +27,15 @@ default:
           goutte:
             guzzle_parameters:
               verify: False
+        chrome:
+          selenium2:
+            browser: chrome
+            wd_host: http://gateway.stepup.example.com:4444/wd/hub
+            capabilities:
+              chrome:
+                switches:
+                  - "--headless"
+                  - "--disable-gpu"
+                  - "--window-size=1920,1080"
+                  - "--no-sandbox"
     Behat\Symfony2Extension: ~
