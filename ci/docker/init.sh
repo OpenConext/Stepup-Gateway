@@ -9,6 +9,7 @@ docker-compose up -d
 docker-compose exec -T php-fpm.stepup.example.com bash -c '
   cp ./ci/config/*.yml ./app/config/
   cp ./ci/certificates/* ./app/
+  cp ./ci/app.php ./web/app.php
   composer install --prefer-dist -n -o --no-scripts && \
   composer distribution-bundle-scripts && \
   ./app/console mopa:bootstrap:symlink:less --env=test && \
