@@ -23,14 +23,10 @@ default:
       base_url: https://gateway.stepup.example.com/
       goutte: ~
       sessions:
-        default:
-          goutte:
-            guzzle_parameters:
-              verify: False
         chrome:
           selenium2:
             browser: chrome
-            wd_host: http://gateway.stepup.example.com:4444/wd/hub
+            wd_host: http://selenium.stepup.example.com:4444/wd/hub
             capabilities:
               chrome:
                 switches:
@@ -38,4 +34,8 @@ default:
                   - "--disable-gpu"
                   - "--window-size=1920,1080"
                   - "--no-sandbox"
+        default:
+          goutte:
+            guzzle_parameters:
+              verify: False
     Behat\Symfony2Extension: ~
