@@ -4,7 +4,8 @@ use Symfony\Component\HttpFoundation\Request;
 $loader = require __DIR__.'/../app/autoload.php';
 $request = Request::createFromGlobals();
 
-$kernel = new AppKernel('test', true);
+$env = $_SERVER['APP_ENV'] ? $_SERVER['prod'] :
+$kernel = new AppKernel($_SERVER['APP_ENV'], true);
 $kernel->boot();
 
 $trustedProxies = $kernel->getContainer()->getParameter('trusted_proxies');

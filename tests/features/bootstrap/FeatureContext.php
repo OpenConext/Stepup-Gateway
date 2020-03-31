@@ -55,8 +55,8 @@ class FeatureContext implements Context
     {
         // Generate test databases
         echo "Preparing test schemas\n";
-        shell_exec("/var/www/app/console doctrine:schema:drop --env=test --force");
-        shell_exec("/var/www/app/console doctrine:schema:create --env=test");
+        shell_exec("/var/www/app/console doctrine:schema:drop --env=webtest --force");
+        shell_exec("/var/www/app/console doctrine:schema:create --env=webtest");
     }
 
     /**

@@ -1,0 +1,94 @@
+imports:
+    - { resource: config.yml }
+    - { resource: services_test.yml }
+
+framework:
+    test: ~
+    session:
+        storage_id: session.storage.mock_file
+    profiler:
+        collect: false
+    router:
+        resource: "%kernel.root_dir%/config/routing_test.yml"
+        strict_requirements: true
+
+assetic:
+    node: "/usr/bin/node"
+    filters:
+        less:
+            node: "/usr/bin/node"
+            node_paths: ["/usr/local/lib/node_modules"]
+            apply_to: '\.less$'
+
+nelmio_security:
+    csp:
+        img: [ self, 'data:' ]
+        script: [ self, unsafe-inline ]
+        style: [ self, unsafe-inline ]
+
+monolog:
+    channels: [authentication]
+    handlers:
+        prod-signaler:
+            type: fingers_crossed
+            action_level: ERROR
+            passthru_level: DEBUG # DEV setting: this means that all message of level DEBUG or higher are always logged
+            handler: main_syslog
+            bubble: true
+            channels: ["!authentication"] # the auth channel is logged by the next handler
+        main_syslog:
+            type: syslog
+            ident: stepup-gateway
+            facility: user
+            formatter: surfnet_stepup.monolog.json_formatter
+        authenthentication_syslog:
+            type: syslog
+            ident: stepup-authentication
+            facility: user
+            level: INFO
+            channels: [authentication]
+            formatter: gateway.monolog.gelf_to_string_formatter
+        nested:
+            type:  stream
+            path:  "php://stderr"
+            level: DEBUG
+        main_logfile:
+            type: stream
+            handler: logfile
+            level: NOTICE
+            path: "%kernel.logs_dir%/%kernel.environment%.log"
+
+doctrine:
+    dbal:
+        default_connection: gateway
+        connections:
+            gateway:
+                driver:   "%database_driver%"
+                host:     "db.stepup.example.com"
+                port:     "3306"
+                dbname:   "gateway"
+                user:     "gateway"
+                password: "gateway"
+                charset:  UTF8
+            u2f:
+                driver:   "%database_driver%"
+                host:     "db.stepup.example.com"
+                port:     "3306"
+                dbname:   "gateway"
+                user:     "gateway"
+                password: "gateway"
+                charset:  UTF8
+            deploy:
+                driver:   "%database_driver%"
+                host:     "db.stepup.example.com"
+                port:     "3306"
+                dbname:   "gateway"
+                user:     "gateway"
+                password: "gateway"
+                charset:  UTF8
+
+# The SP and IdP certificates are overloaded in 'services_test.yml'
+surfnet_saml:
+    remote:
+        identity_provider:
+            certificate: MIIC6jCCAdICCQC9cRx5wiwWOjANBgkqhkiG9w0BAQsFADA3MRwwGgYDVQQDDBNTZWxmU2VydmljZSBTQU1MIFNQMRcwFQYDVQQKDA5EZXZlbG9wbWVudCBWTTAeFw0xODA3MzAxMjMwNDdaFw0yMzA3MjkxMjMwNDdaMDcxHDAaBgNVBAMME1NlbGZTZXJ2aWNlIFNBTUwgU1AxFzAVBgNVBAoMDkRldmVsb3BtZW50IFZNMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqhbI0Xy682DuvWchg6FYnI+DNwLXef2XExM4YVRBaMMsOZ3rBtQUTMSqYan6SK/BOEXLs0rNiJjyM0dn+F98wg3fv5zIADlvfk3LBVdcGsrpVfFUWtSa73yMgbROy8/RJADbUJE/HUB3ZmdjdiuD2Cui2aoWwT2HR8ukJwmoxiu45IWFPbqPQ7/1mH644JPOWTPLTv4OGGLQo8MNrP1oRCiZ0IEL4CQeGOOju5rfIJ0bTVm0UmelT4hGaqZovBMwXp3QV41akJ7UEMEBK2YMnLQy47Xuzi7aTDhJlvHcJ8mfH2NbjRh7hJoACVRTvQloxajgkr1iGMiWiiqT0e+YYwIDAQABMA0GCSqGSIb3DQEBCwUAA4IBAQBwZ0gRHvR8B8KivrXrhWNL9uLvWhEAH7OiDqo+fywkBp5KEuDJcbbvEPftHunSAGylg7M2xKuBIGamFpp74WDJccrtZ1jJ4qqnacUDRQrTLqqMZKqGpFOU0xjKkSxSGRuMtGN9/7er/TeonjQ0XBvjYvTomy3b5aCLVWRvEfKu2g1sDd8uhr62RY/HfMgidEt7LHDolkCVg+6JzY3OTcgeHga3cvYObOYPplxw1YPq5+BqqxaUW4nfb5DtK33bZBYMeyV6BZtSggc5Z/19aPx/s0bf6ySTUyB3lRqe5d3etCns4bGidORCl/6EZiXwVcPvmYmxYXqmuNWfps7isUvo
