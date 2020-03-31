@@ -87,7 +87,8 @@ class ServiceProviderContext implements Context, KernelAwareContext
     {
         $sfoEnabled = true;
         $publicKeyLoader = new KeyLoader();
-        $publicKeyLoader->loadCertificateFile('/var/www/app/sp.crt');
+        // todo: use from services_test.yml
+        $publicKeyLoader->loadCertificateFile('/var/www/ci/certificates/sp.crt');
         $keys = $publicKeyLoader->getKeys();
         /** @var Key $cert */
         $cert = $keys->first();
@@ -111,8 +112,9 @@ class ServiceProviderContext implements Context, KernelAwareContext
         $authnRequest->setProtocolBinding(Constants::BINDING_HTTP_REDIRECT);
         $authnRequest->setNameId($this->buildNameId($nameId));
         // Sign with random key, does not mather for now.
+        // todo: use from services_test.yml
         $authnRequest->setSignatureKey(
-            $this->loadPrivateKey(new PrivateKey('/var/www/app/sp.pem', 'default'))
+            $this->loadPrivateKey(new PrivateKey('/var/www/ci/certificates/sp.pem', 'default'))
         );
         $authnRequest->setRequestedAuthnContext(
             ['AuthnContextClassRef' => ['http://stepup.example.com/assurance/sfo-level2']]

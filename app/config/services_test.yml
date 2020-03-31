@@ -1,12 +1,12 @@
 # Use this service definition file to override services in the test environment. For example to mock certain services
 
 parameters:
-  saml_metadata_publickey: /var/www/app/sp.crt
-  saml_metadata_privatekey: /var/www/app/sp.pem
-  saml_sp_publickey: /var/www/app/sp.crt
-  saml_sp_privatekey: /var/www/app/sp.pem
-  saml_idp_publickey: /var/www/app/idp.crt
-  saml_idp_privatekey: /var/www/app/idp.key
+  saml_metadata_publickey: /var/www/ci/certificates/sp.crt
+  saml_metadata_privatekey: /var/www/ci/certificates/sp.pem
+  saml_sp_publickey: /var/www/ci/certificates/sp.crt
+  saml_sp_privatekey: /var/www/ci/certificates/sp.pem
+  saml_idp_publickey: /var/www/ci/certificates/idp.crt
+  saml_idp_privatekey: /var/www/ci/certificates/idp.key
 
 services:
   _defaults:
@@ -25,6 +25,7 @@ services:
   Surfnet\StepupGateway\Behat\MinkContext:
     class: Surfnet\StepupGateway\Behat\MinkContext
 
+#  todo: inject dbal connection
   Surfnet\StepupGateway\Behat\Repository\Connection:
     class: Surfnet\StepupGateway\Behat\Repository\Connection
     arguments:
