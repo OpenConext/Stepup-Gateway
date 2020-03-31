@@ -1,4 +1,4 @@
-Feature: As an instituition that uses the second factor only feature
+Feature: As an institution that uses the second factor only feature
   In order to do second factor authentications
   I must be able to successfully authenticate with my second factor tokens
 
