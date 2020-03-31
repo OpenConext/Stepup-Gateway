@@ -32,9 +32,6 @@ use SAML2\XML\shibmd\Scope;
  */
 class MinkContext extends BaseMinkContext
 {
-    const SESSION_DEFAULT = 'default';
-    const SESSION_CHROME = 'chrome';
-
     /**
      * @var array a list of window names identified by the name the tester refers to them in the step definitions.
      * @example ['My tab' => 'WindowNameGivenByBrowser', 'My other tab' => 'WindowNameGivenByBrowser']
@@ -114,7 +111,6 @@ class MinkContext extends BaseMinkContext
      */
     public function iOpenTwoBrowserTabsIdentifiedBy($numberOfTabs, $tabNames)
     {
-        $this->getMink()->setDefaultSessionName(self::SESSION_CHROME);
         $tabs = explode(',', $tabNames);
         if (count($tabs) != $numberOfTabs) {
             throw new RuntimeException(
@@ -126,6 +122,7 @@ class MinkContext extends BaseMinkContext
             $this->getMink()
                 ->getSession()
                 ->executeScript("window.open('/','_blank');");
+
             $windowsNames = $this->getSession()->getWindowNames();
 
             if (!$windowsNames) {
@@ -136,6 +133,7 @@ class MinkContext extends BaseMinkContext
             // Keep track of the opened windows in order allow switching between them
             $this->windows[trim($tab)] = $windowName;
         }
+
     }
 
     /**
@@ -144,7 +142,6 @@ class MinkContext extends BaseMinkContext
     public function iSwitchToWindow($windowName)
     {
         // (re) set the default session to the chrome session.
-        $this->getMink()->setDefaultSessionName(self::SESSION_CHROME);
         $this->switchToWindow($windowName);
     }
 

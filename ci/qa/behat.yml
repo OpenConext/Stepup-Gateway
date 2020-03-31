@@ -15,6 +15,8 @@ default:
       paths:
         - '%paths.base%/../../tests/features'
       formatter:
+      mink_session: chrome
+      mink_javascript_session: chrome
       filters:
         tags: "@selenium"
       contexts: *defaultContexts
