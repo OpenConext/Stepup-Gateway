@@ -1,11 +1,7 @@
-@selenium
+@SKIP
 Feature: As an institution that uses the second factor only feature
   In order to do second factor authentications
   I must be able to successfully authenticate with my second factor tokens
-
-  Scenario: Gateway reachable with Selenium
-    Given I should see URL "https://gateway.stepup.example.com/health"
-    Then the response status code should be 200
 
   Scenario: A Yubikey SFO authentication
     Given an SFO enabled SP with EntityID https://sp.stepup.example.com

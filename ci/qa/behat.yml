@@ -4,7 +4,7 @@ default:
       paths:
         - '%paths.base%/../../tests/features'
       filters:
-        tags: "~@selenium"
+        tags: "~@selenium&&~@SKIP"
       contexts: &defaultContexts
         - Surfnet\StepupGateway\Behat\MinkContext
         - Surfnet\StepupGateway\Behat\FeatureContext:
@@ -18,7 +18,7 @@ default:
       mink_session: chrome
       mink_javascript_session: chrome
       filters:
-        tags: "@selenium"
+        tags: "@selenium&&~@SKIP"
       contexts: *defaultContexts
   extensions:
     Behat\MinkExtension:
