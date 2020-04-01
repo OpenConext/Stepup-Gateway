@@ -39,3 +39,6 @@ services:
 
   Surfnet\StepupGateway\Behat\Controller\ServiceProviderController:
     class: Surfnet\StepupGateway\Behat\Controller\ServiceProviderController
+
+  Surfnet\StepupGateway\Behat\Controller\IdentityProviderController:
+    class: Surfnet\StepupGateway\Behat\Controller\IdentityProviderController

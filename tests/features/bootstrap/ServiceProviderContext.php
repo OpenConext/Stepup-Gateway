@@ -40,11 +40,17 @@ use Symfony\Component\HttpKernel\KernelInterface;
 class ServiceProviderContext implements Context, KernelAwareContext
 {
     const SFO_ENDPOINT_URL = 'https://gateway.stepup.example.com/second-factor-only/single-sign-on';
+    const SSO_ENDPOINT_URL = 'https://gateway.stepup.example.com/authentication/single-sign-on';
 
     /**
      * @var array
      */
     private $currentSp;
+
+    /**
+     * @var array
+     */
+    private $currentIdP;
 
     /**
      * @var FixtureService
@@ -85,7 +91,26 @@ class ServiceProviderContext implements Context, KernelAwareContext
      */
     public function anSFOEnabledSPWithEntityID($entityId)
     {
-        $sfoEnabled = true;
+        $this->registerSp($entityId, true);
+    }
+
+    /**
+     * @Given /^an SP with EntityID ([^\']*)$/
+     */
+    public function anSPWithEntityID($entityId)
+    {
+        $this->registerSp($entityId, false);
+    }
+    /**
+     * @Given /^an IdP with EntityID ([^\']*)$/
+     */
+    public function anIdPWithEntityID($entityId)
+    {
+        $this->registerIdp($entityId, false);
+    }
+
+    private function registerSp($entityId, $sfoEnabled)
+    {
         $publicKeyLoader = new KeyLoader();
         // todo: use from services_test.yml
         $publicKeyLoader->loadCertificateFile('/var/www/ci/certificates/sp.crt');
@@ -97,6 +122,21 @@ class ServiceProviderContext implements Context, KernelAwareContext
 
         $spEntity['configuration'] = json_decode($spEntity['configuration'], true);
         $this->currentSp = $spEntity;
+    }
+
+    private function registerIdP($entityId)
+    {
+        $publicKeyLoader = new KeyLoader();
+        // todo: use from services_test.yml
+        $publicKeyLoader->loadCertificateFile('/var/www/ci/certificates/idp.crt');
+        $keys = $publicKeyLoader->getKeys();
+        /** @var Key $cert */
+        $cert = $keys->first();
+
+        $idpEntity = $this->fixtureService->registerIdP($entityId, $cert['X509Certificate']);
+
+        $idpEntity['configuration'] = json_decode($idpEntity['configuration'], true);
+        $this->currentIdP = $idpEntity;
     }
 
     /**
@@ -123,6 +163,66 @@ class ServiceProviderContext implements Context, KernelAwareContext
         $query = $request->buildRequestQuery();
 
         $this->getSession()->visit($request->getDestination().'?'.$query);
+    }
+
+    /**
+     * @When /^([^\']*) starts an SFO authentication$/
+     */
+    public function iStartAnSFOAuthentication($nameId)
+    {
+        $authnRequest = new AuthnRequest();
+        // In order to later assert if the response succeeded or failed, set our own dummy ACS location
+        $authnRequest->setAssertionConsumerServiceURL(SamlEntityRepository::SP_ACS_LOCATION);
+        $authnRequest->setIssuer($this->currentSp['entityId']);
+        $authnRequest->setDestination(self::SFO_ENDPOINT_URL);
+        $authnRequest->setProtocolBinding(Constants::BINDING_HTTP_REDIRECT);
+        $authnRequest->setNameId($this->buildNameId($nameId));
+        // Sign with random key, does not mather for now.
+        // todo: use from services_test.yml
+        $authnRequest->setSignatureKey(
+            $this->loadPrivateKey(new PrivateKey('/var/www/ci/certificates/sp.pem', 'default'))
+        );
+        $authnRequest->setRequestedAuthnContext(
+            ['AuthnContextClassRef' => ['http://stepup.example.com/assurance/sfo-level2']]
+        );
+        $request = Saml2AuthnRequest::createNew($authnRequest);
+        $query = $request->buildRequestQuery();
+
+        $this->getSession()->visit($request->getDestination().'?'.$query);
+    }
+
+    /**
+     * @When /^([^\']*) starts an authentication$/
+     */
+    public function iStartAnAuthentication($nameId)
+    {
+        $authnRequest = new AuthnRequest();
+        // In order to later assert if the response succeeded or failed, set our own dummy ACS location
+        $authnRequest->setAssertionConsumerServiceURL(SamlEntityRepository::SP_ACS_LOCATION);
+        $authnRequest->setIssuer($this->currentSp['entityId']);
+        $authnRequest->setDestination(self::SSO_ENDPOINT_URL);
+        $authnRequest->setProtocolBinding(Constants::BINDING_HTTP_REDIRECT);
+        $authnRequest->setNameId($this->buildNameId($nameId));
+        // Sign with random key, does not mather for now.
+        // todo: use from services_test.yml
+        $authnRequest->setSignatureKey(
+            $this->loadPrivateKey(new PrivateKey('/var/www/ci/certificates/sp.pem', 'default'))
+        );
+        $authnRequest->setRequestedAuthnContext(
+            ['AuthnContextClassRef' => ['http://stepup.example.com/assurance/level2']]
+        );
+        $request = Saml2AuthnRequest::createNew($authnRequest);
+        $request->setSubject($authnRequest->getNameId()->value, $authnRequest->getNameId()->Format);
+        $query = $request->buildRequestQuery();
+        $this->getSession()->visit($request->getDestination().'?'.$query);
+    }
+
+    /**
+     * @When /^I authenticate at the IdP$/
+     */
+    public function iAuthenticateAtTheIdp()
+    {
+        $this->minkContext->pressButton('Submit');
     }
 
     /**

@@ -10,6 +10,7 @@ use SAML2\Configuration\PrivateKey;
 use SAML2\Constants;
 use SAML2\Response;
 use SAML2\Response as SAMLResponse;
+use SAML2\XML\saml\NameID;
 use SAML2\XML\saml\SubjectConfirmation;
 use SAML2\XML\saml\SubjectConfirmationData;
 use Surfnet\SamlBundle\Http\Exception\UnsignedRequestException;
@@ -29,9 +30,11 @@ class IdentityProviderController extends Controller
     {
         // receives the AuthnRequest and sends a SAML response
         $authnRequest = $this->receiveSignedAuthnRequestFrom($request);
+        // Todo: For some reason, the nameId is not transpored even tho it is set on the auhtnrequest.. Figure out whats going on here and fix this.
+        // now the test will only work with one hard-coded user.
         $response = $this->createResponse(
             'https://gateway.stepup.example.com/authentication/consume-assertion',
-            $authnRequest->getNameId(),
+            ['Value' => 'urn:collab:person:stepup.example.com:john_haack', 'Format' => 'urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified'],
             $authnRequest->getRequestId()
         );
         return $this->renderSamlResponse($response);
@@ -62,18 +65,17 @@ class IdentityProviderController extends Controller
      * @param string $nameId
      * @return Response
      */
-    public function createResponse($destination, $nameId, $requestId)
+    public function createResponse($destination, array $nameId, $requestId)
     {
         $newAssertion = new Assertion();
         $newAssertion->setNotBefore(time());
-        $newAssertion->setNotOnOrAfter(time() + (60 * 5));
-        $newAssertion->setAttributes(['urn:mace:dir:attribute-def:eduPersonTargetedID' => [$nameId]]);
+        $newAssertion->setNotOnOrAfter(time() + (60 * 5));//
+        $newAssertion->setAttributes(['urn:mace:dir:attribute-def:eduPersonTargetedID' => [NameID::fromArray($nameId)]]);
         $newAssertion->setIssuer('https://idp.stepup.example.com/');
         $newAssertion->setIssueInstant(time());
 
         $this->signAssertion($newAssertion);
         $this->addSubjectConfirmationFor($newAssertion, $destination, $requestId);
-
         $newAssertion->setNameId($nameId);
         $response = new SAMLResponse();
         $response->setAssertions([$newAssertion]);
