@@ -54,9 +54,20 @@ class FixtureService
      * @return array
      * @throws Exception
      */
-    public function registerSP($entityId, $certificate, $sfoEnabled)
+    public function registerSP($entityId, $certificate, $sfoEnabled = false)
     {
         return $this->samlEntityRepository->createSpIfNotExists($entityId, $certificate, $sfoEnabled);
+    }
+
+    /**
+     * @param string $entityId
+     * @param string $certificate
+     * @return array
+     * @throws Exception
+     */
+    public function registerIdp($entityId, $certificate)
+    {
+        return $this->samlEntityRepository->createIdpIfNotExists($entityId, $certificate);
     }
 
     /**

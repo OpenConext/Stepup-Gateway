@@ -13,6 +13,7 @@ framework:
         strict_requirements: true
 
 assetic:
+    use_controller: "%use_assetic_controller%"
     node: "/usr/bin/node"
     filters:
         less:

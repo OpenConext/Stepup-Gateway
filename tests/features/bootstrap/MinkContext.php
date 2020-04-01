@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupGateway\Behat;
 
+use Behat\Mink\Driver\Selenium2Driver;
 use Behat\Mink\Exception\ExpectationException;
 use Behat\MinkExtension\Context\MinkContext as BaseMinkContext;
 use DOMDocument;
@@ -52,7 +53,13 @@ class MinkContext extends BaseMinkContext
     public function theResponseShouldMatchXpath($xpath)
     {
         $document = new DOMDocument();
-        $document->loadXML($this->getSession()->getPage()->getContent());
+        if ($this->getSession()->getDriver() instanceof Selenium2Driver) {
+            // Chrome uses a user friendly viewer, get the xml from the dressed document and assert on that xml.
+            $xml = $this->getSession()->evaluateScript("document.getElementById('webkit-xml-viewer-source-xml').innerHTML");
+        } else {
+            $xml = $this->getSession()->getPage()->getContent();
+        }
+        $document->loadXML($xml);
 
         $xpathObj = new DOMXPath($document);
         $xpathObj->registerNamespace('ds', XMLSecurityDSig::XMLDSIGNS);
@@ -111,6 +118,9 @@ class MinkContext extends BaseMinkContext
      */
     public function iOpenTwoBrowserTabsIdentifiedBy($numberOfTabs, $tabNames)
     {
+        // Make sure the browser is ready (without this other browser interactions fail)
+        $this->getSession()->visit($this->locatePath('#'));
+
         $tabs = explode(',', $tabNames);
         if (count($tabs) != $numberOfTabs) {
             throw new RuntimeException(
