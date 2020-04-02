@@ -478,7 +478,7 @@ class SecondFactorController extends Controller
         if ($verification->wasSuccessful()) {
             $this->getStepupService()->clearSmsVerificationState();
 
-            $this->getResponseContext()->markSecondFactorVerified();
+            $this->getResponseContext($authenticationMode)->markSecondFactorVerified();
             $this->getAuthenticationLogger()->logSecondFactorAuthentication($originalRequestId);
 
             $logger->info(
