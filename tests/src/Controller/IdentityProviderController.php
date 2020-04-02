@@ -41,6 +41,24 @@ class IdentityProviderController extends Controller
     }
 
     /**
+     * Handles a GSSP SSO request
+     * @param Request $request
+     */
+    public function gsspSsoAction(Request $request)
+    {
+        // receives the AuthnRequest and sends a SAML response
+        $authnRequest = $this->receiveSignedAuthnRequestFrom($request);
+        // Todo: For some reason, the nameId is not transpored even tho it is set on the auhtnrequest.. Figure out whats going on here and fix this.
+        // now the test will only work with one hard-coded user.
+        $response = $this->createResponse(
+            $authnRequest->getAssertionConsumerServiceURL(),
+            ['Value' => 'foobar', 'Format' => 'urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified'],
+            $authnRequest->getRequestId()
+        );
+        return $this->renderSamlResponse($response);
+    }
+
+    /**
      * @param SAMLResponse $response
      * @return \Symfony\Component\HttpFoundation\Response
      */

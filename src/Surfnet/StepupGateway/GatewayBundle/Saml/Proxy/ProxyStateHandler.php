@@ -332,6 +332,23 @@ class ProxyStateHandler
     }
 
     /**
+     * note that the authentication mode is stored outside the session path, to enable other state handlers
+     * to retrieve the Authentication state for a given authentication request id.
+     *
+     * @param $requestId
+     * @param $authenticationMode
+     */
+    public function markAuthenticationModeForRequest($requestId, $authenticationMode)
+    {
+        $this->session->set('surfnet/gateway/auth_mode/' . $requestId, $authenticationMode);
+    }
+
+    public function getAuthenticationModeForRequestId($requestId)
+    {
+        return $this->session->get('surfnet/gateway/auth_mode/' . $requestId);
+    }
+
+    /**
      * @param string $key
      * @param mixed $value Any scalar
      */
