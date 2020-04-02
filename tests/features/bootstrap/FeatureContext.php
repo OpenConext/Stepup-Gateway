@@ -101,7 +101,6 @@ class FeatureContext implements Context
         $this->minkContext->pressButton('gateway_send_sms_challenge_send_challenge');
         $this->minkContext->assertPageContainsText('Enter the received SMS-code');
         $this->minkContext->assertPageContainsText('Send again');
-
     }
 
     /**
@@ -137,7 +136,6 @@ class FeatureContext implements Context
      */
     public function iShouldSelectMyTokenOnTheWAYG($tokenType)
     {
-        $this->minkContext->assertPageContainsText('Choose a token for login');
         switch (strtolower($tokenType)) {
             case "yubikey":
                 $this->minkContext->pressButton('gateway_choose_second_factor_choose_yubikey');
@@ -146,5 +144,13 @@ class FeatureContext implements Context
                 $this->minkContext->pressButton('gateway_choose_second_factor_choose_sms');
                 break;
         }
+    }
+
+    /**
+     * @Then /^I should be on the WAYG$/
+     */
+    public function iShouldBeOnTheWAYG()
+    {
+        $this->minkContext->assertPageContainsText('Choose a token for login');
     }
 }
