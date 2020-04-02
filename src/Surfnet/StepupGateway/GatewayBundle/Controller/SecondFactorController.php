@@ -288,8 +288,9 @@ class SecondFactorController extends Controller
         );
     }
 
-    public function gssfVerifiedAction($authenticationMode)
+    public function gssfVerifiedAction(Request $request)
     {
+        $authenticationMode = $request->get('authenticationMode');
         $this->supportsAuthenticationMode($authenticationMode);
         $context = $this->getResponseContext($authenticationMode);
 
@@ -313,7 +314,7 @@ class SecondFactorController extends Controller
         }
 
         $context->markSecondFactorVerified();
-        $this->getAuthenticationLogger()->logSecondFactorAuthentication($originalRequestId);
+        $this->getAuthenticationLogger()->logSecondFactorAuthentication($originalRequestId, $authenticationMode);
 
         $logger->info(sprintf(
             'Marked GSSF "%s" as verified, forwarding to Gateway controller to respond',
@@ -371,7 +372,7 @@ class SecondFactorController extends Controller
         }
 
         $this->getResponseContext($authenticationMode)->markSecondFactorVerified();
-        $this->getAuthenticationLogger()->logSecondFactorAuthentication($originalRequestId);
+        $this->getAuthenticationLogger()->logSecondFactorAuthentication($originalRequestId, $authenticationMode);
 
         $logger->info(
             sprintf(
@@ -479,7 +480,7 @@ class SecondFactorController extends Controller
             $this->getStepupService()->clearSmsVerificationState();
 
             $this->getResponseContext($authenticationMode)->markSecondFactorVerified();
-            $this->getAuthenticationLogger()->logSecondFactorAuthentication($originalRequestId);
+            $this->getAuthenticationLogger()->logSecondFactorAuthentication($originalRequestId, $authenticationMode);
 
             $logger->info(
                 sprintf(
@@ -619,7 +620,7 @@ class SecondFactorController extends Controller
 
         if ($result->wasSuccessful()) {
             $context->markSecondFactorVerified();
-            $this->getAuthenticationLogger()->logSecondFactorAuthentication($originalRequestId);
+            $this->getAuthenticationLogger()->logSecondFactorAuthentication($originalRequestId, $authenticationMode);
 
             $logger->info(
                 sprintf(

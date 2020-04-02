@@ -7,6 +7,7 @@ use Surfnet\SamlBundle\SAML2\AuthnRequest;
 use Surfnet\SamlBundle\SAML2\AuthnRequestFactory;
 use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\Provider;
+use Symfony\Component\HttpFoundation\Request;
 
 class SecondFactorVerificationService
 {
@@ -16,15 +17,20 @@ class SecondFactorVerificationService
     /** @var ResponseContext */
     private $responseContext;
 
+    /** @var ResponseContext */
+    private $sfoResponseContext;
+
     /**
      * SecondFactorVerificationService constructor.
      * @param SamlAuthenticationLogger $samlLogger
      * @param ResponseContext $responseContext
+     * @param ResponseContext $sfoResponseContext
      */
-    public function __construct(SamlAuthenticationLogger $samlLogger, ResponseContext $responseContext)
+    public function __construct(SamlAuthenticationLogger $samlLogger, ResponseContext $responseContext, ResponseContext $sfoResponseContext)
     {
         $this->samlLogger = $samlLogger;
         $this->responseContext = $responseContext;
+        $this->sfoResponseContext = $sfoResponseContext;
     }
 
     /**
@@ -39,7 +45,6 @@ class SecondFactorVerificationService
      * @param Provider $provider
      * @param string $subjectNameId
      * @param string $responseContextServiceId
-     *
      * @return AuthnRequest
      */
     public function sendSecondFactorVerificationAuthnRequest(
@@ -49,7 +54,11 @@ class SecondFactorVerificationService
     ) {
         $stateHandler = $provider->getStateHandler();
 
-        $originalRequestId = $this->responseContext->getInResponseTo();
+        if ($responseContextServiceId === 'second_factor_only.response_context') {
+            $originalRequestId = $this->sfoResponseContext->getInResponseTo();
+        } else {
+            $originalRequestId = $this->responseContext->getInResponseTo();
+        }
 
         $authnRequest = AuthnRequestFactory::createNewRequest(
             $provider->getServiceProvider(),

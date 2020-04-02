@@ -143,6 +143,7 @@ services:
         arguments:
             - "@surfnet_stepup.service.loa_resolution"
             - "@gateway.proxy.state_handler"
+            - "@gateway.proxy.sfo.state_handler"
             - "@gateway.service.second_factor_service"
             - "@gateway.authentication_logger.logger"
             - "@surfnet_stepup.service.second_factor_type"

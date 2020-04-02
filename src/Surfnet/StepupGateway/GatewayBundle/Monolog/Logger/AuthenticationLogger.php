@@ -28,6 +28,9 @@ use Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorService;
 
 class AuthenticationLogger
 {
+    const AUTHENTICATION_MODE_SSO = 'sso';
+    const AUTHENTICATION_MODE_SFO = 'sfo';
+
     /**
      * @var ProxyStateHandler
      */
@@ -55,13 +58,15 @@ class AuthenticationLogger
 
     public function __construct(
         LoaResolutionService $loaResolutionService,
-        ProxyStateHandler $proxyStateHandler,
+        ProxyStateHandler $ssoProxyStateHandler,
+        ProxyStateHandler $sfoProxyStateHandler,
         SecondFactorService $secondFactorService,
         SamlAuthenticationLogger $authenticationChannelLogger,
         SecondFactorTypeService $service
     ) {
         $this->loaResolutionService = $loaResolutionService;
-        $this->proxyStateHandler    = $proxyStateHandler;
+        $this->proxyStateHandler[self::AUTHENTICATION_MODE_SSO] = $ssoProxyStateHandler;
+        $this->proxyStateHandler[self::AUTHENTICATION_MODE_SFO] = $sfoProxyStateHandler;
         $this->secondFactorService  = $secondFactorService;
         $this->authenticationChannelLogger = $authenticationChannelLogger;
         $this->secondFactorTypeService = $service;
@@ -85,11 +90,12 @@ class AuthenticationLogger
 
     /**
      * @param string $requestId The SAML authentication request ID of the original request (not the proxy request).
+     * @param string $authenticationMode
      */
-    public function logSecondFactorAuthentication($requestId)
+    public function logSecondFactorAuthentication($requestId, $authenticationMode)
     {
         $secondFactor = $this->secondFactorService->findByUuid(
-            $this->proxyStateHandler->getSelectedSecondFactorId()
+            $this->proxyStateHandler[$authenticationMode]->getSelectedSecondFactorId()
         );
         $loa = $this->loaResolutionService->getLoaByLevel($secondFactor->getLoaLevel($this->secondFactorTypeService));
 
@@ -97,7 +103,7 @@ class AuthenticationLogger
             'second_factor_id'      => $secondFactor->secondFactorId,
             'second_factor_type'    => $secondFactor->secondFactorType,
             'institution'           => $secondFactor->institution,
-            'authentication_result' => $this->proxyStateHandler->isSecondFactorVerified() ? 'OK' : 'FAILED',
+            'authentication_result' => $this->proxyStateHandler[$authenticationMode]->isSecondFactorVerified() ? 'OK' : 'FAILED',
             'resulting_loa'         => (string) $loa,
         ];
 
@@ -115,9 +121,15 @@ class AuthenticationLogger
             throw InvalidArgumentException::invalidType('string', 'requestId', $requestId);
         }
 
-        $context['identity_id']        = $this->proxyStateHandler->getIdentityNameId();
-        $context['authenticating_idp'] = $this->proxyStateHandler->getAuthenticatingIdp();
-        $context['requesting_sp']      = $this->proxyStateHandler->getRequestServiceProvider();
+        // Regardless of authentication type, the authentication mode can be retrieved from any state handler
+        // given you provide the request id
+        $authenticationMode = $this->proxyStateHandler[self::AUTHENTICATION_MODE_SSO]->getAuthenticationModeForRequestId(
+            $requestId
+        );
+
+        $context['identity_id']        = $this->proxyStateHandler[$authenticationMode]->getIdentityNameId();
+        $context['authenticating_idp'] = $this->proxyStateHandler[$authenticationMode]->getAuthenticatingIdp();
+        $context['requesting_sp']      = $this->proxyStateHandler[$authenticationMode]->getRequestServiceProvider();
         $context['datetime']           = (new \DateTime())->format('Y-m-d\\TH:i:sP');
 
         $this->authenticationChannelLogger->forAuthentication($requestId)->notice($message, $context);

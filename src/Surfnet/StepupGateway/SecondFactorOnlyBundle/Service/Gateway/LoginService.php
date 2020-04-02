@@ -124,6 +124,8 @@ class LoginService
             ->setResponseAction('SurfnetStepupGatewaySecondFactorOnlyBundle:SecondFactorOnly:respond')
             ->setResponseContextServiceId('second_factor_only.response_context');
 
+        $this->stateHandler->markAuthenticationModeForRequest($originalRequestId, 'sfo');
+
         // Check if the NameID is provided and we may use it.
         $nameId = $originalRequest->getNameId();
         $secondFactorOnlyNameIdValidator = $this->secondFactorOnlyNameValidatorService->with($logger);
