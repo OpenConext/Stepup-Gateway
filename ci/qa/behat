@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+cd $(dirname $0)/../../
+
+./vendor/bin/behat --config=ci/qa/behat.yml --format=progress

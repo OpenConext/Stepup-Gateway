@@ -4,7 +4,8 @@
     "description": "The SURFnet Step-up Gateway sits between a SAML Service Provider and Identity Provider and can provide a certain Level of Assurance by performing second-factor authentication.",
     "autoload": {
         "psr-4": {
-            "Surfnet\\": "src\\Surfnet"
+            "Surfnet\\": "src\\Surfnet",
+            "Surfnet\\StepupGateway\\Behat\\": "tests/features/bootstrap"
         },
         "classmap": [
             "app/AppKernel.php",
@@ -47,8 +48,14 @@
         "webmozart/assert": "^1.2"
     },
     "require-dev": {
+        "behat/behat": "^3.6",
+        "behat/mink": "^1.8",
+        "behat/mink-extension": "^2.3",
+        "behat/mink-goutte-driver": "^1.2",
+        "behat/symfony2-extension": "^2.1",
         "matthiasnoback/symfony-config-test": "^2.2",
         "mockery/mockery": "~0.9",
+        "overtrue/phplint": "^1.2",
         "phpmd/phpmd": "^2.6",
         "phpunit/phpunit": "^5.7",
         "sebastian/exporter": "~2.0",
@@ -59,20 +66,34 @@
     "scripts": {
         "post-install-cmd": [
             "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",
+            "@distribution-bundle-scripts"
+        ],
+        "post-update-cmd": [
+            "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",
+            "@distribution-bundle-scripts"
+        ],
+        "distribution-bundle-scripts": [
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::clearCache",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installAssets",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installRequirementsFile",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::removeSymfonyStandardFiles"
         ],
-        "post-update-cmd": [
-            "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",
-            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",
-            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::clearCache",
-            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installAssets",
-            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installRequirementsFile",
-            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::removeSymfonyStandardFiles"
-        ]
+        "check": [
+            "@phplint",
+            "@phpcs",
+            "@phpmd",
+            "@test",
+            "@behat",
+            "@security"
+        ],
+        "security": "./ci/qa/security",
+        "phplint": "./ci/qa/phplint",
+        "phpcs": "./ci/qa/phpcs",
+        "phpcbf": "./ci/qa/phpcbf",
+        "phpmd": "./ci/qa/phpmd",
+        "behat": "./ci/qa/behat",
+        "test": "./ci/qa/phpunit"
     },
     "config": {
         "optimize-autoloader": true,

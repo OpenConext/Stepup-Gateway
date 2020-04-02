@@ -1,0 +1,33 @@
+name: test-integration
+on: [pull_request, push]
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        timeout-minutes: 30
+        steps:
+            - name: Checkout
+              uses: actions/checkout@master
+            - name: Get Composer Cache Directory
+              id: composer-cache
+              run: |
+                echo "::set-output name=dir::$(composer config cache-files-dir)"
+            - uses: actions/cache@v1
+              with:
+                path: ${{ steps.composer-cache.outputs.dir }}
+                key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+                restore-keys: |
+                  ${{ runner.os }}-composer-
+            - name: Init environment
+              run: cd ci/docker && ./init.sh
+            - name: Run CI tests
+              run: |
+                  cd ci/docker && docker-compose exec -T php-fpm.stepup.example.com bash -c '
+                      composer check
+                  '
+              env:
+                  SYMFONY_ENV: test
+            - name: Output log files on failure
+              if: failure()
+              run:  |
+                  cd ci/docker && docker-compose exec -T php-fpm.stepup.example.com cat app/logs/test.log
+

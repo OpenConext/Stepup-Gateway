@@ -1,0 +1,23 @@
+default:
+  suites:
+    default:
+      paths:
+        - '%paths.base%/../../tests/features'
+      filters:
+        tags: "~@WIP&&~@SKIP"
+      contexts:
+        - Surfnet\StepupGateway\Behat\MinkContext
+        - Surfnet\StepupGateway\Behat\FeatureContext
+  extensions:
+    Behat\MinkExtension:
+      base_url: https://gateway.stepup.example.com/
+      goutte: ~
+      sessions:
+        default:
+          goutte:
+            guzzle_parameters:
+              verify: False
+    Behat\Symfony2Extension:
+      kernel:
+        env: test
+        debug: true

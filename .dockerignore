@@ -1,0 +1,10 @@
+*
+!ci
+!config
+!src
+!tests
+!web
+!app
+!bin
+!composer.json
+!composer.lock

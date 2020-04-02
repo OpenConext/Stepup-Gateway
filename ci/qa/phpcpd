@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+cd $(dirname $0)/../../
+
+# https://github.com/sebastianbergmann/phpcpd
+./vendor/bin/phpcpd \
+    --names=*.php \
+    --names-exclude=Sms*SearchConditions.php \
+    --regexps-exclude="#Client/.*Client.php#" \
+    src $1
