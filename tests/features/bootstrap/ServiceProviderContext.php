@@ -50,6 +50,11 @@ class ServiceProviderContext implements Context, KernelAwareContext
     /**
      * @var array
      */
+    private $currentSfoSp;
+
+    /**
+     * @var array
+     */
     private $currentIdP;
 
     /**
@@ -121,7 +126,11 @@ class ServiceProviderContext implements Context, KernelAwareContext
         $spEntity = $this->fixtureService->registerSP($entityId, $cert['X509Certificate'], $sfoEnabled);
 
         $spEntity['configuration'] = json_decode($spEntity['configuration'], true);
-        $this->currentSp = $spEntity;
+        if ($sfoEnabled) {
+            $this->currentSfoSp = $spEntity;
+        } else {
+            $this->currentSp = $spEntity;
+        }
     }
 
     private function registerIdP($entityId)
@@ -140,32 +149,6 @@ class ServiceProviderContext implements Context, KernelAwareContext
     }
 
     /**
-     * @When /^([^\']*) starts a SFO authentication$/
-     */
-    public function iStartASecondFactorAuthenticationOnTheSecondFactorOnlyEndpoint($nameId)
-    {
-        $authnRequest = new AuthnRequest();
-        // In order to later assert if the response succeeded or failed, set our own dummy ACS location
-        $authnRequest->setAssertionConsumerServiceURL(SamlEntityRepository::SP_ACS_LOCATION);
-        $authnRequest->setIssuer($this->currentSp['entityId']);
-        $authnRequest->setDestination(self::SFO_ENDPOINT_URL);
-        $authnRequest->setProtocolBinding(Constants::BINDING_HTTP_REDIRECT);
-        $authnRequest->setNameId($this->buildNameId($nameId));
-        // Sign with random key, does not mather for now.
-        // todo: use from services_test.yml
-        $authnRequest->setSignatureKey(
-            $this->loadPrivateKey(new PrivateKey('/var/www/ci/certificates/sp.pem', 'default'))
-        );
-        $authnRequest->setRequestedAuthnContext(
-            ['AuthnContextClassRef' => ['http://stepup.example.com/assurance/sfo-level2']]
-        );
-        $request = Saml2AuthnRequest::createNew($authnRequest);
-        $query = $request->buildRequestQuery();
-
-        $this->getSession()->visit($request->getDestination().'?'.$query);
-    }
-
-    /**
      * @When /^([^\']*) starts an SFO authentication$/
      */
     public function iStartAnSFOAuthentication($nameId)
@@ -173,7 +156,7 @@ class ServiceProviderContext implements Context, KernelAwareContext
         $authnRequest = new AuthnRequest();
         // In order to later assert if the response succeeded or failed, set our own dummy ACS location
         $authnRequest->setAssertionConsumerServiceURL(SamlEntityRepository::SP_ACS_LOCATION);
-        $authnRequest->setIssuer($this->currentSp['entityId']);
+        $authnRequest->setIssuer($this->currentSfoSp['entityId']);
         $authnRequest->setDestination(self::SFO_ENDPOINT_URL);
         $authnRequest->setProtocolBinding(Constants::BINDING_HTTP_REDIRECT);
         $authnRequest->setNameId($this->buildNameId($nameId));
