@@ -8,6 +8,8 @@ parameters:
   saml_idp_publickey: /var/www/ci/certificates/idp.crt
   saml_idp_privatekey: /var/www/ci/certificates/idp.key
 
+  second_factor_only: true
+
 services:
   _defaults:
     autowire: true
