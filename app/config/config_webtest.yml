@@ -49,10 +49,15 @@ monolog:
             level: INFO
             channels: [authentication]
             formatter: gateway.monolog.gelf_to_string_formatter
-        nested:
-            type:  stream
-            path:  "php://stderr"
+        stdout:
+            type: stream
+            path: 'php://stdout'
             level: DEBUG
+            channels: ['!event']
+        stderr:
+            type: stream
+            path: 'php://stderr'
+            level: ERROR
         main_logfile:
             type: stream
             handler: logfile
