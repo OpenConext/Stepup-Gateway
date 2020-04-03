@@ -1,3 +1,4 @@
+@selenium
 Feature: As an institution that uses the regular Step Up authentication feature
   In order to do second factor authentications
   I must be able to successfully authenticate with my second factor tokens
