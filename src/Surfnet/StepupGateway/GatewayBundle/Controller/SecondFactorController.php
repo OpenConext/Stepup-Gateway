@@ -41,7 +41,6 @@ use Surfnet\StepupGateway\U2fVerificationBundle\Value\KeyHandle;
 use Surfnet\StepupU2fBundle\Dto\SignResponse;
 use Surfnet\StepupU2fBundle\Form\Type\VerifyDeviceAuthenticationType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -52,6 +51,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class SecondFactorController extends Controller
 {
@@ -440,7 +440,12 @@ class SecondFactorController extends Controller
             );
         }
 
-        return $this->redirect($this->generateUrl('gateway_verify_second_factor_sms_verify_challenge', ['authenticationMode' => $authenticationMode]));
+        return $this->redirect(
+            $this->generateUrl(
+                'gateway_verify_second_factor_sms_verify_challenge',
+                ['authenticationMode' => $authenticationMode]
+            )
+        );
     }
 
     /**
@@ -522,7 +527,10 @@ class SecondFactorController extends Controller
         $selectedSecondFactor = $this->getSelectedSecondFactor($context, $logger);
         $stepupService = $this->getStepupService();
 
-        $cancelFormAction = $this->generateUrl('gateway_verify_second_factor_u2f_cancel_authentication', ['authenticationMode' => $authenticationMode]);
+        $cancelFormAction = $this->generateUrl(
+            'gateway_verify_second_factor_u2f_cancel_authentication',
+            ['authenticationMode' => $authenticationMode]
+        );
         $cancelForm =
             $this->createForm(CancelSecondFactorVerificationType::class, null, ['action' => $cancelFormAction]);
 

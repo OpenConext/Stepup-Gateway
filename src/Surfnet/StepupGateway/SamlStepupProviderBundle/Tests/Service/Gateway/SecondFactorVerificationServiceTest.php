@@ -192,6 +192,7 @@ class SecondFactorVerificationServiceTest extends GatewaySamlTestCase
 
         $this->samlProxySecondFactorService = new SecondFactorVerificationService(
             $samlLogger,
+            $this->responseContext,
             $this->responseContext
         );
     }

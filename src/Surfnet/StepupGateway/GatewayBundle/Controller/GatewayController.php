@@ -35,6 +35,8 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
  *
  * See docs/GatewayState.md for a high-level diagram on how this controller
  * interacts with outside actors and other parts of Stepup.
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class GatewayController extends Controller
 {
