@@ -1,4 +1,4 @@
-@selenium
+@SKIP @selenium
 Feature: As an institution that uses the second factor only feature
   In order to facilitate SFO rollover from StepUp to EngineBlock
   I must be able to run SFO and regular authentications in parallel
