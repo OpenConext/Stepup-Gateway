@@ -93,8 +93,6 @@
             "@phpcs",
             "@phpmd",
             "@test",
-            "@behat",
-            "@behat-selenium",
             "@security"
         ],
         "security": "./ci/qa/security",
