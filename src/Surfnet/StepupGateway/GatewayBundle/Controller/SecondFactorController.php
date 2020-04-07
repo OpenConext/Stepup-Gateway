@@ -52,11 +52,22 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class SecondFactorController extends Controller
 {
     const MODE_SFO = 'sfo';
     const MODE_SSO = 'sso';
+
+    public function selectSecondFactorForVerificationSsoAction()
+    {
+        return $this->selectSecondFactorForVerificationAction(self::MODE_SSO);
+    }
+
+    public function selectSecondFactorForVerificationSfoAction()
+    {
+        return $this->selectSecondFactorForVerificationAction(self::MODE_SFO);
+    }
 
     public function selectSecondFactorForVerificationAction($authenticationMode)
     {
