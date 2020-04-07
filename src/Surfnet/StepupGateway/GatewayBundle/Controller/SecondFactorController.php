@@ -660,11 +660,8 @@ class SecondFactorController extends Controller
         return ['authenticationFailed' => true, 'cancelForm' => $cancelForm->createView()];
     }
 
-    public function cancelAuthenticationAction($authenticationMode)
+    public function cancelAuthenticationAction()
     {
-        // Might not need the authenticationMode?
-        $this->supportsAuthenticationMode($authenticationMode);
-
         return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:sendAuthenticationCancelledByUser');
     }
 
@@ -742,10 +739,7 @@ class SecondFactorController extends Controller
      */
     private function buildCancelAuthenticationForm($authenticationMode)
     {
-        $cancelFormAction = $this->generateUrl(
-            'gateway_cancel_authentication',
-            ['authenticationMode' => $authenticationMode]
-        );
+        $cancelFormAction = $this->generateUrl('gateway_cancel_authentication');
 
         return $this->createForm(
             CancelAuthenticationType::class,
