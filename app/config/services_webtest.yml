@@ -1,14 +1,20 @@
 # Use this service definition file to override services in the test environment. For example to mock certain services
 
 parameters:
-  saml_metadata_publickey: /vagrant/deploy/tests/behat/fixtures/test_public_key.crt
-  saml_metadata_privatekey: /vagrant/deploy/tests/behat/fixtures/test_private_key.key
-  saml_sp_publickey: /vagrant/deploy/tests/behat/fixtures/test_public_key.crt
-  saml_sp_privatekey: /vagrant/deploy/tests/behat/fixtures/test_private_key.key
-  saml_idp_publickey: /vagrant/deploy/tests/behat/fixtures/test_public_key.crt
-  saml_idp_privatekey: /vagrant/deploy/tests/behat/fixtures/test_private_key.key
+  saml_metadata_publickey: /var/www/ci/certificates/sp.crt
+  saml_metadata_privatekey: /var/www/ci/certificates/sp.pem
+  saml_sp_publickey: /var/www/ci/certificates/sp.crt
+  saml_sp_privatekey: /var/www/ci/certificates/sp.pem
+  saml_idp_publickey: /var/www/ci/certificates/idp.crt
+  saml_idp_privatekey: /var/www/ci/certificates/idp.key
+
+  second_factor_only: true
 
 services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+
   surfnet_gateway_api.service.yubikey:
     class: Surfnet\StepupGateway\ApiBundle\Tests\TestDouble\Service\YubikeyService
 
@@ -21,6 +27,7 @@ services:
   Surfnet\StepupGateway\Behat\MinkContext:
     class: Surfnet\StepupGateway\Behat\MinkContext
 
+#  todo: inject dbal connection
   Surfnet\StepupGateway\Behat\Repository\Connection:
     class: Surfnet\StepupGateway\Behat\Repository\Connection
     arguments:
@@ -34,3 +41,6 @@ services:
 
   Surfnet\StepupGateway\Behat\Controller\ServiceProviderController:
     class: Surfnet\StepupGateway\Behat\Controller\ServiceProviderController
+
+  Surfnet\StepupGateway\Behat\Controller\IdentityProviderController:
+    class: Surfnet\StepupGateway\Behat\Controller\IdentityProviderController
