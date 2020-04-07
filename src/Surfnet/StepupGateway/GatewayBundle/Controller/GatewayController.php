@@ -195,7 +195,7 @@ class GatewayController extends Controller
      */
     public function getResponseContext()
     {
-        $stateHandler = $this->get('gateway.proxy.state_handler');
+        $stateHandler = $this->get('gateway.proxy.sso.state_handler');
 
         $responseContextServiceId = $stateHandler->getResponseContextServiceId();
 
