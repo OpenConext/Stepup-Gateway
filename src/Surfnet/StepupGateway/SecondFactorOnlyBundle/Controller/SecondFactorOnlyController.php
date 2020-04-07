@@ -85,10 +85,9 @@ class SecondFactorOnlyController extends Controller
 
         $logger->notice('Forwarding to second factor controller for loa determination and handling');
 
-        return $this->forward(
-            'SurfnetStepupGatewayGatewayBundle:SecondFactor:selectSecondFactorForVerification',
-            ['authenticationMode' => SecondFactorController::MODE_SFO]
-        );
+        // Forward to the selectSecondFactorForVerificationSsoAction, this in turn will forward to the correct
+        // verification action (based on authentication type sso/sfo)
+        return $this->forward('SurfnetStepupGatewayGatewayBundle:SecondFactor:selectSecondFactorForVerificationSfo');
     }
 
     /**
