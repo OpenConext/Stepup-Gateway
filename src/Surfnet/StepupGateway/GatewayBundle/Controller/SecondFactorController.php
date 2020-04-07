@@ -41,8 +41,8 @@ use Surfnet\StepupGateway\U2fVerificationBundle\Value\KeyHandle;
 use Surfnet\StepupU2fBundle\Dto\SignResponse;
 use Surfnet\StepupU2fBundle\Form\Type\VerifyDeviceAuthenticationType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -51,12 +51,29 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class SecondFactorController extends Controller
 {
-    public function selectSecondFactorForVerificationAction()
+    const MODE_SFO = 'sfo';
+    const MODE_SSO = 'sso';
+
+    public function selectSecondFactorForVerificationSsoAction()
     {
-        $context = $this->getResponseContext();
+        return $this->selectSecondFactorForVerificationAction(self::MODE_SSO);
+    }
+
+    public function selectSecondFactorForVerificationSfoAction()
+    {
+        return $this->selectSecondFactorForVerificationAction(self::MODE_SFO);
+    }
+
+    public function selectSecondFactorForVerificationAction($authenticationMode)
+    {
+        $this->supportsAuthenticationMode($authenticationMode);
+        $context = $this->getResponseContext($authenticationMode);
+
         $originalRequestId = $context->getInResponseTo();
 
         /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
@@ -115,13 +132,13 @@ class SecondFactorController extends Controller
                     $secondFactor->secondFactorType
                 ));
 
-                return $this->selectAndRedirectTo($secondFactor, $context);
+                return $this->selectAndRedirectTo($secondFactor, $context, $authenticationMode);
                 break;
 
             default:
                 return $this->forward(
                     'SurfnetStepupGatewayGatewayBundle:SecondFactor:chooseSecondFactor',
-                    ['secondFactors' => $secondFactorCollection]
+                    ['authenticationMode' => $authenticationMode, 'secondFactors' => $secondFactorCollection]
                 );
                 break;
         }
@@ -130,12 +147,14 @@ class SecondFactorController extends Controller
     /**
      * @Template
      * @param Request $request
+     * @param string $authenticationMode
      * @return array|RedirectResponse|Response
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function chooseSecondFactorAction(Request $request)
+    public function chooseSecondFactorAction(Request $request, $authenticationMode)
     {
-        $context = $this->getResponseContext();
+        $this->supportsAuthenticationMode($authenticationMode);
+        $context = $this->getResponseContext($authenticationMode);
         $originalRequestId = $context->getInResponseTo();
 
         /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
@@ -181,10 +200,10 @@ class SecondFactorController extends Controller
             ->createForm(
                 ChooseSecondFactorType::class,
                 $command,
-                ['action' => $this->generateUrl('gateway_verify_second_factor_choose_second_factor')]
+                ['action' => $this->generateUrl('gateway_verify_second_factor_choose_second_factor', ['authenticationMode' => $authenticationMode])]
             )
             ->handleRequest($request);
-        $cancelForm = $this->buildCancelAuthenticationForm()->handleRequest($request);
+        $cancelForm = $this->buildCancelAuthenticationForm($authenticationMode)->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $buttonName = $form->getClickedButton()->getName();
@@ -222,7 +241,7 @@ class SecondFactorController extends Controller
             $logger->notice(sprintf('User chose "%s" to use as second factor', $secondFactorType));
 
             // Forward to action to verify possession of second factor
-            return $this->selectAndRedirectTo($secondFactor, $context);
+            return $this->selectAndRedirectTo($secondFactor, $context, $authenticationMode);
         } else if ($form->isSubmitted() && !$form->isValid()) {
             $form->addError(new FormError('gateway.form.gateway_choose_second_factor.unknown_second_factor_type'));
         }
@@ -234,9 +253,15 @@ class SecondFactorController extends Controller
         ];
     }
 
-    public function verifyGssfAction()
+    public function verifyGssfAction(Request $request)
     {
-        $context = $this->getResponseContext();
+        if (!$request->get('authenticationMode', false)) {
+            throw new RuntimeException('Unable to determine the authentication mode in the GSSP verification action');
+        }
+        $authenticationMode = $request->get('authenticationMode');
+        $this->supportsAuthenticationMode($authenticationMode);
+        $context = $this->getResponseContext($authenticationMode);
+
         $originalRequestId = $context->getInResponseTo();
 
         /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
@@ -274,9 +299,12 @@ class SecondFactorController extends Controller
         );
     }
 
-    public function gssfVerifiedAction()
+    public function gssfVerifiedAction(Request $request)
     {
-        $context = $this->getResponseContext();
+        $authenticationMode = $request->get('authenticationMode');
+        $this->supportsAuthenticationMode($authenticationMode);
+        $context = $this->getResponseContext($authenticationMode);
+
         $originalRequestId = $context->getInResponseTo();
 
         /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
@@ -297,7 +325,7 @@ class SecondFactorController extends Controller
         }
 
         $context->markSecondFactorVerified();
-        $this->getAuthenticationLogger()->logSecondFactorAuthentication($originalRequestId);
+        $this->getAuthenticationLogger()->logSecondFactorAuthentication($originalRequestId, $authenticationMode);
 
         $logger->info(sprintf(
             'Marked GSSF "%s" as verified, forwarding to Gateway controller to respond',
@@ -314,7 +342,12 @@ class SecondFactorController extends Controller
      */
     public function verifyYubiKeySecondFactorAction(Request $request)
     {
-        $context = $this->getResponseContext();
+        if (!$request->get('authenticationMode', false)) {
+            throw new RuntimeException('Unable to determine the authentication mode in Yubikey verification action');
+        }
+        $authenticationMode = $request->get('authenticationMode');
+        $this->supportsAuthenticationMode($authenticationMode);
+        $context = $this->getResponseContext($authenticationMode);
         $originalRequestId = $context->getInResponseTo();
 
         /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
@@ -328,7 +361,7 @@ class SecondFactorController extends Controller
         $command->secondFactorId = $selectedSecondFactor;
 
         $form = $this->createForm(VerifyYubikeyOtpType::class, $command)->handleRequest($request);
-        $cancelForm = $this->buildCancelAuthenticationForm()->handleRequest($request);
+        $cancelForm = $this->buildCancelAuthenticationForm($authenticationMode)->handleRequest($request);
 
         if (!$form->isValid()) {
             // OTP field is rendered empty in the template.
@@ -349,8 +382,8 @@ class SecondFactorController extends Controller
             return ['form' => $form->createView(), 'cancelForm' => $cancelForm->createView()];
         }
 
-        $this->getResponseContext()->markSecondFactorVerified();
-        $this->getAuthenticationLogger()->logSecondFactorAuthentication($originalRequestId);
+        $this->getResponseContext($authenticationMode)->markSecondFactorVerified();
+        $this->getAuthenticationLogger()->logSecondFactorAuthentication($originalRequestId, $authenticationMode);
 
         $logger->info(
             sprintf(
@@ -365,11 +398,17 @@ class SecondFactorController extends Controller
     /**
      * @Template
      * @param Request $request
+     * @param string $authenticationMode
      * @return array|Response
      */
     public function verifySmsSecondFactorAction(Request $request)
     {
-        $context = $this->getResponseContext();
+        if (!$request->get('authenticationMode', false)) {
+            throw new RuntimeException('Unable to determine the authentication mode in the SMS verification action');
+        }
+        $authenticationMode = $request->get('authenticationMode');
+        $this->supportsAuthenticationMode($authenticationMode);
+        $context = $this->getResponseContext($authenticationMode);
         $originalRequestId = $context->getInResponseTo();
 
         /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
@@ -383,7 +422,7 @@ class SecondFactorController extends Controller
         $command->secondFactorId = $selectedSecondFactor;
 
         $form = $this->createForm(SendSmsChallengeType::class, $command)->handleRequest($request);
-        $cancelForm = $this->buildCancelAuthenticationForm()->handleRequest($request);
+        $cancelForm = $this->buildCancelAuthenticationForm($authenticationMode)->handleRequest($request);
 
         $stepupService = $this->getStepupService();
         $phoneNumber = InternationalPhoneNumber::fromStringFormat(
@@ -412,17 +451,28 @@ class SecondFactorController extends Controller
             );
         }
 
-        return $this->redirect($this->generateUrl('gateway_verify_second_factor_sms_verify_challenge'));
+        return $this->redirect(
+            $this->generateUrl(
+                'gateway_verify_second_factor_sms_verify_challenge',
+                ['authenticationMode' => $authenticationMode]
+            )
+        );
     }
 
     /**
      * @Template
      * @param Request $request
+     * @param string $authenticationMode
      * @return array|Response
      */
     public function verifySmsSecondFactorChallengeAction(Request $request)
     {
-        $context = $this->getResponseContext();
+        if (!$request->get('authenticationMode', false)) {
+            throw new RuntimeException('Unable to determine the authentication mode in the SMS challenge action');
+        }
+        $authenticationMode = $request->get('authenticationMode');
+        $this->supportsAuthenticationMode($authenticationMode);
+        $context = $this->getResponseContext($authenticationMode);
         $originalRequestId = $context->getInResponseTo();
 
         /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
@@ -432,7 +482,7 @@ class SecondFactorController extends Controller
 
         $command = new VerifyPossessionOfPhoneCommand();
         $form = $this->createForm(VerifySmsChallengeType::class, $command)->handleRequest($request);
-        $cancelForm = $this->buildCancelAuthenticationForm()->handleRequest($request);
+        $cancelForm = $this->buildCancelAuthenticationForm($authenticationMode)->handleRequest($request);
 
         if (!$form->isValid()) {
             return ['form' => $form->createView(), 'cancelForm' => $cancelForm->createView()];
@@ -445,8 +495,8 @@ class SecondFactorController extends Controller
         if ($verification->wasSuccessful()) {
             $this->getStepupService()->clearSmsVerificationState();
 
-            $this->getResponseContext()->markSecondFactorVerified();
-            $this->getAuthenticationLogger()->logSecondFactorAuthentication($originalRequestId);
+            $this->getResponseContext($authenticationMode)->markSecondFactorVerified();
+            $this->getAuthenticationLogger()->logSecondFactorAuthentication($originalRequestId, $authenticationMode);
 
             $logger->info(
                 sprintf(
@@ -472,10 +522,14 @@ class SecondFactorController extends Controller
 
     /**
      * @Template
+     * @param string $authenticationMode
+     * @return array
      */
-    public function initiateU2fAuthenticationAction()
+    public function initiateU2fAuthenticationAction($authenticationMode)
     {
-        $context = $this->getResponseContext();
+        $this->supportsAuthenticationMode($authenticationMode);
+        $context = $this->getResponseContext($authenticationMode);
+
         $originalRequestId = $context->getInResponseTo();
 
         /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
@@ -484,7 +538,10 @@ class SecondFactorController extends Controller
         $selectedSecondFactor = $this->getSelectedSecondFactor($context, $logger);
         $stepupService = $this->getStepupService();
 
-        $cancelFormAction = $this->generateUrl('gateway_verify_second_factor_u2f_cancel_authentication');
+        $cancelFormAction = $this->generateUrl(
+            'gateway_verify_second_factor_u2f_cancel_authentication',
+            ['authenticationMode' => $authenticationMode]
+        );
         $cancelForm =
             $this->createForm(CancelSecondFactorVerificationType::class, null, ['action' => $cancelFormAction]);
 
@@ -512,7 +569,10 @@ class SecondFactorController extends Controller
         $session = $this->get('gateway.session.u2f');
         $session->set('request', $signRequest);
 
-        $formAction = $this->generateUrl('gateway_verify_second_factor_u2f_verify_authentication');
+        $formAction = $this->generateUrl(
+            'gateway_verify_second_factor_u2f_verify_authentication',
+            ['authenticationMode' => $authenticationMode]
+        );
         $form = $this->createForm(
             VerifyDeviceAuthenticationType::class,
             $signResponse,
@@ -526,11 +586,14 @@ class SecondFactorController extends Controller
      * @Template("SurfnetStepupGatewayGatewayBundle:SecondFactor:initiateU2fAuthentication.html.twig")
      *
      * @param Request $request
+     * @param string $authenticationMode
      * @return array|Response
      */
     public function verifyU2fAuthenticationAction(Request $request)
     {
-        $context = $this->getResponseContext();
+        $this->supportsAuthenticationMode($authenticationMode);
+        $context = $this->getResponseContext($authenticationMode);
+
         $originalRequestId = $context->getInResponseTo();
 
         /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
@@ -545,7 +608,10 @@ class SecondFactorController extends Controller
         $signRequest = $session->get('request');
         $signResponse = new SignResponse();
 
-        $formAction = $this->generateUrl('gateway_verify_second_factor_u2f_verify_authentication');
+        $formAction = $this->generateUrl(
+            'gateway_verify_second_factor_u2f_verify_authentication',
+            ['authenticationMode' => $authenticationMode]
+        );
         $form = $this
             ->createForm(
                 VerifyDeviceAuthenticationType::class,
@@ -554,7 +620,10 @@ class SecondFactorController extends Controller
             )
             ->handleRequest($request);
 
-        $cancelFormAction = $this->generateUrl('gateway_verify_second_factor_u2f_cancel_authentication');
+        $cancelFormAction = $this->generateUrl(
+            'gateway_verify_second_factor_u2f_cancel_authentication',
+            ['authenticationMode' => $authenticationMode]
+        );
         $cancelForm =
             $this->createForm(CancelSecondFactorVerificationType::class, null, ['action' => $cancelFormAction]);
 
@@ -570,7 +639,7 @@ class SecondFactorController extends Controller
 
         if ($result->wasSuccessful()) {
             $context->markSecondFactorVerified();
-            $this->getAuthenticationLogger()->logSecondFactorAuthentication($originalRequestId);
+            $this->getAuthenticationLogger()->logSecondFactorAuthentication($originalRequestId, $authenticationMode);
 
             $logger->info(
                 sprintf(
@@ -607,9 +676,16 @@ class SecondFactorController extends Controller
     /**
      * @return ResponseContext
      */
-    private function getResponseContext()
+    private function getResponseContext($authenticationMode)
     {
-        return $this->get($this->get('gateway.proxy.state_handler')->getResponseContextServiceId());
+        switch ($authenticationMode) {
+            case self::MODE_SFO:
+                return $this->get($this->get('gateway.proxy.sfo.state_handler')->getResponseContextServiceId());
+                break;
+            case self::MODE_SSO:
+                return $this->get($this->get('gateway.proxy.sso.state_handler')->getResponseContextServiceId());
+                break;
+        }
     }
 
     /**
@@ -638,7 +714,7 @@ class SecondFactorController extends Controller
         return $selectedSecondFactor;
     }
 
-    private function selectAndRedirectTo(SecondFactor $secondFactor, ResponseContext $context)
+    private function selectAndRedirectTo(SecondFactor $secondFactor, ResponseContext $context, $authenticationMode)
     {
         $context->saveSelectedSecondFactor($secondFactor);
 
@@ -654,20 +730,29 @@ class SecondFactorController extends Controller
             $route .= strtolower($secondFactor->secondFactorType);
         }
 
-        return $this->redirect($this->generateUrl($route));
+        return $this->redirect($this->generateUrl($route, ['authenticationMode' => $authenticationMode]));
     }
 
     /**
-     * @return Form
+     * @param string $authenticationMode
+     * @return FormInterface
      */
-    private function buildCancelAuthenticationForm()
+    private function buildCancelAuthenticationForm($authenticationMode)
     {
         $cancelFormAction = $this->generateUrl('gateway_cancel_authentication');
-        $cancelForm = $this->createForm(
+
+        return $this->createForm(
             CancelAuthenticationType::class,
             null,
             ['action' => $cancelFormAction]
         );
-        return $cancelForm;
+    }
+
+    private function supportsAuthenticationMode($authenticationMode)
+    {
+        if ($authenticationMode === self::MODE_SSO || $authenticationMode === self::MODE_SFO) {
+            return true;
+        }
+        return false;
     }
 }

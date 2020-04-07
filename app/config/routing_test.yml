@@ -10,3 +10,8 @@ surfnet_stepup_gateway_behat_identity_provider_acs:
     path:     /test/authentication/sso
     methods:  [GET]
     defaults: { _controller: Surfnet\StepupGateway\Behat\Controller\IdentityProviderController:ssoAction }
+
+surfnet_stepup_gateway_behat_gssp_sso:
+    path:     /test/gssp/sso
+    methods:  [GET]
+    defaults: { _controller: Surfnet\StepupGateway\Behat\Controller\IdentityProviderController:gsspSsoAction }

@@ -106,7 +106,9 @@ class GatewayController extends Controller
             return $this->renderSamlResponse('unprocessableResponse', $response);
         }
 
-        return $this->forward('SurfnetStepupGatewayGatewayBundle:SecondFactor:selectSecondFactorForVerification');
+        // Forward to the selectSecondFactorForVerificationSsoAction, this in turn will forward to the correct
+        // verification action (based on authentication type sso/sfo)
+        return $this->forward('SurfnetStepupGatewayGatewayBundle:SecondFactor:selectSecondFactorForVerificationSso');
     }
 
     /**
@@ -190,7 +192,7 @@ class GatewayController extends Controller
      */
     public function getResponseContext()
     {
-        $stateHandler = $this->get('gateway.proxy.state_handler');
+        $stateHandler = $this->get('gateway.proxy.sso.state_handler');
 
         $responseContextServiceId = $stateHandler->getResponseContextServiceId();
 

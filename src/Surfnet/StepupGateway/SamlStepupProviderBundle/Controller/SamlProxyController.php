@@ -161,7 +161,17 @@ class SamlProxyController extends Controller
                 )
             );
         } catch (SecondfactorVerfificationRequiredException $e) {
-            return $this->forward('SurfnetStepupGatewayGatewayBundle:SecondFactor:gssfVerified');
+            // The provider state handler has no access to the session object, hence we use the proxy state handler
+            $stateHandler = $this->get('gateway.proxy.sso.state_handler');
+            return $this->forward(
+                'SurfnetStepupGatewayGatewayBundle:SecondFactor:gssfVerified',
+                [
+                    // The authentication mode is loaded from session, based on the request id
+                    'authenticationMode' => $stateHandler->getAuthenticationModeForRequestId(
+                        $consumeAssertionService->getReceivedRequestId()
+                    ),
+                ]
+            );
         } catch (Exception $e) {
             throw $e;
         }
@@ -373,7 +383,7 @@ class SamlProxyController extends Controller
      */
     public function getResponseContext()
     {
-        $stateHandler = $this->get('gateway.proxy.state_handler');
+        $stateHandler = $this->get('gateway.proxy.sso.state_handler');
 
         $responseContextServiceId = $stateHandler->getResponseContextServiceId();
 
