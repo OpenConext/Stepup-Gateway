@@ -34,7 +34,6 @@ class AppKernel extends Kernel
             new Surfnet\StepupGateway\ApiBundle\SurfnetStepupGatewayApiBundle(),
             new Nelmio\SecurityBundle\NelmioSecurityBundle(),
             new Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle(),
-            new Mopa\Bundle\BootstrapBundle\MopaBootstrapBundle(),
             new Surfnet\MessageBirdApiClientBundle\SurfnetMessageBirdApiClientBundle(),
             new Surfnet\YubikeyApiClientBundle\SurfnetYubikeyApiClientBundle(),
             new Surfnet\StepupBundle\SurfnetStepupBundle(),

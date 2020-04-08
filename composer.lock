@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7bdbbab483651195489cdf60ffbd8e7e",
+    "content-hash": "09fe1a69a3c8992ea49445544247371d",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -1689,131 +1689,6 @@
                 "psr-3"
             ],
             "time": "2017-06-19T01:22:40+00:00"
-        },
-        {
-            "name": "mopa/bootstrap-bundle",
-            "version": "v3.2.2",
-            "target-dir": "Mopa/Bundle/BootstrapBundle",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/phiamo/MopaBootstrapBundle.git",
-                "reference": "d30a6d807c582c606d8fc138dba6584dea559849"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/phiamo/MopaBootstrapBundle/zipball/d30a6d807c582c606d8fc138dba6584dea559849",
-                "reference": "d30a6d807c582c606d8fc138dba6584dea559849",
-                "shasum": ""
-            },
-            "require": {
-                "mopa/composer-bridge": "~1.3",
-                "symfony/console": "~2.3|~3.0|^4.0",
-                "symfony/form": "~2.3|~3.0|^4.0",
-                "symfony/framework-bundle": "~2.3|~3.0|^4.0",
-                "symfony/twig-bundle": "~2.3|~3.0|^4.0",
-                "twig/twig": "^1.14.2|^2.0"
-            },
-            "conflict": {
-                "symfony/twig-bridge": "<2.3"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "~6.0",
-                "symfony/security-bundle": "~2.3|~3.0|^4.0",
-                "symfony/translation": "~2.3|~3.0|^4.0"
-            },
-            "suggest": {
-                "craue/formflow-bundle": "~2.0",
-                "knplabs/knp-menu-bundle": "~2.0@dev",
-                "knplabs/knp-paginator-bundle": "~2.3",
-                "mopa/bootstrap-sandbox-bundle": "~2.3",
-                "twbs/bootstrap": ">2.0,<4.0-dev",
-                "twbs/bootstrap-sass": "v3.1.1"
-            },
-            "type": "symfony-bundle",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "3.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-0": {
-                    "Mopa\\Bundle\\BootstrapBundle\\": ""
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Community contributions",
-                    "homepage": "https://github.com/phiamo/MopaBootstrapBundle/contributors"
-                },
-                {
-                    "name": "Philipp A. Mohrenweiser",
-                    "email": "phiamo@googlemail.com"
-                }
-            ],
-            "description": "Easy integration of twitters bootstrap into symfony2",
-            "keywords": [
-                "bootstrap",
-                "bootstrap form",
-                "extra form",
-                "form",
-                "template"
-            ],
-            "time": "2017-12-23T16:45:33+00:00"
-        },
-        {
-            "name": "mopa/composer-bridge",
-            "version": "v1.5.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/phiamo/MopaComposerBridge.git",
-                "reference": "58661a5c588ce9c3eff7d36c4030f6caa4de1ae2"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/phiamo/MopaComposerBridge/zipball/58661a5c588ce9c3eff7d36c4030f6caa4de1ae2",
-                "reference": "58661a5c588ce9c3eff7d36c4030f6caa4de1ae2",
-                "shasum": ""
-            },
-            "require": {
-                "symfony/class-loader": ">=2.0.0",
-                "symfony/console": ">=2.0.0"
-            },
-            "type": "symfony-bridge",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.3.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-0": {
-                    "Mopa\\Bridge\\Composer": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Community contributions",
-                    "homepage": "https://github.com/phiamo/MopaComposerBridge/contributors"
-                },
-                {
-                    "name": "Philipp A. Mohrenweiser",
-                    "email": "phiamo@googlemail.com"
-                }
-            ],
-            "description": "Symfony2 Composer Bridge",
-            "homepage": "http://bootstrap.mohrenweiserpartner.de",
-            "keywords": [
-                "Symfony2",
-                "composer"
-            ],
-            "time": "2015-10-01T19:20:19+00:00"
         },
         {
             "name": "nelmio/security-bundle",
@@ -3739,57 +3614,6 @@
             "time": "2019-12-01T13:50:53+00:00"
         },
         {
-            "name": "twbs/bootstrap",
-            "version": "v3.3.7",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/twbs/bootstrap.git",
-                "reference": "0b9c4a4007c44201dce9a6cc1a38407005c26c86"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/twbs/bootstrap/zipball/0b9c4a4007c44201dce9a6cc1a38407005c26c86",
-                "reference": "0b9c4a4007c44201dce9a6cc1a38407005c26c86",
-                "shasum": ""
-            },
-            "replace": {
-                "twitter/bootstrap": "self.version"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "3.3.x-dev"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Jacob Thornton",
-                    "email": "jacobthornton@gmail.com"
-                },
-                {
-                    "name": "Mark Otto",
-                    "email": "markdotto@gmail.com"
-                }
-            ],
-            "description": "The most popular front-end framework for developing responsive, mobile first projects on the web.",
-            "homepage": "http://getbootstrap.com",
-            "keywords": [
-                "JS",
-                "css",
-                "framework",
-                "front-end",
-                "less",
-                "mobile-first",
-                "responsive",
-                "web"
-            ],
-            "time": "2016-07-25T15:51:55+00:00"
-        },
-        {
             "name": "twig/extensions",
             "version": "v1.5.2",
             "source": {
@@ -4473,6 +4297,67 @@
             "time": "2016-03-05T09:04:22+00:00"
         },
         {
+            "name": "behat/mink-selenium2-driver",
+            "version": "v1.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/minkphp/MinkSelenium2Driver.git",
+                "reference": "312a967dd527f28980cce40850339cd5316da092"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/minkphp/MinkSelenium2Driver/zipball/312a967dd527f28980cce40850339cd5316da092",
+                "reference": "312a967dd527f28980cce40850339cd5316da092",
+                "shasum": ""
+            },
+            "require": {
+                "behat/mink": "~1.7@dev",
+                "instaclick/php-webdriver": "~1.1",
+                "php": ">=5.4"
+            },
+            "require-dev": {
+                "mink/driver-testsuite": "dev-master"
+            },
+            "type": "mink-driver",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.4.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Behat\\Mink\\Driver\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Pete Otaqui",
+                    "email": "pete@otaqui.com",
+                    "homepage": "https://github.com/pete-otaqui"
+                },
+                {
+                    "name": "Konstantin Kudryashov",
+                    "email": "ever.zet@gmail.com",
+                    "homepage": "http://everzet.com"
+                }
+            ],
+            "description": "Selenium2 (WebDriver) driver for Mink framework",
+            "homepage": "http://mink.behat.org/",
+            "keywords": [
+                "ajax",
+                "browser",
+                "javascript",
+                "selenium",
+                "testing",
+                "webdriver"
+            ],
+            "time": "2020-03-11T14:43:21+00:00"
+        },
+        {
             "name": "behat/symfony2-extension",
             "version": "2.1.5",
             "source": {
@@ -4709,6 +4594,65 @@
                 "test"
             ],
             "time": "2015-05-11T14:41:42+00:00"
+        },
+        {
+            "name": "instaclick/php-webdriver",
+            "version": "1.4.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/instaclick/php-webdriver.git",
+                "reference": "b5f330e900e9b3edfc18024a5ec8c07136075712"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/instaclick/php-webdriver/zipball/b5f330e900e9b3edfc18024a5ec8c07136075712",
+                "reference": "b5f330e900e9b3edfc18024a5ec8c07136075712",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "php": ">=5.3.2"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.8",
+                "satooshi/php-coveralls": "^1.0||^2.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.4.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "WebDriver": "lib/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Justin Bishop",
+                    "email": "jubishop@gmail.com",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Anthon Pang",
+                    "email": "apang@softwaredevelopment.ca",
+                    "role": "Fork Maintainer"
+                }
+            ],
+            "description": "PHP WebDriver for Selenium 2",
+            "homepage": "http://instaclick.com/",
+            "keywords": [
+                "browser",
+                "selenium",
+                "webdriver",
+                "webtest"
+            ],
+            "time": "2019-09-25T09:05:11+00:00"
         },
         {
             "name": "matthiasnoback/symfony-config-test",
@@ -5628,6 +5572,93 @@
             "time": "2017-06-30T09:13:00+00:00"
         },
         {
+            "name": "ramsey/uuid",
+            "version": "3.9.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ramsey/uuid.git",
+                "reference": "7e1633a6964b48589b142d60542f9ed31bd37a92"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ramsey/uuid/zipball/7e1633a6964b48589b142d60542f9ed31bd37a92",
+                "reference": "7e1633a6964b48589b142d60542f9ed31bd37a92",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "paragonie/random_compat": "^1 | ^2 | 9.99.99",
+                "php": "^5.4 | ^7 | ^8",
+                "symfony/polyfill-ctype": "^1.8"
+            },
+            "replace": {
+                "rhumsaa/uuid": "self.version"
+            },
+            "require-dev": {
+                "codeception/aspect-mock": "^1 | ^2",
+                "doctrine/annotations": "^1.2",
+                "goaop/framework": "1.0.0-alpha.2 | ^1 | ^2.1",
+                "jakub-onderka/php-parallel-lint": "^1",
+                "mockery/mockery": "^0.9.11 | ^1",
+                "moontoast/math": "^1.1",
+                "paragonie/random-lib": "^2",
+                "php-mock/php-mock-phpunit": "^0.3 | ^1.1",
+                "phpunit/phpunit": "^4.8 | ^5.4 | ^6.5",
+                "squizlabs/php_codesniffer": "^3.5"
+            },
+            "suggest": {
+                "ext-ctype": "Provides support for PHP Ctype functions",
+                "ext-libsodium": "Provides the PECL libsodium extension for use with the SodiumRandomGenerator",
+                "ext-openssl": "Provides the OpenSSL extension for use with the OpenSslGenerator",
+                "ext-uuid": "Provides the PECL UUID extension for use with the PeclUuidTimeGenerator and PeclUuidRandomGenerator",
+                "moontoast/math": "Provides support for converting UUID to 128-bit integer (in string form).",
+                "paragonie/random-lib": "Provides RandomLib for use with the RandomLibAdapter",
+                "ramsey/uuid-console": "A console application for generating UUIDs with ramsey/uuid",
+                "ramsey/uuid-doctrine": "Allows the use of Ramsey\\Uuid\\Uuid as Doctrine field type."
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Ramsey\\Uuid\\": "src/"
+                },
+                "files": [
+                    "src/functions.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ben Ramsey",
+                    "email": "ben@benramsey.com",
+                    "homepage": "https://benramsey.com"
+                },
+                {
+                    "name": "Marijn Huizendveld",
+                    "email": "marijn.huizendveld@gmail.com"
+                },
+                {
+                    "name": "Thibaud Fabre",
+                    "email": "thibaud@aztech.io"
+                }
+            ],
+            "description": "Formerly rhumsaa/uuid. A PHP 5.4+ library for generating RFC 4122 version 1, 3, 4, and 5 universally unique identifiers (UUID).",
+            "homepage": "https://github.com/ramsey/uuid",
+            "keywords": [
+                "guid",
+                "identifier",
+                "uuid"
+            ],
+            "time": "2020-02-21T04:36:14+00:00"
+        },
+        {
             "name": "sebastian/code-unit-reverse-lookup",
             "version": "1.0.1",
             "source": {
@@ -6395,6 +6426,8 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
+        "ext-libxml": "*",
+        "ext-pdo": "*",
         "php": "~5.6|~7.0"
     },
     "platform-dev": [],
