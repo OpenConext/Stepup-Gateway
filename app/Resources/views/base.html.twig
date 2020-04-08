@@ -1,58 +1,129 @@
-{% extends 'MopaBootstrapBundle::base.html.twig' %}
-{% from 'MopaBootstrapBundle::flash.html.twig' import session_flash %}
+<!DOCTYPE html>
 
-{% block title %}
-    {%  if block('page_title') is not empty %}{{ block('page_title') }} &mdash; {% endif %}
-    {{ app_name }}
-{% endblock title %}
-{% block head_style %}
-    {% stylesheets
-    '../app/Resources/public/less/style.less' filter='less'
-    %}
-    <link href="{{ asset_url }}" type="text/css" rel="stylesheet" media="screen" />
-    {% endstylesheets %}
-{% endblock head_style %}
+{% block html_tag %}
+<html lang="{{ app.request.locale }}">
+{% endblock html_tag %}
 
-{% block navbar %}
-    {#{{ mopa_bootstrap_navbar('frontendNavbar') }}#}
-{% endblock navbar %}
+{% block head %}
+    <head>
+        <meta charset="{{ _charset }}" />
+        {% block head_style %}
+            {% stylesheets filter='less'
+                '../app/Resources/public/less/style.less'
+                '@SurfnetStepupBundle/Resources/public/less/stepup.less'
+            %}
+                <link href="{{ asset_url }}" type="text/css" rel="stylesheet" media="screen, print" />
+            {% endstylesheets %}
+        {% endblock head_style %}
 
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>
+            {% block title %}
+                {%  if block('page_title') is not empty %}{{ block('page_title') }} &mdash; {% endif %}
+                {{ app_name }}
+            {% endblock title %}
+        </title>
+        {% block favicon %}<link rel="shortcut icon" href="{{ asset('favicon.ico') }}" />{% endblock %}
+
+        {% block head_bottom %}
+            <base href="{{ app.request.schemeAndHttpHost ~ app.request.baseUrl }}">
+        {% endblock head_bottom %}
+    </head>
+{% endblock head %}
+
+{% block body_tag %}
+<body>
+{% endblock body_tag %}
+
+{% block body_start %}
+{% endblock body_start %}
+
+{% block body %}
+
+    {% block navbar %}{% endblock navbar %}
+
+{% block container %}
+{% block container_div_start %}<div class="{% block container_class %}container{% endblock container_class %}">{% endblock container_div_start %}
     {% block header %}
     {% endblock header %}
 
-        {% block page_header %}
-            <div class="page-header clearfix">
-                <img src="/images/header-logo.png" class="pull-right logo" alt="OpenConext Stepup">
-                <h1>{% block application_name %}{{ app_name }}{% endblock %}</h1>
+{% block content_div_start %}<div class="content">{% endblock content_div_start %}
+    {% block page_header %}
+        <div class="page-header clearfix">
+            <img src="/images/header-logo.png" class="pull-right logo" alt="OpenConext Stepup">
+            <h1>{{ app_name }}</h1>
+        </div>
+        {% if app.user %}
+            <div class="clearfix page-header-user">
+                <form method="post" action="{{ logout_url('saml_based') }}" class="pull-right">
+                    <button type="submit" class="btn btn-link">
+                        <i class="fa fa-sign-out"></i>
+                        {{ 'button.logout'|trans }}
+                    </button>
+                </form>
+                {% set locale_switcher = stepup_locale_switcher(app.request.locale, 'ss_switch_locale', {'return-url': app.request.uri}) %}
+                {{ form_start(locale_switcher, { attr: { class: 'form-inline' }}) }}
+                {{ form_widget(locale_switcher.locale) }}
+                {{ form_widget(locale_switcher.switch) }}
+                {{ form_end(locale_switcher) }}
             </div>
-        {% endblock page_header %}
+            <hr>
+        {% endif %}
+    {% endblock page_header %}
 
-        {% block flashes %}
-            {% if app.session.flashbag.peekAll|length > 0 %}
-                <div class="row-fluid">
-                    <div id="flash" class="span12">
-                        {{ session_flash() }}
-                    </div>
+    {% block form_errors %}
+        {% if app.session.flashbag.peekAll|length > 0 %}
+            <div class="row-fluid">
+                <div id="flash" class="span12">
                 </div>
-            {% endif %}
-        {% endblock flashes %}
+            </div>
+        {% endif %}
+    {% endblock form_errors %}
 
-        {% block content_row %}
-            {% block content %}
-            {% endblock content %}
-        {% endblock content_row %}
+    {% block content_row %}
+        {% block content %}
+        {% endblock content %}
+    {% endblock content_row %}
 
-        {% block footer %}
-            <p><a href="{{ global_view_parameters.supportUrl }}" target="_blank">Help</a></p>
-        {% endblock footer %}
+{% block content_div_end %}</div>{% endblock content_div_end %}
+
+{% block footer_tag_start %}
+    <footer>
+{% endblock footer_tag_start %}
+
+    {% block footer %}
+        <div class="row-fluid">
+            <div class="span8 offset2">
+                <hr>
+                <ul class="nav nav-pills">
+                    <li><a href="{{ path("ss_entry_point") }}">Home</a></li>
+                    <li><a href="{{ global_view_parameters.supportUrl }}" target="_blank">{{ 'ss.support_url_text'|trans }}</a></li>
+                </ul>
+            </div>
+        </div>
+    {% endblock footer %}
+
+{% block footer_tag_end %}
+    </footer>
+{% endblock footer_tag_end %}
+{% block container_div_end %}</div>{% endblock container_div_end %}
+{% endblock container %}
+
+    {% block body_end_before_js %}
+    {% endblock body_end_before_js %}
 
 {% block foot_script %}
     {% javascripts
-    '@SurfnetStepupBundle/Resources/public/js/jquery-1.11.2.min.js'
-    '@SurfnetStepupBundle/Resources/public/js/stepup.js'
+        '@SurfnetStepupBundle/Resources/public/js/jquery-1.11.2.min.js'
+        '@SurfnetStepupBundle/Resources/public/js/stepup.js'
     %}
     <script type="text/javascript" src="{{ asset_url }}"></script>
     {% endjavascripts %}
 {% endblock foot_script %}
-{% block foot_script_additional %}
-{% endblock foot_script_additional %}
+
+{% endblock body %}
+
+{% block body_end %}
+{% endblock body_end %}
+</body>
+</html>

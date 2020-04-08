@@ -28,17 +28,7 @@ class VerifyYubikeyOtpType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('otp', TextType::class, [
-            'label' => /** @Ignore */ false,
-            'required' => true,
-            'widget_addon_prepend' => [
-                'icon' => 'key'
-            ],
-            'attr' => [
-                'autofocus'    => true,
-                'autocomplete' => 'off',
-            ]
-        ]);
+        $builder->add('otp', OtpType::class);
         // This button is the form's default button, so as to prevent the form being submitted as if the cancel button
         // has been pressed.
         $builder->add('submit', SubmitType::class, [
