@@ -8,4 +8,5 @@ docker-compose up -d --build
 
 docker-compose exec -T php-fpm.stepup.example.com bash -c '
   composer install --prefer-dist -n -o && \
+  npm install --only=prod && \
   ./app/console assetic:dump --env=webtest --verbose'
