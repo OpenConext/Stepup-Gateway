@@ -1,4 +1,4 @@
-@SKIP @selenium
+@selenium
 Feature: As an institution that uses the second factor only feature
   In order to facilitate SFO rollover from StepUp to EngineBlock
   I must be able to run SFO and regular authentications in parallel
@@ -47,6 +47,7 @@ Feature: As an institution that uses the second factor only feature
     When I enter the SMS verification code
     Then the response should match xpath '//samlp:StatusCode[@Value="urn:oasis:names:tc:SAML:2.0:status:Success"]'
 
+  @SKIP
   Scenario: A regular and SFO authentication in parallel using Tiqr token
     When I switch to "Browser tab 1"
     And urn:collab:person:stepup.example.com:john_haack starts an authentication
