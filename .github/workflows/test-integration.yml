@@ -55,6 +55,7 @@ jobs:
                   '
               env:
                   SYMFONY_ENV: webtest
+              continue-on-error: true
             - name: Output log files on failure
               if: failure()
               run:  |
