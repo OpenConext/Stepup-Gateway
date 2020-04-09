@@ -51,7 +51,7 @@
     {% block page_header %}
         <div class="page-header clearfix">
             <img src="/images/header-logo.png" class="pull-right logo" alt="OpenConext Stepup">
-            <h1>{{ app_name }}</h1>
+            <h1>{% block application_name %}{{ app_name }}{% endblock %}</h1>
         </div>
         {% if app.user %}
             <div class="clearfix page-header-user">
