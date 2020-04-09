@@ -36,7 +36,7 @@ services:
     php-fpm.stepup.example.com:
         build:
             context: ../
-            dockerfile: docker/php-fpm/Dockerfile
+            dockerfile: docker/php-fpm/Dockerfile-php72
         container_name: gateway-phpfpm
         volumes:
             - ../../:/var/www
