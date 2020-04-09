@@ -17,20 +17,3 @@ services:
 
   surfnet_stepup.service.challenge_handler:
     class: Surfnet\StepupGateway\ApiBundle\Tests\TestDouble\Service\SessionSmsVerificationStateHandler
-
-  Surfnet\StepupGateway\Behat\MinkContext:
-    class: Surfnet\StepupGateway\Behat\MinkContext
-
-  Surfnet\StepupGateway\Behat\Repository\Connection:
-    class: Surfnet\StepupGateway\Behat\Repository\Connection
-    arguments:
-      - 'gateway'
-      - 'gateway'
-      - 'gateway'
-      - 'db.stepup.example.com'
-
-  Surfnet\StepupGateway\Behat\Service\FixtureService:
-    class: Surfnet\StepupGateway\Behat\Service\FixtureService
-
-  Surfnet\StepupGateway\Behat\Controller\ServiceProviderController:
-    class: Surfnet\StepupGateway\Behat\Controller\ServiceProviderController
