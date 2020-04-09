@@ -60,4 +60,3 @@ jobs:
               if: failure()
               run:  |
                   cd ci/docker && docker-compose -f docker-compose-php74.yml exec -T php-fpm.stepup.example.com cat app/logs/webtest.log
-
