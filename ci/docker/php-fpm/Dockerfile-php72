@@ -6,11 +6,10 @@ COPY docker/php-fpm/app.ini /usr/local/etc/php/conf.d/
 COPY app.php ../web/app.php
 
 # Install dependencies
-RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
-RUN apt-get update && apt-get install -y \
+RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -
+RUN apt-get update && apt-get install -yf \
     git \
     nodejs \
-    npm \
     zip \
     chromium \
     libpng-dev \
