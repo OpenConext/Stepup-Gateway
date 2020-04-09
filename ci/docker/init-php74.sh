@@ -4,9 +4,9 @@ gid=$(id -g)
 
 printf "UID=${uid}\nGID=${gid}\nCOMPOSE_PROJECT_NAME=gateway" > .env
 
-docker-compose up -d --build
+docker-compose -f docker-compose-php74.yml up -d --build
 
-docker-compose exec -T php-fpm.stepup.example.com bash -c '
+docker-compose -f docker-compose-php74.yml exec -T php-fpm.stepup.example.com bash -c '
   composer install --prefer-dist -n -o && \
   npm install --only=prod && \
   ./app/console assetic:dump --env=webtest --verbose'
