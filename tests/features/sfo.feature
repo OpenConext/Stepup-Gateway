@@ -30,3 +30,17 @@ Feature: As an institution that uses the second factor only feature
     Then I should see the Yubikey OTP screen
     When I enter the OTP
     Then the response should match xpath '//samlp:StatusCode[@Value="urn:oasis:names:tc:SAML:2.0:status:Success"]'
+
+  Scenario: SFO without a token yields a SAML error response
+    Given an SFO enabled SP with EntityID https://sp.stepup.example.com
+    And a whitelisted institution stepup.example.com
+    And a user from stepup.example.com identified by urn:collab:person:stepup.example.com:kirill_sarychev
+    When urn:collab:person:stepup.example.com:kirill_sarychev starts an SFO authentication
+    Then the response should match xpath '//samlp:StatusCode[@Value="urn:oasis:names:tc:SAML:2.0:status:Failed"]'
+
+  Scenario: SFO without a suitable token yields a SAML error response
+    Given an SFO enabled SP with EntityID https://sp.stepup.example.com
+    And a whitelisted institution stepup.example.com
+    And a user from stepup.example.com identified by urn:collab:person:stepup.example.com:kirill_sarychev with a vetted SMS token
+    When urn:collab:person:stepup.example.com:kirill_sarychev starts an SFO authentication requiring http://stepup.example.com/assurance/sfo-level3
+    Then the response should match xpath '//samlp:StatusCode[@Value="urn:oasis:names:tc:SAML:2.0:status:Failed"]'

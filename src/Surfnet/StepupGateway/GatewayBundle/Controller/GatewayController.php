@@ -201,6 +201,15 @@ class GatewayController extends Controller
         }
 
         return $this->get($responseContextServiceId);
+
+        //        switch ($authenticationMode) {
+        //            case self::MODE_SFO:
+        //                return $this->get($this->get('gateway.proxy.sfo.state_handler')->getResponseContextServiceId());
+        //                break;
+        //            case self::MODE_SSO:
+        //                return $this->get($this->get('gateway.proxy.sso.state_handler')->getResponseContextServiceId());
+        //                break;
+        //        }
     }
 
     /**
