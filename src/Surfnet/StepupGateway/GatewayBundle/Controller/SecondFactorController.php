@@ -99,7 +99,11 @@ class SecondFactorController extends Controller
         } catch (LoaCannotBeGivenException $e) {
             // Log the message of the domain exception, this contains a meaningful message.
             $logger->notice($e->getMessage());
-            return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:sendLoaCannotBeGiven');
+
+            return $this->forward(
+                'SurfnetStepupGatewayGatewayBundle:Gateway:sendLoaCannotBeGiven',
+                ['authenticationMode' => $authenticationMode]
+            );
         }
 
         $logger->notice(sprintf('Determined that the required Loa is "%s"', $requiredLoa));
@@ -121,7 +125,11 @@ class SecondFactorController extends Controller
         switch (count($secondFactorCollection)) {
             case 0:
                 $logger->notice('No second factors can give the determined Loa');
-                return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:sendLoaCannotBeGiven');
+
+                return $this->forward(
+                    'SurfnetStepupGatewayGatewayBundle:Gateway:sendLoaCannotBeGiven',
+                    ['authenticationMode' => $authenticationMode]
+                );
                 break;
 
             case 1:
@@ -591,6 +599,8 @@ class SecondFactorController extends Controller
      */
     public function verifyU2fAuthenticationAction(Request $request)
     {
+        // u2f is not supported, hardcoded to use SSO auth mode in verification mode. Will break SFO.
+        $authenticationMode = self::MODE_SSO;
         $this->supportsAuthenticationMode($authenticationMode);
         $context = $this->getResponseContext($authenticationMode);
 
@@ -750,9 +760,8 @@ class SecondFactorController extends Controller
 
     private function supportsAuthenticationMode($authenticationMode)
     {
-        if ($authenticationMode === self::MODE_SSO || $authenticationMode === self::MODE_SFO) {
-            return true;
+        if (!($authenticationMode === self::MODE_SSO || $authenticationMode === self::MODE_SFO)) {
+            throw new InvalidArgumentException('Invalid authentication mode requested');
         }
-        return false;
     }
 }
