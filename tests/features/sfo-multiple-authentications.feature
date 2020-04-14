@@ -6,9 +6,9 @@ Feature: As an institution that uses the second factor only feature
     Given an SFO enabled SP with EntityID https://sp.stepup.example.com/sfo
     And an SP with EntityID https://sp.stepup.example.com
     And a whitelisted institution stepup.example.com
-    And a user from stepup.example.com identified by urn:collab:person:stepup.example.com:john_haack with a vetted Yubikey token
-    And a user from stepup.example.com identified by urn:collab:person:stepup.example.com:john_haack with a vetted SMS token
-    And a user from stepup.example.com identified by urn:collab:person:stepup.example.com:john_haack with a vetted tiqr token
+    And a user from "stepup.example.com" identified by "urn:collab:person:stepup.example.com:john_haack" with a vetted "Yubikey" token
+    And a user from "stepup.example.com" identified by "urn:collab:person:stepup.example.com:john_haack" with a vetted "SMS" token
+    And a user from "stepup.example.com" identified by "urn:collab:person:stepup.example.com:john_haack" with a vetted "tiqr" token
     And I open 2 browser tabs identified by "Browser tab 1, Browser tab 2"
 
   Scenario: A regular and SFO authentication in parallel using Yubikey token
