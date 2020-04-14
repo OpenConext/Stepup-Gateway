@@ -21,6 +21,7 @@ namespace Surfnet\StepupGateway\Behat;
 use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\BeforeFeatureScope;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
+use Behat\Behat\Tester\Exception\PendingException;
 use Surfnet\StepupGateway\Behat\Service\FixtureService;
 
 class FeatureContext implements Context
@@ -68,7 +69,7 @@ class FeatureContext implements Context
     }
 
     /**
-     * @Given /^a user from ([^"]*) identified by ([^"]*) with a vetted ([^"]*) token$/
+     * @Given /^a user from "([^"]*)" identified by "([^"]*)" with a vetted "([^"]*)" token$/
      */
     public function aUserIdentifiedByWithAVettedToken($institution, $nameId, $tokenType)
     {
@@ -86,7 +87,7 @@ class FeatureContext implements Context
     }
 
     /**
-     * @Given /^a user from ([^"]*) identified by ([^"]*)$/
+     * @Given /^a user from "([^"]*)" identified by "([^"]*)"$/
      */
     public function aUserIdentifiedBy($institution, $nameId)
     {
@@ -189,5 +190,13 @@ class FeatureContext implements Context
     public function iShouldBeOnTheWAYG()
     {
         $this->minkContext->assertPageContainsText('Choose a token for login');
+    }
+
+    /**
+     * @Then /^an error response is posted back to the SP$/
+     */
+    public function anErrorResponseIsPostedBackToTheSP()
+    {
+        $this->minkContext->pressButton('Submit');
     }
 }
