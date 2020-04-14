@@ -30,7 +30,6 @@ use Surfnet\StepupGateway\GatewayBundle\Service\Gateway\LoginService;
 use Surfnet\StepupGateway\GatewayBundle\Service\Gateway\RespondService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
@@ -39,11 +38,12 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
  *
  * See docs/GatewayState.md for a high-level diagram on how this controller
  * interacts with outside actors and other parts of Stepup.
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class GatewayController extends Controller
 {
     const RESPONSE_CONTEXT_SERVICE_ID = 'gateway.proxy.response_context';
-
     const MODE_SFO = 'sfo';
     const MODE_SSO = 'sso';
 
@@ -73,7 +73,9 @@ class GatewayController extends Controller
         try {
             $proxyRequest = $gatewayLoginService->singleSignOn($httpRequest);
         } catch (RequesterFailureException $e) {
-            $response = $this->getGatewayFailedResponseService()->createRequesterFailureResponse($this->getResponseContext());
+            $response = $this->getGatewayFailedResponseService()->createRequesterFailureResponse(
+                $this->getResponseContext(self::MODE_SSO)
+            );
 
             return $this->renderSamlResponse('consumeAssertion', $response, self::MODE_SSO);
         }
