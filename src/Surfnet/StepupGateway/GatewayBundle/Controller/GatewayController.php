@@ -74,7 +74,7 @@ class GatewayController extends Controller
         } catch (RequesterFailureException $e) {
             $response = $this->getGatewayFailedResponseService()->createRequesterFailureResponse($this->getResponseContext());
 
-            return $this->renderSamlResponse('consumeAssertion', $response);
+            return $this->renderSamlResponse('consumeAssertion', $response, self::MODE_SSO);
         }
 
         return $redirectBinding->createResponseFor($proxyRequest);
@@ -109,7 +109,7 @@ class GatewayController extends Controller
         } catch (ResponseFailureException $e) {
             $response = $this->getGatewayFailedResponseService()->createResponseFailureResponse($responseContext);
 
-            return $this->renderSamlResponse('unprocessableResponse', $response);
+            return $this->renderSamlResponse('unprocessableResponse', $response, self::MODE_SSO);
         }
 
         // Forward to the selectSecondFactorForVerificationSsoAction, this in turn will forward to the correct
@@ -133,10 +133,11 @@ class GatewayController extends Controller
         $response = $gatewayLoginService->respond($responseContext);
         $gatewayLoginService->resetRespondState($responseContext);
 
-        return $this->renderSamlResponse('consumeAssertion', $response);
+        return $this->renderSamlResponse('consumeAssertion', $response, self::MODE_SSO);
     }
 
     /**
+     * This action is also used from the context of SecondFactorOnly authentications
      * @param $authenticationMode
      * @return Response
      */
@@ -152,7 +153,7 @@ class GatewayController extends Controller
 
         $response = $gatewayLoginService->sendLoaCannotBeGiven($responseContext);
 
-        return $this->renderSamlResponse('consumeAssertion', $response);
+        return $this->renderSamlResponse('consumeAssertion', $response, $authenticationMode);
     }
 
     /**
@@ -169,8 +170,9 @@ class GatewayController extends Controller
     }
 
     /**
-     * @param string         $view
+     * @param string $view
      * @param SAMLResponse $response
+     * @param $authenticationMode
      * @return Response
      */
     public function renderSamlResponse($view, SAMLResponse $response, $authenticationMode)
