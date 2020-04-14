@@ -47,3 +47,13 @@ Feature: As an institution that uses the second factor only feature
     When urn:collab:person:stepup.example.com:kirill_sarychev starts an SFO authentication requiring http://stepup.example.com/assurance/sfo-level3
     Then an error response is posted back to the SP
     And the response should match xpath '//samlp:StatusCode[@Value="urn:oasis:names:tc:SAML:2.0:status:NoAuthnContext"]'
+
+  Scenario: Cancelling out of an SFO authentication
+    Given an SFO enabled SP with EntityID https://sp.stepup.example.com
+    And a whitelisted institution stepup.example.com
+    And a user from "stepup.example.com" identified by "urn:collab:person:stepup.example.com:kirill_sarychev" with a vetted "SMS" token
+    When urn:collab:person:stepup.example.com:kirill_sarychev starts an SFO authentication
+    And I cancel the authentication
+    Then an error response is posted back to the SP
+    And the response should match xpath '//samlp:StatusCode[@Value="urn:oasis:names:tc:SAML:2.0:status:AuthnFailed"]'
+    And the response should match xpath '//samlp:StatusMessage[text()="Authentication cancelled by user"]'

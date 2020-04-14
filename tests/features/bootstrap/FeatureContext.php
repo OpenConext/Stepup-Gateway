@@ -199,4 +199,12 @@ class FeatureContext implements Context
     {
         $this->minkContext->pressButton('Submit');
     }
+
+    /**
+     * @Given /^I cancel the authentication$/
+     */
+    public function iCancelTheAuthentication()
+    {
+        $this->minkContext->pressButton('Cancel');
+    }
 }
