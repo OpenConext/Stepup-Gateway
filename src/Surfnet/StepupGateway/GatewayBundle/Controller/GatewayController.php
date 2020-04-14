@@ -30,6 +30,7 @@ use Surfnet\StepupGateway\GatewayBundle\Service\Gateway\LoginService;
 use Surfnet\StepupGateway\GatewayBundle\Service\Gateway\RespondService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
@@ -161,12 +162,23 @@ class GatewayController extends Controller
      */
     public function sendAuthenticationCancelledByUserAction()
     {
-        $responseContext = $this->getResponseContext();
+        // The authentication mode is read from the parent request, in the meantime a forward was followed, making
+        // reading the auth mode from the current request impossible.
+        // @see: \Surfnet\StepupGateway\GatewayBundle\Controller\SecondFactorController::cancelAuthenticationAction
+        $requestStack = $this->get('request_stack');
+        $request = $requestStack->getParentRequest();
+        if (!$request->get('authenticationMode', false)) {
+            throw new RuntimeException('Unable to determine the authentication mode in the sendAuthenticationCancelledByUser action');
+        }
+        $authenticationMode = $request->get('authenticationMode');
+
+        $this->supportsAuthenticationMode($authenticationMode);
+        $responseContext = $this->getResponseContext($authenticationMode);
         $gatewayLoginService = $this->getGatewayFailedResponseService();
 
         $response = $gatewayLoginService->sendAuthenticationCancelledByUser($responseContext);
 
-        return $this->renderSamlResponse('consumeAssertion', $response);
+        return $this->renderSamlResponse('consumeAssertion', $response, $authenticationMode);
     }
 
     /**

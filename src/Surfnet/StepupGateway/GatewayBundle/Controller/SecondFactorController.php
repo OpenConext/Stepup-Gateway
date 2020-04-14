@@ -749,7 +749,10 @@ class SecondFactorController extends Controller
      */
     private function buildCancelAuthenticationForm($authenticationMode)
     {
-        $cancelFormAction = $this->generateUrl('gateway_cancel_authentication');
+        $cancelFormAction = $this->generateUrl(
+            'gateway_cancel_authentication',
+            ['authenticationMode' => $authenticationMode]
+        );
 
         return $this->createForm(
             CancelAuthenticationType::class,
