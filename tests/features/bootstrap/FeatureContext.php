@@ -86,6 +86,14 @@ class FeatureContext implements Context
     }
 
     /**
+     * @Given /^a user from ([^"]*) identified by ([^"]*)$/
+     */
+    public function aUserIdentifiedBy($institution, $nameId)
+    {
+        // For now, do nothing, this user is not known to Gateway, but might exist.
+    }
+
+    /**
      * @Then I should see the Yubikey OTP screen
      */
     public function iShouldSeeTheYubikeyOtpScreen()

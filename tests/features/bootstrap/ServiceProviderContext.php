@@ -175,6 +175,32 @@ class ServiceProviderContext implements Context, KernelAwareContext
     }
 
     /**
+     * @When /^([^\']*) starts an SFO authentication requiring ([^\']*)$/
+     */
+    public function iStartAnSFOAuthenticationWithLoaRequirement($nameId, $loa)
+    {
+        $authnRequest = new AuthnRequest();
+        // In order to later assert if the response succeeded or failed, set our own dummy ACS location
+        $authnRequest->setAssertionConsumerServiceURL(SamlEntityRepository::SP_ACS_LOCATION);
+        $authnRequest->setIssuer($this->currentSfoSp['entityId']);
+        $authnRequest->setDestination(self::SFO_ENDPOINT_URL);
+        $authnRequest->setProtocolBinding(Constants::BINDING_HTTP_REDIRECT);
+        $authnRequest->setNameId($this->buildNameId($nameId));
+        // Sign with random key, does not mather for now.
+        // todo: use from services_test.yml
+        $authnRequest->setSignatureKey(
+            $this->loadPrivateKey(new PrivateKey('/var/www/ci/certificates/sp.pem', 'default'))
+        );
+        $authnRequest->setRequestedAuthnContext(
+            ['AuthnContextClassRef' => [$loa]]
+        );
+        $request = Saml2AuthnRequest::createNew($authnRequest);
+        $query = $request->buildRequestQuery();
+
+        $this->getSession()->visit($request->getDestination().'?'.$query);
+    }
+
+    /**
      * @When /^([^\']*) starts an authentication$/
      */
     public function iStartAnAuthentication($nameId)
