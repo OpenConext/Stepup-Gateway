@@ -16,7 +16,10 @@ use SAML2\XML\saml\SubjectConfirmationData;
 use Surfnet\SamlBundle\Http\Exception\UnsignedRequestException;
 use Surfnet\SamlBundle\Http\ReceivedAuthnRequestQueryString;
 use Surfnet\SamlBundle\SAML2\ReceivedAuthnRequest;
+use Surfnet\StepupGateway\Behat\Command\LoginCommand;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
@@ -28,16 +31,35 @@ class IdentityProviderController extends Controller
      */
     public function ssoAction(Request $request)
     {
-        // receives the AuthnRequest and sends a SAML response
+        // Receives the AuthnRequest and sends a SAML response
         $authnRequest = $this->receiveSignedAuthnRequestFrom($request);
-        // Todo: For some reason, the nameId is not transpored even tho it is set on the auhtnrequest.. Figure out whats going on here and fix this.
-        // now the test will only work with one hard-coded user.
-        $response = $this->createResponse(
-            'https://gateway.stepup.example.com/authentication/consume-assertion',
-            ['Value' => 'urn:collab:person:stepup.example.com:john_haack', 'Format' => 'urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified'],
-            $authnRequest->getRequestId()
-        );
-        return $this->renderSamlResponse($response);
+        // By default render the username form
+        $loginData = new LoginCommand();
+        if ($authnRequest) {
+            $loginData->setRequestId($authnRequest->getRequestId());
+        }
+        $form = $this
+            ->createFormBuilder($loginData)
+            ->add('username', TextType::class)
+            ->add('requestId', TextType::class)
+            ->add('submit', SubmitType::class)
+            ->getForm();
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $loginData = $form->getData();
+            $response = $this->createResponse(
+                'https://gateway.stepup.example.com/authentication/consume-assertion',
+                ['Value' => $loginData->getUsername(), 'Format' => 'urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified'],
+                $loginData->getRequestId()
+            );
+            return $this->renderSamlResponse($response);
+        }
+
+        return $this->render('@test_resources/login.html.twig', [
+            'form' => $form->createView(),
+        ]);
     }
 
     /**
@@ -129,10 +151,7 @@ class IdentityProviderController extends Controller
     public function receiveSignedAuthnRequestFrom(Request $request)
     {
         if (!$request->isMethod(Request::METHOD_GET)) {
-            throw new BadRequestHttpException(sprintf(
-                'Could not receive AuthnRequest from HTTP Request: expected a GET method, got %s',
-                $request->getMethod()
-            ));
+            return;
         }
 
         $requestUri = $request->getRequestUri();
