@@ -35,7 +35,6 @@ Feature: As an institution that uses the second factor only feature
   Scenario: SFO without a token yields a SAML error response
     Given an SFO enabled SP with EntityID https://sp.stepup.example.com
     And a whitelisted institution stepup.example.com
-    And a user from "stepup.example.com" identified by "urn:collab:person:stepup.example.com:kirill_sarychev"
     When urn:collab:person:stepup.example.com:kirill_sarychev starts an SFO authentication
     Then an error response is posted back to the SP
     And the response should match xpath '//samlp:StatusCode[@Value="urn:oasis:names:tc:SAML:2.0:status:NoAuthnContext"]'

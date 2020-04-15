@@ -9,8 +9,7 @@ Feature: As an institution that uses the regular Step Up authentication feature
     And a whitelisted institution stepup.example.com
 
   Scenario: SSO without a token yields a SAML error response
-    Given a user from "stepup.example.com" identified by "urn:collab:person:stepup.example.com:kirill_sarychev"
-    When urn:collab:person:stepup.example.com:kirill_sarychev starts an authentication
+    Given urn:collab:person:stepup.example.com:kirill_sarychev starts an authentication
     Then I authenticate at the IdP as urn:collab:person:stepup.example.com:kirill_sarychev
     Then an error response is posted back to the SP
     And the response should match xpath '//samlp:StatusCode[@Value="urn:oasis:names:tc:SAML:2.0:status:NoAuthnContext"]'
