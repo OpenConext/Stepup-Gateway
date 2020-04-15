@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.0.1
+**Bugfix**
+Ensure SFO SAML errors are handled correctly. In version 3.0 they yielded internal server errors, as the application tried to send
+the response back using the SSO authentication session context.
+
+Fixed in PR: Pass authentication context to error handling actions #198  
+
 ## 3.0.0
 **New feature**
 Allow simultaneous SFO and SSO authentications. To do this the state handling was changed slightly. Some new routes 
