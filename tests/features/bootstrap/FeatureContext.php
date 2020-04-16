@@ -113,7 +113,6 @@ class FeatureContext implements Context
     public function iShouldSeeTheTiqrAuthenticationScreen()
     {
         $this->minkContext->pressButton('Submit');
-        $this->minkContext->printLastResponse(); die;
         $this->minkContext->assertPageContainsText('Log in with Tiqr');
     }
 
@@ -145,7 +144,6 @@ class FeatureContext implements Context
     {
         $this->minkContext->pressButton('Submit');
         $this->minkContext->pressButton('Submit');
-        $this->minkContext->printLastResponse(); die;
     }
 
 
