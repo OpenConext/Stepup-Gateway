@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.0.0
+**New feature**
+Allow simultaneous SFO and SSO authentications. To do this the state handling was changed slightly. Some new routes 
+where added to distinguish between sfo and sso authentications in Gateway. That's why a new major release was tagged.
+
+* Adjust state handling to allow concurrent sfo and sso authentication #193
+
 ## 2.10.6
 **Bugfixes**
 * Use correct ResponseContext service identifier #183
