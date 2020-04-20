@@ -15,6 +15,7 @@
                 <link href="{{ asset_url }}" type="text/css" rel="stylesheet" media="screen, print" />
             {% endstylesheets %}
         {% endblock head_style %}
+        {% block head_script %}{% endblock head_script %}
 
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>
@@ -61,7 +62,7 @@
                         {{ 'button.logout'|trans }}
                     </button>
                 </form>
-                {% set locale_switcher = stepup_locale_switcher(app.request.locale, 'ss_switch_locale', {'return-url': app.request.uri}) %}
+                {% set locale_switcher = stepup_locale_switcher(app.request.locale, 'gateway_switch_locale', {'return-url': app.request.uri}) %}
                 {{ form_start(locale_switcher, { attr: { class: 'form-inline' }}) }}
                 {{ form_widget(locale_switcher.locale) }}
                 {{ form_widget(locale_switcher.switch) }}
@@ -96,8 +97,7 @@
             <div class="span8 offset2">
                 <hr>
                 <ul class="nav nav-pills">
-                    <li><a href="{{ path("ss_entry_point") }}">Home</a></li>
-                    <li><a href="{{ global_view_parameters.supportUrl }}" target="_blank">{{ 'ss.support_url_text'|trans }}</a></li>
+                    <li><a href="{{ global_view_parameters.supportUrl }}" target="_blank">{{ global_view_parameters.supportUrl }}</a></li>
                 </ul>
             </div>
         </div>
