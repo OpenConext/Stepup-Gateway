@@ -79,9 +79,4 @@ class FixtureService
     {
         return $this->whitelistRepository->whitelist($institution);
     }
-
-    public function registerTiqrToken($nameId, $institution)
-    {
-        return $this->secondFactorRepository->create($nameId, 'tiqr', $institution, 'foobar');
-    }
 }

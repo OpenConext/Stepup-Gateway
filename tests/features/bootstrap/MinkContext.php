@@ -162,4 +162,9 @@ class MinkContext extends BaseMinkContext
         }
         $this->getSession()->switchToWindow($this->windows[$windowName]);
     }
+
+    public function isSelenium()
+    {
+        return $this->getSession()->getDriver() instanceof Selenium2Driver;
+    }
 }
