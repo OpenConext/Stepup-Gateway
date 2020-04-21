@@ -80,9 +80,6 @@ class FeatureContext implements Context
             case "sms":
                 $this->currentToken = $this->fixtureService->registerSmsToken($nameId, $institution);
                 break;
-            case "tiqr":
-                $this->currentToken = $this->fixtureService->registerTiqrToken($nameId, $institution);
-                break;
         }
     }
 
@@ -108,22 +105,15 @@ class FeatureContext implements Context
     }
 
     /**
-     * @Given /^I should see the Tiqr authentication screen$/
-     */
-    public function iShouldSeeTheTiqrAuthenticationScreen()
-    {
-        $this->minkContext->pressButton('Submit');
-        $this->minkContext->assertPageContainsText('Log in with Tiqr');
-    }
-
-    /**
      * @When I enter the OTP
      */
     public function iEnterTheOtp()
     {
         $this->minkContext->fillField('gateway_verify_yubikey_otp_otp', 'bogus-otp-we-use-a-mock-yubikey-service');
         $this->minkContext->pressButton('gateway_verify_yubikey_otp_submit');
-        $this->minkContext->pressButton('Submit');
+        if (!$this->minkContext->isSelenium()) {
+            $this->minkContext->pressButton('Submit');
+        }
     }
 
     /**
@@ -133,20 +123,10 @@ class FeatureContext implements Context
     {
         $this->minkContext->fillField('gateway_verify_sms_challenge_challenge', '432543');
         $this->minkContext->pressButton('gateway_verify_sms_challenge_verify_challenge');
-        $this->minkContext->pressButton('Submit');
+        if (!$this->minkContext->isSelenium()) {
+            $this->minkContext->pressButton('Submit');
+        }
     }
-
-
-    /**
-     * @When I finish the Tiqr authentication
-     */
-    public function iFinishGsspAuthentication()
-    {
-        $this->minkContext->pressButton('Submit');
-        $this->minkContext->pressButton('Submit');
-    }
-
-
 
     /**
      * @Given /^a whitelisted institution ([^"]*)$/
@@ -167,9 +147,6 @@ class FeatureContext implements Context
                 break;
             case "sms":
                 $this->minkContext->pressButton('gateway_choose_second_factor_choose_sms');
-                break;
-            case "tiqr":
-                $this->minkContext->pressButton('gateway_choose_second_factor_choose_tiqr');
                 break;
         }
     }

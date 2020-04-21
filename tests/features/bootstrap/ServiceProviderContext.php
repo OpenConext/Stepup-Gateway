@@ -20,6 +20,7 @@ namespace Surfnet\StepupGateway\Behat;
 
 use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
+use Behat\Mink\Driver\Selenium2Driver;
 use Behat\Symfony2Extension\Context\KernelAwareContext;
 use RobRichards\XMLSecLibs\XMLSecurityKey;
 use SAML2\AuthnRequest;
@@ -256,10 +257,12 @@ class ServiceProviderContext implements Context, KernelAwareContext
     public function iAuthenticateAtTheIdp($username)
     {
         $this->minkContext->fillField('form_username', $username);
-        // Submit the form
+        // Submit the IdP 'authentication' form
         $this->minkContext->pressButton('Submit');
-        // Submit the SAML Response
-        $this->minkContext->pressButton('Submit');
+        if (!$this->minkContext->isSelenium()) {
+            // Submit the SAML Response
+            $this->minkContext->pressButton('Submit');
+        }
     }
 
     /**
