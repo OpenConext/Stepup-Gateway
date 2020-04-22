@@ -11,9 +11,12 @@ framework:
     router:
         resource: "%kernel.root_dir%/config/routing_test.yml"
         strict_requirements: true
+twig:
+    paths:
+        '%kernel.project_dir%/tests/src/Resources/views': test_resources
 
 assetic:
-    use_controller: false
+    use_controller: "%use_assetic_controller%"
     node: "/usr/bin/node"
     filters:
         less:

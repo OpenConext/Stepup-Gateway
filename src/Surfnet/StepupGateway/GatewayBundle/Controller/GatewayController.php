@@ -19,8 +19,11 @@
 namespace Surfnet\StepupGateway\GatewayBundle\Controller;
 
 use SAML2\Response as SAMLResponse;
+use Surfnet\StepupGateway\GatewayBundle\Exception\InvalidArgumentException;
 use Surfnet\StepupGateway\GatewayBundle\Exception\RequesterFailureException;
 use Surfnet\StepupGateway\GatewayBundle\Exception\ResponseFailureException;
+use Surfnet\StepupGateway\GatewayBundle\Exception\RuntimeException;
+use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
 use Surfnet\StepupGateway\GatewayBundle\Service\Gateway\ConsumeAssertionService;
 use Surfnet\StepupGateway\GatewayBundle\Service\Gateway\FailedResponseService;
 use Surfnet\StepupGateway\GatewayBundle\Service\Gateway\LoginService;
@@ -35,10 +38,14 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
  *
  * See docs/GatewayState.md for a high-level diagram on how this controller
  * interacts with outside actors and other parts of Stepup.
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class GatewayController extends Controller
 {
     const RESPONSE_CONTEXT_SERVICE_ID = 'gateway.proxy.response_context';
+    const MODE_SFO = 'sfo';
+    const MODE_SSO = 'sso';
 
     /**
      * Receive an AuthnRequest from a service provider.
@@ -66,9 +73,11 @@ class GatewayController extends Controller
         try {
             $proxyRequest = $gatewayLoginService->singleSignOn($httpRequest);
         } catch (RequesterFailureException $e) {
-            $response = $this->getGatewayFailedResponseService()->createRequesterFailureResponse($this->getResponseContext());
+            $response = $this->getGatewayFailedResponseService()->createRequesterFailureResponse(
+                $this->getResponseContext(self::MODE_SSO)
+            );
 
-            return $this->renderSamlResponse('consumeAssertion', $response);
+            return $this->renderSamlResponse('consumeAssertion', $response, self::MODE_SSO);
         }
 
         return $redirectBinding->createResponseFor($proxyRequest);
@@ -95,7 +104,7 @@ class GatewayController extends Controller
      */
     public function consumeAssertionAction(Request $request)
     {
-        $responseContext = $this->getResponseContext();
+        $responseContext = $this->getResponseContext(self::MODE_SSO);
         $gatewayLoginService = $this->getGatewayConsumeAssertionService();
 
         try {
@@ -103,7 +112,7 @@ class GatewayController extends Controller
         } catch (ResponseFailureException $e) {
             $response = $this->getGatewayFailedResponseService()->createResponseFailureResponse($responseContext);
 
-            return $this->renderSamlResponse('unprocessableResponse', $response);
+            return $this->renderSamlResponse('unprocessableResponse', $response, self::MODE_SSO);
         }
 
         // Forward to the selectSecondFactorForVerificationSsoAction, this in turn will forward to the correct
@@ -121,26 +130,33 @@ class GatewayController extends Controller
      */
     public function respondAction()
     {
-        $responseContext = $this->getResponseContext();
+        $responseContext = $this->getResponseContext(self::MODE_SSO);
         $gatewayLoginService = $this->getGatewayRespondService();
 
         $response = $gatewayLoginService->respond($responseContext);
         $gatewayLoginService->resetRespondState($responseContext);
 
-        return $this->renderSamlResponse('consumeAssertion', $response);
+        return $this->renderSamlResponse('consumeAssertion', $response, self::MODE_SSO);
     }
 
     /**
+     * This action is also used from the context of SecondFactorOnly authentications
+     * @param $authenticationMode
      * @return Response
      */
-    public function sendLoaCannotBeGivenAction()
+    public function sendLoaCannotBeGivenAction(Request $request)
     {
-        $responseContext = $this->getResponseContext();
+        if (!$request->get('authenticationMode', false)) {
+            throw new RuntimeException('Unable to determine the authentication mode in the sendLoaCannotBeGiven action');
+        }
+        $authenticationMode = $request->get('authenticationMode');
+        $this->supportsAuthenticationMode($authenticationMode);
+        $responseContext = $this->getResponseContext($authenticationMode);
         $gatewayLoginService = $this->getGatewayFailedResponseService();
 
         $response = $gatewayLoginService->sendLoaCannotBeGiven($responseContext);
 
-        return $this->renderSamlResponse('consumeAssertion', $response);
+        return $this->renderSamlResponse('consumeAssertion', $response, $authenticationMode);
     }
 
     /**
@@ -148,22 +164,35 @@ class GatewayController extends Controller
      */
     public function sendAuthenticationCancelledByUserAction()
     {
-        $responseContext = $this->getResponseContext();
+        // The authentication mode is read from the parent request, in the meantime a forward was followed, making
+        // reading the auth mode from the current request impossible.
+        // @see: \Surfnet\StepupGateway\GatewayBundle\Controller\SecondFactorController::cancelAuthenticationAction
+        $requestStack = $this->get('request_stack');
+        $request = $requestStack->getParentRequest();
+        if (!$request->get('authenticationMode', false)) {
+            throw new RuntimeException('Unable to determine the authentication mode in the sendAuthenticationCancelledByUser action');
+        }
+        $authenticationMode = $request->get('authenticationMode');
+
+        $this->supportsAuthenticationMode($authenticationMode);
+        $responseContext = $this->getResponseContext($authenticationMode);
         $gatewayLoginService = $this->getGatewayFailedResponseService();
 
         $response = $gatewayLoginService->sendAuthenticationCancelledByUser($responseContext);
 
-        return $this->renderSamlResponse('consumeAssertion', $response);
+        return $this->renderSamlResponse('consumeAssertion', $response, $authenticationMode);
     }
 
     /**
-     * @param string         $view
+     * @param string $view
      * @param SAMLResponse $response
+     * @param $authenticationMode
      * @return Response
      */
-    public function renderSamlResponse($view, SAMLResponse $response)
+    public function renderSamlResponse($view, SAMLResponse $response, $authenticationMode)
     {
-        $responseContext = $this->getResponseContext();
+        $this->supportsAuthenticationMode($authenticationMode);
+        $responseContext = $this->getResponseContext($authenticationMode);
 
         return $this->render($view, [
             'acu'        => $responseContext->getDestination(),
@@ -188,19 +217,18 @@ class GatewayController extends Controller
     }
 
     /**
-     * @return \Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext
+     * @return ResponseContext
      */
-    public function getResponseContext()
+    public function getResponseContext($authenticationMode)
     {
-        $stateHandler = $this->get('gateway.proxy.sso.state_handler');
-
-        $responseContextServiceId = $stateHandler->getResponseContextServiceId();
-
-        if (!$responseContextServiceId) {
-            return $this->get(static::RESPONSE_CONTEXT_SERVICE_ID);
+        switch ($authenticationMode) {
+            case self::MODE_SFO:
+                return $this->get($this->get('gateway.proxy.sfo.state_handler')->getResponseContextServiceId());
+                break;
+            case self::MODE_SSO:
+                return $this->get($this->get('gateway.proxy.sso.state_handler')->getResponseContextServiceId());
+                break;
         }
-
-        return $this->get($responseContextServiceId);
     }
 
     /**
@@ -242,5 +270,12 @@ class GatewayController extends Controller
     private function getGatewayFailedResponseService()
     {
         return $this->get('gateway.service.gateway.failed_response');
+    }
+
+    private function supportsAuthenticationMode($authenticationMode)
+    {
+        if (!($authenticationMode === self::MODE_SSO || $authenticationMode === self::MODE_SFO)) {
+            throw new InvalidArgumentException('Invalid authentication mode requested');
+        }
     }
 }
