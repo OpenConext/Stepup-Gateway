@@ -4,7 +4,8 @@ services:
     php-fpm.stepup.example.com:
         build:
             context: ../
-            dockerfile: docker/php-fpm/Dockerfile-php72
+#            # override this in a dedicated dockerfile per php version
+#            dockerfile: docker/php-fpm/Dockerfile-php72
         container_name: gateway-phpfpm
         volumes:
             - ../../:/var/www
