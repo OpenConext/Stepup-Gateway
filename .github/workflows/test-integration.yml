@@ -1,11 +1,15 @@
 name: test-integration
 on: [pull_request]
 jobs:
-    build-php72:
+    build:
         runs-on: ubuntu-latest
         timeout-minutes: 30
+        strategy:
+          matrix:
+            php: [php72, php74]
         env:
-          DOCKER_COMPOSE:  docker-compose
+          PROD_PHP: php72
+          DOCKER_COMPOSE:  docker-compose -f docker-compose.yml -f docker-compose-${{matrix.php}}.yml
         steps:
             - name: Checkout
               uses: actions/checkout@master
@@ -23,57 +27,20 @@ jobs:
               run: cd ci/docker && ./init.sh
             - name: Build Docker environmnent
               run: |
-                ${DOCKER_COMPOSE} up -d --build
+                cd ci/docker &&
+                ${DOCKER_COMPOSE} up -d --build &&
                 ${DOCKER_COMPOSE} exec -T php-fpm.stepup.example.com bash -c '
                 composer install --prefer-dist -n -o && \
                 npm install --only=prod && \
                 ./app/console assetic:dump --env=webtest --verbose'
             - name: Run CI tests
+              continue-on-error: ${{ matrix.php != env.PROD_PHP }}
               run: |
                   cd ci/docker && ${DOCKER_COMPOSE} exec -T php-fpm.stepup.example.com bash -c '
                       composer check
                   '
               env:
                   SYMFONY_ENV: webtest
-            - name: Output log files on failure
-              if: failure()
-              run:  |
-                  cd ci/docker && ${DOCKER_COMPOSE} exec -T php-fpm.stepup.example.com cat app/logs/webtest.log
-    build-php74:
-        runs-on: ubuntu-latest
-        timeout-minutes: 30
-        env:
-          DOCKER_COMPOSE:  docker-compose -f docker-compose.yml -f docker-compose-php74.yml
-        steps:
-            - name: Checkout
-              uses: actions/checkout@master
-            - name: Get Composer Cache Directory
-              id: composer-cache
-              run: |
-                echo "::set-output name=dir::$(composer config cache-files-dir)"
-            - uses: actions/cache@v1
-              with:
-                path: ${{ steps.composer-cache.outputs.dir }}
-                key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-                restore-keys: |
-                  ${{ runner.os }}-composer-
-            - name: Init environment
-              run: cd ci/docker && ./init.sh
-            - name: Build Docker environmnent
-              run: |
-                  ${DOCKER_COMPOSE} up -d --build
-                  ${DOCKER_COMPOSE} exec -T php-fpm.stepup.example.com bash -c '
-                    composer install --prefer-dist -n -o && \
-                    npm install --only=prod && \
-                    ./app/console assetic:dump --env=webtest --verbose'
-            - name: Run CI tests
-              run: |
-                  cd ci/docker && ${DOCKER_COMPOSE} exec -T php-fpm.stepup.example.com bash -c '
-                      composer check
-                  '
-              env:
-                  SYMFONY_ENV: webtest
-              continue-on-error: true
             - name: Output log files on failure
               if: failure()
               run:  |
