@@ -4,6 +4,8 @@ jobs:
     build-php72:
         runs-on: ubuntu-latest
         timeout-minutes: 30
+        env:
+          DOCKER_COMPOSE:  docker-compose
         steps:
             - name: Checkout
               uses: actions/checkout@master
@@ -18,10 +20,17 @@ jobs:
                 restore-keys: |
                   ${{ runner.os }}-composer-
             - name: Init environment
-              run: cd ci/docker && ./init-php72.sh
+              run: cd ci/docker && ./init.sh
+            - name: Build Docker environmnent
+              run: |
+                ${DOCKER_COMPOSE} up -d --build
+                ${DOCKER_COMPOSE} exec -T php-fpm.stepup.example.com bash -c '
+                composer install --prefer-dist -n -o && \
+                npm install --only=prod && \
+                ./app/console assetic:dump --env=webtest --verbose'
             - name: Run CI tests
               run: |
-                  cd ci/docker && docker-compose -f docker-compose-php72.yml exec -T php-fpm.stepup.example.com bash -c '
+                  cd ci/docker && ${DOCKER_COMPOSE} exec -T php-fpm.stepup.example.com bash -c '
                       composer check
                   '
               env:
@@ -29,10 +38,12 @@ jobs:
             - name: Output log files on failure
               if: failure()
               run:  |
-                  cd ci/docker && docker-compose -f docker-compose-php72.yml exec -T php-fpm.stepup.example.com cat app/logs/webtest.log
+                  cd ci/docker && ${DOCKER_COMPOSE} exec -T php-fpm.stepup.example.com cat app/logs/webtest.log
     build-php74:
         runs-on: ubuntu-latest
         timeout-minutes: 30
+        env:
+          DOCKER_COMPOSE:  docker-compose -f docker-compose.yml -f docker-compose-php74.yml
         steps:
             - name: Checkout
               uses: actions/checkout@master
@@ -47,10 +58,17 @@ jobs:
                 restore-keys: |
                   ${{ runner.os }}-composer-
             - name: Init environment
-              run: cd ci/docker && ./init-php74.sh
+              run: cd ci/docker && ./init.sh
+            - name: Build Docker environmnent
+              run: |
+                  ${DOCKER_COMPOSE} up -d --build
+                  ${DOCKER_COMPOSE} exec -T php-fpm.stepup.example.com bash -c '
+                    composer install --prefer-dist -n -o && \
+                    npm install --only=prod && \
+                    ./app/console assetic:dump --env=webtest --verbose'
             - name: Run CI tests
               run: |
-                  cd ci/docker && docker-compose -f docker-compose-php74.yml exec -T php-fpm.stepup.example.com bash -c '
+                  cd ci/docker && ${DOCKER_COMPOSE} exec -T php-fpm.stepup.example.com bash -c '
                       composer check
                   '
               env:
@@ -59,4 +77,4 @@ jobs:
             - name: Output log files on failure
               if: failure()
               run:  |
-                  cd ci/docker && docker-compose -f docker-compose-php74.yml exec -T php-fpm.stepup.example.com cat app/logs/webtest.log
+                  cd ci/docker && ${DOCKER_COMPOSE} exec -T php-fpm.stepup.example.com cat app/logs/webtest.log
