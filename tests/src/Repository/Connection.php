@@ -2,6 +2,8 @@
 
 namespace Surfnet\StepupGateway\Behat\Repository;
 
+use Doctrine\DBAL\Connection as DBALConnection;
+use Exception;
 use PDO;
 use PDOStatement;
 
@@ -12,14 +14,22 @@ class Connection
      */
     private $connection;
 
-    public function __construct($dbUser, $dbPassword, $dbName, $hostName)
+    /**
+     * @param DBALConnection $connection
+     * @throws Exception
+     */
+    public function __construct(DBALConnection $connection)
     {
-        $dsn = 'mysql:host=%s;dbname=%s';
-        // Open a PDO connection
-        $this->connection = new PDO(sprintf($dsn, $hostName, $dbName), $dbUser, $dbPassword);
+        $conn = $connection->getWrappedConnection();
+        if (!$conn instanceof PDO) {
+            throw new Exception('DBAL Connection should be wrapped around PDO connection');
+        }
+
+        $this->connection = $conn;
     }
 
     /**
+     * @param string $statement
      * @return bool|PDOStatement
      */
     public function prepare($statement)
