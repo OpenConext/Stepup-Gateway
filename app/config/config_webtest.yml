@@ -52,15 +52,16 @@ monolog:
             level: INFO
             channels: [authentication]
             formatter: gateway.monolog.gelf_to_string_formatter
-        stdout:
-            type: stream
-            path: 'php://stdout'
-            level: DEBUG
-            channels: ['!event']
-        stderr:
-            type: stream
-            path: 'php://stderr'
-            level: ERROR
+        stderr: # gets caught by FPM process and forwarded to docker log deamon
+            type:         stream
+            path:         "php://stderr"
+            level:        INFO
+            channels:     ["!event"]
+            process_psr_3_messages: false
+        console:
+            type: console
+            channels:     ["!event", "!doctrine"]
+            process_psr_3_messages: false
         main_logfile:
             type: stream
             handler: logfile
@@ -75,7 +76,7 @@ doctrine:
                 driver:   "%database_driver%"
                 host:     "db.stepup.example.com"
                 port:     "3306"
-                dbname:   "gateway"
+                dbname:   "gateway_test"
                 user:     "gateway"
                 password: "gateway"
                 charset:  UTF8
@@ -83,7 +84,7 @@ doctrine:
                 driver:   "%database_driver%"
                 host:     "db.stepup.example.com"
                 port:     "3306"
-                dbname:   "gateway"
+                dbname:   "gateway_test"
                 user:     "gateway"
                 password: "gateway"
                 charset:  UTF8
@@ -91,7 +92,7 @@ doctrine:
                 driver:   "%database_driver%"
                 host:     "db.stepup.example.com"
                 port:     "3306"
-                dbname:   "gateway"
+                dbname:   "gateway_test"
                 user:     "gateway"
                 password: "gateway"
                 charset:  UTF8
