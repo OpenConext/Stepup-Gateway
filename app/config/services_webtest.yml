@@ -5,9 +5,6 @@ parameters:
   trusted_proxies:
     - 127.0.0.1
   use_assetic_controller: true
-  database_driver: pdo_mysql
-  database_host: db.stepup.example.com
-  database_port: null
   saml_metadata_publickey: /var/www/ci/certificates/sp.crt
   saml_metadata_privatekey: /var/www/ci/certificates/sp.pem
   saml_sp_publickey: /var/www/ci/certificates/sp.crt
@@ -50,14 +47,10 @@ services:
   Surfnet\StepupGateway\Behat\MinkContext:
     class: Surfnet\StepupGateway\Behat\MinkContext
 
-#  todo: inject dbal connection
   Surfnet\StepupGateway\Behat\Repository\Connection:
     class: Surfnet\StepupGateway\Behat\Repository\Connection
     arguments:
-      - 'gateway'
-      - 'gateway'
-      - 'gateway'
-      - 'db.stepup.example.com'
+      - '@doctrine.dbal.gateway_connection'
 
   Surfnet\StepupGateway\Behat\Service\FixtureService:
     class: Surfnet\StepupGateway\Behat\Service\FixtureService
