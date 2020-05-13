@@ -52,14 +52,14 @@ services:
         arguments:
             - "@second_factor_only.hosted.identity_provider"
             - "@second_factor_only.entity_service"
-            - "@gateway.proxy.state_handler"
+            - "@gateway.proxy.sfo.state_handler"
             - "@logger"
 
     second_factor_only.saml_response_factory:
         class: Surfnet\StepupGateway\SecondFactorOnlyBundle\Saml\ResponseFactory
         arguments:
             - "@second_factor_only.hosted.identity_provider"
-            - "@gateway.proxy.state_handler"
+            - "@gateway.proxy.sfo.state_handler"
             - "@second_factor_only.assertion_signing"
 
     second_factor_only.assertion_signing:
@@ -141,7 +141,7 @@ services:
         arguments:
             - "@logger"
             - "@surfnet_saml.logger"
-            - "@gateway.proxy.state_handler"
+            - "@gateway.proxy.sfo.state_handler"
             - "@second_factor_only.http.binding_factory"
             - "@second_factor_only.validate_nameid"
             - "@second_factor_only.loa_resolution"

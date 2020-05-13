@@ -5,7 +5,10 @@
     "autoload": {
         "psr-4": {
             "Surfnet\\": "src\\Surfnet",
-            "Surfnet\\StepupGateway\\Behat\\": "tests/features/bootstrap"
+            "Surfnet\\StepupGateway\\Behat\\": [
+                "tests/features/bootstrap",
+                "tests/src"
+            ]
         },
         "classmap": [
             "app/AppKernel.php",
@@ -14,6 +17,8 @@
     },
     "minimum-stability": "stable",
     "require": {
+        "ext-libxml": "*",
+        "ext-pdo": "*",
         "php": "~5.6|~7.0",
         "beberlei/assert": "^2.0",
         "doctrine/cache": "~1.4",
@@ -27,8 +32,6 @@
         "graylog2/gelf-php": "^1.5",
         "incenteev/composer-parameter-handler": "~2.0",
         "jms/translation-bundle": "~1.3.0",
-        "mopa/bootstrap-bundle": "^3.2",
-        "mopa/composer-bridge": "~1.5",
         "nelmio/security-bundle": "~1.4",
         "openconext/monitor-bundle": "^1.0",
         "sensio/distribution-bundle": "^5.0",
@@ -42,7 +45,6 @@
         "symfony/monolog-bundle": "^3.0",
         "symfony/swiftmailer-bundle": "~2.3",
         "symfony/symfony": "3.4.*",
-        "twbs/bootstrap": "^3.3.0",
         "twig/extensions": "~1.5",
         "twig/twig": "1.41.0",
         "webmozart/assert": "^1.2"
@@ -52,12 +54,14 @@
         "behat/mink": "^1.8",
         "behat/mink-extension": "^2.3",
         "behat/mink-goutte-driver": "^1.2",
+        "behat/mink-selenium2-driver": "^1.4",
         "behat/symfony2-extension": "^2.1",
         "matthiasnoback/symfony-config-test": "^2.2",
         "mockery/mockery": "~0.9",
         "overtrue/phplint": "^1.2",
         "phpmd/phpmd": "^2.6",
         "phpunit/phpunit": "^5.7",
+        "ramsey/uuid": "^3.9",
         "sebastian/exporter": "~2.0",
         "sebastian/phpcpd": "^2.0",
         "squizlabs/php_codesniffer": "^3.4",
@@ -81,18 +85,22 @@
         ],
         "check": [
             "@phplint",
+            "@validate-lockfile",
             "@phpcs",
             "@phpmd",
             "@test",
             "@behat",
+            "@behat-selenium",
             "@security"
         ],
         "security": "./ci/qa/security",
         "phplint": "./ci/qa/phplint",
+        "validate-lockfile": "./ci/qa/validate",
         "phpcs": "./ci/qa/phpcs",
         "phpcbf": "./ci/qa/phpcbf",
         "phpmd": "./ci/qa/phpmd",
         "behat": "./ci/qa/behat",
+        "behat-selenium": "./ci/qa/behat-selenium",
         "test": "./ci/qa/phpunit"
     },
     "config": {

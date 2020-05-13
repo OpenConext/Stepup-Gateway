@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupGateway\Behat;
 
+use Behat\Mink\Driver\Selenium2Driver;
 use Behat\Mink\Exception\ExpectationException;
 use Behat\MinkExtension\Context\MinkContext as BaseMinkContext;
 use DOMDocument;
@@ -52,7 +53,13 @@ class MinkContext extends BaseMinkContext
     public function theResponseShouldMatchXpath($xpath)
     {
         $document = new DOMDocument();
-        $document->loadXML($this->getSession()->getPage()->getContent());
+        if ($this->getSession()->getDriver() instanceof Selenium2Driver) {
+            // Chrome uses a user friendly viewer, get the xml from the dressed document and assert on that xml.
+            $xml = $this->getSession()->evaluateScript("document.getElementById('webkit-xml-viewer-source-xml').innerHTML");
+        } else {
+            $xml = $this->getSession()->getPage()->getContent();
+        }
+        $document->loadXML($xml);
 
         $xpathObj = new DOMXPath($document);
         $xpathObj->registerNamespace('ds', XMLSecurityDSig::XMLDSIGNS);
@@ -111,7 +118,9 @@ class MinkContext extends BaseMinkContext
      */
     public function iOpenTwoBrowserTabsIdentifiedBy($numberOfTabs, $tabNames)
     {
-        $this->getMink()->setDefaultSessionName(AbstractSubContext::SESSION_CHROME);
+        // Make sure the browser is ready (without this other browser interactions fail)
+        $this->getSession()->visit($this->locatePath('#'));
+
         $tabs = explode(',', $tabNames);
         if (count($tabs) != $numberOfTabs) {
             throw new RuntimeException(
@@ -134,6 +143,7 @@ class MinkContext extends BaseMinkContext
             // Keep track of the opened windows in order allow switching between them
             $this->windows[trim($tab)] = $windowName;
         }
+
     }
 
     /**
@@ -142,7 +152,6 @@ class MinkContext extends BaseMinkContext
     public function iSwitchToWindow($windowName)
     {
         // (re) set the default session to the chrome session.
-        $this->getMink()->setDefaultSessionName(AbstractSubContext::SESSION_CHROME);
         $this->switchToWindow($windowName);
     }
 
@@ -152,5 +161,10 @@ class MinkContext extends BaseMinkContext
             throw new RuntimeException(sprintf('Unknown window/tab name "%s"', $windowName));
         }
         $this->getSession()->switchToWindow($this->windows[$windowName]);
+    }
+
+    public function isSelenium()
+    {
+        return $this->getSession()->getDriver() instanceof Selenium2Driver;
     }
 }

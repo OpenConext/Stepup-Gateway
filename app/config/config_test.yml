@@ -8,8 +8,12 @@ framework:
         storage_id: session.storage.mock_file
     profiler:
         collect: false
+    router:
+        resource: "%kernel.root_dir%/config/routing_test.yml"
+        strict_requirements: true
 
 assetic:
+    use_controller: "%use_assetic_controller%"
     node: "/usr/bin/node"
     filters:
         less:

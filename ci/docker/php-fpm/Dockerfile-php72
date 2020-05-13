@@ -6,17 +6,20 @@ COPY docker/php-fpm/app.ini /usr/local/etc/php/conf.d/
 COPY app.php ../web/app.php
 
 # Install dependencies
-RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
-RUN apt-get update && apt-get install -y \
+RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -
+RUN apt-get update && apt-get install -yf \
     git \
     nodejs \
-    npm \
     zip \
     chromium \
     libpng-dev \
     libgmp-dev \
     libsodium-dev\
     && docker-php-ext-install pdo_mysql exif gd gmp sodium
+
+# Xdebug
+RUN pecl install xdebug && echo "zend_extension=$(find /usr/local/lib/php/extensions/ -name xdebug.so)" > /usr/local/etc/php/conf.d/xdebug.ini;
+
 # Composer
 RUN curl -sL https://getcomposer.org/installer | php -- --install-dir /usr/bin --filename composer
 RUN mkdir /.composer

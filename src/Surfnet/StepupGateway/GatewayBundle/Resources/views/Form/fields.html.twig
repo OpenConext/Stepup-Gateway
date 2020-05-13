@@ -1,5 +1,4 @@
-
-{% extends 'MopaBootstrapBundle:Form:fields.html.twig' %}
+{% extends 'base.html.twig' %}
 
 {% block anchor_widget %}
     {% spaceless %}
@@ -7,9 +6,6 @@
             {% set label = name|humanize %}
         {% endif %}
         <a href="{{ path(route) }}" {{ block('button_attributes') }}>
-            {% if icon is not empty %}
-                {{ mopa_bootstrap_icon(icon, icon_inverted|default(false)) }}
-            {% endif %}
             {{ label|trans({}, translation_domain) }}</a>
     {% endspaceless %}
 {% endblock anchor_widget %}
@@ -30,3 +26,14 @@
         {% endif %}
     {% endspaceless %}
 {% endblock anchor_row %}
+
+{%- block otp_widget -%}
+    {% spaceless %}
+        <div class="col-sm-9">
+            <div class="input-group">
+                <span class="input-group-addon"><i class="fa fa-key"></i></span>
+                <input type="text" class="form-control" {{ block('widget_attributes') }}>
+            </div>
+        </div>
+    {% endspaceless %}
+{%- endblock otp_widget -%}

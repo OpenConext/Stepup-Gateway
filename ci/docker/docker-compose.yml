@@ -1,6 +1,23 @@
 version: '2.2'
 
 services:
+    php-fpm.stepup.example.com:
+        build:
+            context: ../
+#            # override this in a dedicated dockerfile per php version
+#            dockerfile: docker/php-fpm/Dockerfile-php72
+        container_name: gateway-phpfpm
+        volumes:
+            - ../../:/var/www
+        environment:
+            APP_ENV: webtest
+            PHP_IDE_CONFIG: "serverName=gateway.stepup.example.com"
+            XDEBUG_CONFIG: "remote_enable=1 remote_connect_back=1 remote_port=9001 idekey=PHPSTORM"
+        user: '${UID}:${GID}'
+        depends_on:
+            db.stepup.example.com:
+                condition: service_healthy
+
     gateway.stepup.example.com:
         image: nginx:latest
         container_name: gateway-nginx
@@ -9,6 +26,8 @@ services:
             - ../web:/var/www/web
             - ../certificates/idp.crt:/etc/nginx/certs/gateway.stepup.example.com.crt
             - ../certificates/idp.key:/etc/nginx/certs/gateway.stepup.example.com.key
+        environment:
+            APP_ENV: webtest
         ports:
             - 443:443
         depends_on:
@@ -20,7 +39,7 @@ services:
         container_name: gateway-db
         environment:
             MYSQL_ROOT_PASSWORD: "secret"
-            MYSQL_DATABASE: "gateway"
+            MYSQL_DATABASE: "gateway_test"
             MYSQL_USER: "gateway"
             MYSQL_PASSWORD: "gateway"
             MYSQL_INITDB_SKIP_TZINFO: 1
@@ -31,29 +50,12 @@ services:
             timeout: 2s
             retries: 20
 
-    php-fpm.stepup.example.com:
-        build:
-            context: ../
-            dockerfile: docker/php-fpm/Dockerfile
-        container_name: gateway-phpfpm
-        volumes:
-            - ../../:/var/www
-
-        user: '${UID}:${GID}'
-        ports:
-            - 9000:9000
-        depends_on:
-            db.stepup.example.com:
-                condition: service_healthy
-
     selenium.stepup.example.com:
         image: selenium/standalone-chrome:2.53.1
         container_name: gateway-selenium
         user: '${UID}:${GID}'
         environment:
             START_XVFB: "false"
-        ports:
-            - 4444:4444
         volumes:
             - /dev/shm:/dev/shm
 

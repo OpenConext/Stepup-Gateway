@@ -35,6 +35,7 @@ twig:
     debug:            "%kernel.debug%"
     strict_variables: "%kernel.debug%"
     exception_controller: SurfnetStepupGatewayGatewayBundle:Exception:show
+    form_themes: ['bootstrap_4_layout.html.twig', '@SurfnetStepupGatewayGateway/Form/fields.html.twig']
     globals:
         global_view_parameters: "@gateway.service.global_view_parameters"
         app_name: "%app_name%"
@@ -44,7 +45,6 @@ assetic:
     debug:          "%kernel.debug%"
     use_controller: false
     bundles:
-     - MopaBootstrapBundle
      - SurfnetStepupGatewayApiBundle
      - SurfnetStepupGatewayGatewayBundle
      - SurfnetStepupGatewaySamlStepupProviderBundle
@@ -54,6 +54,22 @@ assetic:
     filters:
         cssrewrite: ~
         less: ~
+    assets:
+        font-awesome-otf:
+            inputs: '%kernel.root_dir%/../node_modules/font-awesome/fonts/FontAwesome.otf'
+            output: 'fonts/FontAwesome.otf'
+        font-awesome-eot:
+            inputs: '%kernel.root_dir%/../node_modules/font-awesome/fonts/fontawesome-webfont.eot'
+            output: 'fonts/fontawesome-webfont.eot'
+        font-awesome-svg:
+            inputs: '%kernel.root_dir%/../node_modules/font-awesome/fonts/fontawesome-webfont.svg'
+            output: 'fonts/fontawesome-webfont.svg'
+        font-awesome-ttf:
+            inputs: '%kernel.root_dir%/../node_modules/font-awesome/fonts/fontawesome-webfont.ttf'
+            output: 'fonts/fontawesome-webfont.ttf'
+        font-awesome-woff:
+            inputs: '%kernel.root_dir%/../node_modules/font-awesome/fonts/fontawesome-webfont.woff'
+            output: 'fonts/fontawesome-webfont.woff'
 
 # Doctrine Configuration
 doctrine:
@@ -136,13 +152,6 @@ services:
     twig.extension.text: # Required by JMSTranslationBundle
         class: Twig_Extensions_Extension_Text
         tags: [{ name: twig.extension }]
-
-mopa_bootstrap:
-    form:
-        show_legend: false
-        templating: SurfnetStepupGatewayGatewayBundle:Form:fields.html.twig
-    icons:
-        icon_set: fontawesome4
 
 surfnet_message_bird_api_client:
     authorization: "%messagebird_authorization%"
