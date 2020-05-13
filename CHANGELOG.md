@@ -1,5 +1,18 @@
 # Changelog
 
+## 3.0.2
+**Improvements**
+
+Add Github Action testing capabilities to test simultaneous SFO flows with Selenium.
+
+## 3.0.1
+**Bugfix**
+
+Ensure SFO SAML errors are handled correctly. In version 3.0 they yielded internal server errors, as the application tried to send
+the response back using the SSO authentication session context.
+
+Fixed in PR: Pass authentication context to error handling actions #198  
+
 ## 2.10.6
 **Bugfixes**
 * Use correct ResponseContext service identifier #183
