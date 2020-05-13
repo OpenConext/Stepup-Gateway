@@ -1,0 +1,17 @@
+_main:
+    resource: routing.yml
+
+surfnet_stepup_gateway_behat_service_provider_acs:
+    path:     /test/authentication/consume-assertion
+    methods:  [POST]
+    defaults: { _controller: Surfnet\StepupGateway\Behat\Controller\ServiceProviderController:acsAction }
+
+surfnet_stepup_gateway_behat_identity_provider_acs:
+    path:     /test/authentication/sso
+    methods:  [GET, POST]
+    defaults: { _controller: Surfnet\StepupGateway\Behat\Controller\IdentityProviderController:ssoAction }
+
+surfnet_stepup_gateway_behat_gssp_sso:
+    path:     /test/gssp/sso
+    methods:  [GET]
+    defaults: { _controller: Surfnet\StepupGateway\Behat\Controller\IdentityProviderController:gsspSsoAction }

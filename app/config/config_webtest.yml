@@ -1,0 +1,103 @@
+imports:
+    - { resource: config.yml }
+    - { resource: services_webtest.yml }
+
+framework:
+    test: ~
+    session:
+        storage_id: session.storage.mock_file
+    profiler:
+        collect: false
+    router:
+        resource: "%kernel.root_dir%/config/routing_test.yml"
+        strict_requirements: true
+twig:
+    paths:
+        '%kernel.project_dir%/tests/src/Resources/views': test_resources
+
+assetic:
+    use_controller: false
+    node: "/usr/bin/node"
+    filters:
+        less:
+            node: "/usr/bin/node"
+            node_paths: ["/usr/local/lib/node_modules"]
+            apply_to: '\.less$'
+
+nelmio_security:
+    csp:
+        img: [ self, 'data:' ]
+        script: [ self, unsafe-inline ]
+        style: [ self, unsafe-inline ]
+
+monolog:
+    channels: [authentication]
+    handlers:
+        prod-signaler:
+            type: fingers_crossed
+            action_level: ERROR
+            passthru_level: DEBUG # DEV setting: this means that all message of level DEBUG or higher are always logged
+            handler: main_syslog
+            bubble: true
+            channels: ["!authentication"] # the auth channel is logged by the next handler
+        main_syslog:
+            type: syslog
+            ident: stepup-gateway
+            facility: user
+            formatter: surfnet_stepup.monolog.json_formatter
+        authenthentication_syslog:
+            type: syslog
+            ident: stepup-authentication
+            facility: user
+            level: INFO
+            channels: [authentication]
+            formatter: gateway.monolog.gelf_to_string_formatter
+        stdout:
+            type: stream
+            path: 'php://stdout'
+            level: DEBUG
+            channels: ['!event']
+        stderr:
+            type: stream
+            path: 'php://stderr'
+            level: ERROR
+        main_logfile:
+            type: stream
+            handler: logfile
+            level: NOTICE
+            path: "%kernel.logs_dir%/%kernel.environment%.log"
+
+doctrine:
+    dbal:
+        default_connection: gateway
+        connections:
+            gateway:
+                driver:   "%database_driver%"
+                host:     "db.stepup.example.com"
+                port:     "3306"
+                dbname:   "gateway"
+                user:     "gateway"
+                password: "gateway"
+                charset:  UTF8
+            u2f:
+                driver:   "%database_driver%"
+                host:     "db.stepup.example.com"
+                port:     "3306"
+                dbname:   "gateway"
+                user:     "gateway"
+                password: "gateway"
+                charset:  UTF8
+            deploy:
+                driver:   "%database_driver%"
+                host:     "db.stepup.example.com"
+                port:     "3306"
+                dbname:   "gateway"
+                user:     "gateway"
+                password: "gateway"
+                charset:  UTF8
+
+# The SP and IdP certificates are overloaded in 'services_test.yml'
+surfnet_saml:
+    remote:
+        identity_provider:
+            certificate: MIIDuDCCAqCgAwIBAgIJAPdqJ9JQKN6vMA0GCSqGSIb3DQEBBQUAMEYxDzANBgNVBAMTBkVuZ2luZTERMA8GA1UECxMIU2VydmljZXMxEzARBgNVBAoTCk9wZW5Db25leHQxCzAJBgNVBAYTAk5MMB4XDTE1MDQwMjE0MDE1NFoXDTI1MDQwMTE0MDE1NFowRjEPMA0GA1UEAxMGRW5naW5lMREwDwYDVQQLEwhTZXJ2aWNlczETMBEGA1UEChMKT3BlbkNvbmV4dDELMAkGA1UEBhMCTkwwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCeVodghQwFR0pItxGaJ3LXHA+ZLy1w/TMaGDcJaszAZRWRkL/6djwbabR7TB45QN6dfKOFGzobQxG1Oksky3gz4Pki1BSzi/DwsjWCw+Yi40cYpYeg/XM0tvHKVorlsx/7Thm5WuC7rwytujr/lV7f6lavf/ApnLHnOORU2h0ZWctJiestapMaC5mc40msruWWp04axmrYICmTmGhEy7w0qO4/HLKjXtWbJh71GWtJeLzG5Hj04X44wI+D9PUJs9U3SYh9SCFZwq0v+oYeqajiX0JPzB+8aVOPmOOM5WqoT8OCddOM/TlsL/0PcxByGHsgJuWbWMI1PKlK3omR764PAgMBAAGjgagwgaUwHQYDVR0OBBYEFLowmsUCD2CrHU0lich1DMkNppmLMHYGA1UdIwRvMG2AFLowmsUCD2CrHU0lich1DMkNppmLoUqkSDBGMQ8wDQYDVQQDEwZFbmdpbmUxETAPBgNVBAsTCFNlcnZpY2VzMRMwEQYDVQQKEwpPcGVuQ29uZXh0MQswCQYDVQQGEwJOTIIJAPdqJ9JQKN6vMAwGA1UdEwQFMAMBAf8wDQYJKoZIhvcNAQEFBQADggEBAIF9tGG1C9HOSTQJA5qL13y5Ad8G57bJjBfTjp/dw308zwagsdTeFQIgsP4tdQqPMwYmBImcTx6vUNdiwlIol7TBCPGuqQAHD0lgTkChCzWezobIPxjitlkTUZGHqn4Kpq+mFelX9x4BElmxdLj0RQV3c3BhoW0VvJvBkqVKWkZ0HcUTQMlMrQEOq6D32jGh0LPCQN7Ke6ir0Ix5knb7oegND49fbLSxpdo5vSuxQd+Zn6nI1/VLWtWpdeHMKhiw2+/ArR9YM3cY8UwFQOj9Y6wI6gPCGh/q1qv2HnngmnPrNzZik8XucGcf1Wm2zE4UIVYKW31T52mqRVDKRk8F3Eo=

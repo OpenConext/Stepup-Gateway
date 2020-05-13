@@ -81,7 +81,7 @@ class RegisterRequestParamConverter implements ParamConverterInterface
 
         $violations = $this->validator->validate($registerRequest);
 
-        if (count($violations) > 0) {
+        if (!is_null($violations) && $violations->count() > 0) {
             throw BadJsonRequestException::createForViolationsAndErrors($violations, $name, []);
         }
 

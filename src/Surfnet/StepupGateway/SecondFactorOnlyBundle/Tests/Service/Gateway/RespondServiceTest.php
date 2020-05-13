@@ -298,7 +298,7 @@ final class RespondServiceTest extends GatewaySamlTestCase
     {
         $samlLogger = new SamlAuthenticationLogger($this->logger);
         $session = new Session($this->sessionStorage);
-        $this->stateHandler = new ProxyStateHandler($session);
+        $this->stateHandler = new ProxyStateHandler($session, 'surfnet/gateway/request');
 
         $this->hostedIdp = new IdentityProvider($idpConfiguration);
 

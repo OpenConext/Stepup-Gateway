@@ -1,0 +1,65 @@
+# This file is auto-generated during the composer install
+parameters:
+    asset_version: 1
+    secret: NotSoSecretReplaceMe!
+    debug_toolbar: true
+    debug_redirects: false
+    app_name: 'Stepup Gateway'
+    use_assetic_controller: false
+    trusted_proxies:
+        - 127.0.0.1
+    database_driver: pdo_mysql
+    database_host: db.stepup.example.com
+    database_port: null
+    database_server_version: 5.6
+    database_gateway_name: gateway
+    database_gateway_user: gateway
+    database_gateway_password: gateway
+    database_u2f_name: u2f
+    database_u2f_user: u2f
+    database_u2f_password: u2f
+    database_deploy_user: deploy
+    database_deploy_password: deploy
+    mailer_transport: smtp
+    mailer_host: 127.0.0.1
+    mailer_user: null
+    mailer_password: null
+    default_locale: en_GB
+    locales:
+        - nl_NL
+        - en_GB
+    locale_cookie_domain: openconext.org
+    messagebird_authorization: 'AccessKey your_api_key'
+    yubikey_client_id: 12345
+    yubikey_client_secret: YubiSecret
+    selfservice_api_password: secret
+    registration_authority_api_password: secret
+    sms_originator: SURFStepup
+    sms_otp_expiry_interval: 900
+    sms_maximum_otp_requests: 3
+    saml_sp_publickey: "%kernel.root_dir%/sp.crt"
+    saml_sp_privatekey: "%kernel.root_dir%/sp.key"
+    saml_idp_publickey: "%kernel.root_dir%/idp.crt"
+    saml_idp_privatekey: "%kernel.root_dir%/idp.key"
+    saml_metadata_publickey: "%kernel.root_dir%/idp.crt"
+    saml_metadata_privatekey: "%kernel.root_dir%/idp.key"
+    saml_remote_idp_entity_id: 'https://ssp.stepup.example.com/saml2/idp/metadata.php'
+    saml_remote_idp_sso_url: 'https://ssp.stepup.example.com/saml2/idp/SSOService.php'
+    saml_remote_idp_certificate: MIIC5DCCAcwCCQCcDbxN/IogUjANBgkqhkiG9w0BAQsFADA0MRkwFwYDVQQDDBBHYXRld2F5IFNBTUwgSWRQMRcwFQYDVQQKDA5EZXZlbG9wbWVudCBWTTAeFw0xODA3MzAxMjMwNDdaFw0yMzA3MjkxMjMwNDdaMDQxGTAXBgNVBAMMEEdhdGV3YXkgU0FNTCBJZFAxFzAVBgNVBAoMDkRldmVsb3BtZW50IFZNMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwrWJ6dKVau2rWfiMQ5EWuPxHabSskcQsXbwS/y35e8rFolNTZZ7zvHYF/0kJqhd31JTgtC92Yoflgpn3PNyjje1PKTe6+OA1/O+jN4eiKr1/GUVoVCdSAgEuioGGxRRCD0ykzT0cbpi4MEgNm1t4LCxPhyGdqp7/KhbpupKhpFpHT9CdL7+vH5y0r+FZZWxwoNTJNSY96UAt94F6bBC+pcgBYKaAtKvAN9wo7Cq9QkmESdIrWcthXJ4ThO1HrKpShTdfC/jfV5DEuvJgS3c7bYdWBKC+p/m8hJOrAz3DAhrg0Bxvv9PkkiXNwclVFVtZ6IcOSx5oP3SqancOD1vTDwIDAQABMA0GCSqGSIb3DQEBCwUAA4IBAQCwn7Dj0ZK3B0xeQisCmFKYPXk5FZLeNF3TcmVz2TGx3seOMzBA89+aOr5uRWEP48+5XUjlXEhG188Vier+eWaoFqRlOnVIXwbMnZCIS6ekMHz/Dx1OLijxDUkzbn2HlsWTl4MoHovTEUgjZqp/tTCwWBfrRf5A2yHpEdCx57VqmBdHgeYSoeeXv5ADDMPDaLkiKBymXZMbwBPQ22zynPGZheMVQn5FnEw/l2Qe/RN61Bf9LAIxyVnqIiO9D0Gbvxo3w8nBiQAycqtXRWWRjoShDNaCA+vi4YdwHzIGqrQY9HHj+fj/ylDY7TQAPOZB3oOR1Ulf8IHmyhJbI8y3VWQB
+    gateway_loa_loa1: 'http://stepup.example.com/assurance/level1'
+    gateway_loa_loa2: 'http://stepup.example.com/assurance/level2'
+    gateway_loa_loa3: 'http://stepup.example.com/assurance/level3'
+    second_factor_only_loa_loa2: 'http://stepup.example.com/assurance/sfo-level2'
+    second_factor_only_loa_loa3: 'http://stepup.example.com/assurance/sfo-level3'
+    second_factor_only: true
+    u2f_app_id: 'https://gateway.tld/u2f/app-id'
+    enabled_second_factors:
+        - sms
+        - yubikey
+        - tiqr
+        - u2f
+    enabled_generic_second_factors:
+        biometric:
+            loa: 3
+        tiqr:
+            loa: 3
