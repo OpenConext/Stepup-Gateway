@@ -50,8 +50,6 @@
         "webmozart/assert": "^1.2"
     },
     "require-dev": {
-        "ext-libxml": "*",
-        "ext-pdo": "*",
         "behat/behat": "^3.6",
         "behat/mink": "^1.8",
         "behat/mink-extension": "^2.3",
@@ -92,7 +90,6 @@
             "@phpmd",
             "@test",
             "@behat",
-            "@behat-selenium",
             "@security"
         ],
         "security": "./ci/qa/security",
@@ -102,7 +99,6 @@
         "phpcbf": "./ci/qa/phpcbf",
         "phpmd": "./ci/qa/phpmd",
         "behat": "./ci/qa/behat",
-        "behat-selenium": "./ci/qa/behat-selenium",
         "test": "./ci/qa/phpunit"
     },
     "config": {
