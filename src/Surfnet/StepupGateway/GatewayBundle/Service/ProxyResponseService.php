@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Service;
 
+use DateInterval;
 use DateTime;
 use DateTimeZone;
 use SAML2\Assertion;
@@ -190,15 +191,17 @@ class ProxyResponseService
     }
 
     /**
-     * @param string $interval a \DateInterval compatible interval to skew the time with
+     * @param string|null $interval a \DateInterval compatible interval to skew the time with
+     *
      * @return int
+     * @throws \Exception
      */
     private function getTimestamp($interval = null)
     {
         $time = clone $this->currentTime;
 
         if ($interval) {
-            $time->add(new \DateInterval($interval));
+            $time->add(new DateInterval($interval));
         }
 
         return $time->getTimestamp();
