@@ -27,6 +27,7 @@
         "graylog2/gelf-php": "^1.5",
         "incenteev/composer-parameter-handler": "~2.0",
         "jms/translation-bundle": "~1.3.0",
+        "malukenho/docheader": "^0.1.7",
         "mopa/bootstrap-bundle": "^3.2",
         "mopa/composer-bridge": "~1.5",
         "nelmio/security-bundle": "~1.4",
@@ -93,7 +94,8 @@
         "phpcbf": "./ci/qa/phpcbf",
         "phpmd": "./ci/qa/phpmd",
         "behat": "./ci/qa/behat",
-        "test": "./ci/qa/phpunit"
+        "test": "./ci/qa/phpunit",
+        "license-headers": "vendor/bin/docheader check src/"
     },
     "config": {
         "optimize-autoloader": true,
