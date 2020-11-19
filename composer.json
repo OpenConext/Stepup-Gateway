@@ -14,7 +14,7 @@
     },
     "minimum-stability": "stable",
     "require": {
-        "php": "~5.6|~7.0",
+        "php": "~7.2",
         "beberlei/assert": "^2.0",
         "doctrine/cache": "~1.4",
         "doctrine/common": "~2.5",
@@ -37,7 +37,7 @@
         "surfnet/messagebird-api-client-bundle": "^4.0",
         "surfnet/stepup-bundle": "^4.0",
         "surfnet/stepup-saml-bundle": "^4.1",
-        "surfnet/stepup-u2f-bundle": "dev-develop",
+        "surfnet/stepup-u2f-bundle": "^3.4",
         "surfnet/yubikey-api-client-bundle": "^3.0",
         "symfony/assetic-bundle": "~2.3",
         "symfony/monolog-bundle": "^3.0",
@@ -59,6 +59,7 @@
         "overtrue/phplint": "^1.2",
         "phpmd/phpmd": "^2.6",
         "phpunit/phpunit": "^5.7",
+        "roave/security-advisories": "dev-master",
         "sebastian/exporter": "~2.0",
         "sebastian/phpcpd": "^2.0",
         "squizlabs/php_codesniffer": "^3.4",
@@ -101,7 +102,7 @@
         "optimize-autoloader": true,
         "sort-packages": true,
         "platform": {
-            "php": "5.6"
+            "php": "7.2"
         }
     },
     "extra": {

@@ -20,6 +20,9 @@ namespace Surfnet\StepupGateway\U2fVerificationBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
+/**
+ * @SuppressWarnings(PHPMD.LongClassName)
+ */
 class SurfnetStepupGatewayU2fVerificationBundle extends Bundle
 {
 }

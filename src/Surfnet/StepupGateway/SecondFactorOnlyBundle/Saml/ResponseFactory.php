@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Saml;
 
+use DateInterval;
 use DateTime;
 use DateTimeZone;
 use SAML2\Assertion;
@@ -154,7 +155,7 @@ final class ResponseFactory
     }
 
     /**
-     * @param string $interval a \DateInterval compatible interval to skew the time with
+     * @param string|null $interval a \DateInterval compatible interval to skew the time with
      * @return int
      */
     private function getTimestamp($interval = null)
@@ -162,7 +163,7 @@ final class ResponseFactory
         $time = clone $this->currentTime;
 
         if ($interval) {
-            $time->add(new \DateInterval($interval));
+            $time->add(new DateInterval($interval));
         }
 
         return $time->getTimestamp();

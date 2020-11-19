@@ -20,6 +20,9 @@ namespace Surfnet\StepupGateway\SamlStepupProviderBundle\Exception;
 
 use Surfnet\StepupGateway\GatewayBundle\Exception\DomainException;
 
+/**
+ * @SuppressWarnings(PHPMD.LongClassName)
+ */
 class SecondfactorVerfificationRequiredException extends DomainException
 {
 }

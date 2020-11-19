@@ -7,7 +7,7 @@ This component is part of "Step-up Authentication as-a Service". See [Stepup-Dep
 
 ## Requirements
 
- * PHP 5.6 (Note that we test on 7.2 but do not run or support it officially)
+ * PHP 7.2
  * [Composer](https://getcomposer.org/)
  * A web server (Apache, Nginx)
  * MariaDB 5.5+ (MySQL should work as well)
