@@ -26,6 +26,9 @@ use Symfony\Component\DependencyInjection\Loader;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
+/**
+ * @SuppressWarnings(PHPMD.LongClassName)
+ */
 class SurfnetStepupGatewaySamlStepupProviderExtension extends Extension
 {
     const VIEW_CONFIG_TAG_NAME = 'gssp.view_config';

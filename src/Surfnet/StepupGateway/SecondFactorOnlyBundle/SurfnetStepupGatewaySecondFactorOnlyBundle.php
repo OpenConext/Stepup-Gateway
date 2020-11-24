@@ -20,6 +20,9 @@ namespace Surfnet\StepupGateway\SecondFactorOnlyBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
+/**
+ * @SuppressWarnings(PHPMD.LongClassName)
+ */
 class SurfnetStepupGatewaySecondFactorOnlyBundle extends Bundle
 {
 }

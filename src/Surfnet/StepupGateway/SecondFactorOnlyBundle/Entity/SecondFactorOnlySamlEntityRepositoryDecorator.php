@@ -21,6 +21,9 @@ namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Entity;
 use Surfnet\StepupGateway\GatewayBundle\Entity\SamlEntity;
 use Surfnet\StepupGateway\GatewayBundle\Entity\SamlEntityRepository;
 
+/**
+ * @SuppressWarnings(PHPMD.LongClassName)
+ */
 final class SecondFactorOnlySamlEntityRepositoryDecorator implements SamlEntityRepository
 {
     /**
