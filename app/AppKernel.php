@@ -28,13 +28,11 @@ class AppKernel extends Kernel
             new Symfony\Bundle\SecurityBundle\SecurityBundle(),
             new Symfony\Bundle\TwigBundle\TwigBundle(),
             new Symfony\Bundle\MonologBundle\MonologBundle(),
-            new Symfony\Bundle\AsseticBundle\AsseticBundle(),
             new Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
             new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
             new Surfnet\StepupGateway\ApiBundle\SurfnetStepupGatewayApiBundle(),
             new Nelmio\SecurityBundle\NelmioSecurityBundle(),
             new Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle(),
-            new Mopa\Bundle\BootstrapBundle\MopaBootstrapBundle(),
             new Surfnet\MessageBirdApiClientBundle\SurfnetMessageBirdApiClientBundle(),
             new Surfnet\YubikeyApiClientBundle\SurfnetYubikeyApiClientBundle(),
             new Surfnet\StepupBundle\SurfnetStepupBundle(),
@@ -46,6 +44,7 @@ class AppKernel extends Kernel
             new Surfnet\StepupGateway\U2fVerificationBundle\SurfnetStepupGatewayU2fVerificationBundle(),
             new Surfnet\StepupU2fBundle\SurfnetStepupU2fBundle(),
             new OpenConext\MonitorBundle\OpenConextMonitorBundle(),
+            new Symfony\WebpackEncoreBundle\WebpackEncoreBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev'))) {

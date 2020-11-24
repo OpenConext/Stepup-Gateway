@@ -28,7 +28,7 @@ RUN mkdir /.npm
 RUN chmod -R a+w /.npm
 
 # Install Less.js
-RUN npm i -g less
+RUN npm i -g yarn less
 
 # Cleanup
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*

@@ -22,3 +22,6 @@
 /cache.properties
 /app/SymfonyRequirements.php
 /app/check.php
+.idea
+node_modules
+web/build

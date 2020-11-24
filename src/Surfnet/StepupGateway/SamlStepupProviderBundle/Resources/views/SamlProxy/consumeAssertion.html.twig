@@ -1,16 +1,4 @@
 {% extends '::base.html.twig' %}
-{% block head_style %}
-    {% stylesheets
-        '@SurfnetStepupGatewayGatewayBundle/Resources/public/css/hiddensubmit.css' %}
-    <link href="{{ asset_url }}" type="text/css" rel="stylesheet" media="screen"/>
-    {% endstylesheets %}
-{% endblock head_style %}
-{% block head_script %}
-    {% javascripts
-    '@SurfnetStepupGatewayGatewayBundle/Resources/public/js/submitonload.js'%}
-    <script type="text/javascript" src="{{ asset_url }}"></script>
-    {% endjavascripts %}
-{% endblock head_script %}
 
 {% block page_title %}{{ 'gateway.gssp.consume_assertion.title'|trans }}{% endblock %}
 
@@ -29,4 +17,8 @@
         <input type="submit" value="Submit"/>
     </noscript>
     </form>
+{% endblock %}
+{% block javascripts %}
+    {{ encore_entry_script_tags('app') }}
+    {{ encore_entry_script_tags('submitonload') }}
 {% endblock %}

@@ -1,0 +1,25 @@
+.wayg.container {
+  max-width: 75rem;
+  form.choose-second-factor-type {
+
+    div.row {
+      margin: 2em 1em;
+    }
+
+    div.logo {
+      img {
+        max-height: 75px;
+      }
+      @media(max-width:767px){
+        img {
+          max-height: 50px;
+        }
+      }
+    }
+
+    div.title {
+      font-size: larger;
+      font-weight: 600;
+    }
+  }
+}

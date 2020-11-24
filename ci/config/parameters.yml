@@ -5,7 +5,6 @@ parameters:
     debug_toolbar: true
     debug_redirects: false
     app_name: 'Stepup Gateway'
-    use_assetic_controller: true
     trusted_proxies:
         - 127.0.0.1
     database_driver: pdo_mysql

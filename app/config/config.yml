@@ -4,6 +4,7 @@ imports:
     - { resource: samlstepupproviders.yml }
     - { resource: global_view_parameters.yml }
     - { resource: logging.yml }
+    - { resource: webpack_encore.yaml }
 
 framework:
     #esi:             ~
@@ -18,7 +19,7 @@ framework:
     templating:
         engines: ['twig']
     assets:
-        version: "%asset_version%"
+        json_manifest_path: '%kernel.project_dir%/web/build/manifest.json'
     default_locale:  "%default_locale%"
     trusted_hosts:   ~
     session:
@@ -38,22 +39,7 @@ twig:
     globals:
         global_view_parameters: "@gateway.service.global_view_parameters"
         app_name: "%app_name%"
-
-# Assetic Configuration
-assetic:
-    debug:          "%kernel.debug%"
-    use_controller: false
-    bundles:
-     - MopaBootstrapBundle
-     - SurfnetStepupGatewayApiBundle
-     - SurfnetStepupGatewayGatewayBundle
-     - SurfnetStepupGatewaySamlStepupProviderBundle
-    #java: /usr/bin/java
-    node: "/usr/bin/node"
-    node_paths: ["/usr/lib/node_modules"]
-    filters:
-        cssrewrite: ~
-        less: ~
+    form_themes: ['bootstrap_4_layout.html.twig']
 
 # Doctrine Configuration
 doctrine:
@@ -136,13 +122,6 @@ services:
     twig.extension.text: # Required by JMSTranslationBundle
         class: Twig_Extensions_Extension_Text
         tags: [{ name: twig.extension }]
-
-mopa_bootstrap:
-    form:
-        show_legend: false
-        templating: SurfnetStepupGatewayGatewayBundle:Form:fields.html.twig
-    icons:
-        icon_set: fontawesome4
 
 surfnet_message_bird_api_client:
     authorization: "%messagebird_authorization%"

@@ -12,7 +12,6 @@ parameters:
     # Display name of application
     app_name: "Stepup Gateway"
 
-    use_assetic_controller: true
     # IP addresses of any HTTP proxies that are sitting in from of the application
     # See: http://symfony.com/doc/current/request/load_balancer_reverse_proxy.html
     trusted_proxies:   ~
