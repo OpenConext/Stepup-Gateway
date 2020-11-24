@@ -1,13 +1,17 @@
-// overriding the font path for correct loading.
-@FontAwesomePath: "/fonts";
-@fa-font-path: "/fonts";
+@charset "utf-8";
+
+@import "vars";
+@import "authentication";
+@import "wayg";
+@import "~bootstrap";
+
 
 body {
-  background-color: @gray-lighter;
+  background-color: $gray-lighter;
   font-size: 15px;
   line-height: 20px;
 
-  @media (max-width: @medium) {
+  @media (max-width: $medium) {
     background-color: white;
   }
 
@@ -21,14 +25,14 @@ body {
     background: #fff;
     padding: 0 2rem;
 
-    @media (min-width: @medium) {
+    @media (min-width: $medium) {
       border-radius: 4px;
       box-shadow: 0 1px 4px rgba(0, 0, 0, .2);
       margin-top: 2rem;
     }
 
     .content {
-      @media (max-width: @small) {
+      @media (max-width: $small) {
         padding: 2rem 0;
       }
     }
@@ -67,4 +71,8 @@ div.page-header {
 div.middle {
   display: flex;
   align-items: center;
+}
+
+.hidden {
+  display: none;
 }

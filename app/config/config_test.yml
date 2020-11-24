@@ -9,14 +9,6 @@ framework:
     profiler:
         collect: false
 
-assetic:
-    node: "/usr/bin/node"
-    filters:
-        less:
-            node: "/usr/bin/node"
-            node_paths: ["/usr/local/lib/node_modules"]
-            apply_to: '\.less$'
-
 nelmio_security:
     csp:
         img: [ self, 'data:' ]

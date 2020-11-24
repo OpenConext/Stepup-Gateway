@@ -42,9 +42,6 @@ web_profiler:
     toolbar: "%debug_toolbar%"
     intercept_redirects: "%debug_redirects%"
 
-assetic:
-    use_controller: "%use_assetic_controller%"
-
 nelmio_security:
     csp:
         img: [ self, 'data:' ]

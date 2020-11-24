@@ -15,11 +15,9 @@ This component is part of "Step-up Authentication as-a Service". See [Stepup-Dep
 
 ## Installation
 
-Clone the repository or download the archive to a directory. Install the dependencies by running `composer install` and fill out the database credentials et cetera.
+Clone the repository or download the archive to a directory. Install the dependencies by running `composer install && yarn install` and fill out the database credentials et cetera.
 
 Make sure to run database migrations for u2f using `app/console u2f:migrations:migrate`.
-
-Run `app/console mopa:bootstrap:symlink:less` to configure Bootstrap symlinks.
 
 The Gateway is configured to only accept connections over SSL. Disable this under `nelmio_security` in `config.yml` or run the web server using a (self-signed) certificate.
 
