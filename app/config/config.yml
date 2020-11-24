@@ -19,7 +19,7 @@ framework:
     templating:
         engines: ['twig']
     assets:
-        json_manifest_path: '%kernel.project_dir%/web/build/manifest.json'
+        json_manifest_path: '%kernel.project_dir%/public/build/manifest.json'
     default_locale:  "%default_locale%"
     trusted_hosts:   ~
     session:
@@ -189,7 +189,7 @@ jms_translation:
     configs:
         default:
             dirs: ["%kernel.root_dir%/../src", "%kernel.root_dir%", "%kernel.root_dir%/../vendor/surfnet"]
-            output_dir: "%kernel.root_dir%/Resources/translations"
+            output_dir: "%kernel.root_dir%/translations"
             ignored_domains: []
             excluded_names:
                 - '*TestCase.php'
