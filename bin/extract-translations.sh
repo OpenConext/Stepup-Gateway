@@ -1,2 +1,2 @@
 #!/bin/bash
-app/console translation:extract --config=default --env=dev
+bin/console translation:extract --config=default --env=dev
