@@ -5,11 +5,9 @@
     "autoload": {
         "psr-4": {
             "Surfnet\\": "src\\Surfnet",
-            "Surfnet\\StepupGateway\\Behat\\": "tests/features/bootstrap"
         },
         "classmap": [
-            "app/AppKernel.php",
-            "app/AppCache.php"
+            "src/Kernel.php"
         ]
     },
     "minimum-stability": "stable",
@@ -70,7 +68,8 @@
     "scripts": {
         "auto-scripts": {
             "cache:clear": "symfony-cmd",
-            "assets:install %PUBLIC_DIR%": "symfony-cmd"
+            "assets:install %PUBLIC_DIR%": "symfony-cmd",
+            "security-checker security:check": "script"
         },
         "post-install-cmd": [
             "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",
@@ -134,13 +133,13 @@
         "symfony-assets-install": "relative",
         "incenteev-parameters": [
             {
-                "file": "app/config/parameters.yml"
+                "file": "config/legacy/parameters.yaml"
             },
             {
-                "file": "app/config/samlstepupproviders_parameters.yml"
+                "file": "config/legacy/samlstepupproviders_parameters.yaml"
             },
             {
-                "file": "app/config/global_view_parameters.yml"
+                "file": "config/legacy/global_view_parameters.yaml"
             }
         ]
     }

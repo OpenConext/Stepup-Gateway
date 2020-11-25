@@ -1,0 +1,5 @@
+nelmio_security:
+  csp:
+    img: [ self, 'data:' ]
+    script: [ self, unsafe-inline ]
+    style: [ self, unsafe-inline ]
