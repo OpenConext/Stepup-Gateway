@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "772543f9600a1c1c6ae4a8f29a36333c",
+    "content-hash": "f222ac8ff0aed9c082524b6825978454",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -3329,16 +3329,16 @@
         },
         {
             "name": "surfnet/yubikey-api-client-bundle",
-            "version": "dev-features/sf4",
+            "version": "4.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SURFnet/yubikey-api-client-bundle.git",
-                "reference": "13ae03d54052ddf7d546e6b356d4548db09e5d7f"
+                "reference": "e12061be6f39114269e0834c9c13e7adadcc3254"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SURFnet/yubikey-api-client-bundle/zipball/13ae03d54052ddf7d546e6b356d4548db09e5d7f",
-                "reference": "13ae03d54052ddf7d546e6b356d4548db09e5d7f",
+                "url": "https://api.github.com/repos/SURFnet/yubikey-api-client-bundle/zipball/e12061be6f39114269e0834c9c13e7adadcc3254",
+                "reference": "e12061be6f39114269e0834c9c13e7adadcc3254",
                 "shasum": ""
             },
             "require": {
@@ -3354,8 +3354,8 @@
                 "phpmd/phpmd": "^2.0",
                 "phpunit/phpunit": "^4.0",
                 "sebastian/phpcpd": "^2.0",
-                "sensiolabs/security-checker": "^4.0",
-                "squizlabs/php_codesniffer": "^1.0",
+                "sensiolabs/security-checker": "^6",
+                "squizlabs/php_codesniffer": "^3",
                 "symfony/framework-bundle": ">=2.3,<4",
                 "symfony/monolog-bundle": "^2.11"
             },
@@ -3377,9 +3377,9 @@
             ],
             "support": {
                 "issues": "https://github.com/SURFnet/yubikey-api-client-bundle/issues",
-                "source": "https://github.com/SURFnet/yubikey-api-client-bundle/tree/features/sf4"
+                "source": "https://github.com/SURFnet/yubikey-api-client-bundle/tree/4.0.0"
             },
-            "time": "2020-11-24T15:43:41+00:00"
+            "time": "2020-11-25T10:17:38+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",
@@ -11749,9 +11749,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "surfnet/yubikey-api-client-bundle": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
