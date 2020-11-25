@@ -1,19 +1,29 @@
+
 monolog:
-    handlers:
-        main:
-            type: stream
-            path: "%kernel.logs_dir%/%kernel.environment%.log"
-            level: debug
-            channels: ["!event"]
-        # uncomment to get logging in your browser
-        # you may have to allow bigger header sizes in your Web server configuration
-        #firephp:
-        #    type: firephp
-        #    level: info
-        #chromephp:
-        #    type: chromephp
-        #    level: info
-        console:
-            type: console
-            process_psr_3_messages: false
-            channels: ["!event", "!doctrine", "!console"]
+  channels: [authentication]
+  handlers:
+    prod-signaler:
+      type: fingers_crossed
+      action_level: ERROR
+      passthru_level: DEBUG # DEV setting: this means that all message of level DEBUG or higher are always logged
+      #passthru_level: NOTICE # PROD setting this means that all message of level NOTICE or higher are always logged
+      handler: main_syslog
+      bubble: true
+      channels: ["!authentication"] # the auth channel is logged by the next handler
+    main_syslog:
+      type: syslog
+      ident: stepup-gateway
+      facility: user
+      formatter: surfnet_stepup.monolog.json_formatter
+    authenthentication_syslog:
+      type: syslog
+      ident: stepup-authentication
+      facility: user
+      level: INFO
+      channels: [authentication]
+      formatter: gateway.monolog.gelf_to_string_formatter
+    main_logfile:
+      type: stream
+      handler: logfile
+      level: NOTICE
+      path: "%kernel.logs_dir%/%kernel.environment%.log"

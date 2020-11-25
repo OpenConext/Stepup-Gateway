@@ -16,8 +16,10 @@ nelmio_security:
 
   # Content Security Policy
     csp:
-      report_uri: /csp/report
-      # Log to security channel
       report_logger_service: monolog.logger.security
-      # Content types: default, script, object, style, img, media, frame, font, connect
-      default: [ self ]
+      enforce:
+        report-uri: "%router.request_context.base_url%/csp/report"
+        default-src:
+          - 'self'
+        block-all-mixed-content: true # defaults to false, blocks HTTP content over HTTPS transport
+        upgrade-insecure-requests: true # defaults to false, upgrades HTTP requests to HTTPS transport

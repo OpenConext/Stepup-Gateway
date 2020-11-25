@@ -4,7 +4,7 @@
     "description": "The SURFnet Step-up Gateway sits between a SAML Service Provider and Identity Provider and can provide a certain Level of Assurance by performing second-factor authentication.",
     "autoload": {
         "psr-4": {
-            "Surfnet\\": "src\\Surfnet",
+            "Surfnet\\": "src\\Surfnet"
         },
         "classmap": [
             "src/Kernel.php"
@@ -33,6 +33,8 @@
         "surfnet/stepup-u2f-bundle": "^4",
         "surfnet/yubikey-api-client-bundle": "dev-features/sf4",
         "symfony/console": "4.4.*",
+        "symfony/dotenv": "4.4.*",
+        "symfony/expression-language": "4.4.*",
         "symfony/flex": "^1.8",
         "symfony/form": "4.4.*",
         "symfony/monolog-bundle": "^3.0",

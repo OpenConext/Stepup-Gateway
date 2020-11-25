@@ -117,6 +117,9 @@
             "config/bootstrap.php"
         ]
     },
+    "symfony/expression-language": {
+        "version": "v4.4.16"
+    },
     "symfony/flex": {
         "version": "1.0",
         "recipe": {
