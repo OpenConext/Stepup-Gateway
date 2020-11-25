@@ -6,12 +6,12 @@ parameters:
         - 'https://selfservice.tld/registration/gssf/tiqr/metadata'
         - 'https://ra.tld/vetting-procedure/gssf/tiqr/metadata'
     gssp_tiqr_enabled: true
-    gssp_tiqr_sp_publickey: "%kernel.root_dir%/sp_gssp.crt"
-    gssp_tiqr_sp_privatekey: "%kernel.root_dir%/sp_gssp.pem"
-    gssp_tiqr_idp_publickey: "%kernel.root_dir%/idp_gssp.crt"
-    gssp_tiqr_idp_privatekey: "%kernel.root_dir%/idp_gssp.pem"
-    gssp_tiqr_metadata_publickey: "%kernel.root_dir%/sp_gssp.crt"
-    gssp_tiqr_metadata_privatekey: "%kernel.root_dir%/sp_gssp.pem"
+    gssp_tiqr_sp_publickey: "%kernel.root_dir%/app/files/sp_gssp.crt"
+    gssp_tiqr_sp_privatekey: "%kernel.root_dir%/app/files/sp_gssp.pem"
+    gssp_tiqr_idp_publickey: "%kernel.root_dir%/app/files/idp_gssp.crt"
+    gssp_tiqr_idp_privatekey: "%kernel.root_dir%/app/files/idp_gssp.pem"
+    gssp_tiqr_metadata_publickey: "%kernel.root_dir%/app/files/sp_gssp.crt"
+    gssp_tiqr_metadata_privatekey: "%kernel.root_dir%/app/files/sp_gssp.pem"
     gssp_tiqr_remote_entity_id: 'https://tiqr.tld/saml/metadata'
     gssp_tiqr_remote_sso_url: 'https://tiqr.tld//saml/sso'
     gssp_tiqr_remote_certificate: MIIC4DCCAcgCCQDUr2z7wR8IRzANBgkqhkiG9w0BAQsFADAyMRcwFQYDVQQDDA5zaW1wbGVzYW1sIElkUDEXMBUGA1UECgwORGV2ZWxvcG1lbnQgVk0wHhcNMTgwNzMwMTIzMDQ4WhcNMjMwNzI5MTIzMDQ4WjAyMRcwFQYDVQQDDA5zaW1wbGVzYW1sIElkUDEXMBUGA1UECgwORGV2ZWxvcG1lbnQgVk0wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCx3HelQFRfsWHKo7bGqDxfIjQaIG5K2uNlfqpeITOx3IXHoaZi0IGK1NnYJU2XacnZnb2oyIxUxDMXJciAmaieNornc33N49/bGLMml4psjF6MjvhbzUXjL6m7kTYquJDJ3JrXgjPrj7ciDM9BHqXtHa5h67qiuHz1p3uUazLxmxbaIEvzBlaey+Zw+yy2lR3zGqrT/xAoqGVl47RYUNbn8fOwUQJp/KrAx5X+MJBtP2Uz9AJuPp+u4mc+0g961sr2zSa9Qp6DEp5QEXP9BHw8iSDzYDYF7wxG83Oyz1o4wiMz1Tg7CsVe64D5cWWQJpQLomWGNvxkL93uFj6VNIBTAgMBAAEwDQYJKoZIhvcNAQELBQADggEBAAeaT0EXKA4brNvOgEZY8tI/xCPMAqM5Yu3DOhT2XU7Ie3PmV1RTxl+iVx5ska3mukwhzEi/wUvw4QxKRJnj/qN7dzyp4MQbEx87/QJ/854ODP/MyCzRnKJ2RW5D6c1EyzW45AxLyXMcrH4rZhsyEuQGNY7aFMkzzz4LUuXgYSMfigdwQ5MtnstKvxVTplcOriLBQnPjzrnmlK7T5GvYBILivfCOnIaZUgwFKM/ZR9EUlcOu8/EqnKsT+aahGHE7E9CLsvWvsF0WJXmVtz4dDw+DX2esctIOPLG9LY42R6AMssjZrf+AziE+yJcY+KnDzoTOoCwBKdMWWk6hYRdR/EA=
@@ -20,12 +20,12 @@ parameters:
         en_GB: Tiqr
         nl_NL: Tiqr
     gssp_biometric_enabled: true
-    gssp_biometric_sp_publickey: "%kernel.root_dir%/sp_gssp.crt"
-    gssp_biometric_sp_privatekey: "%kernel.root_dir%/sp_gssp.pem"
-    gssp_biometric_idp_publickey: "%kernel.root_dir%/idp_gssp.crt"
-    gssp_biometric_idp_privatekey: "%kernel.root_dir%/idp_gssp.pem"
-    gssp_biometric_metadata_publickey: "%kernel.root_dir%/sp_gssp.crt"
-    gssp_biometric_metadata_privatekey: "%kernel.root_dir%/sp_gssp.pem"
+    gssp_biometric_sp_publickey: "%kernel.root_dir%/app/files/sp_gssp.crt"
+    gssp_biometric_sp_privatekey: "%kernel.root_dir%/app/files/sp_gssp.pem"
+    gssp_biometric_idp_publickey: "%kernel.root_dir%/app/files/idp_gssp.crt"
+    gssp_biometric_idp_privatekey: "%kernel.root_dir%/app/files/idp_gssp.pem"
+    gssp_biometric_metadata_publickey: "%kernel.root_dir%/app/files/sp_gssp.crt"
+    gssp_biometric_metadata_privatekey: "%kernel.root_dir%/app/files/sp_gssp.pem"
     gssp_biometric_remote_entity_id: 'https://actual-gssp.entity-id.tld'
     gssp_biometric_remote_sso_url: 'https://actual-gssp.entity-id.tld/single-sign-on/url'
     gssp_biometric_remote_certificate: MIIC4DCCAcgCCQDUr2z7wR8IRzANBgkqhkiG9w0BAQsFADAyMRcwFQYDVQQDDA5zaW1wbGVzYW1sIElkUDEXMBUGA1UECgwORGV2ZWxvcG1lbnQgVk0wHhcNMTgwNzMwMTIzMDQ4WhcNMjMwNzI5MTIzMDQ4WjAyMRcwFQYDVQQDDA5zaW1wbGVzYW1sIElkUDEXMBUGA1UECgwORGV2ZWxvcG1lbnQgVk0wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCx3HelQFRfsWHKo7bGqDxfIjQaIG5K2uNlfqpeITOx3IXHoaZi0IGK1NnYJU2XacnZnb2oyIxUxDMXJciAmaieNornc33N49/bGLMml4psjF6MjvhbzUXjL6m7kTYquJDJ3JrXgjPrj7ciDM9BHqXtHa5h67qiuHz1p3uUazLxmxbaIEvzBlaey+Zw+yy2lR3zGqrT/xAoqGVl47RYUNbn8fOwUQJp/KrAx5X+MJBtP2Uz9AJuPp+u4mc+0g961sr2zSa9Qp6DEp5QEXP9BHw8iSDzYDYF7wxG83Oyz1o4wiMz1Tg7CsVe64D5cWWQJpQLomWGNvxkL93uFj6VNIBTAgMBAAEwDQYJKoZIhvcNAQELBQADggEBAAeaT0EXKA4brNvOgEZY8tI/xCPMAqM5Yu3DOhT2XU7Ie3PmV1RTxl+iVx5ska3mukwhzEi/wUvw4QxKRJnj/qN7dzyp4MQbEx87/QJ/854ODP/MyCzRnKJ2RW5D6c1EyzW45AxLyXMcrH4rZhsyEuQGNY7aFMkzzz4LUuXgYSMfigdwQ5MtnstKvxVTplcOriLBQnPjzrnmlK7T5GvYBILivfCOnIaZUgwFKM/ZR9EUlcOu8/EqnKsT+aahGHE7E9CLsvWvsF0WJXmVtz4dDw+DX2esctIOPLG9LY42R6AMssjZrf+AziE+yJcY+KnDzoTOoCwBKdMWWk6hYRdR/EA=
