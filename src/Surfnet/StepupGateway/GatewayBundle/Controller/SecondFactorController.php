@@ -330,7 +330,7 @@ class SecondFactorController extends Controller
         $form = $this->createForm(VerifyYubikeyOtpType::class, $command)->handleRequest($request);
         $cancelForm = $this->buildCancelAuthenticationForm()->handleRequest($request);
 
-        if (!$form->isValid()) {
+        if ($form->isSubmitted() && !$form->isValid()) {
             // OTP field is rendered empty in the template.
             return ['form' => $form->createView(), 'cancelForm' => $cancelForm->createView()];
         }
@@ -394,7 +394,7 @@ class SecondFactorController extends Controller
         $maximumOtpRequests = $stepupService->getSmsMaximumOtpRequestsCount();
         $viewVariables = ['otpRequestsRemaining' => $otpRequestsRemaining, 'maximumOtpRequests' => $maximumOtpRequests];
 
-        if (!$form->isValid()) {
+        if ($form->isSubmitted() && !$form->isValid()) {
             return array_merge(
                 $viewVariables,
                 ['phoneNumber' => $phoneNumber, 'form' => $form->createView(), 'cancelForm' => $cancelForm->createView()]
@@ -434,7 +434,7 @@ class SecondFactorController extends Controller
         $form = $this->createForm(VerifySmsChallengeType::class, $command)->handleRequest($request);
         $cancelForm = $this->buildCancelAuthenticationForm()->handleRequest($request);
 
-        if (!$form->isValid()) {
+        if ($form->isSubmitted() && !$form->isValid()) {
             return ['form' => $form->createView(), 'cancelForm' => $cancelForm->createView()];
         }
 
@@ -558,7 +558,7 @@ class SecondFactorController extends Controller
         $cancelForm =
             $this->createForm(CancelSecondFactorVerificationType::class, null, ['action' => $cancelFormAction]);
 
-        if (!$form->isValid()) {
+        if ($form->isSubmitted() && !$form->isValid()) {
             $logger->error('U2F authentication verification could not be started because device send illegal data');
             $this->addFlash('error', 'gateway.u2f.alert.error');
 
