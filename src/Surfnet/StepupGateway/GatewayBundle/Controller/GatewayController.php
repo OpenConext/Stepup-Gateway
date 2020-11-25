@@ -176,7 +176,7 @@ class GatewayController extends Controller
      * @param Response $response
      * @return Response
      */
-    public function render($view, array $parameters = array(), Response $response = null)
+    public function render($view, array $parameters = array(), Response $response = null): Response
     {
         return parent::render(
             'SurfnetStepupGatewayGatewayBundle:Gateway:' . $view . '.html.twig',
