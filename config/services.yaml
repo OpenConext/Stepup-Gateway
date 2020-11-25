@@ -1,0 +1,18 @@
+imports:
+  - { resource: 'legacy/samlstepupproviders_parameters.yaml' }
+  - { resource: 'legacy/global_view_parameters.yaml' }
+  - { resource: 'legacy/parameters.yaml' }
+  - { resource: 'legacy/samlstepupproviders.yaml' }
+
+services:
+  logger:
+    alias: 'monolog.logger'
+    public: true
+
+  twig.extension.text: # Required by JMSTranslationBundle
+    class: Twig_Extensions_Extension_Text
+    tags: [{ name: twig.extension }]
+
+  twig.extension.intl:
+    class: Twig_Extensions_Extension_Intl
+    tags: [{ name: twig.extension }]

@@ -1,0 +1,23 @@
+nelmio_security:
+    # prevents framing of the entire site
+    clickjacking:
+        paths:
+            '^/.*': DENY
+
+    # disables content type sniffing for script resources
+    content_type:
+        nosniff: true
+
+    # forces Microsoft's XSS-Protection with
+    # its block mode
+    xss_protection:
+        enabled: true
+        mode_block: true
+
+  # Content Security Policy
+    csp:
+      report_uri: /csp/report
+      # Log to security channel
+      report_logger_service: monolog.logger.security
+      # Content types: default, script, object, style, img, media, frame, font, connect
+      default: [ self ]
