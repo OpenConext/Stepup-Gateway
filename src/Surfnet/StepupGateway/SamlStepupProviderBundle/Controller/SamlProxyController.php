@@ -150,10 +150,10 @@ class SamlProxyController extends Controller
                 $this->getDestination($provider->getStateHandler()),
                 $e->getMessage()
             );
-            return $this->renderSamlResponse('consumeAssertion', $provider->getStateHandler(), $response);
+            return $this->renderSamlResponse('consume_assertion', $provider->getStateHandler(), $response);
         } catch (InvalidSubjectException $e) {
             return $this->renderSamlResponse(
-                'recoverableError',
+                'recoverable_error',
                 $provider->getStateHandler(),
                 $this->createAuthnFailedResponse(
                     $provider,
@@ -166,7 +166,7 @@ class SamlProxyController extends Controller
             throw $e;
         }
 
-        return $this->renderSamlResponse('consumeAssertion', $provider->getStateHandler(), $response);
+        return $this->renderSamlResponse('consume_assertion', $provider->getStateHandler(), $response);
     }
 
     /**
@@ -242,7 +242,7 @@ class SamlProxyController extends Controller
         ];
 
         $response = parent::render(
-            'SurfnetStepupGatewaySamlStepupProviderBundle:SamlProxy:' . $view . '.html.twig',
+            'SurfnetStepupGatewaySamlStepupProviderBundle:saml_proxy:' . $view . '.html.twig',
             $parameters
         );
 

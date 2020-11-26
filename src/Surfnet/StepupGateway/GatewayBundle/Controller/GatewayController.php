@@ -68,7 +68,7 @@ class GatewayController extends Controller
         } catch (RequesterFailureException $e) {
             $response = $this->getGatewayFailedResponseService()->createRequesterFailureResponse($this->getResponseContext());
 
-            return $this->renderSamlResponse('consumeAssertion', $response);
+            return $this->renderSamlResponse('consume_assertion', $response);
         }
 
         return $redirectBinding->createResponseFor($proxyRequest);
@@ -103,7 +103,7 @@ class GatewayController extends Controller
         } catch (ResponseFailureException $e) {
             $response = $this->getGatewayFailedResponseService()->createResponseFailureResponse($responseContext);
 
-            return $this->renderSamlResponse('unprocessableResponse', $response);
+            return $this->renderSamlResponse('unprocessable_response', $response);
         }
 
         return $this->forward('SurfnetStepupGatewayGatewayBundle:SecondFactor:selectSecondFactorForVerification');
@@ -125,7 +125,7 @@ class GatewayController extends Controller
         $response = $gatewayLoginService->respond($responseContext);
         $gatewayLoginService->resetRespondState($responseContext);
 
-        return $this->renderSamlResponse('consumeAssertion', $response);
+        return $this->renderSamlResponse('consume_assertion', $response);
     }
 
     /**
@@ -138,7 +138,7 @@ class GatewayController extends Controller
 
         $response = $gatewayLoginService->sendLoaCannotBeGiven($responseContext);
 
-        return $this->renderSamlResponse('consumeAssertion', $response);
+        return $this->renderSamlResponse('consume_assertion', $response);
     }
 
     /**
@@ -151,7 +151,7 @@ class GatewayController extends Controller
 
         $response = $gatewayLoginService->sendAuthenticationCancelledByUser($responseContext);
 
-        return $this->renderSamlResponse('consumeAssertion', $response);
+        return $this->renderSamlResponse('consume_assertion', $response);
     }
 
     /**
@@ -179,7 +179,7 @@ class GatewayController extends Controller
     public function render($view, array $parameters = array(), Response $response = null): Response
     {
         return parent::render(
-            'SurfnetStepupGatewayGatewayBundle:Gateway:' . $view . '.html.twig',
+            'SurfnetStepupGatewayGatewayBundle:gateway:' . $view . '.html.twig',
             $parameters,
             $response
         );
