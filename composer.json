@@ -119,6 +119,7 @@
             "!/bin",
             "!/component_info",
             "!/config",
+            "!/migrations",
             "!/public",
             "!/src",
             "!/templates",
