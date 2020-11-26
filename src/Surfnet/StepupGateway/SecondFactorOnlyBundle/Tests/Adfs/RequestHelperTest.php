@@ -23,8 +23,9 @@ use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\RequestHelper;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\StateHandler;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
+use PHPUnit\Framework\TestCase;
 
-class RequestHelperTest extends \PHPUnit_Framework_TestCase
+class RequestHelperTest extends TestCase
 {
     /**
      * @var RequestHelper
@@ -51,7 +52,7 @@ class RequestHelperTest extends \PHPUnit_Framework_TestCase
      */
     private $stateHandler;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->logger = m::mock(LoggerInterface::class);
         $this->logger->shouldIgnoreMissing();
@@ -84,10 +85,10 @@ class RequestHelperTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function it_rejects_malformed_request()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $this->request->request->shouldReceive('get')->with(RequestHelper::ADFS_PARAM_AUTH_METHOD)->andReturn('');
         $this->request->request->shouldReceive('get')->with(RequestHelper::ADFS_PARAM_CONTEXT)->andReturn('context');
         $this->helper->transformRequest($this->request, 'my-request-id');

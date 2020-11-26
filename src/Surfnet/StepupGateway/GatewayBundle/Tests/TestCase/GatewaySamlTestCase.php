@@ -21,9 +21,9 @@ use Mockery;
 use PHPUnit\Framework\TestCase;
 use SAML2\Compat\ContainerSingleton;
 use SAML2\Configuration\PrivateKey;
+use Surfnet\StepupGateway\GatewayBundle\Tests\Logger\Logger;
 use Surfnet\StepupGateway\GatewayBundle\Tests\Mock\Saml2ContainerMock;
 use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
-use Symfony\Component\HttpKernel\Tests\Logger;
 
 class GatewaySamlTestCase extends TestCase
 {
@@ -38,7 +38,7 @@ class GatewaySamlTestCase extends TestCase
     /**
      *
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -53,7 +53,7 @@ class GatewaySamlTestCase extends TestCase
     /**
      *
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
 

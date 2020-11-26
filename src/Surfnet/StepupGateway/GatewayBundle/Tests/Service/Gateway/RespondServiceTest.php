@@ -74,7 +74,7 @@ final class RespondServiceTest extends GatewaySamlTestCase
     /** @var Mockery\Mock|SecondFactorService */
     private $secondFactorService;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 

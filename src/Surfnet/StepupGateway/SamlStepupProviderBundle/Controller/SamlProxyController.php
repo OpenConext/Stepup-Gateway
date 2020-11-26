@@ -27,7 +27,7 @@ use Surfnet\StepupGateway\GatewayBundle\Controller\GatewayController;
 use Surfnet\StepupGateway\GatewayBundle\Exception\ResponseFailureException;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Exception\InvalidSubjectException;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Exception\NotConnectedServiceProviderException;
-use Surfnet\StepupGateway\SamlStepupProviderBundle\Exception\SecondfactorVerfificationRequiredException;
+use Surfnet\StepupGateway\SamlStepupProviderBundle\Exception\SecondfactorVerificationRequiredException;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\Provider;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Saml\ProxyResponseFactory;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Saml\StateHandler;
@@ -160,7 +160,7 @@ class SamlProxyController extends Controller
                     $this->getDestination($provider->getStateHandler())
                 )
             );
-        } catch (SecondfactorVerfificationRequiredException $e) {
+        } catch (SecondfactorVerificationRequiredException $e) {
             return $this->forward('SurfnetStepupGatewayGatewayBundle:SecondFactor:gssfVerified');
         } catch (Exception $e) {
             throw $e;

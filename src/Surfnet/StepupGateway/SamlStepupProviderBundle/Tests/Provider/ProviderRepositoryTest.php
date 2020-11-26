@@ -35,7 +35,7 @@ class ProviderRepositoryTest extends TestCase
      */
     private $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $stateHandler = Mockery::mock(StateHandler::class);
         $remoteIdp = Mockery::mock(IdentityProvider::class);

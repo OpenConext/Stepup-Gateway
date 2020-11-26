@@ -19,7 +19,7 @@
 namespace Surfnet\StepupGateway\GatewayBundle\Tests\Service;
 
 use Mockery as m;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Surfnet\SamlBundle\Entity\ServiceProvider;
 use Surfnet\StepupBundle\Service\LoaResolutionService;
@@ -28,11 +28,13 @@ use Surfnet\StepupBundle\Service\SmsSecondFactorService;
 use Surfnet\StepupBundle\Value\Loa;
 use Surfnet\StepupGateway\ApiBundle\Service\YubikeyServiceInterface;
 use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactorRepository;
+use Surfnet\StepupGateway\GatewayBundle\Exception\InstitutionMismatchException;
 use Surfnet\StepupGateway\GatewayBundle\Exception\LoaCannotBeGivenException;
+use Surfnet\StepupGateway\GatewayBundle\Exception\UnknownInstitutionException;
 use Surfnet\StepupGateway\GatewayBundle\Service\StepUpAuthenticationService;
 use Symfony\Component\Translation\TranslatorInterface;
 
-final class StepUpAuthenticationServiceTest extends PHPUnit_Framework_TestCase
+final class StepUpAuthenticationServiceTest extends TestCase
 {
     /**
      * @var StepUpAuthenticationService
@@ -56,7 +58,7 @@ final class StepUpAuthenticationServiceTest extends PHPUnit_Framework_TestCase
      */
     private $serviceProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->loaResolutionService = new LoaResolutionService([
             new Loa(1,'https://gw-dev.stepup.coin.surf.net/authentication/loa1'),
@@ -84,7 +86,7 @@ final class StepUpAuthenticationServiceTest extends PHPUnit_Framework_TestCase
         );
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         m::close();
@@ -192,11 +194,11 @@ final class StepUpAuthenticationServiceTest extends PHPUnit_Framework_TestCase
      * Loa configuration
      *
      * @dataProvider configuredLoas
-     * @expectedException \Surfnet\StepupGateway\GatewayBundle\Exception\InstitutionMismatchException
-     * @expectedExceptionMessage User and IdP SHO are set but do not match.
      */
     public function test_resolve_highest_required_loa_no_vetted_tokens_for_user_institution($loaConfiguration)
     {
+        $this->expectException(InstitutionMismatchException::class);
+        $this->expectExceptionMessage('User and IdP SHO are set but do not match.');
         $this->logger
             ->shouldReceive('info')
             ->with('Added requested Loa "https://gw-dev.stepup.coin.surf.net/authentication/loa1" as candidate');
@@ -214,12 +216,11 @@ final class StepUpAuthenticationServiceTest extends PHPUnit_Framework_TestCase
 
     /**
      * No default SP LOA config is provided for this SP
-     *
-     * @expectedException \Surfnet\StepupGateway\GatewayBundle\Exception\LoaCannotBeGivenException
-     * @expectedExceptionMessage No Loa can be found, at least one Loa should be found
      */
     public function test_resolve_highest_required_loa_no_default_sp_configurated()
     {
+        $this->expectException(LoaCannotBeGivenException::class);
+        $this->expectExceptionMessage('No Loa can be found, at least one Loa should be found');
         $this->logger
             ->shouldReceive('info')
             ->with('Added requested Loa "https://gw-dev.stepup.coin.surf.net/authentication/loa1" as candidate');
@@ -234,12 +235,11 @@ final class StepUpAuthenticationServiceTest extends PHPUnit_Framework_TestCase
 
     /**
      * No default SP LOA config is provided for this SP
-     *
-     * @expectedException \Surfnet\StepupGateway\GatewayBundle\Exception\UnknownInstitutionException
-     * @expectedExceptionMessage Unable to determine the institution for authenticating user.
      */
     public function test_resolve_highest_required_loa_no_sho_can_be_found()
     {
+        $this->expectException(UnknownInstitutionException::class);
+        $this->expectExceptionMessage('Unable to determine the institution for authenticating user.');
         $this->logger
             ->shouldReceive('info')
             ->with('Added requested Loa "https://gw-dev.stepup.coin.surf.net/authentication/loa2" as candidate');
@@ -259,12 +259,10 @@ final class StepUpAuthenticationServiceTest extends PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * @expectedException \Surfnet\StepupGateway\GatewayBundle\Exception\LoaCannotBeGivenException
-     * @expectedExceptionMessage Out of "2" candidates, no existing Loa could be found, no authentication is possible.
-     */
     public function test_resolve_highest_required_loa_no_viable_loa_found()
     {
+        $this->expectException(LoaCannotBeGivenException::class);
+        $this->expectExceptionMessage('Out of "2" candidates, no existing Loa could be found, no authentication is possible.');
         $this->logger
             ->shouldReceive('info')
             ->with('Added requested Loa "https://gw-dev.stepup.coin.ibuildings.nl/authentication/loa1" as candidate');

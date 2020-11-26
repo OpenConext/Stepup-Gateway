@@ -19,7 +19,6 @@
 namespace Surfnet\StepupGateway\GatewayBundle\Tests\Service;
 
 use Mockery;
-use PHPUnit_Framework_TestCase;
 use Psr\Log\NullLogger;
 use SAML2\Assertion;
 use SAML2\Compat\ContainerSingleton;
@@ -29,6 +28,7 @@ use Surfnet\SamlBundle\SAML2\Attribute\AttributeDefinition;
 use Surfnet\SamlBundle\SAML2\Attribute\AttributeDictionary;
 use Surfnet\SamlBundle\Tests\TestSaml2Container;
 use Surfnet\StepupBundle\Value\Loa;
+use Surfnet\StepupGateway\GatewayBundle\Exception\RuntimeException;
 use Surfnet\StepupGateway\GatewayBundle\Saml\AssertionSigningService;
 use Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler;
 use Surfnet\StepupGateway\GatewayBundle\Service\ProxyResponseService;
@@ -67,7 +67,7 @@ final class ProxyResponseServiceTest extends GatewaySamlTestCase
      */
     private $loa;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -155,12 +155,10 @@ final class ProxyResponseServiceTest extends GatewaySamlTestCase
         );
     }
 
-    /**
-     * @expectedException \Surfnet\StepupGateway\GatewayBundle\Exception\RuntimeException
-     * @expectedExceptionMessage The "urn:mace:dir:attribute-def:eduPersonTargetedID" is not present.
-     */
     public function testCreateProxyResponseRequiresEpti()
     {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('The "urn:mace:dir:attribute-def:eduPersonTargetedID" is not present');
         $factory = new ProxyResponseService(
             $this->identityProvider,
             $this->proxyStateHandler,
@@ -181,13 +179,12 @@ final class ProxyResponseServiceTest extends GatewaySamlTestCase
         $factory->createProxyResponse($originalAssertion,'https://acs');
     }
 
-    /**
-     * @expectedException \Surfnet\StepupGateway\GatewayBundle\Exception\RuntimeException
-     * @expectedExceptionMessage The "urn:mace:dir:attribute-def:eduPersonTargetedID" attribute does not contain a
-     *                           NameID with a value.
-     */
     public function testCreateProxyResponseRequiresEptiFilled()
     {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage(
+            'The "urn:mace:dir:attribute-def:eduPersonTargetedID" attribute does not contain a NameID with a value.'
+        );
         $factory = new ProxyResponseService(
             $this->identityProvider,
             $this->proxyStateHandler,

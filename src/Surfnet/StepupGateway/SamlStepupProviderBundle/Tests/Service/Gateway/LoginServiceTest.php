@@ -28,6 +28,7 @@ use Surfnet\SamlBundle\SAML2\AuthnRequest;
 use Surfnet\SamlBundle\SAML2\ReceivedAuthnRequest;
 use Surfnet\StepupGateway\GatewayBundle\Service\SamlEntityService;
 use Surfnet\StepupGateway\GatewayBundle\Tests\TestCase\GatewaySamlTestCase;
+use Surfnet\StepupGateway\SamlStepupProviderBundle\Exception\NotConnectedServiceProviderException;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\ConnectedServiceProviders;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\Provider;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Saml\StateHandler;
@@ -62,7 +63,7 @@ class LoginServiceTest extends GatewaySamlTestCase
     /** @var Provider */
     private $provider;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -171,10 +172,10 @@ class LoginServiceTest extends GatewaySamlTestCase
 
     /**
      * @test
-     * @expectedException \Surfnet\StepupGateway\SamlStepupProviderBundle\Exception\NotConnectedServiceProviderException
      */
     public function it_should_throw_an_exception_when_a_sp_is_not_connected_when_the_registration_is_started_on_gssp_registration_flow()
     {
+        $this->expectException(NotConnectedServiceProviderException::class);
         // Create request
         $httpRequest = new Request();
 

@@ -49,7 +49,7 @@ final class FailedResponseServiceTest extends GatewaySamlTestCase
     /** @var IdentityProvider */
     private $remoteIdp;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 

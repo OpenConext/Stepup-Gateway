@@ -26,7 +26,7 @@ use Surfnet\StepupGateway\GatewayBundle\Exception\ResponseFailureException;
 use Surfnet\StepupGateway\GatewayBundle\Saml\AssertionAdapter;
 use Surfnet\StepupGateway\GatewayBundle\Saml\Exception\UnknownInResponseToException;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Exception\InvalidSubjectException;
-use Surfnet\StepupGateway\SamlStepupProviderBundle\Exception\SecondfactorVerfificationRequiredException;
+use Surfnet\StepupGateway\SamlStepupProviderBundle\Exception\SecondfactorVerificationRequiredException;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\ConnectedServiceProviders;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\Provider;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Saml\ProxyResponseFactory;
@@ -135,7 +135,7 @@ class ConsumeAssertionService
             $message = 'Second Factor verification was requested and was successful, forwarding to SecondFactor handling';
             $logger->notice($message);
 
-            throw new SecondfactorVerfificationRequiredException($message);
+            throw new SecondfactorVerificationRequiredException($message);
         }
 
         $targetServiceProvider = $this->getServiceProvider($stateHandler->getRequestServiceProvider());
