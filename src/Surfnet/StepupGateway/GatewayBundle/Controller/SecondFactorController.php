@@ -523,7 +523,7 @@ class SecondFactorController extends Controller
     }
 
     /**
-     * @Template("SurfnetStepupGatewayGatewayBundle:SecondFactor:initiateU2fAuthentication.html.twig")
+     * @Template("SurfnetStepupGatewayGatewayBundle:second_factor:initiate_u2f_authentication.html.twig")
      *
      * @param Request $request
      * @return array|Response

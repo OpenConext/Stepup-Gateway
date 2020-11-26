@@ -1,4 +1,5 @@
-{% extends '::base.html.twig' %}
+{% extends 'base.html.twig' %}
+
 {% block page_title %}{{ 'gateway.gateway.consume_assertion.title'|trans }}{% endblock %}
 
 {% block body %}
@@ -7,14 +8,13 @@
     </noscript>
     One moment please...
     <form method="post" action="{{ acu }}">
-        <input type="hidden" name="SAMLResponse" value="{{ response }}" />
-    {% if relayState|length > 0 %}
-        <input type="hidden" name="RelayState" value="{{ relayState|escape }}" />
-    {% endif %}
+        <input type="hidden" name="_SAMLResponse" value="{{ samlResponse }}" />
+        <input type="hidden" name="AuthMethod" value="{{ authMethod|escape }}" />
+        <input type="hidden" name="Context" value="{{ context|escape }}" />
         <input type="submit" class="hidden" />
-    <noscript>
-        <input type="submit" value="Submit"/>
-    </noscript>
+        <noscript>
+            <input type="submit" value="Submit"/>
+        </noscript>
     </form>
 {% endblock %}
 {% block javascripts %}
