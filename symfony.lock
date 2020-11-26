@@ -42,21 +42,6 @@
             "migrations/.gitignore"
         ]
     },
-    "friends-of-behat/symfony-extension": {
-        "version": "2.0",
-        "recipe": {
-            "repo": "github.com/symfony/recipes-contrib",
-            "branch": "master",
-            "version": "2.0",
-            "ref": "3d21344765fd3440a85bdd27d4cada186ec628bd"
-        },
-        "files": [
-            "behat.yml.dist",
-            "config/services_test.yaml",
-            "features/demo.feature",
-            "tests/Behat/DemoContext.php"
-        ]
-    },
     "nelmio/security-bundle": {
         "version": "2.4",
         "recipe": {
@@ -197,9 +182,6 @@
             "phpunit.xml.dist",
             "tests/bootstrap.php"
         ]
-    },
-    "symfony/proxy-manager-bridge": {
-        "version": "v4.4.16"
     },
     "symfony/routing": {
         "version": "4.2",

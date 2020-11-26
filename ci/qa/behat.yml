@@ -9,7 +9,6 @@ default:
         - Surfnet\StepupGateway\Behat\MinkContext
         - Surfnet\StepupGateway\Behat\FeatureContext
   extensions:
-    FriendsOfBehat\SymfonyExtension: null
     Behat\MinkExtension:
       base_url: https://gateway.stepup.example.com/
       goutte: ~
