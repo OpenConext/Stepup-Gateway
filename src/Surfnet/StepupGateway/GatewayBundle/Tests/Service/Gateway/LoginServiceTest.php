@@ -29,6 +29,7 @@ use Surfnet\SamlBundle\SAML2\AuthnRequest;
 use Surfnet\SamlBundle\SAML2\ReceivedAuthnRequest;
 use Surfnet\StepupBundle\Service\LoaResolutionService;
 use Surfnet\StepupBundle\Value\Loa;
+use Surfnet\StepupGateway\GatewayBundle\Exception\RequesterFailureException;
 use Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler;
 use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
 use Surfnet\StepupGateway\GatewayBundle\Service\Gateway\LoginService;
@@ -64,7 +65,7 @@ final class LoginServiceTest extends GatewaySamlTestCase
     /** @var Mockery\Mock|SecondFactorService */
     private $secondFactorService;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -166,10 +167,10 @@ final class LoginServiceTest extends GatewaySamlTestCase
 
     /**
      * @test
-     * @expectedException \Surfnet\StepupGateway\GatewayBundle\Exception\RequesterFailureException
      */
     public function it_should_throw_an_exception_when_an_invalid_loa_is_requested_when_starting_on_login_flow()
     {
+        $this->expectException(RequesterFailureException::class);
         // Create request
         $httpRequest = new Request([AuthnRequest::PARAMETER_RELAY_STATE => 'relay_state']);
 

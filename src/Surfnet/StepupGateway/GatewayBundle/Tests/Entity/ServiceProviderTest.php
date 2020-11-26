@@ -20,8 +20,9 @@ namespace Surfnet\StepupGateway\GatewayBundle\Test\Entity;
 
 use Surfnet\StepupGateway\GatewayBundle\Entity\ServiceProvider;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\Exception\AcsLocationNotAllowedException;
+use PHPUnit\Framework\TestCase;
 
-class ServiceProviderTest extends \PHPUnit_Framework_TestCase
+class ServiceProviderTest extends TestCase
 {
     /**
      * @test
@@ -169,7 +170,7 @@ class ServiceProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function it_throws_exception_if_adfs_request_acs_url_is_not_allowed()
     {
-        $this->setExpectedException(AcsLocationNotAllowedException::class);
+        $this->expectException(AcsLocationNotAllowedException::class);
 
         $sp = new ServiceProvider([
             'allowedAcsLocations' => ['https://example.org/acs', 'https://example.com/acs'],

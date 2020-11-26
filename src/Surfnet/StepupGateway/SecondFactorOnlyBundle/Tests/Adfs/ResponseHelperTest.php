@@ -23,8 +23,9 @@ use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\ResponseHelper;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\StateHandler;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
+use PHPUnit\Framework\TestCase;
 
-class ResponseHelperTest extends \PHPUnit_Framework_TestCase
+class ResponseHelperTest extends TestCase
 {
     /**
      * @var ResponseHelper
@@ -51,7 +52,7 @@ class ResponseHelperTest extends \PHPUnit_Framework_TestCase
      */
     private $stateHandler;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->logger = m::mock(LoggerInterface::class);
         $this->logger->shouldIgnoreMissing();
@@ -99,10 +100,10 @@ class ResponseHelperTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function it_rejects_malformed_adfs_parameters()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $this->stateHandler->shouldReceive('getAuthMethod')->andReturn(null);
         $this->stateHandler->shouldReceive('getContext')->andReturn('<blob></blob>');
         $this->stateHandler->shouldReceive('getRequestId')->andReturn('my-request-id');

@@ -23,6 +23,6 @@ use Surfnet\StepupGateway\GatewayBundle\Exception\DomainException;
 /**
  * @SuppressWarnings(PHPMD.LongClassName)
  */
-class SecondfactorVerfificationRequiredException extends DomainException
+class SecondfactorVerificationRequiredException extends DomainException
 {
 }

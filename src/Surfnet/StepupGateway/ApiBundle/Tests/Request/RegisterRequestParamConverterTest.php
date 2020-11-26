@@ -19,8 +19,9 @@
 namespace Surfnet\StepupGateway\ApiBundle\Tests\Request;
 
 use Mockery as m;
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Surfnet\StepupBundle\Exception\BadJsonRequestException;
 use Surfnet\StepupGateway\ApiBundle\Request\RegisterRequestParamConverter;
 use Surfnet\StepupU2fBundle\Dto\RegisterRequest;
 
@@ -47,7 +48,7 @@ class RegisterRequestParamConverterTest extends TestCase
             ]
         ]);
         $request->attributes = m::mock('Symfony\Component\HttpFoundation\ParameterBag');
-        $request->attributes->shouldReceive('set')->once()->with('parameter', m::anyOf($expectedRegisterRequest));
+        $request->attributes->shouldReceive('set')->once()->with('parameter', RegisterRequest::class);
 
         $validator = m::mock('Symfony\Component\Validator\Validator\ValidatorInterface');
         $validator->shouldReceive('validate');
@@ -85,7 +86,7 @@ class RegisterRequestParamConverterTest extends TestCase
         $request->attributes->shouldReceive('set');
 
         $validator = m::mock('Symfony\Component\Validator\Validator\ValidatorInterface');
-        $validator->shouldReceive('validate')->once()->with(m::anyOf($expectedRegisterRequest));
+        $validator->shouldReceive('validate')->once()->with(RegisterRequest::class);
 
         $configuration = new ParamConverter([
             'name'  => 'parameter',
@@ -100,12 +101,12 @@ class RegisterRequestParamConverterTest extends TestCase
      * @test
      * @group api
      * @dataProvider objectsWithMissingProperties
-     * @expectedException \Surfnet\StepupBundle\Exception\BadJsonRequestException
      *
      * @param array $requestContent
      */
     public function it_throws_a_bad_json_request_exception_when_properties_are_missing($requestContent)
     {
+        $this->expectException(BadJsonRequestException::class);
         $request = $this->createJsonRequest($requestContent);
         $validator = m::mock('Symfony\Component\Validator\Validator\ValidatorInterface');
 

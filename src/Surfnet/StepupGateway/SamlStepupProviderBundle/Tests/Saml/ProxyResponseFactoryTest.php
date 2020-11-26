@@ -51,7 +51,7 @@ class ProxyResponseFactoryTest extends GatewaySamlTestCase
      */
     private $factory;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
