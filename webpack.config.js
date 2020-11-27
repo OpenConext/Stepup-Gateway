@@ -13,6 +13,10 @@ Encore
     ])
     .addEntry('submitonload', './public/typescript/submitonload.ts')
     .addEntry('app', './public/typescript/app.ts')
+    .addEntry('u2f', [
+        './vendor/surfnet/stepup-u2f-bundle/src/Resources/public/u2f.js',
+        './vendor/surfnet/stepup-u2f-bundle/src/Resources/public/u2f-api.js'
+    ])
 
     // Convert sass files.
     .enableSassLoader(function (options) {
