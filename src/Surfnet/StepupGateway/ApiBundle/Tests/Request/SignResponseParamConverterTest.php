@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupGateway\ApiBundle\Tests\Request;
 
+use Hamcrest\Core\IsEqual;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
@@ -55,7 +56,10 @@ class SignResponseParamConverterTest extends TestCase
             ]
         ]);
         $request->attributes = m::mock('Symfony\Component\HttpFoundation\ParameterBag');
-        $request->attributes->shouldReceive('set')->once()->with('parameter', SignResponse::class);
+        $request->attributes
+          ->shouldReceive('set')
+          ->once()
+          ->with('parameter', IsEqual::equalTo($expectedSignResponse));
 
         $validator = m::mock('Symfony\Component\Validator\Validator\ValidatorInterface');
         $validator->shouldReceive('validate');
@@ -100,7 +104,7 @@ class SignResponseParamConverterTest extends TestCase
         $request->attributes->shouldReceive('set');
 
         $validator = m::mock('Symfony\Component\Validator\Validator\ValidatorInterface');
-        $validator->shouldReceive('validate')->once()->with(SignResponse::class);
+        $validator->shouldReceive('validate')->once()->with(IsEqual::equalTo($expectedSignResponse));
 
         $configuration = new ParamConverter([
             'name'  => 'parameter',

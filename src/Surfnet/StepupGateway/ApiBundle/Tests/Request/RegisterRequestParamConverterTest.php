@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupGateway\ApiBundle\Tests\Request;
 
+use Hamcrest\Core\IsEqual;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
@@ -48,7 +49,10 @@ class RegisterRequestParamConverterTest extends TestCase
             ]
         ]);
         $request->attributes = m::mock('Symfony\Component\HttpFoundation\ParameterBag');
-        $request->attributes->shouldReceive('set')->once()->with('parameter', RegisterRequest::class);
+        $request->attributes
+          ->shouldReceive('set')
+          ->once()
+          ->with('parameter', IsEqual::equalTo($expectedRegisterRequest));
 
         $validator = m::mock('Symfony\Component\Validator\Validator\ValidatorInterface');
         $validator->shouldReceive('validate');
@@ -86,7 +90,7 @@ class RegisterRequestParamConverterTest extends TestCase
         $request->attributes->shouldReceive('set');
 
         $validator = m::mock('Symfony\Component\Validator\Validator\ValidatorInterface');
-        $validator->shouldReceive('validate')->once()->with(RegisterRequest::class);
+        $validator->shouldReceive('validate')->once()->with(isEqual::equalTo($expectedRegisterRequest));
 
         $configuration = new ParamConverter([
             'name'  => 'parameter',
