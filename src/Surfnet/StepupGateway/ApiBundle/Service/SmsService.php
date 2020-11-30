@@ -19,31 +19,23 @@
 namespace Surfnet\StepupGateway\ApiBundle\Service;
 
 use Psr\Log\LoggerInterface;
-use Surfnet\MessageBirdApiClient\Messaging\Message;
-use Surfnet\MessageBirdApiClient\Messaging\SendMessageResult;
-use Surfnet\MessageBirdApiClientBundle\Service\MessagingService;
 use Surfnet\StepupGateway\ApiBundle\Dto\Requester;
 use Surfnet\StepupGateway\ApiBundle\Dto\SmsMessage;
+use Spryng\SpryngRestApi\Objects\Message;
+use Spryng\SpryngRestApi\Spryng;
 
 class SmsService
 {
-    /**
-     * @var MessagingService
-     */
-    private $messagingService;
-
     /**
      * @var LoggerInterface
      */
     private $logger;
 
     /**
-     * @param MessagingService $messagingService
      * @param LoggerInterface $logger
      */
-    public function __construct(MessagingService $messagingService, LoggerInterface $logger)
+    public function __construct(LoggerInterface $logger)
     {
-        $this->messagingService = $messagingService;
         $this->logger = $logger;
     }
 
@@ -56,13 +48,25 @@ class SmsService
     {
         $this->logger->notice('Sending OTP per SMS.');
 
-        $message = new Message($message->originator, $message->recipient, $message->body);
-        $result = $this->messagingService->send($message);
+        // TODO: get apikey from parameters file
+        $spryng = new Spryng("dummy");
 
-        if (!$result->isSuccess()) {
-            $this->logger->warning('Sending OTP per SMS failed.');
+        $myMessage = new Message();
+        $myMessage->setBody($message->body);
+        $myMessage->setRecipients([$message->recipient,]);
+        $myMessage->setOriginator($message->originator);
+
+        $response = $spryng->message->send($message);
+
+        if ($response->wasSuccessful()) {
+            $message = $response->toObject();
+            $this->logger->notice("Message with ID " . $message->getId() . " was send successfully!");
+        } else if ($response->serverError()) {
+            $this->logger->error("Message could not be send because of a server error...");
+        } else {
+            $this->logger->error("Message could not be send. Response code: " . $response->getResponseCode());
         }
 
-        return $result;
+        return $response;
     }
 }
