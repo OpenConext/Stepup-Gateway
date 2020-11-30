@@ -1,9 +1,11 @@
 {
     "devDependencies": {
         "@symfony/webpack-encore": "^0",
+        "@types/bootstrap": "^5.0.0",
         "@types/jest": "^24",
         "@types/jquery": "^3.3.9",
         "@types/node": "^10",
+        "@types/popper.js": "^1.11.0",
         "compass-mixins": "^0.12.10",
         "css-loader": "^5",
         "import-glob-loader": "^1.1.0",

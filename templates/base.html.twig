@@ -11,7 +11,9 @@
         {{ encore_entry_link_tags('global') }}
     {% endblock %}
 </head>
+{% block body_tag %}
 <body>
+{% endblock body_tag %}
 
 {% block flashes %}
     {% if app.session.flashbag.peekAll|length > 0 %}
