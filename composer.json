@@ -28,7 +28,7 @@
         "nelmio/security-bundle": "^2",
         "openconext/monitor-bundle": "^2.0",
         "sensio/framework-extra-bundle": "^5.0",
-        "surfnet/messagebird-api-client-bundle": "^4.0",
+        "spryng/rest-api-php" : "1.1.*",
         "surfnet/stepup-bundle": "^4.0",
         "surfnet/stepup-saml-bundle": "^4.1",
         "surfnet/stepup-u2f-bundle": "^4",
