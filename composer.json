@@ -116,6 +116,7 @@
         "exclude": [
             "*",
             ".*",
+            "!/.env",
             "*/Tests/*",
             "!/bin",
             "!/component_info",
