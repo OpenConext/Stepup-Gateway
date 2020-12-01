@@ -6,7 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" href="/images/favicon.ico">
 
-    <title>{% block title %}Stepup Gateway{% endblock %}</title>
+    <title>
+        {% block page_title%}
+        {% endblock page_title%}
+        {%  if block('page_title') is not empty %}{{ block('page_title') }} &mdash; {% endif %}
+        {% block title %}Stepup Gateway{% endblock %}
+    </title>
     {% block stylesheets %}
         {{ encore_entry_link_tags('global') }}
     {% endblock %}
