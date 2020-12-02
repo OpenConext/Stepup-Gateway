@@ -104,6 +104,7 @@ class SurfnetStepupGatewaySamlStepupProviderExtension extends Extension
                 new Reference('gssp.provider.' . $provider . '.assertion_signing')
             ]
         );
+        $proxyResponseFactory->setPublic(true);
         $container->setDefinition('gssp.provider.' . $provider . '.response_proxy', $proxyResponseFactory);
 
         $container
