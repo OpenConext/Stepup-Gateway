@@ -1,0 +1,146 @@
+parameters:
+    # Set to a unique string at each update te prevent asset cashing issues after an update
+    asset_version: 1
+
+    # Secret used for XSRF protection
+    secret:                 NotSoSecretReplaceMe!
+
+    # Debug options, relevant when running in debug mode only
+    debug_toolbar:          true
+    debug_redirects:        false
+
+    # Display name of application
+    app_name: "Stepup Gateway"
+
+    # IP addresses of any HTTP proxies that are sitting in from of the application
+    # See: http://symfony.com/doc/current/request/load_balancer_reverse_proxy.html
+    trusted_proxies:   ~
+
+    # Database connection
+    database_driver:   pdo_mysql
+    database_host:     127.0.0.1
+    database_port:     ~
+
+    # The database server version is used in the dbal configuration and is required to prevent issues when the database
+    # connection is booted. See https://github.com/doctrine/DoctrineBundle/issues/351 for more details on this.
+    # Also see: https://symfony.com/doc/current/reference/configuration/doctrine.html#doctrine-dbal-configuration
+    database_server_version: 5.6
+
+    # Credentials for the gateway database
+    database_gateway_name:     gateway
+    database_gateway_user:     gateway
+    database_gateway_password: gateway
+    # Credentials for the u2f database
+    database_u2f_name:         u2f
+    database_u2f_user:         u2f
+    database_u2f_password:     u2f
+    # Credentials used when running database migrations
+    database_deploy_user:      deploy
+    database_deploy_password:  deploy
+
+    mailer_transport:  smtp
+    mailer_host:       127.0.0.1
+    mailer_user:       ~
+    mailer_password:   ~
+
+    # Default locale
+    default_locale:         en_GB
+    # Available locales
+    locales:                [nl_NL, en_GB]
+    # Domain for the locale cookie that is set by the Gateway, SelfService and the RA and that is used to share the
+    # user's locale preference with other (stepup) components
+    locale_cookie_domain:   openconext.org
+
+    # Messagebird (www.messagebird.com) REST API (v2 and above) access key
+    # Reuired for sending SMS messages
+    messagebird_authorization: AccessKey your_api_key
+
+    # Yubico Yubico Web Services API key
+    # Get one for free at: https://upgrade.yubico.com/getapikey/ (requires a YubiKey)
+    # API client_id
+    yubikey_client_id: 12345
+    # API Secret
+    yubikey_client_secret: YubiSecret
+
+    # Password for the "selfservice" Gateway API user
+    selfservice_api_password: ~
+    # Password for the "ra" Gateway API user
+    registration_authority_api_password: ~
+
+    # Message originator as displayed in SMS
+    # "This can be a telephone number (including country code) or an alphanumeric string.
+    #  In case of an alphanumeric string, the maximum length is 11 characters."
+    sms_originator: SURFStepup
+    # Validity time of an OTP send using SMS in seconds
+    sms_otp_expiry_interval: 900 # 15 minutes
+    # Maximum number of times a user may resend an SMS during authenticaton
+    sms_maximum_otp_requests: 3
+
+    # The private key and certificate that are used by the Gateway SP to sign SAML AuthnRequests
+    # Filename of the PEM CERTIFICATE
+    saml_sp_publickey:
+    # Filename of the PEM RSA PRIVATE KEY
+    saml_sp_privatekey:
+
+    # The private key and certificate that are used by the Gateway IdP to sign SAML Responses/Assertions
+    # Filename of the PEM CERTIFICATE
+    saml_idp_publickey:
+    # Filename of the PEM RSA PRIVATE KEY
+    saml_idp_privatekey:
+
+    # The certificate and private key that are used by the Gateway to sign the metadata that it publishes
+    # Filename of the PEM CERTIFICATE
+    saml_metadata_publickey:
+    # Filename of the PEM RSA PRIVATE KEY
+    saml_metadata_privatekey:
+
+    # The remote IdP (i.e. not the local IdP that is part of the Gateway) is the IdP that provides the first
+    # factor authentication of users to the Gateway.
+    # The Gateway does publish very basic SAML Metadata that can be used by the Remote IdP (it currently does
+    # not include the signing certificate in the SPSSODescriptor). The Stepup-Gateway cannot import
+    # SAML Metadata published by the Remote IdP, you must configure that here by hand.
+    # The location of the metadata is: https://{{ gateway_vhost_name }}/authentication/metadata
+    # The Gateway uses the HTTP-Redirect binding to send the AuthnRequest to the Remote IdP. The AuthnRequest
+    # is signed using SHA256 (`http://www.w3.org/2001/04/xmldsig-more#rsa-sha256`)
+    # The Remote IdP must use the HTTP-POST Binding to send the Response back to to the Gateway
+    # The Remote IdP may sign the Assertion in the Response using either:
+    # - SHA-1 (http://www.w3.org/2000/09/xmldsig#rsa-sha1); or
+    # - SHA256 (http://www.w3.org/2001/04/xmldsig-more#rsa-sha256)
+    # The ACS location is: https://{{ gateway_vhost_name }}/authentication/consume-assertion
+
+    # The SAML EntityID of the Remote IdP
+    saml_remote_idp_entity_id:
+    # The SAML SSO Location of the Remote IdP
+    saml_remote_idp_sso_url:
+    # The SAML Base64 encoded DER X.509 SAML Signing certificate of the Remote IdP. This is the value of the
+    # X509Certificate element in the SAML Metadata of the Remote IdP.
+    saml_remote_idp_certificate: 'FOR CI ONLY, REPLACE WITH ACTUAL VALUE'
+
+    # The uri's that are used to define the LoA levels used in AuthnContextClassRef
+    gateway_loa_loa1: https://gateway.tld/authentication/loa1
+    gateway_loa_loa2: https://gateway.tld/authentication/loa2
+    gateway_loa_loa3: https://gateway.tld/authentication/loa3
+
+    # The uri's used by the second factor only (SFO) endpoint
+    second_factor_only_loa_loa2: https://gateway.tld/second-factor-only/level2
+    second_factor_only_loa_loa3: https://gateway.tld/second-factor-only/level3
+
+    # Boolean: Whether to enable (true) or disable (false) the SFO endpoint
+    second_factor_only: false
+
+    # U2F AppID (Application ID). Must be an url
+    # Required for U2F
+    u2f_app_id: https://gateway.tld/u2f/app-id
+
+    # The second factor types to enable
+    # Available second factor types: sms, yubikey, tiqr, u2f, biometric
+    enabled_second_factors:
+        - sms
+        - yubikey
+        - tiqr
+        - u2f
+    enabled_generic_second_factors:
+        biometric:
+            loa: 3
+        tiqr:
+            loa: 3

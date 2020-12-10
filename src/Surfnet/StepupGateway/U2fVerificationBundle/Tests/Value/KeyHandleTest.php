@@ -18,7 +18,8 @@
 
 namespace Surfnet\StepupGateway\U2fVerificationBundle\Tests\Value;
 
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
+use Surfnet\StepupGateway\U2fVerificationBundle\Exception\InvalidArgumentException;
 use Surfnet\StepupGateway\U2fVerificationBundle\Value\KeyHandle;
 
 final class KeyHandleTest extends TestCase
@@ -49,25 +50,25 @@ final class KeyHandleTest extends TestCase
     /**
      * @test
      * @dataProvider nonStrings
-     * @expectedException \Surfnet\StepupGateway\U2fVerificationBundle\Exception\InvalidArgumentException
-     * @expectedExceptionMessage should be of type "string"
      * @group value
      *
      * @param mixed $nonString
      */
     public function it_doesnt_accept_non_strings_as_key_handle($nonString)
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessageMatches('/should be of type "string"/');
         new KeyHandle($nonString);
     }
 
     /**
      * @test
-     * @expectedException \Surfnet\StepupGateway\U2fVerificationBundle\Exception\InvalidArgumentException
-     * @expectedExceptionMessage may not be an empty string
      * @group value
      */
     public function it_doesnt_accept_an_empty_string_as_key_handle()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessageMatches('/may not be an empty string/');
         new KeyHandle('');
     }
 }

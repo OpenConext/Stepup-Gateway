@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block page_title %}{{ 'gateway.gateway.consume_assertion.title'|trans }}{% endblock %}
+
+{% block content %}
+    <noscript>
+        <b>Note: </b> javascript is disabled, please click the button below to proceed
+    </noscript>
+    One moment please...
+    <form method="post" action="{{ acu }}">
+        <input type="hidden" name="_SAMLResponse" value="{{ samlResponse }}" />
+        <input type="hidden" name="AuthMethod" value="{{ authMethod|escape }}" />
+        <input type="hidden" name="Context" value="{{ context|escape }}" />
+        <input type="submit" class="hidden" />
+        <noscript>
+            <input type="submit" value="Submit"/>
+        </noscript>
+    </form>
+{% endblock %}
+{% block javascripts %}
+    {{ encore_entry_script_tags('app') }}
+    {{ encore_entry_script_tags('submitonload') }}
+{% endblock %}

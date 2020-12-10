@@ -26,6 +26,8 @@ use Surfnet\SamlBundle\Entity\IdentityProvider;
 use Surfnet\SamlBundle\Entity\ServiceProvider;
 use Surfnet\SamlBundle\Http\PostBinding;
 use Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger;
+use Surfnet\StepupGateway\GatewayBundle\Exception\ResponseFailureException;
+use Surfnet\StepupGateway\GatewayBundle\Saml\Exception\UnknownInResponseToException;
 use Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler;
 use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
 use Surfnet\StepupGateway\GatewayBundle\Service\Gateway\ConsumeAssertionService;
@@ -54,7 +56,7 @@ final class ConsumeAssertionServiceTest extends GatewaySamlTestCase
     /** @var IdentityProvider */
     private $remoteIdp;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -226,10 +228,10 @@ final class ConsumeAssertionServiceTest extends GatewaySamlTestCase
 
     /**
      * @test
-     * @expectedException \Surfnet\StepupGateway\GatewayBundle\Exception\ResponseFailureException
      */
     public function it_should_throw_an_exception_when_the_post_binding_could_not_be_processed_when_receiving_a_saml_response_when_consuming_assertions_on_login_flow()
     {
+        $this->expectException(ResponseFailureException::class);
         $samlResponseXml = '<samlp:Response
         xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"
         xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
@@ -337,10 +339,10 @@ final class ConsumeAssertionServiceTest extends GatewaySamlTestCase
 
     /**
      * @test
-     * @expectedException \Surfnet\StepupGateway\GatewayBundle\Saml\Exception\UnknownInResponseToException
      */
     public function it_should_throw_an_exception_when_the_in_respone_to_is_invalid_when_receiving_a_saml_response_when_consuming_assertions_on_login_flow()
     {
+        $this->expectException(UnknownInResponseToException::class);
         $samlResponseXml = '<samlp:Response
         xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"
         xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"

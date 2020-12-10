@@ -1,0 +1,25 @@
+surfnet_saml:
+  hosted:
+    attribute_dictionary:
+      ignore_unknown_attributes: true
+    service_provider:
+      enabled: true
+      assertion_consumer_route: gateway_serviceprovider_consume_assertion
+      public_key: "%saml_sp_publickey%"
+      private_key: "%saml_sp_privatekey%"
+    identity_provider:
+      enabled: true
+      service_provider_repository: gateway.entity_service
+      sso_route: gateway_identityprovider_sso
+      public_key: "%saml_idp_publickey%"
+      private_key: "%saml_idp_privatekey%"
+    metadata:
+      entity_id_route: gateway_saml_metadata
+      public_key: "%saml_metadata_publickey%"
+      private_key: "%saml_metadata_privatekey%"
+  remote:
+    identity_provider:
+      enabled: true
+      entity_id: "%saml_remote_idp_entity_id%"
+      sso_url: "%saml_remote_idp_sso_url%"
+      certificate: "%saml_remote_idp_certificate%"

@@ -1,0 +1,24 @@
+{% extends "@SurfnetStepupGatewayGateway/second_factor/second_factor_authentication.html.twig" %}
+
+{% block application_name %}{{ 'ra.registration.yubikey.title.enter_challenge'|trans }}{% endblock application_name %}
+
+{% block content %}
+
+    <p>{{ 'gateway.second_factor.yubikey.text.enter_challenge'|trans }}</p>
+
+    {{ form_start(form) }}
+    {{ form_errors(form) }}
+
+    {{ form_row(form.otp, { value: '' }) }}
+
+    {{ form_end(form) }}
+
+
+    <p>{{ 'gateway.second_factor.yubikey.text.help_user_enter_challenge'|trans }}</p>
+    <ol>
+        <li>{{ 'gateway.second_factor.yubikey.text.connect_yubikey_to_pc'|trans }}</li>
+        <li>{{ 'gateway.second_factor.yubikey.text.ensure_form_field_focus'|trans }}</li>
+        <li>{{ 'gateway.second_factor.yubikey.text.press_once_form_auto_submitted'|trans }}</li>
+    </ol>
+
+{% endblock %}

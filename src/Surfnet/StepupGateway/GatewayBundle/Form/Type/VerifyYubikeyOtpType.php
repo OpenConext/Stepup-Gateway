@@ -31,9 +31,6 @@ class VerifyYubikeyOtpType extends AbstractType
         $builder->add('otp', TextType::class, [
             'label' => /** @Ignore */ false,
             'required' => true,
-            'widget_addon_prepend' => [
-                'icon' => 'key'
-            ],
             'attr' => [
                 'autofocus'    => true,
                 'autocomplete' => 'off',

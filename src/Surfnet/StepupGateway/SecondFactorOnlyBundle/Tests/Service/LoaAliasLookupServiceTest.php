@@ -18,9 +18,11 @@
 namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Test\Service;
 
 use Mockery as m;
+use Surfnet\StepupGateway\GatewayBundle\Exception\InvalidArgumentException;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\LoaAliasLookupService;
+use PHPUnit\Framework\TestCase;
 
-class LoaAliasLookupServiceTest extends \PHPUnit_Framework_TestCase
+class LoaAliasLookupServiceTest extends TestCase
 {
     /**
      * @test
@@ -76,10 +78,10 @@ class LoaAliasLookupServiceTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      * @group secondFactorOnly
-     * @expectedException \Surfnet\StepupGateway\GatewayBundle\Exception\InvalidArgumentException
      */
     public function it_rejects_invalid_mappings()
     {
+        $this->expectException(InvalidArgumentException::class);
         new LoaAliasLookupService(['a' => ['a', 'b']]);
     }
 }

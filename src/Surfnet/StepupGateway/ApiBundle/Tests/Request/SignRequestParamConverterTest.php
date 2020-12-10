@@ -18,9 +18,11 @@
 
 namespace Surfnet\StepupGateway\ApiBundle\Tests\Request;
 
+use Hamcrest\Core\IsEqual;
 use Mockery as m;
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Surfnet\StepupBundle\Exception\BadJsonRequestException;
 use Surfnet\StepupGateway\ApiBundle\Request\SignRequestParamConverter;
 use Surfnet\StepupU2fBundle\Dto\SignRequest;
 
@@ -54,7 +56,10 @@ class SignRequestParamConverterTest extends TestCase
             ]
         ]);
         $request->attributes = m::mock('Symfony\Component\HttpFoundation\ParameterBag');
-        $request->attributes->shouldReceive('set')->once()->with('parameter', m::anyOf($expectedSignRequest));
+        $request->attributes
+          ->shouldReceive('set')
+          ->once()
+          ->with('parameter', IsEqual::equalTo($expectedSignRequest));
 
         $validator = m::mock('Symfony\Component\Validator\Validator\ValidatorInterface');
         $validator->shouldReceive('validate');
@@ -99,7 +104,7 @@ class SignRequestParamConverterTest extends TestCase
         $request->attributes->shouldReceive('set');
 
         $validator = m::mock('Symfony\Component\Validator\Validator\ValidatorInterface');
-        $validator->shouldReceive('validate')->once()->with(m::anyOf($expectedSignRequest));
+        $validator->shouldReceive('validate')->once()->with(IsEqual::equalTo($expectedSignRequest));
 
         $configuration = new ParamConverter([
             'name'  => 'parameter',
@@ -114,12 +119,12 @@ class SignRequestParamConverterTest extends TestCase
      * @test
      * @group api
      * @dataProvider objectsWithMissingProperties
-     * @expectedException \Surfnet\StepupBundle\Exception\BadJsonRequestException
      *
      * @param array $requestContent
      */
     public function it_throws_a_bad_json_request_exception_when_properties_are_missing($requestContent)
     {
+        $this->expectException(BadJsonRequestException::class);
         $request = $this->createJsonRequest($requestContent);
         $validator = m::mock('Symfony\Component\Validator\Validator\ValidatorInterface');
 

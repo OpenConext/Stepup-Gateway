@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block page_title %}{{ 'gateway.gateway.unprocessable_response.title'|trans }}{% endblock %}
+
+{% block content %}
+    <p class="bg-danger">
+        {{ 'gateway.error.unprocessable_response'|trans }}
+    </p>
+    {{ 'gateway.error.click_to_go_back_to_sp'|trans }}
+    <form method="post" action="{{ acu }}">
+        <input type="hidden" name="SAMLResponse" value="{{ response }}"/>
+    {% if relayState|length > 0 %}
+        <input type="hidden" name="RelayState" value="{{ relayState|escape }}"/>
+    {% endif %}
+        <input type="submit" value="{{ 'gateway.submit.click_to_go_back_to_sp'|trans }}"/>
+    </form>
+{% endblock content %}

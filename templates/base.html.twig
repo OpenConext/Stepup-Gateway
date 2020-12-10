@@ -1,0 +1,81 @@
+{% set current_route = app.request.attributes.get( '_route' ) %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="/images/favicon.ico">
+
+    <title>
+        {% block page_title%}
+        {% endblock page_title%}
+        {%  if block('page_title') is not empty %}{{ block('page_title') }} &mdash; {% endif %}
+        {% block title %}Stepup Gateway{% endblock %}
+    </title>
+    {% block stylesheets %}
+        {{ encore_entry_link_tags('global') }}
+    {% endblock %}
+</head>
+{% block body_tag %}
+<body>
+{% endblock body_tag %}
+
+{% block flashes %}
+    {% if app.session.flashbag.peekAll|length > 0 %}
+        <div class="row-fluid">
+            <div id="flash" class="span12">
+                {% for type, messages in app.session.flashbag.all() %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ type }} alert-dismissible" role="alert">
+                            <button type="button" class="close" data-dismiss="alert"><span
+                                        aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                            {{ message | trans }}
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+{% endblock flashes %}
+<div class="{% block container_class %}container{% endblock container_class %}">
+    {% block head_bottom %}
+        <base href="{{ app.request.schemeAndHttpHost ~ app.request.baseUrl }}">
+    {% endblock head_bottom %}
+
+
+    {% block header %}
+    {% endblock header %}
+
+    {% block page_header %}
+        <div class="page-header clearfix">
+            <img src="/images/header-logo.png" class="pull-right logo" alt="OpenConext Stepup">
+            <h1>Stepup Gateway</h1>
+        </div>
+    {% endblock page_header %}
+
+
+    <div class="main-content">
+        {% block content_row %}
+            {% block content %}
+            {% endblock content %}
+        {% endblock content_row %}
+    </div>
+
+    {% block footer %}
+        <div class="row-fluid">
+            <div class="span8 offset2">
+                <hr>
+                <ul class="nav nav-pills">
+                    <li><a href="{{ global_view_parameters.supportUrl }}" target="_blank">Help</a></li>
+                </ul>
+            </div>
+        </div>
+    {% endblock footer %}
+
+    {% block javascripts %}
+        {{ encore_entry_script_tags('app') }}
+    {% endblock %}
+</div>
+</body>
+</html>
+

@@ -1,0 +1,2 @@
+surfnet_message_bird_api_client:
+  authorization: "%messagebird_authorization%"

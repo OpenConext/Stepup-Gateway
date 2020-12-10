@@ -3,7 +3,7 @@ FROM php:7.2-fpm
 # Copy phpfpm config
 COPY docker/php-fpm/app.ini /usr/local/etc/php/conf.d/
 # Copy the app_test.php.dist to web/app.php
-COPY app.php ../web/app.php
+COPY index.php ../public/index.php
 
 # Install dependencies
 RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
@@ -28,7 +28,7 @@ RUN mkdir /.npm
 RUN chmod -R a+w /.npm
 
 # Install Less.js
-RUN npm i -g less
+RUN npm i -g yarn less
 
 # Cleanup
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*

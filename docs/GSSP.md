@@ -210,4 +210,4 @@ Note that the NameID in the response (oom60v-3art) matches that in the AuthnRequ
 
 ## Configuration
 
-GSSPs are configured in [samlstepupproviders_parameters.yml](../app/config/samlstepupproviders_parameters.yml.dist) in the Stepup-Gateway.
+GSSPs are configured in [samlstepupproviders_parameters.yml](../config/legacy/samlstepupproviders_parameters.yaml.dist) in the Stepup-Gateway.
