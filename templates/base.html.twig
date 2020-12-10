@@ -37,7 +37,7 @@
         </div>
     {% endif %}
 {% endblock flashes %}
-<div class="container">
+<div class="{% block container_class %}container{% endblock container_class %}">
     {% block head_bottom %}
         <base href="{{ app.request.schemeAndHttpHost ~ app.request.baseUrl }}">
     {% endblock head_bottom %}
