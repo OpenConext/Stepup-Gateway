@@ -54,6 +54,9 @@
             "config/packages/nelmio_security.yaml"
         ]
     },
+    "php": {
+        "version": "7.2"
+    },
     "phpunit/phpunit": {
         "version": "4.7",
         "recipe": {
