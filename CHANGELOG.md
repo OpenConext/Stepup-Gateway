@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.1.0
+**Improvements**
+
+Drop support for php5. From now only php 7.2 is supported
+Upgrade to Symfony 4
+
 ## 3.0.2
 **Improvements**
 
