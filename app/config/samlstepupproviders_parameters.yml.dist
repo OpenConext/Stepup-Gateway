@@ -77,3 +77,100 @@ parameters:
     gssp_biometric_title:
         en_GB: Biometric
         nl_NL: Biometrisch
+
+    # Azure MFA SP Proxy for authenticating with the real (i.e. external) Azure MFA IdP
+    gssp_azuremfa_sp_publickey: '/full/path/to/the/gateway-as-sp/private-key-file.pem'
+    gssp_azuremfa_sp_privatekey: '/full/path/to/the/gateway-as-sp/private-key-file.pem'
+
+    # Certificate and private key of the Azure MFA SAML IdP Proxy for use by RA and SS
+    gssp_azuremfa_idp_publickey: '/full/path/to/the/gateway-as-idp/public-key-file.cer'
+    gssp_azuremfa_idp_privatekey: '/full/path/to/the/gateway-as-sp/public-key-file.cer'
+
+    # Metadata signing cert and key for Azure MFA SP/IdP proxy
+    gssp_azuremfa_metadata_publickey: '/full/path/to/the/gateway-metadata/public-key-file.cer'
+    gssp_azuremfa_metadata_privatekey: '/full/path/to/the/gateway-as-sp/private-key-file.pem'
+
+    gssp_azuremfa_remote_entity_id: https://azuremfa.stepup.example.com/saml/metadata'
+    gssp_azuremfa_remote_sso_url: https://azuremfa.stepup.example.com/saml/sso'
+    gssp_azuremfa_remote_certificate: 'MIIC2jCCAcICCQCDjMLsEXP3EjANBgkqhkiG9w0BAQsFADAvMRQwEgYDVQQDDAtSQSBUaXFyIElkUDEXMBUGA1UECgwORGV2ZWxvcG1lbnQgVk0wHhcNMTgwODAzMDkyNTE5WhcNMjMwODAyMDkyNTE5WjAvMRQwEgYDVQQDDAtSQSBUaXFyIElkUDEXMBUGA1UECgwORGV2ZWxvcG1lbnQgVk0wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDcrx9F+mQh8WUwSePhqpdsP0urO9ld3zYZswBh1gvSdqwoo3FngLbG93kdG+3zI46AKcShunQZeKjIuPycaINtYn3iUvaDTmapUMIZyF7Vdtcq4XS9Osa/tfb0vwRv++541CTxyMta6bAvPM40WdoD9UVPJyB+FJK2Fl0da9O/32NEVrnkO6lRiuE5OIXXtWi+rC5xDIJX9Tafw3BZtX6NFeegrXvIDYSPr0vV5J2/+USlZ4/cAd8/dIYhtma/fUZGFcNdjy0H8VuEQDbTqs4E1YuoHWM3pOTpA/acSUtR1v+A6W61V8OmVjgf3+Uhty/uxYDmYlPWIBk40mHx+hrbAgMBAAEwDQYJKoZIhvcNAQELBQADggEBAMi9n9af/kgs2T0mvTJ7N2c7u4LhGMfh8jRr6KPCzWHneupa0n72Pcrc3qED/qhGYImaR+w2IWDG5lWGl8Yy5WN3Kh7oHEk2cxicGy0c8g/+WTeChnrPHAPZpO2Ft1YVxKuw+gNVMcorpPTvkWjFC0cF1qMZWgVRvnDIfvcu7fcWIhENDWNeKUqbyFiR5k9VMj0iqwpOaFtFlOp2efV0zRH5HTUhlNRIi+cBQ+hHnCp19tCF5G8EdMajMwN0+Z9HYce8D2XYT8hgO6EcBB2uV0iviGnFMV09hDyd4DbC1V5+4aWqFtiqDDrAWWhx5HgA7h6/AkxmspvQtmmAAlONOpw='
+
+    # The logo used for Azure MFA, shown in the choose second factor screen (WAYG)
+    gssp_azuremfa_logo: '/full/path/to/azuremfa_logo.png'
+    gssp_azuremfa_title:
+        en_GB: Azure MFA
+        nl_NL: Azure MFA
+
+    # Webauthn SP Proxy for authenticating with the real (i.e. external) Webauthn IdP
+    gssp_webauthn_sp_publickey: '/full/path/to/the/gateway-as-sp/private-key-file.pem'
+    gssp_webauthn_sp_privatekey: '/full/path/to/the/gateway-as-sp/private-key-file.pem'
+
+    # Certificate and private key of the Webauthn SAML IdP Proxy for use by RA and SS
+    gssp_webauthn_idp_publickey: '/full/path/to/the/gateway-as-idp/public-key-file.cer'
+    gssp_webauthn_idp_privatekey: '/full/path/to/the/gateway-as-sp/public-key-file.cer'
+
+    # Metadata signing cert and key for Webauthn SP/IdP proxy
+    gssp_webauthn_metadata_publickey: '/full/path/to/the/gateway-metadata/public-key-file.cer'
+    gssp_webauthn_metadata_privatekey: '/full/path/to/the/gateway-as-sp/private-key-file.pem'
+
+    gssp_webauthn_remote_entity_id: https://webauthn.stepup.example.com/saml/metadata'
+    gssp_webauthn_remote_sso_url: https://webauthn.stepup.example.com/saml/sso'
+    gssp_webauthn_remote_certificate: 'MIIC2jCCAcICCQCDjMLsEXP3EjANBgkqhkiG9w0BAQsFADAvMRQwEgYDVQQDDAtSQSBUaXFyIElkUDEXMBUGA1UECgwORGV2ZWxvcG1lbnQgVk0wHhcNMTgwODAzMDkyNTE5WhcNMjMwODAyMDkyNTE5WjAvMRQwEgYDVQQDDAtSQSBUaXFyIElkUDEXMBUGA1UECgwORGV2ZWxvcG1lbnQgVk0wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDcrx9F+mQh8WUwSePhqpdsP0urO9ld3zYZswBh1gvSdqwoo3FngLbG93kdG+3zI46AKcShunQZeKjIuPycaINtYn3iUvaDTmapUMIZyF7Vdtcq4XS9Osa/tfb0vwRv++541CTxyMta6bAvPM40WdoD9UVPJyB+FJK2Fl0da9O/32NEVrnkO6lRiuE5OIXXtWi+rC5xDIJX9Tafw3BZtX6NFeegrXvIDYSPr0vV5J2/+USlZ4/cAd8/dIYhtma/fUZGFcNdjy0H8VuEQDbTqs4E1YuoHWM3pOTpA/acSUtR1v+A6W61V8OmVjgf3+Uhty/uxYDmYlPWIBk40mHx+hrbAgMBAAEwDQYJKoZIhvcNAQELBQADggEBAMi9n9af/kgs2T0mvTJ7N2c7u4LhGMfh8jRr6KPCzWHneupa0n72Pcrc3qED/qhGYImaR+w2IWDG5lWGl8Yy5WN3Kh7oHEk2cxicGy0c8g/+WTeChnrPHAPZpO2Ft1YVxKuw+gNVMcorpPTvkWjFC0cF1qMZWgVRvnDIfvcu7fcWIhENDWNeKUqbyFiR5k9VMj0iqwpOaFtFlOp2efV0zRH5HTUhlNRIi+cBQ+hHnCp19tCF5G8EdMajMwN0+Z9HYce8D2XYT8hgO6EcBB2uV0iviGnFMV09hDyd4DbC1V5+4aWqFtiqDDrAWWhx5HgA7h6/AkxmspvQtmmAAlONOpw='
+
+    # The logo used for Webauthn, shown in the choose second factor screen (WAYG)
+    gssp_webauthn_logo: '/full/path/to/webauthn_logo.png'
+    gssp_webauthn_title:
+        en_GB: Webauthn
+        nl_NL: Webauthn
+
+
+    # Whether this GSSP endpoint is enabled (true) or not (false)
+    gssp_demo_gssp_enabled: true
+
+    # Biometric SP Proxy for authenticating with the real (i.e. external) demo_gssp IdP
+    gssp_demo_gssp_sp_publickey: '/full/path/to/the/gateway-as-sp/public-key-file.cer'
+    gssp_demo_gssp_sp_privatekey: '/full/path/to/the/gateway-as-sp/private-key-file.pem'
+
+    # Certificate and private key of the demo SAML IdP Proxy for use by RA and SS
+    gssp_demo_gssp_idp_publickey: '/full/path/to/the/gateway-as-idp/public-key-file.cer'
+    gssp_demo_gssp_idp_privatekey: '/full/path/to/the/gateway-as-sp/private-key-file.pem'
+
+    # Metadata signing cert and key for demo SP/IdP proxy
+    gssp_demo_gssp_metadata_publickey: '/full/path/to/the/gateway-metadata/public-key-file.cer'
+    gssp_demo_gssp_metadata_privatekey: '/full/path/to/the/gateway-as-sp/private-key-file.pem'
+
+    # Real (i.e. external) Demo GSSP IdP
+    gssp_demo_gssp_remote_entity_id: 'https://actual-gssp.entity-id.tld'
+    gssp_demo_gssp_remote_sso_url: 'https://actual-gssp.entity-id.tld/single-sign-on/url'
+    gssp_demo_gssp_remote_certificate: 'The contents of the certificate published by the gssp, excluding PEM headers'
+
+    # The logo used for demo_gssp, shown in the choose second factor screen (WAYG)
+    gssp_demo_gssp_logo: '/full/path/to/bio_logo.png'
+    gssp_demo_gssp_title:
+        en_GB: Demo gssp
+        nl_NL: Demo gssp
+
+    # Whether this GSSP endpoint is enabled (true) or not (false)
+    gssp_demo_gssp_2_enabled: true
+
+    # Biometric SP Proxy for authenticating with the real (i.e. external) demo_gssp IdP
+    gssp_demo_gssp_2_sp_publickey: '/full/path/to/the/gateway-as-sp/public-key-file.cer'
+    gssp_demo_gssp_2_sp_privatekey: '/full/path/to/the/gateway-as-sp/private-key-file.pem'
+
+    # Certificate and private key of the demo SAML IdP Proxy for use by RA and SS
+    gssp_demo_gssp_2_idp_publickey: '/full/path/to/the/gateway-as-idp/public-key-file.cer'
+    gssp_demo_gssp_2_idp_privatekey: '/full/path/to/the/gateway-as-sp/private-key-file.pem'
+
+    # Metadata signing cert and key for demo SP/IdP proxy
+    gssp_demo_gssp_2_metadata_publickey: '/full/path/to/the/gateway-metadata/public-key-file.cer'
+    gssp_demo_gssp_2_metadata_privatekey: '/full/path/to/the/gateway-as-sp/private-key-file.pem'
+
+    # Real (i.e. external) Demo GSSP IdP
+    gssp_demo_gssp_2_remote_entity_id: 'https://actual-gssp.entity-id.tld'
+    gssp_demo_gssp_2_remote_sso_url: 'https://actual-gssp.entity-id.tld/single-sign-on/url'
+    gssp_demo_gssp_2_remote_certificate: 'The contents of the certificate published by the gssp, excluding PEM headers'
+
+    # The logo used for demo_gssp, shown in the choose second factor screen (WAYG)
+    gssp_demo_gssp_2_logo: '/full/path/to/bio_logo.png'
+    gssp_demo_gssp_2_title:
+        en_GB: Demo gssp
+        nl_NL: Demo gssp
