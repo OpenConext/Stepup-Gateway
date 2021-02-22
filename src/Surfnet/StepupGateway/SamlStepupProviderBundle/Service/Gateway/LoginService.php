@@ -110,6 +110,10 @@ class LoginService
             $provider->getRemoteIdentityProvider()
         );
 
+        if ($originalRequest->getExtensions()) {
+            $proxyRequest->setExtensions($originalRequest->getExtensions());
+        }
+
         // if a Specific subject is given to authenticate we should proxy that and verify in the response
         // that that subject indeed was authenticated
         $nameId = $originalRequest->getNameId();
