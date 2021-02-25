@@ -1,5 +1,9 @@
 # Changelog
 
+## Next
+**New Feature**
+Add support for SAML extensions
+
 ## 3.1.0
 **Improvements**
 
