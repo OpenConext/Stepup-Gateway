@@ -31,7 +31,7 @@
         "sensio/framework-extra-bundle": "^5.0",
         "surfnet/messagebird-api-client-bundle": "^4.0",
         "surfnet/stepup-bundle": "^4.0",
-        "surfnet/stepup-saml-bundle": "^4.1",
+        "surfnet/stepup-saml-bundle": "^4.2.1",
         "surfnet/stepup-u2f-bundle": "^4",
         "surfnet/yubikey-api-client-bundle": "^4.0.0",
         "symfony/config": "4.4.*",
@@ -65,7 +65,6 @@
         "phpunit/phpunit": "^8",
         "sebastian/exporter": "^3.0",
         "sebastian/phpcpd": "^2.0",
-        "sensiolabs/security-checker": "^6.0",
         "squizlabs/php_codesniffer": "^3.4",
         "symfony/phpunit-bridge": "^3.0"
     },
@@ -88,7 +87,8 @@
             "@phpmd",
             "@test",
             "@behat",
-            "@security",
+            "@download-security-checker",
+            "@security-tests",
             "@yarn-audit"
         ],
         "security": "./ci/qa/security",
@@ -103,7 +103,9 @@
         "frontend-install": [
             "yarn install --frozen-lockfile",
             "yarn encore production"
-        ]
+        ],
+        "download-security-checker": "if [ ! -f local-php-security-checker ]; then curl -s https://api.github.com/repos/fabpot/local-php-security-checker/releases/latest | grep -E \"browser_download_url(.+)linux_386\" | cut -d : -f 2,3 | tr -d \\\" | xargs -I{} curl -L --output local-php-security-checker {} && chmod +x local-php-security-checker; fi",
+        "security-tests": "./local-php-security-checker"
     },
     "config": {
         "optimize-autoloader": true,
