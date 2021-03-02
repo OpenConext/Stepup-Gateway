@@ -1,3 +1,4 @@
+@SKIP
 Feature: As a SP or IdP
   In order to know what features are available on the Stepup Gateway proxy
   I must be able to read the Stepup Gateway proxy metadata

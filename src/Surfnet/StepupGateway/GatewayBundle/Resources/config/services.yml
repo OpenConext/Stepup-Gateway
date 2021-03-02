@@ -13,10 +13,17 @@ services:
         arguments:
             - "@gateway.repository.gateway_saml_entity"
 
-    gateway.proxy.state_handler:
+    gateway.proxy.sso.state_handler:
         class: Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler
         arguments:
             - "@session"
+            - "surfnet/gateway/request"
+
+    gateway.proxy.sfo.state_handler:
+        class: Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler
+        arguments:
+            - "@session"
+            - "surfnet/gateway/sfo/request"
 
     gateway.proxy.response_builder:
         class: Surfnet\StepupGateway\GatewayBundle\Saml\ResponseBuilder
@@ -26,14 +33,14 @@ services:
         arguments:
             - "@surfnet_saml.hosted.identity_provider"
             - "@gateway.entity_service"
-            - "@gateway.proxy.state_handler"
+            - "@gateway.proxy.sso.state_handler"
             - "@logger"
 
     gateway.service.gateway.login:
         class: Surfnet\StepupGateway\GatewayBundle\Service\Gateway\LoginService
         arguments:
             - "@surfnet_saml.logger"
-            - "@gateway.proxy.state_handler"
+            - "@gateway.proxy.sso.state_handler"
             - "@surfnet_stepup.service.loa_resolution"
             - "@surfnet_saml.hosted.service_provider"
             - "@surfnet_saml.remote.idp"
@@ -71,7 +78,7 @@ services:
         class: Surfnet\StepupGateway\GatewayBundle\Service\ProxyResponseService
         arguments:
             - "@surfnet_saml.hosted.identity_provider"
-            - "@gateway.proxy.state_handler"
+            - "@gateway.proxy.sso.state_handler"
             - "@gateway.service.assertion_signing"
             - "@surfnet_saml.saml.attribute_dictionary"
             - "@saml.attribute.eduPersonTargetedID"
@@ -135,7 +142,8 @@ services:
         class: Surfnet\StepupGateway\GatewayBundle\Monolog\Logger\AuthenticationLogger
         arguments:
             - "@surfnet_stepup.service.loa_resolution"
-            - "@gateway.proxy.state_handler"
+            - "@gateway.proxy.sso.state_handler"
+            - "@gateway.proxy.sfo.state_handler"
             - "@gateway.service.second_factor_service"
             - "@gateway.authentication_logger.logger"
             - "@surfnet_stepup.service.second_factor_type"
@@ -196,7 +204,7 @@ services:
         public: false
         class: Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorLocaleProvider
         arguments:
-            - "@gateway.proxy.state_handler"
+            - "@gateway.proxy.sso.state_handler"
 
     gateway.locale_cookie_listener:
         class: Surfnet\StepupBundle\EventListener\LocaleCookieListener

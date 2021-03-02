@@ -142,6 +142,7 @@ final class LoginServiceTest extends GatewaySamlTestCase
             'surfnet/gateway/requestrelay_state' => '',
             'surfnet/gateway/requestresponse_controller' => 'SurfnetStepupGatewaySecondFactorOnlyBundle:SecondFactorOnly:respond',
             'surfnet/gateway/requestresponse_context_service_id' => 'second_factor_only.response_context',
+            'surfnet/gateway/auth_mode/_7179b234fc69f75724c83cab795fc87475d2f6d88e97e43368c3966e398c' => 'sfo',
             'surfnet/gateway/requestname_id' => 'oom60v-3art',
             'surfnet/gateway/requestloa_identifier' => 'http://stepup.example.com/assurance/loa2',
         ], $this->getSessionData('attributes'));
@@ -249,7 +250,7 @@ final class LoginServiceTest extends GatewaySamlTestCase
     private function initGatewayLoginService(array $loaLevels,  array $loaAliases)
     {
         $session = new Session($this->sessionStorage);
-        $this->stateHandler = new ProxyStateHandler($session);
+        $this->stateHandler = new ProxyStateHandler($session, 'surfnet/gateway/request');
         $samlLogger = new SamlAuthenticationLogger($this->logger);
 
         $this->loaResolutionService = $this->mockLoaResolutionService($loaLevels);

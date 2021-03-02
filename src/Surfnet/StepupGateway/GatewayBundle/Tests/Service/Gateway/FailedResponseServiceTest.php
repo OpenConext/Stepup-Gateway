@@ -183,7 +183,7 @@ final class FailedResponseServiceTest extends GatewaySamlTestCase
     private function initGatewayService(array $idpConfiguration, DateTime $now)
     {
         $session = new Session($this->sessionStorage);
-        $this->stateHandler = new ProxyStateHandler($session);
+        $this->stateHandler = new ProxyStateHandler($session, 'surfnet/gateway/request');
         $samlLogger = new SamlAuthenticationLogger($this->logger);
 
         $this->remoteIdp = new IdentityProvider($idpConfiguration);

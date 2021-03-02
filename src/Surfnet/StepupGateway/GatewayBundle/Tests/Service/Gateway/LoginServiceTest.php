@@ -160,6 +160,7 @@ final class LoginServiceTest extends GatewaySamlTestCase
             'surfnet/gateway/requestrelay_state' => 'relay_state',
             'surfnet/gateway/requestresponse_controller' => 'SurfnetStepupGatewayGatewayBundle:Gateway:respond',
             'surfnet/gateway/requestresponse_context_service_id' => 'gateway.proxy.response_context',
+            'surfnet/gateway/auth_mode/_123456789012345678901234567890123456789012' => 'sso',
             'surfnet/gateway/requestloa_identifier' => 'http://stepup.example.com/assurance/loa2',
             'surfnet/gateway/requestgateway_request_id' => '_mocked_generated_id',
         ], $this->getSessionData('attributes'));
@@ -209,7 +210,7 @@ final class LoginServiceTest extends GatewaySamlTestCase
     private function initGatewayService(array $idpConfiguration, array $spConfiguration, array $loaLevels, DateTime $now)
     {
         $session = new Session($this->sessionStorage);
-        $this->stateHandler = new ProxyStateHandler($session);
+        $this->stateHandler = new ProxyStateHandler($session, 'surfnet/gateway/request');
         $samlLogger = new SamlAuthenticationLogger($this->logger);
 
         $hostedServiceProvider = new ServiceProvider($spConfiguration);

@@ -113,6 +113,8 @@ class LoginService
             ->setResponseAction('SurfnetStepupGatewayGatewayBundle:Gateway:respond')
             ->setResponseContextServiceId(static::RESPONSE_CONTEXT_SERVICE_ID);
 
+        $this->stateHandler->markAuthenticationModeForRequest($originalRequestId, 'sso');
+
         // check if the requested Loa is supported
         $requiredLoa = $originalRequest->getAuthenticationContextClassRef();
         if ($requiredLoa && !$this->loaResolutionService->hasLoa($requiredLoa)) {

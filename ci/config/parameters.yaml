@@ -3,12 +3,13 @@ parameters:
     asset_version: 1
     secret: NotSoSecretReplaceMe!
     debug_toolbar: true
-    debug_redirects: false
+    debug_redirects:quickly, false
     app_name: 'Stepup Gateway'
+    use_assetic_controller: false
     trusted_proxies:
         - 127.0.0.1
     database_driver: pdo_mysql
-    database_host: 127.0.0.1
+    database_host: db.stepup.example.com
     database_port: null
     database_server_version: 5.6
     database_gateway_name: gateway
@@ -44,13 +45,13 @@ parameters:
     saml_metadata_privatekey: "/var/www/app/files/idp.key"
     saml_remote_idp_entity_id: 'https://ssp.stepup.example.com/saml2/idp/metadata.php'
     saml_remote_idp_sso_url: 'https://ssp.stepup.example.com/saml2/idp/SSOService.php'
-    saml_remote_idp_certificate: MIIC4DCCAcgCCQDUr2z7wR8IRzANBgkqhkiG9w0BAQsFADAyMRcwFQYDVQQDDA5zaW1wbGVzYW1sIElkUDEXMBUGA1UECgwORGV2ZWxvcG1lbnQgVk0wHhcNMTgwNzMwMTIzMDQ4WhcNMjMwNzI5MTIzMDQ4WjAyMRcwFQYDVQQDDA5zaW1wbGVzYW1sIElkUDEXMBUGA1UECgwORGV2ZWxvcG1lbnQgVk0wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCx3HelQFRfsWHKo7bGqDxfIjQaIG5K2uNlfqpeITOx3IXHoaZi0IGK1NnYJU2XacnZnb2oyIxUxDMXJciAmaieNornc33N49/bGLMml4psjF6MjvhbzUXjL6m7kTYquJDJ3JrXgjPrj7ciDM9BHqXtHa5h67qiuHz1p3uUazLxmxbaIEvzBlaey+Zw+yy2lR3zGqrT/xAoqGVl47RYUNbn8fOwUQJp/KrAx5X+MJBtP2Uz9AJuPp+u4mc+0g961sr2zSa9Qp6DEp5QEXP9BHw8iSDzYDYF7wxG83Oyz1o4wiMz1Tg7CsVe64D5cWWQJpQLomWGNvxkL93uFj6VNIBTAgMBAAEwDQYJKoZIhvcNAQELBQADggEBAAeaT0EXKA4brNvOgEZY8tI/xCPMAqM5Yu3DOhT2XU7Ie3PmV1RTxl+iVx5ska3mukwhzEi/wUvw4QxKRJnj/qN7dzyp4MQbEx87/QJ/854ODP/MyCzRnKJ2RW5D6c1EyzW45AxLyXMcrH4rZhsyEuQGNY7aFMkzzz4LUuXgYSMfigdwQ5MtnstKvxVTplcOriLBQnPjzrnmlK7T5GvYBILivfCOnIaZUgwFKM/ZR9EUlcOu8/EqnKsT+aahGHE7E9CLsvWvsF0WJXmVtz4dDw+DX2esctIOPLG9LY42R6AMssjZrf+AziE+yJcY+KnDzoTOoCwBKdMWWk6hYRdR/EA=
-    gateway_loa_loa1: 'https://gateway.tld/authentication/loa1'
-    gateway_loa_loa2: 'https://gateway.tld/authentication/loa2'
-    gateway_loa_loa3: 'https://gateway.tld/authentication/loa3'
-    second_factor_only_loa_loa2: 'https://gateway.tld/second-factor-only/level2'
-    second_factor_only_loa_loa3: 'https://gateway.tld/second-factor-only/level3'
-    second_factor_only: false
+    saml_remote_idp_certificate: MIIC5DCCAcwCCQCcDbxN/IogUjANBgkqhkiG9w0BAQsFADA0MRkwFwYDVQQDDBBHYXRld2F5IFNBTUwgSWRQMRcwFQYDVQQKDA5EZXZlbG9wbWVudCBWTTAeFw0xODA3MzAxMjMwNDdaFw0yMzA3MjkxMjMwNDdaMDQxGTAXBgNVBAMMEEdhdGV3YXkgU0FNTCBJZFAxFzAVBgNVBAoMDkRldmVsb3BtZW50IFZNMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwrWJ6dKVau2rWfiMQ5EWuPxHabSskcQsXbwS/y35e8rFolNTZZ7zvHYF/0kJqhd31JTgtC92Yoflgpn3PNyjje1PKTe6+OA1/O+jN4eiKr1/GUVoVCdSAgEuioGGxRRCD0ykzT0cbpi4MEgNm1t4LCxPhyGdqp7/KhbpupKhpFpHT9CdL7+vH5y0r+FZZWxwoNTJNSY96UAt94F6bBC+pcgBYKaAtKvAN9wo7Cq9QkmESdIrWcthXJ4ThO1HrKpShTdfC/jfV5DEuvJgS3c7bYdWBKC+p/m8hJOrAz3DAhrg0Bxvv9PkkiXNwclVFVtZ6IcOSx5oP3SqancOD1vTDwIDAQABMA0GCSqGSIb3DQEBCwUAA4IBAQCwn7Dj0ZK3B0xeQisCmFKYPXk5FZLeNF3TcmVz2TGx3seOMzBA89+aOr5uRWEP48+5XUjlXEhG188Vier+eWaoFqRlOnVIXwbMnZCIS6ekMHz/Dx1OLijxDUkzbn2HlsWTl4MoHovTEUgjZqp/tTCwWBfrRf5A2yHpEdCx57VqmBdHgeYSoeeXv5ADDMPDaLkiKBymXZMbwBPQ22zynPGZheMVQn5FnEw/l2Qe/RN61Bf9LAIxyVnqIiO9D0Gbvxo3w8nBiQAycqtXRWWRjoShDNaCA+vi4YdwHzIGqrQY9HHj+fj/ylDY7TQAPOZB3oOR1Ulf8IHmyhJbI8y3VWQB
+    gateway_loa_loa1: 'http://stepup.example.com/assurance/level1'
+    gateway_loa_loa2: 'http://stepup.example.com/assurance/level2'
+    gateway_loa_loa3: 'http://stepup.example.com/assurance/level3'
+    second_factor_only_loa_loa2: 'http://stepup.example.com/assurance/sfo-level2'
+    second_factor_only_loa_loa3: 'http://stepup.example.com/assurance/sfo-level3'
+    second_factor_only: true
     u2f_app_id: 'https://gateway.tld/u2f/app-id'
     enabled_second_factors:
         - sms

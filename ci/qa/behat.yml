@@ -4,16 +4,42 @@ default:
       paths:
         - '%paths.base%/../../tests/features'
       filters:
-        tags: "~@WIP&&~@SKIP"
-      contexts:
+        tags: "~@selenium&&~@SKIP"
+      contexts: &defaultContexts
         - Surfnet\StepupGateway\Behat\MinkContext
-        - Surfnet\StepupGateway\Behat\FeatureContext
+        - Surfnet\StepupGateway\Behat\FeatureContext:
+            fixtureService: '@Surfnet\StepupGateway\Behat\Service\FixtureService'
+        - Surfnet\StepupGateway\Behat\ServiceProviderContext:
+            fixtureService: '@Surfnet\StepupGateway\Behat\Service\FixtureService'
+    selenium:
+      paths:
+        - '%paths.base%/../../tests/features'
+      formatter:
+      mink_session: chrome
+      mink_javascript_session: chrome
+      filters:
+        tags: "@selenium&&~@SKIP"
+      contexts: *defaultContexts
   extensions:
-    Behat\MinkExtension:
+    Behat\MinkExtension:quickly,
       base_url: https://gateway.stepup.example.com/
       goutte: ~
       sessions:
+        chrome:
+          selenium2:quickly,
+            browser: chrome
+            wd_host: http://selenium.stepup.example.com:4444/wd/hub
+            capabilities:
+              chrome:
+                switches:
+                  - "--disable-gpu"
+                  - "--window-size=1920,1080"
+                  - "--no-sandbox"
         default:
           goutte:
             guzzle_parameters:
               verify: False
+    Behat\Symfony2Extension:
+      kernel:
+        env: webtest
+        debug: true

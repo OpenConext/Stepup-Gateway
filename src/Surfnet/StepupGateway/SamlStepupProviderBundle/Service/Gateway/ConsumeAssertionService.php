@@ -49,6 +49,8 @@ class ConsumeAssertionService
     /** @var ConnectedServiceProviders */
     private $connectedServiceProviders;
 
+    private $handledRequestId = null;
+
     /**
      * ConsumeAssertionService constructor.
      * @param LoggerInterface $logger
@@ -86,6 +88,8 @@ class ConsumeAssertionService
     {
         $stateHandler = $provider->getStateHandler();
         $originalRequestId = $stateHandler->getRequestId();
+
+        $this->handledRequestId = $originalRequestId;
 
         $logger = $this->samlLogger->forAuthentication($originalRequestId);
 
@@ -164,5 +168,13 @@ class ConsumeAssertionService
     private function getServiceProvider($serviceProvider)
     {
         return $this->connectedServiceProviders->getConfigurationOf($serviceProvider);
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getReceivedRequestId()
+    {
+        return $this->handledRequestId;
     }
 }

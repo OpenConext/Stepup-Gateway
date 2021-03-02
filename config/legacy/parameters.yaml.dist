@@ -14,7 +14,7 @@ parameters:
 
     # IP addresses of any HTTP proxies that are sitting in from of the application
     # See: http://symfony.com/doc/current/request/load_balancer_reverse_proxy.html
-    trusted_proxies:   ~
+    trusted_proxies:   []
 
     # Database connection
     database_driver:   pdo_mysql

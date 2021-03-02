@@ -9,6 +9,8 @@ services:
             - ../public:/var/www/public
             - ../certificates/idp.crt:/etc/nginx/certs/gateway.stepup.example.com.crt
             - ../certificates/idp.key:/etc/nginx/certs/gateway.stepup.example.com.key
+        environment:
+            APP_ENV: webtest
         ports:
             - 443:443
         depends_on:
@@ -38,10 +40,11 @@ services:
         container_name: gateway-phpfpm
         volumes:
             - ../../:/var/www
-
+        environment:
+            APP_ENV: webtest
+            PHP_IDE_CONFIG: "serverName=gateway.stepup.example.com"
+            XDEBUG_CONFIG: "remote_enable=1 remote_connect_back=1 remote_port=9001 idekey=PHPSTORM"
         user: '${UID}:${GID}'
-        ports:
-            - 9000:9000
         depends_on:
             db.stepup.example.com:
                 condition: service_healthy
@@ -52,8 +55,6 @@ services:
         user: '${UID}:${GID}'
         environment:
             START_XVFB: "false"
-        ports:
-            - 4444:4444
         volumes:
             - /dev/shm:/dev/shm
 

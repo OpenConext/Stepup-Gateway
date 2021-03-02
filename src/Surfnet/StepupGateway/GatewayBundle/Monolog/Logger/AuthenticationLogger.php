@@ -32,7 +32,12 @@ class AuthenticationLogger
     /**
      * @var ProxyStateHandler
      */
-    private $proxyStateHandler;
+    private $ssoProxyStateHandler;
+
+    /**
+     * @var ProxyStateHandler
+     */
+    private $sfoProxyStateHandler;
 
     /**
      * @var SecondFactorService
@@ -56,13 +61,15 @@ class AuthenticationLogger
 
     public function __construct(
         LoaResolutionService $loaResolutionService,
-        ProxyStateHandler $proxyStateHandler,
+        ProxyStateHandler $ssoProxyStateHandler,
+        ProxyStateHandler $sfoProxyStateHandler,
         SecondFactorService $secondFactorService,
         SamlAuthenticationLogger $authenticationChannelLogger,
         SecondFactorTypeService $service
     ) {
         $this->loaResolutionService = $loaResolutionService;
-        $this->proxyStateHandler    = $proxyStateHandler;
+        $this->ssoProxyStateHandler = $ssoProxyStateHandler;
+        $this->sfoProxyStateHandler = $sfoProxyStateHandler;
         $this->secondFactorService  = $secondFactorService;
         $this->authenticationChannelLogger = $authenticationChannelLogger;
         $this->secondFactorTypeService = $service;
@@ -86,19 +93,19 @@ class AuthenticationLogger
 
     /**
      * @param string $requestId The SAML authentication request ID of the original request (not the proxy request).
+     * @param string $authenticationMode
      */
-    public function logSecondFactorAuthentication($requestId)
+    public function logSecondFactorAuthentication($requestId, $authenticationMode)
     {
-        $secondFactor = $this->secondFactorService->findByUuid(
-            $this->proxyStateHandler->getSelectedSecondFactorId()
-        );
+        $stateHandler = $this->getStateHandler($authenticationMode);
+        $secondFactor = $this->secondFactorService->findByUuid($stateHandler->getSelectedSecondFactorId());
         $loa = $this->loaResolutionService->getLoaByLevel($secondFactor->getLoaLevel($this->secondFactorTypeService));
 
         $context = [
             'second_factor_id'      => $secondFactor->secondFactorId,
             'second_factor_type'    => $secondFactor->secondFactorType,
             'institution'           => $secondFactor->institution,
-            'authentication_result' => $this->proxyStateHandler->isSecondFactorVerified() ? 'OK' : 'FAILED',
+            'authentication_result' => $stateHandler->isSecondFactorVerified() ? 'OK' : 'FAILED',
             'resulting_loa'         => (string) $loa,
         ];
 
@@ -115,12 +122,32 @@ class AuthenticationLogger
         if (!is_string($requestId)) {
             throw InvalidArgumentException::invalidType('string', 'requestId', $requestId);
         }
+        // Regardless of authentication type, the authentication mode can be retrieved from any state handler
+        // given you provide the request id
+        $authenticationMode = $this->getStateHandler('sso')->getAuthenticationModeForRequestId($requestId);
+        $stateHandler = $this->getStateHandler($authenticationMode);
 
-        $context['identity_id']        = $this->proxyStateHandler->getIdentityNameId();
-        $context['authenticating_idp'] = $this->proxyStateHandler->getAuthenticatingIdp();
-        $context['requesting_sp']      = $this->proxyStateHandler->getRequestServiceProvider();
-        $context['datetime']           = (new DateTime())->format('Y-m-d\\TH:i:sP');
+        $context['identity_id']        = $stateHandler->getIdentityNameId();
+        $context['authenticating_idp'] = $stateHandler->getAuthenticatingIdp();
+        $context['requesting_sp']      = $stateHandler->getRequestServiceProvider();
+        $context['datetime']           = (new \DateTime())->format('Y-m-d\\TH:i:sP');
 
         $this->authenticationChannelLogger->forAuthentication($requestId)->notice($message, $context);
+    }
+
+    /**
+     * @param string $authenticationMode
+     * @return ProxyStateHandler
+     */
+    private function getStateHandler($authenticationMode)
+    {
+        if ($authenticationMode === 'sfo') {
+            return $this->sfoProxyStateHandler;
+        } else if ($authenticationMode === 'sso') {
+            return $this->ssoProxyStateHandler;
+        }
+        throw new InvalidArgumentException(
+            sprintf('Retrieving a state handler for authentication type %s is not supported', $authenticationMode)
+        );
     }
 }

@@ -22,7 +22,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class ProxyStateHandler
 {
-    const SESSION_PATH = 'surfnet/gateway/request';
+    private $sessionPath;
 
     /**
      * @var \Symfony\Component\HttpFoundation\Session\SessionInterface
@@ -32,8 +32,9 @@ class ProxyStateHandler
     /**
      * @param SessionInterface $session
      */
-    public function __construct(SessionInterface $session)
+    public function __construct(SessionInterface $session, $sessionPath)
     {
+        $this->sessionPath = $sessionPath;
         $this->session = $session;
     }
 
@@ -45,7 +46,7 @@ class ProxyStateHandler
         $all = $this->session->all();
 
         foreach (array_keys($all) as $key) {
-            if (strpos($key, self::SESSION_PATH) === 0) {
+            if (strpos($key, $this->sessionPath) === 0) {
                 $this->session->remove($key);
             }
         }
@@ -331,12 +332,29 @@ class ProxyStateHandler
     }
 
     /**
+     * note that the authentication mode is stored outside the session path, to enable other state handlers
+     * to retrieve the Authentication state for a given authentication request id.
+     *
+     * @param $requestId
+     * @param $authenticationMode
+     */
+    public function markAuthenticationModeForRequest($requestId, $authenticationMode)
+    {
+        $this->session->set('surfnet/gateway/auth_mode/' . $requestId, $authenticationMode);
+    }
+
+    public function getAuthenticationModeForRequestId($requestId)
+    {
+        return $this->session->get('surfnet/gateway/auth_mode/' . $requestId);
+    }
+
+    /**
      * @param string $key
      * @param mixed $value Any scalar
      */
     protected function set($key, $value)
     {
-        $this->session->set(self::SESSION_PATH . $key, $value);
+        $this->session->set($this->sessionPath . $key, $value);
     }
 
     /**
@@ -345,6 +363,6 @@ class ProxyStateHandler
      */
     protected function get($key)
     {
-        return $this->session->get(self::SESSION_PATH . $key);
+        return $this->session->get($this->sessionPath . $key);
     }
 }
