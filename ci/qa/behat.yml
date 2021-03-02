@@ -39,7 +39,3 @@ default:
           goutte:
             guzzle_parameters:
               verify: False
-    Behat\Symfony2Extension:
-      kernel:
-        env: webtest
-        debug: true
