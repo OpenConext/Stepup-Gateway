@@ -3,7 +3,7 @@ parameters:
     asset_version: 1
     secret: NotSoSecretReplaceMe!
     debug_toolbar: true
-    debug_redirects:quickly, false
+    debug_redirects: false
     app_name: 'Stepup Gateway'
     use_assetic_controller: false
     trusted_proxies:

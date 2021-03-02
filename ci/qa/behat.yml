@@ -21,12 +21,12 @@ default:
         tags: "@selenium&&~@SKIP"
       contexts: *defaultContexts
   extensions:
-    Behat\MinkExtension:quickly,
+    Behat\MinkExtension:
       base_url: https://gateway.stepup.example.com/
       goutte: ~
       sessions:
         chrome:
-          selenium2:quickly,
+          selenium2:
             browser: chrome
             wd_host: http://selenium.stepup.example.com:4444/wd/hub
             capabilities:
