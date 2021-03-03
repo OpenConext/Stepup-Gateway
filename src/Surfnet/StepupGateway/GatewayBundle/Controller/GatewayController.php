@@ -32,6 +32,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use function parent;
 
 /**
  * Entry point for the Stepup login flow.
@@ -77,7 +78,7 @@ class GatewayController extends Controller
                 $this->getResponseContext(self::MODE_SSO)
             );
 
-            return $this->renderSamlResponse('consumeAssertion', $response, self::MODE_SSO);
+            return $this->renderSamlResponse('consume_assertion', $response, self::MODE_SSO);
         }
 
         return $redirectBinding->createResponseFor($proxyRequest);
@@ -112,7 +113,7 @@ class GatewayController extends Controller
         } catch (ResponseFailureException $e) {
             $response = $this->getGatewayFailedResponseService()->createResponseFailureResponse($responseContext);
 
-            return $this->renderSamlResponse('unprocessableResponse', $response, self::MODE_SSO);
+            return $this->renderSamlResponse('unprocessable_response', $response, self::MODE_SSO);
         }
 
         // Forward to the selectSecondFactorForVerificationSsoAction, this in turn will forward to the correct
@@ -136,7 +137,7 @@ class GatewayController extends Controller
         $response = $gatewayLoginService->respond($responseContext);
         $gatewayLoginService->resetRespondState($responseContext);
 
-        return $this->renderSamlResponse('consumeAssertion', $response, self::MODE_SSO);
+        return $this->renderSamlResponse('consume_assertion', $response, self::MODE_SSO);
     }
 
     /**
@@ -156,7 +157,7 @@ class GatewayController extends Controller
 
         $response = $gatewayLoginService->sendLoaCannotBeGiven($responseContext);
 
-        return $this->renderSamlResponse('consumeAssertion', $response, $authenticationMode);
+        return $this->renderSamlResponse('consume_assertion', $response, $authenticationMode);
     }
 
     /**
@@ -180,7 +181,7 @@ class GatewayController extends Controller
 
         $response = $gatewayLoginService->sendAuthenticationCancelledByUser($responseContext);
 
-        return $this->renderSamlResponse('consumeAssertion', $response, $authenticationMode);
+        return $this->renderSamlResponse('consume_assertion', $response, $authenticationMode);
     }
 
     /**
