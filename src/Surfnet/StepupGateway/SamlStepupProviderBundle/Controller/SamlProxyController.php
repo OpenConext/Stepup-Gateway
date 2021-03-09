@@ -160,7 +160,7 @@ class SamlProxyController extends Controller
                     $this->getDestination($provider->getStateHandler())
                 )
             );
-        } catch (SecondfactorVerfificationRequiredException $e) {
+        } catch (SecondfactorVerificationRequiredException $e) {
             // The provider state handler has no access to the session object, hence we use the proxy state handler
             $stateHandler = $this->get('gateway.proxy.sso.state_handler');
             return $this->forward(
