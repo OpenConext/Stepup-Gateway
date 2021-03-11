@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.2.1
+** Bugfix **
+Restore simultaneous SFO and SSO authentications feature. This was accidently removed in version 3.2.0
+Resolved issues with naming
+
 ## 3.2.0
 **New Feature**
 
