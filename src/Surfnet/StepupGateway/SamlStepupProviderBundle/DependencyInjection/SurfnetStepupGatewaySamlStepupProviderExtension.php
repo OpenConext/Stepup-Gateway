@@ -236,6 +236,7 @@ class SurfnetStepupGatewaySamlStepupProviderExtension extends Extension
             new Reference('surfnet_saml.signing_service'),
             new Reference('gssp.provider.' . $provider . 'metadata.configuration')
         ]);
+        $metadataFactory->setPublic(true);
         $container->setDefinition('gssp.provider.' . $provider . '.metadata.factory', $metadataFactory);
     }
 
