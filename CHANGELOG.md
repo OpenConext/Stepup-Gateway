@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.2.2
+** Bugfix **
+Add X-UA-Compatible header to fix issues with embedded browsers
+
 ## 3.2.1
 ** Bugfix **
 Restore simultaneous SFO and SSO authentications feature. This was accidently removed in version 3.2.0
