@@ -138,9 +138,6 @@ parameters:
         - sms
         - yubikey
         - tiqr
-        - u2f
     enabled_generic_second_factors:
-        biometric:
-            loa: 3
         tiqr:
             loa: 3
