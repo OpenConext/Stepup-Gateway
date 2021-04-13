@@ -1,0 +1,67 @@
+{% block form_label_class -%}
+    col-sm-3
+{%- endblock form_label_class %}
+
+{% block form_group_class -%}
+    col-sm-9
+{%- endblock form_group_class %}
+
+{% block anchor_widget %}
+    {% spaceless %}
+        {% if label is empty %}
+            {% set label = name|humanize %}
+        {% endif %}
+        <a href="{{ path(route) }}" {{ block('button_attributes') }}>
+            {% if icon is not empty %}
+                <span class="glyphicon glyphicon-{{ icon }}"{% if icon_inverted|default(false) %} style="color: white;"{% endif %}></span>
+            {% endif %}
+            {{ label|trans({}, translation_domain) }}</a>
+    {% endspaceless %}
+{% endblock anchor_widget %}
+
+{% block anchor_row %}
+    {% spaceless %}
+        {% if button_offset is defined and button_offset is not empty %}
+            {% set attr = attr|merge({'for': id, 'class': button_offset }) %}
+            <div class="form-group">
+                <div {% for attrname, attrvalue in attr %} {{attrname}}="{{attrvalue}}"{% endfor %}>
+                {{ form_widget(form) }}
+            </div>
+            </div>
+        {% else %}
+            <div>
+                {{ form_widget(form) }}
+            </div>
+        {% endif %}
+    {% endspaceless %}
+{% endblock anchor_row %}
+
+{% block ra_role_at_institution_widget %}
+    <div class="form-inline">
+        {{  form_widget(form.children.role) }}
+        <a href="#" class="btn btn-link btn-sm disabled" role="button">@</a>
+        {{  form_widget(form.children.institution) }}
+    </div>
+{% endblock ra_role_at_institution_widget %}
+
+{% block button_group_row %}
+    <div class="form-group">
+        <div class="{{ block('form_label_class') }}"></div>
+        <div class="{{ block('form_group_class') }}">
+            {% for child in form %}
+                {{ form_widget(child) }}
+            {% endfor %}
+        </div>
+    </div>
+{% endblock button_group_row %}
+
+{%- block otp_widget -%}
+    {% spaceless %}
+        <div class="col-sm-9">
+            <div class="input-group">
+                <span class="input-group-addon"><i class="fa fa-key"></i></span>
+                <input type="text" class="form-control" {{ block('widget_attributes') }}>
+            </div>
+        </div>
+    {% endspaceless %}
+{%- endblock otp_widget -%}

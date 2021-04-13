@@ -27,7 +27,7 @@ use Surfnet\StepupGateway\GatewayBundle\Controller\GatewayController;
 use Surfnet\StepupGateway\GatewayBundle\Exception\ResponseFailureException;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Exception\InvalidSubjectException;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Exception\NotConnectedServiceProviderException;
-use Surfnet\StepupGateway\SamlStepupProviderBundle\Exception\SecondfactorVerfificationRequiredException;
+use Surfnet\StepupGateway\SamlStepupProviderBundle\Exception\SecondfactorVerificationRequiredException;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\Provider;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Saml\ProxyResponseFactory;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Saml\StateHandler;
@@ -150,17 +150,17 @@ class SamlProxyController extends Controller
                 $this->getDestination($provider->getStateHandler()),
                 $e->getMessage()
             );
-            return $this->renderSamlResponse('consumeAssertion', $provider->getStateHandler(), $response);
+            return $this->renderSamlResponse('consume_assertion', $provider->getStateHandler(), $response);
         } catch (InvalidSubjectException $e) {
             return $this->renderSamlResponse(
-                'recoverableError',
+                'recoverable_error',
                 $provider->getStateHandler(),
                 $this->createAuthnFailedResponse(
                     $provider,
                     $this->getDestination($provider->getStateHandler())
                 )
             );
-        } catch (SecondfactorVerfificationRequiredException $e) {
+        } catch (SecondfactorVerificationRequiredException $e) {
             // The provider state handler has no access to the session object, hence we use the proxy state handler
             $stateHandler = $this->get('gateway.proxy.sso.state_handler');
             return $this->forward(
@@ -176,7 +176,7 @@ class SamlProxyController extends Controller
             throw $e;
         }
 
-        return $this->renderSamlResponse('consumeAssertion', $provider->getStateHandler(), $response);
+        return $this->renderSamlResponse('consume_assertion', $provider->getStateHandler(), $response);
     }
 
     /**
@@ -252,7 +252,7 @@ class SamlProxyController extends Controller
         ];
 
         $response = parent::render(
-            'SurfnetStepupGatewaySamlStepupProviderBundle:SamlProxy:' . $view . '.html.twig',
+            'SurfnetStepupGatewaySamlStepupProviderBundle:saml_proxy:' . $view . '.html.twig',
             $parameters
         );
 

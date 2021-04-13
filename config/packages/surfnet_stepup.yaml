@@ -1,0 +1,14 @@
+surfnet_stepup:
+  logging:
+    application_name: stepup-gateway
+  loa_definition:
+    loa1: "%gateway_loa_loa1%"
+    loa2: "%gateway_loa_loa2%"
+    loa3: "%gateway_loa_loa3%"
+  sms:
+    service: gateway.service.gateway_api_sms
+    originator: "%sms_originator%"
+    otp_expiry_interval: "%sms_otp_expiry_interval%"
+    maximum_otp_requests: "%sms_maximum_otp_requests%"
+  locale_cookie:
+    domain: "%locale_cookie_domain%"

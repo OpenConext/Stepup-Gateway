@@ -20,7 +20,7 @@ The Remote IdP (i.e. not the local IdP that is part of the Stepup-Gateway) is th
 
 ### Configuration in the Stepup Gateway
 
-The EntityID, SSO Location and the SAML signing key of the remote IdP must be set in the [parameters.yml](../app/config/parameters.yml.dist) of the gateway. The Stepup-Gateway does not support importing or updating the remote IdP configuration from metadata published by the remote IdP. You must configure that by hand.
+The EntityID, SSO Location and the SAML signing key of the remote IdP must be set in the [parameters.yml](../config/legacy/parameters.yaml.dist) of the gateway. The Stepup-Gateway does not support importing or updating the remote IdP configuration from metadata published by the remote IdP. You must configure that by hand.
 
 ### SAML Interface
 

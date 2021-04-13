@@ -1,4 +1,19 @@
 <?php
+/**
+ * Copyright 2020 SURFnet bv
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 namespace Surfnet\StepupGateway\SamlStepupProviderBundle\Service\Gateway;
 
@@ -11,7 +26,7 @@ use Surfnet\StepupGateway\GatewayBundle\Exception\ResponseFailureException;
 use Surfnet\StepupGateway\GatewayBundle\Saml\AssertionAdapter;
 use Surfnet\StepupGateway\GatewayBundle\Saml\Exception\UnknownInResponseToException;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Exception\InvalidSubjectException;
-use Surfnet\StepupGateway\SamlStepupProviderBundle\Exception\SecondfactorVerfificationRequiredException;
+use Surfnet\StepupGateway\SamlStepupProviderBundle\Exception\SecondfactorVerificationRequiredException;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\ConnectedServiceProviders;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\Provider;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Saml\ProxyResponseFactory;
@@ -124,7 +139,7 @@ class ConsumeAssertionService
             $message = 'Second Factor verification was requested and was successful, forwarding to SecondFactor handling';
             $logger->notice($message);
 
-            throw new SecondfactorVerfificationRequiredException($message);
+            throw new SecondfactorVerificationRequiredException($message);
         }
 
         $targetServiceProvider = $this->getServiceProvider($stateHandler->getRequestServiceProvider());

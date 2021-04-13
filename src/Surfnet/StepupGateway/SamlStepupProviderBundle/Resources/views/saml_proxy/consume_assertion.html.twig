@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block page_title %}{{ 'gateway.gssp.consume_assertion.title'|trans }}{% endblock %}
+
+{% block content %}
+    <noscript>
+        {{ 'gateway.gssp.consume_assertion.no_javascript_click_button'|trans }}
+    </noscript>
+    {{ 'gateway.gssp.consume_assertion.one_moment_please'|trans }}
+    <form method="post" action="{{ acu }}">
+        <input type="hidden" name="SAMLResponse" value="{{ response }}" />
+    {% if relayState|length > 0 %}
+        <input type="hidden" name="RelayState" value="{{ relayState|escape }}" />
+    {% endif %}
+        <input type="submit" class="hidden" value="Submit" />
+    <noscript>
+        <input type="submit" value="Submit"/>
+    </noscript>
+    </form>
+{% endblock %}
+{% block javascripts %}
+    {{ encore_entry_script_tags('app') }}
+    {{ encore_entry_script_tags('submitonload') }}
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends "@SurfnetStepupGatewayGateway/second_factor/second_factor_authentication.html.twig" %}
+
+{% block application_name %}{{ 'gateway.second_factor.sms.send_challenge.title'|trans }}{% endblock application_name %}
+{% block content %}
+
+    <p>{{ 'gateway.second_factor.sms.text.help_user_enter_phone_number'|trans({"%phone_number%": phoneNumber|slice(-4)}) }}</p>
+
+    {% if otpRequestsRemaining != maximumOtpRequests %}
+        <div class="alert alert-{% if otpRequestsRemaining == 0 %}error{% elseif otpRequestsRemaining == 1 %}warning{% else %}info{% endif %}">
+            {{ 'gateway.second_factor.sms.text.otp_requests_remaining'|trans({ '%count%': otpRequestsRemaining }) }}
+        </div>
+    {% endif %}
+
+    <div class="form-gateway-send-sms-challenge">
+        {{ form(form) }}
+    </div>
+
+    <p>{{ 'gateway.second_factor.sms.text.next_step'|trans }}</p>
+
+{% endblock %}

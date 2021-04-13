@@ -1,5 +1,19 @@
 <?php
-
+/**
+ * Copyright 2020 SURFnet bv
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 namespace Surfnet\StepupGateway\SamlStepupProviderBundle\Tests\Service\Gateway;
 
@@ -14,6 +28,7 @@ use Surfnet\SamlBundle\SAML2\AuthnRequest;
 use Surfnet\SamlBundle\SAML2\ReceivedAuthnRequest;
 use Surfnet\StepupGateway\GatewayBundle\Service\SamlEntityService;
 use Surfnet\StepupGateway\GatewayBundle\Tests\TestCase\GatewaySamlTestCase;
+use Surfnet\StepupGateway\SamlStepupProviderBundle\Exception\NotConnectedServiceProviderException;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\ConnectedServiceProviders;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\Provider;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Saml\StateHandler;
@@ -48,7 +63,7 @@ class LoginServiceTest extends GatewaySamlTestCase
     /** @var Provider */
     private $provider;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -157,10 +172,10 @@ class LoginServiceTest extends GatewaySamlTestCase
 
     /**
      * @test
-     * @expectedException \Surfnet\StepupGateway\SamlStepupProviderBundle\Exception\NotConnectedServiceProviderException
      */
     public function it_should_throw_an_exception_when_a_sp_is_not_connected_when_the_registration_is_started_on_gssp_registration_flow()
     {
+        $this->expectException(NotConnectedServiceProviderException::class);
         // Create request
         $httpRequest = new Request();
 

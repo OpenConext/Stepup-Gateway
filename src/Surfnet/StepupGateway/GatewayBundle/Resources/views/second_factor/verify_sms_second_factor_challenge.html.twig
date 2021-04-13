@@ -1,0 +1,26 @@
+{% extends "@SurfnetStepupGatewayGateway/second_factor/second_factor_authentication.html.twig" %}
+
+{% block application_name %}{{ 'gateway.second_factor.sms.verify_challenge.title.page'|trans }}{% endblock application_name %}
+{% block content %}
+
+    <p>{{ 'gateway.second_factor.sms.text.help_user_enter_challenge'|trans }}</p>
+
+    <div class="form-gateway-verify-sms-challenge">
+        {{ form_start(form) }}
+
+        {% set formErrors = form.vars.errors.form.getErrors(true) %}
+        {% if formErrors|length %}
+            {% for error in formErrors %}
+                <p class="form-error">{{ error.message }}</p>
+            {% endfor %}
+        {% endif %}
+
+        <div class="row">
+        {{ form_widget(form.challenge) }}
+        {{ form_widget(form.verify_challenge) }}
+        </div>
+        <p>{{ 'gateway.second_factor.sms.text.resend_challenge_text'|trans }} {{ form_widget(form.resend_challenge) }}
+        {{ form_end(form) }}
+    </div>
+
+{% endblock %}

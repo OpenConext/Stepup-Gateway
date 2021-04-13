@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Monolog\Logger;
 
+use DateTime;
 use Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger;
 use Surfnet\StepupBundle\Service\LoaResolutionService;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
@@ -129,7 +130,7 @@ class AuthenticationLogger
         $context['identity_id']        = $stateHandler->getIdentityNameId();
         $context['authenticating_idp'] = $stateHandler->getAuthenticatingIdp();
         $context['requesting_sp']      = $stateHandler->getRequestServiceProvider();
-        $context['datetime']           = (new \DateTime())->format('Y-m-d\\TH:i:sP');
+        $context['datetime']           = (new DateTime())->format('Y-m-d\\TH:i:sP');
 
         $this->authenticationChannelLogger->forAuthentication($requestId)->notice($message, $context);
     }

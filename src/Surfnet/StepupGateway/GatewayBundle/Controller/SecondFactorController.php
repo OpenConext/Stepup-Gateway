@@ -251,7 +251,12 @@ class SecondFactorController extends Controller
             // Forward to action to verify possession of second factor
             return $this->selectAndRedirectTo($secondFactor, $context, $authenticationMode);
         } else if ($form->isSubmitted() && !$form->isValid()) {
-            $form->addError(new FormError('gateway.form.gateway_choose_second_factor.unknown_second_factor_type'));
+            $form->addError(
+                new FormError(
+                    $this->get('translator')
+                      ->trans('gateway.form.gateway_choose_second_factor.unknown_second_factor_type')
+                )
+            );
         }
 
         return [
@@ -371,36 +376,39 @@ class SecondFactorController extends Controller
         $form = $this->createForm(VerifyYubikeyOtpType::class, $command)->handleRequest($request);
         $cancelForm = $this->buildCancelAuthenticationForm($authenticationMode)->handleRequest($request);
 
-        if (!$form->isValid()) {
-            // OTP field is rendered empty in the template.
-            return ['form' => $form->createView(), 'cancelForm' => $cancelForm->createView()];
+        if ($form->isSubmitted()  && $form->isValid()) {
+            $result = $this->getStepupService()->verifyYubikeyOtp($command);
+            if ($result->didOtpVerificationFail()) {
+                $form->addError(
+                    new FormError($this->get('translator')->trans('gateway.form.verify_yubikey.otp_verification_failed'))
+                );
+
+                // OTP field is rendered empty in the template.
+                return ['form' => $form->createView(), 'cancelForm' => $cancelForm->createView()];
+            } elseif (!$result->didPublicIdMatch()) {
+                $form->addError(
+                    new FormError($this->get('translator')->trans('gateway.form.verify_yubikey.public_id_mismatch'))
+                );
+
+                // OTP field is rendered empty in the template.
+                return ['form' => $form->createView(), 'cancelForm' => $cancelForm->createView()];
+            }
+
+            $this->getResponseContext($authenticationMode)->markSecondFactorVerified();
+            $this->getAuthenticationLogger()->logSecondFactorAuthentication($originalRequestId, $authenticationMode);
+
+            $logger->info(
+                sprintf(
+                    'Marked Yubikey Second Factor "%s" as verified, forwarding to Saml Proxy to respond',
+                    $selectedSecondFactor
+                )
+            );
+
+            return $this->forward($context->getResponseAction());
         }
 
-        $result = $this->getStepupService()->verifyYubikeyOtp($command);
-
-        if ($result->didOtpVerificationFail()) {
-            $form->addError(new FormError('gateway.form.verify_yubikey.otp_verification_failed'));
-
-            // OTP field is rendered empty in the template.
-            return ['form' => $form->createView(), 'cancelForm' => $cancelForm->createView()];
-        } elseif (!$result->didPublicIdMatch()) {
-            $form->addError(new FormError('gateway.form.verify_yubikey.public_id_mismatch'));
-
-            // OTP field is rendered empty in the template.
-            return ['form' => $form->createView(), 'cancelForm' => $cancelForm->createView()];
-        }
-
-        $this->getResponseContext($authenticationMode)->markSecondFactorVerified();
-        $this->getAuthenticationLogger()->logSecondFactorAuthentication($originalRequestId, $authenticationMode);
-
-        $logger->info(
-            sprintf(
-                'Marked Yubikey Second Factor "%s" as verified, forwarding to Saml Proxy to respond',
-                $selectedSecondFactor
-            )
-        );
-
-        return $this->forward($context->getResponseAction());
+        // OTP field is rendered empty in the template.
+        return ['form' => $form->createView(), 'cancelForm' => $cancelForm->createView()];
     }
 
     /**
@@ -441,7 +449,7 @@ class SecondFactorController extends Controller
         $maximumOtpRequests = $stepupService->getSmsMaximumOtpRequestsCount();
         $viewVariables = ['otpRequestsRemaining' => $otpRequestsRemaining, 'maximumOtpRequests' => $maximumOtpRequests];
 
-        if (!$form->isValid()) {
+        if ($form->isSubmitted() && !$form->isValid()) {
             return array_merge(
                 $viewVariables,
                 ['phoneNumber' => $phoneNumber, 'form' => $form->createView(), 'cancelForm' => $cancelForm->createView()]
@@ -451,14 +459,15 @@ class SecondFactorController extends Controller
         $logger->notice('Verifying possession of SMS second factor, sending challenge per SMS');
 
         if (!$stepupService->sendSmsChallenge($command)) {
-            $form->addError(new FormError('gateway.form.send_sms_challenge.sms_sending_failed'));
+            $form->addError(
+                new FormError($this->get('translator')->trans('gateway.form.send_sms_challenge.sms_sending_failed'))
+            );
 
             return array_merge(
                 $viewVariables,
                 ['phoneNumber' => $phoneNumber, 'form' => $form->createView(), 'cancelForm' => $cancelForm->createView()]
             );
         }
-
         return $this->redirect(
             $this->generateUrl(
                 'gateway_verify_second_factor_sms_verify_challenge',
@@ -492,39 +501,44 @@ class SecondFactorController extends Controller
         $form = $this->createForm(VerifySmsChallengeType::class, $command)->handleRequest($request);
         $cancelForm = $this->buildCancelAuthenticationForm($authenticationMode)->handleRequest($request);
 
-        if (!$form->isValid()) {
-            return ['form' => $form->createView(), 'cancelForm' => $cancelForm->createView()];
+        if ($form->isSubmitted() && $form->isValid()) {
+            $logger->notice('Verifying input SMS challenge matches');
+
+            $verification = $this->getStepupService()->verifySmsChallenge($command);
+
+            if ($verification->wasSuccessful()) {
+                $this->getStepupService()->clearSmsVerificationState();
+
+                $this->getResponseContext($authenticationMode)->markSecondFactorVerified();
+                $this->getAuthenticationLogger()->logSecondFactorAuthentication($originalRequestId, $authenticationMode);
+
+                $logger->info(
+                    sprintf(
+                        'Marked Sms Second Factor "%s" as verified, forwarding to Saml Proxy to respond',
+                        $selectedSecondFactor
+                    )
+                );
+
+                return $this->forward($context->getResponseAction());
+            } elseif ($verification->didOtpExpire()) {
+                $logger->notice('SMS challenge expired');
+                $form->addError(
+                    new FormError($this->get('translator')->trans('gateway.form.send_sms_challenge.challenge_expired'))
+                );
+            } elseif ($verification->wasAttemptedTooManyTimes()) {
+                $logger->notice('SMS challenge verification was attempted too many times');
+                $form->addError(
+                    new FormError($this->get('translator')->trans('gateway.form.send_sms_challenge.too_many_attempts'))
+                );
+            } else {
+                $logger->notice('SMS challenge did not match');
+                $form->addError(
+                    new FormError(
+                        $this->get('translator')->trans('gateway.form.send_sms_challenge.sms_challenge_incorrect')
+                    )
+                );
+            }
         }
-
-        $logger->notice('Verifying input SMS challenge matches');
-
-        $verification = $this->getStepupService()->verifySmsChallenge($command);
-
-        if ($verification->wasSuccessful()) {
-            $this->getStepupService()->clearSmsVerificationState();
-
-            $this->getResponseContext($authenticationMode)->markSecondFactorVerified();
-            $this->getAuthenticationLogger()->logSecondFactorAuthentication($originalRequestId, $authenticationMode);
-
-            $logger->info(
-                sprintf(
-                    'Marked Sms Second Factor "%s" as verified, forwarding to Saml Proxy to respond',
-                    $selectedSecondFactor
-                )
-            );
-
-            return $this->forward($context->getResponseAction());
-        } elseif ($verification->didOtpExpire()) {
-            $logger->notice('SMS challenge expired');
-            $form->addError(new FormError('gateway.form.send_sms_challenge.challenge_expired'));
-        } elseif ($verification->wasAttemptedTooManyTimes()) {
-            $logger->notice('SMS challenge verification was attempted too many times');
-            $form->addError(new FormError('gateway.form.send_sms_challenge.too_many_attempts'));
-        } else {
-            $logger->notice('SMS challenge did not match');
-            $form->addError(new FormError('gateway.form.send_sms_challenge.sms_challenge_incorrect'));
-        }
-
         return ['form' => $form->createView(), 'cancelForm' => $cancelForm->createView()];
     }
 
@@ -591,7 +605,7 @@ class SecondFactorController extends Controller
     }
 
     /**
-     * @Template("SurfnetStepupGatewayGatewayBundle:SecondFactor:initiateU2fAuthentication.html.twig")
+     * @Template("SurfnetStepupGatewayGatewayBundle:second_factor:initiate_u2f_authentication.html.twig")
      *
      * @param Request $request
      * @param string $authenticationMode
@@ -637,7 +651,7 @@ class SecondFactorController extends Controller
         $cancelForm =
             $this->createForm(CancelSecondFactorVerificationType::class, null, ['action' => $cancelFormAction]);
 
-        if (!$form->isValid()) {
+        if ($form->isSubmitted() && !$form->isValid()) {
             $logger->error('U2F authentication verification could not be started because device send illegal data');
             $this->addFlash('error', 'gateway.u2f.alert.error');
 

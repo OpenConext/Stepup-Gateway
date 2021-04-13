@@ -26,6 +26,9 @@ use Symfony\Component\DependencyInjection\Loader;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
+/**
+ * @SuppressWarnings(PHPMD.LongClassName)
+ */
 class SurfnetStepupGatewaySamlStepupProviderExtension extends Extension
 {
     const VIEW_CONFIG_TAG_NAME = 'gssp.view_config';
@@ -101,6 +104,7 @@ class SurfnetStepupGatewaySamlStepupProviderExtension extends Extension
                 new Reference('gssp.provider.' . $provider . '.assertion_signing')
             ]
         );
+        $proxyResponseFactory->setPublic(true);
         $container->setDefinition('gssp.provider.' . $provider . '.response_proxy', $proxyResponseFactory);
 
         $container
@@ -232,6 +236,7 @@ class SurfnetStepupGatewaySamlStepupProviderExtension extends Extension
             new Reference('surfnet_saml.signing_service'),
             new Reference('gssp.provider.' . $provider . 'metadata.configuration')
         ]);
+        $metadataFactory->setPublic(true);
         $container->setDefinition('gssp.provider.' . $provider . '.metadata.factory', $metadataFactory);
     }
 

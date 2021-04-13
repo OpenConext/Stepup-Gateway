@@ -28,6 +28,7 @@ use Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger;
 use Surfnet\SamlBundle\SAML2\ReceivedAuthnRequest;
 use Surfnet\StepupBundle\Service\LoaResolutionService;
 use Surfnet\StepupBundle\Value\Loa;
+use Surfnet\StepupGateway\GatewayBundle\Exception\RequesterFailureException;
 use Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler;
 use Surfnet\StepupGateway\GatewayBundle\Service\SamlEntityService;
 use Surfnet\StepupGateway\GatewayBundle\Tests\TestCase\GatewaySamlTestCase;
@@ -58,7 +59,7 @@ final class LoginServiceTest extends GatewaySamlTestCase
     /** @var Mockery\Mock|SamlEntityService */
     private $samlEntityService;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -150,10 +151,10 @@ final class LoginServiceTest extends GatewaySamlTestCase
 
     /**
      * @test
-     * @expectedException \Surfnet\StepupGateway\GatewayBundle\Exception\RequesterFailureException
      */
     public function it_should_throw_a_exception_when_second_factor_is_not_allowed_when_starting_verification_on_sfo_login_flow()
     {
+        $this->expectException(RequesterFailureException::class);
         // Create request
         $httpRequest = new Request();
         $originalRequest = ReceivedAuthnRequest::from('<samlp:AuthnRequest xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"
@@ -196,10 +197,10 @@ final class LoginServiceTest extends GatewaySamlTestCase
 
     /**
      * @test
-     * @expectedException \Surfnet\StepupGateway\GatewayBundle\Exception\RequesterFailureException
      */
     public function it_should_throw_a_exception_when_the_requestd_loa_is_not_supported_when_starting_verification_on_sfo_login_flow()
     {
+        $this->expectException(RequesterFailureException::class);
         // Create request
         $httpRequest = new Request();
         $originalRequest = ReceivedAuthnRequest::from('<samlp:AuthnRequest xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"

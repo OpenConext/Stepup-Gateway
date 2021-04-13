@@ -6,7 +6,7 @@ services:
         container_name: gateway-nginx
         volumes:
             -  ../docker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
-            - ../web:/var/www/web
+            - ../public:/var/www/public
             - ../certificates/idp.crt:/etc/nginx/certs/gateway.stepup.example.com.crt
             - ../certificates/idp.key:/etc/nginx/certs/gateway.stepup.example.com.key
         environment:

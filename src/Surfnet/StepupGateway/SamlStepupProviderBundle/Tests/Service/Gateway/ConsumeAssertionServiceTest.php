@@ -1,5 +1,19 @@
 <?php
-
+/**
+ * Copyright 2020 SURFnet bv
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 namespace Surfnet\StepupGateway\SamlStepupProviderBundle\Tests\Service\Gateway;
 
@@ -11,10 +25,14 @@ use Surfnet\SamlBundle\Entity\IdentityProvider;
 use Surfnet\SamlBundle\Entity\ServiceProvider;
 use Surfnet\SamlBundle\Http\PostBinding;
 use Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger;
+use Surfnet\StepupGateway\GatewayBundle\Exception\ResponseFailureException;
 use Surfnet\StepupGateway\GatewayBundle\Saml\AssertionSigningService;
+use Surfnet\StepupGateway\GatewayBundle\Saml\Exception\UnknownInResponseToException;
 use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
 use Surfnet\StepupGateway\GatewayBundle\Service\SamlEntityService;
 use Surfnet\StepupGateway\GatewayBundle\Tests\TestCase\GatewaySamlTestCase;
+use Surfnet\StepupGateway\SamlStepupProviderBundle\Exception\InvalidSubjectException;
+use Surfnet\StepupGateway\SamlStepupProviderBundle\Exception\SecondfactorVerificationRequiredException;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\ConnectedServiceProviders;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\Provider;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Saml\ProxyResponseFactory;
@@ -53,7 +71,7 @@ class ConsumeAssertionServiceTest extends GatewaySamlTestCase
     /** @var ProxyResponseFactory */
     private $proxyResponseFactory;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -244,10 +262,10 @@ class ConsumeAssertionServiceTest extends GatewaySamlTestCase
 
     /**
      * @test
-     * @expectedException \Surfnet\StepupGateway\GatewayBundle\Exception\ResponseFailureException
      */
-    public function it_should_throw_an_exception_when_the_post_binding_could_not_be_processed_when_receiving_a_saml_response_when_consuming_assertions_on_gssp_registration_and_gssp_verification_flows() {
-
+    public function it_should_throw_an_exception_when_the_post_binding_could_not_be_processed_when_receiving_a_saml_response_when_consuming_assertions_on_gssp_registration_and_gssp_verification_flows()
+    {
+        $this->expectException(ResponseFailureException::class);
         $samlResponse = '<samlp:Response
     xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"
     xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
@@ -355,10 +373,10 @@ class ConsumeAssertionServiceTest extends GatewaySamlTestCase
 
     /**
      * @test
-     * @expectedException \Surfnet\StepupGateway\GatewayBundle\Saml\Exception\UnknownInResponseToException
      */
-    public function it_should_throw_an_exception_when_in_response_to_is_invalid_when_receiving_a_saml_response_when_consuming_assertions_on_gssp_registration_and_gssp_verification_flows() {
-
+    public function it_should_throw_an_exception_when_in_response_to_is_invalid_when_receiving_a_saml_response_when_consuming_assertions_on_gssp_registration_and_gssp_verification_flows()
+    {
+        $this->expectException(UnknownInResponseToException::class);
         $samlResponse = '<samlp:Response
     xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"
     xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
@@ -465,10 +483,10 @@ class ConsumeAssertionServiceTest extends GatewaySamlTestCase
 
     /**
      * @test
-     * #@expectedException \Surfnet\StepupGateway\SamlStepupProviderBundle\Exception\InvalidSubjectException
      */
-    public function it_should_throw_an_exception_when_to_subject_is_invalid_when_receiving_a_saml_response_when_consuming_assertions_on_gssp_registration_and_gssp_verification_flows() {
-
+    public function it_should_throw_an_exception_when_to_subject_is_invalid_when_receiving_a_saml_response_when_consuming_assertions_on_gssp_registration_and_gssp_verification_flows()
+    {
+        $this->expectException(InvalidSubjectException::class);
         $samlResponse = '<samlp:Response
     xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"
     xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
@@ -576,10 +594,10 @@ class ConsumeAssertionServiceTest extends GatewaySamlTestCase
 
     /**
      * @test
-     * #@expectedException \Surfnet\StepupGateway\SamlStepupProviderBundle\Exception\SecondfactorVerfificationRequiredException
      */
-    public function it_should_throw_an_verification_exception_when_receiving_a_saml_response_when_consuming_assertions_on_gssp_registration_and_gssp_verification_flows() {
-
+    public function it_should_throw_an_verification_exception_when_receiving_a_saml_response_when_consuming_assertions_on_gssp_registration_and_gssp_verification_flows()
+    {
+        $this->expectException(SecondfactorVerificationRequiredException::class);
         $samlResponse = '<samlp:Response
     xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"
     xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"

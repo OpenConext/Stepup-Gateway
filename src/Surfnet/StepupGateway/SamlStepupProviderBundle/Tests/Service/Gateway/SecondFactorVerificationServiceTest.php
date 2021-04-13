@@ -55,7 +55,7 @@ class SecondFactorVerificationServiceTest extends GatewaySamlTestCase
     /** @var Provider */
     private $provider;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 

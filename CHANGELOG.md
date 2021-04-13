@@ -1,5 +1,32 @@
 # Changelog
 
+## 3.2.3
+**Bugfix**
+
+Show form error messages once again  #217
+
+## 3.2.2
+**Bugfix**
+
+Add X-UA-Compatible header to fix issues with embedded browsers
+
+## 3.2.1
+**Bugfix**
+
+Restore simultaneous SFO and SSO authentications feature. This was accidently removed in version 3.2.0
+Resolved issues with naming
+
+## 3.2.0
+**New Feature**
+
+Add support for SAML extensions
+
+## 3.1.0
+**Improvements**
+
+Drop support for php5. From now only php 7.2 is supported
+Upgrade to Symfony 4
+
 ## 3.0.2
 **Improvements**
 

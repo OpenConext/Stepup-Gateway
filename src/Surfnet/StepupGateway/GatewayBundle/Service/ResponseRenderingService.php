@@ -76,7 +76,7 @@ final class ResponseRenderingService
     {
         return $this->renderSamlResponse(
             $context,
-            'unprocessableResponse',
+            'unprocessable_response',
             $this->responseBuilder
                 ->createNewResponse($context)
                 ->setResponseStatus(Constants::STATUS_RESPONDER)
@@ -93,7 +93,7 @@ final class ResponseRenderingService
         ResponseContext $context,
         SAMLResponse $response
     ) {
-        return $this->renderSamlResponse($context, 'consumeAssertion', $response);
+        return $this->renderSamlResponse($context, 'consume_assertion', $response);
     }
 
     /**
@@ -108,7 +108,7 @@ final class ResponseRenderingService
         SAMLResponse $response
     ) {
         return $this->twigEngine->renderResponse(
-            'SurfnetStepupGatewayGatewayBundle:Gateway:' . $view . '.html.twig',
+            'SurfnetStepupGatewayGatewayBundle:gateway:' . $view . '.html.twig',
             [
                 'acu'        => $context->getDestination(),
                 'response'   => $this->getResponseAsXML($response),
