@@ -8,7 +8,12 @@
     <h2>{{ block('page_title') }}</h2>
     {{ form_start(form, {'attr': {'class': 'form-horizontal choose-second-factor-type'}}) }}
 
-    {{ form_errors(form) }}
+    {% set formErrors = form.vars.errors.form.getErrors(true) %}
+    {% if formErrors|length %}
+        {% for error in formErrors %}
+            <p class="form-error">{{ error.message }}</p>
+        {% endfor %}
+    {% endif %}
 
     {% for secondFactor in secondFactors %}
         <div class="row middle">
