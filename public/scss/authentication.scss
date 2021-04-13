@@ -57,4 +57,12 @@ body.authentication {
   form[name="gateway_cancel_second_factor_verification"] {
     text-align: center;
   }
+
+  .form-error {
+    background: $pink-lighter;
+    border: 1px solid red;
+    border-radius: 5px;
+    margin-bottom: 1em;
+    padding: .5em;
+  }
 }

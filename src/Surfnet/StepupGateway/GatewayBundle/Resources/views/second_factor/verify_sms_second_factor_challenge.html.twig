@@ -7,7 +7,14 @@
 
     <div class="form-gateway-verify-sms-challenge">
         {{ form_start(form) }}
-        {{ form_errors(form) }}
+
+        {% set formErrors = form.vars.errors.form.getErrors(true) %}
+        {% if formErrors|length %}
+            {% for error in formErrors %}
+                <p class="form-error">{{ error.message }}</p>
+            {% endfor %}
+        {% endif %}
+
         <div class="row">
         {{ form_widget(form.challenge) }}
         {{ form_widget(form.verify_challenge) }}
