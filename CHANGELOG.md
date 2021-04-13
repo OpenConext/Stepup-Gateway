@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.2.3
+**Bugfix**
+
+Show form error messages once again  #217
+
 ## 3.2.2
 **Bugfix**
 
