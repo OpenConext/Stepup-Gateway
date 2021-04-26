@@ -7,6 +7,7 @@ monolog:
       passthru_level: NOTICE # this means that all message of level NOTICE or higher are always logged
       handler: main_syslog
       bubble: false # if we handle it, nothing else should
+      channels: ["!authentication"] # the auth channel is logged by the next handler
     main_syslog:
       type: syslog
       ident: stepup-gateway
