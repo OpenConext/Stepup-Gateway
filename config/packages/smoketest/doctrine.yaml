@@ -1,0 +1,20 @@
+doctrine:
+  dbal:
+    default_connection: gateway
+    connections:
+      gateway:
+        driver:   "%database_driver%"
+        port:     "%database_port%"
+        host:     localhost
+        dbname:   gateway_test
+        user:     root
+        password: password
+        charset:  UTF8
+      u2f:
+        driver:   "%database_driver%"
+        port:     "%database_port%"
+        host: localhost
+        dbname: u2f_test
+        user: root
+        password: password
+        charset:  UTF8
