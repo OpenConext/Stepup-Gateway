@@ -1,5 +1,9 @@
 # Changelog
 
+## Next
+**Bugfix**
+Fix authentication logging
+
 ## 3.2.3
 **Bugfix**
 
