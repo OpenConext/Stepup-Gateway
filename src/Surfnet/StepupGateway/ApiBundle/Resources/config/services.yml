@@ -6,8 +6,15 @@ services:
     surfnet_gateway_api.service.sms:
         class: Surfnet\StepupGateway\ApiBundle\Service\SmsService
         arguments:
+            - "@surfnet_gateway_api_service.sms.messagebird"
+
+    surfnet_gateway_api_service.sms.messagebird:
+        class: Surfnet\StepupGateway\ApiBundle\Service\Sms\MessageBirdService
+        arguments:
             - "@surfnet_message_bird_api_client.messaging"
             - "@logger"
+
+    surfnet_gateway_api_service.sms.spryng:
 
     surfnet_gateway_api.service.yubikey:
         class: Surfnet\StepupGateway\ApiBundle\Service\YubikeyService

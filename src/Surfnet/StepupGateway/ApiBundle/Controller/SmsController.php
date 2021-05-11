@@ -36,7 +36,7 @@ class SmsController extends Controller
     {
         /** @var SmsService $smsService */
         $smsService = $this->get('surfnet_gateway_api.service.sms');
-        $result = $smsService->send($message, $requester);
+        $result = $smsService->send($message);
 
         return $this->createJsonResponseFromSendMessageResult($result);
     }

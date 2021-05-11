@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2014 SURFnet bv
+ * Copyright 2021 SURFnet B.V.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,26 +16,11 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupGateway\ApiBundle\Service;
+namespace Surfnet\StepupGateway\ApiBundle\Service\Sms;
 
 use Surfnet\StepupGateway\ApiBundle\Dto\SmsMessage;
-use Surfnet\StepupGateway\ApiBundle\Service\Sms\SmsAdapterInterface;
-use Surfnet\StepupGateway\ApiBundle\Service\Sms\SmsMessageResultInterface;
 
-class SmsService
+interface SmsAdapterInterface
 {
-    /**
-     * @var SmsAdapterInterface
-     */
-    private $messagingService;
-
-    public function __construct(SmsAdapterInterface $messagingService)
-    {
-        $this->messagingService = $messagingService;
-    }
-
-    public function send(SmsMessage $message): SmsMessageResultInterface
-    {
-        return $this->messagingService->send($message);
-    }
+    public function send(SmsMessage $message): SmsMessageResultInterface;
 }
