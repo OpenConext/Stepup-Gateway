@@ -18,6 +18,7 @@
 namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Test\Adfs;
 
 use Mockery as m;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Psr\Log\LoggerInterface;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\RequestHelper;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\StateHandler;
@@ -27,6 +28,8 @@ use PHPUnit\Framework\TestCase;
 
 class RequestHelperTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var RequestHelper
      */

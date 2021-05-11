@@ -21,6 +21,7 @@ namespace Surfnet\StepupGateway\ApiBundle\Controller;
 use Surfnet\MessageBirdApiClient\Messaging\SendMessageResult;
 use Surfnet\StepupGateway\ApiBundle\Dto\Requester;
 use Surfnet\StepupGateway\ApiBundle\Dto\SmsMessage;
+use Surfnet\StepupGateway\ApiBundle\Service\Sms\SmsMessageResultInterface;
 use Surfnet\StepupGateway\ApiBundle\Service\SmsService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -41,11 +42,7 @@ class SmsController extends Controller
         return $this->createJsonResponseFromSendMessageResult($result);
     }
 
-    /**
-     * @param SendMessageResult $result
-     * @return JsonResponse
-     */
-    private function createJsonResponseFromSendMessageResult(SendMessageResult $result)
+    private function createJsonResponseFromSendMessageResult(SmsMessageResultInterface $result): JsonResponse
     {
         if ($result->isSuccess()) {
             return new JsonResponse(['status' => 'OK']);
