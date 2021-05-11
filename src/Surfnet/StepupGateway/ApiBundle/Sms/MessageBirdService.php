@@ -52,6 +52,6 @@ class MessageBirdService implements SmsAdapterInterface
             $this->logger->warning('Sending OTP per SMS failed.');
         }
 
-        return $result;
+        return new MessageBirdMessageResult($result);
     }
 }

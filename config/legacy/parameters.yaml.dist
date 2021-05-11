@@ -55,6 +55,9 @@ parameters:
     # Reuired for sending SMS messages
     messagebird_authorization: AccessKey your_api_key
 
+    # Spryng config for sending SMS messages
+    spryng_api_key: Your_Spryng_Api_Key_Here
+
     # Yubico Yubico Web Services API key
     # Get one for free at: https://upgrade.yubico.com/getapikey/ (requires a YubiKey)
     # API client_id
