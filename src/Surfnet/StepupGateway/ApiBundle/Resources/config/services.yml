@@ -18,6 +18,7 @@ services:
         class: Surfnet\StepupGateway\ApiBundle\Service\Sms\SpryngService
         arguments:
             - "%spryng_api_key%"
+            - "%spryng_route%"
             - "@logger"
 
     surfnet_gateway_api.service.yubikey:

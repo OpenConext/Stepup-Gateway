@@ -36,9 +36,15 @@ class SpryngService implements SmsAdapterInterface
      */
     private $client;
 
-    public function __construct(string $apiKey, LoggerInterface $logger)
+    /**
+     * @var string
+     */
+    private $route = null;
+
+    public function __construct(string $apiKey, ?string $route, LoggerInterface $logger)
     {
         $this->client = new MessageClient(new Spryng($apiKey));
+        $this->route = $route;
         $this->logger = $logger;
     }
 
@@ -51,7 +57,7 @@ class SpryngService implements SmsAdapterInterface
         $spryngMessage->setRecipients([$message->recipient]);
         $spryngMessage->setOriginator($message->originator);
 
-        if (!empty($this->route)) {
+        if (!is_null($this->route)) {
             $spryngMessage->setRoute($this->route);
         }
 
