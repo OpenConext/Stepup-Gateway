@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupGateway\ApiBundle\Service\Sms;
+namespace Surfnet\StepupGateway\ApiBundle\Sms;
 
 use Surfnet\MessageBirdApiClient\Messaging\SendMessageResult;
 

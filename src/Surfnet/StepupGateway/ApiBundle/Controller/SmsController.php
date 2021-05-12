@@ -18,10 +18,9 @@
 
 namespace Surfnet\StepupGateway\ApiBundle\Controller;
 
-use Surfnet\MessageBirdApiClient\Messaging\SendMessageResult;
 use Surfnet\StepupGateway\ApiBundle\Dto\Requester;
 use Surfnet\StepupGateway\ApiBundle\Dto\SmsMessage;
-use Surfnet\StepupGateway\ApiBundle\Service\Sms\SmsMessageResultInterface;
+use Surfnet\StepupGateway\ApiBundle\Sms\SmsMessageResultInterface;
 use Surfnet\StepupGateway\ApiBundle\Service\SmsService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;

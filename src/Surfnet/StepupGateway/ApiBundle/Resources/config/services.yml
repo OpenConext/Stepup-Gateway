@@ -6,20 +6,26 @@ services:
     surfnet_gateway_api.service.sms:
         class: Surfnet\StepupGateway\ApiBundle\Service\SmsService
         arguments:
-            - "@surfnet_gateway_api_service.sms.spryng"
+        - "@surfnet_gateway_api.service.provider"
+
+    surfnet_gateway_api.service.provider:
+        class: Surfnet\StepupGateway\ApiBundle\Sms\SmsAdapterProvider
+        arguments: ["%sms_service%"]
 
     surfnet_gateway_api_service.sms.messagebird:
-        class: Surfnet\StepupGateway\ApiBundle\Service\Sms\MessageBirdService
+        class: Surfnet\StepupGateway\ApiBundle\Sms\MessageBirdService
         arguments:
             - "@surfnet_message_bird_api_client.messaging"
             - "@logger"
-            -
+        tags: ['sms_provider']
+
     surfnet_gateway_api_service.sms.spryng:
-        class: Surfnet\StepupGateway\ApiBundle\Service\Sms\SpryngService
+        class: Surfnet\StepupGateway\ApiBundle\Sms\SpryngService
         arguments:
             - "%spryng_api_key%"
             - "%spryng_route%"
             - "@logger"
+        tags: ['sms_provider']
 
     surfnet_gateway_api.service.yubikey:
         class: Surfnet\StepupGateway\ApiBundle\Service\YubikeyService

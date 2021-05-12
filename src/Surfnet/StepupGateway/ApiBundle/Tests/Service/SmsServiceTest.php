@@ -26,11 +26,12 @@ use Psr\Log\LoggerInterface;
 use Surfnet\MessageBirdApiClientBundle\Service\MessagingService as BundleMessagingService;
 use Surfnet\MessageBirdApiClient\Messaging\MessagingService as LibraryMessagingService;
 use Surfnet\StepupGateway\ApiBundle\Dto\SmsMessage;
-use Surfnet\StepupGateway\ApiBundle\Service\Sms\MessageBirdMessageResult;
-use Surfnet\StepupGateway\ApiBundle\Service\Sms\MessageBirdService;
-use Surfnet\StepupGateway\ApiBundle\Service\Sms\SmsMessageResultInterface;
-use Surfnet\StepupGateway\ApiBundle\Service\Sms\SpryngMessageResult;
-use Surfnet\StepupGateway\ApiBundle\Service\Sms\SpryngService;
+use Surfnet\StepupGateway\ApiBundle\Sms\MessageBirdMessageResult;
+use Surfnet\StepupGateway\ApiBundle\Sms\MessageBirdService;
+use Surfnet\StepupGateway\ApiBundle\Sms\SmsAdapterProvider;
+use Surfnet\StepupGateway\ApiBundle\Sms\SmsMessageResultInterface;
+use Surfnet\StepupGateway\ApiBundle\Sms\SpryngMessageResult;
+use Surfnet\StepupGateway\ApiBundle\Sms\SpryngService;
 use Surfnet\StepupGateway\ApiBundle\Service\SmsService;
 
 /**
@@ -38,21 +39,26 @@ use Surfnet\StepupGateway\ApiBundle\Service\SmsService;
  */
 final class SmsServiceTest extends TestCase
 {
+    private $logger;
     private $spryng;
     private $messageBird;
+    private $adapter;
 
     public function setUp(): void
     {
-        $logger = m::mock(LoggerInterface::class);
-        $logger->shouldIgnoreMissing();
-        $this->spryng = new SpryngService('apikey', '', $logger);
+        $this->logger = m::mock(LoggerInterface::class);
+        $this->logger->shouldIgnoreMissing();
+        $this->spryng = new SpryngService('apikey', '', $this->logger);
         // Messy business building a MessageBird test setup
-        $this->setUpMessageBird($logger);
+        $this->setUpMessageBird($this->logger);
     }
 
     public function test_spryng_integration_happy_flow()
     {
-        $service = new SmsService($this->spryng);
+        $this->adapter = new SmsAdapterProvider('spryng');
+        $this->adapter->addSmsAdapter($this->spryng);
+        $this->adapter->addSmsAdapter($this->messageBird);
+        $service = new SmsService($this->adapter);
         $result = $service->send($this->getMessage());
         self::assertInstanceOf(SmsMessageResultInterface::class, $result);
         self::assertInstanceOf(SpryngMessageResult::class, $result);
@@ -62,7 +68,10 @@ final class SmsServiceTest extends TestCase
 
     public function test_message_bird_integration_happy_flow()
     {
-        $service = new SmsService($this->messageBird);
+        $this->adapter = new SmsAdapterProvider('messagebird');
+        $this->adapter->addSmsAdapter($this->spryng);
+        $this->adapter->addSmsAdapter($this->messageBird);
+        $service = new SmsService($this->adapter);
         $result = $service->send($this->getMessage());
         self::assertInstanceOf(SmsMessageResultInterface::class, $result);
         self::assertInstanceOf(MessageBirdMessageResult::class, $result);

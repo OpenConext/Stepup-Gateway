@@ -16,13 +16,10 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupGateway\ApiBundle\Sms;
+namespace Surfnet\StepupGateway\ApiBundle\Exception;
 
-interface SmsMessageResultInterface
+use InvalidArgumentException as BaseInvalidArgumentException;
+
+class InvalidArgumentException extends BaseInvalidArgumentException
 {
-    public function isSuccess(): bool;
-
-    public function getRawErrors(): array;
-
-    public function isMessageInvalid(): bool;
 }

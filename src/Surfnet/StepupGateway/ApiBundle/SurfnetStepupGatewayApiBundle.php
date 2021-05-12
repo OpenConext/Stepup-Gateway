@@ -18,8 +18,14 @@
 
 namespace Surfnet\StepupGateway\ApiBundle;
 
+use Surfnet\StepupGateway\ApiBundle\DependencyInjection\Compiler\SmsAdapterProviderPass;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class SurfnetStepupGatewayApiBundle extends Bundle
 {
+    public function build(ContainerBuilder $container)
+    {
+        $container->addCompilerPass(new SmsAdapterProviderPass());
+    }
 }

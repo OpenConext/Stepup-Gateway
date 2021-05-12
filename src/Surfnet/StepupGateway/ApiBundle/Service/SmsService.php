@@ -19,8 +19,9 @@
 namespace Surfnet\StepupGateway\ApiBundle\Service;
 
 use Surfnet\StepupGateway\ApiBundle\Dto\SmsMessage;
-use Surfnet\StepupGateway\ApiBundle\Service\Sms\SmsAdapterInterface;
-use Surfnet\StepupGateway\ApiBundle\Service\Sms\SmsMessageResultInterface;
+use Surfnet\StepupGateway\ApiBundle\Sms\SmsAdapterInterface;
+use Surfnet\StepupGateway\ApiBundle\Sms\SmsAdapterProvider;
+use Surfnet\StepupGateway\ApiBundle\Sms\SmsMessageResultInterface;
 
 class SmsService
 {
@@ -29,9 +30,9 @@ class SmsService
      */
     private $messagingService;
 
-    public function __construct(SmsAdapterInterface $messagingService)
+    public function __construct(SmsAdapterProvider $provider)
     {
-        $this->messagingService = $messagingService;
+        $this->messagingService = $provider->getSelectedService();
     }
 
     public function send(SmsMessage $message): SmsMessageResultInterface
