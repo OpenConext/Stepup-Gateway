@@ -1,0 +1,10 @@
+{
+    "trustedFacets": [{
+        "version": {"major": 1, "minor": 0},
+        "ids": [
+            "https://selfservice.stepup.example.com",
+            "https://ra.stepup.example.com",
+            "https://gateway.stepup.example.com"
+        ]
+    }]
+}

@@ -19,6 +19,7 @@
 namespace Surfnet\StepupGateway\U2fVerificationBundle\Tests\Service;
 
 use Mockery as m;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 use Surfnet\StepupGateway\U2fVerificationBundle\Entity\Registration;
@@ -32,6 +33,8 @@ use Surfnet\StepupU2fBundle\Service\AuthenticationVerificationResult;
 
 final class VerificationServiceAuthenticationVerificationTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     const APP_ID = 'https://gateway.surfconext.invalid/u2f/app-id';
 
     /**

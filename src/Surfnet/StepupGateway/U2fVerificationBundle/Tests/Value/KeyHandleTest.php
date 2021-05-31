@@ -18,12 +18,14 @@
 
 namespace Surfnet\StepupGateway\U2fVerificationBundle\Tests\Value;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 use Surfnet\StepupGateway\U2fVerificationBundle\Exception\InvalidArgumentException;
 use Surfnet\StepupGateway\U2fVerificationBundle\Value\KeyHandle;
 
 final class KeyHandleTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
     use ValueObjectDataProvider;
 
     /**
@@ -32,7 +34,7 @@ final class KeyHandleTest extends TestCase
      */
     public function it_can_be_created()
     {
-        new KeyHandle('WIDU_');
+        self::assertInstanceOf(KeyHandle::class, new KeyHandle('WIDU_'));
     }
 
     /**
@@ -44,7 +46,7 @@ final class KeyHandleTest extends TestCase
      */
     public function it_accepts_strings_as_key_handle($string)
     {
-        new KeyHandle($string);
+        self::assertInstanceOf(KeyHandle::class, new KeyHandle($string));
     }
 
     /**

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2014 SURFnet bv
+ * Copyright 2021 SURFnet B.V.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,10 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupGateway\ApiBundle;
+namespace Surfnet\StepupGateway\ApiBundle\Exception;
 
-use Surfnet\StepupGateway\ApiBundle\DependencyInjection\Compiler\SmsAdapterProviderPass;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\HttpKernel\Bundle\Bundle;
+use InvalidArgumentException as BaseInvalidArgumentException;
 
-class SurfnetStepupGatewayApiBundle extends Bundle
+class InvalidArgumentException extends BaseInvalidArgumentException
 {
-    public function build(ContainerBuilder $container)
-    {
-        $container->addCompilerPass(new SmsAdapterProviderPass());
-    }
 }

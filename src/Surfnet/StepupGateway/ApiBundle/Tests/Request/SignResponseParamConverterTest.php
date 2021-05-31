@@ -20,6 +20,7 @@ namespace Surfnet\StepupGateway\ApiBundle\Tests\Request;
 
 use Hamcrest\Core\IsEqual;
 use Mockery as m;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Surfnet\StepupBundle\Exception\BadJsonRequestException;
@@ -28,6 +29,8 @@ use Surfnet\StepupU2fBundle\Dto\SignResponse;
 
 class SignResponseParamConverterTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @test
      * @group api
