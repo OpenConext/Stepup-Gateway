@@ -1,5 +1,14 @@
 # Changelog
 
+## 3.3.0
+**Feature**
+Provide Spryng SMS service support #221
+
+## 3.2.4
+**Bugfix**
+
+Fix authentication logging
+
 ## 3.2.3
 **Bugfix**
 

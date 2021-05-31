@@ -29,5 +29,5 @@ jobs:
             - name: Output log files on failure
               if: failure()
               run:  |
-                  cd ci/docker && docker-compose exec -T php-fpm.stepup.example.com cat app/logs/webtest.log
+                  cd ci/docker && docker-compose exec -T php-fpm.stepup.example.com cat var/log/webtest.log
 

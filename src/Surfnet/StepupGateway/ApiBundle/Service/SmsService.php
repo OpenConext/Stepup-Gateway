@@ -18,51 +18,25 @@
 
 namespace Surfnet\StepupGateway\ApiBundle\Service;
 
-use Psr\Log\LoggerInterface;
-use Surfnet\MessageBirdApiClient\Messaging\Message;
-use Surfnet\MessageBirdApiClient\Messaging\SendMessageResult;
-use Surfnet\MessageBirdApiClientBundle\Service\MessagingService;
-use Surfnet\StepupGateway\ApiBundle\Dto\Requester;
 use Surfnet\StepupGateway\ApiBundle\Dto\SmsMessage;
+use Surfnet\StepupGateway\ApiBundle\Sms\SmsAdapterInterface;
+use Surfnet\StepupGateway\ApiBundle\Sms\SmsAdapterProvider;
+use Surfnet\StepupGateway\ApiBundle\Sms\SmsMessageResultInterface;
 
 class SmsService
 {
     /**
-     * @var MessagingService
+     * @var SmsAdapterInterface
      */
     private $messagingService;
 
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
-     * @param MessagingService $messagingService
-     * @param LoggerInterface $logger
-     */
-    public function __construct(MessagingService $messagingService, LoggerInterface $logger)
+    public function __construct(SmsAdapterProvider $provider)
     {
-        $this->messagingService = $messagingService;
-        $this->logger = $logger;
+        $this->messagingService = $provider->getSelectedService();
     }
 
-    /**
-     * @param SmsMessage $message
-     * @param Requester $requester
-     * @return SendMessageResult
-     */
-    public function send(SmsMessage $message, Requester $requester)
+    public function send(SmsMessage $message): SmsMessageResultInterface
     {
-        $this->logger->notice('Sending OTP per SMS.');
-
-        $message = new Message($message->originator, $message->recipient, $message->body);
-        $result = $this->messagingService->send($message);
-
-        if (!$result->isSuccess()) {
-            $this->logger->warning('Sending OTP per SMS failed.');
-        }
-
-        return $result;
+        return $this->messagingService->send($message);
     }
 }

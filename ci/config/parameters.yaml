@@ -29,7 +29,10 @@ parameters:
         - nl_NL
         - en_GB
     locale_cookie_domain: openconext.org
+    sms_service: 'spryng'
+    spryng_route: ''
     messagebird_authorization: 'AccessKey your_api_key'
+    spryng_api_key: 'There-is-no-api-key'
     yubikey_client_id: 12345
     yubikey_client_secret: YubiSecret
     selfservice_api_password: secret

@@ -18,12 +18,14 @@
 
 namespace Surfnet\StepupGateway\U2fVerificationBundle\Tests\Value;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 use Surfnet\StepupGateway\U2fVerificationBundle\Exception\InvalidArgumentException;
 use Surfnet\StepupGateway\U2fVerificationBundle\Value\PublicKey;
 
 final class PublicKeyTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
     use ValueObjectDataProvider;
 
     /**
@@ -32,7 +34,7 @@ final class PublicKeyTest extends TestCase
      */
     public function it_can_be_created()
     {
-        new PublicKey('WIDU_');
+        self::assertInstanceOf(PublicKey::class, new PublicKey('WIDU_'));
     }
 
     /**
@@ -44,7 +46,7 @@ final class PublicKeyTest extends TestCase
      */
     public function it_accepts_strings_as_public_key($string)
     {
-        new PublicKey($string);
+        self::assertInstanceOf(PublicKey::class, new PublicKey($string));
     }
 
     /**

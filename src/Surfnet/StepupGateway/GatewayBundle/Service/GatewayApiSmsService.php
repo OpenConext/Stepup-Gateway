@@ -50,10 +50,6 @@ final class GatewayApiSmsService implements SmsService
         $message->originator = $command->originator;
         $message->body = $command->body;
 
-        $requester = new Requester();
-        $requester->identity = $command->identity;
-        $requester->institution = $command->institution;
-
-        return $this->smsService->send($message, $requester)->isSuccess();
+        return $this->smsService->send($message)->isSuccess();
     }
 }

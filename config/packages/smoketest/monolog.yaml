@@ -4,9 +4,9 @@ monolog:
     prod-signaler:
       type: fingers_crossed
       action_level: ERROR
-      passthru_level: NOTICE # this means that all message of level NOTICE or higher are always logged
+      passthru_level: DEBUG # DEV setting: this means that all message of level DEBUG or higher are always logged
       handler: main_syslog
-      bubble: false # if we handle it, nothing else should
+      bubble: true
       channels: ["!authentication"] # the auth channel is logged by the next handler
     main_syslog:
       type: syslog
@@ -20,3 +20,8 @@ monolog:
       level: INFO
       channels: [authentication]
       formatter: gateway.monolog.gelf_to_string_formatter
+    main_logfile:
+      type: stream
+      handler: logfile
+      level: NOTICE
+      path: "%kernel.logs_dir%/%kernel.environment%.log"
