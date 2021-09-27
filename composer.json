@@ -110,7 +110,7 @@
         "behat-selenium": "./ci/qa/behat-selenium",
         "test": "./ci/qa/phpunit",
         "license-headers": "vendor/bin/docheader check src/",
-        "yarn-audit": "yarn audit --groups dependencies optionalDependencies",
+        "yarn-audit": "yarn audit",
         "frontend-install": [
             "yarn install --frozen-lockfile",
             "yarn encore production"
