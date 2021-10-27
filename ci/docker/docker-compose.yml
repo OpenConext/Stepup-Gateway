@@ -10,7 +10,7 @@ services:
             - ../certificates/idp.crt:/etc/nginx/certs/gateway.stepup.example.com.crt
             - ../certificates/idp.key:/etc/nginx/certs/gateway.stepup.example.com.key
         environment:
-            APP_ENV: webtest
+            APP_ENV: test
         ports:
             - 443:443
         depends_on:
@@ -41,7 +41,7 @@ services:
         volumes:
             - ../../:/var/www
         environment:
-            APP_ENV: webtest
+            APP_ENV: test
             PHP_IDE_CONFIG: "serverName=gateway.stepup.example.com"
             XDEBUG_CONFIG: "remote_enable=1 remote_connect_back=1 remote_port=9001 idekey=PHPSTORM"
         user: '${UID}:${GID}'

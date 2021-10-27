@@ -55,8 +55,8 @@ class FeatureContext implements Context
     {
         // Generate test databases
         echo "Preparing test schemas\n";
-        shell_exec("/var/www/app/console doctrine:schema:drop --env=webtest --force");
-        shell_exec("/var/www/app/console doctrine:schema:create --env=webtest");
+        shell_exec("/var/www/bin/console doctrine:schema:drop --env=test --force");
+        shell_exec("/var/www/bin/console doctrine:schema:create --env=test");
     }
 
     /**
@@ -91,7 +91,7 @@ class FeatureContext implements Context
      */
     public function iShouldSeeTheYubikeyOtpScreen()
     {
-        $this->minkContext->assertPageContainsText('Log in with YubiKey');
+        $this->minkContext->assertPageContainsText('Connect your YubiKey to the USB-port of your computer');
         $this->minkContext->assertPageContainsText('Your YubiKey-code');
     }
 

@@ -55,7 +55,9 @@ class MinkContext extends BaseMinkContext
         $document = new DOMDocument();
         if ($this->getSession()->getDriver() instanceof Selenium2Driver) {
             // Chrome uses a user friendly viewer, get the xml from the dressed document and assert on that xml.
-            $xml = $this->getSession()->evaluateScript("document.getElementById('webkit-xml-viewer-source-xml').innerHTML");
+            $xml = $this->getSession()->getPage()->getContent();
+die($xml);
+//            $xml = $this->getSession()->evaluateScript("document.getElementById('webkit-xml-viewer-source-xml').innerHTML");
         } else {
             $xml = $this->getSession()->getPage()->getContent();
         }

@@ -1,3 +1,5 @@
+imports:
+  - { resource: ../../services_test.yml }
 framework:
   test: ~
   session:
