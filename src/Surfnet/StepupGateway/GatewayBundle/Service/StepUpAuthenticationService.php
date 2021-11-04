@@ -359,9 +359,9 @@ class StepUpAuthenticationService
     /**
      * @return int
      */
-    public function getSmsOtpRequestsRemainingCount()
+    public function getSmsOtpRequestsRemainingCount(string $secondFactorId)
     {
-        return $this->smsService->getOtpRequestsRemainingCount();
+        return $this->smsService->getOtpRequestsRemainingCount($secondFactorId);
     }
 
     /**
@@ -385,6 +385,7 @@ class StepUpAuthenticationService
 
         $stepupCommand = new StepupSendSmsChallengeCommand();
         $stepupCommand->phoneNumber = $phoneNumber;
+        $stepupCommand->secondFactorId = $secondFactor->secondFactorId;
         $stepupCommand->body = $this->translator->trans('gateway.second_factor.sms.challenge_body');
         $stepupCommand->identity = $secondFactor->identityId;
         $stepupCommand->institution = $secondFactor->institution;
@@ -401,9 +402,9 @@ class StepUpAuthenticationService
         return $this->smsService->verifyPossession($command);
     }
 
-    public function clearSmsVerificationState()
+    public function clearSmsVerificationState(string $secondFactorId)
     {
-        $this->smsService->clearSmsVerificationState();
+        $this->smsService->clearSmsVerificationState($secondFactorId);
     }
 
     /**
