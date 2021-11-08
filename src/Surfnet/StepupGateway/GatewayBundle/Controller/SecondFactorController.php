@@ -501,13 +501,12 @@ class SecondFactorController extends Controller
         $selectedSecondFactor = $this->getSelectedSecondFactor($context, $logger);
 
         $command = new VerifyPossessionOfPhoneCommand();
-        $command->secondFactorId = $selectedSecondFactor;
         $form = $this->createForm(VerifySmsChallengeType::class, $command)->handleRequest($request);
         $cancelForm = $this->buildCancelAuthenticationForm($authenticationMode)->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $logger->notice('Verifying input SMS challenge matches');
-
+            $command->secondFactorId = $selectedSecondFactor;
             $verification = $this->getStepupService()->verifySmsChallenge($command);
 
             if ($verification->wasSuccessful()) {

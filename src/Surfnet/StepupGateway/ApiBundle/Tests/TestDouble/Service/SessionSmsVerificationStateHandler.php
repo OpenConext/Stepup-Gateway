@@ -28,11 +28,10 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 final class SessionSmsVerificationStateHandler implements SmsVerificationStateHandler
 {
-
     /**
      * @inheritDoc
      */
-    public function hasState()
+    public function hasState(string $secondFactorId): bool
     {
         // TODO: Implement hasState() method.
     }
@@ -40,7 +39,7 @@ final class SessionSmsVerificationStateHandler implements SmsVerificationStateHa
     /**
      * @inheritDoc
      */
-    public function clearState()
+    public function clearState(string $secondFactorId)
     {
         // TODO: Implement clearState() method.
     }
@@ -48,7 +47,7 @@ final class SessionSmsVerificationStateHandler implements SmsVerificationStateHa
     /**
      * @inheritDoc
      */
-    public function requestNewOtp($phoneNumber)
+    public function requestNewOtp(string $phoneNumber, string $secondFactorId): string
     {
         // TODO: Implement requestNewOtp() method.
     }
@@ -56,7 +55,7 @@ final class SessionSmsVerificationStateHandler implements SmsVerificationStateHa
     /**
      * @inheritDoc
      */
-    public function getOtpRequestsRemainingCount()
+    public function getOtpRequestsRemainingCount(string $secondFactorId): int
     {
         // TODO: Implement getOtpRequestsRemainingCount() method.
     }
@@ -64,7 +63,7 @@ final class SessionSmsVerificationStateHandler implements SmsVerificationStateHa
     /**
      * @inheritDoc
      */
-    public function getMaximumOtpRequestsCount()
+    public function getMaximumOtpRequestsCount(): int
     {
         // TODO: Implement getMaximumOtpRequestsCount() method.
     }
@@ -72,7 +71,7 @@ final class SessionSmsVerificationStateHandler implements SmsVerificationStateHa
     /**
      * @inheritDoc
      */
-    public function verify($otp)
+    public function verify(string $otp, string $secondFactorId): OtpVerification
     {
         return OtpVerification::foundMatch('0606060606');
     }
