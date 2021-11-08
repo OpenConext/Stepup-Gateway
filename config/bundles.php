@@ -15,8 +15,6 @@ return [
     Surfnet\StepupGateway\GatewayBundle\SurfnetStepupGatewayGatewayBundle::class => ['all' => true],
     Surfnet\StepupGateway\SamlStepupProviderBundle\SurfnetStepupGatewaySamlStepupProviderBundle::class => ['all' => true],
     Surfnet\StepupGateway\SecondFactorOnlyBundle\SurfnetStepupGatewaySecondFactorOnlyBundle::class => ['all' => true],
-    Surfnet\StepupGateway\U2fVerificationBundle\SurfnetStepupGatewayU2fVerificationBundle::class => ['all' => true],
-    Surfnet\StepupU2fBundle\SurfnetStepupU2fBundle::class => ['all' => true],
     OpenConext\MonitorBundle\OpenConextMonitorBundle::class => ['all' => true],
     Surfnet\SamlBundle\SurfnetSamlBundle::class => ['all' => true],
     Symfony\Bundle\MonologBundle\MonologBundle::class => ['all' => true],
