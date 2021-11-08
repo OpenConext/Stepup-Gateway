@@ -1,8 +1,0 @@
-surfnet_stepup_u2f:
-  app_id: "%u2f_app_id%"
-
-surfnet_stepup_gateway_u2f_verification:
-  migrations:
-    diff_entity_manager: u2f
-    migrate_entity_manager: deploy
-
