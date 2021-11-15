@@ -28,12 +28,19 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 final class SessionSmsVerificationStateHandler implements SmsVerificationStateHandler
 {
+    private $session;
+
+    public function __construct(SessionInterface $session)
+    {
+        $this->session = $session;
+    }
+
     /**
      * @inheritDoc
      */
     public function hasState(string $secondFactorId): bool
     {
-        // TODO: Implement hasState() method.
+        return $this->session->has($secondFactorId);
     }
 
     /**
@@ -41,15 +48,15 @@ final class SessionSmsVerificationStateHandler implements SmsVerificationStateHa
      */
     public function clearState(string $secondFactorId)
     {
-        // TODO: Implement clearState() method.
+        $this->session->remove($secondFactorId);
     }
 
     /**
-     * @inheritDoc
+     * The OTP is a combination of the phone number and the SecondFactorId
      */
     public function requestNewOtp(string $phoneNumber, string $secondFactorId): string
     {
-        // TODO: Implement requestNewOtp() method.
+        return sprintf("%s-%s", $phoneNumber, $secondFactorId);
     }
 
     /**
@@ -57,7 +64,7 @@ final class SessionSmsVerificationStateHandler implements SmsVerificationStateHa
      */
     public function getOtpRequestsRemainingCount(string $secondFactorId): int
     {
-        // TODO: Implement getOtpRequestsRemainingCount() method.
+        return 3;
     }
 
     /**
@@ -65,7 +72,7 @@ final class SessionSmsVerificationStateHandler implements SmsVerificationStateHa
      */
     public function getMaximumOtpRequestsCount(): int
     {
-        // TODO: Implement getMaximumOtpRequestsCount() method.
+        return 3;
     }
 
     /**
