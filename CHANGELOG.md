@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.4.1
+Update stepup-saml-bundle
+
+## 3.4.0
+**Bugfix**
+Update Setpup-Bundle
+
 ## 3.3.0
 **Feature**
 Provide Spryng SMS service support #221
