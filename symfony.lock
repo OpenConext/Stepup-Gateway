@@ -20,6 +20,12 @@
     "behat/mink-goutte-driver": {
         "version": "v1.2.1"
     },
+    "behat/mink-selenium2-driver": {
+        "version": "v1.5.0"
+    },
+    "behat/symfony2-extension": {
+        "version": "2.1.5"
+    },
     "behat/transliterator": {
         "version": "v1.3.0"
     },
@@ -134,6 +140,9 @@
     },
     "incenteev/composer-parameter-handler": {
         "version": "v2.1.4"
+    },
+    "instaclick/php-webdriver": {
+        "version": "1.4.10"
     },
     "jdorn/sql-formatter": {
         "version": "v1.2.17"
@@ -259,6 +268,9 @@
     },
     "ralouphie/getallheaders": {
         "version": "3.0.3"
+    },
+    "ramsey/uuid": {
+        "version": "3.9.6"
     },
     "robrichards/xmlseclibs": {
         "version": "3.1.1"
