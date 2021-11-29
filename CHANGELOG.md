@@ -4,10 +4,11 @@
 * Maintenance: Install http-foundation update
 
 ## 3.4.1
-* Maintenance: Update of stepup-saml-bundle and stepup-bundle
+Update stepup-saml-bundle
 
 ## 3.4.0
-* Stepup bundle was updated to mitigate SMS bypass issues
+**Bugfix**
+Update Setpup-Bundle
 
 ## 3.3.0
 **Feature**
