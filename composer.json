@@ -44,6 +44,7 @@
         "symfony/expression-language": "4.4.*",
         "symfony/flex": "^1.8",
         "symfony/form": "4.4.*",
+        "symfony/http-foundation": "^5.0",
         "symfony/monolog-bundle": "^3.0",
         "symfony/security-bundle": "4.4.*",
         "symfony/swiftmailer-bundle": "^3.1",
@@ -127,7 +128,7 @@
         "optimize-autoloader": true,
         "sort-packages": true,
         "platform": {
-            "php": "7.2"
+            "php": "7.2.5"
         }
     },
     "archive": {
