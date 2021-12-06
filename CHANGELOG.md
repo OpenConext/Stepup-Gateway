@@ -1,4 +1,6 @@
 # Changelog
+## 3.4.3
+- Added browserlist entry in package.json to ensure IE 11 support
 
 ## 3.4.2
 * Maintenance: Install http-foundation update
