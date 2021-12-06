@@ -1,4 +1,5 @@
 {
+    "browserslist": "last 2 versions, ie 11, > 1%",
     "devDependencies": {
         "@symfony/webpack-encore": "^1",
         "@types/bootstrap": "^5.0.0",
