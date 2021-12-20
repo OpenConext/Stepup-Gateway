@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "cb9757f875fc4a3e4a7b34405463bdc5",
+    "content-hash": "650ec8ed564e9a9cbce0d8298c162df5",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -3132,6 +3132,7 @@
                 "issues": "https://github.com/SURFnet/messagebird-api-client-bundle/issues",
                 "source": "https://github.com/SURFnet/messagebird-api-client-bundle/tree/master"
             },
+            "abandoned": true,
             "time": "2018-11-21T14:39:00+00:00"
         },
         {
@@ -3139,8 +3140,14 @@
             "version": "4.2.2",
             "source": {
                 "type": "git",
-                "url": "git@github.com:ibuildingsnl/Stepup-bundle.git",
-                "reference": "c8cb750af7eac962c5dbf1d39975a79cf6169f84"
+                "url": "https://github.com/OpenConext/Stepup-bundle.git",
+                "reference": "410579c2f0e018fca6cb8acb8e26ee7296654347"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/OpenConext/Stepup-bundle/zipball/410579c2f0e018fca6cb8acb8e26ee7296654347",
+                "reference": "410579c2f0e018fca6cb8acb8e26ee7296654347",
+                "shasum": ""
             },
             "require": {
                 "ext-gmp": "*",

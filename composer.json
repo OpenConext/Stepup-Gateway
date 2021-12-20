@@ -35,7 +35,7 @@
         "sensio/framework-extra-bundle": "^5.0",
         "spryng/rest-api-php": "^1.1",
         "surfnet/messagebird-api-client-bundle": "^4.0",
-        "surfnet/stepup-bundle": "4.2.2",
+        "surfnet/stepup-bundle": "^4.2",
         "surfnet/stepup-saml-bundle": "^4.3.1",
         "surfnet/yubikey-api-client-bundle": "^4.0.0",
         "symfony/config": "4.4.*",
@@ -76,12 +76,6 @@
         "squizlabs/php_codesniffer": "^3.4",
         "symfony/phpunit-bridge": "^3.0"
     },
-    "repositories": [
-        {
-            "type": "git",
-            "url": "git@github.com:ibuildingsnl/Stepup-bundle.git"
-        }
-    ],
     "scripts": {
         "auto-scripts": {
             "cache:clear": "symfony-cmd",
