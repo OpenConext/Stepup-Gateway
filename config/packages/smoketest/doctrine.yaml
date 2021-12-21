@@ -10,11 +10,3 @@ doctrine:
         user:     root
         password: password
         charset:  UTF8
-      u2f:
-        driver:   "%database_driver%"
-        port:     "%database_port%"
-        host: localhost
-        dbname: u2f_test
-        user: root
-        password: password
-        charset:  UTF8

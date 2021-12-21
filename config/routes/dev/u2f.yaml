@@ -1,3 +1,0 @@
-_u2f:
-  resource: "@SurfnetStepupGatewayU2fVerificationBundle/Resources/config/routing_dev.yml"
-  prefix:   /u2f

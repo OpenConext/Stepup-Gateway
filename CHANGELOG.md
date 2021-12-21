@@ -1,4 +1,15 @@
 # Changelog
+## 3.4.3
+- Added browserlist entry in package.json to ensure IE 11 support
+
+## 3.4.2
+* Maintenance: Install http-foundation update
+
+## 3.4.1
+* Maintenance: Update of stepup-saml-bundle and stepup-bundle
+
+## 3.4.0
+* Stepup bundle was updated to mitigate SMS bypass issues
 
 ## 3.3.0
 **Feature**
