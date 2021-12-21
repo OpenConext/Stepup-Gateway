@@ -20,6 +20,12 @@
     "behat/mink-goutte-driver": {
         "version": "v1.2.1"
     },
+    "behat/mink-selenium2-driver": {
+        "version": "v1.5.0"
+    },
+    "behat/symfony2-extension": {
+        "version": "2.1.5"
+    },
     "behat/transliterator": {
         "version": "v1.3.0"
     },
@@ -52,6 +58,9 @@
     },
     "doctrine/dbal": {
         "version": "2.10.4"
+    },
+    "doctrine/deprecations": {
+        "version": "v0.5.3"
     },
     "doctrine/doctrine-bundle": {
         "version": "1.12",
@@ -131,6 +140,9 @@
     },
     "incenteev/composer-parameter-handler": {
         "version": "v2.1.4"
+    },
+    "instaclick/php-webdriver": {
+        "version": "1.4.10"
     },
     "jdorn/sql-formatter": {
         "version": "v1.2.17"
@@ -257,6 +269,9 @@
     "ralouphie/getallheaders": {
         "version": "3.0.3"
     },
+    "ramsey/uuid": {
+        "version": "3.9.6"
+    },
     "robrichards/xmlseclibs": {
         "version": "3.1.1"
     },
@@ -316,6 +331,9 @@
     },
     "simplesamlphp/saml2": {
         "version": "v3.2.6"
+    },
+    "spryng/rest-api-php": {
+        "version": "v1.1.0"
     },
     "squizlabs/php_codesniffer": {
         "version": "3.0",
@@ -527,6 +545,9 @@
     },
     "symfony/polyfill-php80": {
         "version": "v1.22.1"
+    },
+    "symfony/polyfill-php81": {
+        "version": "v1.23.0"
     },
     "symfony/process": {
         "version": "v4.4.19"

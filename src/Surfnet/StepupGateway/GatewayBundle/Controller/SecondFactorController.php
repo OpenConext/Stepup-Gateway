@@ -440,7 +440,7 @@ class SecondFactorController extends Controller
             $stepupService->getSecondFactorIdentifier($selectedSecondFactor)
         );
 
-        $otpRequestsRemaining = $stepupService->getSmsOtpRequestsRemainingCount();
+        $otpRequestsRemaining = $stepupService->getSmsOtpRequestsRemainingCount($selectedSecondFactor);
         $maximumOtpRequests = $stepupService->getSmsMaximumOtpRequestsCount();
         $viewVariables = ['otpRequestsRemaining' => $otpRequestsRemaining, 'maximumOtpRequests' => $maximumOtpRequests];
 
@@ -506,11 +506,11 @@ class SecondFactorController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             $logger->notice('Verifying input SMS challenge matches');
-
+            $command->secondFactorId = $selectedSecondFactor;
             $verification = $this->getStepupService()->verifySmsChallenge($command);
 
             if ($verification->wasSuccessful()) {
-                $this->getStepupService()->clearSmsVerificationState();
+                $this->getStepupService()->clearSmsVerificationState($selectedSecondFactor);
 
                 $this->getResponseContext($authenticationMode)->markSecondFactorVerified();
                 $this->getAuthenticationLogger()->logSecondFactorAuthentication($originalRequestId, $authenticationMode);
@@ -603,7 +603,7 @@ class SecondFactorController extends Controller
     {
         $context->saveSelectedSecondFactor($secondFactor);
 
-        $this->getStepupService()->clearSmsVerificationState();
+        $this->getStepupService()->clearSmsVerificationState($secondFactor->secondFactorId);
 
         $secondFactorTypeService = $this->get('surfnet_stepup.service.second_factor_type');
         $secondFactorType = new SecondFactorType($secondFactor->secondFactorType);
