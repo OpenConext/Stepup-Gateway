@@ -1,4 +1,7 @@
 # Changelog
+## Next
+- Fix robots.txt
+
 ## 3.4.3
 - Added browserlist entry in package.json to ensure IE 11 support
 
