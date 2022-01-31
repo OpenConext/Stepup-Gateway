@@ -1,13 +1,12 @@
 name: tag-release
 on:
-  pull_request:
   push:
     tags:
       - "*.*.*"
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 10
     env:
       COMPONENT_NAME: Stepup-Gateway
     if: always()
@@ -16,16 +15,15 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: OpenConext/Stepup-Build
-          ref: feature/dockerize-build-scripts
+          ref: master
       - name: Output the semver tag to the tag variable
         id: vars
         run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
       - name: Run release script
-        run: ./stepup-build.sh ${COMPONENT_NAME} --branch master
+        run: ./stepup-build.sh ${COMPONENT_NAME} --tag ${{ steps.vars.outputs.tag }}
       - name: Grab the archive filename
         id: archive
         run: |
-          ls -lah
           echo ::set-output name=archive::$(find . -maxdepth 1 -name "$COMPONENT_NAME*.tar.bz2" -printf '%f\n')
           echo ::set-output name=shasum::$(find . -maxdepth 1 -name "$COMPONENT_NAME*.sha" -printf '%f\n')
       - name: Create Draft Release
