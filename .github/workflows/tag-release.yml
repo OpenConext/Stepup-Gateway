@@ -1,0 +1,62 @@
+name: tag-release
+on:
+  pull_request:
+  push:
+    tags:
+      - "*.*.*"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      COMPONENT_NAME: Stepup-Gateway
+    if: always()
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          repository: OpenConext/Stepup-Build
+          ref: feature/dockerize-build-scripts
+      - name: Output the semver tag to the tag variable
+        id: vars
+        run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
+      - name: Run release script
+        run: ./stepup-build.sh ${COMPONENT_NAME} --branch master
+      - name: Grab the archive filename
+        id: archive
+        run: echo ::set-output name=archiveName::$(find . -maxdepth 1 -name "$COMPONENT_NAME*.tar.bz2" -printf '%f\n')
+      - name: Create Draft Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.vars.outputs.tag }}
+          release_name: ${{ steps.vars.outputs.tag }}
+          body: Auto generated release. Please update these release notes manually.
+          draft: true
+          prerelease: false
+      - uses: actions/upload-release-asset@v1.0.1
+        name: Upload the release artefact tarbal
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ steps.archive.outputs.archiveName }}
+          asset_name: ${{ steps.archive.outputs.archiveName }}
+          asset_content_type: application/gzip
+#      - uses: actions/upload-release-asset@v1.0.1
+#        name: Upload the release artefact verification hash
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        with:
+#          upload_url: ${{ steps.create_release.outputs.upload_url }}
+#          asset_path: Stepup-SelfService-${{ steps.vars.outputs.tag }}.sha
+#          asset_name: Stepup-SelfService-${{ steps.vars.outputs.tag }}.sha
+#          asset_content_type: text/plain
+      - uses: eregon/publish-release@v1
+        name: Publish the new release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          release_id: ${{ steps.create_release.outputs.id }}
