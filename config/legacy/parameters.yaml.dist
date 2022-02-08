@@ -12,7 +12,7 @@ parameters:
     # Display name of application
     app_name: "Stepup Gateway"
 
-    # IP addresses of any HTTP proxies that are sitting in from of the application
+    # IP addresses of any HTTP proxies that are sitting in front of the application
     # See: http://symfony.com/doc/current/request/load_balancer_reverse_proxy.html
     trusted_proxies:   []
 

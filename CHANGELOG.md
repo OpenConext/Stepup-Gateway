@@ -1,4 +1,8 @@
 # Changelog
+## 3.4.4
+- Fix robots.txt
+- Add Github Actions workflow for tag release automisation
+
 ## 3.4.3
 - Added browserlist entry in package.json to ensure IE 11 support
 
