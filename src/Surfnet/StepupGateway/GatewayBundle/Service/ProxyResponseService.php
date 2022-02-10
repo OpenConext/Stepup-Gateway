@@ -55,11 +55,6 @@ class ProxyResponseService
     private $attributeDictionary;
 
     /**
-     * @var \Surfnet\SamlBundle\SAML2\Attribute\AttributeDefinition
-     */
-    private $eptiAttribute;
-
-    /**
      * @var \DateTime
      */
     private $currentTime;
@@ -79,7 +74,6 @@ class ProxyResponseService
         ProxyStateHandler $proxyStateHandler,
         AssertionSigningService $assertionSigningService,
         AttributeDictionary $attributeDictionary,
-        AttributeDefinition $eptiAttribute,
         Loa $intrinsicLoa,
         DateTime $now = null
     ) {
@@ -87,7 +81,6 @@ class ProxyResponseService
         $this->proxyStateHandler         = $proxyStateHandler;
         $this->assertionSigningService   = $assertionSigningService;
         $this->attributeDictionary       = $attributeDictionary;
-        $this->eptiAttribute             = $eptiAttribute;
         $this->intrinsicLoa              = $intrinsicLoa;
         $this->currentTime = is_null($now) ? new DateTime('now', new DateTimeZone('UTC')): $now;
     }
@@ -113,11 +106,12 @@ class ProxyResponseService
 
         $translatedAssertion = $this->attributeDictionary->translate($assertion);
         $eptiNameId = $translatedAssertion->getAttributeValue('eduPersonTargetedID');
+        $internalCollabPersonId = $translatedAssertion->getAttributeValue('internalCollabPersonId');
 
         // Perform some input validation on the eptiNameId that was received.
-        if (is_null($eptiNameId)) {
-            throw new RuntimeException('The "urn:mace:dir:attribute-def:eduPersonTargetedID" is not present.');
-        } elseif (!array_key_exists(0, $eptiNameId) || !$eptiNameId[0]->value) {
+        if (is_null($eptiNameId) && is_null($internalCollabPersonId)) {
+            throw new RuntimeException('Neither "urn:mace:dir:attribute-def:eduPersonTargetedID" or "urn:mace:surf.nl:attribute-def:internal-collabPersonId" is present');
+        } elseif (is_null($internalCollabPersonId) && (!array_key_exists(0, $eptiNameId) || !$eptiNameId[0]->value)) {
             throw new RuntimeException(
                 'The "urn:mace:dir:attribute-def:eduPersonTargetedID" attribute does not contain a NameID with a value.'
             );

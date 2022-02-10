@@ -58,11 +58,6 @@ final class ProxyResponseServiceTest extends GatewaySamlTestCase
     private $attributeDictionary;
 
     /**
-     * @var Mockery\MockInterface|AttributeDefinition
-     */
-    private $attributeDefinition;
-
-    /**
      * @var Loa
      */
     private $loa;
@@ -75,7 +70,6 @@ final class ProxyResponseServiceTest extends GatewaySamlTestCase
         $this->proxyStateHandler = Mockery::mock(ProxyStateHandler::class)->shouldIgnoreMissing();
         $this->assertionSigningService = Mockery::mock(AssertionSigningService::class)->shouldIgnoreMissing();
         $this->attributeDictionary = Mockery::mock(AttributeDictionary::class);
-        $this->attributeDefinition = Mockery::mock(AttributeDefinition::class);
         $this->loa = Mockery::mock(Loa::class);
 
         $container = new TestSaml2Container(new NullLogger());
@@ -90,7 +84,13 @@ final class ProxyResponseServiceTest extends GatewaySamlTestCase
 
         $this->attributeDictionary
             ->shouldReceive('translate->getAttributeValue')
+            ->with('eduPersonTargetedID')
             ->andReturn([$nameId])
+            ->byDefault();
+        $this->attributeDictionary
+            ->shouldReceive('translate->getAttributeValue')
+            ->with('internalCollabPersonId')
+            ->andReturnNull()
             ->byDefault();
     }
 
@@ -104,7 +104,6 @@ final class ProxyResponseServiceTest extends GatewaySamlTestCase
             $this->proxyStateHandler,
             $this->assertionSigningService,
             $this->attributeDictionary,
-            $this->attributeDefinition,
             $this->loa
         );
 
@@ -134,7 +133,6 @@ final class ProxyResponseServiceTest extends GatewaySamlTestCase
             $this->proxyStateHandler,
             $this->assertionSigningService,
             $this->attributeDictionary,
-            $this->attributeDefinition,
             $this->loa
         );
 
@@ -155,16 +153,15 @@ final class ProxyResponseServiceTest extends GatewaySamlTestCase
         );
     }
 
-    public function testCreateProxyResponseRequiresEpti()
+    public function testCreateProxyResponseRequiresEptiIfInternalCollabPersonIdIsNotPresent()
     {
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('The "urn:mace:dir:attribute-def:eduPersonTargetedID" is not present');
+        $this->expectExceptionMessage('Neither "urn:mace:dir:attribute-def:eduPersonTargetedID" or "urn:mace:surf.nl:attribute-def:internal-collabPersonId" is present');
         $factory = new ProxyResponseService(
             $this->identityProvider,
             $this->proxyStateHandler,
             $this->assertionSigningService,
             $this->attributeDictionary,
-            $this->attributeDefinition,
             $this->loa
         );
 
@@ -181,6 +178,11 @@ final class ProxyResponseServiceTest extends GatewaySamlTestCase
 
     public function testCreateProxyResponseRequiresEptiFilled()
     {
+        $this->attributeDictionary
+            ->shouldReceive('translate->getAttributeValue')
+            ->with('internalCollabPersonId')
+            ->andReturnNull();
+
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage(
             'The "urn:mace:dir:attribute-def:eduPersonTargetedID" attribute does not contain a NameID with a value.'
@@ -190,7 +192,6 @@ final class ProxyResponseServiceTest extends GatewaySamlTestCase
             $this->proxyStateHandler,
             $this->assertionSigningService,
             $this->attributeDictionary,
-            $this->attributeDefinition,
             $this->loa
         );
 
@@ -222,7 +223,6 @@ final class ProxyResponseServiceTest extends GatewaySamlTestCase
             $this->proxyStateHandler,
             $this->assertionSigningService,
             $this->attributeDictionary,
-            $this->attributeDefinition,
             $this->loa
         );
 
