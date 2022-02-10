@@ -3194,16 +3194,16 @@
         },
         {
             "name": "surfnet/stepup-saml-bundle",
-            "version": "4.3.2",
+            "version": "4.3.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/OpenConext/Stepup-saml-bundle.git",
-                "reference": "add45ebea90b33e89f723239e77e7a9f0c018b27"
+                "reference": "eb61d4eb5e7e2803a56c83ac87741a410536174b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/OpenConext/Stepup-saml-bundle/zipball/add45ebea90b33e89f723239e77e7a9f0c018b27",
-                "reference": "add45ebea90b33e89f723239e77e7a9f0c018b27",
+                "url": "https://api.github.com/repos/OpenConext/Stepup-saml-bundle/zipball/eb61d4eb5e7e2803a56c83ac87741a410536174b",
+                "reference": "eb61d4eb5e7e2803a56c83ac87741a410536174b",
                 "shasum": ""
             },
             "require": {
@@ -3246,7 +3246,7 @@
                 "stepup",
                 "surfnet"
             ],
-            "time": "2021-11-23T10:22:55+00:00"
+            "time": "2022-02-10T11:54:37+00:00"
         },
         {
             "name": "surfnet/yubikey-api-client",
@@ -5216,7 +5216,7 @@
                     "type": "tidelift"
                 }
             ],
-            "abandoned": "use `EnglishInflector` from the String component instead",
+            "abandoned": "EnglishInflector from the String component",
             "time": "2021-10-29T15:39:54+00:00"
         },
         {
@@ -7008,6 +7008,7 @@
                     "type": "tidelift"
                 }
             ],
+            "abandoned": "symfony/mailer",
             "time": "2021-01-25T17:31:39+00:00"
         },
         {
