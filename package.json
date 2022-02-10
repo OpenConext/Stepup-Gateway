@@ -12,7 +12,6 @@
         "jest": "^27",
         "less": "^3.12.2",
         "less-loader": "^10",
-        "node-sass": "^4.5.3",
         "postcss": ">=8.3.8",
         "sass-loader": "^9",
         "ts-jest": "^27",
@@ -31,6 +30,7 @@
         "bootstrap": "^3",
         "jquery": "^3.5.0",
         "popper.js": "^1.16.1",
+        "sass": "^1.49.7",
         "select2": "^4.0.3",
         "yargs-parser": ">=18.1.2"
     },
