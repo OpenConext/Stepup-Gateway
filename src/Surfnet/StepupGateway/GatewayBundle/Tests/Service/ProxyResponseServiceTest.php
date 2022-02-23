@@ -58,11 +58,6 @@ final class ProxyResponseServiceTest extends GatewaySamlTestCase
     private $attributeDictionary;
 
     /**
-     * @var Mockery\MockInterface|AttributeDefinition
-     */
-    private $attributeDefinition;
-
-    /**
      * @var Loa
      */
     private $loa;
@@ -75,7 +70,10 @@ final class ProxyResponseServiceTest extends GatewaySamlTestCase
         $this->proxyStateHandler = Mockery::mock(ProxyStateHandler::class)->shouldIgnoreMissing();
         $this->assertionSigningService = Mockery::mock(AssertionSigningService::class)->shouldIgnoreMissing();
         $this->attributeDictionary = Mockery::mock(AttributeDictionary::class);
-        $this->attributeDefinition = Mockery::mock(AttributeDefinition::class);
+        $attributeDefinition = Mockery::mock(AttributeDefinition::class);
+        $attributeDefinition->shouldReceive('getName')->andReturn('internalCollabPersonId');
+        $attributeDefinition->shouldReceive('getUrnMace')->andReturn('urn:mace:surf.nl:attribute-def:internal-collabPersonId');
+        $this->attributeDefinition = $attributeDefinition;
         $this->loa = Mockery::mock(Loa::class);
 
         $container = new TestSaml2Container(new NullLogger());
@@ -90,7 +88,13 @@ final class ProxyResponseServiceTest extends GatewaySamlTestCase
 
         $this->attributeDictionary
             ->shouldReceive('translate->getAttributeValue')
+            ->with('eduPersonTargetedID')
             ->andReturn([$nameId])
+            ->byDefault();
+        $this->attributeDictionary
+            ->shouldReceive('translate->getAttributeValue')
+            ->with('internalCollabPersonId')
+            ->andReturnNull()
             ->byDefault();
     }
 
@@ -117,6 +121,61 @@ final class ProxyResponseServiceTest extends GatewaySamlTestCase
         $assertion = $response->getAssertions()[0];
 
         $this->assertInstanceOf(Assertion::class, $assertion);
+
+        $this->assertEquals(
+            ['https://idp.example/metadata'],
+            $assertion->getAuthenticatingAuthority()
+        );
+    }
+    /**
+     * @test
+     */
+    public function it_uses_internal_collab_person_id_when_present_and_removes_it_from_outgoing_assertion()
+    {
+        $this->attributeDictionary
+            ->shouldReceive('translate->getAttributeValue')
+            ->with('internalCollabPersonId')
+            ->andReturn('john-doe@example.com');
+
+        $factory = new ProxyResponseService(
+            $this->identityProvider,
+            $this->proxyStateHandler,
+            $this->assertionSigningService,
+            $this->attributeDictionary,
+            $this->attributeDefinition,
+            $this->loa
+        );
+        // internal Collab person id is in the incoming SAML responses' assertoin
+        $attributes = [
+            'attrib1' => ['foobar'],
+            'attrib2' => ['foobar 2'],
+            'urn:mace:surf.nl:attribute-def:internal-collabPersonId' => ['joe@exampe.com'],
+        ];
+        $originalNameId = NameID::fromArray([
+            'Value' => 'John Doe',
+            'Format' => 'Unspecified'
+        ]);
+
+        $originalAssertion = new Assertion();
+        $originalAssertion->setIssuer('https://idp.example/metadata');
+        $originalAssertion->setAttributes($attributes);
+        // The original NameId will be used in the outgoing assertion
+        $originalAssertion->setNameId($originalNameId);
+
+        $response = $factory->createProxyResponse($originalAssertion, 'https://acs');
+
+        /** @var Assertion $assertion */
+        $assertion = $response->getAssertions()[0];
+        $this->assertInstanceOf(Assertion::class, $assertion);
+
+        $responseAttributes = $assertion->getAttributes();
+
+        // The internal collabPersonId should now be removed from the assertion
+        $this->assertCount(2, $responseAttributes);
+        $this->assertArrayNotHasKey('urn:mace:surf.nl:attribute-def:internal-collabPersonId', $responseAttributes);
+
+        // The nameId is not updated (which we did when dealing with EPTI)
+        $this->assertEquals($assertion->getNameId()->value, $originalNameId->value);
 
         $this->assertEquals(
             ['https://idp.example/metadata'],
@@ -155,10 +214,10 @@ final class ProxyResponseServiceTest extends GatewaySamlTestCase
         );
     }
 
-    public function testCreateProxyResponseRequiresEpti()
+    public function testCreateProxyResponseRequiresEptiIfInternalCollabPersonIdIsNotPresent()
     {
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('The "urn:mace:dir:attribute-def:eduPersonTargetedID" is not present');
+        $this->expectExceptionMessage('Neither "urn:mace:dir:attribute-def:eduPersonTargetedID" nor "urn:mace:surf.nl:attribute-def:internal-collabPersonId" is present');
         $factory = new ProxyResponseService(
             $this->identityProvider,
             $this->proxyStateHandler,
@@ -181,6 +240,11 @@ final class ProxyResponseServiceTest extends GatewaySamlTestCase
 
     public function testCreateProxyResponseRequiresEptiFilled()
     {
+        $this->attributeDictionary
+            ->shouldReceive('translate->getAttributeValue')
+            ->with('internalCollabPersonId')
+            ->andReturnNull();
+
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage(
             'The "urn:mace:dir:attribute-def:eduPersonTargetedID" attribute does not contain a NameID with a value.'

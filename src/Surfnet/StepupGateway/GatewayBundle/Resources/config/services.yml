@@ -81,7 +81,7 @@ services:
             - "@gateway.proxy.sso.state_handler"
             - "@gateway.service.assertion_signing"
             - "@surfnet_saml.saml.attribute_dictionary"
-            - "@saml.attribute.eduPersonTargetedID"
+            - "@saml.attribute.internalCollabPersonId"
             - "@gateway.security.intrinsic_loa"
 
     gateway.security.intrinsic_loa:
