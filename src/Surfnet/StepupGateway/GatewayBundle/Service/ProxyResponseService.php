@@ -24,6 +24,7 @@ use DateTimeZone;
 use SAML2\Assertion;
 use SAML2\Constants;
 use SAML2\Response;
+use SAML2\XML\saml\NameID;
 use SAML2\XML\saml\SubjectConfirmation;
 use SAML2\XML\saml\SubjectConfirmationData;
 use Surfnet\SamlBundle\Entity\IdentityProvider;
@@ -57,7 +58,7 @@ class ProxyResponseService
     /**
      * @var \Surfnet\SamlBundle\SAML2\Attribute\AttributeDefinition
      */
-    private $eptiAttribute;
+    private $internalCollabPersonIdAttribute;
 
     /**
      * @var \DateTime
@@ -75,21 +76,21 @@ class ProxyResponseService
     private $intrinsicLoa;
 
     public function __construct(
-        IdentityProvider $hostedIdentityProvider,
-        ProxyStateHandler $proxyStateHandler,
+        IdentityProvider        $hostedIdentityProvider,
+        ProxyStateHandler       $proxyStateHandler,
         AssertionSigningService $assertionSigningService,
-        AttributeDictionary $attributeDictionary,
-        AttributeDefinition $eptiAttribute,
-        Loa $intrinsicLoa,
-        DateTime $now = null
+        AttributeDictionary     $attributeDictionary,
+        AttributeDefinition     $internalCollabPersonIdAttribute,
+        Loa                     $intrinsicLoa,
+        DateTime                $now = null
     ) {
-        $this->hostedIdentityProvider    = $hostedIdentityProvider;
-        $this->proxyStateHandler         = $proxyStateHandler;
-        $this->assertionSigningService   = $assertionSigningService;
-        $this->attributeDictionary       = $attributeDictionary;
-        $this->eptiAttribute             = $eptiAttribute;
-        $this->intrinsicLoa              = $intrinsicLoa;
-        $this->currentTime = is_null($now) ? new DateTime('now', new DateTimeZone('UTC')): $now;
+        $this->hostedIdentityProvider = $hostedIdentityProvider;
+        $this->proxyStateHandler = $proxyStateHandler;
+        $this->assertionSigningService = $assertionSigningService;
+        $this->attributeDictionary = $attributeDictionary;
+        $this->internalCollabPersonIdAttribute = $internalCollabPersonIdAttribute;
+        $this->intrinsicLoa = $intrinsicLoa;
+        $this->currentTime = is_null($now) ? new DateTime('now', new DateTimeZone('UTC')) : $now;
     }
 
     /**
@@ -100,7 +101,6 @@ class ProxyResponseService
      */
     public function createProxyResponse(Assertion $assertion, $destination, $loa = null)
     {
-
         $newAssertion = new Assertion();
         $newAssertion->setNotBefore($this->currentTime->getTimestamp());
         $newAssertion->setNotOnOrAfter($this->getTimestamp('PT5M'));
@@ -110,21 +110,17 @@ class ProxyResponseService
 
         $this->assertionSigningService->signAssertion($newAssertion);
         $this->addSubjectConfirmationFor($newAssertion, $destination);
-
         $translatedAssertion = $this->attributeDictionary->translate($assertion);
         $eptiNameId = $translatedAssertion->getAttributeValue('eduPersonTargetedID');
-
-        // Perform some input validation on the eptiNameId that was received.
-        if (is_null($eptiNameId)) {
-            throw new RuntimeException('The "urn:mace:dir:attribute-def:eduPersonTargetedID" is not present.');
-        } elseif (!array_key_exists(0, $eptiNameId) || !$eptiNameId[0]->value) {
+        $internalCollabPersonId = $translatedAssertion->getAttributeValue('internalCollabPersonId');
+        // Perform some input validation on the eptiNameId and/or internal-collabPersonId that was received.
+        if (is_null($eptiNameId) && is_null($internalCollabPersonId)) {
             throw new RuntimeException(
-                'The "urn:mace:dir:attribute-def:eduPersonTargetedID" attribute does not contain a NameID with a value.'
+                'Neither "urn:mace:dir:attribute-def:eduPersonTargetedID" nor ' .
+                '"urn:mace:surf.nl:attribute-def:internal-collabPersonId" is present'
             );
         }
-
-        $newAssertion->setNameId($eptiNameId[0]);
-
+        $this->updateNewAssertionWith($eptiNameId, $internalCollabPersonId, $newAssertion, $assertion);
         $newAssertion->setValidAudiences([$this->proxyStateHandler->getRequestServiceProvider()]);
 
         $this->addAuthenticationStatementTo($newAssertion, $assertion);
@@ -142,13 +138,13 @@ class ProxyResponseService
      */
     private function addSubjectConfirmationFor(Assertion $newAssertion, $destination)
     {
-        $confirmation         = new SubjectConfirmation();
+        $confirmation = new SubjectConfirmation();
         $confirmation->Method = Constants::CM_BEARER;
 
-        $confirmationData                      = new SubjectConfirmationData();
-        $confirmationData->InResponseTo        = $this->proxyStateHandler->getRequestId();
-        $confirmationData->Recipient           = $destination;
-        $confirmationData->NotOnOrAfter        = $newAssertion->getNotOnOrAfter();
+        $confirmationData = new SubjectConfirmationData();
+        $confirmationData->InResponseTo = $this->proxyStateHandler->getRequestId();
+        $confirmationData->Recipient = $destination;
+        $confirmationData->NotOnOrAfter = $newAssertion->getNotOnOrAfter();
 
         $confirmation->SubjectConfirmationData = $confirmationData;
 
@@ -162,7 +158,7 @@ class ProxyResponseService
     private function addAuthenticationStatementTo(Assertion $newAssertion, Assertion $assertion)
     {
         $newAssertion->setAuthnInstant($assertion->getAuthnInstant());
-        $newAssertion->setAuthnContextClassRef((string) $this->intrinsicLoa);
+        $newAssertion->setAuthnContextClassRef((string)$this->intrinsicLoa);
 
         $authority = $assertion->getAuthenticatingAuthority();
         $newAssertion->setAuthenticatingAuthority(
@@ -205,5 +201,29 @@ class ProxyResponseService
         }
 
         return $time->getTimestamp();
+    }
+
+    private function updateNewAssertionWith(
+        $eptiNameId,
+        $internalCollabPersonId,
+        Assertion $newAssertion,
+        Assertion $originalAssertion
+    ) :void {
+        if (!$internalCollabPersonId && $eptiNameId) {
+            if (is_null($internalCollabPersonId) && (!array_key_exists(0, $eptiNameId) || !$eptiNameId[0]->value)) {
+                throw new RuntimeException(
+                    'The "urn:mace:dir:attribute-def:eduPersonTargetedID" attribute does not contain a NameID ' .
+                    'with a value.'
+                );
+            }
+            $newAssertion->setNameId($eptiNameId[0]);
+        } else if ($internalCollabPersonId) {
+            // Remove the internal-collabPersonId from the assertion
+            $attributes = $newAssertion->getAttributes();
+            unset($attributes[$this->internalCollabPersonIdAttribute->getUrnMace()]);
+            $newAssertion->setAttributes($attributes);
+            // Use the supplied NameID as the NameID to the SP
+            $newAssertion->setNameId($originalAssertion->getNameId());
+        }
     }
 }

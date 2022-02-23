@@ -101,6 +101,11 @@ final class RespondServiceTest extends GatewaySamlTestCase
                 'urn:mace:dir:attribute-def:eduPersonTargetedID',
                 'urn:oid:1.3.6.1.4.1.5923.1.1.1.10',
             ],
+            [
+                'internalCollabPersonId',
+                'urn:mace:surf.nl:attribute-def:internal-collabPersonId',
+                null,
+            ],
         ];
 
         $loaLevels = [
