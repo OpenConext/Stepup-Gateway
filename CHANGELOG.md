@@ -1,7 +1,13 @@
 # Changelog
+
+## 3.4.5
+- Use internal-collabPersonId when present #241
+- Upgrade the Stepup Saml Bundle #238
+- Update JS dependencies #238 #239 #240
+
 ## 3.4.4
 - Fix robots.txt
-- Add Github Actions workflow for tag release automisation
+- Add Github Actions workflow for tag release automation #236
 
 ## 3.4.3
 - Added browserlist entry in package.json to ensure IE 11 support
