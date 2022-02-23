@@ -11,7 +11,7 @@
 /vendor/
 /composer.phar
 /cache.properties
-.idea
+.idea/
 /node_modules
 web/build
 /.env.local
