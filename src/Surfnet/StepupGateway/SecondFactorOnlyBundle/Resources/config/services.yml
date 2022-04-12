@@ -33,14 +33,6 @@ services:
             publicKey: '%saml_metadata_publickey%'
             privateKey: '%saml_metadata_privatekey%'
 
-    second_factor_only.metadata_factory:
-        class: Surfnet\SamlBundle\Metadata\MetadataFactory
-        arguments:
-            - "@templating"
-            - "@router"
-            - "@surfnet_saml.signing_service"
-            - "@second_factor_only.configuration.metadata"
-
     second_factor_only.response_rendering:
         class: Surfnet\StepupGateway\GatewayBundle\Service\ResponseRenderingService
         arguments:

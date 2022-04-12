@@ -231,7 +231,7 @@ class SurfnetStepupGatewaySamlStepupProviderExtension extends Extension
         $container->setDefinition('gssp.provider.' . $provider . 'metadata.configuration', $metadataConfiguration);
 
         $metadataFactory = new Definition('Surfnet\SamlBundle\Metadata\MetadataFactory', [
-            new Reference('templating'),
+            new Reference('twig'),
             new Reference('router'),
             new Reference('surfnet_saml.signing_service'),
             new Reference('gssp.provider.' . $provider . 'metadata.configuration')
