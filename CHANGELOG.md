@@ -1,5 +1,8 @@
 # Changelog
 
+## Next
+- Resolve GSSP metadata generation twig environment configuration issue #244
+
 ## 3.4.5
 - Use internal-collabPersonId when present #241
 - Upgrade the Stepup Saml Bundle #238
