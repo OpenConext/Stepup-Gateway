@@ -28,6 +28,4 @@ jobs:
                   SYMFONY_ENV: test
             - name: Output log files on failure
               if: failure()
-              run:  |
-                  cd ci/docker && docker-compose exec -T php-fpm.stepup.example.com cat var/log/webtest.log
-
+              run: tail -2000 /var/log/syslog
