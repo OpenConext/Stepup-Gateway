@@ -5,8 +5,8 @@ doctrine:
       gateway:
         driver:   "%database_driver%"
         port:     "%database_port%"
-        host:     localhost
-        dbname:   gateway_test
-        user:     root
-        password: password
+        host:     db.stepup.example.com
+        dbname:   gateway
+        user:     gateway
+        password: gateway
         charset:  UTF8

@@ -21,7 +21,6 @@ namespace Surfnet\StepupGateway\Behat;
 use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\BeforeFeatureScope;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
-use Behat\Behat\Tester\Exception\PendingException;
 use Surfnet\StepupGateway\Behat\Service\FixtureService;
 
 class FeatureContext implements Context
@@ -55,8 +54,8 @@ class FeatureContext implements Context
     {
         // Generate test databases
         echo "Preparing test schemas\n";
-        shell_exec("/var/www/app/console doctrine:schema:drop --env=webtest --force");
-        shell_exec("/var/www/app/console doctrine:schema:create --env=webtest");
+        shell_exec("/var/www/bin/console doctrine:schema:drop --env=webtest --force");
+        shell_exec("/var/www/bin/console doctrine:schema:create --env=webtest");
     }
 
     /**
