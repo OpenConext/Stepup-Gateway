@@ -8,13 +8,13 @@ Feature: As a SP or IdP
     And the response should match xpath '//md:SingleSignOnService[@Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"]'
     And the response should match xpath '//md:SingleSignOnService[@Location="https://gateway.stepup.example.com/authentication/single-sign-on"]'
 
-  Scenario: View the SecondFactor metadata of the Gateway
+  Scenario: View the SecondFactor of the Gateway
     Given I am on "/second-factor-only/metadata"
     Then the response should match xpath '//md:EntityDescriptor[@entityID="https://gateway.stepup.example.com/second-factor-only/metadata"]'
     And the response should match xpath '//md:SingleSignOnService[@Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"]'
     And the response should match xpath '//md:SingleSignOnService[@Location="https://gateway.stepup.example.com/second-factor-only/single-sign-on"]'
 
-  Scenario: View the GSSP Azuremfa metadata of the Gateway
+  Scenario: View the GSSP Azure MFA metadata of the Gateway
     Given I am on "/gssp/azuremfa/metadata"
     Then the response should match xpath '//md:EntityDescriptor[@entityID="https://gateway.stepup.example.com/gssp/azuremfa/metadata"]'
     And the response should match xpath '//md:SingleSignOnService[@Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"]'
@@ -26,7 +26,7 @@ Feature: As a SP or IdP
     And the response should match xpath '//md:SingleSignOnService[@Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"]'
     And the response should match xpath '//md:SingleSignOnService[@Location="https://gateway.stepup.example.com/gssp/tiqr/single-sign-on"]'
 
-  Scenario: View the GSSP webauthn metadata of the Gateway
+  Scenario: View the GSSP WebAuthn metadata of the Gateway
     Given I am on "/gssp/webauthn/metadata"
     Then the response should match xpath '//md:EntityDescriptor[@entityID="https://gateway.stepup.example.com/gssp/webauthn/metadata"]'
     And the response should match xpath '//md:SingleSignOnService[@Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"]'
