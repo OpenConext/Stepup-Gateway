@@ -1,7 +1,8 @@
 # Changelog
 
-## Next
+## 3.4.6
 - Resolve GSSP metadata generation twig environment configuration issue #244
+- Install JS and PHP dependency updates (composer & yarn)
 
 ## 3.4.5
 - Use internal-collabPersonId when present #241
