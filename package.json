@@ -34,7 +34,5 @@
         "select2": "^4.0.3",
         "yargs-parser": ">=18.1.2"
     },
-    "resolutions": {
-        "postcss": ">=8.3.8"
-    }
+    "resolutions": {}
 }

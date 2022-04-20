@@ -22,7 +22,7 @@ use SAML2\Constants;
 use SAML2\Response as SAMLResponse;
 use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseBuilder;
 use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
-use Symfony\Bundle\TwigBundle\TwigEngine;
+use Twig\Environment;
 use Symfony\Component\HttpFoundation\Response;
 
 final class ResponseRenderingService
@@ -33,21 +33,21 @@ final class ResponseRenderingService
     private $responseBuilder;
 
     /**
-     * @var TwigEngine
+     * @var Environment
      */
-    private $twigEngine;
+    private $templateEngine;
 
     /**
      * SamlResponseRenderingService constructor.
      * @param ResponseBuilder $responseBuilder
-     * @param TwigEngine $twigEngine
+     * @param Environment $templateEngine
      */
     public function __construct(
         ResponseBuilder $responseBuilder,
-        TwigEngine $twigEngine
+        Environment     $templateEngine
     ) {
         $this->responseBuilder = $responseBuilder;
-        $this->twigEngine = $twigEngine;
+        $this->templateEngine = $templateEngine;
     }
 
     /**
@@ -91,7 +91,7 @@ final class ResponseRenderingService
      */
     public function renderResponse(
         ResponseContext $context,
-        SAMLResponse $response
+        SAMLResponse    $response
     ) {
         return $this->renderSamlResponse($context, 'consume_assertion', $response);
     }
@@ -104,16 +104,18 @@ final class ResponseRenderingService
      */
     private function renderSamlResponse(
         ResponseContext $context,
-        $view,
-        SAMLResponse $response
+        string          $view,
+        SAMLResponse    $response
     ) {
-        return $this->twigEngine->renderResponse(
-            'SurfnetStepupGatewayGatewayBundle:gateway:' . $view . '.html.twig',
-            [
-                'acu'        => $context->getDestination(),
-                'response'   => $this->getResponseAsXML($response),
-                'relayState' => $context->getRelayState()
-            ]
+        return (new Response)->setContent(
+            $this->templateEngine->render(
+                'SurfnetStepupGatewayGatewayBundle:gateway:' . $view . '.html.twig',
+                [
+                    'acu' => $context->getDestination(),
+                    'response' => $this->getResponseAsXML($response),
+                    'relayState' => $context->getRelayState()
+                ]
+            )
         );
     }
 

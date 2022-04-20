@@ -12,5 +12,5 @@ docker-compose exec -T php-fpm.stepup.example.com bash -c '
   cp ./ci/certificates/* ./app/files/ && \
   composer install --prefer-dist -n -o --no-scripts && \
   composer frontend-install && \
-  ./bin/console assets:install --env=webtest --verbose
+  ./bin/console assets:install --env=test --verbose
 '
