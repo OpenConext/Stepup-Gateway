@@ -18,7 +18,7 @@ parameters:
 
     # Database connection
     database_driver:   pdo_mysql
-    database_host:     127.0.0.1
+    database_host:     db.stepup.example.com
     database_port:     ~
 
     # The database server version is used in the dbal configuration and is required to prevent issues when the database

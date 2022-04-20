@@ -20,6 +20,13 @@ if ($trustedHosts = $_SERVER['TRUSTED_HOSTS'] ?? false) {
     Request::setTrustedHosts([$trustedHosts]);
 }
 
+// To run behat tests in smoketest mode, the app env needs to be 'dev' or 'test'
+// and the user agent needs to be that of the behat guzzle client.
+$isTestOrDev = ($_SERVER['APP_ENV'] === 'dev' || $_SERVER['APP_ENV'] === 'test');
+if ($isTestOrDev && $_SERVER['HTTP_USER_AGENT'] === 'Symfony BrowserKit') {
+    $_SERVER['APP_ENV'] = 'smoketest';
+}
+
 $kernel = new Kernel($_SERVER['APP_ENV'], (bool) $_SERVER['APP_DEBUG']);
 $request = Request::createFromGlobals();
 $response = $kernel->handle($request);
