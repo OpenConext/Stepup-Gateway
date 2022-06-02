@@ -26,8 +26,10 @@ use SAML2\Assertion;
 use Surfnet\SamlBundle\Entity\IdentityProvider;
 use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor;
 use Surfnet\StepupGateway\GatewayBundle\Entity\ServiceProvider;
+use Surfnet\StepupGateway\GatewayBundle\Saml\Exception\RuntimeException;
 use Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler;
 use Surfnet\StepupGateway\GatewayBundle\Service\SamlEntityService;
+use function is_string;
 
 class ResponseContext
 {
@@ -175,12 +177,7 @@ class ResponseContext
      */
     public function saveAssertion(Assertion $assertion)
     {
-        // we pluck the NameId to make it easier to access it without having to reconstitute the assertion
-        $nameId = $assertion->getNameId();
-        if (!is_null($nameId->value)) {
-            $this->stateHandler->saveIdentityNameId($nameId->value);
-        }
-
+        $this->stateHandler->saveIdentityNameId($this->resolveNameIdValue($assertion));
         // same for the entityId of the authenticating Authority
         $authenticatingAuthorities = $assertion->getAuthenticatingAuthority();
         if (!empty($authenticatingAuthorities)) {
@@ -212,7 +209,7 @@ class ResponseContext
     /**
      * @return null|string
      */
-    public function getIdentityNameId()
+    public function getIdentityNameId(): string
     {
         return $this->stateHandler->getIdentityNameId();
     }
@@ -314,5 +311,22 @@ class ResponseContext
     public function getResponseContextServiceId()
     {
         return $this->stateHandler->getResponseContextServiceId();
+    }
+
+    /**
+     * Either gets the internal-collabPersonId if present or falls back on the regular name id attribute
+     */
+    private function resolveNameIdValue(Assertion $assertion): string
+    {
+        $attributes = $assertion->getAttributes();
+        if (array_key_exists('urn:mace:surf.nl:attribute-def:internal-collabPersonId', $attributes)) {
+            return reset($attributes['urn:mace:surf.nl:attribute-def:internal-collabPersonId']);
+        }
+        $nameId = $assertion->getNameId();
+        if ($nameId && !is_null($nameId->value) && is_string($nameId->value)) {
+            return $nameId->value;
+        }
+
+        throw new RuntimeException('Unable to resolve an identifier from internalCollabPersonId or the Subject NameId');
     }
 }
