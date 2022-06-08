@@ -119,6 +119,9 @@
         "security-tests": "./local-php-security-checker"
     },
     "config": {
+        "allow-plugins": {
+            "symfony/flex": true
+        },
         "optimize-autoloader": true,
         "sort-packages": true,
         "platform": {

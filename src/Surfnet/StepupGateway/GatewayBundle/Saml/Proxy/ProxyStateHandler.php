@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Saml\Proxy;
 
+use Surfnet\StepupGateway\GatewayBundle\Saml\Exception\RuntimeException;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class ProxyStateHandler
@@ -196,12 +197,19 @@ class ProxyStateHandler
         return $this;
     }
 
-    /**
-     * @return null|string
-     */
-    public function getIdentityNameId()
+    public function getIdentityNameId(): string
     {
-        return $this->get('name_id');
+        $nameId = $this->get('name_id');
+        if (!$nameId) {
+            throw new RuntimeException('Unable to retrieve NameId, it was not set on the state handler');
+        }
+
+        if (!is_string($nameId)) {
+            throw new RuntimeException(
+                sprintf('Unable to retrieve NameId, must be a string, but a %s was set', gettype($nameId))
+            );
+        }
+        return $nameId;
     }
 
     /**
