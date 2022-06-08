@@ -1,5 +1,8 @@
 # Changelog
 
+## 3.4.7
+-  Use internal-collabPersonId to retrieve the Identities Second Factor tokens #255
+
 ## 3.4.6
 - Resolve GSSP metadata generation twig environment configuration issue #244
 - Install JS and PHP dependency updates (composer & yarn)

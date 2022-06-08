@@ -19,6 +19,7 @@
 namespace Surfnet\StepupGateway\GatewayBundle\Service;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Psr\Log\LoggerInterface;
 use Surfnet\StepupBundle\Command\SendSmsChallengeCommand as StepupSendSmsChallengeCommand;
 use Surfnet\StepupBundle\Command\VerifyPossessionOfPhoneCommand;
@@ -108,17 +109,11 @@ class StepUpAuthenticationService
         $this->secondFactorTypeService = $secondFactorTypeService;
     }
 
-    /**
-     * @param string $identityNameId
-     * @param Loa $requiredLoa
-     * @param WhitelistService $whitelistService
-     * @return \Doctrine\Common\Collections\Collection
-     */
     public function determineViableSecondFactors(
-        $identityNameId,
+        string $identityNameId,
         Loa $requiredLoa,
         WhitelistService $whitelistService
-    ) {
+    ): Collection {
 
         $candidateSecondFactors = $this->secondFactorRepository->getAllMatchingFor(
             $requiredLoa,
