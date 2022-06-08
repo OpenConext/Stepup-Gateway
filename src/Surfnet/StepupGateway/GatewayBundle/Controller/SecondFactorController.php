@@ -148,6 +148,10 @@ class SecondFactorController extends Controller
     }
 
     /**
+     * The main WAYG screen
+     * - Shows the token selection screen if you own > 1 token
+     * - Directly goes to SF auth when identity owns 1 token
+     *
      * @Template
      * @param Request $request
      * @param string $authenticationMode
