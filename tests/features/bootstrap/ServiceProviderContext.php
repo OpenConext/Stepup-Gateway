@@ -166,7 +166,7 @@ class ServiceProviderContext implements Context, KernelAwareContext
             $this->loadPrivateKey(new PrivateKey('/var/www/ci/certificates/sp.pem', 'default'))
         );
         $authnRequest->setRequestedAuthnContext(
-            ['AuthnContextClassRef' => ['http://stepup.example.com/assurance/sfo-level2']]
+            ['AuthnContextClassRef' => ['http://stepup.example.com/assurance/loa-self-asserted']]
         );
         $request = Saml2AuthnRequest::createNew($authnRequest);
         $query = $request->buildRequestQuery();

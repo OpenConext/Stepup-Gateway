@@ -54,8 +54,8 @@ class FeatureContext implements Context
     {
         // Generate test databases
         echo "Preparing test schemas\n";
-        shell_exec("/var/www/bin/console doctrine:schema:drop --env=webtest --force");
-        shell_exec("/var/www/bin/console doctrine:schema:create --env=webtest");
+        shell_exec("/var/www/bin/console doctrine:schema:drop --env=test --force");
+        shell_exec("/var/www/bin/console doctrine:schema:create --env=test");
     }
 
     /**
@@ -86,12 +86,33 @@ class FeatureContext implements Context
     }
 
     /**
+     * @Given /^a user from "([^"]*)" identified by "([^"]*)" with a self-asserted "([^"]*)" token$/
+     */
+    public function aUserIdentifiedByWithASelfAssertedToken($institution, $nameId, $tokenType)
+    {
+        switch (strtolower($tokenType)) {
+            case "yubikey":
+                $this->currentToken = $this->fixtureService->registerYubikeyToken($nameId, $institution, true);
+                break;
+            case "sms":
+                $this->currentToken = $this->fixtureService->registerSmsToken($nameId, $institution, true);
+                break;
+            case "tiqr":
+                $this->currentToken = $this->fixtureService->registerTiqrToken($nameId, $institution, true);
+                break;
+        }
+    }
+
+    /**
      * @Then I should see the Yubikey OTP screen
      */
     public function iShouldSeeTheYubikeyOtpScreen()
     {
+        $this->minkContext->pressButton('Submit');
+
         $this->minkContext->assertPageContainsText('Log in with YubiKey');
         $this->minkContext->assertPageContainsText('Your YubiKey-code');
+
     }
 
     /**
