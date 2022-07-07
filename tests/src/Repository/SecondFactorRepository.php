@@ -21,7 +21,7 @@ class SecondFactorRepository
         $this->connection = $connection;
     }
 
-    public function create($nameId, $tokenType, $institution, $identifier = null, bool $selfAsserted = false)
+    public function create($nameId, $tokenType, $institution, bool $selfAsserted = false, $identifier = null)
     {
         $uuid = Uuid::uuid4()->toString();
 

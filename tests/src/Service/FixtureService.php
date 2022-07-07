@@ -27,7 +27,7 @@ class FixtureService
 
     public function registerYubikeyToken(string $nameId, string $institution, bool $selfAsserted = false): array
     {
-        return $this->secondFactorRepository->create($nameId, 'yubikey', $selfAsserted, $institution);
+        return $this->secondFactorRepository->create($nameId, 'yubikey', $institution, $selfAsserted);
     }
 
     /**
@@ -38,7 +38,7 @@ class FixtureService
      */
     public function registerSmsToken(string $nameId, string $institution, bool $selfAsserted = false): array
     {
-        return $this->secondFactorRepository->create($nameId, 'sms', $institution, '+31 (0) 606060606', $selfAsserted);
+        return $this->secondFactorRepository->create($nameId, 'sms', $institution, $selfAsserted, '+31 (0) 606060606');
     }
 
     /**
@@ -76,6 +76,6 @@ class FixtureService
 
     public function registerTiqrToken(string $nameId, string $institution, bool $selfAsserted = false): array
     {
-        return $this->secondFactorRepository->create($nameId, 'tiqr', $institution, 'foobar', $selfAsserted);
+        return $this->secondFactorRepository->create($nameId, 'tiqr', $institution, $selfAsserted, 'foobar');
     }
 }

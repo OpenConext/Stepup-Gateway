@@ -21,6 +21,7 @@ namespace Surfnet\StepupGateway\Behat;
 use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\BeforeFeatureScope;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
+use Behat\Behat\Tester\Exception\PendingException;
 use Surfnet\StepupGateway\Behat\Service\FixtureService;
 
 class FeatureContext implements Context
@@ -108,11 +109,7 @@ class FeatureContext implements Context
      */
     public function iShouldSeeTheYubikeyOtpScreen()
     {
-        $this->minkContext->pressButton('Submit');
-
-        $this->minkContext->assertPageContainsText('Log in with YubiKey');
         $this->minkContext->assertPageContainsText('Your YubiKey-code');
-
     }
 
     /**
@@ -133,7 +130,6 @@ class FeatureContext implements Context
     public function iShouldSeeTheTiqrAuthenticationScreen()
     {
         $this->minkContext->pressButton('Submit');
-        $this->minkContext->printLastResponse(); die;
         $this->minkContext->assertPageContainsText('Log in with Tiqr');
     }
 
@@ -165,7 +161,6 @@ class FeatureContext implements Context
     {
         $this->minkContext->pressButton('Submit');
         $this->minkContext->pressButton('Submit');
-        $this->minkContext->printLastResponse(); die;
     }
 
 
@@ -218,5 +213,13 @@ class FeatureContext implements Context
     public function iCancelTheAuthentication()
     {
         $this->minkContext->pressButton('Cancel');
+    }
+
+    /**
+     * @Given /^I pass through the Gateway$/
+     */
+    public function iPassThroughTheGateway()
+    {
+        $this->minkContext->pressButton('Submit');
     }
 }

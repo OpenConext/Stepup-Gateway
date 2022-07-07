@@ -51,3 +51,4 @@ services:
 
   Surfnet\StepupGateway\Behat\Controller\ServiceProviderController:
     class: Surfnet\StepupGateway\Behat\Controller\ServiceProviderController
+    tags: ['controller.service_arguments']
