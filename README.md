@@ -36,7 +36,9 @@ best option for developing the Gateway. However, when writing Behat tests, we ru
 do not run out of the box on the Stepup-VM.
 
 In order to run the behat tests, my personal preference is to halt the stepup-vm. And start up the Docker Compose
-containers that are used in CI.
+containers that are used in CI. But be carefull here, running them in the same clone that you use in Stepup-VM might
+cause issues with the parameters and certificates used in the test environment. My suggestion is to create a new
+clone to run the GW Behat tests in.
 
 From the doc-root:
 ```bash

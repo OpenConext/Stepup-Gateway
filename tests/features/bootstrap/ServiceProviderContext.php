@@ -22,6 +22,7 @@ use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Symfony2Extension\Context\KernelAwareContext;
 use RobRichards\XMLSecLibs\XMLSecurityKey;
+use RuntimeException;
 use SAML2\AuthnRequest;
 use SAML2\Certificate\Key;
 use SAML2\Certificate\KeyLoader;
@@ -166,8 +167,42 @@ class ServiceProviderContext implements Context, KernelAwareContext
             $this->loadPrivateKey(new PrivateKey('/var/www/ci/certificates/sp.pem', 'default'))
         );
         $authnRequest->setRequestedAuthnContext(
-            ['AuthnContextClassRef' => ['http://stepup.example.com/assurance/sfo-level2']]
+            ['AuthnContextClassRef' => ['http://stepup.example.com/assurance/loa-self-asserted']]
         );
+        $request = Saml2AuthnRequest::createNew($authnRequest);
+        $query = $request->buildRequestQuery();
+
+        $this->getSession()->visit($request->getDestination().'?'.$query);
+    }
+
+    /**
+     * @When /^([^\']*) starts an SFO authentication with LoA ([^\']*)$/
+     */
+    public function iStartAnSFOAuthenticationWithLoa($nameId, string $loa)
+    {
+        $authnRequest = new AuthnRequest();
+        // In order to later assert if the response succeeded or failed, set our own dummy ACS location
+        $authnRequest->setAssertionConsumerServiceURL(SamlEntityRepository::SP_ACS_LOCATION);
+        $authnRequest->setIssuer($this->currentSfoSp['entityId']);
+        $authnRequest->setDestination(self::SFO_ENDPOINT_URL);
+        $authnRequest->setProtocolBinding(Constants::BINDING_HTTP_REDIRECT);
+        $authnRequest->setNameId($this->buildNameId($nameId));
+        // Sign with random key, does not mather for now.
+        $authnRequest->setSignatureKey(
+            $this->loadPrivateKey(new PrivateKey('/var/www/ci/certificates/sp.pem', 'default'))
+        );
+        switch ($loa) {
+            case "1":
+            case "2":
+            case "3":
+            case "self-asserted":
+                $authnRequest->setRequestedAuthnContext(
+                    ['AuthnContextClassRef' => ['http://stepup.example.com/assurance/loa-' . $loa]]
+                );
+                break;
+            default:
+                throw new RuntimeException(sprintf('The specified LoA-%s is not supported', $loa));
+        }
         $request = Saml2AuthnRequest::createNew($authnRequest);
         $query = $request->buildRequestQuery();
 

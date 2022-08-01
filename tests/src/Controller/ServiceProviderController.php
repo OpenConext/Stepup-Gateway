@@ -12,13 +12,8 @@ use Symfony\Component\HttpFoundation\Request;
 
 class ServiceProviderController
 {
-    public function __construct()
-    {
-    }
-
     /**
      * Simply dumps the SAMLResponse XML
-     * @param Request $request
      */
     public function acsAction(Request $request)
     {
