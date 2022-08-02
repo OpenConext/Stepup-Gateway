@@ -1,5 +1,8 @@
 # Changelog
 
+## 4.0.0
+- Support self-asserted LoA #258
+
 ## 3.4.6
 - Resolve GSSP metadata generation twig environment configuration issue #244
 - Install JS and PHP dependency updates (composer & yarn)
