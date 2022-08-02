@@ -567,11 +567,19 @@ class SecondFactorController extends Controller
      */
     private function getResponseContext($authenticationMode)
     {
+        /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
+        $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
         switch ($authenticationMode) {
             case self::MODE_SFO:
+                if (!($this->get('gateway.proxy.sfo.state_handler'))) {
+                    $logger->warn('Cannot find SFO state handler.');
+                }
                 return $this->get($this->get('gateway.proxy.sfo.state_handler')->getResponseContextServiceId());
                 break;
             case self::MODE_SSO:
+                if (!($this->get('gateway.proxy.sso.state_handler'))) {
+                    $logger->warn('Cannot find SSO state handler.');
+                }
                 return $this->get($this->get('gateway.proxy.sso.state_handler')->getResponseContextServiceId());
                 break;
         }
