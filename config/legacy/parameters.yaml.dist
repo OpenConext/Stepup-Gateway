@@ -128,6 +128,10 @@ parameters:
     second_factor_only_loa_loa2: https://gateway.tld/second-factor-only/level2
     second_factor_only_loa_loa3: https://gateway.tld/second-factor-only/level3
 
+    # Self-asserted token LoA uri's
+    second_factor_only_loa_self_asserted: 'http://stepup.example.com/assurance/loa-self-asserted'
+    gateway_loa_self_asserted: 'http://stepup.example.com/assurance/loa-self-asserted'
+
     # Boolean: Whether to enable (true) or disable (false) the SFO endpoint
     second_factor_only: false
 

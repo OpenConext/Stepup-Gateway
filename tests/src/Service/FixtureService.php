@@ -25,15 +25,9 @@ class FixtureService
         $this->whitelistRepository = $whitelistRepository;
     }
 
-    /**
-     * @param string $nameId
-     * @param string $institution
-     * @return array
-     * @throws Exception
-     */
-    public function registerYubikeyToken($nameId, $institution)
+    public function registerYubikeyToken(string $nameId, string $institution, bool $selfAsserted = false): array
     {
-        return $this->secondFactorRepository->create($nameId, 'yubikey', $institution);
+        return $this->secondFactorRepository->create($nameId, 'yubikey', $institution, $selfAsserted);
     }
 
     /**
@@ -42,9 +36,9 @@ class FixtureService
      * @return array
      * @throws Exception
      */
-    public function registerSmsToken($nameId, $institution)
+    public function registerSmsToken(string $nameId, string $institution, bool $selfAsserted = false): array
     {
-        return $this->secondFactorRepository->create($nameId, 'sms', $institution, '+31 (0) 606060606');
+        return $this->secondFactorRepository->create($nameId, 'sms', $institution, $selfAsserted, '+31 (0) 606060606');
     }
 
     /**
@@ -80,8 +74,8 @@ class FixtureService
         return $this->whitelistRepository->whitelist($institution);
     }
 
-    public function registerTiqrToken($nameId, $institution)
+    public function registerTiqrToken(string $nameId, string $institution, bool $selfAsserted = false): array
     {
-        return $this->secondFactorRepository->create($nameId, 'tiqr', $institution, 'foobar');
+        return $this->secondFactorRepository->create($nameId, 'tiqr', $institution, $selfAsserted, 'foobar');
     }
 }

@@ -22,6 +22,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupBundle\Value\Loa;
 use Surfnet\StepupBundle\Value\SecondFactorType;
+use Surfnet\StepupBundle\Value\VettingType;
 
 /**
  * WARNING: Any schema change made to this entity should also be applied to the Middleware SecondFactor entity!
@@ -100,6 +101,13 @@ class SecondFactor
     public $displayLocale;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(length=255)
+     */
+    public $vettingType;
+
+    /**
      * No new second factors should be created by the gateway
      */
     final private function __construct()
@@ -114,7 +122,7 @@ class SecondFactor
     public function canSatisfy(Loa $loa, SecondFactorTypeService $service)
     {
         $secondFactorType = new SecondFactorType($this->secondFactorType);
-        return $service->canSatisfy($secondFactorType, $loa);
+        return $service->canSatisfy($secondFactorType, $loa, new VettingType($this->vettingType));
     }
 
     /**
@@ -124,6 +132,6 @@ class SecondFactor
     public function getLoaLevel(SecondFactorTypeService $service)
     {
         $secondFactorType = new SecondFactorType($this->secondFactorType);
-        return $service->getLevel($secondFactorType);
+        return $service->getLevel($secondFactorType, new VettingType($this->vettingType));
     }
 }

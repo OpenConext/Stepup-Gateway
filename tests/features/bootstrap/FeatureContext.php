@@ -21,6 +21,7 @@ namespace Surfnet\StepupGateway\Behat;
 use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\BeforeFeatureScope;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
+use Behat\Behat\Tester\Exception\PendingException;
 use Surfnet\StepupGateway\Behat\Service\FixtureService;
 
 class FeatureContext implements Context
@@ -54,8 +55,8 @@ class FeatureContext implements Context
     {
         // Generate test databases
         echo "Preparing test schemas\n";
-        shell_exec("/var/www/bin/console doctrine:schema:drop --env=webtest --force");
-        shell_exec("/var/www/bin/console doctrine:schema:create --env=webtest");
+        shell_exec("/var/www/bin/console doctrine:schema:drop --env=test --force");
+        shell_exec("/var/www/bin/console doctrine:schema:create --env=test");
     }
 
     /**
@@ -86,11 +87,28 @@ class FeatureContext implements Context
     }
 
     /**
+     * @Given /^a user from "([^"]*)" identified by "([^"]*)" with a self-asserted "([^"]*)" token$/
+     */
+    public function aUserIdentifiedByWithASelfAssertedToken($institution, $nameId, $tokenType)
+    {
+        switch (strtolower($tokenType)) {
+            case "yubikey":
+                $this->currentToken = $this->fixtureService->registerYubikeyToken($nameId, $institution, true);
+                break;
+            case "sms":
+                $this->currentToken = $this->fixtureService->registerSmsToken($nameId, $institution, true);
+                break;
+            case "tiqr":
+                $this->currentToken = $this->fixtureService->registerTiqrToken($nameId, $institution, true);
+                break;
+        }
+    }
+
+    /**
      * @Then I should see the Yubikey OTP screen
      */
     public function iShouldSeeTheYubikeyOtpScreen()
     {
-        $this->minkContext->assertPageContainsText('Log in with YubiKey');
         $this->minkContext->assertPageContainsText('Your YubiKey-code');
     }
 
@@ -112,7 +130,6 @@ class FeatureContext implements Context
     public function iShouldSeeTheTiqrAuthenticationScreen()
     {
         $this->minkContext->pressButton('Submit');
-        $this->minkContext->printLastResponse(); die;
         $this->minkContext->assertPageContainsText('Log in with Tiqr');
     }
 
@@ -144,7 +161,6 @@ class FeatureContext implements Context
     {
         $this->minkContext->pressButton('Submit');
         $this->minkContext->pressButton('Submit');
-        $this->minkContext->printLastResponse(); die;
     }
 
 
@@ -197,5 +213,13 @@ class FeatureContext implements Context
     public function iCancelTheAuthentication()
     {
         $this->minkContext->pressButton('Cancel');
+    }
+
+    /**
+     * @Given /^I pass through the Gateway$/
+     */
+    public function iPassThroughTheGateway()
+    {
+        $this->minkContext->pressButton('Submit');
     }
 }
