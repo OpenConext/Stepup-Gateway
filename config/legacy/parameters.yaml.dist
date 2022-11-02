@@ -144,3 +144,13 @@ parameters:
     enabled_generic_second_factors:
         tiqr:
             loa: 3
+    # The lifetime of the SSO on second factor authentications lifetime in seconds
+    # For example, 8h is 28800 seconds.
+    sso_cookie_lifetime: 28800
+
+    # Is the SSO on second factor authentications cookie persistent or a session cookie?
+    # Allowed values: persistent, session
+    sso_cookie_type: 'persistent'
+
+    # The name used for the sso on second factor authentication cookie
+    sso_cookie_name: 'stepup-gateway_sso-on-second-factor-authentication'
