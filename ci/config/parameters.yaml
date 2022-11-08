@@ -63,3 +63,6 @@ parameters:
             loa: 3
         tiqr:
             loa: 3
+    sso_cookie_lifetime: 28800
+    sso_cookie_type: 'persistent'
+    sso_cookie_name: 'stepup-gateway_sso-on-second-factor-authentication'
