@@ -18,13 +18,13 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Test\Sso2fa\ValueObject;
 
-
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Surfnet\StepupBundle\Value\Loa;
 use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Crypto\HaliteCryptoHelper;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Exception\DecryptionFailedException;
+use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\Configuration;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\CookieValue;
 
 /**
@@ -32,26 +32,34 @@ use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\CookieValue;
  */
 class HaliteCryptoHelperTest extends TestCase
 {
+    /**
+     * @var HaliteCryptoHelper
+     */
+    private $helper;
+
+    protected function setUp(): void
+    {
+        $configuration = Mockery::mock(Configuration::class);
+        $configuration->shouldReceive('getEncryptionKey')->andReturn(random_bytes(32));
+        $this->helper = new HaliteCryptoHelper($configuration);
+    }
+
     public function test_encrypt_decrypt_with_authentication()
     {
-        $helper = new HaliteCryptoHelper();
-
         $cookie = $this->createCookieValue();
-        $data = $helper->encrypt($cookie);
-        $cookieDecrypted = $helper->decrypt($data);
+        $data = $this->helper->encrypt($cookie);
+        $cookieDecrypted = $this->helper->decrypt($data);
 
         self::assertEquals($cookie, $cookieDecrypted);
     }
 
     public function test_encrypt_decrypt_with_authentication_decryption_impossible_if_tampered_with()
     {
-        $helper = new HaliteCryptoHelper();
-
         $cookie = $this->createCookieValue();
-        $data = $helper->encrypt($cookie);
+        $data = $this->helper->encrypt($cookie);
         $data = substr($data, 1, strlen($data));
         self::expectException(DecryptionFailedException::class);
-        $helper->decrypt($data);
+        $this->helper->decrypt($data);
     }
 
     private function createCookieValue(): CookieValue

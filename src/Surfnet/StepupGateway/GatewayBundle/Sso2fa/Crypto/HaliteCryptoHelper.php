@@ -20,27 +20,48 @@ namespace Surfnet\StepupGateway\GatewayBundle\Sso2fa\Crypto;
 
 use Exception;
 use ParagonIE\Halite\HiddenString;
-use ParagonIE\Halite\Symmetric\AuthenticationKey;
 use ParagonIE\Halite\Symmetric\Crypto;
 use ParagonIE\Halite\Symmetric\EncryptionKey;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Exception\DecryptionFailedException;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Exception\EncryptionFailedException;
+use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\Configuration;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\CookieValue;
+use function hex2bin;
 
 class HaliteCryptoHelper implements CryptoHelperInterface
 {
-    private $authKey;
+    private $encryptionKey;
 
-    public function __construct()
+    public function __construct(Configuration $configuration)
     {
-        $this->authKey = new AuthenticationKey(new HiddenString(random_bytes(32)));
-        $this->encryptionKey = new EncryptionKey(new HiddenString(random_bytes(32)));
+        // The configured encryption key is used to create a Halite EncryptionKey
+        $this->encryptionKey = new EncryptionKey(new HiddenString($configuration->getEncryptionKey()));
     }
 
+    /**
+     * Halite always uses authenticated encryption.
+     * See: https://github.com/paragonie/halite/blob/v4.x/doc/Classes/Symmetric/Crypto.md#encrypt
+     *
+     * It uses XSalsa20 for encryption and BLAKE2b for message Authentication (MAC)
+     * The keys used for encryption and message authentication are derived from the secret key using a
+     * HKDF using a salt This means that learning either derived key cannot lead to learning the other
+     * derived key, or the secret key input in the HKDF. Encrypting many messages using the same
+     * secret key is not a problem in this design. This makes it a much safer setup than using GCM with
+     * the secret key directly:
+     * - GCM has a relatively short nonce (96 bits)
+     * - An attacker that is in possession of two different GCM messages that were encrypted using
+     *   the same key can not only decrypt the two messages, but can also recover (parts) of the
+     *   encryption key.
+     */
     public function encrypt(CookieValue $cookieValue): string
     {
         try {
-            $encryptedData = Crypto::encrypt(new HiddenString($cookieValue->serialize()), $this->encryptionKey);
+            $plainTextCookieValue = new HiddenString($cookieValue->serialize());
+            // Encryption (we use the default encoding: Halite::ENCODE_BASE64URLSAFE)
+            $encryptedData = Crypto::encrypt(
+                $plainTextCookieValue,
+                $this->encryptionKey
+            );
         } catch (Exception $e) {
             throw new EncryptionFailedException(
                 sprintf('Encrypting the CookieValue for %s failed', $cookieValue->fingerprint()),
@@ -50,10 +71,19 @@ class HaliteCryptoHelper implements CryptoHelperInterface
         return $encryptedData;
     }
 
+    /**
+     * Decrypt the cookie ciphertext back to plain text.
+     * Again using the encryption key, used to encrypt the data.
+     * The decrypt method will return a deserialized CookieValue value object
+     */
     public function decrypt(string $cookieData): CookieValue
     {
         try {
-            $decryptedData = Crypto::decrypt($cookieData, $this->encryptionKey);
+            // Decryption: (we use the default encoding: Halite::DECODE_BASE64URLSAFE)
+            $decryptedData = Crypto::decrypt(
+                $cookieData,
+                $this->encryptionKey
+            );
         } catch (Exception $e) {
             throw new DecryptionFailedException(
                 'Decrypting the CookieValue failed, see embedded error message for details',
