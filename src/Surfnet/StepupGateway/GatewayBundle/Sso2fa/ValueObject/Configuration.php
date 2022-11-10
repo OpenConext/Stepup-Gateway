@@ -18,9 +18,11 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject;
 
+use ParagonIE\ConstantTime\Binary;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Exception\InvalidCookieTypeException;
+use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Exception\InvalidEncryptionKeyException;
 
-final class Configuration
+class Configuration
 {
     /**
      * @var string
@@ -37,7 +39,12 @@ final class Configuration
      */
     private $lifetime;
 
-    public function __construct(string $name, string $type, int $lifetime)
+    /**
+     * @var string
+     */
+    private $encryptionKey;
+
+    public function __construct(string $name, string $type, int $lifetime, string $encryptionKey)
     {
         $this->name = $name;
         $this->type = CookieType::fromConfiguration($type);
@@ -47,6 +54,19 @@ final class Configuration
             );
         }
         $this->lifetime = $lifetime;
+
+        // Convert the key from the configuration from hex to binary. sodium_hex2bin
+        $binaryKey = sodium_hex2bin($encryptionKey);
+        // The key length, converted back to binary must be 32 bytes long
+        if (Binary::safeStrlen($binaryKey) < SODIUM_CRYPTO_STREAM_KEYBYTES) {
+            throw new InvalidEncryptionKeyException(
+                sprintf(
+                    'The configured SSO on 2FA encryption key is not complex enough, should be at least %d bytes.',
+                    SODIUM_CRYPTO_STREAM_KEYBYTES
+                )
+            );
+        }
+        $this->encryptionKey = $binaryKey;
     }
 
     public function getName(): string
@@ -62,5 +82,10 @@ final class Configuration
     public function getLifetime(): int
     {
         return $this->lifetime;
+    }
+
+    public function getEncryptionKey(): string
+    {
+        return $this->encryptionKey;
     }
 }

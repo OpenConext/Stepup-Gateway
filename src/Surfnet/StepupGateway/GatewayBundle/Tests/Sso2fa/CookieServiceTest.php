@@ -25,10 +25,12 @@ use Surfnet\StepupBundle\Value\Loa;
 use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\CookieService;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Crypto\CryptoHelper;
+use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Crypto\HaliteCryptoHelper;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Http\CookieHelper;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\Configuration;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\CookieValue;
 use Symfony\Component\HttpFoundation\Response;
+use function bin2hex;
 
 /**
  * Integration test
@@ -48,14 +50,21 @@ class CookieServiceTest extends TestCase
     protected function buildService(Configuration $configuration): void
     {
         $this->configuration = $configuration;
-        $encryptionHelper = new CryptoHelper();
+        $encryptionHelper = new HaliteCryptoHelper($configuration);
         $cookieHelper = new CookieHelper($this->configuration, $encryptionHelper);
         $this->service = new CookieService($cookieHelper);
     }
 
     public function test_storing_a_session_cookie()
     {
-        $this->buildService(new Configuration('test-cookie', 'session', 0));
+        $this->buildService(
+            new Configuration(
+                'test-cookie',
+                'session',
+                0,
+                '0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f'
+            )
+        );
         $response = new Response('<html><body><h1>hi</h1></body></html>', 200);
         $cookieValue = $this->cookieValue();
         $this->service->store($response, $cookieValue);
@@ -70,7 +79,14 @@ class CookieServiceTest extends TestCase
 
     public function test_storing_a_persistent_cookie()
     {
-        $this->buildService(new Configuration('test-cookie', 'persistent', 3600));
+        $this->buildService(
+            new Configuration(
+                'test-cookie',
+                'persistent',
+                3600,
+                '0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f'
+            )
+        );
         $response = new Response('<html><body><h1>hi</h1></body></html>', 200);
         $cookieValue = $this->cookieValue();
         $this->service->store($response, $cookieValue);
@@ -81,15 +97,6 @@ class CookieServiceTest extends TestCase
         // The name and lifetime of the cookie should match the one we configured it to be
         self::assertEquals($this->configuration->getName(), $cookie->getName());
         self::assertEquals($this->configuration->getLifetime(), $cookie->getExpiresTime());
-    }
-
-    public function test_storing_fails_when_error_arises()
-    {
-        $this->buildService(new Configuration('test-cookie', 'persistent', 1));
-        $response = new Response('<html><body><h1>hi</h1></body></html>', 200);
-        $cookieValue = $this->cookieValue();
-        $this->expectException(Exception::class);
-        $this->service->store($response, $cookieValue);
     }
 
     private function cookieValue(): CookieValue

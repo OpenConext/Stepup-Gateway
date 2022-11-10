@@ -20,7 +20,9 @@ namespace Surfnet\StepupGateway\GatewayBundle\Test\Sso2fa\ValueObject;
 
 
 use PHPUnit\Framework\TestCase;
+use SodiumException;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Exception\InvalidCookieTypeException;
+use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Exception\InvalidEncryptionKeyException;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\Configuration;
 
 class ConfigurationTest extends TestCase
@@ -29,6 +31,20 @@ class ConfigurationTest extends TestCase
     {
         self::expectException(InvalidCookieTypeException::class);
         self::expectExceptionMessage('When using a persistent cookie, you must configure a non zero cookie lifetime');
-        new Configuration('name', 'persistent', 0);
+        new Configuration('name', 'persistent', 0, 'LORUM IPSUM DOLOR SIT AMOR VINCIT OMIA');
+    }
+
+    public function test_encryption_key_must_be_hexadecimal()
+    {
+        self::expectException(SodiumException::class);
+        self::expectExceptionMessage('invalid hex string');
+        new Configuration('name', 'session', 0, 'Monkey nut Mies');
+    }
+
+    public function test_encryption_key_must_be_amply_strong()
+    {
+        self::expectException(InvalidEncryptionKeyException::class);
+        self::expectExceptionMessage('The configured SSO on 2FA encryption key is not complex enough, should be at least 32 bytes.');
+        new Configuration('name', 'session', 0, '0f0f0f');
     }
 }
