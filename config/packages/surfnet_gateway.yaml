@@ -6,6 +6,7 @@ surfnet_stepup_gateway_gateway:
     cookie_type: "%sso_cookie_type%"
     cookie_name: "%sso_cookie_name%"
     cookie_lifetime: "%sso_cookie_lifetime%"
+    encryption_key: "%sso_encryption_key%"
 
 surfnet_stepup_gateway_second_factor_only:
   loa_aliases:
