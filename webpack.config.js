@@ -21,7 +21,7 @@ Encore
             includePaths: ['public'],
         };
     })
-    .addLoader({test: /\.scss$/, loader: 'import-glob-loader'})
+    .addLoader({test: /\.scss$/, loader: 'webpack-import-glob-loader'})
     .addLoader({
         test: /\.tsx?|\.js$/,
         exclude: /node_modules|vendor/,
