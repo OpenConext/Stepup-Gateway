@@ -24,3 +24,5 @@ web/build
 .phpunit
 npm-debug.log
 yarn-error.log
+/app/
+/web/
