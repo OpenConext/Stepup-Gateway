@@ -22,7 +22,16 @@ use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\BeforeFeatureScope;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Behat\Tester\Exception\PendingException;
+use Behat\Mink\Exception\ExpectationException;
+use RuntimeException;
 use Surfnet\StepupGateway\Behat\Service\FixtureService;
+use function array_key_exists;
+use function array_keys;
+use function array_shift;
+use function assertEquals;
+use function assertSameSize;
+use function explode;
+use function in_array;
 
 class FeatureContext implements Context
 {
@@ -43,9 +52,12 @@ class FeatureContext implements Context
      */
     private $currentToken;
 
+    private $sso2faCookieName;
+
     public function __construct(FixtureService $fixtureService)
     {
         $this->fixtureService = $fixtureService;
+        $this->sso2faCookieName = 'stepup-gateway_sso-on-second-factor-authentication';
     }
 
     /**
@@ -55,8 +67,8 @@ class FeatureContext implements Context
     {
         // Generate test databases
         echo "Preparing test schemas\n";
-        shell_exec("/var/www/bin/console doctrine:schema:drop --env=test --force");
-        shell_exec("/var/www/bin/console doctrine:schema:create --env=test");
+        shell_exec("/var/www/bin/console doctrine:schema:drop --env=smoketest --force");
+        shell_exec("/var/www/bin/console doctrine:schema:create --env=smoketest");
     }
 
     /**
@@ -174,6 +186,21 @@ class FeatureContext implements Context
     }
 
     /**
+     * @Given /^an institution "([^"]*)" that allows "([^"]*)"$/
+     */
+    public function anInstitutionThatAllows(string $institution, string $option)
+    {
+        switch(true) {
+            case $option === 'sso_on_2fa':
+                $optionColumnName = 'sso_on2fa_enabled';
+                break;
+            default:
+                throw new RuntimeException(sprintf('Option "%s" is not supported', $option));
+        }
+        $this->fixtureService->configureBoolean($institution, $optionColumnName, true);
+    }
+
+    /**
      * @Then /^I select my ([^"]*) token on the WAYG$/
      */
     public function iShouldSelectMyTokenOnTheWAYG($tokenType)
@@ -221,5 +248,36 @@ class FeatureContext implements Context
     public function iPassThroughTheGateway()
     {
         $this->minkContext->pressButton('Submit');
+    }
+
+    /**
+     * @Given /^the response should have a SSO\-2FA cookie$/
+     */
+    public function theResponseShouldHaveASSO2FACookie()
+    {
+        $responseHeaders = $this->minkContext->getSession()->getResponseHeaders();
+        $cookieNames = $this->getCookieNames($responseHeaders['Set-Cookie']);
+        if (!in_array($this->sso2faCookieName, $cookieNames)) {
+            throw new ExpectationException(
+                sprintf(
+                    'The SSO on 2FA cookie should be in the response headers. Cookie name should be: %s, ' .
+                    'Cookies set: (%s)',
+                    $this->sso2faCookieName,
+                    implode(', ', $cookieNames)
+                ),
+                $this->minkContext->getSession()->getDriver()
+            );
+        }
+        // Assert correct contents? Maybe use the dummy encryption helper to also peek into the cookie contents?
+    }
+
+    private function getCookieNames(array $responseCookieHeaders): array
+    {
+        $response = [];
+        foreach($responseCookieHeaders as $cookie) {
+            $parts = explode('=', $cookie);
+            $response[] = array_shift($parts);
+        }
+        return $response;
     }
 }

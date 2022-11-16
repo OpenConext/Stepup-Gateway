@@ -257,7 +257,7 @@ class ServiceProviderContext implements Context, KernelAwareContext
         );
         $request = Saml2AuthnRequest::createNew($authnRequest);
         $query = $request->buildRequestQuery();
-        $this->getSession()->visit($request->getDestination().'?'.$query);
+        $this->getSession()->visit($authnRequest->getDestination().'?'.$query);
     }
 
     /**
