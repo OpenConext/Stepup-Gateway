@@ -18,8 +18,11 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Sso2fa;
 
+use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Exception\CookieNotFoundException;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Http\CookieHelperInterface;
-use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\CookieValue;
+use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\CookieValueInterface;
+use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\NullCookieValue;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class CookieService implements CookieServiceInterface
@@ -34,8 +37,17 @@ class CookieService implements CookieServiceInterface
         $this->cookieHelper = $cookieHelper;
     }
 
-    public function store(Response $response, CookieValue $cookieValue)
+    public function store(Response $response, CookieValueInterface $cookieValue)
     {
         $this->cookieHelper->write($response, $cookieValue);
+    }
+
+    public function read(Request $request): CookieValueInterface
+    {
+        try {
+            return $this->cookieHelper->read($request);
+        } catch (CookieNotFoundException $e) {
+            return new NullCookieValue();
+        }
     }
 }

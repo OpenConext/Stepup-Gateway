@@ -28,3 +28,8 @@ services:
         class:           Surfnet\StepupGateway\GatewayBundle\Entity\WhitelistEntryRepository
         factory: ['@doctrine', 'getRepository']
         arguments: [Surfnet\StepupGateway\GatewayBundle\Entity\WhitelistEntry]
+
+    gateway.repository.institution_configuration:
+        class: Surfnet\StepupGateway\GatewayBundle\Entity\InstitutionConfigurationRepository
+        factory: ['@doctrine', 'getRepository']
+        arguments: [Surfnet\StepupGateway\GatewayBundle\Entity\InstitutionConfiguration]

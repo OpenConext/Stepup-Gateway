@@ -16,16 +16,11 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupGateway\GatewayBundle\Sso2fa\Http;
+namespace Surfnet\StepupGateway\GatewayBundle\Exception;
 
-use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\CookieValue;
-use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\CookieValueInterface;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-
-interface CookieHelperInterface
+/**
+ * @SuppressWarnings(PHPMD.LongClassName)
+ */
+class InstitutionConfigurationNotFoundException extends LoaCannotBeGivenException
 {
-    public function write(Response $response, CookieValueInterface $value): void;
-
-    public function read(Request $request): CookieValueInterface;
 }
