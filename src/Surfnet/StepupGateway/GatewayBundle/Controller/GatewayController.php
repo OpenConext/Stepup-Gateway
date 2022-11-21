@@ -28,6 +28,10 @@ use Surfnet\StepupGateway\GatewayBundle\Service\Gateway\ConsumeAssertionService;
 use Surfnet\StepupGateway\GatewayBundle\Service\Gateway\FailedResponseService;
 use Surfnet\StepupGateway\GatewayBundle\Service\Gateway\LoginService;
 use Surfnet\StepupGateway\GatewayBundle\Service\Gateway\RespondService;
+use Surfnet\StepupGateway\GatewayBundle\Service\InstitutionConfigurationService;
+use Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorService;
+use Surfnet\StepupGateway\GatewayBundle\Sso2fa\CookieServiceInterface;
+use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\CookieValue;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -77,7 +81,7 @@ class GatewayController extends Controller
                 $this->getResponseContext(self::MODE_SSO)
             );
 
-            return $this->renderSamlResponse('consume_assertion', $response, self::MODE_SSO);
+            return $this->renderSamlResponse('consume_assertion', $response, $httpRequest, self::MODE_SSO);
         }
 
         return $redirectBinding->createResponseFor($proxyRequest);
@@ -112,7 +116,7 @@ class GatewayController extends Controller
         } catch (ResponseFailureException $e) {
             $response = $this->getGatewayFailedResponseService()->createResponseFailureResponse($responseContext);
 
-            return $this->renderSamlResponse('unprocessable_response', $response, self::MODE_SSO);
+            return $this->renderSamlResponse('unprocessable_response', $response, $request, self::MODE_SSO);
         }
 
         // Forward to the selectSecondFactorForVerificationSsoAction, this in turn will forward to the correct
@@ -128,7 +132,7 @@ class GatewayController extends Controller
      * redirect. This method sends a AuthnResponse back to the service
      * provider in response to the AuthnRequest received in ssoAction().
      */
-    public function respondAction()
+    public function respondAction(Request $request)
     {
         $responseContext = $this->getResponseContext(self::MODE_SSO);
         $gatewayLoginService = $this->getGatewayRespondService();
@@ -136,7 +140,7 @@ class GatewayController extends Controller
         $response = $gatewayLoginService->respond($responseContext);
         $gatewayLoginService->resetRespondState($responseContext);
 
-        return $this->renderSamlResponse('consume_assertion', $response, self::MODE_SSO);
+        return $this->renderSamlResponse('consume_assertion', $response, $request, self::MODE_SSO);
     }
 
     /**
@@ -156,7 +160,7 @@ class GatewayController extends Controller
 
         $response = $gatewayLoginService->sendLoaCannotBeGiven($responseContext);
 
-        return $this->renderSamlResponse('consume_assertion', $response, $authenticationMode);
+        return $this->renderSamlResponse('consume_assertion', $response, $request, $authenticationMode);
     }
 
     /**
@@ -180,25 +184,72 @@ class GatewayController extends Controller
 
         $response = $gatewayLoginService->sendAuthenticationCancelledByUser($responseContext);
 
-        return $this->renderSamlResponse('consume_assertion', $response, $authenticationMode);
+        return $this->renderSamlResponse('consume_assertion', $response, $request, $authenticationMode);
     }
 
-    /**
-     * @param string $view
-     * @param SAMLResponse $response
-     * @param $authenticationMode
-     * @return Response
-     */
-    public function renderSamlResponse($view, SAMLResponse $response, $authenticationMode)
-    {
+    public function renderSamlResponse(
+        string $view,
+        SAMLResponse $response,
+        Request $request,
+        string $authenticationMode
+    ): Response {
         $this->supportsAuthenticationMode($authenticationMode);
         $responseContext = $this->getResponseContext($authenticationMode);
 
-        return $this->render($view, [
-            'acu'        => $responseContext->getDestination(),
-            'response'   => $this->getResponseAsXML($response),
+        $httpResponse = $this->render($view, [
+            'acu' => $responseContext->getDestination(),
+            'response' => $this->getResponseAsXML($response),
             'relayState' => $responseContext->getRelayState()
         ]);
+
+        $secondFactorId = $responseContext->getSelectedSecondFactor();
+        $responseContext->unsetSelectedSecondFactor();
+        // Dealing with a second factor authentication?
+        if ($secondFactorId) {
+            /** @var \Psr\Log\LoggerInterface $logger */
+            $logger = $this->get('logger');
+            /** @var SecondFactorService $secondFactorService */
+            $secondFactorService = $this->get('gateway.service.second_factor_service');
+            $secondFactor = $secondFactorService->findByUuid($secondFactorId);
+            if (!$secondFactor) {
+                throw new RuntimeException(sprintf('Second Factor token not found with ID: %s', $secondFactorId));
+            }
+
+            /** @var CookieServiceInterface $ssoCookieService */
+            $ssoCookieService = $this->get('gateway.service.sso_2fa_cookie');
+            /** @var InstitutionConfigurationService $institutionConfigurationService */
+            $institutionConfigurationService = $this->get('gateway.service.institution_configuration');
+            $isEnabled = $institutionConfigurationService->ssoOn2faEnabled($secondFactor->institution);
+            $logger->notice(
+                sprintf(
+                    'SSO on 2FA is %senabled for %s',
+                    $isEnabled ? '': 'not ',
+                    $secondFactor->institution
+                )
+            );
+            if ($isEnabled) {
+                $logger->notice(sprintf('SSO on 2FA is enabled for %s', $secondFactor->institution));
+                $ssoCookie = $ssoCookieService->read($request);
+                $loa = (float) $responseContext->getRequiredLoa();
+                // Did the LoA requirement change? If a higher LoA was requested, update the cookie value accordingly.
+                if ($ssoCookie instanceof CookieValue && !$ssoCookie->meetsRequiredLoa($loa)) {
+                    $logger->notice(
+                        sprintf(
+                            'Storing new SSO on 2FA cookie as LoA requirement (%s changed to %s) changed',
+                            $ssoCookie->getLoa(),
+                            $loa
+                        )
+                    );
+                    $identityId = $responseContext->getIdentityNameId();
+                    $cookie = CookieValue::from($identityId, $secondFactor->secondFactorId, $loa);
+                    /** @var CookieServiceInterface $ssoCookieService */
+                    $ssoCookieService = $this->get('gateway.service.sso_2fa_cookie');
+                    $ssoCookieService->store($httpResponse, $cookie);
+                }
+            }
+        }
+
+        return $httpResponse;
     }
 
     /**

@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Test\Sso2fa\ValueObject;
 
+use Generator;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Surfnet\StepupBundle\Value\Loa;
@@ -32,7 +33,7 @@ class CookieValueTest extends TestCase
         $secondFactor->secondFactorId = 'abcdef-1234';
         $secondFactor->identityId = 'abcdef-1234';
         $loa = new Loa(3.0, 'LoA3');
-        $cookie = CookieValue::from($secondFactor, $loa);
+        $cookie = CookieValue::from($secondFactor->identityId, $secondFactor->secondFactorId, $loa->getLevel());
         $serialized = $cookie->serialize();
         self::assertNotEmpty($serialized);
         self::assertIsString($serialized);
@@ -44,9 +45,31 @@ class CookieValueTest extends TestCase
         $secondFactor->secondFactorId = 'abcdef-1234';
         $secondFactor->identityId = 'abcdef-1234';
         $loa = new Loa(3.0, 'LoA3');
-        $cookie = CookieValue::from($secondFactor, $loa);
+        $cookie = CookieValue::from($secondFactor->identityId, $secondFactor->secondFactorId, $loa->getLevel());
         $serialized = $cookie->serialize();
         $cookieValue = CookieValue::deserialize($serialized);
         self::assertInstanceOf(CookieValue::class, $cookieValue);
+    }
+
+    /**
+     * @dataProvider loaProvider
+     */
+    public function test_loa_can_be_tested_against_required_loa(float $requiredLoa, bool $expectedResult)
+    {
+        $secondFactor = Mockery::mock(SecondFactor::class);
+        $secondFactor->secondFactorId = 'abcdef-1234';
+        $secondFactor->identityId = 'abcdef-1234';
+        $loa = new Loa(2.0, 'LoA3');
+        $cookie = CookieValue::from($secondFactor->identityId, $secondFactor->secondFactorId, $loa->getLevel());
+
+        self::assertEquals($expectedResult, $cookie->meetsRequiredLoa($requiredLoa));
+    }
+
+    public function loaProvider(): Generator
+    {
+        yield [1.0, true];
+        yield [1.5, true];
+        yield [2.0, true];
+        yield [3.0, false];
     }
 }

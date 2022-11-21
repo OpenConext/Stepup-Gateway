@@ -277,6 +277,11 @@ class ResponseContext
         $this->stateHandler->setSecondFactorVerified(true);
     }
 
+    public function unsetSelectedSecondFactor()
+    {
+        $this->stateHandler->setSelectedSecondFactorId(null);
+    }
+
     /**
      * @return bool
      */
@@ -296,7 +301,6 @@ class ResponseContext
      */
     public function responseSent()
     {
-        $this->stateHandler->setSelectedSecondFactorId(null);
         $this->stateHandler->setSecondFactorVerified(false);
     }
 

@@ -197,7 +197,8 @@ final class RespondServiceTest extends GatewaySamlTestCase
             'surfnet/gateway/requestresponse_context_service_id' => 'second_factor_only.response_context',
             'surfnet/gateway/requestname_id' => 'oom60v-3art',
             'surfnet/gateway/requestloa_identifier' => 'http://stepup.example.com/assurance/loa2',
-            'surfnet/gateway/requestselected_second_factor' => null,
+            // This is reset right after setting or not setting the SSO on 2FA cookie.
+            'surfnet/gateway/requestselected_second_factor' => 'mocked-second-factor-id',
             'surfnet/gateway/requestselected_second_factor_verified' => false,
             'surfnet/gateway/requestlocale' => 'nl_NL',
         ], $this->getSessionData('attributes'));
