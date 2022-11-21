@@ -19,10 +19,8 @@
 namespace Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject;
 
 use Surfnet\StepupBundle\DateTime\DateTime;
-use Surfnet\StepupBundle\Value\Loa;
-use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor;
 
-class CookieValue
+class CookieValue implements CookieValueInterface
 {
     private $tokenId;
     private $identityId;
@@ -36,17 +34,17 @@ class CookieValue
      * - The resolved LoA: LoA (resolved using Loa resolution service)
      * - Authentication time (Atom formatted date time string)
      */
-    public static function from(SecondFactor $secondFactor, Loa $loa): self
+    public static function from(string $identityId, string $secondFactorId, float $loa): self
     {
         $cookieValue = new self;
-        $cookieValue->tokenId = $secondFactor->secondFactorId;
-        $cookieValue->identityId = $secondFactor->identityId;
-        $cookieValue->loa = $loa->getLevel();
+        $cookieValue->tokenId = $secondFactorId;
+        $cookieValue->identityId = $identityId;
+        $cookieValue->loa = $loa;
         $cookieValue->authenticationTime = DateTime::now()->format(DATE_ATOM);
         return $cookieValue;
     }
 
-    public static function deserialize(string $serializedData): self
+    public static function deserialize(string $serializedData): CookieValueInterface
     {
         $data = json_decode($serializedData, true);
         $cookieValue = new self;
@@ -66,5 +64,15 @@ class CookieValue
             'loa' => $this->loa,
             'authenticationTime' => $this->authenticationTime,
         ]);
+    }
+
+    public function meetsRequiredLoa(float $requiredLoa): bool
+    {
+        return $this->loa >= $requiredLoa;
+    }
+
+    public function getLoa(): float
+    {
+        return $this->loa;
     }
 }

@@ -16,16 +16,15 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupGateway\GatewayBundle\Sso2fa\Http;
+namespace Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject;
 
-use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\CookieValue;
-use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\CookieValueInterface;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Surfnet\StepupBundle\Value\Loa;
 
-interface CookieHelperInterface
+interface CookieValueInterface
 {
-    public function write(Response $response, CookieValueInterface $value): void;
+    public static function deserialize(string $serializedData): CookieValueInterface;
 
-    public function read(Request $request): CookieValueInterface;
+    public function serialize(): string;
+
+    public function meetsRequiredLoa(float $requiredLoa): bool;
 }

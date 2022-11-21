@@ -18,7 +18,13 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Sso2fa;
 
+use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\CookieValueInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+
 interface CookieServiceInterface
 {
+    public function store(Response $response, CookieValueInterface $cookieValue);
 
+    public function read(Request $request): CookieValueInterface;
 }

@@ -68,6 +68,6 @@ class HaliteCryptoHelperTest extends TestCase
         $secondFactor->secondFactorId = 'abcdef-1234';
         $secondFactor->identityId = 'abcdef-1234';
         $loa = new Loa(3.0, 'LoA3');
-        return CookieValue::from($secondFactor, $loa);
+        return CookieValue::from($secondFactor->identityId, $secondFactor->secondFactorId, $loa->getLevel());
     }
 }
