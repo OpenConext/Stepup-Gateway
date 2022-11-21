@@ -96,7 +96,7 @@ class CookieServiceTest extends TestCase
         $cookie = reset($cookieJar);
         // The name and lifetime of the cookie should match the one we configured it to be
         self::assertEquals($this->configuration->getName(), $cookie->getName());
-        self::assertEquals($this->configuration->getLifetime(), $cookie->getExpiresTime());
+        self::assertEquals(time() + $this->configuration->getLifetime(), $cookie->getExpiresTime());
     }
 
     private function cookieValue(): CookieValue
@@ -105,6 +105,6 @@ class CookieServiceTest extends TestCase
         $secondFactor->secondFactorId = 'abcdef-1234';
         $secondFactor->identityId = 'abcdef-1234';
         $loa = new Loa(3.0, 'LoA3');
-        return CookieValue::from($secondFactor, $loa);
+        return CookieValue::from($secondFactor->identityId, $secondFactor->secondFactorId, $loa->getLevel());
     }
 }
