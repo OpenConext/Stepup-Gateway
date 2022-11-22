@@ -18,9 +18,7 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Test\Sso2fa\ValueObject;
 
-
 use PHPUnit\Framework\TestCase;
-use SodiumException;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Exception\InvalidCookieTypeException;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Exception\InvalidEncryptionKeyException;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\Configuration;
@@ -36,15 +34,15 @@ class ConfigurationTest extends TestCase
 
     public function test_encryption_key_must_be_hexadecimal()
     {
-        self::expectException(SodiumException::class);
-        self::expectExceptionMessage('invalid hex string');
+        self::expectException(InvalidEncryptionKeyException::class);
+        self::expectExceptionMessage('The configured SSO on 2FA encryption key contains illegal characters. It should be a 64 digits long hexadecimal value. Example value: 000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f');
         new Configuration('name', 'session', 0, 'Monkey nut Mies');
     }
 
     public function test_encryption_key_must_be_amply_strong()
     {
         self::expectException(InvalidEncryptionKeyException::class);
-        self::expectExceptionMessage('The configured SSO on 2FA encryption key is not complex enough, should be at least 32 bytes.');
+        self::expectExceptionMessage('The configured SSO on 2FA encryption key must be exactly 32 bytes. This comes down to 64 hex digits value, configured in the sso_encryption_key configuration option');
         new Configuration('name', 'session', 0, '0f0f0f');
     }
 }

@@ -18,9 +18,9 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Test\Sso2fa;
 
-use Exception;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 use Surfnet\StepupBundle\Value\Loa;
 use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\CookieService;
@@ -30,7 +30,6 @@ use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Http\CookieHelper;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\Configuration;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\CookieValue;
 use Symfony\Component\HttpFoundation\Response;
-use function bin2hex;
 
 /**
  * Integration test
@@ -49,9 +48,10 @@ class CookieServiceTest extends TestCase
 
     protected function buildService(Configuration $configuration): void
     {
+        $logger = Mockery::mock(LoggerInterface::class)->shouldIgnoreMissing();
         $this->configuration = $configuration;
         $encryptionHelper = new HaliteCryptoHelper($configuration);
-        $cookieHelper = new CookieHelper($this->configuration, $encryptionHelper);
+        $cookieHelper = new CookieHelper($this->configuration, $encryptionHelper, $logger);
         $this->service = new CookieService($cookieHelper);
     }
 
