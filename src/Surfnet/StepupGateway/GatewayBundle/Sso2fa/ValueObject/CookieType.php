@@ -30,7 +30,7 @@ final class CookieType
 
     private $type;
 
-    public static function fromConfiguration(string $type): self
+    private function __construct(string $type)
     {
         $allowedTypes = [self::TYPE_PERSISTENT, self::TYPE_SESSION];
         if (!in_array($type, $allowedTypes)) {
@@ -41,9 +41,12 @@ final class CookieType
                 )
             );
         }
-        $cookieType = new self;
-        $cookieType->type = $type;
-        return $cookieType;
+        $this->type = $type;
+    }
+
+    public static function fromConfiguration(string $type): self
+    {
+        return new self($type);
     }
 
     public function isPersistent(): bool

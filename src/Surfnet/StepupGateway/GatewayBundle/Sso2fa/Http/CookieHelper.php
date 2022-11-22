@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Sso2fa\Http;
 
+use Psr\Log\LoggerInterface;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Crypto\CryptoHelperInterface;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Exception\CookieNotFoundException;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\Configuration;
@@ -38,16 +39,27 @@ class CookieHelper implements CookieHelperInterface
      */
     private $encryptionHelper;
 
-    public function __construct(Configuration $configuration, CryptoHelperInterface $encryptionHelper)
-    {
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    public function __construct(
+        Configuration $configuration,
+        CryptoHelperInterface $encryptionHelper,
+        LoggerInterface $logger
+    ) {
         $this->configuration = $configuration;
         $this->encryptionHelper = $encryptionHelper;
+        $this->logger = $logger;
     }
 
     public function write(Response $response, CookieValue $value): void
     {
         // The CookieValue is encrypted
         $encryptedCookieValue = $this->encryptionHelper->encrypt($value);
+        $fingerprint = $this->fingerprint($encryptedCookieValue);
+        $this->logger->notice(sprintf('Writing a SSO on 2FA cookie with fingerprint %s', $fingerprint));
         // Create a Symfony HttpFoundation cookie object
         $cookie = $this->createCookieWithValue($encryptedCookieValue);
         // Which is added to the response headers
@@ -63,6 +75,9 @@ class CookieHelper implements CookieHelperInterface
             throw new CookieNotFoundException();
         }
         $cookie = $request->cookies->get($this->configuration->getName());
+        $fingerprint = $this->fingerprint($cookie);
+        $this->logger->notice(sprintf('Reading a SSO on 2FA cookie with fingerprint %s', $fingerprint));
+
         return CookieValue::deserialize($cookie);
     }
 
@@ -79,5 +94,10 @@ class CookieHelper implements CookieHelperInterface
             false,
             Cookie::SAMESITE_STRICT
         );
+    }
+
+    private function fingerprint(string $encryptedCookieValue): string
+    {
+        return hash('sha256', $encryptedCookieValue);
     }
 }

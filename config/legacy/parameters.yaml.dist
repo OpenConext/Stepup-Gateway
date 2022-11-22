@@ -157,9 +157,9 @@ parameters:
 
     # The secret key is used for the authenticated encryption (AE) of the SSO cookies, it is stored in the
     # parameters.yaml of the Stepup-Gateway. This secret may only be used for the AE of the SSO cookies.
-    #   The secret key must be 256 bits (32 bytes)
+    #   The secret key size is fixed, it must be 256 bits (32 bytes (64 hex digits))
     #   We use hex encoding to store the key in the configuration, so the key will be 64 hex digits long
     # Please use this encryption key only for this purpose, do not re-use it for other crypto work.
     #
     # Example value: 000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f
-    sso_encryption_key: 0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f
+    sso_encryption_key: 'set this key'
