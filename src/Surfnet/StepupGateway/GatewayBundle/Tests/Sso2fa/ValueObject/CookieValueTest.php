@@ -22,7 +22,6 @@ use Mockery;
 use PHPUnit\Framework\TestCase;
 use Surfnet\StepupBundle\Value\Loa;
 use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor;
-use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Exception\FingerprintNotValidException;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\CookieValue;
 
 class CookieValueTest extends TestCase
@@ -49,21 +48,5 @@ class CookieValueTest extends TestCase
         $serialized = $cookie->serialize();
         $cookieValue = CookieValue::deserialize($serialized);
         self::assertInstanceOf(CookieValue::class, $cookieValue);
-    }
-
-    public function test_fingerprint_is_verified_on_deserialization()
-    {
-        $secondFactor = Mockery::mock(SecondFactor::class);
-        $secondFactor->secondFactorId = 'abcdef-1234';
-        $secondFactor->identityId = 'abcdef-1234';
-        $loa = new Loa(3.0, 'LoA3');
-        $cookie = CookieValue::from($secondFactor, $loa);
-        $serialized = $cookie->serialize();
-
-        // Man in the middle somehow tampers with the contents of the cookie
-        $serialized = str_replace('"loa":3', '"loa":1', $serialized);
-
-        self::expectException(FingerprintNotValidException::class);
-        CookieValue::deserialize($serialized);
     }
 }

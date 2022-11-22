@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject;
 
+use Exception;
 use ParagonIE\ConstantTime\Binary;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Exception\InvalidCookieTypeException;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Exception\InvalidEncryptionKeyException;
@@ -56,12 +57,23 @@ class Configuration
         $this->lifetime = $lifetime;
 
         // Convert the key from the configuration from hex to binary. sodium_hex2bin
-        $binaryKey = sodium_hex2bin($encryptionKey);
+        try {
+            $binaryKey = sodium_hex2bin($encryptionKey);
+        } catch (Exception $e) {
+            // The key contains non-hexadecimal values. Show a custom error message in logs.
+            throw new InvalidEncryptionKeyException(
+                'The configured SSO on 2FA encryption key contains illegal characters. It should be a 64 digits long ' .
+                'hexadecimal value. Example value: 000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f',
+                0,
+                $e
+            );
+        }
         // The key length, converted back to binary must be 32 bytes long
         if (Binary::safeStrlen($binaryKey) < SODIUM_CRYPTO_STREAM_KEYBYTES) {
             throw new InvalidEncryptionKeyException(
                 sprintf(
-                    'The configured SSO on 2FA encryption key is not complex enough, should be at least %d bytes.',
+                    'The configured SSO on 2FA encryption key must be exactly %d bytes. ' .
+                    'This comes down to 64 hex digits value, configured in the sso_encryption_key configuration option',
                     SODIUM_CRYPTO_STREAM_KEYBYTES
                 )
             );
