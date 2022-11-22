@@ -26,7 +26,6 @@ use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Exception\DecryptionFailedExcepti
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Exception\EncryptionFailedException;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\Configuration;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\CookieValue;
-use function hex2bin;
 
 class HaliteCryptoHelper implements CryptoHelperInterface
 {
@@ -46,12 +45,7 @@ class HaliteCryptoHelper implements CryptoHelperInterface
      * The keys used for encryption and message authentication are derived from the secret key using a
      * HKDF using a salt This means that learning either derived key cannot lead to learning the other
      * derived key, or the secret key input in the HKDF. Encrypting many messages using the same
-     * secret key is not a problem in this design. This makes it a much safer setup than using GCM with
-     * the secret key directly:
-     * - GCM has a relatively short nonce (96 bits)
-     * - An attacker that is in possession of two different GCM messages that were encrypted using
-     *   the same key can not only decrypt the two messages, but can also recover (parts) of the
-     *   encryption key.
+     * secret key is not a problem in this design.
      */
     public function encrypt(CookieValue $cookieValue): string
     {
@@ -64,7 +58,7 @@ class HaliteCryptoHelper implements CryptoHelperInterface
             );
         } catch (Exception $e) {
             throw new EncryptionFailedException(
-                sprintf('Encrypting the CookieValue for %s failed', $cookieValue->fingerprint()),
+                'Encrypting the CookieValue for failed',
                 $e
             );
         }
