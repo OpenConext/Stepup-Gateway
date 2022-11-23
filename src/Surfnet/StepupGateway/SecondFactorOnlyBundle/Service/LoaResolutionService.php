@@ -21,7 +21,7 @@ namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Service;
 use Psr\Log\LoggerInterface;
 use Surfnet\StepupBundle\Service\LoaResolutionService as BaseResolutionService;
 
-final class LoaResolutionService
+class LoaResolutionService
 {
     /**
      * @var LoggerInterface

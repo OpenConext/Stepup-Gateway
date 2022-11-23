@@ -402,7 +402,6 @@ class SecondFactorController extends Controller
                     $selectedSecondFactor
                 )
             );
-            $context->unsetSelectedSecondFactor();
             return $this->forward($context->getResponseAction());
         }
 
@@ -525,7 +524,6 @@ class SecondFactorController extends Controller
                         $selectedSecondFactor
                     )
                 );
-                $context->unsetSelectedSecondFactor();
                 return $this->forward($context->getResponseAction());
             } elseif ($verification->didOtpExpire()) {
                 $logger->notice('SMS challenge expired');

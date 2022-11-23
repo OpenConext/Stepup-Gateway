@@ -16,17 +16,10 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupGateway\GatewayBundle\Sso2fa;
+namespace Surfnet\StepupGateway\GatewayBundle\Sso2fa\Exception;
 
-use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use RuntimeException;
 
-interface CookieServiceInterface
+final class LoaCanNotBeResolvedException extends RuntimeException
 {
-    public function handleSsoOn2faCookieStorage(
-        ResponseContext $responseContext,
-        Request $request,
-        Response $httpResponse
-    ): Response;
 }

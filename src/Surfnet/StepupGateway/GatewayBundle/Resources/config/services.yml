@@ -143,12 +143,18 @@ services:
         arguments:
             - "@gateway.service.sso_2fa_cookie_config"
             - "@gateway.service.sso_2fa_cookie_crypto_helper"
+            - "@logger"
         public: false
 
     gateway.service.sso_2fa_cookie:
         class: Surfnet\StepupGateway\GatewayBundle\Sso2fa\CookieService
         arguments:
             - "@gateway.service.sso_2fa_cookie_helper"
+            - "@gateway.service.institution_configuration"
+            - "@surfnet_stepup.service.loa_resolution"
+            - "@second_factor_only.loa_resolution"
+            - "@logger"
+            - "@gateway.service.second_factor_service"
 
     gateway.service.institution_configuration:
         class: Surfnet\StepupGateway\GatewayBundle\Service\InstitutionConfigurationService

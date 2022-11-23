@@ -28,10 +28,6 @@ use Surfnet\StepupGateway\GatewayBundle\Service\Gateway\ConsumeAssertionService;
 use Surfnet\StepupGateway\GatewayBundle\Service\Gateway\FailedResponseService;
 use Surfnet\StepupGateway\GatewayBundle\Service\Gateway\LoginService;
 use Surfnet\StepupGateway\GatewayBundle\Service\Gateway\RespondService;
-use Surfnet\StepupGateway\GatewayBundle\Service\InstitutionConfigurationService;
-use Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorService;
-use Surfnet\StepupGateway\GatewayBundle\Sso2fa\CookieServiceInterface;
-use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\CookieValue;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\ResponseHelper;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -223,53 +219,8 @@ class GatewayController extends Controller
 
         $httpResponse = $this->render($view, $parameters);
 
-        $secondFactorId = $responseContext->getSelectedSecondFactor();
-        $responseContext->unsetSelectedSecondFactor();
-        // Dealing with a second factor authentication?
-        if ($secondFactorId) {
-            /** @var \Psr\Log\LoggerInterface $logger */
-            $logger = $this->get('logger');
-            /** @var SecondFactorService $secondFactorService */
-            $secondFactorService = $this->get('gateway.service.second_factor_service');
-            $secondFactor = $secondFactorService->findByUuid($secondFactorId);
-            if (!$secondFactor) {
-                throw new RuntimeException(sprintf('Second Factor token not found with ID: %s', $secondFactorId));
-            }
-
-            /** @var CookieServiceInterface $ssoCookieService */
-            $ssoCookieService = $this->get('gateway.service.sso_2fa_cookie');
-            /** @var InstitutionConfigurationService $institutionConfigurationService */
-            $institutionConfigurationService = $this->get('gateway.service.institution_configuration');
-            $isEnabled = $institutionConfigurationService->ssoOn2faEnabled($secondFactor->institution);
-            $logger->notice(
-                sprintf(
-                    'SSO on 2FA is %senabled for %s',
-                    $isEnabled ? '': 'not ',
-                    $secondFactor->institution
-                )
-            );
-            if ($isEnabled) {
-                $logger->notice(sprintf('SSO on 2FA is enabled for %s', $secondFactor->institution));
-                $ssoCookie = $ssoCookieService->read($request);
-                $loa = (float) $responseContext->getRequiredLoa();
-                // Did the LoA requirement change? If a higher LoA was requested, update the cookie value accordingly.
-                if ($ssoCookie instanceof CookieValue && !$ssoCookie->meetsRequiredLoa($loa)) {
-                    $logger->notice(
-                        sprintf(
-                            'Storing new SSO on 2FA cookie as LoA requirement (%s changed to %s) changed',
-                            $ssoCookie->getLoa(),
-                            $loa
-                        )
-                    );
-                    $identityId = $responseContext->getIdentityNameId();
-                    $cookie = CookieValue::from($identityId, $secondFactor->secondFactorId, $loa);
-                    /** @var CookieServiceInterface $ssoCookieService */
-                    $ssoCookieService = $this->get('gateway.service.sso_2fa_cookie');
-                    $ssoCookieService->store($httpResponse, $cookie);
-                }
-            }
-        }
-
+        $ssoCookieService = $this->get('gateway.service.sso_2fa_cookie');
+        $ssoCookieService->handleSsoOn2faCookieStorage($responseContext, $request, $httpResponse);
         return $httpResponse;
     }
 
