@@ -47,6 +47,7 @@ services:
             - "@gateway.proxy.response_builder"
             - "@second_factor_only.adfs.response_helper"
             - "@twig"
+            - "@gateway.service.sso_2fa_cookie"
             - "@logger"
 
     second_factor_only.response_context:

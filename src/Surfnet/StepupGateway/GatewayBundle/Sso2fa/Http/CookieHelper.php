@@ -72,7 +72,7 @@ class CookieHelper implements CookieHelperInterface
      */
     public function read(Request $request): CookieValueInterface
     {
-        if (!$request->cookies->has($this->configuration->getName())) {
+        if (!$request->cookies || !$request->cookies->has($this->configuration->getName())) {
             throw new CookieNotFoundException();
         }
         $cookie = $request->cookies->get($this->configuration->getName());
