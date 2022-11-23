@@ -80,7 +80,7 @@ class SecondFactorOnlyController extends Controller
             /** @var \Surfnet\StepupGateway\GatewayBundle\Service\ResponseRenderingService $responseRendering */
             $responseRendering = $this->get('second_factor_only.response_rendering');
 
-            return $responseRendering->renderRequesterFailureResponse($this->getResponseContext());
+            return $responseRendering->renderRequesterFailureResponse($this->getResponseContext(), $httpRequest);
         }
 
         $logger->notice('Forwarding to second factor controller for loa determination and handling');
@@ -101,7 +101,7 @@ class SecondFactorOnlyController extends Controller
      * @return Response
      * @throws InvalidAdfsResponseException
      */
-    public function respondAction()
+    public function respondAction(Request $request)
     {
         $responseContext = $this->getResponseContext();
         $originalRequestId = $responseContext->getInResponseTo();
@@ -147,7 +147,7 @@ class SecondFactorOnlyController extends Controller
         }
 
         // Handle SAML response
-        return $responseRendering->renderResponse($responseContext, $response);
+        return $responseRendering->renderResponse($responseContext, $response, $request);
     }
 
     /**

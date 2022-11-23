@@ -46,6 +46,7 @@ services:
         arguments:
             - "@gateway.proxy.response_builder"
             - "@twig"
+            - "@gateway.service.sso_2fa_cookie"
 
     second_factor_only.response_context:
         class: Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext
