@@ -18,8 +18,6 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject;
 
-use Surfnet\StepupBundle\Value\Loa;
-
 interface CookieValueInterface
 {
     public static function deserialize(string $serializedData): CookieValueInterface;
