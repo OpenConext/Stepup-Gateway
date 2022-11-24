@@ -155,6 +155,7 @@ services:
             - "@second_factor_only.loa_resolution"
             - "@logger"
             - "@gateway.service.second_factor_service"
+            - "@surfnet_stepup.service.second_factor_type"
 
     gateway.service.institution_configuration:
         class: Surfnet\StepupGateway\GatewayBundle\Service\InstitutionConfigurationService
