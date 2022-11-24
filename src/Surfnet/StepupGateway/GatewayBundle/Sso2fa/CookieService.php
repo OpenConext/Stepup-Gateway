@@ -18,9 +18,12 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Sso2fa;
 
+use Doctrine\Common\Collections\Collection;
 use Psr\Log\LoggerInterface;
 use Surfnet\StepupBundle\Service\LoaResolutionService;
+use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupGateway\GatewayBundle\Controller\GatewayController;
+use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor;
 use Surfnet\StepupGateway\GatewayBundle\Exception\RuntimeException;
 use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
 use Surfnet\StepupGateway\GatewayBundle\Service\InstitutionConfigurationService;
@@ -65,20 +68,26 @@ class CookieService implements CookieServiceInterface
      */
     private $secondFactorService;
 
+    /**
+     * @var SecondFactorTypeService
+     */
+    private $secondFactorTypeService;
+
     public function __construct(
         CookieHelperInterface $cookieHelper,
         InstitutionConfigurationService $institutionConfigurationService,
         LoaResolutionService $gatewayLoaResolutionService,
         SfoLoaResolutionService $sfoLoaResolutionService,
         LoggerInterface $logger,
-        SecondFactorService $secondFactorService
+        SecondFactorService $secondFactorService,
+        SecondFactorTypeService $secondFactorTypeService
     ) {
         $this->cookieHelper = $cookieHelper;
         $this->institutionConfigurationService = $institutionConfigurationService;
         $this->gatewayLoaResolutionService = $gatewayLoaResolutionService;
         $this->sfoLoaResolutionService = $sfoLoaResolutionService;
         $this->secondFactorService = $secondFactorService;
-
+        $this->secondFactorTypeService = $secondFactorTypeService;
         $this->logger = $logger;
     }
 
@@ -118,6 +127,39 @@ class CookieService implements CookieServiceInterface
             }
         }
         return $httpResponse;
+    }
+
+    public function shouldSkip2faAuthentication(
+        ResponseContext $responseContext,
+        float $requiredLoa,
+        Collection $secondFactorCollection,
+        Request $request
+    ): bool {
+        $ssoCookie = $this->read($request);
+        if ($ssoCookie instanceof NullCookieValue) {
+            $this->logger->notice('No SSO on 2FA cookie found');
+            return false;
+        }
+        if ($ssoCookie instanceof CookieValue && !$ssoCookie->meetsRequiredLoa($requiredLoa)) {
+            $this->logger->notice(
+                sprintf(
+                    'The required LoA %d did not match the LoA of the SSO cookie %d',
+                    $requiredLoa,
+                    $ssoCookie->getLoa()
+                )
+            );
+            return false;
+        }
+        /** @var SecondFactor $secondFactor */
+        foreach ($secondFactorCollection as $secondFactor) {
+            $loa = $secondFactor->getLoaLevel($this->secondFactorTypeService);
+            if ($loa >= $requiredLoa) {
+                $this->logger->notice('Verified the current 2FA authentication can be given with the SSO on 2FA cookie');
+                $responseContext->saveSelectedSecondFactor($secondFactor);
+                return true;
+            }
+        }
+        return false;
     }
 
     private function shouldAddCookie(CookieValueInterface $ssoCookie, float $loa)
