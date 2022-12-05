@@ -301,15 +301,14 @@ class ServiceProviderContext implements Context, KernelAwareContext
         return $ip;
     }
 
-    private static function loadPrivateKey(PrivateKey $key)
+
+    /**
+     * @Given /^I log out at the IdP$/
+     */
+    public function iLogOutAtTheIdP()
     {
-        $keyLoader = new PrivateKeyLoader();
-        $privateKey = $keyLoader->loadPrivateKey($key);
-
-        $key = new XMLSecurityKey(XMLSecurityKey::RSA_SHA256, ['type' => 'private']);
-        $key->loadKey($privateKey->getKeyAsString());
-
-        return $key;
+        $this->minkContext->visit(self::SSP_URL);
+        $this->minkContext->pressButton('Logout');
     }
 
     private function getSession()

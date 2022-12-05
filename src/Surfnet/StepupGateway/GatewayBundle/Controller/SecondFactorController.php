@@ -81,8 +81,9 @@ class SecondFactorController extends Controller
             $requestedLoa = $context->getRequiredLoa();
             $spConfiguredLoas = $context->getServiceProvider()->get('configuredLoas');
 
+            $identityNameId = $context->getIdentityNameId();
             $normalizedIdpSho = $context->getNormalizedSchacHomeOrganization();
-            $normalizedUserSho = $this->getStepupService()->getNormalizedUserShoByIdentityNameId($context->getIdentityNameId());
+            $normalizedUserSho = $this->getStepupService()->getNormalizedUserShoByIdentityNameId($identityNameId);
 
             $requiredLoa = $this
                 ->getStepupService()
@@ -124,6 +125,7 @@ class SecondFactorController extends Controller
         if ($ssoCookieService->shouldSkip2faAuthentication(
             $context,
             $requiredLoa->getLevel(),
+            $identityNameId,
             $secondFactorCollection,
             $request
         )) {
