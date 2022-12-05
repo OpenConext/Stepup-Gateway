@@ -278,8 +278,7 @@ class ResponseContext
 
     public function finalizeAuthentication()
     {
-        $this->stateHandler
-            ->setSelectedSecondFactorId(null);
+        $this->stateHandler->setSelectedSecondFactorId(null);
     }
 
     /**
