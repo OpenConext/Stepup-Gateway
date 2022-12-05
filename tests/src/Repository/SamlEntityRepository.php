@@ -11,7 +11,8 @@ use Ramsey\Uuid\Uuid;
  */
 class SamlEntityRepository
 {
-    const SP_ACS_LOCATION = 'https://gateway.stepup.example.com/test/authentication/consume-assertion';
+    const SP_ACS_LOCATION = 'https://ssp.stepup.example.com/module.php/saml/sp/saml2-acs.php/default-sp';
+    const SP_SFO_ACS_LOCATION = 'https://ssp.stepup.example.com/module.php/saml/sp/saml2-acs.php/second-sp';
 
     /**
      * @var Connection
@@ -27,13 +28,13 @@ class SamlEntityRepository
     {
         // Does the SP exist?
         $stmt = $this->connection->prepare('SELECT * FROM saml_entity WHERE entity_id=:entityId LIMIT 1');
-        $stmt->bindParam('entityId', $entityId, PDO::PARAM_STR);
+        $stmt->bindParam('entityId', $entityId);
         $stmt->execute();
         if ($stmt->rowCount() === 0) {
             // If not, create it
             $uuid = Uuid::uuid4()->toString();
             $type = 'sp';
-            $configuration['acs'] = [self::SP_ACS_LOCATION];
+            $configuration['acs'] = [!$sfoEnabled ? self::SP_ACS_LOCATION: self::SP_SFO_ACS_LOCATION];
             $configuration['public_key'] = $certificate;
             $configuration['loa'] = ['__default__' => 'http://stepup.example.com/assurance/loa1'];
             $configuration['second_factor_only'] = $sfoEnabled;
