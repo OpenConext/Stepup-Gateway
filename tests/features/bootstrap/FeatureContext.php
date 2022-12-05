@@ -121,6 +121,9 @@ class FeatureContext implements Context
      */
     public function iShouldSeeTheSMSScreen()
     {
+        $this->minkContext->assertPageContainsText('Log in with SMS');
+        $this->minkContext->assertPageContainsText('Enter the received code on the next page');
+        $this->minkContext->pressButton('gateway_send_sms_challenge_send_challenge');
         $this->minkContext->assertPageContainsText('Enter the received SMS-code');
         $this->minkContext->assertPageContainsText('Send again');
     }
@@ -151,7 +154,6 @@ class FeatureContext implements Context
     {
         $this->minkContext->fillField('gateway_verify_sms_challenge_challenge', '432543');
         $this->minkContext->pressButton('gateway_verify_sms_challenge_verify_challenge');
-        $this->minkContext->printLastResponse(); die;
         $this->minkContext->pressButton('Submit');
     }
 
@@ -265,6 +267,15 @@ class FeatureContext implements Context
                 $this->minkContext->getSession()->getDriver()
             );
         }
+    }
+
+    /**
+     * @Given /^the user cleared cookies from browser$/
+     */
+    public function userClearedCookide()
+    {
+        $this->minkContext->visit('https://gateway.stepup.example.com/info');
+        $this->minkContext->getSession()->setCookie($this->sso2faCookieName, null);
     }
 
     /**
