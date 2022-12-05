@@ -38,7 +38,6 @@ use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Crypto\HaliteCryptoHelper;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Http\CookieHelper;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\Configuration;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\CookieValue;
-use Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\AllowedServiceProviders;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\LoaResolutionService as SfoLoaResolutionService;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
@@ -87,7 +86,6 @@ class CookieServiceTest extends TestCase
      */
     private $encryptionHelper;
 
-
     protected function buildService(Configuration $configuration): void
     {
         // Not all dependencies are included for real, the ones not focussed on crypto and cookie storage are mocked
@@ -99,7 +97,6 @@ class CookieServiceTest extends TestCase
         $this->secondFactorTypeService = Mockery::mock(SecondFactorTypeService::class);
         $this->configuration = $configuration;
         $this->encryptionHelper = new HaliteCryptoHelper($configuration);
-
         $cookieHelper = new CookieHelper($this->configuration, $this->encryptionHelper, $logger);
         $this->service = new CookieService(
             $cookieHelper,

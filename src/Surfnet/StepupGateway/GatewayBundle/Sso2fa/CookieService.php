@@ -110,6 +110,7 @@ class CookieService implements CookieServiceInterface
             return $httpResponse;
         }
         $secondFactorId = $responseContext->getSelectedSecondFactor();
+
         // We can only set an SSO on 2FA cookie if a second factor authentication is being handled.
         if ($secondFactorId) {
             $secondFactor = $this->secondFactorService->findByUuid($secondFactorId);
