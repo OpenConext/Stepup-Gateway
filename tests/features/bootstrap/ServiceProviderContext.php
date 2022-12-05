@@ -21,19 +21,13 @@ namespace Surfnet\StepupGateway\Behat;
 use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Symfony2Extension\Context\KernelAwareContext;
-use RobRichards\XMLSecLibs\XMLSecurityKey;
 use RuntimeException;
-use SAML2\AuthnRequest;
 use SAML2\Certificate\Key;
 use SAML2\Certificate\KeyLoader;
-use SAML2\Certificate\PrivateKeyLoader;
-use SAML2\Configuration\PrivateKey;
 use SAML2\Constants;
 use SAML2\XML\saml\Issuer;
 use SAML2\XML\saml\NameID;
 use Surfnet\SamlBundle\Entity\IdentityProvider;
-use Surfnet\SamlBundle\SAML2\AuthnRequest as Saml2AuthnRequest;
-use Surfnet\StepupGateway\Behat\Repository\SamlEntityRepository;
 use Surfnet\StepupGateway\Behat\Service\FixtureService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -167,7 +161,7 @@ class ServiceProviderContext implements Context, KernelAwareContext
     /**
      * @When /^([^\']*) starts an SFO authentication with LoA ([^\']*)$/
      */
-    public function iStartAnSFOAuthenticationWithLoa($nameId, string $loa)
+    public function iStartAnSFOAuthenticationWithLoa($nameId, string $loa, bool $forceAuthN = false)
     {
         $authnRequest = new AuthnRequest();
         // In order to later assert if the response succeeded or failed, set our own dummy ACS location
@@ -203,6 +197,13 @@ class ServiceProviderContext implements Context, KernelAwareContext
     public function iStartAnSFOAuthenticationWithLoaRequirement($nameId, $loa)
     {
         $this->iStartAnSFOAuthenticationWithLoa($nameId, $loa);
+    }
+    /**
+     * @When /^([^\']*) starts a forced SFO authentication requiring LoA ([^\']*)$/
+     */
+    public function iStartAForcedSFOAuthenticationWithLoaRequirement($nameId, $loa)
+    {
+        $this->iStartAnSFOAuthenticationWithLoa($nameId, $loa, true);
     }
 
     /**

@@ -359,7 +359,7 @@ class SecondFactorController extends Controller
             'Marked GSSF "%s" as verified, forwarding to Gateway controller to respond',
             $selectedSecondFactor
         ));
-        $context->unsetSelectedSecondFactor();
+        $context->finalizeAuthentication();
         return $this->forward($context->getResponseAction());
     }
 

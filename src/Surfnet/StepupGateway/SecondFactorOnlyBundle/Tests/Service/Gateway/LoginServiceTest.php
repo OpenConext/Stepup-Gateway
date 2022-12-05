@@ -140,6 +140,7 @@ final class LoginServiceTest extends GatewaySamlTestCase
             'surfnet/gateway/requestservice_provider' => 'https://gateway.tld/gssp/tiqr/metadata',
             'surfnet/gateway/requestassertion_consumer_service_url' => 'https://gateway.tld/gssp/tiqr/consume-assertion',
             'surfnet/gateway/requestrelay_state' => '',
+            'surfnet/gateway/requestforce_authn' => false,
             'surfnet/gateway/requestresponse_controller' => 'SurfnetStepupGatewaySecondFactorOnlyBundle:SecondFactorOnly:respond',
             'surfnet/gateway/requestresponse_context_service_id' => 'second_factor_only.response_context',
             'surfnet/gateway/auth_mode/_7179b234fc69f75724c83cab795fc87475d2f6d88e97e43368c3966e398c' => 'sfo',
