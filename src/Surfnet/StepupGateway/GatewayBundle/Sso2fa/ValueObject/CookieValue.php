@@ -19,6 +19,7 @@
 namespace Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject;
 
 use Surfnet\StepupBundle\DateTime\DateTime;
+use function strtolower;
 
 class CookieValue implements CookieValueInterface
 {
@@ -74,5 +75,15 @@ class CookieValue implements CookieValueInterface
     public function getLoa(): float
     {
         return $this->loa;
+    }
+
+    public function getIdentityId(): string
+    {
+        return $this->identityId;
+    }
+
+    public function issuedTo(string $identityNameId): bool
+    {
+        return strtolower($identityNameId) === strtolower($this->identityId);
     }
 }

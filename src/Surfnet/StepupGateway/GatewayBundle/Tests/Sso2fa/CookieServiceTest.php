@@ -304,6 +304,7 @@ class CookieServiceTest extends TestCase
             $this->service->shouldSkip2faAuthentication(
                 $this->responseContext,
                 3.0,
+                'abcdef-1234',
                 $collection,
                 $httpRequest
             )
@@ -344,6 +345,7 @@ class CookieServiceTest extends TestCase
             $this->service->shouldSkip2faAuthentication(
                 $this->responseContext,
                 3.0,
+                'abcdef-1234',
                 $collection,
                 $httpRequest
             )
@@ -366,6 +368,7 @@ class CookieServiceTest extends TestCase
             $this->service->shouldSkip2faAuthentication(
                 $this->responseContext,
                 3.0,
+                'abcdef-1234',
                 Mockery::mock(ArrayCollection::class),
                 $httpRequest
             )
@@ -391,6 +394,33 @@ class CookieServiceTest extends TestCase
             $this->service->shouldSkip2faAuthentication(
                 $this->responseContext,
                 4.0, // LoA required by SP is 4.0, the one in the cookie is 3.0
+                'abcdef-1234',
+                Mockery::mock(ArrayCollection::class),
+                $httpRequest
+            )
+        );
+    }
+
+    public function test_skipping_authentication_fails_when_identity_id_doesnt_match()
+    {
+        $this->buildService(
+            new Configuration(
+                'test-cookie',
+                'session',
+                0,
+                '0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f'
+            )
+        );
+        $httpRequest = new Request();
+        $cookieValue = $this->cookieValue();
+        $httpRequest->cookies->add(
+            [$this->configuration->getName() => $this->createCookieWithValue($this->encryptionHelper->encrypt($cookieValue))->getValue()]
+        );
+        self::assertFalse(
+            $this->service->shouldSkip2faAuthentication(
+                $this->responseContext,
+                2.0,
+                'Jane Doe', // Not issued to Jane Doe but to abcdef-1234
                 Mockery::mock(ArrayCollection::class),
                 $httpRequest
             )
@@ -431,6 +461,7 @@ class CookieServiceTest extends TestCase
             $this->service->shouldSkip2faAuthentication(
                 $this->responseContext,
                 4.0, // LoA 4 is required, Identity only has LoA 2 and 3 tokens, no bueno
+                'abcdef-1234',
                 $collection,
                 $httpRequest
             )
