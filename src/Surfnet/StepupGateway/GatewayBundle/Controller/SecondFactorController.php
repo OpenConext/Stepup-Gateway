@@ -105,7 +105,6 @@ class SecondFactorController extends Controller
 
         if ($this->getStepupService()->isIntrinsicLoa($requiredLoa)) {
             $this->get('gateway.authentication_logger')->logIntrinsicLoaAuthentication($originalRequestId);
-            $context->unsetSelectedSecondFactor();
             return $this->forward($context->getResponseAction());
         }
 

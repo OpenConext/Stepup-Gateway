@@ -38,13 +38,13 @@ parameters:
     sms_otp_expiry_interval: 900
     sms_maximum_otp_requests: 3
     saml_sp_publickey: "/var/www/app/files/sp.crt"
-    saml_sp_privatekey: "/var/www/app/files/sp.pem"
+    saml_sp_privatekey: "/var/www/app/files/sp.key"
     saml_idp_publickey: "/var/www/app/files/idp.crt"
     saml_idp_privatekey: "/var/www/app/files/idp.key"
     saml_metadata_publickey: "/var/www/app/files/idp.crt"
     saml_metadata_privatekey: "/var/www/app/files/idp.key"
-    saml_remote_idp_entity_id: 'https://gateway.stepup.example.com/idp/metadata'
-    saml_remote_idp_sso_url: 'https://gateway.stepup.example.com/test/authentication/idp/sso'
+    saml_remote_idp_entity_id: https://ssp.stepup.example.com/saml2/idp/metadata.php
+    saml_remote_idp_sso_url: https://ssp.stepup.example.com/saml2/idp/SSOService.php
     saml_remote_idp_certificate: MIIC5DCCAcwCCQCcDbxN/IogUjANBgkqhkiG9w0BAQsFADA0MRkwFwYDVQQDDBBHYXRld2F5IFNBTUwgSWRQMRcwFQYDVQQKDA5EZXZlbG9wbWVudCBWTTAeFw0xODA3MzAxMjMwNDdaFw0yMzA3MjkxMjMwNDdaMDQxGTAXBgNVBAMMEEdhdGV3YXkgU0FNTCBJZFAxFzAVBgNVBAoMDkRldmVsb3BtZW50IFZNMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwrWJ6dKVau2rWfiMQ5EWuPxHabSskcQsXbwS/y35e8rFolNTZZ7zvHYF/0kJqhd31JTgtC92Yoflgpn3PNyjje1PKTe6+OA1/O+jN4eiKr1/GUVoVCdSAgEuioGGxRRCD0ykzT0cbpi4MEgNm1t4LCxPhyGdqp7/KhbpupKhpFpHT9CdL7+vH5y0r+FZZWxwoNTJNSY96UAt94F6bBC+pcgBYKaAtKvAN9wo7Cq9QkmESdIrWcthXJ4ThO1HrKpShTdfC/jfV5DEuvJgS3c7bYdWBKC+p/m8hJOrAz3DAhrg0Bxvv9PkkiXNwclVFVtZ6IcOSx5oP3SqancOD1vTDwIDAQABMA0GCSqGSIb3DQEBCwUAA4IBAQCwn7Dj0ZK3B0xeQisCmFKYPXk5FZLeNF3TcmVz2TGx3seOMzBA89+aOr5uRWEP48+5XUjlXEhG188Vier+eWaoFqRlOnVIXwbMnZCIS6ekMHz/Dx1OLijxDUkzbn2HlsWTl4MoHovTEUgjZqp/tTCwWBfrRf5A2yHpEdCx57VqmBdHgeYSoeeXv5ADDMPDaLkiKBymXZMbwBPQ22zynPGZheMVQn5FnEw/l2Qe/RN61Bf9LAIxyVnqIiO9D0Gbvxo3w8nBiQAycqtXRWWRjoShDNaCA+vi4YdwHzIGqrQY9HHj+fj/ylDY7TQAPOZB3oOR1Ulf8IHmyhJbI8y3VWQB
     gateway_loa_loa1: 'http://stepup.example.com/assurance/level1'
     gateway_loa_loa2: 'http://stepup.example.com/assurance/level2'
@@ -63,7 +63,7 @@ parameters:
             loa: 3
         tiqr:
             loa: 3
-    sso_cookie_lifetime: 28800
-    sso_cookie_type: 'persistent'
+    sso_cookie_lifetime: 0
+    sso_cookie_type: 'session'
     sso_cookie_name: 'stepup-gateway_sso-on-second-factor-authentication'
     sso_encryption_key: 0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f

@@ -57,3 +57,20 @@ services:
     tags: ['controller.service_arguments']
     arguments:
       - '@twig'
+
+  ##### SSO on 2FA overrides #####
+  # For end to end testing, we do not actually encrypt & decrypt the cookie value.
+  # Allowing for more easily checking the cookie for correct contents without having
+  # to decrypt a cookie while checking it in the guzzle response.
+
+  gateway.service.sso_2fa_cookie_crypto_helper_dummy:
+    class: Surfnet\StepupGateway\GatewayBundle\Sso2fa\Crypto\DummyCryptoHelper
+
+  gateway.service.sso_2fa_cookie_helper:
+    class: Surfnet\StepupGateway\GatewayBundle\Sso2fa\Http\CookieHelper
+    arguments:
+      - "@gateway.service.sso_2fa_cookie_config"
+      # The dummy crypto helper does not actually encrypt the data so we can peek into it in test assertions
+      - "@gateway.service.sso_2fa_cookie_crypto_helper_dummy"
+      - "@logger"
+    public: false

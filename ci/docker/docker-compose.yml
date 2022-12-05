@@ -16,6 +16,17 @@ services:
         depends_on:
             - php-fpm.stepup.example.com
 
+    ssp.stepup.example.com:
+        image: ghcr.io/openconext/openconext-containers/openconext-ssp-debug-sp:latest
+        volumes:
+            - ../certificates/sp.crt:/app/cert/sp.crt
+            - ../certificates/sp.key:/app/cert/sp.key
+            - ../certificates/idp.crt:/app/cert/idp.crt
+            - ../certificates/idp.key:/app/cert/idp.key
+            - ../certificates/ssp.crt:/app/cert/ssp.crt
+            - ../certificates/ssp.key:/app/cert/ssp.key
+        container_name: gateway-ssp
+
     db.stepup.example.com:
         image: mariadb:10.2
         restart: always
