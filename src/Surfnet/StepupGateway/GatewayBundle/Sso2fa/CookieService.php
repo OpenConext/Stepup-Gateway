@@ -19,6 +19,7 @@
 namespace Surfnet\StepupGateway\GatewayBundle\Sso2fa;
 
 use Doctrine\Common\Collections\Collection;
+use http\Cookie;
 use Psr\Log\LoggerInterface;
 use Surfnet\StepupBundle\Service\LoaResolutionService;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
@@ -132,6 +133,7 @@ class CookieService implements CookieServiceInterface
     public function shouldSkip2faAuthentication(
         ResponseContext $responseContext,
         float $requiredLoa,
+        string $identityNameId,
         Collection $secondFactorCollection,
         Request $request
     ): bool {
@@ -146,6 +148,16 @@ class CookieService implements CookieServiceInterface
                     'The required LoA %d did not match the LoA of the SSO cookie %d',
                     $requiredLoa,
                     $ssoCookie->getLoa()
+                )
+            );
+            return false;
+        }
+        if ($ssoCookie instanceof CookieValue && !$ssoCookie->issuedTo($identityNameId)) {
+            $this->logger->notice(
+                sprintf(
+                    'The SSO on 2FA cookie was not issued to %s, but to %s',
+                    $identityNameId,
+                    $ssoCookie->getIdentityId()
                 )
             );
             return false;
