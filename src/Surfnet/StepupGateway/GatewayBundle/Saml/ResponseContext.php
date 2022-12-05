@@ -334,7 +334,7 @@ class ResponseContext
         throw new RuntimeException('Unable to resolve an identifier from internalCollabPersonId or the Subject NameId');
     }
 
-    public function isForceAuthn()
+    public function isForceAuthn(): bool
     {
         return $this->stateHandler->isForceAuthn();
     }
