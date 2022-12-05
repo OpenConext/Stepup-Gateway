@@ -22,8 +22,18 @@ Encore
         };
     })
     .addLoader({test: /\.scss$/, loader: 'webpack-import-glob-loader'})
-    .configureLoaderRule('eslint', loaderRule => {
-        loaderRule.test = /\.(jsx?|vue)$/
+    .addLoader({
+        test: /\.tsx?|\.js$/,
+        exclude: /node_modules|vendor/,
+        use: [{
+            loader: 'eslint-loader',
+            options: {
+                configFile: 'eslint.json',
+                emitErrors: true,
+                failOnHint: Encore.isProduction(),
+                typeCheck: true
+            }
+        }]
     })
     .enableSingleRuntimeChunk()
     .enableSourceMaps(!Encore.isProduction())
