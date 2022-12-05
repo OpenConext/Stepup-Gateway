@@ -309,6 +309,18 @@ class ProxyStateHandler
         return $this;
     }
 
+
+    public function setIsForceAuthn(bool $forceAuthn): self
+    {
+        $this->set('force_authn', $forceAuthn);
+        return $this;
+    }
+
+
+    public function isForceAuthn(): bool
+    {
+        return $this->get('force_authn') === true;
+    }
     /**
      * @return string|null
      */
