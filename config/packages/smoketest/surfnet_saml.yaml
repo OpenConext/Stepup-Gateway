@@ -4,7 +4,7 @@ surfnet_saml:
       enabled: true
       assertion_consumer_route: gateway_serviceprovider_consume_assertion
       public_key: /var/www/ci/certificates/sp.crt
-      private_key: /var/www/ci/certificates/sp.pem
+      private_key: /var/www/ci/certificates/sp.key
     identity_provider:
       enabled: true
       service_provider_repository: gateway.entity_service
@@ -15,7 +15,7 @@ surfnet_saml:
     metadata:
       entity_id_route: gateway_saml_metadata
       public_key: /var/www/ci/certificates/sp.crt
-      private_key: /var/www/ci/certificates/sp.pem
+      private_key: /var/www/ci/certificates/sp.key
   remote:
     identity_provider:
       certificate: MIIC5DCCAcwCCQCcDbxN/IogUjANBgkqhkiG9w0BAQsFADA0MRkwFwYDVQQDDBBHYXRld2F5IFNBTUwgSWRQMRcwFQYDVQQKDA5EZXZlbG9wbWVudCBWTTAeFw0xODA3MzAxMjMwNDdaFw0yMzA3MjkxMjMwNDdaMDQxGTAXBgNVBAMMEEdhdGV3YXkgU0FNTCBJZFAxFzAVBgNVBAoMDkRldmVsb3BtZW50IFZNMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwrWJ6dKVau2rWfiMQ5EWuPxHabSskcQsXbwS/y35e8rFolNTZZ7zvHYF/0kJqhd31JTgtC92Yoflgpn3PNyjje1PKTe6+OA1/O+jN4eiKr1/GUVoVCdSAgEuioGGxRRCD0ykzT0cbpi4MEgNm1t4LCxPhyGdqp7/KhbpupKhpFpHT9CdL7+vH5y0r+FZZWxwoNTJNSY96UAt94F6bBC+pcgBYKaAtKvAN9wo7Cq9QkmESdIrWcthXJ4ThO1HrKpShTdfC/jfV5DEuvJgS3c7bYdWBKC+p/m8hJOrAz3DAhrg0Bxvv9PkkiXNwclVFVtZ6IcOSx5oP3SqancOD1vTDwIDAQABMA0GCSqGSIb3DQEBCwUAA4IBAQCwn7Dj0ZK3B0xeQisCmFKYPXk5FZLeNF3TcmVz2TGx3seOMzBA89+aOr5uRWEP48+5XUjlXEhG188Vier+eWaoFqRlOnVIXwbMnZCIS6ekMHz/Dx1OLijxDUkzbn2HlsWTl4MoHovTEUgjZqp/tTCwWBfrRf5A2yHpEdCx57VqmBdHgeYSoeeXv5ADDMPDaLkiKBymXZMbwBPQ22zynPGZheMVQn5FnEw/l2Qe/RN61Bf9LAIxyVnqIiO9D0Gbvxo3w8nBiQAycqtXRWWRjoShDNaCA+vi4YdwHzIGqrQY9HHj+fj/ylDY7TQAPOZB3oOR1Ulf8IHmyhJbI8y3VWQB

@@ -21,7 +21,6 @@ namespace Surfnet\StepupGateway\Behat;
 use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Symfony2Extension\Context\KernelAwareContext;
-use PhpParser\Node\Name;
 use RobRichards\XMLSecLibs\XMLSecurityKey;
 use RuntimeException;
 use SAML2\AuthnRequest;
@@ -43,8 +42,13 @@ use function http_build_query;
 
 class ServiceProviderContext implements Context, KernelAwareContext
 {
+    const SSP_URL = 'https://ssp.stepup.example.com/sp.php';
+    const SSO_ENDPOINT_URL = 'https://ssp.stepup.example.com/sp.php';
     const SFO_ENDPOINT_URL = 'https://gateway.stepup.example.com/second-factor-only/single-sign-on';
-    const SSO_ENDPOINT_URL = 'https://gateway.stepup.example.com/authentication/single-sign-on';
+    const SSO_SP_ENTITY_ID = 'default-sp';
+    const SFO_IDP_ENTITY_ID = 'https://gateway.stepup.example.com/second-factor-only/metadata';
+    const SSO_IDP_ENTITY_ID = 'https://gateway.stepup.example.com/authentication/metadata';
+    const SFO_SP_ENTITY_ID = 'second-sp';
 
     /**
      * @var array
@@ -155,29 +159,9 @@ class ServiceProviderContext implements Context, KernelAwareContext
     /**
      * @When /^([^\']*) starts an SFO authentication$/
      */
-    public function iStartAnSFOAuthentication($nameId)
+    public function iStartAnSFOAuthentication($nameId, string $loa)
     {
-        $authnRequest = new AuthnRequest();
-        // In order to later assert if the response succeeded or failed, set our own dummy ACS location
-        $authnRequest->setAssertionConsumerServiceURL(SamlEntityRepository::SP_ACS_LOCATION);
-        $issuerVo = new Issuer();
-        $issuerVo->setValue($this->currentSfoSp['entityId']);
-        $authnRequest->setIssuer($issuerVo);
-        $authnRequest->setDestination(self::SFO_ENDPOINT_URL);
-        $authnRequest->setProtocolBinding(Constants::BINDING_HTTP_REDIRECT);
-        $authnRequest->setNameId($this->buildNameId($nameId));
-        // Sign with random key, does not mather for now.
-        // todo: use from services_test.yml
-        $authnRequest->setSignatureKey(
-            $this->loadPrivateKey(new PrivateKey('/var/www/ci/certificates/sp.pem', 'default'))
-        );
-        $authnRequest->setRequestedAuthnContext(
-            ['AuthnContextClassRef' => ['http://stepup.example.com/assurance/loa-self-asserted']]
-        );
-        $request = Saml2AuthnRequest::createNew($authnRequest);
-        $query = $request->buildRequestQuery();
-
-        $this->getSession()->visit($request->getDestination().'?'.$query);
+        $this->iStartAnSFOAuthenticationWithLoa($nameId, '2');
     }
 
     /**
@@ -202,46 +186,23 @@ class ServiceProviderContext implements Context, KernelAwareContext
             case "1":
             case "2":
             case "3":
+                $this->getSession()->getPage()->selectFieldOption('loa', $loa);
+            break;
             case "self-asserted":
-                $authnRequest->setRequestedAuthnContext(
-                    ['AuthnContextClassRef' => ['http://stepup.example.com/assurance/loa-' . $loa]]
-                );
+                $this->getSession()->getPage()->selectFieldOption('loa', "1.5");
                 break;
             default:
                 throw new RuntimeException(sprintf('The specified LoA-%s is not supported', $loa));
         }
-        $request = Saml2AuthnRequest::createNew($authnRequest);
-        $query = $request->buildRequestQuery();
-
-        $this->getSession()->visit($request->getDestination().'?'.$query);
+        $this->getSession()->getPage()->pressButton('Login');
     }
 
     /**
-     * @When /^([^\']*) starts an SFO authentication requiring ([^\']*)$/
+     * @When /^([^\']*) starts an SFO authentication requiring LoA ([^\']*)$/
      */
     public function iStartAnSFOAuthenticationWithLoaRequirement($nameId, $loa)
     {
-        $authnRequest = new AuthnRequest();
-        // In order to later assert if the response succeeded or failed, set our own dummy ACS location
-        $authnRequest->setAssertionConsumerServiceURL(SamlEntityRepository::SP_ACS_LOCATION);
-        $issuerVo = new Issuer();
-        $issuerVo->setValue($this->currentSfoSp['entityId']);
-        $authnRequest->setIssuer($issuerVo);
-        $authnRequest->setDestination(self::SFO_ENDPOINT_URL);
-        $authnRequest->setProtocolBinding(Constants::BINDING_HTTP_REDIRECT);
-        $authnRequest->setNameId($this->buildNameId($nameId));
-        // Sign with random key, does not mather for now.
-        // todo: use from services_test.yml
-        $authnRequest->setSignatureKey(
-            $this->loadPrivateKey(new PrivateKey('/var/www/ci/certificates/sp.pem', 'default'))
-        );
-        $authnRequest->setRequestedAuthnContext(
-            ['AuthnContextClassRef' => [$loa]]
-        );
-        $request = Saml2AuthnRequest::createNew($authnRequest);
-        $query = $request->buildRequestQuery();
-
-        $this->getSession()->visit($request->getDestination().'?'.$query);
+        $this->iStartAnSFOAuthenticationWithLoa($nameId, $loa);
     }
 
     /**
@@ -286,7 +247,7 @@ class ServiceProviderContext implements Context, KernelAwareContext
     }
 
     /**
-     * @When /^([^\']*) starts an authentication requiring ([^\']*)$/
+     * @When /^([^\']*) starts an authentication requiring LoA ([^\']*)$/
      */
     public function iStartAnSsoAuthenticationWithLoaRequirement($nameId, $loa)
     {
@@ -317,9 +278,10 @@ class ServiceProviderContext implements Context, KernelAwareContext
      */
     public function iAuthenticateAtTheIdp($username)
     {
-        $this->minkContext->fillField('form_username', $username);
+        $this->minkContext->fillField('username', $username);
+        $this->minkContext->fillField('password', $username);
         // Submit the form
-        $this->minkContext->pressButton('Submit');
+        $this->minkContext->pressButton('Login');
         // Submit the SAML Response
         $this->minkContext->pressButton('Submit');
     }
