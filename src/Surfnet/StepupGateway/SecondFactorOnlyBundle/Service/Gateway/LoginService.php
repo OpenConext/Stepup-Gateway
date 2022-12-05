@@ -121,6 +121,7 @@ class LoginService
             ->setRequestServiceProvider($originalRequest->getServiceProvider())
             ->setRequestAssertionConsumerServiceUrl($originalRequest->getAssertionConsumerServiceURL())
             ->setRelayState($httpRequest->get(AuthnRequest::PARAMETER_RELAY_STATE, ''))
+            ->setIsForceAuthn($originalRequest->isForceAuthn())
             ->setResponseAction('SurfnetStepupGatewaySecondFactorOnlyBundle:SecondFactorOnly:respond')
             ->setResponseContextServiceId('second_factor_only.response_context');
 

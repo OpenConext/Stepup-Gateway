@@ -21,18 +21,12 @@ namespace Surfnet\StepupGateway\Behat;
 use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Symfony2Extension\Context\KernelAwareContext;
-use RobRichards\XMLSecLibs\XMLSecurityKey;
 use RuntimeException;
-use SAML2\AuthnRequest;
 use SAML2\Certificate\Key;
 use SAML2\Certificate\KeyLoader;
-use SAML2\Certificate\PrivateKeyLoader;
-use SAML2\Configuration\PrivateKey;
 use SAML2\Constants;
 use SAML2\XML\saml\NameID;
 use Surfnet\SamlBundle\Entity\IdentityProvider;
-use Surfnet\SamlBundle\SAML2\AuthnRequest as Saml2AuthnRequest;
-use Surfnet\StepupGateway\Behat\Repository\SamlEntityRepository;
 use Surfnet\StepupGateway\Behat\Service\FixtureService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -41,7 +35,6 @@ use Symfony\Component\HttpKernel\KernelInterface;
 class ServiceProviderContext implements Context, KernelAwareContext
 {
     const SSP_URL = 'https://ssp.stepup.example.com/sp.php';
-    const SSO_ENDPOINT_URL = 'https://ssp.stepup.example.com/sp.php';
     const SSO_SP_ENTITY_ID = 'default-sp';
     const SFO_IDP_ENTITY_ID = 'https://gateway.stepup.example.com/second-factor-only/metadata';
     const SSO_IDP_ENTITY_ID = 'https://gateway.stepup.example.com/authentication/metadata';
@@ -164,12 +157,15 @@ class ServiceProviderContext implements Context, KernelAwareContext
     /**
      * @When /^([^\']*) starts an SFO authentication with LoA ([^\']*)$/
      */
-    public function iStartAnSFOAuthenticationWithLoa($nameId, string $loa)
+    public function iStartAnSFOAuthenticationWithLoa($nameId, string $loa, bool $forceAuthN = false)
     {
         $this->getSession()->visit(self::SSP_URL);
         // Visit the SSP Debug SP and trigger SFO authentication
         $this->getSession()->getPage()->selectFieldOption('idp', self::SFO_IDP_ENTITY_ID);
         $this->getSession()->getPage()->fillField('subject', $nameId);
+        if ($forceAuthN) {
+            $this->getSession()->getPage()->checkField('forceauthn');
+        }
         $this->getSession()->getPage()->selectFieldOption('sp', self::SFO_SP_ENTITY_ID);
         switch ($loa) {
             case "1":
@@ -192,6 +188,13 @@ class ServiceProviderContext implements Context, KernelAwareContext
     public function iStartAnSFOAuthenticationWithLoaRequirement($nameId, $loa)
     {
         $this->iStartAnSFOAuthenticationWithLoa($nameId, $loa);
+    }
+    /**
+     * @When /^([^\']*) starts a forced SFO authentication requiring LoA ([^\']*)$/
+     */
+    public function iStartAForcedSFOAuthenticationWithLoaRequirement($nameId, $loa)
+    {
+        $this->iStartAnSFOAuthenticationWithLoa($nameId, $loa, true);
     }
 
     /**

@@ -108,6 +108,9 @@ class CookieServiceTest extends TestCase
         );
 
         $this->responseContext = Mockery::mock(ResponseContext::class);
+        $this->responseContext
+            ->shouldReceive('isForceAuthn')
+            ->andReturnFalse();
     }
 
     public function test_storing_a_session_cookie()
@@ -130,7 +133,7 @@ class CookieServiceTest extends TestCase
             ->shouldReceive('getSelectedSecondFactor')
             ->andReturn('sf-id-1234');
         $this->responseContext
-            ->shouldReceive('unsetSelectedSecondFactor');
+            ->shouldReceive('finalizeAuthentication');
         $this->secondFactorService
             ->shouldReceive('findByUuid')
             ->with('sf-id-1234')
@@ -181,7 +184,7 @@ class CookieServiceTest extends TestCase
             ->shouldReceive('getSelectedSecondFactor')
             ->andReturn('sf-id-1234');
         $this->responseContext
-            ->shouldReceive('unsetSelectedSecondFactor');
+            ->shouldReceive('finalizeAuthentication');
         $this->secondFactorService
             ->shouldReceive('findByUuid')
             ->with('sf-id-1234')
@@ -228,7 +231,7 @@ class CookieServiceTest extends TestCase
             ->shouldReceive('getSelectedSecondFactor')
             ->andReturn('non-existant');
         $this->responseContext
-            ->shouldReceive('unsetSelectedSecondFactor');
+            ->shouldReceive('finalizeAuthentication');
         $this->secondFactorService
             ->shouldReceive('findByUuid')
             ->with('non-existant')
@@ -259,7 +262,10 @@ class CookieServiceTest extends TestCase
             ->shouldReceive('getSelectedSecondFactor')
             ->andReturn('sf-id-1234');
         $this->responseContext
-            ->shouldReceive('unsetSelectedSecondFactor');
+            ->shouldReceive('finalizeAuthentication');
+        $this->responseContext
+            ->shouldReceive('isForceAuthn')
+            ->andReturn(false);
         $this->secondFactorService
             ->shouldReceive('findByUuid')
             ->with('sf-id-1234')
@@ -394,6 +400,36 @@ class CookieServiceTest extends TestCase
             $this->service->shouldSkip2faAuthentication(
                 $this->responseContext,
                 4.0, // LoA required by SP is 4.0, the one in the cookie is 3.0
+                'abcdef-1234',
+                Mockery::mock(ArrayCollection::class),
+                $httpRequest
+            )
+        );
+    }
+
+    public function test_skipping_authentication_fails_when_force_authn_requested()
+    {
+        $this->buildService(
+            new Configuration(
+                'test-cookie',
+                'session',
+                0,
+                '0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f'
+            )
+        );
+        $httpRequest = new Request();
+        $cookieValue = $this->cookieValue();
+        $httpRequest->cookies->add(
+            [$this->configuration->getName() => $this->createCookieWithValue($this->encryptionHelper->encrypt($cookieValue))->getValue()]
+        );
+        $this->responseContext = Mockery::mock(ResponseContext::class);
+        $this->responseContext
+            ->shouldReceive('isForceAuthn')->andReturn(true);
+
+        self::assertFalse(
+            $this->service->shouldSkip2faAuthentication(
+                $this->responseContext,
+                3.0,
                 'abcdef-1234',
                 Mockery::mock(ArrayCollection::class),
                 $httpRequest
