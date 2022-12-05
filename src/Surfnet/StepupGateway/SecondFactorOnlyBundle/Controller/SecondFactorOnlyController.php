@@ -131,6 +131,8 @@ class SecondFactorOnlyController extends Controller
 
         // Reset state
         $this->getSecondFactorRespondService()->resetRespondState($responseContext);
+        // We can now forget the selected second factor.
+        $responseContext->unsetSelectedSecondFactor();
 
         // Check if ADFS response
         $adfsParameters = $this->getSecondFactorAdfsService()->handleAdfsResponse($logger, $responseContext);

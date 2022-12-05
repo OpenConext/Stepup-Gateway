@@ -21,17 +21,9 @@ namespace Surfnet\StepupGateway\Behat;
 use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\BeforeFeatureScope;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
-use Behat\Behat\Tester\Exception\PendingException;
 use Behat\Mink\Exception\ExpectationException;
 use RuntimeException;
 use Surfnet\StepupGateway\Behat\Service\FixtureService;
-use function array_key_exists;
-use function array_keys;
-use function array_shift;
-use function assertEquals;
-use function assertSameSize;
-use function explode;
-use function in_array;
 
 class FeatureContext implements Context
 {
@@ -159,6 +151,7 @@ class FeatureContext implements Context
     {
         $this->minkContext->fillField('gateway_verify_sms_challenge_challenge', '432543');
         $this->minkContext->pressButton('gateway_verify_sms_challenge_verify_challenge');
+        $this->minkContext->printLastResponse(); die;
         $this->minkContext->pressButton('Submit');
     }
 
@@ -229,6 +222,7 @@ class FeatureContext implements Context
     public function anErrorResponseIsPostedBackToTheSP()
     {
         $this->minkContext->pressButton('Submit');
+
     }
 
     /**
@@ -248,24 +242,49 @@ class FeatureContext implements Context
     }
 
     /**
+     * @Given /^I pass through the IdP/
+     */
+    public function iPassThroughTheIdP()
+    {
+        $this->minkContext->pressButton('Submit');
+    }
+
+    /**
      * @Given /^the response should have a SSO\-2FA cookie$/
      */
     public function theResponseShouldHaveASSO2FACookie()
     {
-        $responseHeaders = $this->minkContext->getSession()->getResponseHeaders();
-        $cookieNames = $this->getCookieNames($responseHeaders['Set-Cookie']);
-        if (!in_array($this->sso2faCookieName, $cookieNames)) {
+        $this->minkContext->visit('https://gateway.stepup.example.com/info');
+        $cookieValue = $this->minkContext->getSession()->getCookie($this->sso2faCookieName);
+        if (empty($cookieValue)) {
             throw new ExpectationException(
                 sprintf(
-                    'The SSO on 2FA cookie should be in the response headers. Cookie name should be: %s, ' .
-                    'Cookies set: (%s)',
-                    $this->sso2faCookieName,
-                    implode(', ', $cookieNames)
+                    'The SSO on 2FA cookie was not present, or empty. Cookie name: %s',
+                    $this->sso2faCookieName
                 ),
                 $this->minkContext->getSession()->getDriver()
             );
         }
-        // Assert correct contents? Maybe use the dummy encryption helper to also peek into the cookie contents?
+    }
+
+    /**
+     * @Given /^the SSO\-2FA cookie should contain "([^"]*)"$/
+     */
+    public function theSSO2FACookieShouldContain($expectedCookieValue)
+    {
+        $this->minkContext->visit('https://gateway.stepup.example.com/info');
+        $cookieValue = $this->minkContext->getSession()->getCookie($this->sso2faCookieName);
+        if (strstr($cookieValue, $expectedCookieValue) === false) {
+            throw new ExpectationException(
+                sprintf(
+                    'The SSO on 2FA cookie did not contain the expected value: "%s", actual contents: "%s"',
+                    $expectedCookieValue,
+                    $cookieValue
+                ),
+                $this->minkContext->getSession()->getDriver()
+            );
+        }
+
     }
 
     private function getCookieNames(array $responseCookieHeaders): array

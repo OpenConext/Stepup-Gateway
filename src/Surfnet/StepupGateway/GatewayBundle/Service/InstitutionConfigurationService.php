@@ -40,7 +40,7 @@ class InstitutionConfigurationService
         try {
             return $this->repository->getInstitutionConfiguration($institution)->ssoOn2faEnabled;
         } catch (InstitutionConfigurationNotFoundException $e) {
-            $this->logger->notice('Institution %s is not configured to use SSO on 2FA');
+            $this->logger->notice(sprintf('Institution %s is not configured to use SSO on 2FA', $institution));
         }
         return false;
     }
