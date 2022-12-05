@@ -99,7 +99,7 @@ class CookieService implements CookieServiceInterface
         string $authenticationMode = 'sso'
     ): Response {
         $secondFactorId = $responseContext->getSelectedSecondFactor();
-        $responseContext->unsetSelectedSecondFactor();
+
         // We can only set an SSO on 2FA cookie if a second factor authentication is being handled.
         if ($secondFactorId) {
             $secondFactor = $this->secondFactorService->findByUuid($secondFactorId);
@@ -127,6 +127,7 @@ class CookieService implements CookieServiceInterface
                 }
             }
         }
+        $responseContext->finalizeAuthentication();
         return $httpResponse;
     }
 
@@ -137,6 +138,10 @@ class CookieService implements CookieServiceInterface
         Collection $secondFactorCollection,
         Request $request
     ): bool {
+        if ($responseContext->isForceAuthn()) {
+            $this->logger->notice('Ignoring SSO on 2FA cookie when ForceAuthN is specified.');
+            return false;
+        }
         $ssoCookie = $this->read($request);
         if ($ssoCookie instanceof NullCookieValue) {
             $this->logger->notice('No SSO on 2FA cookie found');
