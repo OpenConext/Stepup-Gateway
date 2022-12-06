@@ -301,6 +301,8 @@ class ResponseContext
     public function responseSent()
     {
         $this->stateHandler->setSecondFactorVerified(false);
+        $this->stateHandler->setVerifiedBySsoOn2faCookie(false);
+        $this->stateHandler->setSsoOn2faCookieFingerprint('');
     }
 
     /**
@@ -336,5 +338,16 @@ class ResponseContext
     public function isForceAuthn(): bool
     {
         return $this->stateHandler->isForceAuthn();
+    }
+
+    public function markVerifiedBySsoOn2faCookie(string $fingerprint)
+    {
+        $this->stateHandler->setVerifiedBySsoOn2faCookie(true);
+        $this->stateHandler->setSsoOn2faCookieFingerprint($fingerprint);
+    }
+
+    public function isVerifiedBySsoOn2faCookie(): bool
+    {
+        return $this->stateHandler->isVerifiedBySsoOn2faCookie();
     }
 }

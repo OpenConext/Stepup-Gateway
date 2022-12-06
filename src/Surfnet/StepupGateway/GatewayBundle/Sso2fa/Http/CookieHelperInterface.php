@@ -28,4 +28,6 @@ interface CookieHelperInterface
     public function write(Response $response, CookieValueInterface $value): void;
 
     public function read(Request $request): CookieValueInterface;
+
+    public function fingerprint(Request $request): string;
 }

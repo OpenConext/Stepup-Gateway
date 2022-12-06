@@ -58,7 +58,7 @@ class CookieHelper implements CookieHelperInterface
     {
         // The CookieValue is encrypted
         $encryptedCookieValue = $this->encryptionHelper->encrypt($value);
-        $fingerprint = $this->fingerprint($encryptedCookieValue);
+        $fingerprint = $this->hashFingerprint($encryptedCookieValue);
         $this->logger->notice(sprintf('Writing a SSO on 2FA cookie with fingerprint %s', $fingerprint));
         // Create a Symfony HttpFoundation cookie object
         $cookie = $this->createCookieWithValue($encryptedCookieValue);
@@ -75,9 +75,18 @@ class CookieHelper implements CookieHelperInterface
             throw new CookieNotFoundException();
         }
         $cookie = $request->cookies->get($this->configuration->getName());
-        $fingerprint = $this->fingerprint($cookie);
+        $fingerprint = $this->hashFingerprint($cookie);
         $this->logger->notice(sprintf('Reading a SSO on 2FA cookie with fingerprint %s', $fingerprint));
         return $this->encryptionHelper->decrypt($cookie);
+    }
+
+    public function fingerprint(Request $request): string
+    {
+        if (!$request->cookies || !$request->cookies->has($this->configuration->getName())) {
+            throw new CookieNotFoundException();
+        }
+        $cookie = $request->cookies->get($this->configuration->getName());
+        return $this->hashFingerprint($cookie);
     }
 
     private function createCookieWithValue($value): Cookie
@@ -95,7 +104,7 @@ class CookieHelper implements CookieHelperInterface
         );
     }
 
-    private function fingerprint(string $encryptedCookieValue): string
+    private function hashFingerprint(string $encryptedCookieValue): string
     {
         return hash('sha256', $encryptedCookieValue);
     }
