@@ -33,6 +33,7 @@ use Surfnet\StepupGateway\GatewayBundle\Service\SamlEntityService;
 use Surfnet\StepupGateway\GatewayBundle\Tests\TestCase\GatewaySamlTestCase;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Exception\InvalidSubjectException;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Exception\SecondfactorVerificationRequiredException;
+use Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\AllowedServiceProviders;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\ConnectedServiceProviders;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\Provider;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Saml\ProxyResponseFactory;
@@ -724,7 +725,8 @@ class ConsumeAssertionServiceTest extends GatewaySamlTestCase
         $serviceProvider = new ServiceProvider($spConfiguration);
         $this->postBinding = Mockery::mock(PostBinding::class);
         $this->samlEntityService = Mockery::mock(SamlEntityService::class);
-        $connectedServiceProviders = new ConnectedServiceProviders($this->samlEntityService, $connectedServiceProviders);
+        $allowed = new AllowedServiceProviders($connectedServiceProviders, 'regex');
+        $connectedServiceProviders = new ConnectedServiceProviders($this->samlEntityService, $allowed);
 
         $this->provider = new Provider(
             'testProvider',

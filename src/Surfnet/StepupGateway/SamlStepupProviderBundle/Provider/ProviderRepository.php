@@ -67,7 +67,7 @@ final class ProviderRepository
     public function get($providerName)
     {
         if (!$this->has($providerName)) {
-            throw UnknownProviderException::create($providerName, array_keys($this->providers));
+            throw UnknownProviderException::create($providerName, implode(', ', array_keys($this->providers)));
         }
 
         return $this->providers[$providerName];
