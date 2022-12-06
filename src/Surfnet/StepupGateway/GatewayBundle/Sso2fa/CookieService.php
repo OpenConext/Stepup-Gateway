@@ -19,12 +19,12 @@
 namespace Surfnet\StepupGateway\GatewayBundle\Sso2fa;
 
 use Doctrine\Common\Collections\Collection;
-use http\Cookie;
 use Psr\Log\LoggerInterface;
 use Surfnet\StepupBundle\Service\LoaResolutionService;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupGateway\GatewayBundle\Controller\GatewayController;
 use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor;
+use Surfnet\StepupGateway\GatewayBundle\Entity\ServiceProvider;
 use Surfnet\StepupGateway\GatewayBundle\Exception\RuntimeException;
 use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
 use Surfnet\StepupGateway\GatewayBundle\Service\InstitutionConfigurationService;
@@ -98,8 +98,18 @@ class CookieService implements CookieServiceInterface
         Response $httpResponse,
         string $authenticationMode = 'sso'
     ): Response {
+        // Check if this specific SP is configured to allow setting of a SSO on 2FA cookie (configured in MW config)
+        $remoteSp = $this->getRemoteSp($responseContext);
+        if (!$remoteSp->allowedToSetSsoCookieOn2fa()) {
+            $this->logger->notice(
+                sprintf(
+                    'Ignoring SSO on 2FA for SP: %s',
+                    $remoteSp->getEntityId()
+                )
+            );
+            return $httpResponse;
+        }
         $secondFactorId = $responseContext->getSelectedSecondFactor();
-
         // We can only set an SSO on 2FA cookie if a second factor authentication is being handled.
         if ($secondFactorId) {
             $secondFactor = $this->secondFactorService->findByUuid($secondFactorId);
@@ -131,6 +141,11 @@ class CookieService implements CookieServiceInterface
         return $httpResponse;
     }
 
+    /**
+     * Allow high cyclomatic complexity in favour of keeping this method readable
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     */
     public function shouldSkip2faAuthentication(
         ResponseContext $responseContext,
         float $requiredLoa,
@@ -140,6 +155,17 @@ class CookieService implements CookieServiceInterface
     ): bool {
         if ($responseContext->isForceAuthn()) {
             $this->logger->notice('Ignoring SSO on 2FA cookie when ForceAuthN is specified.');
+            return false;
+        }
+        $remoteSp = $this->getRemoteSp($responseContext);
+        // Test if the SP allows SSO on 2FA to take place (configured in MW config)
+        if (!$remoteSp->allowSsoOn2fa()) {
+            $this->logger->notice(
+                sprintf(
+                    'Ignoring SSO on 2FA for SP: %s',
+                    $remoteSp->getEntityId()
+                )
+            );
             return false;
         }
         $ssoCookie = $this->read($request);
@@ -231,5 +257,14 @@ class CookieService implements CookieServiceInterface
         } catch (CookieNotFoundException $e) {
             return new NullCookieValue();
         }
+    }
+
+    private function getRemoteSp(ResponseContext $responseContext): ServiceProvider
+    {
+        $remoteSp = $responseContext->getServiceProvider();
+        if (!$remoteSp) {
+            throw new RuntimeException('SP not found in the response context, unable to continue with SSO on 2FA');
+        }
+        return $remoteSp;
     }
 }
