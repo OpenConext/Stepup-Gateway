@@ -5,6 +5,7 @@ parameters:
     gssp_allowed_sps:
         - 'https://selfservice.tld/registration/gssf/tiqr/metadata'
         - 'https://ra.tld/vetting-procedure/gssf/tiqr/metadata'
+    gssp_ra_vetting_procedure_sp_metadata_url_regex: '/https:\/\/ra.stepup.example.com\/vetting-procedure\/gssf\/[0-9.A-_\-Za-z]+\/metadata/'
     gssp_tiqr_enabled: true
     gssp_tiqr_sp_publickey: "/var/www/app/files/sp_gssp.crt"
     gssp_tiqr_sp_privatekey: "/var/www/app/files/sp_gssp.pem"
