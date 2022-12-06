@@ -206,6 +206,11 @@ class CookieService implements CookieServiceInterface
         return false;
     }
 
+    public function getCookieFingerprint(Request $request): string
+    {
+        return $this->cookieHelper->fingerprint($request);
+    }
+
     private function shouldAddCookie(CookieValueInterface $ssoCookie, float $loa)
     {
         // IF the SSO cookie is not found (we've got a NullCookieValue returned from the cookie helper)
