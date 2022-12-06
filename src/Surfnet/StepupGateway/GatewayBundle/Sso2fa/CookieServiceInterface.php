@@ -18,7 +18,15 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Sso2fa;
 
+use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+
 interface CookieServiceInterface
 {
-
+    public function handleSsoOn2faCookieStorage(
+        ResponseContext $responseContext,
+        Request $request,
+        Response $httpResponse
+    ): Response;
 }

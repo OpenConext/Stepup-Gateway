@@ -92,10 +92,9 @@ class IdentityProviderController extends Controller
             'relayState' => ''
         ];
 
-        $response = parent::render(
-            'SurfnetStepupGatewaySamlStepupProviderBundle:SamlProxy:consumeAssertion.html.twig',
-            $parameters
-        );
+        $response = $this->render(
+            '@SurfnetStepupGatewayGateway/gateway/consume_assertion.html.twig',
+            $parameters);
 
         return $response;
     }
@@ -119,7 +118,7 @@ class IdentityProviderController extends Controller
         $newAssertion->setNameId($nameId);
         $response = new SAMLResponse();
         $response->setAssertions([$newAssertion]);
-        $response->setIssuer('https://idp.stepup.example.com/');
+        $response->setIssuer('https://gateway.stepup.example.com/idp/metadata');
         $response->setIssueInstant(time());
         $response->setDestination($destination);
         $response->setInResponseTo($requestId);
@@ -214,7 +213,7 @@ class IdentityProviderController extends Controller
      */
     private function loadPrivateKey()
     {
-        $key        = new PrivateKey('/var/www/ci/certificates/sp.pem', 'default');
+        $key        = new PrivateKey('/var/www/ci/certificates/idp.key', 'default');
         $keyLoader  = new PrivateKeyLoader();
         $privateKey = $keyLoader->loadPrivateKey($key);
 
@@ -230,7 +229,7 @@ class IdentityProviderController extends Controller
     private function getPublicCertificate()
     {
         $keyLoader = new KeyLoader();
-        $keyLoader->loadCertificateFile('/var/www/ci/certificates/sp.crt');
+        $keyLoader->loadCertificateFile('/var/www/ci/certificates/idp.crt');
         /** @var \SAML2\Certificate\X509 $publicKey */
         $publicKey = $keyLoader->getKeys()->getOnlyElement();
 

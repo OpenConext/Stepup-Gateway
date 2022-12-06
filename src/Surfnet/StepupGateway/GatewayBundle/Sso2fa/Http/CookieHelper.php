@@ -23,6 +23,7 @@ use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Crypto\CryptoHelperInterface;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Exception\CookieNotFoundException;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\Configuration;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\CookieValue;
+use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\CookieValueInterface;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -54,7 +55,7 @@ class CookieHelper implements CookieHelperInterface
         $this->logger = $logger;
     }
 
-    public function write(Response $response, CookieValue $value): void
+    public function write(Response $response, CookieValueInterface $value): void
     {
         // The CookieValue is encrypted
         $encryptedCookieValue = $this->encryptionHelper->encrypt($value);
@@ -69,16 +70,15 @@ class CookieHelper implements CookieHelperInterface
     /**
      * Retrieve the current cookie from the Request if it exists.
      */
-    public function read(Request $request): CookieValue
+    public function read(Request $request): CookieValueInterface
     {
-        if (!$request->cookies->has($this->configuration->getName())) {
+        if (!$request->cookies || !$request->cookies->has($this->configuration->getName())) {
             throw new CookieNotFoundException();
         }
         $cookie = $request->cookies->get($this->configuration->getName());
         $fingerprint = $this->fingerprint($cookie);
         $this->logger->notice(sprintf('Reading a SSO on 2FA cookie with fingerprint %s', $fingerprint));
-
-        return CookieValue::deserialize($cookie);
+        return $this->encryptionHelper->decrypt($cookie);
     }
 
     private function createCookieWithValue($value): Cookie
@@ -86,7 +86,7 @@ class CookieHelper implements CookieHelperInterface
         return new Cookie(
             $this->configuration->getName(),
             $value,
-            $this->configuration->isPersistent() ? $this->configuration->getLifetime(): 0,
+            $this->configuration->isPersistent() ? $this->getTimestamp($this->configuration->getLifetime()): 0,
             '/',
             null,
             true,
@@ -99,5 +99,11 @@ class CookieHelper implements CookieHelperInterface
     private function fingerprint(string $encryptedCookieValue): string
     {
         return hash('sha256', $encryptedCookieValue);
+    }
+
+    private function getTimestamp(int $expiresInSeconds): int
+    {
+        $currentTimestamp = time();
+        return $currentTimestamp + $expiresInSeconds;
     }
 }

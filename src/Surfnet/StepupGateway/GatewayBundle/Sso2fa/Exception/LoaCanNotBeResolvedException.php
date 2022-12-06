@@ -16,16 +16,10 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupGateway\GatewayBundle\Sso2fa\Http;
+namespace Surfnet\StepupGateway\GatewayBundle\Sso2fa\Exception;
 
-use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\CookieValue;
-use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\CookieValueInterface;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use RuntimeException;
 
-interface CookieHelperInterface
+final class LoaCanNotBeResolvedException extends RuntimeException
 {
-    public function write(Response $response, CookieValueInterface $value): void;
-
-    public function read(Request $request): CookieValueInterface;
 }

@@ -21,7 +21,8 @@ namespace Surfnet\StepupGateway\Behat;
 use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\BeforeFeatureScope;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
-use Behat\Behat\Tester\Exception\PendingException;
+use Behat\Mink\Exception\ExpectationException;
+use RuntimeException;
 use Surfnet\StepupGateway\Behat\Service\FixtureService;
 
 class FeatureContext implements Context
@@ -43,9 +44,12 @@ class FeatureContext implements Context
      */
     private $currentToken;
 
+    private $sso2faCookieName;
+
     public function __construct(FixtureService $fixtureService)
     {
         $this->fixtureService = $fixtureService;
+        $this->sso2faCookieName = 'stepup-gateway_sso-on-second-factor-authentication';
     }
 
     /**
@@ -55,8 +59,8 @@ class FeatureContext implements Context
     {
         // Generate test databases
         echo "Preparing test schemas\n";
-        shell_exec("/var/www/bin/console doctrine:schema:drop --env=test --force");
-        shell_exec("/var/www/bin/console doctrine:schema:create --env=test");
+        shell_exec("/var/www/bin/console doctrine:schema:drop --env=smoketest --force");
+        shell_exec("/var/www/bin/console doctrine:schema:create --env=smoketest");
     }
 
     /**
@@ -117,6 +121,7 @@ class FeatureContext implements Context
      */
     public function iShouldSeeTheSMSScreen()
     {
+        $this->minkContext->printLastResponse(); die;
         $this->minkContext->assertPageContainsText('Log in with SMS');
         $this->minkContext->assertPageContainsText('Enter the received code on the next page');
         $this->minkContext->pressButton('gateway_send_sms_challenge_send_challenge');
@@ -150,6 +155,7 @@ class FeatureContext implements Context
     {
         $this->minkContext->fillField('gateway_verify_sms_challenge_challenge', '432543');
         $this->minkContext->pressButton('gateway_verify_sms_challenge_verify_challenge');
+        $this->minkContext->printLastResponse(); die;
         $this->minkContext->pressButton('Submit');
     }
 
@@ -171,6 +177,21 @@ class FeatureContext implements Context
     public function aWhitelistedInstitution($institution)
     {
         $this->whitelistedInstitutions[] = $this->fixtureService->whitelist($institution)['institution'];
+    }
+
+    /**
+     * @Given /^an institution "([^"]*)" that allows "([^"]*)"$/
+     */
+    public function anInstitutionThatAllows(string $institution, string $option)
+    {
+        switch(true) {
+            case $option === 'sso_on_2fa':
+                $optionColumnName = 'sso_on2fa_enabled';
+                break;
+            default:
+                throw new RuntimeException(sprintf('Option "%s" is not supported', $option));
+        }
+        $this->fixtureService->configureBoolean($institution, $optionColumnName, true);
     }
 
     /**
@@ -205,6 +226,7 @@ class FeatureContext implements Context
     public function anErrorResponseIsPostedBackToTheSP()
     {
         $this->minkContext->pressButton('Submit');
+
     }
 
     /**
@@ -221,5 +243,61 @@ class FeatureContext implements Context
     public function iPassThroughTheGateway()
     {
         $this->minkContext->pressButton('Submit');
+    }
+
+    /**
+     * @Given /^I pass through the IdP/
+     */
+    public function iPassThroughTheIdP()
+    {
+        $this->minkContext->pressButton('Submit');
+    }
+
+    /**
+     * @Given /^the response should have a SSO\-2FA cookie$/
+     */
+    public function theResponseShouldHaveASSO2FACookie()
+    {
+        $this->minkContext->visit('https://gateway.stepup.example.com/info');
+        $cookieValue = $this->minkContext->getSession()->getCookie($this->sso2faCookieName);
+        if (empty($cookieValue)) {
+            throw new ExpectationException(
+                sprintf(
+                    'The SSO on 2FA cookie was not present, or empty. Cookie name: %s',
+                    $this->sso2faCookieName
+                ),
+                $this->minkContext->getSession()->getDriver()
+            );
+        }
+    }
+
+    /**
+     * @Given /^the SSO\-2FA cookie should contain "([^"]*)"$/
+     */
+    public function theSSO2FACookieShouldContain($expectedCookieValue)
+    {
+        $this->minkContext->visit('https://gateway.stepup.example.com/info');
+        $cookieValue = $this->minkContext->getSession()->getCookie($this->sso2faCookieName);
+        if (strstr($cookieValue, $expectedCookieValue) === false) {
+            throw new ExpectationException(
+                sprintf(
+                    'The SSO on 2FA cookie did not contain the expected value: "%s", actual contents: "%s"',
+                    $expectedCookieValue,
+                    $cookieValue
+                ),
+                $this->minkContext->getSession()->getDriver()
+            );
+        }
+
+    }
+
+    private function getCookieNames(array $responseCookieHeaders): array
+    {
+        $response = [];
+        foreach($responseCookieHeaders as $cookie) {
+            $parts = explode('=', $cookie);
+            $response[] = array_shift($parts);
+        }
+        return $response;
     }
 }

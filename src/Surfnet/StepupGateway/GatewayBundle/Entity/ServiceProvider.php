@@ -98,8 +98,10 @@ class ServiceProvider extends BaseServiceProvider
         if ($logger !== null) {
             $logger->warning(
                 sprintf(
-                    'AuthnRequest requests ACS location "%s" but it is not configured in the list of allowed ACS locations',
-                    $acsLocationInAuthnRequest
+                    'AuthnRequest requests ACS location "%s" but it is not configured in the list of allowed ACS ' .
+                    'locations, allowed locations include: [%s]',
+                    $acsLocationInAuthnRequest,
+                    implode($allowedAcsLocations, ', ')
                 )
             );
         }

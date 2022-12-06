@@ -22,6 +22,8 @@ use SAML2\Constants;
 use SAML2\Response as SAMLResponse;
 use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseBuilder;
 use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
+use Surfnet\StepupGateway\GatewayBundle\Sso2fa\CookieService;
+use Symfony\Component\HttpFoundation\Request;
 use Twig\Environment;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -38,23 +40,25 @@ final class ResponseRenderingService
     private $templateEngine;
 
     /**
-     * SamlResponseRenderingService constructor.
-     * @param ResponseBuilder $responseBuilder
-     * @param Environment $templateEngine
+     * @var CookieService
      */
+    private $ssoCookieService;
+
     public function __construct(
         ResponseBuilder $responseBuilder,
-        Environment     $templateEngine
+        Environment $templateEngine,
+        CookieService $cookieService
     ) {
         $this->responseBuilder = $responseBuilder;
         $this->templateEngine = $templateEngine;
+        $this->ssoCookieService = $cookieService;
     }
 
     /**
      * @param ResponseContext $context
      * @return Response
      */
-    public function renderRequesterFailureResponse(ResponseContext $context)
+    public function renderRequesterFailureResponse(ResponseContext $context, Request $request)
     {
         return $this->renderResponse(
             $context,
@@ -64,19 +68,17 @@ final class ResponseRenderingService
                     Constants::STATUS_REQUESTER,
                     Constants::STATUS_REQUEST_UNSUPPORTED
                 )
-                ->get()
+                ->get(),
+            $request
         );
     }
 
-    /**
-     * @param ResponseContext $context
-     * @return Response
-     */
-    public function renderUnprocessableResponse(ResponseContext $context)
+    public function renderUnprocessableResponse(ResponseContext $context, Request $request)
     {
         return $this->renderSamlResponse(
             $context,
             'unprocessable_response',
+            $request,
             $this->responseBuilder
                 ->createNewResponse($context)
                 ->setResponseStatus(Constants::STATUS_RESPONDER)
@@ -84,30 +86,22 @@ final class ResponseRenderingService
         );
     }
 
-    /**
-     * @param ResponseContext $context
-     * @param SAMLResponse $response
-     * @return Response
-     */
     public function renderResponse(
         ResponseContext $context,
-        SAMLResponse    $response
+        SAMLResponse $response,
+        Request $request
     ) {
-        return $this->renderSamlResponse($context, 'consume_assertion', $response);
+        return $this->renderSamlResponse($context, 'consume_assertion', $request, $response);
     }
 
-    /**
-     * @param ResponseContext $context
-     * @param string $view
-     * @param SAMLResponse $response
-     * @return Response
-     */
     private function renderSamlResponse(
         ResponseContext $context,
-        string          $view,
-        SAMLResponse    $response
-    ) {
-        return (new Response)->setContent(
+        string $view,
+        Request $request,
+        SAMLResponse $response
+    ): Response {
+        $httpResponse = new Response();
+        $httpResponse->setContent(
             $this->templateEngine->render(
                 'SurfnetStepupGatewayGatewayBundle:gateway:' . $view . '.html.twig',
                 [
@@ -117,6 +111,8 @@ final class ResponseRenderingService
                 ]
             )
         );
+        $this->ssoCookieService->handleSsoOn2faCookieStorage($context, $request, $httpResponse, 'sfo');
+        return $httpResponse;
     }
 
     /**

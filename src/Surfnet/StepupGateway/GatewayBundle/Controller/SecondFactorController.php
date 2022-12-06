@@ -105,7 +105,6 @@ class SecondFactorController extends Controller
 
         if ($this->getStepupService()->isIntrinsicLoa($requiredLoa)) {
             $this->get('gateway.authentication_logger')->logIntrinsicLoaAuthentication($originalRequestId);
-
             return $this->forward($context->getResponseAction());
         }
 
@@ -343,7 +342,7 @@ class SecondFactorController extends Controller
             'Marked GSSF "%s" as verified, forwarding to Gateway controller to respond',
             $selectedSecondFactor
         ));
-
+        $context->unsetSelectedSecondFactor();
         return $this->forward($context->getResponseAction());
     }
 
@@ -402,7 +401,6 @@ class SecondFactorController extends Controller
                     $selectedSecondFactor
                 )
             );
-
             return $this->forward($context->getResponseAction());
         }
 
@@ -525,7 +523,6 @@ class SecondFactorController extends Controller
                         $selectedSecondFactor
                     )
                 );
-
                 return $this->forward($context->getResponseAction());
             } elseif ($verification->didOtpExpire()) {
                 $logger->notice('SMS challenge expired');

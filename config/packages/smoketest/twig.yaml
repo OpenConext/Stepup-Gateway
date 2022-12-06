@@ -1,2 +1,5 @@
 twig:
     strict_variables: true
+    paths:
+        '%kernel.project_dir%/tests/src/Resources/views/': test_resources
+

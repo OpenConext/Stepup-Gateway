@@ -3,6 +3,7 @@
 namespace Surfnet\StepupGateway\Behat\Service;
 
 use Exception;
+use Surfnet\StepupGateway\Behat\Repository\InstitutionConfigurationRepository;
 use Surfnet\StepupGateway\Behat\Repository\SamlEntityRepository;
 use Surfnet\StepupGateway\Behat\Repository\SecondFactorRepository;
 use Surfnet\StepupGateway\Behat\Repository\WhitelistRepository;
@@ -15,14 +16,18 @@ class FixtureService
 
     private $whitelistRepository;
 
+    private $institutionConfigurationRepository;
+
     public function __construct(
         SecondFactorRepository $secondFactorRepository,
         SamlEntityRepository $samlRepository,
-        WhitelistRepository $whitelistRepository
+        WhitelistRepository $whitelistRepository,
+        InstitutionConfigurationRepository $institutionConfigurationRepository
     ) {
         $this->secondFactorRepository = $secondFactorRepository;
         $this->samlEntityRepository = $samlRepository;
         $this->whitelistRepository = $whitelistRepository;
+        $this->institutionConfigurationRepository = $institutionConfigurationRepository;
     }
 
     public function registerYubikeyToken(string $nameId, string $institution, bool $selfAsserted = false): array
@@ -77,5 +82,10 @@ class FixtureService
     public function registerTiqrToken(string $nameId, string $institution, bool $selfAsserted = false): array
     {
         return $this->secondFactorRepository->create($nameId, 'tiqr', $institution, $selfAsserted, 'foobar');
+    }
+
+    public function configureBoolean(string $institution, string $option, bool $value): void
+    {
+        $this->institutionConfigurationRepository->configure($institution, $option, $value);
     }
 }

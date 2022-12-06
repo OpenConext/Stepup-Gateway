@@ -1,5 +1,0 @@
-gateway_test_consume_assertion:
-  path:     /test/authentication/consume-assertion
-  methods:  [POST]
-  defaults: { _controller: Surfnet\StepupGateway\Behat\Controller\ServiceProviderController::acsAction }
-
