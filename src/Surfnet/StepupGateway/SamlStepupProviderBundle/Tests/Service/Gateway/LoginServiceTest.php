@@ -29,6 +29,7 @@ use Surfnet\SamlBundle\SAML2\ReceivedAuthnRequest;
 use Surfnet\StepupGateway\GatewayBundle\Service\SamlEntityService;
 use Surfnet\StepupGateway\GatewayBundle\Tests\TestCase\GatewaySamlTestCase;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Exception\NotConnectedServiceProviderException;
+use Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\AllowedServiceProviders;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\ConnectedServiceProviders;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\Provider;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Saml\StateHandler;
@@ -222,7 +223,8 @@ class LoginServiceTest extends GatewaySamlTestCase
         $this->postBinding = Mockery::mock(PostBinding::class);
         $this->redirectBinding = Mockery::mock(RedirectBinding::class);
         $this->samlEntityService = Mockery::mock(SamlEntityService::class);
-        $connectedServiceProviders = new ConnectedServiceProviders($this->samlEntityService, $connectedServiceProviders);
+        $allowedProviders = new AllowedServiceProviders($connectedServiceProviders, '/^https:\/\/$/');
+        $connectedServiceProviders = new ConnectedServiceProviders($this->samlEntityService, $allowedProviders);
 
         $this->provider = new Provider(
             'testProvider',

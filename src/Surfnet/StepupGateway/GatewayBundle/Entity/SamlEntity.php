@@ -117,6 +117,11 @@ class SamlEntity
         $configuration['configuredLoas']      = $decodedConfiguration['loa'];
 
         $configuration['secondFactorOnly'] = false;
+        // Allow the sp to evaluate the SSO on 2FA cookie if present? (defaults to false)
+        $configuration['allowSsoOn2fa'] = false;
+        // Is the SP allowed to set a SSO on 2FA cookie in Gateway? (defautls to false)
+        $configuration['setSsoCookieOn2fa'] = false;
+
         if (isset($decodedConfiguration['second_factor_only'])) {
             $configuration['secondFactorOnly'] = $decodedConfiguration['second_factor_only'];
         }
@@ -125,7 +130,12 @@ class SamlEntity
             $configuration['secondFactorOnlyNameIdPatterns'] =
                 $decodedConfiguration['second_factor_only_nameid_patterns'];
         }
-
+        if (isset($decodedConfiguration['allow_sso_on_2fa'])) {
+            $configuration['allowSsoOn2fa'] = $decodedConfiguration['allow_sso_on_2fa'];
+        }
+        if (isset($decodedConfiguration['set_sso_cookie_on_2fa'])) {
+            $configuration['setSsoCookieOn2fa'] = $decodedConfiguration['set_sso_cookie_on_2fa'];
+        }
         return new ServiceProvider($configuration);
     }
 

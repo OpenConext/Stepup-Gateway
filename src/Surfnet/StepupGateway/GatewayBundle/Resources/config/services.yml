@@ -156,6 +156,7 @@ services:
             - "@logger"
             - "@gateway.service.second_factor_service"
             - "@surfnet_stepup.service.second_factor_type"
+            - "@gssp.allowed_sps"
 
     gateway.service.institution_configuration:
         class: Surfnet\StepupGateway\GatewayBundle\Service\InstitutionConfigurationService

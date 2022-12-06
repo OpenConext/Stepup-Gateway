@@ -149,4 +149,14 @@ class ServiceProvider extends BaseServiceProvider
             $acsLocationInAuthnRequest
         );
     }
+
+    public function allowSsoOn2fa(): bool
+    {
+        return $this->get('allowSsoOn2fa');
+    }
+
+    public function allowedToSetSsoCookieOn2fa(): bool
+    {
+        return $this->get('setSsoCookieOn2fa');
+    }
 }

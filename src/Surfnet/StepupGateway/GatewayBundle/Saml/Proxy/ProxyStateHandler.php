@@ -20,7 +20,6 @@ namespace Surfnet\StepupGateway\GatewayBundle\Saml\Proxy;
 
 use Surfnet\StepupGateway\GatewayBundle\Saml\Exception\RuntimeException;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
-use function is_bool;
 
 class ProxyStateHandler
 {
