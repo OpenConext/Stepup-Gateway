@@ -38,6 +38,8 @@ class SamlEntityRepository
             $configuration['public_key'] = $certificate;
             $configuration['loa'] = ['__default__' => 'http://stepup.example.com/assurance/loa1'];
             $configuration['second_factor_only'] = $sfoEnabled;
+            $configuration['set_sso_cookie_on_2fa'] = true;
+            $configuration['allow_sso_on_2fa'] = true;
             $configuration['second_factor_only_nameid_patterns'] = [
                 'urn:collab:person:stepup.example.com:admin',
                 'urn:collab:person:stepup.example.com:*',
