@@ -98,6 +98,8 @@ activate SP
               - ""[setSelectedSecondFactorId] ""unique ID of selected token
               - ""[setPreferredLocale]        ""preffered locale of token
               - ""[setSecondFactorVerified]   ""verification success or fail
+              - ""[setVerifiedBySsoOn2faCookie] ""opt: set flag when using SSO on 2FA cookie to skip 2FA
+              - ""[setSsoOn2faCookieFingerprint] ""opt: set fingerprint of SSO on 2FA cookie
             end note
 
             SF -> GW: Process verification result
@@ -121,6 +123,8 @@ activate SP
 
               - ""[setSelectedSecondFactorId] ""clear the tokenID
               - ""[setSecondFactorVerified]   ""clear the verification flag
+              - ""[setVerifiedBySsoOn2faCookie] ""opt: clear flag when using SSO on 2FA cookie to skip 2FA
+              - ""[setSsoOn2faCookieFingerprint] ""opt: clear fingerprint of SSO on 2FA cookie
             end note
 
         end
@@ -204,6 +208,8 @@ activate SP
               - ""[setSelectedSecondFactorId] ""unique ID of selected token
               - ""[setPreferredLocale]        ""preffered locale of token
               - ""[setSecondFactorVerified]   ""verification success or fail
+              - ""[setVerifiedBySsoOn2faCookie] ""opt: set flag when using SSO on 2FA cookie to skip 2FA
+              - ""[setSsoOn2faCookieFingerprint] ""opt: set fingerprint of SSO on 2FA cookie
             end note
 
             SF -> SFO: Process verification result
@@ -231,6 +237,8 @@ activate SP
 
               - ""[setSelectedSecondFactorId] ""clear the tokenID
               - ""[setSecondFactorVerified]   ""clear the verification flag
+              - ""[setVerifiedBySsoOn2faCookie] ""opt: clear flag when using SSO on 2FA cookie to skip 2FA
+              - ""[setSsoOn2faCookieFingerprint] ""opt: clear fingerprint of SSO on 2FA cookie
             end note
         end
 

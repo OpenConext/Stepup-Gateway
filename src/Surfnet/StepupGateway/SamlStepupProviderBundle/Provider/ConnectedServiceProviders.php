@@ -20,7 +20,6 @@ namespace Surfnet\StepupGateway\SamlStepupProviderBundle\Provider;
 
 use Surfnet\SamlBundle\Entity\ServiceProvider;
 use Surfnet\StepupGateway\GatewayBundle\Service\SamlEntityService;
-use Surfnet\StepupGateway\SamlStepupProviderBundle\Exception\InvalidArgumentException;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Exception\UnknownProviderException;
 
 final class ConnectedServiceProviders

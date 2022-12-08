@@ -20,6 +20,7 @@ namespace Surfnet\StepupGateway\SamlStepupProviderBundle\Provider;
 
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Exception\InvalidConfigurationException;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Exception\UnknownProviderException;
+use function implode;
 
 /**
  * @todo discuss (im)mutability
