@@ -3,7 +3,6 @@ imports:
 
 surfnet_stepup_gateway_saml_stepup_provider:
     allowed_sps: "%gssp_allowed_sps%"
-    ra_vetting_procedure_sp_metadata_url_regex: "%gssp_ra_vetting_procedure_sp_metadata_url_regex%"
     routes:
         sso: gssp_verify
         consume_assertion: gssp_consume_assertion

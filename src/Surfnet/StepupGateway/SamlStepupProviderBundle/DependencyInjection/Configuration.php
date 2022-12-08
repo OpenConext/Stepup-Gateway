@@ -31,14 +31,11 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
-                ->scalarNode('ra_vetting_procedure_sp_metadata_url_regex')
-                    ->isRequired()
-                ->end()
                 ->arrayNode('allowed_sps')
-                    ->isRequired()
-                    ->requiresAtLeastOneElement()
-                    ->prototype('scalar')
-                ->end()
+                ->isRequired()
+                ->requiresAtLeastOneElement()
+                ->prototype('scalar')
+            ->end()
             ->end();
 
         $this->addRoutesSection($rootNode);
