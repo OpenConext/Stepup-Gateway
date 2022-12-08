@@ -95,7 +95,7 @@ class AuthenticationLogger
      * @param string $requestId The SAML authentication request ID of the original request (not the proxy request).
      * @param string $authenticationMode
      */
-    public function logSecondFactorAuthentication($requestId, $authenticationMode)
+    public function logSecondFactorAuthentication(string $requestId, string $authenticationMode)
     {
         $stateHandler = $this->getStateHandler($authenticationMode);
         $secondFactor = $this->secondFactorService->findByUuid($stateHandler->getSelectedSecondFactorId());
@@ -107,7 +107,12 @@ class AuthenticationLogger
             'institution'           => $secondFactor->institution,
             'authentication_result' => $stateHandler->isSecondFactorVerified() ? 'OK' : 'FAILED',
             'resulting_loa'         => (string) $loa,
+            'sso' => $stateHandler->isVerifiedBySsoOn2faCookie() ? 'YES': 'NO',
         ];
+
+        if ($stateHandler->isVerifiedBySsoOn2faCookie()) {
+            $context['sso_cookie_id'] = $stateHandler->getSsoOn2faCookieFingerprint();
+        }
 
         $this->log('Second Factor Authenticated', $context, $requestId);
     }

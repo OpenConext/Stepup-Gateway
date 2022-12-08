@@ -22,12 +22,12 @@ use RuntimeException;
 
 class UnknownProviderException extends RuntimeException
 {
-    public static function create($unknownProvider, array $knownProviders)
+    public static function create($unknownProvider, string $knownProviders)
     {
         return new static(sprintf(
             'Unknown Generic SAML Stepup Provider requested "%s", known providers: "%s"',
             is_object($unknownProvider) ? '(object)' . get_class($unknownProvider) : $unknownProvider,
-            implode('", "', $knownProviders)
+            $knownProviders
         ));
     }
 }

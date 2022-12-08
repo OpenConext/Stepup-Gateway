@@ -27,6 +27,7 @@ use Surfnet\StepupBundle\Service\LoaResolutionService;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupBundle\Value\Loa;
 use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor;
+use Surfnet\StepupGateway\GatewayBundle\Entity\ServiceProvider;
 use Surfnet\StepupGateway\GatewayBundle\Exception\RuntimeException;
 use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
 use Surfnet\StepupGateway\GatewayBundle\Service\InstitutionConfigurationService;
@@ -111,6 +112,20 @@ class CookieServiceTest extends TestCase
         $this->responseContext
             ->shouldReceive('isForceAuthn')
             ->andReturnFalse();
+
+        $sp = Mockery::mock(ServiceProvider::class);
+        $sp
+            ->shouldReceive('getEntityId')
+            ->andReturn('https://remote.sp.stepup.example.com');
+        $sp
+            ->shouldReceive('allowedToSetSsoCookieOn2fa')
+            ->andReturnTrue();
+        $sp
+            ->shouldReceive('allowSsoOn2fa')
+            ->andReturnTrue();
+        $this->responseContext
+            ->shouldReceive('getServiceProvider')
+            ->andReturn($sp);
     }
 
     public function test_storing_a_session_cookie()
@@ -242,6 +257,36 @@ class CookieServiceTest extends TestCase
         $this->service->handleSsoOn2faCookieStorage($this->responseContext, $request, $response);
     }
 
+    public function test_storing_a_session_cookie_disallowed_sp()
+    {
+        $this->buildService(
+            new Configuration(
+                'test-cookie',
+                'session',
+                0,
+                '0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f'
+            )
+        );
+        $this->responseContext = Mockery::mock(ResponseContext::class);
+        $sp = Mockery::mock(ServiceProvider::class);
+        $sp
+            ->shouldReceive('getEntityId')
+            ->andReturn('https://ra.stepup.example.com/gssf/tiqr/metadata');
+        $sp
+            ->shouldReceive('allowedToSetSsoCookieOn2fa')
+            ->andReturnFalse();
+        $this->responseContext
+            ->shouldReceive('getServiceProvider')
+            ->andReturn($sp);
+
+        $response = new Response('<html><body><h1>hi</h1></body></html>', 200);
+        $request = Mockery::mock(Request::class);
+
+        $this->service->handleSsoOn2faCookieStorage($this->responseContext, $request, $response);
+        $cookieJar = $response->headers->getCookies();
+        self::assertCount(0, $cookieJar);
+    }
+
     public function test_storing_a_session_cookie_not_enabled_for_institution()
     {
         $this->buildService(
@@ -369,6 +414,48 @@ class CookieServiceTest extends TestCase
             )
         );
         $httpRequest = new Request();
+
+        self::assertFalse(
+            $this->service->shouldSkip2faAuthentication(
+                $this->responseContext,
+                3.0,
+                'abcdef-1234',
+                Mockery::mock(ArrayCollection::class),
+                $httpRequest
+            )
+        );
+    }
+
+    public function test_skip_sso_when_sp_disallows_sso_on_2fa()
+    {
+        $this->buildService(
+            new Configuration(
+                'test-cookie',
+                'session',
+                0,
+                '0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f'
+            )
+        );
+
+        $this->responseContext = Mockery::mock(ResponseContext::class);
+        $sp = Mockery::mock(ServiceProvider::class);
+        $sp
+            ->shouldReceive('getEntityId')
+            ->andReturn('https://ra.stepup.example.com/vetting-procedure/gssf/tiqr/metadata');
+        $sp
+            ->shouldReceive('allowSsoOn2fa')
+            ->andReturnFalse();
+        $this->responseContext
+            ->shouldReceive('getServiceProvider')
+            ->andReturn($sp);
+        $this->responseContext
+            ->shouldReceive('isForceAuthn')->andReturn(false);
+
+        $cookieValue = $this->cookieValue();
+        $httpRequest = new Request();
+        $httpRequest->cookies->add(
+            [$this->configuration->getName() => $this->createCookieWithValue($this->encryptionHelper->encrypt($cookieValue))->getValue()]
+        );
 
         self::assertFalse(
             $this->service->shouldSkip2faAuthentication(

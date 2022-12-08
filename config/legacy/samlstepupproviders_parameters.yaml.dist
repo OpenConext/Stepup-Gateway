@@ -11,6 +11,9 @@ parameters:
         - 'https://selfservice.tld/registration/gssf/tiqr/metadata'
         - 'https://ra.tld/vetting-procedure/gssf/tiqr/metadata'
 
+    # A regex that allows matching on the RA GSSP vetting procedure metadata URLs
+    # Used to determine
+    gssp_ra_vetting_procedure_sp_metadata_url_regex: '/https:\/\/ra.tld\/vetting-procedure\/gssf\/[0-9.A-_\-Za-z]+\/metadata/'
 
     # Configuration of the "tiqr" GSSP
     # Authentication flow:
