@@ -29,7 +29,6 @@ use Surfnet\StepupGateway\GatewayBundle\Entity\ServiceProvider;
 use Surfnet\StepupGateway\GatewayBundle\Saml\Exception\RuntimeException;
 use Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler;
 use Surfnet\StepupGateway\GatewayBundle\Service\SamlEntityService;
-use function is_string;
 
 class ResponseContext
 {
@@ -277,9 +276,10 @@ class ResponseContext
         $this->stateHandler->setSecondFactorVerified(true);
     }
 
-    public function unsetSelectedSecondFactor()
+    public function finalizeAuthentication()
     {
-        $this->stateHandler->setSelectedSecondFactorId(null);
+        $this->stateHandler
+            ->setSelectedSecondFactorId(null);
     }
 
     /**
@@ -332,5 +332,10 @@ class ResponseContext
         }
 
         throw new RuntimeException('Unable to resolve an identifier from internalCollabPersonId or the Subject NameId');
+    }
+
+    public function isForceAuthn()
+    {
+        return $this->stateHandler->isForceAuthn();
     }
 }

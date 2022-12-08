@@ -26,9 +26,9 @@ Encore
         test: /\.tsx?|\.js$/,
         exclude: /node_modules|vendor/,
         use: [{
-            loader: 'tslint-loader',
+            loader: 'eslint-loader',
             options: {
-                configFile: 'tslint.json',
+                configFile: 'eslint.json',
                 emitErrors: true,
                 failOnHint: Encore.isProduction(),
                 typeCheck: true
