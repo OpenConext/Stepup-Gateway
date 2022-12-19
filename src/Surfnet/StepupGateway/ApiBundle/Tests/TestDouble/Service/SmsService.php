@@ -26,7 +26,7 @@ use function setcookie;
  */
 class SmsService implements SmsServiceInterface
 {
-    const CHALLENGE_COOKIE_PREFIX = 'smoketest-sms-service-';
+    const CHALLENGE_COOKIE_PREFIX = 'smoketest-sms-service';
 
     /**
      * @inheritDoc
@@ -35,7 +35,7 @@ class SmsService implements SmsServiceInterface
     {
         // Store the SMS code in a session identified by the identity of the user requesting the step up allowing
         // later access to the challenge code
-        setcookie(sprintf(self::CHALLENGE_COOKIE_PREFIX . $command->recipient), $command->body);
+        setcookie(sprintf(self::CHALLENGE_COOKIE_PREFIX), $command->body);
         // beep boop, sending SMS ...
         return true;
     }
