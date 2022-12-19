@@ -38,6 +38,27 @@ Feature: As an institution that uses the SSO on Second Factor authentication
     And the response should have a SSO-2FA cookie
     And the SSO-2FA cookie should contain "urn:collab:person:stepup.example.com:user-2"
 
+  Scenario: A successive higher LoA authentication asks the Yubikey second factor authentication
+    Given a user from "stepup.example.com" identified by "urn:collab:person:stepup.example.com:user-5" with a vetted "Yubikey" token
+    And a user from "stepup.example.com" identified by "urn:collab:person:stepup.example.com:user-5" with a vetted "SMS" token
+    When urn:collab:person:stepup.example.com:user-5 starts an authentication requiring LoA 2
+    Then I authenticate at the IdP as user-5
+    And I select my SMS token on the WAYG
+    Then I should see the SMS verification screen
+    And I enter the SMS verification code
+    Then the response should contain "You are logged in to SP"
+    And the response should contain "default-sp"
+    And the response should have a SSO-2FA cookie
+    And the SSO-2FA cookie should contain "urn:collab:person:stepup.example.com:user-5"
+    When urn:collab:person:stepup.example.com:user-5 starts an authentication requiring LoA 3
+    And I pass through the IdP
+    And I should see the Yubikey OTP screen
+    When I enter the OTP
+    Then the response should contain "You are logged in to SP"
+    And the response should contain "default-sp"
+    And the response should have a SSO-2FA cookie
+    And the SSO-2FA cookie should contain "urn:collab:person:stepup.example.com:user-5"
+
   Scenario: Cookie is only valid for the identity it was issued to
     Given a user from "stepup.example.com" identified by "urn:collab:person:stepup.example.com:user-3" with a vetted "Yubikey" token
     Given a user from "stepup.example.com" identified by "urn:collab:person:stepup.example.com:user-4" with a vetted "Yubikey" token

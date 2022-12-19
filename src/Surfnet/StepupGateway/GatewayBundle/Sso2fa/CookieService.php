@@ -20,9 +20,7 @@ namespace Surfnet\StepupGateway\GatewayBundle\Sso2fa;
 
 use Doctrine\Common\Collections\Collection;
 use Psr\Log\LoggerInterface;
-use Surfnet\StepupBundle\Service\LoaResolutionService;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
-use Surfnet\StepupGateway\GatewayBundle\Controller\GatewayController;
 use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor;
 use Surfnet\StepupGateway\GatewayBundle\Entity\ServiceProvider;
 use Surfnet\StepupGateway\GatewayBundle\Exception\RuntimeException;
@@ -30,12 +28,10 @@ use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
 use Surfnet\StepupGateway\GatewayBundle\Service\InstitutionConfigurationService;
 use Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorService;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Exception\CookieNotFoundException;
-use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Exception\LoaCanNotBeResolvedException;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Http\CookieHelperInterface;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\CookieValue;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\CookieValueInterface;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\NullCookieValue;
-use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\LoaResolutionService as SfoLoaResolutionService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -53,14 +49,6 @@ class CookieService implements CookieServiceInterface
      */
     private $institutionConfigurationService;
     /**
-     * @var LoaResolutionService
-     */
-    private $gatewayLoaResolutionService;
-    /**
-     * @var SfoLoaResolutionService
-     */
-    private $sfoLoaResolutionService;
-    /**
      * @var LoggerInterface
      */
     private $logger;
@@ -77,16 +65,12 @@ class CookieService implements CookieServiceInterface
     public function __construct(
         CookieHelperInterface $cookieHelper,
         InstitutionConfigurationService $institutionConfigurationService,
-        LoaResolutionService $gatewayLoaResolutionService,
-        SfoLoaResolutionService $sfoLoaResolutionService,
         LoggerInterface $logger,
         SecondFactorService $secondFactorService,
         SecondFactorTypeService $secondFactorTypeService
     ) {
         $this->cookieHelper = $cookieHelper;
         $this->institutionConfigurationService = $institutionConfigurationService;
-        $this->gatewayLoaResolutionService = $gatewayLoaResolutionService;
-        $this->sfoLoaResolutionService = $sfoLoaResolutionService;
         $this->secondFactorService = $secondFactorService;
         $this->secondFactorTypeService = $secondFactorTypeService;
         $this->logger = $logger;
@@ -129,7 +113,7 @@ class CookieService implements CookieServiceInterface
             if ($isEnabled) {
                 $this->logger->notice(sprintf('SSO on 2FA is enabled for %s', $secondFactor->institution));
                 $ssoCookie = $this->read($request);
-                $loa = $this->getRequestedLoa($responseContext, $authenticationMode);
+                $loa = $secondFactor->getLoaLevel($this->secondFactorTypeService);
                 // Did the LoA requirement change? If a higher LoA was requested, update the cookie value accordingly.
                 if ($this->shouldAddCookie($ssoCookie, $loa)) {
                     $identityId = $responseContext->getIdentityNameId();
@@ -227,28 +211,6 @@ class CookieService implements CookieServiceInterface
             );
         }
         return $cookieNotSet || $cookieDoesNotMeetLoaRequirement;
-    }
-
-    private function getRequestedLoa(ResponseContext $responseContext, string $authenticationMode): float
-    {
-        $loaIdentifier = $responseContext->getRequiredLoa();
-        $loa = $this->gatewayLoaResolutionService->getLoa($loaIdentifier);
-        if ($loa) {
-            return $loa->getLevel();
-        }
-        if ($authenticationMode === GatewayController::MODE_SFO) {
-            $loaResolved = $this->sfoLoaResolutionService->resolve($loaIdentifier);
-            $loa = $this->gatewayLoaResolutionService->getLoa($loaResolved);
-            if ($loa) {
-                return $loa->getLevel();
-            }
-        }
-        throw new LoaCanNotBeResolvedException(
-            sprintf(
-                'Loaded LoA %s from the response context. This level can not be resolved to a LoA level',
-                $loaIdentifier
-            )
-        );
     }
 
     private function store(Response $response, CookieValueInterface $cookieValue)
