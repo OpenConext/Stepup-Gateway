@@ -121,9 +121,6 @@ class FeatureContext implements Context
      */
     public function iShouldSeeTheSMSScreen()
     {
-        $this->minkContext->assertPageContainsText('Log in with SMS');
-        $this->minkContext->assertPageContainsText('Enter the received code on the next page');
-        $this->minkContext->pressButton('gateway_send_sms_challenge_send_challenge');
         $this->minkContext->assertPageContainsText('Enter the received SMS-code');
         $this->minkContext->assertPageContainsText('Send again');
     }
@@ -152,7 +149,10 @@ class FeatureContext implements Context
      */
     public function iEnterTheSmsVerificationCode()
     {
-        $this->minkContext->fillField('gateway_verify_sms_challenge_challenge', '432543');
+        $cookieValue = $this->minkContext->getSession()->getDriver()->getCookie('smoketest-sms-service');
+        $matches = [];
+        preg_match('/^Your\ SMS\ code:\ (.*)$/', $cookieValue, $matches);
+        $this->minkContext->fillField('gateway_verify_sms_challenge_challenge', $matches[1]);
         $this->minkContext->pressButton('gateway_verify_sms_challenge_verify_challenge');
         $this->minkContext->pressButton('Submit');
     }

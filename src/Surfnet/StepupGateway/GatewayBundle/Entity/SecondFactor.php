@@ -114,22 +114,13 @@ class SecondFactor
     {
     }
 
-    /**
-     * @param Loa $loa
-     * @param SecondFactorTypeService $service
-     * @return bool
-     */
-    public function canSatisfy(Loa $loa, SecondFactorTypeService $service)
+    public function canSatisfy(Loa $loa, SecondFactorTypeService $service): bool
     {
         $secondFactorType = new SecondFactorType($this->secondFactorType);
         return $service->canSatisfy($secondFactorType, $loa, new VettingType($this->vettingType));
     }
 
-    /**
-     * @param SecondFactorTypeService $service
-     * @return int
-     */
-    public function getLoaLevel(SecondFactorTypeService $service)
+    public function getLoaLevel(SecondFactorTypeService $service): float
     {
         $secondFactorType = new SecondFactorType($this->secondFactorType);
         return $service->getLevel($secondFactorType, new VettingType($this->vettingType));
