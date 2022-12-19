@@ -91,8 +91,6 @@ class CookieServiceTest extends TestCase
         // Not all dependencies are included for real, the ones not focussed on crypto and cookie storage are mocked
         $logger = Mockery::mock(LoggerInterface::class)->shouldIgnoreMissing();
         $this->institutionService = Mockery::mock(InstitutionConfigurationService::class);
-        $this->gwLoaResolution = Mockery::mock(LoaResolutionService::class);
-        $this->sfoLoaResolution = Mockery::mock(SfoLoaResolutionService::class);
         $this->secondFactorService = Mockery::mock(SecondFactorService::class);
         $this->secondFactorTypeService = Mockery::mock(SecondFactorTypeService::class);
         $this->configuration = $configuration;
@@ -101,8 +99,6 @@ class CookieServiceTest extends TestCase
         $this->service = new CookieService(
             $cookieHelper,
             $this->institutionService,
-            $this->gwLoaResolution,
-            $this->sfoLoaResolution,
             $logger,
             $this->secondFactorService,
             $this->secondFactorTypeService
@@ -143,6 +139,8 @@ class CookieServiceTest extends TestCase
         $sfMock = Mockery::mock(SecondFactor::class)->makePartial();
         $sfMock->secondFactorId = 'sf-id-1234';
         $sfMock->institution = 'institution-a';
+        $sfMock->secondFactorType = 'sms';
+        $sfMock->vettingType = 'on-premise';
 
         $this->responseContext
             ->shouldReceive('getSelectedSecondFactor')
@@ -160,13 +158,12 @@ class CookieServiceTest extends TestCase
         $this->responseContext
             ->shouldReceive('getRequiredLoa')
             ->andReturn('example.org:loa-2.0');
-        $this->gwLoaResolution
-            ->shouldReceive('getLoa')
-            ->with('example.org:loa-2.0')
-            ->andReturn(new Loa(2.0, 'example.org:loa-2.0'));
         $this->responseContext
             ->shouldReceive('getIdentityNameId')
             ->andReturn('james-hoffman');
+        $this->secondFactorTypeService
+            ->shouldReceive('getLevel')
+            ->andReturn(2.0);
 
         $response = $this->service->handleSsoOn2faCookieStorage($this->responseContext, $request, $response);
 
@@ -194,6 +191,8 @@ class CookieServiceTest extends TestCase
         $sfMock = Mockery::mock(SecondFactor::class)->makePartial();
         $sfMock->secondFactorId = 'sf-id-1234';
         $sfMock->institution = 'institution-a';
+        $sfMock->secondFactorType = 'yubikey';
+        $sfMock->vettingType = 'on-premise';
 
         $this->responseContext
             ->shouldReceive('getSelectedSecondFactor')
@@ -211,13 +210,12 @@ class CookieServiceTest extends TestCase
         $this->responseContext
             ->shouldReceive('getRequiredLoa')
             ->andReturn('example.org:loa-2.0');
-        $this->gwLoaResolution
-            ->shouldReceive('getLoa')
-            ->with('example.org:loa-2.0')
-            ->andReturn(new Loa(2.0, 'example.org:loa-2.0'));
         $this->responseContext
             ->shouldReceive('getIdentityNameId')
             ->andReturn('james-hoffman');
+        $this->secondFactorTypeService
+            ->shouldReceive('getLevel')
+            ->andReturn(3.0);
 
         $response = $this->service->handleSsoOn2faCookieStorage($this->responseContext, $request, $response);
 
