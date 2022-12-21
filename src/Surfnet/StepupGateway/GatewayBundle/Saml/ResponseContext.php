@@ -23,6 +23,7 @@ use DateTimeZone;
 use DOMDocument;
 use Psr\Log\LoggerInterface;
 use SAML2\Assertion;
+use SAML2\XML\saml\Issuer;
 use Surfnet\SamlBundle\Entity\IdentityProvider;
 use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor;
 use Surfnet\StepupGateway\GatewayBundle\Entity\ServiceProvider;
@@ -105,9 +106,11 @@ class ResponseContext
     /**
      * @return null|string
      */
-    public function getIssuer()
+    public function getIssuer(): Issuer
     {
-        return $this->hostedIdentityProvider->getEntityId();
+        $issuer = new Issuer();
+        $issuer->setValue($this->hostedIdentityProvider->getEntityId());
+        return $issuer;
     }
 
     /**
@@ -323,8 +326,8 @@ class ResponseContext
             return reset($attributes['urn:mace:surf.nl:attribute-def:internal-collabPersonId']);
         }
         $nameId = $assertion->getNameId();
-        if ($nameId && !is_null($nameId->value) && is_string($nameId->value)) {
-            return $nameId->value;
+        if ($nameId && !is_null($nameId->getValue()) && is_string($nameId->getValue())) {
+            return $nameId->getValue();
         }
 
         throw new RuntimeException('Unable to resolve an identifier from internalCollabPersonId or the Subject NameId');

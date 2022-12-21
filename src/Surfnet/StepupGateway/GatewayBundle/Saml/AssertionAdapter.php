@@ -46,6 +46,6 @@ class AssertionAdapter
         /** @var \SAML2\XML\saml\SubjectConfirmation $subjectConfirmation */
         $subjectConfirmation = $this->assertion->getSubjectConfirmation()[0];
 
-        return $subjectConfirmation->SubjectConfirmationData->InResponseTo;
+        return $subjectConfirmation->getSubjectConfirmationData()->getInResponseTo();
     }
 }

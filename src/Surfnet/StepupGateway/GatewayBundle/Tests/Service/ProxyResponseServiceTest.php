@@ -22,6 +22,7 @@ use Mockery;
 use Psr\Log\NullLogger;
 use SAML2\Assertion;
 use SAML2\Compat\ContainerSingleton;
+use SAML2\XML\saml\Issuer;
 use SAML2\XML\saml\NameID;
 use Surfnet\SamlBundle\Entity\IdentityProvider;
 use Surfnet\SamlBundle\SAML2\Attribute\AttributeDefinition;
@@ -81,10 +82,9 @@ final class ProxyResponseServiceTest extends GatewaySamlTestCase
 
         $this->identityProvider->shouldReceive('getEntityId')->andReturn('https://gateway.example/metadata');
 
-        $nameId = NameID::fromArray([
-            'Value' => 'John Doe',
-            'Format' => 'Unspecified'
-        ]);
+        $nameId = new NameID();
+        $nameId->setValue('John Doe');
+        $nameId->setFormat('Unspecified');
 
         $this->attributeDictionary
             ->shouldReceive('translate->getAttributeValue')
@@ -113,7 +113,7 @@ final class ProxyResponseServiceTest extends GatewaySamlTestCase
         );
 
         $originalAssertion = new Assertion();
-        $originalAssertion->setIssuer('https://idp.example/metadata');
+        $originalAssertion->setIssuer($this->getIssuer('https://idp.example/metadata'));
 
         $response = $factory->createProxyResponse($originalAssertion, 'https://acs');
 
@@ -151,13 +151,14 @@ final class ProxyResponseServiceTest extends GatewaySamlTestCase
             'attrib2' => ['foobar 2'],
             'urn:mace:surf.nl:attribute-def:internal-collabPersonId' => ['joe@exampe.com'],
         ];
-        $originalNameId = NameID::fromArray([
-            'Value' => 'John Doe',
-            'Format' => 'Unspecified'
-        ]);
+
+        $originalNameId = new NameID();
+        $originalNameId->setValue('John Doe');
+        $originalNameId->setFormat('Unspecified');
+
 
         $originalAssertion = new Assertion();
-        $originalAssertion->setIssuer('https://idp.example/metadata');
+        $originalAssertion->setIssuer($this->getIssuer('https://idp.example/metadata'));
         $originalAssertion->setAttributes($attributes);
         // The original NameId will be used in the outgoing assertion
         $originalAssertion->setNameId($originalNameId);
@@ -175,7 +176,7 @@ final class ProxyResponseServiceTest extends GatewaySamlTestCase
         $this->assertArrayNotHasKey('urn:mace:surf.nl:attribute-def:internal-collabPersonId', $responseAttributes);
 
         // The nameId is not updated (which we did when dealing with EPTI)
-        $this->assertEquals($assertion->getNameId()->value, $originalNameId->value);
+        $this->assertEquals($assertion->getNameId()->getValue(), $originalNameId->getValue());
 
         $this->assertEquals(
             ['https://idp.example/metadata'],
@@ -198,7 +199,7 @@ final class ProxyResponseServiceTest extends GatewaySamlTestCase
         );
 
         $originalAssertion = new Assertion();
-        $originalAssertion->setIssuer('https://idp.example/metadata');
+        $originalAssertion->setIssuer($this->getIssuer('https://idp.example/metadata'));
         $originalAssertion->setAuthenticatingAuthority(['https://previous.idp.example/metadata']);
 
         $response = $factory->createProxyResponse($originalAssertion, 'https://acs');
@@ -228,7 +229,7 @@ final class ProxyResponseServiceTest extends GatewaySamlTestCase
         );
 
         $originalAssertion = new Assertion();
-        $originalAssertion->setIssuer('https://idp.example/metadata');
+        $originalAssertion->setIssuer($this->getIssuer('https://idp.example/metadata'));
         $originalAssertion->setAuthenticatingAuthority(['https://previous.idp.example/metadata']);
 
         $this->attributeDictionary
@@ -259,13 +260,12 @@ final class ProxyResponseServiceTest extends GatewaySamlTestCase
         );
 
         $originalAssertion = new Assertion();
-        $originalAssertion->setIssuer('https://idp.example/metadata');
+        $originalAssertion->setIssuer($this->getIssuer('https://idp.example/metadata'));
         $originalAssertion->setAuthenticatingAuthority(['https://previous.idp.example/metadata']);
 
-        $nameId = NameID::fromArray([
-            'Value' => null,
-            'Format' => 'urn.colab.Epti'
-        ]);
+        $nameId = new NameID();
+        $nameId->setValue('');
+        $nameId->setFormat('urn.colab.Epti');
 
         $this->attributeDictionary
             ->shouldReceive('translate->getAttributeValue')
@@ -304,6 +304,13 @@ final class ProxyResponseServiceTest extends GatewaySamlTestCase
         /** @var \SAML2\XML\saml\SubjectConfirmation $subjectConfirmation */
         $subjectConfirmation = reset($subjects);
 
-        $this->assertEquals($assertion->getNotOnOrAfter(), $subjectConfirmation->SubjectConfirmationData->NotOnOrAfter);
+        $this->assertEquals($assertion->getNotOnOrAfter(), $subjectConfirmation->getSubjectConfirmationData()->getNotOnOrAfter());
+    }
+
+    private function getIssuer(string $issuer): Issuer
+    {
+        $issuerVo = new Issuer();
+        $issuerVo->setValue($issuer);
+        return $issuerVo;
     }
 }

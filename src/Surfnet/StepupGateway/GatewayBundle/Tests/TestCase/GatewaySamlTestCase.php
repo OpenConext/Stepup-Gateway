@@ -81,6 +81,8 @@ class GatewaySamlTestCase extends TestCase
         return Mockery::mock(PrivateKey::class)
             ->shouldReceive('getName')
             ->andReturn($name)
+            ->shouldReceive('isFile')
+            ->andReturnTrue()
             ->shouldReceive('getFilePath')
             ->andReturn($this->getKeyPath($file))
             ->shouldReceive('getPassPhrase')

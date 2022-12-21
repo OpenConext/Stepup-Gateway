@@ -50,12 +50,8 @@ final class SecondFactorOnlyNameIdValidationService
 
     /**
      * Is the given SP allowed to authenticate via Second Factor Only for the given NameID?
-     *
-     * @param string $spEntityId
-     * @param string $nameId
-     * @return bool
      */
-    public function validate($spEntityId, $nameId)
+    public function validate(string $spEntityId, string $nameId): bool
     {
         if (!$nameId) {
             $this->logger->notice(
