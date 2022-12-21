@@ -22,7 +22,7 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install pdo_mysql exif gd gmp sodium
 
 # Xdebug
-RUN pecl install xdebug && echo "zend_extension=$(find /usr/local/lib/php/extensions/ -name xdebug.so)" > /usr/local/etc/php/conf.d/xdebug.ini;
+RUN pecl install xdebug-3.1.6 && echo "zend_extension=$(find /usr/local/lib/php/extensions/ -name xdebug.so)" > /usr/local/etc/php/conf.d/xdebug.ini;
 
 # Composer
 RUN curl -sL https://getcomposer.org/installer | php -- --install-dir /usr/bin --filename composer
