@@ -21,6 +21,7 @@ namespace Surfnet\StepupGateway\Behat;
 use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Symfony2Extension\Context\KernelAwareContext;
+use PhpParser\Node\Name;
 use RobRichards\XMLSecLibs\XMLSecurityKey;
 use RuntimeException;
 use SAML2\AuthnRequest;
@@ -29,6 +30,7 @@ use SAML2\Certificate\KeyLoader;
 use SAML2\Certificate\PrivateKeyLoader;
 use SAML2\Configuration\PrivateKey;
 use SAML2\Constants;
+use SAML2\XML\saml\Issuer;
 use SAML2\XML\saml\NameID;
 use Surfnet\SamlBundle\Entity\IdentityProvider;
 use Surfnet\SamlBundle\SAML2\AuthnRequest as Saml2AuthnRequest;
@@ -157,7 +159,9 @@ class ServiceProviderContext implements Context, KernelAwareContext
         $authnRequest = new AuthnRequest();
         // In order to later assert if the response succeeded or failed, set our own dummy ACS location
         $authnRequest->setAssertionConsumerServiceURL(SamlEntityRepository::SP_ACS_LOCATION);
-        $authnRequest->setIssuer($this->currentSfoSp['entityId']);
+        $issuerVo = new Issuer();
+        $issuerVo->setValue($this->currentSfoSp['entityId']);
+        $authnRequest->setIssuer($issuerVo);
         $authnRequest->setDestination(self::SFO_ENDPOINT_URL);
         $authnRequest->setProtocolBinding(Constants::BINDING_HTTP_REDIRECT);
         $authnRequest->setNameId($this->buildNameId($nameId));
@@ -183,7 +187,9 @@ class ServiceProviderContext implements Context, KernelAwareContext
         $authnRequest = new AuthnRequest();
         // In order to later assert if the response succeeded or failed, set our own dummy ACS location
         $authnRequest->setAssertionConsumerServiceURL(SamlEntityRepository::SP_ACS_LOCATION);
-        $authnRequest->setIssuer($this->currentSfoSp['entityId']);
+        $issuerVo = new Issuer();
+        $issuerVo->setValue($this->currentSfoSp['entityId']);
+        $authnRequest->setIssuer($issuerVo);
         $authnRequest->setDestination(self::SFO_ENDPOINT_URL);
         $authnRequest->setProtocolBinding(Constants::BINDING_HTTP_REDIRECT);
         $authnRequest->setNameId($this->buildNameId($nameId));
@@ -217,7 +223,9 @@ class ServiceProviderContext implements Context, KernelAwareContext
         $authnRequest = new AuthnRequest();
         // In order to later assert if the response succeeded or failed, set our own dummy ACS location
         $authnRequest->setAssertionConsumerServiceURL(SamlEntityRepository::SP_ACS_LOCATION);
-        $authnRequest->setIssuer($this->currentSfoSp['entityId']);
+        $issuerVo = new Issuer();
+        $issuerVo->setValue($this->currentSfoSp['entityId']);
+        $authnRequest->setIssuer($issuerVo);
         $authnRequest->setDestination(self::SFO_ENDPOINT_URL);
         $authnRequest->setProtocolBinding(Constants::BINDING_HTTP_REDIRECT);
         $authnRequest->setNameId($this->buildNameId($nameId));
@@ -243,7 +251,9 @@ class ServiceProviderContext implements Context, KernelAwareContext
         $authnRequest = new AuthnRequest();
         // In order to later assert if the response succeeded or failed, set our own dummy ACS location
         $authnRequest->setAssertionConsumerServiceURL(SamlEntityRepository::SP_ACS_LOCATION);
-        $authnRequest->setIssuer($this->currentSp['entityId']);
+        $issuerVo = new Issuer();
+        $issuerVo->setValue($this->currentSfoSp['entityId']);
+        $authnRequest->setIssuer($issuerVo);
         $authnRequest->setDestination(self::SSO_ENDPOINT_URL);
         $authnRequest->setProtocolBinding(Constants::BINDING_HTTP_REDIRECT);
         $authnRequest->setNameId($this->buildNameId($nameId));
@@ -268,7 +278,9 @@ class ServiceProviderContext implements Context, KernelAwareContext
         $authnRequest = new AuthnRequest();
         // In order to later assert if the response succeeded or failed, set our own dummy ACS location
         $authnRequest->setAssertionConsumerServiceURL(SamlEntityRepository::SP_ACS_LOCATION);
-        $authnRequest->setIssuer($this->currentSp['entityId']);
+        $issuerVo = new Issuer();
+        $issuerVo->setValue($this->currentSfoSp['entityId']);
+        $authnRequest->setIssuer($issuerVo);
         $authnRequest->setDestination(self::SSO_ENDPOINT_URL);
         $authnRequest->setProtocolBinding(Constants::BINDING_HTTP_REDIRECT);
         $authnRequest->setNameId($this->buildNameId($nameId));
@@ -328,13 +340,11 @@ class ServiceProviderContext implements Context, KernelAwareContext
         return $this->minkContext->getSession();
     }
 
-    /**
-     * @param string $nameId
-     * @return NameID
-     */
-    private function buildNameId($nameId)
+    private function buildNameId(string $nameId): NameID
     {
-        $nameId = NameID::fromArray(['Value' => $nameId, 'Format' =>  Constants::NAMEFORMAT_UNSPECIFIED]);
-        return $nameId;
+        $nameIdVo = new NameID();
+        $nameIdVo->setValue($nameId);
+        $nameIdVo->setFormat(Constants::NAMEFORMAT_UNSPECIFIED);
+        return $nameIdVo;
     }
 }

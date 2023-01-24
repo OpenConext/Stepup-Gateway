@@ -23,6 +23,7 @@ use Psr\Log\NullLogger;
 use SAML2\Assertion;
 use SAML2\Constants;
 use SAML2\Response;
+use SAML2\XML\saml\NameID;
 use Surfnet\SamlBundle\Entity\IdentityProvider;
 use Surfnet\StepupGateway\GatewayBundle\Saml\AssertionSigningService;
 use Surfnet\StepupGateway\GatewayBundle\Tests\TestCase\GatewaySamlTestCase;
@@ -85,10 +86,10 @@ class ProxyResponseFactoryTest extends GatewaySamlTestCase
             ->andReturn('https://sp');
 
         $originalAssertion = new Assertion();
-        $originalAssertion->setNameId([
-            'Value' => 'e3d2948',
-            'Format' => Constants::NAMEID_TRANSIENT,
-        ]);
+        $nameIdVo = new NameID();
+        $nameIdVo->setValue('e3d2948');
+        $nameIdVo->setFormat(Constants::NAMEID_TRANSIENT);
+        $originalAssertion->setNameId($nameIdVo);
 
         $response = $this->factory->createProxyResponse(
             $originalAssertion,
@@ -101,8 +102,8 @@ class ProxyResponseFactoryTest extends GatewaySamlTestCase
         $assertion = reset($assertions);
 
         $this->assertInstanceOf(Response::class, $response);
-        $this->assertEquals('e3d2948', $assertion->getNameId()->value);
-        $this->assertEquals('https://idp.example.com/metadata', $response->getIssuer());
+        $this->assertEquals('e3d2948', $assertion->getNameId()->getValue());
+        $this->assertEquals('https://idp.example.com/metadata', $response->getIssuer()->getValue());
         $this->assertEquals('https://acs', $response->getDestination());
         $this->assertNull($response->getAssertions()[0]->getAuthnContextClassRef());
 
@@ -111,7 +112,7 @@ class ProxyResponseFactoryTest extends GatewaySamlTestCase
         /** @var \SAML2\XML\saml\SubjectConfirmation $subjectConfirmation */
         $subjectConfirmation = reset($subjects);
 
-        $this->assertEquals($assertion->getNotOnOrAfter(), $subjectConfirmation->SubjectConfirmationData->NotOnOrAfter);
+        $this->assertEquals($assertion->getNotOnOrAfter(), $subjectConfirmation->getSubjectConfirmationData()->getNotOnOrAfter());
     }
 
 }
