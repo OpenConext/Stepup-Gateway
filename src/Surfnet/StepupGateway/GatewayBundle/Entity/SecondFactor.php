@@ -16,22 +16,26 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupMiddleware\GatewayBundle\Entity;
+namespace Surfnet\StepupGateway\GatewayBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Rhumsaa\Uuid\Uuid;
+use Surfnet\StepupBundle\Service\SecondFactorTypeService;
+use Surfnet\StepupBundle\Value\Loa;
+use Surfnet\StepupBundle\Value\SecondFactorType;
+use Surfnet\StepupBundle\Value\VettingType;
 
 /**
- * WARNING: Any schema change made to this entity should also be applied to the Gateway SecondFactor entity!
- * @see Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor (in OpenConext/Stepup-Gateway project)
+ * WARNING: Any schema change made to this entity should also be applied to the Middleware SecondFactor entity!
+ *          Migrations are managed by Middleware.
  *
- * @ORM\Entity(repositoryClass="Surfnet\StepupMiddleware\GatewayBundle\Repository\SecondFactorRepository")
+ * @see Surfnet\StepupMiddleware\GatewayBundle\Entity\SecondFactor (in OpenConext/Stepup-Middleware project)
+ *
+ * @ORM\Entity(repositoryClass="Surfnet\StepupGateway\GatewayBundle\Entity\DoctrineSecondFactorRepository")
  * @ORM\Table(
  *      indexes={
  *          @ORM\Index(name="idx_secondfactor_nameid", columns={"name_id"}),
  *      }
  * )
- * @SuppressWarnings(PHPMD.UnusedPrivateFields)
  */
 class SecondFactor
 {
@@ -41,7 +45,7 @@ class SecondFactor
      * @ORM\Id
      * @ORM\Column(length=36)
      */
-    private $id;
+    public $id;
 
     /**
      * @var string
@@ -49,21 +53,21 @@ class SecondFactor
      * @ORM\Id
      * @ORM\Column(length=36)
      */
-    private $identityId;
+    public $identityId;
 
     /**
      * @var string
      *
      * @ORM\Column(length=200)
      */
-    private $nameId;
+    public $nameId;
 
     /**
      * @var string
      *
      * @ORM\Column(length=200)
      */
-    private $institution;
+    public $institution;
 
     /**
      * In which language to display any second factor verification screens.
@@ -79,21 +83,21 @@ class SecondFactor
      *
      * @ORM\Column(length=36)
      */
-    private $secondFactorId;
+    public $secondFactorId;
 
     /**
      * @var string
      *
      * @ORM\Column(length=50)
      */
-    private $secondFactorType;
+    public $secondFactorType;
 
     /**
      * @var string
      *
      * @ORM\Column(length=255)
      */
-    private $secondFactorIdentifier;
+    public $secondFactorIdentifier;
 
     /**
      * This boolean indicates if the second factor token was vetted
@@ -105,26 +109,44 @@ class SecondFactor
      *
      * @ORM\Column(type="boolean", options={"default":"1"})
      */
-    private $identityVetted;
+    public $identityVetted;
 
-    public function __construct(
-        $identityId,
-        $nameId,
-        $institution,
-        $displayLocale,
-        $secondFactorId,
-        $secondFactorIdentifier,
-        $secondFactorType,
-        $identityVetted
-    ) {
-        $this->id                     = (string) Uuid::uuid4();
-        $this->identityId             = $identityId;
-        $this->nameId                 = $nameId;
-        $this->institution            = $institution;
-        $this->displayLocale          = $displayLocale;
-        $this->secondFactorId         = $secondFactorId;
-        $this->secondFactorIdentifier = $secondFactorIdentifier;
-        $this->secondFactorType = $secondFactorType;
-        $this->identityVetted = $identityVetted;
+    /**
+     * No new second factors should be created by the gateway
+     */
+    final private function __construct()
+    {
+    }
+
+    /**
+     * @param Loa $loa
+     * @param SecondFactorTypeService $service
+     * @return bool
+     */
+    public function canSatisfy(Loa $loa, SecondFactorTypeService $service)
+    {
+        $secondFactorType = new SecondFactorType($this->secondFactorType);
+        $vettingType = $this->determineVettingType($this->identityVetted);
+        return $service->canSatisfy($secondFactorType, $loa, $vettingType);
+    }
+
+    /**
+     * @param SecondFactorTypeService $service
+     * @return float
+     */
+    public function getLoaLevel(SecondFactorTypeService $service)
+    {
+        $secondFactorType = new SecondFactorType($this->secondFactorType);
+        $vettingType = $this->determineVettingType($this->identityVetted);
+        $level = $service->getLevel($secondFactorType, $vettingType);
+        return $level;
+    }
+
+    private function determineVettingType(bool $identityVetted): VettingType
+    {
+        if ($identityVetted) {
+            return new VettingType(VettingType::TYPE_ON_PREMISE);
+        }
+        return new VettingType(VettingType::TYPE_SELF_ASSERTED_REGISTRATION);
     }
 }

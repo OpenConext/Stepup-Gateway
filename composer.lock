@@ -67,16 +67,16 @@
         },
         {
             "name": "composer/ca-bundle",
-            "version": "1.3.4",
+            "version": "1.3.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/ca-bundle.git",
-                "reference": "69098eca243998b53eed7a48d82dedd28b447cd5"
+                "reference": "74780ccf8c19d6acb8d65c5f39cd72110e132bbd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/ca-bundle/zipball/69098eca243998b53eed7a48d82dedd28b447cd5",
-                "reference": "69098eca243998b53eed7a48d82dedd28b447cd5",
+                "url": "https://api.github.com/repos/composer/ca-bundle/zipball/74780ccf8c19d6acb8d65c5f39cd72110e132bbd",
+                "reference": "74780ccf8c19d6acb8d65c5f39cd72110e132bbd",
                 "shasum": ""
             },
             "require": {
@@ -123,7 +123,7 @@
             "support": {
                 "irc": "irc://irc.freenode.org/composer",
                 "issues": "https://github.com/composer/ca-bundle/issues",
-                "source": "https://github.com/composer/ca-bundle/tree/1.3.4"
+                "source": "https://github.com/composer/ca-bundle/tree/1.3.5"
             },
             "funding": [
                 {
@@ -139,7 +139,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-10-12T12:08:29+00:00"
+            "time": "2023-01-11T08:27:00+00:00"
         },
         {
             "name": "composer/package-versions-deprecated",
@@ -2449,16 +2449,16 @@
         },
         {
             "name": "nikic/php-parser",
-            "version": "v4.15.2",
+            "version": "v4.15.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nikic/PHP-Parser.git",
-                "reference": "f59bbe44bf7d96f24f3e2b4ddc21cd52c1d2adbc"
+                "reference": "570e980a201d8ed0236b0a62ddf2c9cbb2034039"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/f59bbe44bf7d96f24f3e2b4ddc21cd52c1d2adbc",
-                "reference": "f59bbe44bf7d96f24f3e2b4ddc21cd52c1d2adbc",
+                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/570e980a201d8ed0236b0a62ddf2c9cbb2034039",
+                "reference": "570e980a201d8ed0236b0a62ddf2c9cbb2034039",
                 "shasum": ""
             },
             "require": {
@@ -2499,9 +2499,9 @@
             ],
             "support": {
                 "issues": "https://github.com/nikic/PHP-Parser/issues",
-                "source": "https://github.com/nikic/PHP-Parser/tree/v4.15.2"
+                "source": "https://github.com/nikic/PHP-Parser/tree/v4.15.3"
             },
-            "time": "2022-11-12T15:38:23+00:00"
+            "time": "2023-01-16T22:05:37+00:00"
         },
         {
             "name": "ocramius/proxy-manager",
@@ -3299,16 +3299,16 @@
         },
         {
             "name": "surfnet/stepup-bundle",
-            "version": "5.0.1",
+            "version": "5.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/OpenConext/Stepup-bundle.git",
-                "reference": "41c9eb724025f822c262913e8d25b5f078e908b8"
+                "reference": "6654def1d5895e0c67d26683e512ce78f578ef8f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/OpenConext/Stepup-bundle/zipball/41c9eb724025f822c262913e8d25b5f078e908b8",
-                "reference": "41c9eb724025f822c262913e8d25b5f078e908b8",
+                "url": "https://api.github.com/repos/OpenConext/Stepup-bundle/zipball/6654def1d5895e0c67d26683e512ce78f578ef8f",
+                "reference": "6654def1d5895e0c67d26683e512ce78f578ef8f",
                 "shasum": ""
             },
             "require": {
@@ -3320,13 +3320,13 @@
                 "php": "^7.2|^8.0",
                 "sensio/framework-extra-bundle": "^5.4",
                 "surfnet/stepup-saml-bundle": "^5.0",
-                "symfony/config": "^4.4",
-                "symfony/dependency-injection": "^4.4",
-                "symfony/form": "^4.4",
-                "symfony/framework-bundle": "^4.4",
-                "symfony/http-kernel": "^4.4",
-                "symfony/twig-bridge": "^4.4",
-                "symfony/validator": "^4.4"
+                "symfony/config": "^4.4|^5.4",
+                "symfony/dependency-injection": "^4.4|^5.4",
+                "symfony/form": "^4.4|^5.4",
+                "symfony/framework-bundle": "^4.4|^5.4",
+                "symfony/http-kernel": "^4.4|^5.4",
+                "symfony/twig-bridge": "^4.4|^5.4",
+                "symfony/validator": "^4.4|^5.4"
             },
             "require-dev": {
                 "mockery/mockery": "^1.3",
@@ -3335,7 +3335,7 @@
                 "sebastian/phpcpd": "^4.0",
                 "sensiolabs/security-checker": "^5.0",
                 "squizlabs/php_codesniffer": "^3.4",
-                "symfony/phpunit-bridge": "^4.4"
+                "symfony/phpunit-bridge": "^4.4|^5.4"
             },
             "type": "library",
             "autoload": {
@@ -3355,22 +3355,22 @@
             ],
             "support": {
                 "issues": "https://github.com/OpenConext/Stepup-bundle/issues",
-                "source": "https://github.com/OpenConext/Stepup-bundle/tree/5.0.1"
+                "source": "https://github.com/OpenConext/Stepup-bundle/tree/5.0.3"
             },
-            "time": "2023-01-03T09:52:23+00:00"
+            "time": "2023-01-26T15:00:57+00:00"
         },
         {
             "name": "surfnet/stepup-saml-bundle",
-            "version": "5.0.1",
+            "version": "5.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/OpenConext/Stepup-saml-bundle.git",
-                "reference": "e4851b262ae9ad9c3a8c58f0e3fb2321f7801acd"
+                "reference": "f38da4d9e420d271e7e167c5904fdc569b3ea5df"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/OpenConext/Stepup-saml-bundle/zipball/e4851b262ae9ad9c3a8c58f0e3fb2321f7801acd",
-                "reference": "e4851b262ae9ad9c3a8c58f0e3fb2321f7801acd",
+                "url": "https://api.github.com/repos/OpenConext/Stepup-saml-bundle/zipball/f38da4d9e420d271e7e167c5904fdc569b3ea5df",
+                "reference": "f38da4d9e420d271e7e167c5904fdc569b3ea5df",
                 "shasum": ""
             },
             "require": {
@@ -3379,9 +3379,9 @@
                 "php": "^7.2 || ^8.0",
                 "robrichards/xmlseclibs": "^3.1.1",
                 "simplesamlphp/saml2": "^4.6.4",
-                "symfony/dependency-injection": "^4.4",
-                "symfony/framework-bundle": "^4.4",
-                "symfony/templating": "^4.4",
+                "symfony/dependency-injection": "^4.4|^5.4",
+                "symfony/framework-bundle": "^4.4|^5.4",
+                "symfony/templating": "^4.4|^5.4",
                 "twig/twig": "^2 || ^3"
             },
             "require-dev": {
@@ -3392,7 +3392,7 @@
                 "sebastian/exporter": "^4.0.5",
                 "sebastian/phpcpd": "^6.0",
                 "squizlabs/php_codesniffer": "^3.7.1",
-                "symfony/phpunit-bridge": "^4.4"
+                "symfony/phpunit-bridge": "^4.4|^5.4"
             },
             "type": "symfony-bundle",
             "autoload": {
@@ -3414,9 +3414,9 @@
             ],
             "support": {
                 "issues": "https://github.com/OpenConext/Stepup-saml-bundle/issues",
-                "source": "https://github.com/OpenConext/Stepup-saml-bundle/tree/5.0.1"
+                "source": "https://github.com/OpenConext/Stepup-saml-bundle/tree/5.0.2"
             },
-            "time": "2022-12-22T14:53:15+00:00"
+            "time": "2023-01-25T08:13:29+00:00"
         },
         {
             "name": "surfnet/yubikey-api-client",
@@ -5219,16 +5219,16 @@
         },
         {
             "name": "symfony/http-foundation",
-            "version": "v5.4.17",
+            "version": "v5.4.19",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/http-foundation.git",
-                "reference": "b64a0e2df212d5849e4584cabff0cf09c5d6866a"
+                "reference": "70fd0eb8a1570ba119d5e496c8ee79bf9f0b51b0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/http-foundation/zipball/b64a0e2df212d5849e4584cabff0cf09c5d6866a",
-                "reference": "b64a0e2df212d5849e4584cabff0cf09c5d6866a",
+                "url": "https://api.github.com/repos/symfony/http-foundation/zipball/70fd0eb8a1570ba119d5e496c8ee79bf9f0b51b0",
+                "reference": "70fd0eb8a1570ba119d5e496c8ee79bf9f0b51b0",
                 "shasum": ""
             },
             "require": {
@@ -5275,7 +5275,7 @@
             "description": "Defines an object-oriented layer for the HTTP specification",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/http-foundation/tree/v5.4.17"
+                "source": "https://github.com/symfony/http-foundation/tree/v5.4.19"
             },
             "funding": [
                 {
@@ -5291,7 +5291,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-12-14T08:23:03+00:00"
+            "time": "2023-01-01T08:32:19+00:00"
         },
         {
             "name": "symfony/http-kernel",
@@ -8130,16 +8130,16 @@
         },
         {
             "name": "symfony/webpack-encore-bundle",
-            "version": "v1.16.0",
+            "version": "v1.16.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/webpack-encore-bundle.git",
-                "reference": "bb399930c0299866258b616a74a27b50b94c5d45"
+                "reference": "1862d71e483769b40278548a30e756ce13ef9d4c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/webpack-encore-bundle/zipball/bb399930c0299866258b616a74a27b50b94c5d45",
-                "reference": "bb399930c0299866258b616a74a27b50b94c5d45",
+                "url": "https://api.github.com/repos/symfony/webpack-encore-bundle/zipball/1862d71e483769b40278548a30e756ce13ef9d4c",
+                "reference": "1862d71e483769b40278548a30e756ce13ef9d4c",
                 "shasum": ""
             },
             "require": {
@@ -8183,7 +8183,7 @@
             "description": "Integration with your Symfony app & Webpack Encore!",
             "support": {
                 "issues": "https://github.com/symfony/webpack-encore-bundle/issues",
-                "source": "https://github.com/symfony/webpack-encore-bundle/tree/v1.16.0"
+                "source": "https://github.com/symfony/webpack-encore-bundle/tree/v1.16.1"
             },
             "funding": [
                 {
@@ -8199,7 +8199,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-10-18T15:21:06+00:00"
+            "time": "2023-01-18T19:37:55+00:00"
         },
         {
             "name": "symfony/yaml",
@@ -10533,16 +10533,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "8.5.31",
+            "version": "8.5.32",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "33c126b09a42de5c99e5e8032b54e8221264a74e"
+                "reference": "375686930d05c9fd7d20f6e5fc38121e8d7a9d55"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/33c126b09a42de5c99e5e8032b54e8221264a74e",
-                "reference": "33c126b09a42de5c99e5e8032b54e8221264a74e",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/375686930d05c9fd7d20f6e5fc38121e8d7a9d55",
+                "reference": "375686930d05c9fd7d20f6e5fc38121e8d7a9d55",
                 "shasum": ""
             },
             "require": {
@@ -10610,7 +10610,7 @@
             ],
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/8.5.31"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/8.5.32"
             },
             "funding": [
                 {
@@ -10626,7 +10626,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-10-28T05:57:37+00:00"
+            "time": "2023-01-26T08:30:25+00:00"
         },
         {
             "name": "ramsey/uuid",

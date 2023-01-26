@@ -39,7 +39,7 @@ class SecondFactorRepository
             'secondFactorIdentifier' => $identifier,
             'id' => $uuid,
             'displayLocale' => 'en_GB',
-            'vettingType' => $selfAsserted ? VettingType::TYPE_SELF_ASSERTED_REGISTRATION: VettingType::TYPE_ON_PREMISE,
+            'identityVetted' => $selfAsserted ? 0 : 1,
         ];
         $sql = <<<SQL
             INSERT INTO second_factor (
@@ -51,7 +51,7 @@ class SecondFactorRepository
                 second_factor_identifier, 
                 id, 
                 display_locale,
-                vetting_type
+                identity_vetted
             )
             VALUES (
                 :identityId, 
@@ -62,7 +62,7 @@ class SecondFactorRepository
                 :secondFactorIdentifier, 
                 :id, 
                 :displayLocale,
-                :vettingType
+                :identityVetted
             )
 SQL;
         $stmt = $this->connection->prepare($sql);
