@@ -1,5 +1,12 @@
 # Changelog
 
+## 4.0.1
+Add support for the new identity-vetting setup for SAT second factor tokens. In addition two important
+security updates where installed. For additional details check these closed PR's https://github.com/OpenConext/Stepup-Gateway/pull/277 and https://github.com/OpenConext/Stepup-Gateway/pull/276.
+I installed the updates in #275.
+
+- Identity-vetting implementation #275
+
 ## 4.0.0
 - Support support for self-asserted LoA #258
 
