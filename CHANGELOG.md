@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.0.2
+- Downgrade Stepp-bundle (revert of #238) as this required us to install too much untested 
+  stepup-saml-bundle features.
+
 ## 4.0.1
 Add support for the new identity-vetting setup for SAT second factor tokens. In addition two important
 security updates where installed. For additional details check these closed PR's https://github.com/OpenConext/Stepup-Gateway/pull/277 and https://github.com/OpenConext/Stepup-Gateway/pull/276.
