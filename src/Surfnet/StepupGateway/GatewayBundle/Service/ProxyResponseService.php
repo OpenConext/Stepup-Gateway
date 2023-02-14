@@ -24,7 +24,7 @@ use DateTimeZone;
 use SAML2\Assertion;
 use SAML2\Constants;
 use SAML2\Response;
-use SAML2\XML\saml\Issuer;
+use SAML2\XML\saml\NameID;
 use SAML2\XML\saml\SubjectConfirmation;
 use SAML2\XML\saml\SubjectConfirmationData;
 use Surfnet\SamlBundle\Entity\IdentityProvider;
@@ -105,9 +105,7 @@ class ProxyResponseService
         $newAssertion->setNotBefore($this->currentTime->getTimestamp());
         $newAssertion->setNotOnOrAfter($this->getTimestamp('PT5M'));
         $newAssertion->setAttributes($assertion->getAttributes());
-        $issuerVo = new Issuer();
-        $issuerVo->setValue($this->hostedIdentityProvider->getEntityId());
-        $newAssertion->setIssuer($issuerVo);
+        $newAssertion->setIssuer($this->hostedIdentityProvider->getEntityId());
         $newAssertion->setIssueInstant($this->getTimestamp());
 
         $this->assertionSigningService->signAssertion($newAssertion);
@@ -141,14 +139,14 @@ class ProxyResponseService
     private function addSubjectConfirmationFor(Assertion $newAssertion, $destination)
     {
         $confirmation = new SubjectConfirmation();
-        $confirmation->setMethod(Constants::CM_BEARER);
+        $confirmation->Method = Constants::CM_BEARER;
 
         $confirmationData = new SubjectConfirmationData();
-        $confirmationData->setInResponseTo($this->proxyStateHandler->getRequestId());
-        $confirmationData->setRecipient($destination);
-        $confirmationData->setNotOnOrAfter($newAssertion->getNotOnOrAfter());
+        $confirmationData->InResponseTo = $this->proxyStateHandler->getRequestId();
+        $confirmationData->Recipient = $destination;
+        $confirmationData->NotOnOrAfter = $newAssertion->getNotOnOrAfter();
 
-        $confirmation->setSubjectConfirmationData($confirmationData);
+        $confirmation->SubjectConfirmationData = $confirmationData;
 
         $newAssertion->setSubjectConfirmation([$confirmation]);
     }
@@ -166,7 +164,7 @@ class ProxyResponseService
         $newAssertion->setAuthenticatingAuthority(
             array_merge(
                 (empty($authority) ? [] : $authority),
-                [$assertion->getIssuer()->getValue()]
+                [$assertion->getIssuer()]
             )
         );
     }
@@ -180,9 +178,7 @@ class ProxyResponseService
     {
         $response = new Response();
         $response->setAssertions([$newAssertion]);
-        $issuerVo = new Issuer();
-        $issuerVo->setValue($this->hostedIdentityProvider->getEntityId());
-        $response->setIssuer($issuerVo);
+        $response->setIssuer($this->hostedIdentityProvider->getEntityId());
         $response->setIssueInstant($this->getTimestamp());
         $response->setDestination($destination);
         $response->setInResponseTo($this->proxyStateHandler->getRequestId());
@@ -214,7 +210,7 @@ class ProxyResponseService
         Assertion $originalAssertion
     ) :void {
         if (!$internalCollabPersonId && $eptiNameId) {
-            if (is_null($internalCollabPersonId) && (!array_key_exists(0, $eptiNameId) || !$eptiNameId[0]->getValue())) {
+            if (is_null($internalCollabPersonId) && (!array_key_exists(0, $eptiNameId) || !$eptiNameId[0]->value)) {
                 throw new RuntimeException(
                     'The "urn:mace:dir:attribute-def:eduPersonTargetedID" attribute does not contain a NameID ' .
                     'with a value.'

@@ -22,7 +22,6 @@ use DateTime;
 use Exception;
 use SAML2\Constants;
 use SAML2\Response as SAMLResponse;
-use SAML2\XML\saml\Issuer;
 use Surfnet\SamlBundle\Http\XMLResponse;
 use Surfnet\StepupGateway\GatewayBundle\Controller\GatewayController;
 use Surfnet\StepupGateway\GatewayBundle\Exception\ResponseFailureException;

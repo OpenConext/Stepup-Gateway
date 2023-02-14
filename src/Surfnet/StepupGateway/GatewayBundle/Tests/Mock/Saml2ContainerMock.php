@@ -20,7 +20,6 @@ namespace Surfnet\StepupGateway\GatewayBundle\Tests\Mock;
 use BadMethodCallException;
 use Psr\Log\LoggerInterface;
 use SAML2\Compat\AbstractContainer;
-use function sprintf;
 
 class Saml2ContainerMock extends AbstractContainer
 {
@@ -37,7 +36,7 @@ class Saml2ContainerMock extends AbstractContainer
     /**
      * @return LoggerInterface
      */
-    public function getLogger(): LoggerInterface
+    public function getLogger()
     {
         return $this->logger;
     }
@@ -45,17 +44,17 @@ class Saml2ContainerMock extends AbstractContainer
     /**
      * Generate a random identifier for identifying SAML2 documents.
      */
-    public function generateId(): string
+    public function generateId()
     {
         return '_mocked_generated_id';
     }
 
-    public function debugMessage($message, $type): void
+    public function debugMessage($message, $type)
     {
         $this->logger->debug($message, ['type' => $type]);
     }
 
-    public function redirect($url, $data = array()): void
+    public function redirect($url, $data = array())
     {
         throw new BadMethodCallException(sprintf(
             "%s:%s may not be called in the Surfnet\\SamlBundle as it doesn't work with Symfony2",
@@ -64,7 +63,7 @@ class Saml2ContainerMock extends AbstractContainer
         ));
     }
 
-    public function postRedirect($url, $data = array()): void
+    public function postRedirect($url, $data = array())
     {
         throw new BadMethodCallException(sprintf(
             "%s:%s may not be called in the Surfnet\\SamlBundle as it doesn't work with Symfony2",
@@ -73,21 +72,4 @@ class Saml2ContainerMock extends AbstractContainer
         ));
     }
 
-    public function getTempDir(): string
-    {
-        throw new BadMethodCallException(sprintf(
-            "%s:%s may not be called in the Surfnet\\SamlBundle as it doesn't work with Symfony2",
-            __CLASS__,
-            __METHOD__
-        ));
-    }
-
-    public function writeFile(string $filename, string $data, int $mode = null): void
-    {
-        throw new BadMethodCallException(sprintf(
-            "%s:%s may not be called in the Surfnet\\SamlBundle as it doesn't work with Symfony2",
-            __CLASS__,
-            __METHOD__
-        ));
-    }
 }

@@ -92,8 +92,8 @@ class ResponseFactoryTest extends GatewaySamlTestCase
         $assertion = reset($assertions);
 
         $this->assertInstanceOf(Response::class, $response);
-        $this->assertEquals('e3d2948', $assertion->getNameId()->getValue());
-        $this->assertEquals('https://idp.example.com/metadata', $response->getIssuer()->getValue());
+        $this->assertEquals('e3d2948', $assertion->getNameId()->value);
+        $this->assertEquals('https://idp.example.com/metadata', $response->getIssuer());
         $this->assertEquals('https://acs', $response->getDestination());
         $this->assertNull($response->getAssertions()[0]->getAuthnContextClassRef());
 
@@ -102,7 +102,7 @@ class ResponseFactoryTest extends GatewaySamlTestCase
         /** @var \SAML2\XML\saml\SubjectConfirmation $subjectConfirmation */
         $subjectConfirmation = reset($subjects);
 
-        $this->assertEquals($assertion->getNotOnOrAfter(), $subjectConfirmation->getSubjectConfirmationData()->getNotOnOrAfter());
+        $this->assertEquals($assertion->getNotOnOrAfter(), $subjectConfirmation->SubjectConfirmationData->NotOnOrAfter);
     }
 
 }

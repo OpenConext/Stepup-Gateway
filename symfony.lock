@@ -525,6 +525,9 @@
     "symfony/polyfill-iconv": {
         "version": "v1.22.1"
     },
+    "symfony/polyfill-intl-grapheme": {
+        "version": "v1.25.0"
+    },
     "symfony/polyfill-intl-idn": {
         "version": "v1.22.1"
     },
@@ -551,6 +554,9 @@
     },
     "symfony/property-access": {
         "version": "v4.4.19"
+    },
+    "symfony/property-info": {
+        "version": "v5.4.7"
     },
     "symfony/routing": {
         "version": "4.2",
@@ -592,6 +598,9 @@
     },
     "symfony/service-contracts": {
         "version": "v1.1.9"
+    },
+    "symfony/string": {
+        "version": "v5.4.3"
     },
     "symfony/swiftmailer-bundle": {
         "version": "2.5",

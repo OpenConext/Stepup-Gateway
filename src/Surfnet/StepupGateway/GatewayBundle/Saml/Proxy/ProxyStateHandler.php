@@ -186,7 +186,11 @@ class ProxyStateHandler
         return $this->get('response_assertion');
     }
 
-    public function saveIdentityNameId(string $nameId)
+    /**
+     * @param $nameId
+     * @return $this
+     */
+    public function saveIdentityNameId($nameId)
     {
         $this->set('name_id', $nameId);
 

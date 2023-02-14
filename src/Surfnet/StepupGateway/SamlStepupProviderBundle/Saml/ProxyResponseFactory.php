@@ -26,7 +26,6 @@ use SAML2\Assertion;
 use SAML2\Constants;
 use SAML2\Response;
 use SAML2\Response as SAMLResponse;
-use SAML2\XML\saml\Issuer;
 use SAML2\XML\saml\SubjectConfirmation;
 use SAML2\XML\saml\SubjectConfirmationData;
 use Surfnet\SamlBundle\Entity\IdentityProvider;
@@ -88,9 +87,7 @@ class ProxyResponseFactory
         $newAssertion->setNotBefore($this->currentTime->getTimestamp());
         $newAssertion->setNotOnOrAfter($this->getTimestamp('PT5M'));
         $newAssertion->setAttributes($assertion->getAttributes());
-        $issuerVo = new Issuer();
-        $issuerVo->setValue($this->hostedIdentityProvider->getEntityId());
-        $newAssertion->setIssuer($issuerVo);
+        $newAssertion->setIssuer($this->hostedIdentityProvider->getEntityId());
         $newAssertion->setIssueInstant($this->getTimestamp());
 
         $this->assertionSigningService->signAssertion($newAssertion);
@@ -110,15 +107,15 @@ class ProxyResponseFactory
      */
     private function addSubjectConfirmationFor(Assertion $newAssertion, $destination)
     {
-        $confirmation = new SubjectConfirmation();
-        $confirmation->setMethod(Constants::CM_BEARER);
+        $confirmation         = new SubjectConfirmation();
+        $confirmation->Method = Constants::CM_BEARER;
 
-        $confirmationData = new SubjectConfirmationData();
-        $confirmationData->setInResponseTo($this->stateHandler->getRequestId());
-        $confirmationData->setRecipient($destination);
-        $confirmationData->setNotOnOrAfter($newAssertion->getNotOnOrAfter());
+        $confirmationData                      = new SubjectConfirmationData();
+        $confirmationData->InResponseTo        = $this->stateHandler->getRequestId();
+        $confirmationData->Recipient           = $destination;
+        $confirmationData->NotOnOrAfter        = $newAssertion->getNotOnOrAfter();
 
-        $confirmation->setSubjectConfirmationData($confirmationData);
+        $confirmation->SubjectConfirmationData = $confirmationData;
 
         $newAssertion->setSubjectConfirmation([$confirmation]);
     }
@@ -143,9 +140,7 @@ class ProxyResponseFactory
     {
         $response = new SAMLResponse();
         $response->setAssertions([$newAssertion]);
-        $issuerVo = new Issuer();
-        $issuerVo->setValue($this->hostedIdentityProvider->getEntityId());
-        $response->setIssuer($issuerVo);
+        $response->setIssuer($this->hostedIdentityProvider->getEntityId());
         $response->setIssueInstant($this->getTimestamp());
         $response->setDestination($destination);
         $response->setInResponseTo($this->stateHandler->getRequestId());

@@ -122,11 +122,11 @@ class ConsumeAssertionService
 
         $authenticatedNameId = $assertion->getNameId();
         $isSubjectRequested = $stateHandler->hasSubject();
-        if ($isSubjectRequested && ($stateHandler->getSubject() !== $authenticatedNameId->getValue())) {
+        if ($isSubjectRequested && ($stateHandler->getSubject() !== $authenticatedNameId->value)) {
             $message = sprintf(
                 'Requested Subject NameID "%s" and Response NameID "%s" do not match',
                 $stateHandler->getSubject(),
-                $authenticatedNameId->getValue()
+                $authenticatedNameId->value
             );
             $logger->critical($message);
 
