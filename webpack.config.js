@@ -21,19 +21,9 @@ Encore
             includePaths: ['public'],
         };
     })
-    .addLoader({test: /\.scss$/, loader: 'import-glob-loader'})
-    .addLoader({
-        test: /\.tsx?|\.js$/,
-        exclude: /node_modules|vendor/,
-        use: [{
-            loader: 'tslint-loader',
-            options: {
-                configFile: 'tslint.json',
-                emitErrors: true,
-                failOnHint: Encore.isProduction(),
-                typeCheck: true
-            }
-        }]
+    .addLoader({test: /\.scss$/, loader: 'webpack-import-glob-loader'})
+    .configureLoaderRule('eslint', loaderRule => {
+        loaderRule.test = /\.(jsx?|vue)$/
     })
     .enableSingleRuntimeChunk()
     .enableSourceMaps(!Encore.isProduction())

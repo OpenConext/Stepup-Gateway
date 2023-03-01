@@ -9,3 +9,7 @@ surfnet_stepup_gateway_second_factor_only:
       alias: "%second_factor_only_loa_loa2%"
     - loa: "%gateway_loa_loa3%"
       alias: "%second_factor_only_loa_loa3%"
+    - loa: "%gateway_loa_self_asserted%"
+      alias: "%second_factor_only_loa_self_asserted%"
+    - loa: 'http://stepup.example.com/assurance/loa-3'
+      alias: "%second_factor_only_loa_loa3%"

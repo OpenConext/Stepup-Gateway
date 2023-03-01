@@ -19,7 +19,7 @@ Clone the repository or download the archive to a directory. Install the depende
 
 The Gateway is configured to only accept connections over SSL. Disable this under `nelmio_security` in `config.yml` or run the web server using a (self-signed) certificate.
 
-## Developer options
+## Developer tips
 
 ### Mock Yubikey service
 If you are not in possession of an actual Yubikey device, using the Mock Yubikey service might prove useful. This
@@ -29,6 +29,30 @@ mock service was created for end to end test purposes, but could be utilized in 
 2. Find the `surfnet_gateway_api.service.yubikey` service
 3. Update the service definition to point to this class: `class: Surfnet\StepupGateway\ApiBundle\Tests\TestDouble\Service\YubikeyService` 
 4. Do not commit/push this change!
+
+### Running Behat tests
+Chances are you are developing using the Stepup-VM development environment. And that, at this point, is the
+best option for developing the Gateway. However, when writing Behat tests, we run into a wall. As the behat tests
+do not run out of the box on the Stepup-VM.
+
+In order to run the behat tests, my personal preference is to halt the stepup-vm. And start up the Docker Compose
+containers that are used in CI. But be carefull here, running them in the same clone that you use in Stepup-VM might
+cause issues with the parameters and certificates used in the test environment. My suggestion is to create a new
+clone to run the GW Behat tests in.
+
+From the doc-root:
+```bash
+$ cd ci/docker
+$ ./init.sh
+# If this fails, possibly you'll have to make the app/files folder writable for your docker user
+$ docker-compose exec -T php-fpm.stepup.example.com bash -c 'composer behat'
+```
+
+Be aware! Make sure any parameter changes are also applied in the `ci/config/parameters.yaml`.
+
+When finished working on behat tests, stop the containers (`docker-compose down`), and restart your stepup-vm.
+
+Having them running simultaneous might cause hostname issues, but your mileage may vary.
 
 ## Release strategy
 Please read: https://github.com/OpenConext/Stepup-Deploy/wiki/Release-Management fro more information on the release strategy used in Stepup projects.

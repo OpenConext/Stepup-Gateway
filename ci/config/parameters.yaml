@@ -51,6 +51,8 @@ parameters:
     gateway_loa_loa3: 'http://stepup.example.com/assurance/level3'
     second_factor_only_loa_loa2: 'http://stepup.example.com/assurance/sfo-level2'
     second_factor_only_loa_loa3: 'http://stepup.example.com/assurance/sfo-level3'
+    second_factor_only_loa_self_asserted: 'http://stepup.example.com/assurance/loa-self-asserted'
+    gateway_loa_self_asserted: 'http://stepup.example.com/assurance/loa-self-asserted'
     second_factor_only: true
     enabled_second_factors:
         - sms

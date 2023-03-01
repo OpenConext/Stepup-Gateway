@@ -32,6 +32,12 @@
     "composer/ca-bundle": {
         "version": "1.2.9"
     },
+    "composer/package-versions-deprecated": {
+        "version": "1.11.99.5"
+    },
+    "composer/pcre": {
+        "version": "2.0.0"
+    },
     "composer/xdebug-handler": {
         "version": "1.4.5"
     },
@@ -206,9 +212,6 @@
     },
     "phar-io/version": {
         "version": "3.1.0"
-    },
-    "php": {
-        "version": "7.2.5"
     },
     "phpdocumentor/reflection-common": {
         "version": "2.2.0"
@@ -402,6 +405,9 @@
     "symfony/dependency-injection": {
         "version": "v4.4.19"
     },
+    "symfony/deprecation-contracts": {
+        "version": "v2.5.1"
+    },
     "symfony/doctrine-bridge": {
         "version": "v4.4.19"
     },
@@ -519,6 +525,9 @@
     "symfony/polyfill-iconv": {
         "version": "v1.22.1"
     },
+    "symfony/polyfill-intl-grapheme": {
+        "version": "v1.25.0"
+    },
     "symfony/polyfill-intl-idn": {
         "version": "v1.22.1"
     },
@@ -545,6 +554,9 @@
     },
     "symfony/property-access": {
         "version": "v4.4.19"
+    },
+    "symfony/property-info": {
+        "version": "v5.4.7"
     },
     "symfony/routing": {
         "version": "4.2",
@@ -586,6 +598,9 @@
     },
     "symfony/service-contracts": {
         "version": "v1.1.9"
+    },
+    "symfony/string": {
+        "version": "v5.4.3"
     },
     "symfony/swiftmailer-bundle": {
         "version": "2.5",

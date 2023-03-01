@@ -22,6 +22,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupBundle\Value\Loa;
 use Surfnet\StepupBundle\Value\SecondFactorType;
+use Surfnet\StepupBundle\Value\VettingType;
 
 /**
  * WARNING: Any schema change made to this entity should also be applied to the Middleware SecondFactor entity!
@@ -35,7 +36,6 @@ use Surfnet\StepupBundle\Value\SecondFactorType;
  *          @ORM\Index(name="idx_secondfactor_nameid", columns={"name_id"}),
  *      }
  * )
- * @SuppressWarnings(PHPMD.UnusedPrivateFields)
  */
 class SecondFactor
 {
@@ -45,7 +45,7 @@ class SecondFactor
      * @ORM\Id
      * @ORM\Column(length=36)
      */
-    private $id;
+    public $id;
 
     /**
      * @var string
@@ -70,6 +70,15 @@ class SecondFactor
     public $institution;
 
     /**
+     * In which language to display any second factor verification screens.
+     *
+     * @var string
+     *
+     * @ORM\Column
+     */
+    public $displayLocale;
+
+    /**
      * @var string
      *
      * @ORM\Column(length=36)
@@ -91,13 +100,16 @@ class SecondFactor
     public $secondFactorIdentifier;
 
     /**
-     * In which language to display any second factor verification screens.
+     * This boolean indicates if the second factor token was vetted
+     * using one of the vetting types that are considered 'identity-vetted'.
+     * That in turn means if the owner of the second factor token has its
+     * identity vetted (verified) by a RA(A) at the service desk. This trickles
+     * down to the self-vet vetting type. As the token used for self vetting
+     * was RA vetted.
      *
-     * @var string
-     *
-     * @ORM\Column
+     * @ORM\Column(type="boolean", options={"default":"1"})
      */
-    public $displayLocale;
+    public $identityVetted;
 
     /**
      * No new second factors should be created by the gateway
@@ -114,16 +126,27 @@ class SecondFactor
     public function canSatisfy(Loa $loa, SecondFactorTypeService $service)
     {
         $secondFactorType = new SecondFactorType($this->secondFactorType);
-        return $service->canSatisfy($secondFactorType, $loa);
+        $vettingType = $this->determineVettingType($this->identityVetted);
+        return $service->canSatisfy($secondFactorType, $loa, $vettingType);
     }
 
     /**
      * @param SecondFactorTypeService $service
-     * @return int
+     * @return float
      */
     public function getLoaLevel(SecondFactorTypeService $service)
     {
         $secondFactorType = new SecondFactorType($this->secondFactorType);
-        return $service->getLevel($secondFactorType);
+        $vettingType = $this->determineVettingType($this->identityVetted);
+        $level = $service->getLevel($secondFactorType, $vettingType);
+        return $level;
+    }
+
+    private function determineVettingType(bool $identityVetted): VettingType
+    {
+        if ($identityVetted) {
+            return new VettingType(VettingType::TYPE_ON_PREMISE);
+        }
+        return new VettingType(VettingType::TYPE_SELF_ASSERTED_REGISTRATION);
     }
 }

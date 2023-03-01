@@ -79,6 +79,7 @@ class MinkContext extends BaseMinkContext
      */
     public function theResponseShouldNotMatchXpath($xpath)
     {
+        $this->printLastResponse(); die;
         $document = new DOMDocument();
         $document->loadXML($this->getSession()->getPage()->getContent());
 

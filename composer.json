@@ -96,9 +96,7 @@
             "@phpmd",
             "@test",
             "@behat",
-            "@download-security-checker",
-            "@security-tests",
-            "@yarn-audit"
+            "@security-tests"
         ],
         "security": "./ci/qa/security",
         "phplint": "./ci/qa/phplint",
@@ -110,17 +108,19 @@
         "behat-selenium": "./ci/qa/behat-selenium",
         "test": "./ci/qa/phpunit",
         "license-headers": "vendor/bin/docheader check src/",
-        "yarn-audit": "yarn audit",
         "frontend-install": [
             "yarn install --frozen-lockfile",
             "yarn encore production"
         ],
-        "download-security-checker": "if [ ! -f local-php-security-checker ]; then curl -s https://api.github.com/repos/fabpot/local-php-security-checker/releases/latest | grep -E \"browser_download_url(.+)linux_386\" | cut -d : -f 2,3 | tr -d \\\" | xargs -I{} curl -L --output local-php-security-checker {} && chmod +x local-php-security-checker; fi",
-        "security-tests": "./local-php-security-checker"
+        "security-tests": [
+            "composer audit",
+            "yarn audit"
+        ]
     },
     "config": {
         "allow-plugins": {
-            "symfony/flex": true
+            "symfony/flex": true,
+            "symfony/runtime": true
         },
         "optimize-autoloader": true,
         "sort-packages": true,

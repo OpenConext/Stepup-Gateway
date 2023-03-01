@@ -4,6 +4,7 @@ namespace Surfnet\StepupGateway\Behat\Repository;
 
 use Exception;
 use Ramsey\Uuid\Uuid;
+use Surfnet\StepupBundle\Value\VettingType;
 
 /**
  * A poor mans repository, a pdo connection to the test database is established in the constructor
@@ -20,7 +21,7 @@ class SecondFactorRepository
         $this->connection = $connection;
     }
 
-    public function create($nameId, $tokenType, $institution, $identifier = null)
+    public function create($nameId, $tokenType, $institution, bool $selfAsserted = false, $identifier = null)
     {
         $uuid = Uuid::uuid4()->toString();
 
@@ -38,6 +39,7 @@ class SecondFactorRepository
             'secondFactorIdentifier' => $identifier,
             'id' => $uuid,
             'displayLocale' => 'en_GB',
+            'identityVetted' => $selfAsserted ? 0 : 1,
         ];
         $sql = <<<SQL
             INSERT INTO second_factor (
@@ -48,7 +50,8 @@ class SecondFactorRepository
                 second_factor_type, 
                 second_factor_identifier, 
                 id, 
-                display_locale
+                display_locale,
+                identity_vetted
             )
             VALUES (
                 :identityId, 
@@ -58,7 +61,8 @@ class SecondFactorRepository
                 :secondFactorType, 
                 :secondFactorIdentifier, 
                 :id, 
-                :displayLocale
+                :displayLocale,
+                :identityVetted
             )
 SQL;
         $stmt = $this->connection->prepare($sql);
