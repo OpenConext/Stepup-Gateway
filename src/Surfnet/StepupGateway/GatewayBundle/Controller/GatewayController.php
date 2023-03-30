@@ -28,6 +28,7 @@ use Surfnet\StepupGateway\GatewayBundle\Service\Gateway\ConsumeAssertionService;
 use Surfnet\StepupGateway\GatewayBundle\Service\Gateway\FailedResponseService;
 use Surfnet\StepupGateway\GatewayBundle\Service\Gateway\LoginService;
 use Surfnet\StepupGateway\GatewayBundle\Service\Gateway\RespondService;
+use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\ResponseHelper;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -191,14 +192,32 @@ class GatewayController extends Controller
      */
     public function renderSamlResponse($view, SAMLResponse $response, $authenticationMode)
     {
+        $logger = $this->get('logger');
+        /** @var ResponseHelper $responseHelper */
+        $responseHelper = $this->get('second_factor_only.adfs.response_helper');
+
         $this->supportsAuthenticationMode($authenticationMode);
         $responseContext = $this->getResponseContext($authenticationMode);
 
-        return $this->render($view, [
-            'acu'        => $responseContext->getDestination(),
-            'response'   => $this->getResponseAsXML($response),
+        $parameters = [
+            'acu' => $responseContext->getDestination(),
+            'response' => $this->getResponseAsXML($response),
             'relayState' => $responseContext->getRelayState()
-        ]);
+        ];
+
+        // Test if we should add ADFS response parameters
+        $inResponseTo = $responseContext->getInResponseTo();
+        if ($responseHelper->isAdfsResponse($inResponseTo)) {
+            $adfsParameters = $responseHelper->retrieveAdfsParameters();
+            $logMessage = 'Responding with additional ADFS parameters, in response to request: "%s", with view: "%s"';
+            if ($response->isSuccess()) {
+                $logMessage = 'Responding with an AuthnFailed SamlResponse with ADFS parameters, in response to AR: "%s", with view: "%s"';
+            }
+            $logger->notice(sprintf($logMessage, $inResponseTo, $view));
+            $parameters['adfs'] = $adfsParameters;
+        }
+
+        return $this->render($view, $parameters);
     }
 
     /**
