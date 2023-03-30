@@ -45,6 +45,7 @@ services:
         class: Surfnet\StepupGateway\GatewayBundle\Service\ResponseRenderingService
         arguments:
             - "@gateway.proxy.response_builder"
+            - "@second_factor_only.adfs.response_helper"
             - "@twig"
 
     second_factor_only.response_context:

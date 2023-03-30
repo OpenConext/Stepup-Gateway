@@ -1,0 +1,4 @@
+{% if adfs is defined %}
+    <input type="hidden" name="Context" value="{{ adfs.getContext|escape }}" >
+    <input type="hidden" name="AuthMethod" value="{{ adfs.getAuthMethod|escape }}" >
+{% endif %}
