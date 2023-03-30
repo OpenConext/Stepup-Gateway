@@ -18,7 +18,6 @@
 
 namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Controller;
 
-use Surfnet\StepupGateway\GatewayBundle\Controller\SecondFactorController;
 use Surfnet\StepupGateway\GatewayBundle\Exception\RequesterFailureException;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\Exception\InvalidAdfsRequestException;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\Exception\InvalidAdfsResponseException;
@@ -98,6 +97,12 @@ class SecondFactorOnlyController extends Controller
      * redirect. This method sends a AuthnResponse back to the service
      * provider in response to the AuthnRequest received in ssoAction().
      *
+     * When responding to an ADFS authentication, the additional ADFS
+     * parameters (Context, AuthMethod) are added to the POST response data.
+     * In this case, the SAMLResponse parameter is prepended with an
+     * underscore. And finally the ACS location the SAMLResponse wil be sent
+     * to, is updated to use the ACS location set in the original AuthNRequest.
+     *
      * @return Response
      * @throws InvalidAdfsResponseException
      */
@@ -140,8 +145,7 @@ class SecondFactorOnlyController extends Controller
                 [
                     'acu' => $responseContext->getDestinationForAdfs(),
                     'samlResponse' => $xmlResponse,
-                    'context' => $adfsParameters->getContext(),
-                    'authMethod' => $adfsParameters->getAuthMethod(),
+                    'adfs' => $adfsParameters,
                 ]
             );
         }
