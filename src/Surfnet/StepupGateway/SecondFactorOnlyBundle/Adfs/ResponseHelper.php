@@ -29,8 +29,6 @@ use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\ValueObject\Response as Ad
  * Context: <Conext>
  * RequestId: <RequestId>
  * Response: <The "Response" that was received from the SFO endpoint>
- *
- * @package Surfnet\StepupGateway\SecondFactorOnlyBundle\Service
  */
 final class ResponseHelper
 {

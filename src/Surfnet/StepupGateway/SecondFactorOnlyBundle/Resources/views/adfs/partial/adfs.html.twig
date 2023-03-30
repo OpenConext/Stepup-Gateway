@@ -1,0 +1,8 @@
+{# When handling an ADFS originating authentication. The POST vars should include #}
+{# the Context and AuthMethod POST params. They are only added if the ADFS response #}
+{# context is present in the view vars. #}
+
+{% if adfs is defined %}
+    <input type="hidden" name="Context" value="{{ adfs.context|escape }}" >
+    <input type="hidden" name="AuthMethod" value="{{ adfs.authMethod|escape }}" >
+{% endif %}
