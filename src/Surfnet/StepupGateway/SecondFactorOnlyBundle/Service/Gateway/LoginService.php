@@ -128,6 +128,9 @@ class LoginService
 
         // Check if the NameID is provided and we may use it.
         $nameId = $originalRequest->getNameId();
+        if (!$nameId) {
+            throw new RequesterFailureException('The NameId was not present in the AuthNRequest');
+        }
         $secondFactorOnlyNameIdValidator = $this->secondFactorOnlyNameValidatorService->with($logger);
         $serviceProviderMayUseSecondFactorOnly = $secondFactorOnlyNameIdValidator->validate(
             $originalRequest->getServiceProvider(),

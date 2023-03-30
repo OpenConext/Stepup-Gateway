@@ -18,7 +18,6 @@
 
 namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Controller;
 
-use Surfnet\StepupGateway\GatewayBundle\Controller\SecondFactorController;
 use Surfnet\StepupGateway\GatewayBundle\Exception\RequesterFailureException;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\Exception\InvalidAdfsRequestException;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\Exception\InvalidAdfsResponseException;
@@ -140,8 +139,7 @@ class SecondFactorOnlyController extends Controller
                 [
                     'acu' => $responseContext->getDestinationForAdfs(),
                     'samlResponse' => $xmlResponse,
-                    'context' => $adfsParameters->getContext(),
-                    'authMethod' => $adfsParameters->getAuthMethod(),
+                    'adfs' => $adfsParameters,
                 ]
             );
         }
