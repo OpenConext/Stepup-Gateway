@@ -28,6 +28,7 @@ use Surfnet\StepupGateway\GatewayBundle\Service\Gateway\ConsumeAssertionService;
 use Surfnet\StepupGateway\GatewayBundle\Service\Gateway\FailedResponseService;
 use Surfnet\StepupGateway\GatewayBundle\Service\Gateway\LoginService;
 use Surfnet\StepupGateway\GatewayBundle\Service\Gateway\RespondService;
+use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\ResponseHelper;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -191,14 +192,25 @@ class GatewayController extends Controller
      */
     public function renderSamlResponse($view, SAMLResponse $response, $authenticationMode)
     {
+        /** @var ResponseHelper $responseHelper */
+        $responseHelper = $this->get(ResponseHelper::class);
+
         $this->supportsAuthenticationMode($authenticationMode);
         $responseContext = $this->getResponseContext($authenticationMode);
 
-        return $this->render($view, [
-            'acu'        => $responseContext->getDestination(),
-            'response'   => $this->getResponseAsXML($response),
+        $parameters = [
+            'acu' => $responseContext->getDestination(),
+            'response' => $this->getResponseAsXML($response),
             'relayState' => $responseContext->getRelayState()
-        ]);
+        ];
+
+        // Test if we should add ADFS response parameters
+        if ($responseHelper->isAdfsResponse($responseContext->getInResponseTo())) {
+            $adfsParameters = $responseHelper->retrieveAdfsParameters();
+            $parameters['adfs'] = $adfsParameters;
+        }
+
+        return $this->render($view, $parameters);
     }
 
     /**

@@ -11,6 +11,7 @@
     {% if relayState|length > 0 %}
         <input type="hidden" name="RelayState" value="{{ relayState|escape }}" />
     {% endif %}
+    {% include "@SurfnetStepupGatewaySecondFactorOnly/adfs/partial/adfs.html.twig" %}
         <input type="submit" value="Submit" class="hidden" />
     <noscript>
         <input type="submit" value="Submit"/>

@@ -22,6 +22,7 @@ use SAML2\Constants;
 use SAML2\Response as SAMLResponse;
 use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseBuilder;
 use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
+use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\ResponseHelper;
 use Twig\Environment;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -37,16 +38,15 @@ final class ResponseRenderingService
      */
     private $templateEngine;
 
-    /**
-     * SamlResponseRenderingService constructor.
-     * @param ResponseBuilder $responseBuilder
-     * @param Environment $templateEngine
-     */
+    private $responseHelper;
+
     public function __construct(
         ResponseBuilder $responseBuilder,
-        Environment     $templateEngine
+        ResponseHelper $responseHelper,
+        Environment $templateEngine
     ) {
         $this->responseBuilder = $responseBuilder;
+        $this->responseHelper = $responseHelper;
         $this->templateEngine = $templateEngine;
     }
 
@@ -107,14 +107,19 @@ final class ResponseRenderingService
         string          $view,
         SAMLResponse    $response
     ) {
+        $parameters = [
+            'acu' => $context->getDestination(),
+            'response' => $this->getResponseAsXML($response),
+            'relayState' => $context->getRelayState()
+        ];
+        if ($this->responseHelper->isAdfsResponse($context->getInResponseTo())) {
+            $adfsParameters = $this->responseHelper->retrieveAdfsParameters();
+            $parameters['adfs'] = $adfsParameters;
+        }
         return (new Response)->setContent(
             $this->templateEngine->render(
                 'SurfnetStepupGatewayGatewayBundle:gateway:' . $view . '.html.twig',
-                [
-                    'acu' => $context->getDestination(),
-                    'response' => $this->getResponseAsXML($response),
-                    'relayState' => $context->getRelayState()
-                ]
+                $parameters
             )
         );
     }
