@@ -12,6 +12,7 @@ use Ramsey\Uuid\Uuid;
 class SamlEntityRepository
 {
     const SP_ACS_LOCATION = 'https://gateway.stepup.example.com/test/authentication/consume-assertion';
+    const SP_ADFS_SSO_LOCATION = 'https://gateway.stepup.example.com/test/authentication/adfs/sso';
 
     /**
      * @var Connection
