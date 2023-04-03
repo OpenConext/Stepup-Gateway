@@ -117,9 +117,6 @@ class FeatureContext implements Context
      */
     public function iShouldSeeTheSMSScreen()
     {
-        $this->minkContext->assertPageContainsText('Log in with SMS');
-        $this->minkContext->assertPageContainsText('Enter the received code on the next page');
-        $this->minkContext->pressButton('gateway_send_sms_challenge_send_challenge');
         $this->minkContext->assertPageContainsText('Enter the received SMS-code');
         $this->minkContext->assertPageContainsText('Send again');
     }

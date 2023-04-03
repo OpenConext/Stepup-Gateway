@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+    <noscript>
+        <b>Note: </b> javascript is disabled, please click the button below to proceed
+    </noscript>
+    One moment please...
+    <form method="post" action="{{ ssoUrl }}">
+        <input type="hidden" name="SAMLRequest" value="{{ authNRequest }}" />
+        {% include "@SurfnetStepupGatewaySecondFactorOnly/adfs/partial/adfs.html.twig" %}
+        <input type="submit" class="hidden" />
+        <noscript>
+            <input type="submit" value="Submit"/>
+        </noscript>
+    </form>
+{% endblock %}
+{% block javascripts %}
+    {{ encore_entry_script_tags('app') }}
+    {{ encore_entry_script_tags('submitonload') }}
+{% endblock %}

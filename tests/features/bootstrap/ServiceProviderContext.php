@@ -236,6 +236,20 @@ class ServiceProviderContext implements Context, KernelAwareContext
     }
 
     /**
+     * @When /^([^\']*) starts an ADFS authentication requiring ([^\']*)$/
+     */
+    public function iStartAnADFSAuthenticationWithLoaRequirement($nameId, $loa)
+    {
+        $requestParams = [
+            'loa' => $loa,
+            'nameId' => $nameId,
+            'entityId' => $this->currentSfoSp['entityId']
+        ];
+        $this->getSession()->visit(SamlEntityRepository::SP_ADFS_SSO_LOCATION . '?' . http_build_query($requestParams));
+        $this->minkContext->pressButton('Submit');
+    }
+
+    /**
      * @When /^([^\']*) starts an authentication$/
      */
     public function iStartAnAuthentication($nameId)

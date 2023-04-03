@@ -197,14 +197,14 @@ class IdentityProviderController extends Controller
     private function addSubjectConfirmationFor(Assertion $newAssertion, $destination, $requestId)
     {
         $confirmation = new SubjectConfirmation();
-        $confirmation->Method = Constants::CM_BEARER;
+        $confirmation->setMethod(Constants::CM_BEARER);
 
-        $confirmationData                      = new SubjectConfirmationData();
-        $confirmationData->InResponseTo        = $requestId;
-        $confirmationData->Recipient           = $destination;
-        $confirmationData->NotOnOrAfter        = $newAssertion->getNotOnOrAfter();
+        $confirmationData = new SubjectConfirmationData();
+        $confirmationData->setInResponseTo($requestId);
+        $confirmationData->setRecipient($destination);
+        $confirmationData->setNotOnOrAfter($newAssertion->getNotOnOrAfter());
 
-        $confirmation->SubjectConfirmationData = $confirmationData;
+        $confirmation->setSubjectConfirmationData($confirmationData);
 
         $newAssertion->setSubjectConfirmation([$confirmation]);
     }
