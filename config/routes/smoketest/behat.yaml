@@ -3,3 +3,8 @@ gateway_test_consume_assertion:
   methods:  [POST]
   defaults: { _controller: Surfnet\StepupGateway\Behat\Controller\ServiceProviderController::acsAction }
 
+gateway_test_adfs_sso:
+  path:     /test/authentication/adfs/sso
+  methods:  [GET]
+  defaults: { _controller: Surfnet\StepupGateway\Behat\Controller\ServiceProviderController::adfsSsoAction }
+

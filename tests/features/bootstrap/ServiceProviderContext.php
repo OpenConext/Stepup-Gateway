@@ -39,6 +39,7 @@ use Surfnet\StepupGateway\Behat\Service\FixtureService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\KernelInterface;
+use function http_build_query;
 
 class ServiceProviderContext implements Context, KernelAwareContext
 {
@@ -241,6 +242,20 @@ class ServiceProviderContext implements Context, KernelAwareContext
         $query = $request->buildRequestQuery();
 
         $this->getSession()->visit($request->getDestination().'?'.$query);
+    }
+
+    /**
+     * @When /^([^\']*) starts an ADFS authentication requiring ([^\']*)$/
+     */
+    public function iStartAnADFSAuthenticationWithLoaRequirement($nameId, $loa)
+    {
+        $requestParams = [
+            'loa' => $loa,
+            'nameId' => $nameId,
+            'entityId' => $this->currentSfoSp['entityId']
+        ];
+        $this->getSession()->visit(SamlEntityRepository::SP_ADFS_SSO_LOCATION . '?' . http_build_query($requestParams));
+        echo $this->getSession()->getPage()->getContent(); die;
     }
 
     /**
