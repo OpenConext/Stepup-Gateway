@@ -39,6 +39,7 @@ use Surfnet\StepupGateway\Behat\Service\FixtureService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\KernelInterface;
+use function urlencode;
 
 class ServiceProviderContext implements Context, KernelAwareContext
 {
@@ -241,6 +242,15 @@ class ServiceProviderContext implements Context, KernelAwareContext
         $query = $request->buildRequestQuery();
 
         $this->getSession()->visit($request->getDestination().'?'.$query);
+    }
+
+    /**
+     * @When /^([^\']*) starts an ADFS authentication requiring ([^\']*)$/
+     */
+    public function iStartAnADFSAuthenticationWithLoaRequirement($nameId, $loa)
+    {
+        $this->getSession()->visit(SamlEntityRepository::SP_ACS_LOCATION . '?loa=' . urlencode($loa) . '&nameId=' . urlencode($nameId));
+        echo $this->getSession()->getPage()->getContent(); die;
     }
 
     /**
