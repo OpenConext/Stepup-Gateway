@@ -39,6 +39,7 @@ use Surfnet\StepupGateway\Behat\Service\FixtureService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\KernelInterface;
+use function http_build_query;
 
 class ServiceProviderContext implements Context, KernelAwareContext
 {
@@ -244,6 +245,20 @@ class ServiceProviderContext implements Context, KernelAwareContext
     }
 
     /**
+     * @When /^([^\']*) starts an ADFS authentication requiring ([^\']*)$/
+     */
+    public function iStartAnADFSAuthenticationWithLoaRequirement($nameId, $loa)
+    {
+        $requestParams = [
+            'loa' => $loa,
+            'nameId' => $nameId,
+            'entityId' => $this->currentSfoSp['entityId']
+        ];
+        $this->getSession()->visit(SamlEntityRepository::SP_ADFS_SSO_LOCATION . '?' . http_build_query($requestParams));
+        $this->minkContext->pressButton('Submit');
+    }
+
+    /**
      * @When /^([^\']*) starts an authentication$/
      */
     public function iStartAnAuthentication($nameId)
@@ -252,7 +267,7 @@ class ServiceProviderContext implements Context, KernelAwareContext
         // In order to later assert if the response succeeded or failed, set our own dummy ACS location
         $authnRequest->setAssertionConsumerServiceURL(SamlEntityRepository::SP_ACS_LOCATION);
         $issuerVo = new Issuer();
-        $issuerVo->setValue($this->currentSfoSp['entityId']);
+        $issuerVo->setValue($this->currentSp['entityId']);
         $authnRequest->setIssuer($issuerVo);
         $authnRequest->setDestination(self::SSO_ENDPOINT_URL);
         $authnRequest->setProtocolBinding(Constants::BINDING_HTTP_REDIRECT);
