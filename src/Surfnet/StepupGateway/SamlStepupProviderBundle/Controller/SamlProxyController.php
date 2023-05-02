@@ -149,6 +149,7 @@ class SamlProxyController extends Controller
             $response = $this->createResponseFailureResponse(
                 $provider,
                 $this->getDestination($provider->getStateHandler()),
+                $this->getIssuer($provider->getStateHandler()),
                 $e->getMessage()
             );
             return $this->renderSamlResponse('consume_assertion', $provider->getStateHandler(), $response);
@@ -238,6 +239,17 @@ class SamlProxyController extends Controller
         return $destination;
     }
 
+    private function getIssuer(StateHandler $stateHandler): Issuer
+    {
+        // This can either be a SFO or 'regular' SSO authentication. Both use a ResponseContext service of their own
+        $responseContextServiceId = $stateHandler->getResponseContextServiceId();
+        // GSSP verification action, return to SP from GatewayController state!
+        /** @var Issuer $issuer */
+        $issuer = $this->get($responseContextServiceId)->getIssuer();
+
+        return $issuer;
+    }
+
     /**
      * @param string $view
      * @param StateHandler $stateHandler
@@ -273,16 +285,23 @@ class SamlProxyController extends Controller
     }
 
     /**
-     * Response that indicates that an error occurred in the responder (the gateway). Used to indicate that we could
-     * not process the response we received from the upstream GSSP
+     * Response that indicates that an error occurred in the responder
+     * (the gateway). Used to indicate that we could not process the
+     * response we received from the upstream GSSP
      *
-     * @param Provider $provider
-     * @param string $destination
-     * @return SAMLResponse
+     * The correct Destination (where did the SAMLResponse originate from.
+     * And the Issuer (who issued the response) are explicitly set on the response
+     * allowing for correctly setting them.
      */
-    private function createResponseFailureResponse(Provider $provider, $destination, $message)
-    {
+    private function createResponseFailureResponse(
+        Provider $provider,
+        string $destination,
+        Issuer $issuer,
+        string $message
+    ): SAMLResponse {
         $response = $this->createResponse($provider, $destination);
+        // Overwrite the issuer with the correct issuer for the saml failed response
+        $response->setIssuer($issuer);
         $response->setStatus([
             'Code' => Constants::STATUS_RESPONDER,
             'SubCode' => Constants::STATUS_AUTHN_FAILED,
@@ -323,7 +342,6 @@ class SamlProxyController extends Controller
     private function createResponse(Provider $provider, $destination)
     {
         $context = $this->getResponseContext();
-
         $response = new SAMLResponse();
         $response->setDestination($destination);
         $response->setIssuer($context->getIssuer());
