@@ -107,8 +107,8 @@ class ConsumeAssertionService
         } catch (Exception $exception) {
             $message = sprintf('Could not process received Response, error: "%s"', $exception->getMessage());
             $logger->error($message);
-
-            throw new ResponseFailureException($message);
+            // Only pass along the original message back to the SP
+            throw new ResponseFailureException($exception->getMessage());
         }
 
         $adaptedAssertion = new AssertionAdapter($assertion);
