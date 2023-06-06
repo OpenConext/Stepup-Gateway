@@ -33,6 +33,7 @@ class VerifySmsChallengeType extends AbstractType
             'required' => true,
             'attr'     => array(
                 'autofocus' => true,
+                'autocomplete' => 'one-time-code',
                 'placeholder' => 'gateway.form.verify_sms_challenge.button.challenge_placeholder'
             )
         ]);
