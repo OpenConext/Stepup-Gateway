@@ -143,35 +143,3 @@ parameters:
     gssp_demo_gssp_title:
         en_GB: demo
         nl_NL: demo
-
-    # Configuration of the "biometric" GSSP
-    # Authentication flow:
-    # Real Biometric GSSP IdP <--> Gateway GSSP Biometric SP <--> Gateway GSSP Biometric IdP Proxy <--> RA | SS
-    # AuthnRequests from the RA and SS are proxied through the Biometric GSSP proxy on the Gateway
-    # The GSSP Biometric SP and IdP are hosted on the gateway
-
-    # Whether this GSSP endpoint is enabled (true) or not (false)
-    gssp_biometric_enabled: false
-
-    # Biometric SP Proxy for authenticating with the real (i.e. external) biometric IdP
-    gssp_biometric_sp_publickey: '/full/path/to/the/gateway-as-sp/public-key-file.cer'
-    gssp_biometric_sp_privatekey: '/full/path/to/the/gateway-as-sp/private-key-file.pem'
-
-    # Certificate and private key of the Biometric SAML IdP Proxy for use by RA and SS
-    gssp_biometric_idp_publickey: '/full/path/to/the/gateway-as-idp/public-key-file.cer'
-    gssp_biometric_idp_privatekey: '/full/path/to/the/gateway-as-sp/private-key-file.pem'
-
-    # Metadata signing cert and key for Biometric SP/IdP proxy
-    gssp_biometric_metadata_publickey: '/full/path/to/the/gateway-metadata/public-key-file.cer'
-    gssp_biometric_metadata_privatekey: '/full/path/to/the/gateway-as-sp/private-key-file.pem'
-
-    # Real (i.e. external) Biometric GSSP IdP
-    gssp_biometric_remote_entity_id: 'https://actual-gssp.entity-id.tld'
-    gssp_biometric_remote_sso_url: 'https://actual-gssp.entity-id.tld/single-sign-on/url'
-    gssp_biometric_remote_certificate: 'The contents of the certificate published by the gssp, excluding PEM headers'
-
-    # The logo used for biometric, shown in the choose second factor screen (WAYG)
-    gssp_biometric_logo: '/full/path/to/bio_logo.png'
-    gssp_biometric_title:
-        en_GB: Biometric
-        nl_NL: Biometrisch
