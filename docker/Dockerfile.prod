@@ -1,10 +1,10 @@
 FROM ghcr.io/openconext/openconext-basecontainers/php72-apache2:latest AS php-build
-COPY Stepup-Gateway-4.0.4-20230605075359Z-38b2d2eac7880fc5215c24f93a183deb3e84763e.tar.bz2 /tmp/
+COPY *.tar.bz2 /tmp/
 RUN tar -xvjf /tmp/*.tar.bz2 -C /var/www/html/ && \
   rm -rf /tmp/*.tar.bz2
 
 # Add the application configuration files
-COPY .env.dist .env
+COPY .env .env
 COPY config/legacy/parameters.yaml.dist config/legacy/parameters.yaml
 COPY config/legacy/samlstepupproviders_parameters.yaml.dist config/legacy/samlstepupproviders_parameters.yaml
 
