@@ -27,7 +27,11 @@ class FixtureService
 
     public function registerYubikeyToken(string $nameId, string $institution, bool $selfAsserted = false): array
     {
-        return $this->secondFactorRepository->create($nameId, 'yubikey', $institution, $selfAsserted);
+        if (!$this->secondFactorRepository->has($nameId, 'yubikey')) {
+            return $this->secondFactorRepository->create($nameId, 'yubikey', $institution, $selfAsserted);
+        }
+        return $this->secondFactorRepository->findBy($nameId, 'yubikey');
+
     }
 
     /**
@@ -38,7 +42,10 @@ class FixtureService
      */
     public function registerSmsToken(string $nameId, string $institution, bool $selfAsserted = false): array
     {
-        return $this->secondFactorRepository->create($nameId, 'sms', $institution, $selfAsserted, '+31 (0) 606060606');
+        if (!$this->secondFactorRepository->has($nameId, 'sms')) {
+            return $this->secondFactorRepository->create($nameId, 'sms', $institution, $selfAsserted, '+31 (0) 606060606');
+        }
+        return $this->secondFactorRepository->findBy($nameId, 'sms');
     }
 
     /**
@@ -76,6 +83,9 @@ class FixtureService
 
     public function registerTiqrToken(string $nameId, string $institution, bool $selfAsserted = false): array
     {
-        return $this->secondFactorRepository->create($nameId, 'tiqr', $institution, $selfAsserted, 'foobar');
+        if (!$this->secondFactorRepository->has($nameId, 'tiqr')) {
+            return $this->secondFactorRepository->create($nameId, 'tiqr', $institution, $selfAsserted, 'foobar');
+        }
+        return $this->secondFactorRepository->findBy($nameId, 'tiqr');
     }
 }

@@ -75,11 +75,47 @@ class MinkContext extends BaseMinkContext
     }
 
     /**
+     * @Then /^the ADFS response should match xpath \'([^\']*)\'$/
+     */
+    public function theAdfsResponseShouldMatchXpath($xpath)
+    {
+        $document = new DOMDocument();
+        $xml = $this->getSession()->getPage()->findById('saml-response-xml')->getText();
+        $document->loadXML($xml);
+
+        $xpathObj = new DOMXPath($document);
+        $xpathObj->registerNamespace('ds', XMLSecurityDSig::XMLDSIGNS);
+        $xpathObj->registerNamespace('mdui', Common::NS);
+        $xpathObj->registerNamespace('mdash', Common::NS);
+        $xpathObj->registerNamespace('shibmd', Scope::NS);
+        $nodeList = $xpathObj->query($xpath);
+
+        if (!$nodeList || $nodeList->length === 0) {
+            $message = sprintf('The xpath "%s" did not result in at least one match.', $xpath);
+            throw new ExpectationException($message, $this->getSession());
+        }
+    }
+
+    /**
+     * @Then /^the ADFS response should carry the ADFS POST parameters$/
+     */
+    public function theAdfsResponseShouldHaveAdfsPostParams()
+    {
+        $context = $this->getSession()->getPage()->findById('Context')->getText();
+        $authMethod = $this->getSession()->getPage()->findById('AuthMethod')->getText();
+        if ($context !== '<EncryptedData></EncryptedData>') {
+            throw new ExpectationException('The Adfs Context POST parameter was not found or contained an invalid value', $this->getSession());
+        }
+        if ($authMethod !== 'ADFS.SCSA') {
+            throw new ExpectationException('The Adfs AuthMethod POST parameter was not found or contained an invalid value', $this->getSession());
+        }
+    }
+
+    /**
      * @Then /^the response should not match xpath \'([^\']*)\'$/
      */
     public function theResponseShouldNotMatchXpath($xpath)
     {
-        $this->printLastResponse(); die;
         $document = new DOMDocument();
         $document->loadXML($this->getSession()->getPage()->getContent());
 

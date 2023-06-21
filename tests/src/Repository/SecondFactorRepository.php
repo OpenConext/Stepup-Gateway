@@ -3,6 +3,7 @@
 namespace Surfnet\StepupGateway\Behat\Repository;
 
 use Exception;
+use PDO;
 use Ramsey\Uuid\Uuid;
 use Surfnet\StepupBundle\Value\VettingType;
 
@@ -71,5 +72,29 @@ SQL;
         }
 
         throw new Exception('Unable to insert the new second_factor');
+    }
+
+    public function findBy(string $nameId, string $secondFactorType): array
+    {
+        $sql = 'SELECT * FROM `second_factor` WHERE `name_id` = :nameId AND `second_factor_type` = :type';
+        $stmt = $this->connection->prepare($sql);
+        $stmt->execute([
+            'nameId' => $nameId,
+            'type' => $secondFactorType
+        ]);
+        if ($result = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            return $result;
+        }
+        throw new Exception(sprintf('Unable to find %s SF token for %s', $secondFactorType, $nameId));
+    }
+
+    public function has(string $nameId, string $secondFactorType): bool
+    {
+        try {
+            $this->findBy($nameId, $secondFactorType);
+            return true;
+        } catch (Exception $e) {
+            return false;
+        }
     }
 }

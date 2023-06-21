@@ -18,10 +18,12 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Service;
 
+use Psr\Log\LoggerInterface;
 use SAML2\Constants;
 use SAML2\Response as SAMLResponse;
 use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseBuilder;
 use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
+use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\ResponseHelper;
 use Twig\Environment;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -37,17 +39,20 @@ final class ResponseRenderingService
      */
     private $templateEngine;
 
-    /**
-     * SamlResponseRenderingService constructor.
-     * @param ResponseBuilder $responseBuilder
-     * @param Environment $templateEngine
-     */
+    private $responseHelper;
+
+    private $logger;
+
     public function __construct(
         ResponseBuilder $responseBuilder,
-        Environment     $templateEngine
+        ResponseHelper $responseHelper,
+        Environment $templateEngine,
+        LoggerInterface $logger
     ) {
         $this->responseBuilder = $responseBuilder;
+        $this->responseHelper = $responseHelper;
         $this->templateEngine = $templateEngine;
+        $this->logger = $logger;
     }
 
     /**
@@ -97,24 +102,41 @@ final class ResponseRenderingService
     }
 
     /**
-     * @param ResponseContext $context
-     * @param string $view
-     * @param SAMLResponse $response
-     * @return Response
+     * Based on a $view that is specified in the second parameter, render
+     * a Response object that either results in an unprocessable response
+     * or a regular POST-back to the SPs ACS location.
+     *
+     * When responding to an ADFS authentication, the additional ADFS
+     * parameters (Context, AuthMethod) are added to the POST response data.
+     * In this case, the SAMLResponse parameter is prepended with an
+     * underscore. And finally the ACS location the SAMLResponse wil be sent
+     * to, is updated to use the ACS location set in the original AuthNRequest.
      */
     private function renderSamlResponse(
         ResponseContext $context,
         string          $view,
         SAMLResponse    $response
-    ) {
+    ): Response {
+        $parameters = [
+            'acu' => $context->getDestination(),
+            'response' => $this->getResponseAsXML($response),
+            'relayState' => $context->getRelayState()
+        ];
+        $inResponseTo = $context->getInResponseTo();
+        if ($this->responseHelper->isAdfsResponse($inResponseTo)) {
+            $logMessage = 'Responding with additional ADFS parameters, in response to request: "%s", with view: "%s"';
+            if ($response->isSuccess()) {
+                $logMessage = 'Responding with an AuthnFailed SamlResponse with ADFS parameters, in response to AR: "%s", with view: "%s"';
+            }
+            $this->logger->notice(sprintf($logMessage, $inResponseTo, $view));
+            $adfsParameters = $this->responseHelper->retrieveAdfsParameters();
+            $parameters['adfs'] = $adfsParameters;
+            $parameters['acu'] = $context->getDestinationForAdfs();
+        }
         return (new Response)->setContent(
             $this->templateEngine->render(
                 'SurfnetStepupGatewayGatewayBundle:gateway:' . $view . '.html.twig',
-                [
-                    'acu' => $context->getDestination(),
-                    'response' => $this->getResponseAsXML($response),
-                    'relayState' => $context->getRelayState()
-                ]
+                $parameters
             )
         );
     }

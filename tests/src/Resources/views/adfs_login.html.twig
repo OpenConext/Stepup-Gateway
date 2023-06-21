@@ -1,14 +1,12 @@
 {% extends 'base.html.twig' %}
 
-{% block page_title %}{{ 'gateway.gateway.consume_assertion.title'|trans }}{% endblock %}
-
 {% block content %}
     <noscript>
         <b>Note: </b> javascript is disabled, please click the button below to proceed
     </noscript>
     One moment please...
-    <form method="post" action="{{ acu }}">
-        <input type="hidden" name="_SAMLResponse" value="{{ samlResponse }}" />
+    <form method="post" action="{{ ssoUrl }}">
+        <input type="hidden" name="SAMLRequest" value="{{ authNRequest }}" />
         {% include "@SurfnetStepupGatewaySecondFactorOnly/adfs/partial/adfs.html.twig" %}
         <input type="submit" class="hidden" />
         <noscript>

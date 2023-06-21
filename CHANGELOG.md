@@ -1,5 +1,8 @@
 # Changelog
 
+## 4.0.3
+-  Add ADFS parameters to SAMLResponse on error #279
+
 ## 4.0.2
 - Downgrade Stepp-bundle (revert of #238) as this required us to install too much untested
   stepup-saml-bundle features.
