@@ -144,9 +144,13 @@ parameters:
         - sms
         - yubikey
         - tiqr
+        - demo_gssp
     enabled_generic_second_factors:
         tiqr:
             loa: 3
+        demo_gssp:
+            loa: 2
+
     # The lifetime of the SSO on second factor authentications lifetime in seconds
     # For example, 8h is 28800 seconds.
     sso_cookie_lifetime: 28800
