@@ -144,6 +144,9 @@ parameters:
         - sms
         - yubikey
         - tiqr
+        - demo_gssp
     enabled_generic_second_factors:
         tiqr:
             loa: 3
+        demo_gssp:
+            loa: 2
