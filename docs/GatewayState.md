@@ -386,6 +386,7 @@ activate SP
              - ""[setRequestId]                          ""request ID <AR1> (in-response-to check)
              - ""[setRequestAssertionConsumerServiceUrl] ""ACS location of <AR1>
              - ""[setRequestServiceProvider]             ""entity ID of service provider <AR1>
+             - ""[setResponseContextServiceId]           ""The (SF) service identifier for the authentication context (used to retrieve the original issuer when a SAML authn failed response is encountered <AR1>
              - ""[setRelayState]                         ""relay state <AR1>
              - ""[setSubject]                            ""name ID <AR1>
              - ""[setGatewayRequestId]                   ""request ID <AR2>
