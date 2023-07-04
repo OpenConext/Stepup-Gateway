@@ -94,10 +94,8 @@
             "@phpcs",
             "@phpmd",
             "@test",
-            "@behat",
-            "@security-tests"
+            "@behat"
         ],
-        "security": "./ci/qa/security",
         "phplint": "./ci/qa/phplint",
         "validate-lockfile": "./ci/qa/validate",
         "phpcs": "./ci/qa/phpcs",
