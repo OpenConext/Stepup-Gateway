@@ -1,5 +1,14 @@
 # Changelog
 
+## 4.1.0
+- Repaired a problem with the SAML error response handling when cancelling a GSSP registration #283
+- Removed security checks from test-integration GHA #283
+
+## 4.0.4
+- Upgrade of the stepup SAML bundle (upgrading the SSP SAML2 lib to v4)
+- Aligned framework settings with other step-up project (Thanks Thijs)
+- Fixed typo in dutch translations
+
 ## 4.0.3
 -  Add ADFS parameters to SAMLResponse on error #279
 
