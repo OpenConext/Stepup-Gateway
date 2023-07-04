@@ -29,6 +29,8 @@ use Symfony\Component\HttpFoundation\Request;
 
 class LoginService
 {
+    private const RESPONSE_CONTEXT_SERVICE_ID = 'gateway.proxy.response_context';
+
     /** @var SamlAuthenticationLogger */
     private $samlLogger;
 
@@ -102,6 +104,7 @@ class LoginService
             ->setRequestId($originalRequestId)
             ->setRequestServiceProvider($originalRequest->getServiceProvider())
             ->setRequestAssertionConsumerServiceUrl($originalRequest->getAssertionConsumerServiceURL())
+            ->setResponseContextServiceId(self::RESPONSE_CONTEXT_SERVICE_ID)
             ->setRelayState($httpRequest->get(AuthnRequest::PARAMETER_RELAY_STATE, ''));
 
         $proxyRequest = AuthnRequestFactory::createNewRequest(

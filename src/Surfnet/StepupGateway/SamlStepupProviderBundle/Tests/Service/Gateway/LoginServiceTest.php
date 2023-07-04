@@ -163,6 +163,7 @@ class LoginServiceTest extends GatewaySamlTestCase
                 'request_id' => '_1b8f282a9c194b264ef68761171539380de78b45038f65b8609df868f55e',
                 'service_provider' => 'https://gateway.tld/authentication/metadata',
                 'assertion_consumer_service_url' => 'https://gateway.tld/authentication/consume-assertion',
+                'response_context_service_id' => 'gateway.proxy.response_context',
                 'relay_state' => '',
                 'gateway_request_id' => '_mocked_generated_id',
             ],

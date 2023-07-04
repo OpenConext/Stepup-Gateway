@@ -103,9 +103,6 @@ class ResponseContext
         return $this->getServiceProvider()->determineAcsLocationForAdfs($requestAcsUrl);
     }
 
-    /**
-     * @return null|string
-     */
     public function getIssuer(): Issuer
     {
         $issuer = new Issuer();
