@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-
-cd $(dirname $0)/../../
-
-./vendor/bin/security-checker security:check $1
