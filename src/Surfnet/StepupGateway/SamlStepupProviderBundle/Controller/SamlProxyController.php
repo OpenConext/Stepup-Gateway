@@ -26,8 +26,10 @@ use SAML2\XML\saml\Issuer;
 use Surfnet\SamlBundle\Http\XMLResponse;
 use Surfnet\StepupGateway\GatewayBundle\Controller\GatewayController;
 use Surfnet\StepupGateway\GatewayBundle\Exception\ResponseFailureException;
+use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Exception\InvalidSubjectException;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Exception\NotConnectedServiceProviderException;
+use Surfnet\StepupGateway\SamlStepupProviderBundle\Exception\RuntimeException;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Exception\SecondfactorVerificationRequiredException;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\Provider;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Saml\ProxyResponseFactory;
@@ -243,11 +245,19 @@ class SamlProxyController extends Controller
     {
         // This can either be a SFO or 'regular' SSO authentication. Both use a ResponseContext service of their own
         $responseContextServiceId = $stateHandler->getResponseContextServiceId();
+        if (!$responseContextServiceId) {
+            throw new RuntimeException(
+                sprintf(
+                    'Unable to find the ResponseContext service-id for this authentication or registration, ' .
+                    'service-id provided was: "%s"',
+                    $responseContextServiceId
+                )
+            );
+        }
         // GSSP verification action, return to SP from GatewayController state!
-        /** @var Issuer $issuer */
-        $issuer = $this->get($responseContextServiceId)->getIssuer();
-
-        return $issuer;
+        /** @var ResponseContext $responseService */
+        $responseService = $this->get($responseContextServiceId);
+        return $responseService->getIssuer();
     }
 
     /**
