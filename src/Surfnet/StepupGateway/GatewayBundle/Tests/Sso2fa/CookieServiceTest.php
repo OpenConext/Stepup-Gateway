@@ -140,7 +140,7 @@ class CookieServiceTest extends TestCase
         $sfMock->secondFactorId = 'sf-id-1234';
         $sfMock->institution = 'institution-a';
         $sfMock->secondFactorType = 'sms';
-        $sfMock->vettingType = 'on-premise';
+        $sfMock->identityVetted = true;
 
         $this->responseContext
             ->shouldReceive('getSelectedSecondFactor')
@@ -192,7 +192,7 @@ class CookieServiceTest extends TestCase
         $sfMock->secondFactorId = 'sf-id-1234';
         $sfMock->institution = 'institution-a';
         $sfMock->secondFactorType = 'yubikey';
-        $sfMock->vettingType = 'on-premise';
+        $sfMock->identityVetted = true;
 
         $this->responseContext
             ->shouldReceive('getSelectedSecondFactor')
