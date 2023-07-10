@@ -95,7 +95,7 @@ final class FailedResponseServiceTest extends GatewaySamlTestCase
 
         // Assert response
         $this->assertInstanceOf(Response::class, $response);
-        $this->assertSame('<?xml version="1.0"?>
+        $this->assertSame('<?xml version="1.0" encoding="UTF-8"?>
 <samlp:Response xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol" xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" ID="_mocked_generated_id" Version="2.0" IssueInstant="2018-08-17T08:58:20Z" InResponseTo="_123456789012345678901234567890123456789012"><saml:Issuer>idp.nl/entity-id</saml:Issuer><samlp:Status><samlp:StatusCode Value="urn:oasis:names:tc:SAML:2.0:status:Responder"><samlp:StatusCode Value="urn:oasis:names:tc:SAML:2.0:status:NoAuthnContext"/></samlp:StatusCode></samlp:Status></samlp:Response>
 ', $response->toUnsignedXML()->ownerDocument->saveXML());
 
@@ -149,7 +149,7 @@ final class FailedResponseServiceTest extends GatewaySamlTestCase
 
         // Assert response
         $this->assertInstanceOf(Response::class, $response);
-        $this->assertSame('<?xml version="1.0"?>
+        $this->assertSame('<?xml version="1.0" encoding="UTF-8"?>
 <samlp:Response xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol" xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" ID="_mocked_generated_id" Version="2.0" IssueInstant="2018-08-17T08:58:20Z" InResponseTo="_123456789012345678901234567890123456789012"><saml:Issuer>idp.nl/entity-id</saml:Issuer><samlp:Status><samlp:StatusCode Value="urn:oasis:names:tc:SAML:2.0:status:Responder"><samlp:StatusCode Value="urn:oasis:names:tc:SAML:2.0:status:AuthnFailed"/></samlp:StatusCode><samlp:StatusMessage>Authentication cancelled by user</samlp:StatusMessage></samlp:Status></samlp:Response>
 ', $response->toUnsignedXML()->ownerDocument->saveXML());
 
