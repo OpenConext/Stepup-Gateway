@@ -1,13 +1,16 @@
 monolog:
   channels: [authentication]
   handlers:
+    deprecation:
+      type: stream
+      level: emergency
     prod-signaler:
       type: fingers_crossed
       action_level: ERROR
       passthru_level: DEBUG # DEV setting: this means that all message of level DEBUG or higher are always logged
       handler: main_syslog
       bubble: true
-      channels: ["!authentication"] # the auth channel is logged by the next handler
+      channels: ["!authentication, !deprecation"] # the auth channel is logged by the next handler
     main_syslog:
       type: syslog
       ident: stepup-gateway

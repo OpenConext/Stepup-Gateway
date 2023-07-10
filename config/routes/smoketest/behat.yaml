@@ -8,3 +8,8 @@ gateway_test_adfs_sso:
   methods:  [GET]
   defaults: { _controller: Surfnet\StepupGateway\Behat\Controller\ServiceProviderController::adfsSsoAction }
 
+gateway_test_remote_idp_sso:
+  path:     /test/authentication/idp/sso
+  methods:  [GET,POST]
+  defaults: { _controller: Surfnet\StepupGateway\Behat\Controller\IdentityProviderController::ssoAction }
+

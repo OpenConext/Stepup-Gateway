@@ -41,7 +41,7 @@ class WhitelistRepository
             throw new Exception('Unable add the institution to the whitelist');
         } else {
             // Return the existing whitelist data
-            return reset($stmt->fetchAll());
+            return $stmt->fetchAll()[0];
         }
     }
 }

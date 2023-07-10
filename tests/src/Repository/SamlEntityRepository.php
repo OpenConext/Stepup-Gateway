@@ -71,12 +71,13 @@ SQL;
             throw new Exception('Unable to insert the new SP saml_entity');
         } else {
             // Return the SP data
-            $results = reset($stmt->fetchAll());
+            $results = $stmt->fetchAll();
+            $result = $results[0];
             $data = [
-                'entityId' => $results['entity_id'],
-                'type' => $results['type'],
-                'configuration' => $results['configuration'],
-                'id' => $results['id'],
+                'entityId' => $result['entity_id'],
+                'type' => $result['type'],
+                'configuration' => $result['configuration'],
+                'id' => $result['id'],
             ];
             return $data;
         }
@@ -123,12 +124,13 @@ SQL;
             throw new Exception('Unable to insert the new SP saml_entity');
         } else {
             // Return the SP data
-            $results = reset($stmt->fetchAll());
+            $results = $stmt->fetchAll();
+            $result = $results[0];
             $data = [
-                'entityId' => $results['entity_id'],
-                'type' => $results['type'],
-                'configuration' => $results['configuration'],
-                'id' => $results['id'],
+                'entityId' => $result['entity_id'],
+                'type' => $result['type'],
+                'configuration' => $result['configuration'],
+                'id' => $result['id'],
             ];
             return $data;
         }

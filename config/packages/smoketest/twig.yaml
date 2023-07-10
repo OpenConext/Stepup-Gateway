@@ -8,4 +8,5 @@ twig:
         app_name: "%app_name%"
     form_themes: ['bootstrap_4_layout.html.twig']
     paths:
-        'tests/src/Resources/views': 'test_resources'
+        '%kernel.project_dir%/tests/src/Resources/views/': test_resources
+
