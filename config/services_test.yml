@@ -57,6 +57,7 @@ services:
     tags: ['controller.service_arguments']
     arguments:
       - '@twig'
+      - '@logger'
 
   ##### SSO on 2FA overrides #####
   # For end to end testing, we do not actually encrypt & decrypt the cookie value.

@@ -1,3 +1,4 @@
+@selenium
 Feature: As an institution that uses the SSO on Second Factor authentication
   In order to do SSO on second factor authentications
   A successful authentication should yield a SSO cookie
@@ -9,7 +10,7 @@ Feature: As an institution that uses the SSO on Second Factor authentication
     And an institution "stepup.example.com" that allows "sso_on_2fa"
     And a whitelisted institution stepup.example.com
 
-  Scenario: A succesfull authentication sets an SSO cookie
+  Scenario: A successful authentication sets an SSO cookie
     Given a user from "stepup.example.com" identified by "urn:collab:person:stepup.example.com:user-1" with a vetted "Yubikey" token
     When urn:collab:person:stepup.example.com:user-1 starts an authentication requiring LoA 2
     Then I authenticate at the IdP as user-1

@@ -27,7 +27,7 @@ if ($isTestOrDev && $_SERVER['HTTP_USER_AGENT'] === 'Symfony BrowserKit') {
     $_SERVER['APP_ENV'] = 'smoketest';
 }
 
-$kernel = new Kernel($_SERVER['APP_ENV'], (bool) $_SERVER['APP_DEBUG']);
+$kernel = new Kernel('smoketest', (bool) $_SERVER['APP_DEBUG']);
 $request = Request::createFromGlobals();
 $response = $kernel->handle($request);
 $response->send();
