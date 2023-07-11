@@ -3,6 +3,7 @@
 namespace Surfnet\StepupGateway\Behat\Controller;
 
 use Exception;
+use Psr\Log\LoggerInterface;
 use RobRichards\XMLSecLibs\XMLSecurityKey;
 use RuntimeException;
 use SAML2\AuthnRequest;
@@ -18,7 +19,6 @@ use Surfnet\SamlBundle\Http\XMLResponse;
 use Surfnet\StepupGateway\Behat\Repository\SamlEntityRepository;
 use Surfnet\StepupGateway\Behat\ServiceProviderContext;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\ValueObject\Response as AdfsResponse;
-use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\Gateway\AdfsService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;
@@ -27,8 +27,12 @@ use function base64_encode;
 class ServiceProviderController
 {
     private $twig;
-    public function __construct(Environment $twig)
+
+    private $logger;
+
+    public function __construct(Environment $twig, LoggerInterface $logger)
     {
+        $this->logger = $logger;
         $this->twig = $twig;
     }
 
@@ -37,8 +41,10 @@ class ServiceProviderController
      */
     public function acsAction(Request $request)
     {
+        $this->logger->notice('Getting ready to consume the assertion on the test SP');
         $isAdfs = false;
         if ($request->request->has('_SAMLResponse')) {
+            $this->logger->notice('Handling a test ADFS assertion');
             // The ADFS saml response is hidden in the _SAMLResponse input, in order to get the
             $request->request->set('SAMLResponse', $request->request->get('_SAMLResponse'));
             $_POST['SAMLResponse'] = $request->request->get('_SAMLResponse');
@@ -46,10 +52,12 @@ class ServiceProviderController
         }
         libxml_disable_entity_loader(true);
         try {
+            $this->logger->notice('Process the assertion on the test SP (try POST binding)');
             $httpPostBinding = new HTTPPost();
             $message = $httpPostBinding->receive();
         } catch (Exception $e1) {
             try {
+                $this->logger->alert('Processing failed on the test SP');
                 $httpRedirectBinding = new HTTPRedirect();
                 $message = $httpRedirectBinding->receive();
             } catch (Exception $e2) {
@@ -62,6 +70,8 @@ class ServiceProviderController
         }
 
         $xml = base64_decode($request->get('SAMLResponse'));
+        $this->logger->notice(sprintf('Received SAMLResponse with status "%s"', implode($message->getStatus())));
+        $this->logger->notice('The XML received', ['response-xml' => $xml]);
 
         if ($isAdfs) {
             $html = $this->twig->render(
@@ -104,7 +114,7 @@ class ServiceProviderController
         $authnRequest->setNameId($nameIdVo);
 
         $keyLoader = new PrivateKeyLoader();
-        $privateKey = $keyLoader->loadPrivateKey(new PrivateKey('/var/www/ci/certificates/sp.pem', 'default'));
+        $privateKey = $keyLoader->loadPrivateKey(new PrivateKey('/var/www/ci/certificates/sp.key', 'default'));
         $key = new XMLSecurityKey(XMLSecurityKey::RSA_SHA256, ['type' => 'private']);
         $key->loadKey($privateKey->getKeyAsString());
 
