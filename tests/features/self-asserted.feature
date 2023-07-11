@@ -12,15 +12,14 @@ Feature: As an institution that uses the sefl-asserted tokens (SAT) registration
     When urn:collab:person:stepup.example.com:eric_lilliebridge starts an SFO authentication with LoA self-asserted
     Then I should see the Yubikey OTP screen
     When I enter the OTP
-    Then the response should contain "You are logged in to SP"
-    Then the response should contain "second-sp"
+    Then the response should match xpath '//samlp:StatusCode[@Value="urn:oasis:names:tc:SAML:2.0:status:Success"]'
 
   Scenario: A self asserted Yubikey can not satisfiy LoA 2
     When urn:collab:person:stepup.example.com:eric_lilliebridge starts an SFO authentication with LoA 2
     And I pass through the Gateway
-    And the response should contain "Responder/NoAuthnContext"
+    Then the response should match xpath '//samlp:StatusCode[@Value="urn:oasis:names:tc:SAML:2.0:status:RequestUnsupported"]'
 
   Scenario: A self asserted Yubikey can not satisfiy LoA 3
     When urn:collab:person:stepup.example.com:eric_lilliebridge starts an SFO authentication with LoA 3
     And I pass through the Gateway
-    And the response should contain "Responder/NoAuthnContext"
+    Then the response should match xpath '//samlp:StatusCode[@Value="urn:oasis:names:tc:SAML:2.0:status:RequestUnsupported"]'

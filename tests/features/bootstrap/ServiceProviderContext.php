@@ -22,12 +22,18 @@ use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Symfony2Extension\Context\KernelAwareContext;
 use RuntimeException;
+use RobRichards\XMLSecLibs\XMLSecurityKey;
+use SAML2\AuthnRequest;
 use SAML2\Certificate\Key;
 use SAML2\Certificate\KeyLoader;
+use SAML2\Certificate\PrivateKeyLoader;
+use SAML2\Configuration\PrivateKey;
 use SAML2\Constants;
 use SAML2\XML\saml\Issuer;
 use SAML2\XML\saml\NameID;
 use Surfnet\SamlBundle\Entity\IdentityProvider;
+use Surfnet\SamlBundle\SAML2\AuthnRequest as Saml2AuthnRequest;
+use Surfnet\StepupGateway\Behat\Repository\SamlEntityRepository;
 use Surfnet\StepupGateway\Behat\Service\FixtureService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -37,12 +43,8 @@ use function http_build_query;
 class ServiceProviderContext implements Context, KernelAwareContext
 {
     const SSP_URL = 'https://ssp.stepup.example.com/sp.php';
-    const SSO_ENDPOINT_URL = 'https://ssp.stepup.example.com/sp.php';
+    const SSO_ENDPOINT_URL = 'https://gateway.stepup.example.com/authentication/single-sign-on';
     const SFO_ENDPOINT_URL = 'https://gateway.stepup.example.com/second-factor-only/single-sign-on';
-    const SSO_SP_ENTITY_ID = 'default-sp';
-    const SFO_IDP_ENTITY_ID = 'https://gateway.stepup.example.com/second-factor-only/metadata';
-    const SSO_IDP_ENTITY_ID = 'https://gateway.stepup.example.com/authentication/metadata';
-    const SFO_SP_ENTITY_ID = 'second-sp';
 
     /**
      * @var array
@@ -153,9 +155,9 @@ class ServiceProviderContext implements Context, KernelAwareContext
     /**
      * @When /^([^\']*) starts an SFO authentication$/
      */
-    public function iStartAnSFOAuthentication($nameId, string $loa)
+    public function iStartAnSFOAuthentication($nameId)
     {
-        $this->iStartAnSFOAuthenticationWithLoa($nameId, '2');
+        $this->iStartAnSFOAuthenticationWithLoa($nameId, "self-asserted");
     }
 
     /**
@@ -174,21 +176,28 @@ class ServiceProviderContext implements Context, KernelAwareContext
         $authnRequest->setNameId($this->buildNameId($nameId));
         // Sign with random key, does not mather for now.
         $authnRequest->setSignatureKey(
-            $this->loadPrivateKey(new PrivateKey('/var/www/ci/certificates/sp.pem', 'default'))
+            $this->loadPrivateKey(new PrivateKey('/var/www/ci/certificates/sp.key', 'default'))
         );
         switch ($loa) {
             case "1":
             case "2":
             case "3":
-                $this->getSession()->getPage()->selectFieldOption('loa', $loa);
+                $authnRequest->setRequestedAuthnContext(
+                    ['AuthnContextClassRef' => ['http://stepup.example.com/assurance/level' . $loa]]
+                );
             break;
             case "self-asserted":
-                $this->getSession()->getPage()->selectFieldOption('loa', "1.5");
-                break;
+                $authnRequest->setRequestedAuthnContext(
+                    ['AuthnContextClassRef' => ['http://stepup.example.com/assurance/loa-self-asserted']]
+                );
+            break;
             default:
                 throw new RuntimeException(sprintf('The specified LoA-%s is not supported', $loa));
         }
-        $this->getSession()->getPage()->pressButton('Login');
+        $request = Saml2AuthnRequest::createNew($authnRequest);
+        $query = $request->buildRequestQuery();
+
+        $this->getSession()->visit($request->getDestination().'?'.$query);
     }
 
     /**
@@ -237,7 +246,7 @@ class ServiceProviderContext implements Context, KernelAwareContext
         // Sign with random key, does not mather for now.
         // todo: use from services_test.yml
         $authnRequest->setSignatureKey(
-            $this->loadPrivateKey(new PrivateKey('/var/www/ci/certificates/sp.pem', 'default'))
+            $this->loadPrivateKey(new PrivateKey('/var/www/ci/certificates/sp.key', 'default'))
         );
         $authnRequest->setRequestedAuthnContext(
             ['AuthnContextClassRef' => ['http://stepup.example.com/assurance/level2']]
@@ -256,7 +265,7 @@ class ServiceProviderContext implements Context, KernelAwareContext
         // In order to later assert if the response succeeded or failed, set our own dummy ACS location
         $authnRequest->setAssertionConsumerServiceURL(SamlEntityRepository::SP_ACS_LOCATION);
         $issuerVo = new Issuer();
-        $issuerVo->setValue($this->currentSfoSp['entityId']);
+        $issuerVo->setValue($this->currentSp['entityId']);
         $authnRequest->setIssuer($issuerVo);
         $authnRequest->setDestination(self::SSO_ENDPOINT_URL);
         $authnRequest->setProtocolBinding(Constants::BINDING_HTTP_REDIRECT);
@@ -264,11 +273,25 @@ class ServiceProviderContext implements Context, KernelAwareContext
         // Sign with random key, does not mather for now.
         // todo: use from services_test.yml
         $authnRequest->setSignatureKey(
-            $this->loadPrivateKey(new PrivateKey('/var/www/ci/certificates/sp.pem', 'default'))
+            $this->loadPrivateKey(new PrivateKey('/var/www/ci/certificates/sp.key', 'default'))
         );
-        $authnRequest->setRequestedAuthnContext(
-            ['AuthnContextClassRef' => [$loa]]
-        );
+
+        switch ($loa) {
+            case "1":
+            case "2":
+            case "3":
+                $authnRequest->setRequestedAuthnContext(
+                    ['AuthnContextClassRef' => ['http://stepup.example.com/assurance/level' . $loa]]
+                );
+                break;
+            case "self-asserted":
+                $authnRequest->setRequestedAuthnContext(
+                    ['AuthnContextClassRef' => ['http://stepup.example.com/assurance/loa-self-asserted']]
+                );
+            default:
+                throw new RuntimeException(sprintf('The specified LoA-%s is not supported', $loa));
+        }
+
         $request = Saml2AuthnRequest::createNew($authnRequest);
         $query = $request->buildRequestQuery();
         $this->getSession()->visit($request->getDestination().'?'.$query);
@@ -302,6 +325,16 @@ class ServiceProviderContext implements Context, KernelAwareContext
         return $ip;
     }
 
+    private static function loadPrivateKey(PrivateKey $key)
+    {
+        $keyLoader = new PrivateKeyLoader();
+        $privateKey = $keyLoader->loadPrivateKey($key);
+
+        $key = new XMLSecurityKey(XMLSecurityKey::RSA_SHA256, ['type' => 'private']);
+        $key->loadKey($privateKey->getKeyAsString());
+
+        return $key;
+    }
 
     /**
      * @Given /^I log out at the IdP$/

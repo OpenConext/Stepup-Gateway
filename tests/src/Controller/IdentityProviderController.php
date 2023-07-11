@@ -2,6 +2,7 @@
 
 namespace Surfnet\StepupGateway\Behat\Controller;
 
+use Psr\Log\LoggerInterface;
 use RobRichards\XMLSecLibs\XMLSecurityKey;
 use SAML2\Assertion;
 use SAML2\Certificate\KeyLoader;
@@ -99,12 +100,7 @@ class IdentityProviderController extends Controller
         return $response;
     }
 
-    /**
-     * @param string $destination
-     * @param string $nameId
-     * @return Response
-     */
-    public function createResponse($destination, array $nameId, $requestId)
+    public function createResponse(string $destination, array $nameId, $requestId)
     {
         $newAssertion = new Assertion();
         $newAssertion->setNotBefore(time());
@@ -122,6 +118,11 @@ class IdentityProviderController extends Controller
         $response->setIssueInstant(time());
         $response->setDestination($destination);
         $response->setInResponseTo($requestId);
+
+        $this->get('logger')->notice(
+            'Create the SAML Response after logging in to the test IdP',
+            [$this->getResponseAsXML($response)]
+        );
         return $response;
     }
 

@@ -12,6 +12,7 @@ use Ramsey\Uuid\Uuid;
 class SamlEntityRepository
 {
     const SP_ACS_LOCATION = 'https://gateway.stepup.example.com/test/authentication/consume-assertion';
+
     const SP_ADFS_SSO_LOCATION = 'https://gateway.stepup.example.com/test/authentication/adfs/sso';
 
     /**
@@ -34,7 +35,7 @@ class SamlEntityRepository
             // If not, create it
             $uuid = Uuid::uuid4()->toString();
             $type = 'sp';
-            $configuration['acs'] = [!$sfoEnabled ? self::SP_ACS_LOCATION: self::SP_SFO_ACS_LOCATION];
+            $configuration['acs'] = [self::SP_ACS_LOCATION];
             $configuration['public_key'] = $certificate;
             $configuration['loa'] = ['__default__' => 'http://stepup.example.com/assurance/loa1'];
             $configuration['second_factor_only'] = $sfoEnabled;
@@ -81,6 +82,7 @@ SQL;
                 'configuration' => $result['configuration'],
                 'id' => $result['id'],
             ];
+
             return $data;
         }
     }
