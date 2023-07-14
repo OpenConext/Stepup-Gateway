@@ -145,11 +145,17 @@ parameters:
         - yubikey
         - tiqr
         - demo_gssp
+        - webauthn
+        - azuremfa
     enabled_generic_second_factors:
+        azuremfa:
+            loa: 2
         tiqr:
+            loa: 2
+        webauthn:
             loa: 3
         demo_gssp:
-            loa: 2
+            loa: 3
 
     # The lifetime of the SSO on second factor authentications lifetime in seconds
     # For example, 8h is 28800 seconds.
