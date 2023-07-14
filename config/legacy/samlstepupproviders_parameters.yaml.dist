@@ -12,6 +12,10 @@ parameters:
         - 'https://ra.dev.openconext.local/vetting-procedure/gssf/tiqr/metadata'
         - 'https://selfservice.dev.openconext.local/registration/gssf/demo_gssp/metadata'
         - 'https://ra.dev.openconext.local/vetting-procedure/gssf/demo_gssp/metadata'
+        - 'https://selfservice.dev.openconext.local/registration/gssf/azuremfa/metadata'
+        - 'https://ra.dev.openconext.local/vetting-procedure/gssf/azuremfa/metadata'
+        - 'https://selfservice.dev.openconext.local/registration/gssf/webauthn/metadata'
+        - 'https://ra.dev.openconext.local/vetting-procedure/gssf/webauthn/metadata'
 
     # A regex that allows matching on the RA GSSP vetting procedure metadata URLs
     # Used to determine
