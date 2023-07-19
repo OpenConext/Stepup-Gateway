@@ -37,6 +37,7 @@ use Surfnet\StepupGateway\SamlStepupProviderBundle\Saml\StateHandler;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Service\Gateway\ConsumeAssertionService;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Service\Gateway\LoginService;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Service\Gateway\SecondFactorVerificationService;
+use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\ResponseHelper;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -268,11 +269,33 @@ class SamlProxyController extends Controller
      */
     public function renderSamlResponse($view, StateHandler $stateHandler, SAMLResponse $response)
     {
+        /** @var ResponseHelper $responseHelper */
+        $responseHelper = $this->get('second_factor_only.adfs.response_helper');
+        $logger = $this->get('logger');
+
+        $logger->notice(sprintf('Rendering SAML Response with view "%s"', $view));
+
         $parameters = [
             'acu' => $response->getDestination(),
             'response' => $this->getResponseAsXML($response),
             'relayState' => $stateHandler->getRelayState(),
         ];
+        $responseContext = $this->getResponseContext('gateway.proxy.sfo.state_handler');
+
+        // Test if we should add ADFS response parameters
+        $inResponseTo = $responseContext->getInResponseTo();
+        $isAdfsResponse = $responseHelper->isAdfsResponse($inResponseTo);
+        $logger->notice(sprintf('Responding to "%s" an ADFS response? %s', $inResponseTo, $isAdfsResponse ? 'yes' : 'no'));
+        if ($isAdfsResponse) {
+            $adfsParameters = $responseHelper->retrieveAdfsParameters();
+            $logMessage = 'Responding with additional ADFS parameters, in response to request: "%s", with view: "%s"';
+            if ($response->isSuccess()) {
+                $logMessage = 'Responding with an AuthnFailed SamlResponse with ADFS parameters, in response to AR: "%s", with view: "%s"';
+            }
+            $logger->notice(sprintf($logMessage, $inResponseTo, $view));
+            $parameters['adfs'] = $adfsParameters;
+            $parameters['acu'] = $responseContext->getDestinationForAdfs();
+        }
 
         $response = parent::render(
             'SurfnetStepupGatewaySamlStepupProviderBundle:saml_proxy:' . $view . '.html.twig',
@@ -410,9 +433,9 @@ class SamlProxyController extends Controller
     /**
      * @return \Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext
      */
-    public function getResponseContext()
+    public function getResponseContext($mode = 'gateway.proxy.sso.state_handler')
     {
-        $stateHandler = $this->get('gateway.proxy.sso.state_handler');
+        $stateHandler = $this->get($mode);
 
         $responseContextServiceId = $stateHandler->getResponseContextServiceId();
 
