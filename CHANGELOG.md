@@ -1,5 +1,14 @@
 # Changelog
 
+## 4.1.2
+After fixing error response handling in 4.1.0, the possibility of handling a failing ADFS response was not
+yet implemented. And that was taken care of in this release. See #285 for details.
+
+- Add ADFS params when rendering a GSSP response #285
+
+## 4.1.1
+- Upgrade Stepup SAML bundle to 5.0.3
+
 ## 4.1.0
 - Repaired a problem with the SAML error response handling when cancelling a GSSP registration #283
 - Removed security checks from test-integration GHA #283
