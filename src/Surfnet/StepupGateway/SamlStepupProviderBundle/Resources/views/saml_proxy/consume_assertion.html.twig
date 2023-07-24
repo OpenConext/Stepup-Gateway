@@ -3,15 +3,22 @@
 {% block page_title %}{{ 'gateway.gssp.consume_assertion.title'|trans }}{% endblock %}
 
 {% block content %}
+    {% set samlResponse = 'SAMLResponse' %}
+    {% if adfs is defined %}
+        {# When responding to the ADFS plugin, we add an underscore to the `SAMLResponse` parameter #}
+        {% set samlResponse = '_SAMLResponse' %}
+    {% endif %}
     <noscript>
         {{ 'gateway.gssp.consume_assertion.no_javascript_click_button'|trans }}
     </noscript>
     {{ 'gateway.gssp.consume_assertion.one_moment_please'|trans }}
     <form method="post" action="{{ acu }}">
-        <input type="hidden" name="SAMLResponse" value="{{ response }}" />
+        <input type="hidden" name="{{ samlResponse }}" value="{{ response }}" />
     {% if relayState|length > 0 %}
         <input type="hidden" name="RelayState" value="{{ relayState|escape }}" />
     {% endif %}
+    {# Optionally add the ADFS response parameters #}
+    {% include "@SurfnetStepupGatewaySecondFactorOnly/adfs/partial/adfs.html.twig" %}
         <input type="submit" class="hidden" value="Submit" />
     <noscript>
         <input type="submit" value="Submit"/>
