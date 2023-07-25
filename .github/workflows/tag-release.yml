@@ -35,8 +35,8 @@ jobs:
           tag_name: ${{ steps.vars.outputs.tag }}
           release_name: ${{ steps.vars.outputs.tag }}
           body: Auto generated release. Please update these release notes manually.
-          draft: true
-          prerelease: false
+          draft: false
+          prerelease: true
       - uses: actions/upload-release-asset@v1.0.1
         name: Upload the release artefact tarbal
         env:
