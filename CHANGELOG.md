@@ -1,5 +1,8 @@
 # Changelog
 
+## 4.1.3
+- Fix ADFS error handling not invoked for errors from a GSSP #287
+
 ## 4.1.2
 After fixing error response handling in 4.1.0, the possibility of handling a failing ADFS response was not
 yet implemented. And that was taken care of in this release. See #285 for details.
