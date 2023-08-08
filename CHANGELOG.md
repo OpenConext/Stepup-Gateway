@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.2.0
+Add single sign-on on second factor tokens feature. 
+
+- For additional details see `docs/SsoOn2Fa.md`
+- And https://www.pivotaltracker.com/epic/show/5024251
+
 ## 4.1.3
 - Fix ADFS error handling not invoked for errors from a GSSP #287
 
