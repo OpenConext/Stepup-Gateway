@@ -26,7 +26,7 @@ class SecondFactorRepository
     {
         $uuid = Uuid::uuid4()->toString();
 
-        // If an identifier is not importand, simply use the UUID, otherwise use the provide one
+        // If an identifier is not important, simply use the UUID, otherwise use the provide one
         if (!$identifier) {
             $identifier = $uuid;
         }

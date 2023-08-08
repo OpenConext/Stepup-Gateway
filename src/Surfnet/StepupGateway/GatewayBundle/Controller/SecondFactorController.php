@@ -36,6 +36,7 @@ use Surfnet\StepupGateway\GatewayBundle\Form\Type\SendSmsChallengeType;
 use Surfnet\StepupGateway\GatewayBundle\Form\Type\VerifySmsChallengeType;
 use Surfnet\StepupGateway\GatewayBundle\Form\Type\VerifyYubikeyOtpType;
 use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
+use Surfnet\StepupGateway\GatewayBundle\Sso2fa\CookieService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
@@ -54,17 +55,17 @@ class SecondFactorController extends Controller
     const MODE_SFO = 'sfo';
     const MODE_SSO = 'sso';
 
-    public function selectSecondFactorForVerificationSsoAction()
+    public function selectSecondFactorForVerificationSsoAction(Request $request)
     {
-        return $this->selectSecondFactorForVerificationAction(self::MODE_SSO);
+        return $this->selectSecondFactorForVerificationAction(self::MODE_SSO, $request);
     }
 
-    public function selectSecondFactorForVerificationSfoAction()
+    public function selectSecondFactorForVerificationSfoAction(Request $request)
     {
-        return $this->selectSecondFactorForVerificationAction(self::MODE_SFO);
+        return $this->selectSecondFactorForVerificationAction(self::MODE_SFO, $request);
     }
 
-    public function selectSecondFactorForVerificationAction($authenticationMode)
+    public function selectSecondFactorForVerificationAction($authenticationMode, Request $request)
     {
         $this->supportsAuthenticationMode($authenticationMode);
         $context = $this->getResponseContext($authenticationMode);
@@ -80,8 +81,9 @@ class SecondFactorController extends Controller
             $requestedLoa = $context->getRequiredLoa();
             $spConfiguredLoas = $context->getServiceProvider()->get('configuredLoas');
 
+            $identityNameId = $context->getIdentityNameId();
             $normalizedIdpSho = $context->getNormalizedSchacHomeOrganization();
-            $normalizedUserSho = $this->getStepupService()->getNormalizedUserShoByIdentityNameId($context->getIdentityNameId());
+            $normalizedUserSho = $this->getStepupService()->getNormalizedUserShoByIdentityNameId($identityNameId);
 
             $requiredLoa = $this
                 ->getStepupService()
@@ -105,7 +107,6 @@ class SecondFactorController extends Controller
 
         if ($this->getStepupService()->isIntrinsicLoa($requiredLoa)) {
             $this->get('gateway.authentication_logger')->logIntrinsicLoaAuthentication($originalRequestId);
-
             return $this->forward($context->getResponseAction());
         }
 
@@ -117,6 +118,23 @@ class SecondFactorController extends Controller
                 $this->get('gateway.service.whitelist')
             );
 
+        /**
+         * @var CookieService $ssoCookieService
+         */
+        $ssoCookieService = $this->get('gateway.service.sso_2fa_cookie');
+        if ($ssoCookieService->shouldSkip2faAuthentication(
+            $context,
+            $requiredLoa->getLevel(),
+            $identityNameId,
+            $secondFactorCollection,
+            $request
+        )) {
+            $logger->notice('Skipping second factor authentication. Required LoA was met by the LoA recorded in the cookie');
+            $this->getResponseContext($authenticationMode)->markSecondFactorVerified();
+            $this->getResponseContext($authenticationMode)->markVerifiedBySsoOn2faCookie($ssoCookieService->getCookieFingerprint($request));
+            $this->getAuthenticationLogger()->logSecondFactorAuthentication($originalRequestId, $authenticationMode);
+            return $this->forward($context->getResponseAction());
+        }
         switch (count($secondFactorCollection)) {
             case 0:
                 $logger->notice('No second factors can give the determined Loa');
@@ -338,12 +356,12 @@ class SecondFactorController extends Controller
 
         $context->markSecondFactorVerified();
         $this->getAuthenticationLogger()->logSecondFactorAuthentication($originalRequestId, $authenticationMode);
-
+        $context->setVerifiedBySsoOn2faCookie(null);
         $logger->info(sprintf(
             'Marked GSSF "%s" as verified, forwarding to Gateway controller to respond',
             $selectedSecondFactor
         ));
-
+        $context->finalizeAuthentication();
         return $this->forward($context->getResponseAction());
     }
 
@@ -402,7 +420,6 @@ class SecondFactorController extends Controller
                     $selectedSecondFactor
                 )
             );
-
             return $this->forward($context->getResponseAction());
         }
 
@@ -525,7 +542,6 @@ class SecondFactorController extends Controller
                         $selectedSecondFactor
                     )
                 );
-
                 return $this->forward($context->getResponseAction());
             } elseif ($verification->didOtpExpire()) {
                 $logger->notice('SMS challenge expired');

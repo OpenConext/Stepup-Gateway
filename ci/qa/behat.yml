@@ -1,4 +1,7 @@
 default:
+  calls:
+    error_reporting: 16383 # E_ALL & ~E_USER_DREPRECATED
+
   suites:
     default:
       paths:
@@ -42,5 +45,5 @@ default:
     Behat\Symfony2Extension:
       kernel:
         class: 'App\Kernel'
-        env: test
+        env: smoketest
         debug: true

@@ -20,6 +20,7 @@ namespace Surfnet\StepupGateway\GatewayBundle\Saml\Proxy;
 
 use Surfnet\StepupGateway\GatewayBundle\Saml\Exception\RuntimeException;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use function is_bool;
 
 class ProxyStateHandler
 {
@@ -265,6 +266,30 @@ class ProxyStateHandler
         return $this->get('selected_second_factor_verified') === true;
     }
 
+    public function setVerifiedBySsoOn2faCookie(bool $isVerifiedByCookie): self
+    {
+        $this->set('verified_by_sso_on_2fa_cookie', $isVerifiedByCookie);
+
+        return $this;
+    }
+
+    public function isVerifiedBySsoOn2faCookie(): bool
+    {
+        return $this->get('verified_by_sso_on_2fa_cookie') === true;
+    }
+
+    public function setSsoOn2faCookieFingerprint(string $fingerprint)
+    {
+        $this->set('sso_on_2fa_cookie_fingerprint', $fingerprint);
+
+        return $this;
+    }
+
+    public function getSsoOn2faCookieFingerprint()
+    {
+        return $this->get('sso_on_2fa_cookie_fingerprint');
+    }
+
     /**
      * @param string $controllerName
      * @return $this
@@ -309,6 +334,18 @@ class ProxyStateHandler
         return $this;
     }
 
+
+    public function setIsForceAuthn(bool $forceAuthn): self
+    {
+        $this->set('force_authn', $forceAuthn);
+        return $this;
+    }
+
+
+    public function isForceAuthn(): bool
+    {
+        return $this->get('force_authn') === true;
+    }
     /**
      * @return string|null
      */

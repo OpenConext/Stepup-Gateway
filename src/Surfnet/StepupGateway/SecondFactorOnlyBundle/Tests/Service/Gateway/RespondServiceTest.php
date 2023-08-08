@@ -145,7 +145,7 @@ final class RespondServiceTest extends GatewaySamlTestCase
 
         // Assert response
         $this->assertInstanceOf(Response::class, $response);
-        $this->assertSame('<?xml version="1.0"?>
+        $this->assertSame('<?xml version="1.0" encoding="UTF-8"?>
 <samlp:Response xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol" xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" ID="_mocked_generated_id" Version="2.0" IssueInstant="2018-08-17T08:58:20Z" InResponseTo="_7179b234fc69f75724c83cab795fc87475d2f6d88e97e43368c3966e398c"><saml:Issuer>idp.nl/entity-id</saml:Issuer><samlp:Status><samlp:StatusCode Value="urn:oasis:names:tc:SAML:2.0:status:Success"/></samlp:Status><saml:Assertion xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" ID="_mocked_generated_id" Version="2.0" IssueInstant="2018-08-17T08:58:20Z"><saml:Issuer>idp.nl/entity-id</saml:Issuer><ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
   <ds:SignedInfo><ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
     <ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/>
@@ -197,9 +197,12 @@ final class RespondServiceTest extends GatewaySamlTestCase
             'surfnet/gateway/requestresponse_context_service_id' => 'second_factor_only.response_context',
             'surfnet/gateway/requestname_id' => 'oom60v-3art',
             'surfnet/gateway/requestloa_identifier' => 'http://stepup.example.com/assurance/loa2',
-            'surfnet/gateway/requestselected_second_factor' => null,
+            // This is reset right after setting or not setting the SSO on 2FA cookie.
+            'surfnet/gateway/requestselected_second_factor' => 'mocked-second-factor-id',
             'surfnet/gateway/requestselected_second_factor_verified' => false,
             'surfnet/gateway/requestlocale' => 'nl_NL',
+            'surfnet/gateway/requestverified_by_sso_on_2fa_cookie' => false,
+            'surfnet/gateway/requestsso_on_2fa_cookie_fingerprint' => ''
         ], $this->getSessionData('attributes'));
     }
 

@@ -44,8 +44,8 @@ class SurfnetStepupGatewaySamlStepupProviderExtension extends Extension
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
 
-        $connectedServiceProviders = $container->getDefinition('gssp.connected_service_providers');
-        $connectedServiceProviders->replaceArgument(1, $config['allowed_sps']);
+        $connectedServiceProviders = $container->getDefinition('gssp.allowed_sps');
+        $connectedServiceProviders->replaceArgument(0, $config['allowed_sps']);
 
         foreach ($config['providers'] as $provider => $providerConfiguration) {
             // may seem a bit strange, but this prevents casing issue when getting/setting/creating provider

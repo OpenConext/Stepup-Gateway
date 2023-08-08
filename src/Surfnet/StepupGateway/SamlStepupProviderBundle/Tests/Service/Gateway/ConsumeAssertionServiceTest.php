@@ -33,6 +33,7 @@ use Surfnet\StepupGateway\GatewayBundle\Service\SamlEntityService;
 use Surfnet\StepupGateway\GatewayBundle\Tests\TestCase\GatewaySamlTestCase;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Exception\InvalidSubjectException;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Exception\SecondfactorVerificationRequiredException;
+use Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\AllowedServiceProviders;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\ConnectedServiceProviders;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\Provider;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Saml\ProxyResponseFactory;
@@ -224,7 +225,7 @@ class ConsumeAssertionServiceTest extends GatewaySamlTestCase
         // Assertions
         // Assert proxy response
         $this->assertInstanceOf(Response::class, $response);
-        $this->assertSame('<?xml version="1.0"?>
+        $this->assertSame('<?xml version="1.0" encoding="UTF-8"?>
 <samlp:Response xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol" xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" ID="_mocked_generated_id" Version="2.0" IssueInstant="2018-08-17T08:58:20Z" InResponseTo="_1b8f282a9c194b264ef68761171539380de78b45038f65b8609df868f55e"><saml:Issuer>remote-idp.nl/entity-id</saml:Issuer><samlp:Status><samlp:StatusCode Value="urn:oasis:names:tc:SAML:2.0:status:Success"/></samlp:Status><saml:Assertion xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" ID="_mocked_generated_id" Version="2.0" IssueInstant="2018-08-17T08:58:20Z"><saml:Issuer>remote-idp.nl/entity-id</saml:Issuer><ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
   <ds:SignedInfo><ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
     <ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/>
@@ -724,7 +725,8 @@ class ConsumeAssertionServiceTest extends GatewaySamlTestCase
         $serviceProvider = new ServiceProvider($spConfiguration);
         $this->postBinding = Mockery::mock(PostBinding::class);
         $this->samlEntityService = Mockery::mock(SamlEntityService::class);
-        $connectedServiceProviders = new ConnectedServiceProviders($this->samlEntityService, $connectedServiceProviders);
+        $allowed = new AllowedServiceProviders($connectedServiceProviders, 'regex');
+        $connectedServiceProviders = new ConnectedServiceProviders($this->samlEntityService, $allowed);
 
         $this->provider = new Provider(
             'testProvider',

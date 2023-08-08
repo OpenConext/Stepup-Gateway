@@ -30,7 +30,6 @@ use Surfnet\StepupGateway\GatewayBundle\Entity\ServiceProvider;
 use Surfnet\StepupGateway\GatewayBundle\Saml\Exception\RuntimeException;
 use Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler;
 use Surfnet\StepupGateway\GatewayBundle\Service\SamlEntityService;
-use function is_string;
 
 class ResponseContext
 {
@@ -277,6 +276,11 @@ class ResponseContext
         $this->stateHandler->setSecondFactorVerified(true);
     }
 
+    public function finalizeAuthentication()
+    {
+        $this->stateHandler->setSelectedSecondFactorId(null);
+    }
+
     /**
      * @return bool
      */
@@ -296,8 +300,9 @@ class ResponseContext
      */
     public function responseSent()
     {
-        $this->stateHandler->setSelectedSecondFactorId(null);
         $this->stateHandler->setSecondFactorVerified(false);
+        $this->stateHandler->setVerifiedBySsoOn2faCookie(false);
+        $this->stateHandler->setSsoOn2faCookieFingerprint('');
     }
 
     /**
@@ -328,5 +333,21 @@ class ResponseContext
         }
 
         throw new RuntimeException('Unable to resolve an identifier from internalCollabPersonId or the Subject NameId');
+    }
+
+    public function isForceAuthn(): bool
+    {
+        return $this->stateHandler->isForceAuthn();
+    }
+
+    public function markVerifiedBySsoOn2faCookie(string $fingerprint)
+    {
+        $this->stateHandler->setVerifiedBySsoOn2faCookie(true);
+        $this->stateHandler->setSsoOn2faCookieFingerprint($fingerprint);
+    }
+
+    public function isVerifiedBySsoOn2faCookie(): bool
+    {
+        return $this->stateHandler->isVerifiedBySsoOn2faCookie();
     }
 }

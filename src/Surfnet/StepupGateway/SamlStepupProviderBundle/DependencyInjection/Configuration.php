@@ -31,11 +31,11 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
-            ->arrayNode('allowed_sps')
+                ->arrayNode('allowed_sps')
                 ->isRequired()
                 ->requiresAtLeastOneElement()
                 ->prototype('scalar')
-                ->end()
+            ->end()
             ->end();
 
         $this->addRoutesSection($rootNode);

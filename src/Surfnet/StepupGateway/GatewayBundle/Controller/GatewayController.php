@@ -78,7 +78,7 @@ class GatewayController extends Controller
                 $this->getResponseContext(self::MODE_SSO)
             );
 
-            return $this->renderSamlResponse('consume_assertion', $response, self::MODE_SSO);
+            return $this->renderSamlResponse('consume_assertion', $response, $httpRequest, self::MODE_SSO);
         }
 
         return $redirectBinding->createResponseFor($proxyRequest);
@@ -113,7 +113,7 @@ class GatewayController extends Controller
         } catch (ResponseFailureException $e) {
             $response = $this->getGatewayFailedResponseService()->createResponseFailureResponse($responseContext);
 
-            return $this->renderSamlResponse('unprocessable_response', $response, self::MODE_SSO);
+            return $this->renderSamlResponse('unprocessable_response', $response, $request, self::MODE_SSO);
         }
 
         // Forward to the selectSecondFactorForVerificationSsoAction, this in turn will forward to the correct
@@ -129,7 +129,7 @@ class GatewayController extends Controller
      * redirect. This method sends a AuthnResponse back to the service
      * provider in response to the AuthnRequest received in ssoAction().
      */
-    public function respondAction()
+    public function respondAction(Request $request)
     {
         $responseContext = $this->getResponseContext(self::MODE_SSO);
         $gatewayLoginService = $this->getGatewayRespondService();
@@ -137,7 +137,7 @@ class GatewayController extends Controller
         $response = $gatewayLoginService->respond($responseContext);
         $gatewayLoginService->resetRespondState($responseContext);
 
-        return $this->renderSamlResponse('consume_assertion', $response, self::MODE_SSO);
+        return $this->renderSamlResponse('consume_assertion', $response, $request, self::MODE_SSO);
     }
 
     /**
@@ -157,7 +157,7 @@ class GatewayController extends Controller
 
         $response = $gatewayLoginService->sendLoaCannotBeGiven($responseContext);
 
-        return $this->renderSamlResponse('consume_assertion', $response, $authenticationMode);
+        return $this->renderSamlResponse('consume_assertion', $response, $request, $authenticationMode);
     }
 
     /**
@@ -181,17 +181,16 @@ class GatewayController extends Controller
 
         $response = $gatewayLoginService->sendAuthenticationCancelledByUser($responseContext);
 
-        return $this->renderSamlResponse('consume_assertion', $response, $authenticationMode);
+        return $this->renderSamlResponse('consume_assertion', $response, $request, $authenticationMode);
     }
 
-    /**
-     * @param string $view
-     * @param SAMLResponse $response
-     * @param $authenticationMode
-     * @return Response
-     */
-    public function renderSamlResponse($view, SAMLResponse $response, $authenticationMode)
-    {
+
+    public function renderSamlResponse(
+        string $view,
+        SAMLResponse $response,
+        Request $request,
+        string $authenticationMode
+    ): Response {
         $logger = $this->get('logger');
         /** @var ResponseHelper $responseHelper */
         $responseHelper = $this->get('second_factor_only.adfs.response_helper');
@@ -218,7 +217,11 @@ class GatewayController extends Controller
             $parameters['acu'] = $responseContext->getDestinationForAdfs();
         }
 
-        return $this->render($view, $parameters);
+        $httpResponse = $this->render($view, $parameters);
+
+        $ssoCookieService = $this->get('gateway.service.sso_2fa_cookie');
+        $ssoCookieService->handleSsoOn2faCookieStorage($responseContext, $request, $httpResponse);
+        return $httpResponse;
     }
 
     /**

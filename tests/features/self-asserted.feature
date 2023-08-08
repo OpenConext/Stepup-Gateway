@@ -3,8 +3,8 @@ Feature: As an institution that uses the sefl-asserted tokens (SAT) registration
   I must be able to successfully authenticate with my SAT second factor tokens
 
   Background:
-    Given an SFO enabled SP with EntityID https://sp.stepup.example.com
-    And an IdP with EntityID https://idp.stepup.example.com
+    Given an SFO enabled SP with EntityID https://ssp.stepup.example.com/module.php/saml/sp/metadata.php/second-sp
+    And an IdP with EntityID https://ssp.stepup.example.com/saml2/idp/metadata.php
     And a whitelisted institution stepup.example.com
     And a user from "stepup.example.com" identified by "urn:collab:person:stepup.example.com:eric_lilliebridge" with a self-asserted "Yubikey" token
 

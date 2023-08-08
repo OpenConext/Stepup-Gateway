@@ -12,6 +12,7 @@ use Ramsey\Uuid\Uuid;
 class SamlEntityRepository
 {
     const SP_ACS_LOCATION = 'https://gateway.stepup.example.com/test/authentication/consume-assertion';
+
     const SP_ADFS_SSO_LOCATION = 'https://gateway.stepup.example.com/test/authentication/adfs/sso';
 
     /**
@@ -28,7 +29,7 @@ class SamlEntityRepository
     {
         // Does the SP exist?
         $stmt = $this->connection->prepare('SELECT * FROM saml_entity WHERE entity_id=:entityId LIMIT 1');
-        $stmt->bindParam('entityId', $entityId, PDO::PARAM_STR);
+        $stmt->bindParam('entityId', $entityId);
         $stmt->execute();
         if ($stmt->rowCount() === 0) {
             // If not, create it
@@ -38,6 +39,8 @@ class SamlEntityRepository
             $configuration['public_key'] = $certificate;
             $configuration['loa'] = ['__default__' => 'http://stepup.example.com/assurance/loa1'];
             $configuration['second_factor_only'] = $sfoEnabled;
+            $configuration['set_sso_cookie_on_2fa'] = true;
+            $configuration['allow_sso_on_2fa'] = true;
             $configuration['second_factor_only_nameid_patterns'] = [
                 'urn:collab:person:stepup.example.com:admin',
                 'urn:collab:person:stepup.example.com:*',
@@ -71,13 +74,15 @@ SQL;
             throw new Exception('Unable to insert the new SP saml_entity');
         } else {
             // Return the SP data
-            $results = reset($stmt->fetchAll());
+            $results = $stmt->fetchAll();
+            $result = $results[0];
             $data = [
-                'entityId' => $results['entity_id'],
-                'type' => $results['type'],
-                'configuration' => $results['configuration'],
-                'id' => $results['id'],
+                'entityId' => $result['entity_id'],
+                'type' => $result['type'],
+                'configuration' => $result['configuration'],
+                'id' => $result['id'],
             ];
+
             return $data;
         }
     }
@@ -123,12 +128,13 @@ SQL;
             throw new Exception('Unable to insert the new SP saml_entity');
         } else {
             // Return the SP data
-            $results = reset($stmt->fetchAll());
+            $results = $stmt->fetchAll();
+            $result = $results[0];
             $data = [
-                'entityId' => $results['entity_id'],
-                'type' => $results['type'],
-                'configuration' => $results['configuration'],
-                'id' => $results['id'],
+                'entityId' => $result['entity_id'],
+                'type' => $result['type'],
+                'configuration' => $result['configuration'],
+                'id' => $result['id'],
             ];
             return $data;
         }

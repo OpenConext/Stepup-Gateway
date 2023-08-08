@@ -15,9 +15,6 @@ services:
   gateway.service.gateway_api_sms:
     class: Surfnet\StepupGateway\ApiBundle\Tests\TestDouble\Service\SmsService
 
-  Surfnet\StepupGateway\Behat\MinkContext:
-    class: Surfnet\StepupGateway\Behat\MinkContext
-
   Surfnet\StepupGateway\Behat\Repository\SecondFactorRepository:
     class: Surfnet\StepupGateway\Behat\Repository\SecondFactorRepository
     arguments:
@@ -30,6 +27,11 @@ services:
 
   Surfnet\StepupGateway\Behat\Repository\WhitelistRepository:
     class: Surfnet\StepupGateway\Behat\Repository\WhitelistRepository
+    arguments:
+      - '@Surfnet\StepupGateway\Behat\Repository\Connection'
+
+  Surfnet\StepupGateway\Behat\Repository\InstitutionConfigurationRepository:
+    class: Surfnet\StepupGateway\Behat\Repository\InstitutionConfigurationRepository
     arguments:
       - '@Surfnet\StepupGateway\Behat\Repository\Connection'
 
@@ -48,9 +50,28 @@ services:
       - '@Surfnet\StepupGateway\Behat\Repository\SecondFactorRepository'
       - '@Surfnet\StepupGateway\Behat\Repository\SamlEntityRepository'
       - '@Surfnet\StepupGateway\Behat\Repository\WhitelistRepository'
+      - '@Surfnet\StepupGateway\Behat\Repository\InstitutionConfigurationRepository'
 
   Surfnet\StepupGateway\Behat\Controller\ServiceProviderController:
     class: Surfnet\StepupGateway\Behat\Controller\ServiceProviderController
     tags: ['controller.service_arguments']
     arguments:
       - '@twig'
+      - '@logger'
+
+  ##### SSO on 2FA overrides #####
+  # For end to end testing, we do not actually encrypt & decrypt the cookie value.
+  # Allowing for more easily checking the cookie for correct contents without having
+  # to decrypt a cookie while checking it in the guzzle response.
+
+  gateway.service.sso_2fa_cookie_crypto_helper_dummy:
+    class: Surfnet\StepupGateway\GatewayBundle\Sso2fa\Crypto\DummyCryptoHelper
+
+  gateway.service.sso_2fa_cookie_helper:
+    class: Surfnet\StepupGateway\GatewayBundle\Sso2fa\Http\CookieHelper
+    arguments:
+      - "@gateway.service.sso_2fa_cookie_config"
+      # The dummy crypto helper does not actually encrypt the data so we can peek into it in test assertions
+      - "@gateway.service.sso_2fa_cookie_crypto_helper_dummy"
+      - "@logger"
+    public: false
