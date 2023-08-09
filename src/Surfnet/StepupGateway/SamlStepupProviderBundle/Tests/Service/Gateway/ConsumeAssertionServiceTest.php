@@ -40,7 +40,7 @@ use Surfnet\StepupGateway\SamlStepupProviderBundle\Saml\ProxyResponseFactory;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Saml\StateHandler;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Service\Gateway\ConsumeAssertionService;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag;
+use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBag;
 use Symfony\Component\HttpFoundation\Session\Session;
 
 class ConsumeAssertionServiceTest extends GatewaySamlTestCase
@@ -195,13 +195,11 @@ class ConsumeAssertionServiceTest extends GatewaySamlTestCase
 </samlp:Response>';
 
         $this->mockSessionData('__gssp_session', [
-            'test_provider' => [
-                'request_id' => '_1b8f282a9c194b264ef68761171539380de78b45038f65b8609df868f55e',
-                'service_provider' => 'https://gateway.tld/authentication/metadata',
-                'assertion_consumer_service_url' => 'https://gateway.tld/authentication/consume-assertion',
-                'relay_state' => '',
-                'gateway_request_id' => '_mocked_generated_id',
-            ],
+            'test_provider/request_id' => '_1b8f282a9c194b264ef68761171539380de78b45038f65b8609df868f55e',
+            'test_provider/service_provider' => 'https://gateway.tld/authentication/metadata',
+            'test_provider/assertion_consumer_service_url' => 'https://gateway.tld/authentication/consume-assertion',
+            'test_provider/relay_state' => '',
+            'test_provider/gateway_request_id' => '_mocked_generated_id',
         ]);
 
         $httpRequest = Request::create('idp.nl/sso-url');
@@ -251,13 +249,11 @@ class ConsumeAssertionServiceTest extends GatewaySamlTestCase
 
         // Assert session
         $this->assertSame([
-            'test_provider' => [
-                'request_id' => '_1b8f282a9c194b264ef68761171539380de78b45038f65b8609df868f55e',
-                'service_provider' => 'https://gateway.tld/authentication/metadata',
-                'assertion_consumer_service_url' => 'https://gateway.tld/authentication/consume-assertion',
-                'relay_state' => '',
-                'gateway_request_id' => '_mocked_generated_id',
-            ],
+            'test_provider/request_id' => '_1b8f282a9c194b264ef68761171539380de78b45038f65b8609df868f55e',
+            'test_provider/service_provider' => 'https://gateway.tld/authentication/metadata',
+            'test_provider/assertion_consumer_service_url' => 'https://gateway.tld/authentication/consume-assertion',
+            'test_provider/relay_state' => '',
+            'test_provider/gateway_request_id' => '_mocked_generated_id',
         ], $this->getSessionData('attributes'));
     }
 
@@ -343,13 +339,11 @@ class ConsumeAssertionServiceTest extends GatewaySamlTestCase
 </samlp:Response>';
 
         $this->mockSessionData('__gssp_session', [
-            'test_provider' => [
-                'request_id' => '_1b8f282a9c194b264ef68761171539380de78b45038f65b8609df868f55e',
-                'service_provider' => 'https://gateway.tld/authentication/metadata',
-                'assertion_consumer_service_url' => 'https://gateway.tld/authentication/consume-assertion',
-                'relay_state' => '',
-                'gateway_request_id' => '_mocked_generated_id',
-            ],
+            'test_provider/request_id' => '_1b8f282a9c194b264ef68761171539380de78b45038f65b8609df868f55e',
+            'test_provider/service_provider' => 'https://gateway.tld/authentication/metadata',
+            'test_provider/assertion_consumer_service_url' => 'https://gateway.tld/authentication/consume-assertion',
+            'test_provider/relay_state' => '',
+            'test_provider/gateway_request_id' => '_mocked_generated_id',
         ]);
 
         $httpRequest = Request::create('idp.nl/sso-url');
@@ -454,13 +448,11 @@ class ConsumeAssertionServiceTest extends GatewaySamlTestCase
 </samlp:Response>';
 
         $this->mockSessionData('__gssp_session', [
-            'test_provider' => [
-                'request_id' => '_1b8f282a9c194b264ef68761171539380de78b45038f65b8609df868f55e',
-                'service_provider' => 'https://gateway.tld/authentication/metadata',
-                'assertion_consumer_service_url' => 'https://gateway.tld/authentication/consume-assertion',
-                'relay_state' => '',
-                'gateway_request_id' => '_mocked_invalid_generated_id',
-            ],
+            'test_provider/request_id' => '_1b8f282a9c194b264ef68761171539380de78b45038f65b8609df868f55e',
+            'test_provider/service_provider' => 'https://gateway.tld/authentication/metadata',
+            'test_provider/assertion_consumer_service_url' => 'https://gateway.tld/authentication/consume-assertion',
+            'test_provider/relay_state' => '',
+            'test_provider/gateway_request_id' => '_mocked_invalid_generated_id',
         ]);
 
         $httpRequest = Request::create('idp.nl/sso-url');
@@ -564,14 +556,12 @@ class ConsumeAssertionServiceTest extends GatewaySamlTestCase
 </samlp:Response>';
 
         $this->mockSessionData('__gssp_session', [
-            'test_provider' => [
-                'request_id' => '_1b8f282a9c194b264ef68761171539380de78b45038f65b8609df868f55e',
-                'service_provider' => 'https://gateway.tld/authentication/metadata',
-                'assertion_consumer_service_url' => 'https://gateway.tld/authentication/consume-assertion',
-                'relay_state' => '',
-                'gateway_request_id' => '_mocked_generated_id',
-                'subject' => 'invalid-subject'
-            ],
+            'test_provider/request_id' => '_1b8f282a9c194b264ef68761171539380de78b45038f65b8609df868f55e',
+            'test_provider/service_provider' => 'https://gateway.tld/authentication/metadata',
+            'test_provider/assertion_consumer_service_url' => 'https://gateway.tld/authentication/consume-assertion',
+            'test_provider/relay_state' => '',
+            'test_provider/gateway_request_id' => '_mocked_generated_id',
+            'test_provider/subject' => 'invalid-subject'
         ]);
 
         $httpRequest = Request::create('idp.nl/sso-url');
@@ -675,14 +665,12 @@ class ConsumeAssertionServiceTest extends GatewaySamlTestCase
 </samlp:Response>';
 
         $this->mockSessionData('__gssp_session', [
-            'test_provider' => [
-                'request_id' => '_1b8f282a9c194b264ef68761171539380de78b45038f65b8609df868f55e',
-                'service_provider' => 'https://gateway.tld/authentication/metadata',
-                'assertion_consumer_service_url' => 'https://gateway.tld/authentication/consume-assertion',
-                'relay_state' => '',
-                'gateway_request_id' => '_mocked_generated_id',
-                'is_second_factor_verification' => true,
-            ],
+            'test_provider/request_id' => '_1b8f282a9c194b264ef68761171539380de78b45038f65b8609df868f55e',
+            'test_provider/service_provider' => 'https://gateway.tld/authentication/metadata',
+            'test_provider/assertion_consumer_service_url' => 'https://gateway.tld/authentication/consume-assertion',
+            'test_provider/relay_state' => '',
+            'test_provider/gateway_request_id' => '_mocked_generated_id',
+            'test_provider/is_second_factor_verification' => true,
         ]);
 
         $httpRequest = Request::create('idp.nl/sso-url');
@@ -715,9 +703,9 @@ class ConsumeAssertionServiceTest extends GatewaySamlTestCase
     private function initSamlProxyService(array $remoteIdpConfiguration, array $idpConfiguration, array $spConfiguration, array $connectedServiceProviders, DateTime $now)
     {
         $session = new Session($this->sessionStorage);
-        $namespacedSessionBag = new NamespacedAttributeBag('__gssp_session');
-        $session->registerBag($namespacedSessionBag);
-        $this->stateHandler = new StateHandler($namespacedSessionBag, 'test_provider');
+        $sessionBag = new AttributeBag('__gssp_session');
+        $session->registerBag($sessionBag);
+        $this->stateHandler = new StateHandler($sessionBag, 'test_provider');
         $samlLogger = new SamlAuthenticationLogger($this->logger);
 
         $this->remoteIdp = new IdentityProvider($remoteIdpConfiguration);

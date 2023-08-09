@@ -29,7 +29,7 @@ use Surfnet\StepupGateway\GatewayBundle\Tests\TestCase\GatewaySamlTestCase;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\Provider;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Saml\StateHandler;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Service\Gateway\SecondFactorVerificationService;
-use Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag;
+use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBag;
 use Symfony\Component\HttpFoundation\Session\Session;
 
 class SecondFactorVerificationServiceTest extends GatewaySamlTestCase
@@ -100,13 +100,11 @@ class SecondFactorVerificationServiceTest extends GatewaySamlTestCase
         $subjectNameId = 'test-gssp-id';
 
         $this->mockSessionData('__gssp_session', [
-            'test_provider' => [
-                'request_id' => '_1b8f282a9c194b264ef68761171539380de78b45038f65b8609df868f55e',
-                'service_provider' => 'https://gateway.tld/authentication/metadata',
-                'assertion_consumer_service_url' => 'https://gateway.tld/authentication/consume-assertion',
-                'relay_state' => '',
-                'gateway_request_id' => '_mocked_generated_id',
-            ],
+            'test_provider/request_id' => '_1b8f282a9c194b264ef68761171539380de78b45038f65b8609df868f55e',
+            'test_provider/service_provider' => 'https://gateway.tld/authentication/metadata',
+            'test_provider/assertion_consumer_service_url' => 'https://gateway.tld/authentication/consume-assertion',
+            'test_provider/relay_state' => '',
+            'test_provider/gateway_request_id' => '_mocked_generated_id',
         ]);
 
         // Handle request
@@ -140,16 +138,14 @@ class SecondFactorVerificationServiceTest extends GatewaySamlTestCase
 
         // Assert session
         $this->assertSame([
-            'test_provider' => [
-                'request_id' => '_1b8f282a9c194b264ef68761171539380de78b45038f65b8609df868f55e',
-                'service_provider' => 'https://gateway.tld/authentication/metadata',
-                'assertion_consumer_service_url' => 'https://gateway.tld/authentication/consume-assertion',
-                'relay_state' => '',
-                'gateway_request_id' => '_mocked_generated_id',
-                'subject' => 'test-gssp-id',
-                'response_context_service_id' => 'service_id',
-                'is_second_factor_verification' => true,
-            ],
+            'test_provider/request_id' => '_1b8f282a9c194b264ef68761171539380de78b45038f65b8609df868f55e',
+            'test_provider/service_provider' => 'https://gateway.tld/authentication/metadata',
+            'test_provider/assertion_consumer_service_url' => 'https://gateway.tld/authentication/consume-assertion',
+            'test_provider/relay_state' => '',
+            'test_provider/gateway_request_id' => '_mocked_generated_id',
+            'test_provider/subject' => 'test-gssp-id',
+            'test_provider/response_context_service_id' => 'service_id',
+            'test_provider/is_second_factor_verification' => true,
         ], $this->getSessionData('attributes'));
     }
 
@@ -164,9 +160,9 @@ class SecondFactorVerificationServiceTest extends GatewaySamlTestCase
     private function initSamlProxyService(array $remoteIdpConfiguration, array $idpConfiguration, array $spConfiguration, DateTime $now)
     {
         $session = new Session($this->sessionStorage);
-        $namespacedSessionBag = new NamespacedAttributeBag('__gssp_session');
-        $session->registerBag($namespacedSessionBag);
-        $this->stateHandler = new StateHandler($namespacedSessionBag, 'test_provider');
+        $attributeBag = new AttributeBag('__gssp_session');
+        $session->registerBag($attributeBag);
+        $this->stateHandler = new StateHandler($attributeBag, 'test_provider');
         $samlLogger = new SamlAuthenticationLogger($this->logger);
 
         $this->remoteIdp = new IdentityProvider($remoteIdpConfiguration);
