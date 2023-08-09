@@ -12,17 +12,16 @@ Feature: As an institution that uses the second factor only feature
     When I enter the OTP
     Then the response should match xpath '//samlp:StatusCode[@Value="urn:oasis:names:tc:SAML:2.0:status:Success"]'
 
-## Skipped temporarily, as the SMS service test double seems to malfunction
-#  Scenario: A SMS SFO authentication
-#    Given an SFO enabled SP with EntityID https://ssp.stepup.example.com/module.php/saml/sp/metadata.php/second-sp
-#    And an IdP with EntityID https://ssp.stepup.example.com/saml2/idp/metadata.php
-#    And a whitelisted institution stepup.example.com
-#    And a user from "stepup.example.com" identified by "urn:collab:person:stepup.example.com:blaine_sumner" with a vetted "SMS" token
-#    When urn:collab:person:stepup.example.com:blaine_sumner starts an SFO authentication requiring LoA 2
-#    Then I should see the SMS verification screen
-#    When I enter the SMS verification code
-#    Then the response should contain "You are logged in to SP:"
-#    Then the response should contain "second-sp"
+  Scenario: A SMS SFO authentication
+    Given an SFO enabled SP with EntityID https://ssp.stepup.example.com/module.php/saml/sp/metadata.php/second-sp
+    And an IdP with EntityID https://ssp.stepup.example.com/saml2/idp/metadata.php
+    And a whitelisted institution stepup.example.com
+    And a user from "stepup.example.com" identified by "urn:collab:person:stepup.example.com:blaine_sumner" with a vetted "SMS" token
+    When urn:collab:person:stepup.example.com:blaine_sumner starts an SFO authentication requiring LoA 2
+    Then I should see the SMS verification screen
+    When I enter the SMS verification code
+    Then the response should match xpath '//samlp:StatusCode[@Value="urn:oasis:names:tc:SAML:2.0:status:Success"]'
+    Then the response should contain "second-sp"
 
   Scenario: A Yubikey SFO authentication with an identity with multiple tokens
     Given an SFO enabled SP with EntityID https://ssp.stepup.example.com/module.php/saml/sp/metadata.php/second-sp
@@ -51,7 +50,7 @@ Feature: As an institution that uses the second factor only feature
     And a user from "stepup.example.com" identified by "urn:collab:person:stepup.example.com:kirill_sarychev" with a vetted "SMS" token
     When urn:collab:person:stepup.example.com:kirill_sarychev starts an SFO authentication requiring LoA 3
     Then an error response is posted back to the SP
-    And the response should match xpath '//samlp:StatusCode[@Value="urn:oasis:names:tc:SAML:2.0:status:RequestUnsupported"]'
+    And the response should match xpath '//samlp:StatusCode[@Value="urn:oasis:names:tc:SAML:2.0:status:NoAuthnContext"]'
 
   Scenario: Cancelling out of an SFO authentication
     Given an SFO enabled SP with EntityID https://ssp.stepup.example.com/module.php/saml/sp/metadata.php/second-sp

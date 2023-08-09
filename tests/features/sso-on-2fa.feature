@@ -59,41 +59,39 @@ Feature: As an institution that uses the SSO on Second Factor authentication
     And the response should have a SSO-2FA cookie
     And the SSO-2FA cookie should contain "urn:collab:person:stepup.example.com:user-5"
 
-#  Scenario: Cookie is only valid for the identity it was issued to
-#    Given a user from "stepup.example.com" identified by "urn:collab:person:stepup.example.com:user-3" with a vetted "Yubikey" token
-#    Given a user from "stepup.example.com" identified by "urn:collab:person:stepup.example.com:user-4" with a vetted "Yubikey" token
-#    When urn:collab:person:stepup.example.com:user-2 starts an authentication requiring LoA 2
-#    Then I authenticate at the IdP as user-3
-#    And I should see the Yubikey OTP screen
-#    When I enter the OTP
-#    Then the response should match xpath '//samlp:StatusCode[@Value="urn:oasis:names:tc:SAML:2.0:status:Success"]'
-#    And the response should contain "default-sp"
-#    And the response should have a SSO-2FA cookie
-#    And the SSO-2FA cookie should contain "urn:collab:person:stepup.example.com:user-3"
-#    Then I log out at the IdP
-#    When urn:collab:person:stepup.example.com:user-4 starts an SFO authentication requiring LoA 2
-#    And I pass through the Gateway
-#    And I should see the Yubikey OTP screen
-#    When I enter the OTP
-#    Then the response should match xpath '//samlp:StatusCode[@Value="urn:oasis:names:tc:SAML:2.0:status:Success"]'
-#    And the response should contain "default-sp"
-#    And the response should have a SSO-2FA cookie
-#    # SFO with the other user did not affect the existing cookie
-#    And the SSO-2FA cookie should contain "urn:collab:person:stepup.example.com:user-3"
+  Scenario: Cookie is only valid for the identity it was issued to
+    Given a user from "stepup.example.com" identified by "urn:collab:person:stepup.example.com:user-3" with a vetted "Yubikey" token
+    Given a user from "stepup.example.com" identified by "urn:collab:person:stepup.example.com:user-4" with a vetted "Yubikey" token
+    When urn:collab:person:stepup.example.com:user-2 starts an authentication requiring LoA 2
+    Then I authenticate at the IdP as user-3
+    And I should see the Yubikey OTP screen
+    When I enter the OTP
+    Then the response should match xpath '//samlp:StatusCode[@Value="urn:oasis:names:tc:SAML:2.0:status:Success"]'
+    And the response should contain "default-sp"
+    And the response should have a SSO-2FA cookie
+    And the SSO-2FA cookie should contain "urn:collab:person:stepup.example.com:user-3"
+    When urn:collab:person:stepup.example.com:user-4 starts an SFO authentication requiring LoA 2
+    And I pass through the Gateway
+    And I should see the Yubikey OTP screen
+    When I enter the OTP
+    Then the response should match xpath '//samlp:StatusCode[@Value="urn:oasis:names:tc:SAML:2.0:status:Success"]'
+    And the response should contain "second-sp"
+    And the response should have a SSO-2FA cookie
+    # SFO with the other user did not affect the existing cookie
+    And the SSO-2FA cookie should contain "urn:collab:person:stepup.example.com:user-3"
 
-#  Scenario: Cookie is only evaluated when authentication is not forced (ForceAuthN !== true)
-#    Given a user from "stepup.example.com" identified by "urn:collab:person:stepup.example.com:joe-1" with a vetted "Yubikey" token
-#    When urn:collab:person:stepup.example.com:joe-1 starts an authentication requiring LoA 2
-#    Then I authenticate at the IdP as joe-1
-#    And I should see the Yubikey OTP screen
-#    When I enter the OTP
-#    Then the response should match xpath '//samlp:StatusCode[@Value="urn:oasis:names:tc:SAML:2.0:status:Success"]'
-#    And the response should contain "default-sp"
-#    And the response should have a SSO-2FA cookie
-#    Then I log out at the IdP
-#    When urn:collab:person:stepup.example.com:joe-1 starts a forced SFO authentication requiring LoA 2
-#    And I pass through the Gateway
-#    And I should see the Yubikey OTP screen
-#    When I enter the OTP
-#    Then the response should match xpath '//samlp:StatusCode[@Value="urn:oasis:names:tc:SAML:2.0:status:Success"]'
-#    And the response should contain "second-sp"
+  Scenario: Cookie is only evaluated when authentication is not forced (ForceAuthN !== true)
+    Given a user from "stepup.example.com" identified by "urn:collab:person:stepup.example.com:joe-1" with a vetted "Yubikey" token
+    When urn:collab:person:stepup.example.com:joe-1 starts an authentication requiring LoA 2
+    Then I authenticate at the IdP as joe-1
+    And I should see the Yubikey OTP screen
+    When I enter the OTP
+    Then the response should match xpath '//samlp:StatusCode[@Value="urn:oasis:names:tc:SAML:2.0:status:Success"]'
+    And the response should contain "default-sp"
+    And the response should have a SSO-2FA cookie
+    When urn:collab:person:stepup.example.com:joe-1 starts a forced SFO authentication requiring LoA 2
+    And I pass through the Gateway
+    And I should see the Yubikey OTP screen
+    When I enter the OTP
+    Then the response should match xpath '//samlp:StatusCode[@Value="urn:oasis:names:tc:SAML:2.0:status:Success"]'
+    And the response should contain "second-sp"

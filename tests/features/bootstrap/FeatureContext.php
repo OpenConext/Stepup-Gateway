@@ -24,6 +24,7 @@ use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Mink\Exception\ExpectationException;
 use RuntimeException;
 use Surfnet\StepupGateway\Behat\Service\FixtureService;
+use function error_reporting;
 
 class FeatureContext implements Context
 {

@@ -174,6 +174,9 @@ class ServiceProviderContext implements Context, KernelAwareContext
         $authnRequest->setDestination(self::SFO_ENDPOINT_URL);
         $authnRequest->setProtocolBinding(Constants::BINDING_HTTP_REDIRECT);
         $authnRequest->setNameId($this->buildNameId($nameId));
+        if ($forceAuthN) {
+            $authnRequest->setForceAuthn(true);
+        }
         // Sign with random key, does not mather for now.
         $authnRequest->setSignatureKey(
             $this->loadPrivateKey(new PrivateKey('/var/www/ci/certificates/sp.key', 'default'))
@@ -183,7 +186,7 @@ class ServiceProviderContext implements Context, KernelAwareContext
             case "2":
             case "3":
                 $authnRequest->setRequestedAuthnContext(
-                    ['AuthnContextClassRef' => ['http://stepup.example.com/assurance/level' . $loa]]
+                    ['AuthnContextClassRef' => ['http://stepup.example.com/assurance/sfo-level' . $loa]]
                 );
             break;
             case "self-asserted":
