@@ -155,6 +155,10 @@ class MinkContext extends BaseMinkContext
      */
     public function iOpenTwoBrowserTabsIdentifiedBy($numberOfTabs, $tabNames)
     {
+        // On successive scenarios, reset the session to get rid of browser (session) state from previous scenarios
+        if ($this->getMink()->getSession()->isStarted()) {
+            $this->getMink()->getSession()->restart();
+        }
         // Make sure the browser is ready (without this other browser interactions fail)
         $this->getSession()->visit($this->locatePath('#'));
 
@@ -164,6 +168,8 @@ class MinkContext extends BaseMinkContext
                 'Please identify all tabs you are opening in order to refer to them at a later stage'
             );
         }
+        // Set the testcookie ensuring the selenium tests run in the smoketest env
+        $this->getMink()->getSession()->setCookie('testcookie', 'testcookie');
 
         foreach ($tabs as $tab) {
             $this->getMink()
