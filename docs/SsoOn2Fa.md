@@ -32,3 +32,6 @@ parameters. The configuration options are configured in `config/legacy/parameter
 | `sso_cookie_type`     | Is the SSO on second factor authentications cookie persistent or a session cookie?     | `string` `enum` possible values: (persistent, session) |
 | `sso_cookie_name`     | The name used for the sso on second factor authentication cookie                       | `string`                                               |
 | `sso_encryption_key`  | The encryption key used to encrypt/decrypt the cookie contents, must be 64 hex digits. | `string containing hex character`                      |
+
+## References
+See: [the corresponding Middleware docs](https://github.com/OpenConext/Stepup-Middleware/blob/develop/docs/sso-on-2fa.md)
