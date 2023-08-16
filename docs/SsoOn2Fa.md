@@ -60,12 +60,14 @@ Measures:
 ### SSO Cookie integrity and confidentiality
 
 To protect the integrity and confidentiality of the cookie value, it is encrypted and authenticated using the `sso_encryption_key` that is stored in the gateway configuration. This is a 256-bit symmetric key. We use the [Paragonie Halite library](https://paragonie.com/project/halite) for encrypting and authenticating the cookie with this key. Halite uses XSalsa20 for encryption and BLAKE2b for message Authentication (MAC). The keys used for encryption and message authentication are derived from the secret key using a HKDF with a random a salt. This means that learning either derived key cannot lead to learning the other derived key, or the secret key input in the HKDF. Encrypting many messages using the same secret key is not a problem in this design.
- 
-If your encryption requirements differ from ours, you can provide a different encryption method by implementing a different `Surfnet\StepupGateway\GatewayBundle\Sso2fa\Crypto\CryptoHelperInterface` See [CookieValue](https://github.com/OpenConext/Stepup-Gateway/blob/3c3149b0e68daa1abcdf9a8e6009667d470c8d2d/src/Surfnet/StepupGateway/GatewayBundle/Sso2fa/ValueObject/CookieValue.php) for details.
 
 ## Implementation
 
+### Clock skew when validating the SSO cookie timestamp
 To allow for clock skew between servers, a grace period of 60 seconds is applied when validating the SSO cookie. This means that an SSO cookie with a timestamp that lies a maximum of 60 seconds in the future that would otherwise be seen als not yet valid, is considered valid. The grace period is configured in the `gateway.service.sso_2fa_expiration_helper` service definition in `src/Surfnet/StepupGateway/GatewayBundle/Resources/config/services.yml`
+
+### Cookie encryption
+If your encryption requirements differ from ours, you can provide a different encryption method by implementing a different `Surfnet\StepupGateway\GatewayBundle\Sso2fa\Crypto\CryptoHelperInterface` See [CookieValue](https://github.com/OpenConext/Stepup-Gateway/blob/3c3149b0e68daa1abcdf9a8e6009667d470c8d2d/src/Surfnet/StepupGateway/GatewayBundle/Sso2fa/ValueObject/CookieValue.php) for details
 
 ## References
 See: [the corresponding Middleware docs](https://github.com/OpenConext/Stepup-Middleware/blob/develop/docs/sso-on-2fa.md)
