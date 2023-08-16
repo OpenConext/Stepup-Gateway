@@ -18,8 +18,9 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject;
 
-use Surfnet\StepupBundle\DateTime\DateTime;
+use DateTime;
 use function strtolower;
+use function strtotime;
 
 class CookieValue implements CookieValueInterface
 {
@@ -41,7 +42,8 @@ class CookieValue implements CookieValueInterface
         $cookieValue->tokenId = $secondFactorId;
         $cookieValue->identityId = $identityId;
         $cookieValue->loa = $loa;
-        $cookieValue->authenticationTime = DateTime::now()->format(DATE_ATOM);
+        $dateTime = new DateTime();
+        $cookieValue->authenticationTime = $dateTime->format(DATE_ATOM);
         return $cookieValue;
     }
 
@@ -85,5 +87,10 @@ class CookieValue implements CookieValueInterface
     public function issuedTo(string $identityNameId): bool
     {
         return strtolower($identityNameId) === strtolower($this->identityId);
+    }
+
+    public function authenticationTime(): int
+    {
+        return strtotime($this->authenticationTime);
     }
 }

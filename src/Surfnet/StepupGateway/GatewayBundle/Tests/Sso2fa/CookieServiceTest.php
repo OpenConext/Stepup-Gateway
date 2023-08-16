@@ -35,6 +35,8 @@ use Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorService;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\CookieService;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Crypto\CryptoHelper;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Crypto\HaliteCryptoHelper;
+use Surfnet\StepupGateway\GatewayBundle\Sso2fa\DateTime\ExpirationHelper;
+use Surfnet\StepupGateway\GatewayBundle\Sso2fa\DateTime\ExpirationHelperInterface;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Http\CookieHelper;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\Configuration;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\CookieValue;
@@ -86,6 +88,11 @@ class CookieServiceTest extends TestCase
      */
     private $encryptionHelper;
 
+    /**
+     * @var Mockery\LegacyMockInterface|Mockery\MockInterface|ExpirationHelperInterface|(ExpirationHelperInterface&Mockery\LegacyMockInterface)|(ExpirationHelperInterface&Mockery\MockInterface)
+     */
+    private $expirationHelper;
+
     protected function buildService(Configuration $configuration): void
     {
         // Not all dependencies are included for real, the ones not focussed on crypto and cookie storage are mocked
@@ -95,13 +102,15 @@ class CookieServiceTest extends TestCase
         $this->secondFactorTypeService = Mockery::mock(SecondFactorTypeService::class);
         $this->configuration = $configuration;
         $this->encryptionHelper = new HaliteCryptoHelper($configuration);
+        $this->expirationHelper = Mockery::mock(ExpirationHelperInterface::class);
         $cookieHelper = new CookieHelper($this->configuration, $this->encryptionHelper, $logger);
         $this->service = new CookieService(
             $cookieHelper,
             $this->institutionService,
-            $logger,
             $this->secondFactorService,
-            $this->secondFactorTypeService
+            $this->secondFactorTypeService,
+            $this->expirationHelper,
+            $logger
         );
 
         $this->responseContext = Mockery::mock(ResponseContext::class);
@@ -349,6 +358,10 @@ class CookieServiceTest extends TestCase
             ->shouldReceive('saveSelectedSecondFactor')
             ->with($yubikey);
 
+        $this->expirationHelper
+            ->shouldReceive('isExpired')
+            ->andReturn(false);
+
         self::assertTrue(
             $this->service->shouldSkip2faAuthentication(
                 $this->responseContext,
@@ -389,6 +402,10 @@ class CookieServiceTest extends TestCase
         $this->responseContext
             ->shouldReceive('saveSelectedSecondFactor')
             ->with($yubikey);
+
+        $this->expirationHelper
+            ->shouldReceive('isExpired')
+            ->andReturn(false);
 
         self::assertTrue(
             $this->service->shouldSkip2faAuthentication(
