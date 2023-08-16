@@ -1,6 +1,6 @@
 # SSO on Second Factor Authentications
 
-In Stepup-Gateway 4.2.0 the possibility to have single-sign-on (SSO) on the second factor was introduced. SSO works by storing a cookie in the user's browser after they have successfully with a second factor. Then, on a successive authentication that requires 2FA, when a valid SSO cookie is presented and several other policy checks are passed, the user is not asked for the second factor and is authenticated immediately. You can see the SSO cookie as a temporary second factor bearer token 
+In Stepup-Gateway 4.2.0 the possibility to have single-sign-on (SSO) on the second factor was introduced. SSO works by storing a cookie in the user's browser after they have successfully authenticated with a second factor. Then, on a successive authentication that requires 2FA, when a valid SSO cookie is presented and several other policy checks are passed, the user is not asked for the second factor and is authenticated immediately. You can see the SSO cookie as a temporary second factor bearer token. 
 
 The SSO feature of the gateway does not affect authentication with the first factor, the first factor authentication is always forwarded to the [Remote IdP](SAMLProxy.md#remote-idp), if a first factor authentication is required.
 
