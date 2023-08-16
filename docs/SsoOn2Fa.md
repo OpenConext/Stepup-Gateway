@@ -19,6 +19,12 @@ The timestamp is used to verify if the cookie value did not expire. This is dete
 to the authentication timestamp found in the cookie. If those two exceed the current timestamp, the cookie is considered to be expired. Even tho the browser cookie itself 
 might still be alive. 
 
+The cookie lifetime can be configured with a grace period. This is useful when your setup include multiple StepUp gateways that are able to verify the cookie validity. 
+In that case a (minor) time difference between the nodes can cause a false positive invalid cookie scenario. By adding the grace period, the end user is not directly
+affected in a negative manner.
+
+At this point this grace period is configured to be 60 seconds in the `gateway.service.sso_2fa_expiration_helper` service definition in `src/Surfnet/StepupGateway/GatewayBundle/Resources/config/services.yml`
+
 The cookie value contains sensitive data, and its contents are authenticated and encrypted for that reason. We use the Paragonie Halite library for this. Halite uses XSalsa20 for encryption and BLAKE2b for message Authentication (MAC).
 
 If your encryption requirements differ from ours, you can simply provide a different encryption method by implementing a different `Surfnet\StepupGateway\GatewayBundle\Sso2fa\Crypto\CryptoHelperInterface`

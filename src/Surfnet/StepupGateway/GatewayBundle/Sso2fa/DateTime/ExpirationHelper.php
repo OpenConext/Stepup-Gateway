@@ -32,15 +32,23 @@ class ExpirationHelper implements ExpirationHelperInterface
     private $now;
 
     /*
+     * The period in seconds that we still acknowledge the
+     * cookie even tho the expiration was reached. This accounts
+     * for server time/sync differences that may occur.
+     */
+    private $gracePeriod;
+
+    /*
      * The SSO on 2FA cookie lifetime in seconds
      *
      * See: config/legacy/parameters.yaml sso_cookie_lifetime
      */
     private $cookieLifetime;
 
-    public function __construct(int $cookieLifetime, CoreDateTime $now = null)
+    public function __construct(int $cookieLifetime, int $gracePeriod, CoreDateTime $now = null)
     {
         $this->cookieLifetime = $cookieLifetime;
+        $this->gracePeriod = $gracePeriod;
         if (!$now) {
             $now = DateTime::now();
         }
@@ -70,7 +78,7 @@ class ExpirationHelper implements ExpirationHelperInterface
             );
         }
 
-        $expirationTimestamp = $authenticationTimestamp + $this->cookieLifetime;
+        $expirationTimestamp = $authenticationTimestamp + $this->cookieLifetime + $this->gracePeriod;
         $currentTimestamp = $this->now->getTimestamp();
         // Is the current time greater than the expiration time?
         return $currentTimestamp > $expirationTimestamp;

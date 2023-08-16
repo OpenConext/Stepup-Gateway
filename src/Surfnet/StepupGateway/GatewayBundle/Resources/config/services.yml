@@ -142,6 +142,7 @@ services:
         class: Surfnet\StepupGateway\GatewayBundle\Sso2fa\DateTime\ExpirationHelper
         arguments:
             $cookieLifetime: "%sso_cookie_lifetime%"
+            $gracePeriod: 60
 
     gateway.service.sso_2fa_cookie_helper:
         class: Surfnet\StepupGateway\GatewayBundle\Sso2fa\Http\CookieHelper
