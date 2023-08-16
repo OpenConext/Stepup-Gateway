@@ -39,4 +39,9 @@ class NullCookieValue implements CookieValueInterface
     {
         return -1;
     }
+
+    public function secondFactorId(): string
+    {
+        return '';
+    }
 }

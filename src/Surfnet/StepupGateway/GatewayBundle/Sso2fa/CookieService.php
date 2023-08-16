@@ -199,6 +199,16 @@ class CookieService implements CookieServiceInterface
             return false;
         }
 
+        if (!$this->secondFactorService->findByUuid($ssoCookie->secondFactorId())) {
+            $this->logger->notice(
+                'The second factor stored in the SSO cookie was revoked or has otherwise became unknown to Gateway',
+                [
+                    'secondFactorIdFromCookie' => $ssoCookie->secondFactorId()
+                ]
+            );
+            return false;
+        }
+
         /** @var SecondFactor $secondFactor */
         foreach ($secondFactorCollection as $secondFactor) {
             $loa = $secondFactor->getLoaLevel($this->secondFactorTypeService);

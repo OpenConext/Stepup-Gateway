@@ -84,6 +84,11 @@ class CookieValue implements CookieValueInterface
         return $this->identityId;
     }
 
+    public function secondFactorId(): string
+    {
+        return $this->tokenId;
+    }
+
     public function issuedTo(string $identityNameId): bool
     {
         return strtolower($identityNameId) === strtolower($this->identityId);

@@ -27,4 +27,6 @@ interface CookieValueInterface
     public function meetsRequiredLoa(float $requiredLoa): bool;
 
     public function authenticationTime(): int;
+
+    public function secondFactorId(): string;
 }

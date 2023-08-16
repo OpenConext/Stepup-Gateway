@@ -362,6 +362,11 @@ class CookieServiceTest extends TestCase
             ->shouldReceive('isExpired')
             ->andReturn(false);
 
+        $token = Mockery::mock(SecondFactor::class);
+        $this->secondFactorService
+            ->shouldReceive('findByUuid')
+            ->andReturn($token);
+
         self::assertTrue(
             $this->service->shouldSkip2faAuthentication(
                 $this->responseContext,
@@ -406,6 +411,11 @@ class CookieServiceTest extends TestCase
         $this->expirationHelper
             ->shouldReceive('isExpired')
             ->andReturn(false);
+
+        $token = Mockery::mock(SecondFactor::class);
+        $this->secondFactorService
+            ->shouldReceive('findByUuid')
+            ->andReturn($token);
 
         self::assertTrue(
             $this->service->shouldSkip2faAuthentication(
@@ -599,6 +609,56 @@ class CookieServiceTest extends TestCase
             $this->service->shouldSkip2faAuthentication(
                 $this->responseContext,
                 4.0, // LoA 4 is required, Identity only has LoA 2 and 3 tokens, no bueno
+                'abcdef-1234',
+                $collection,
+                $httpRequest
+            )
+        );
+    }
+
+    public function test_skipping_authentication_fails_when_token_was_revoked()
+    {
+        $this->buildService(
+            new Configuration(
+                'test-cookie',
+                'session',
+                0,
+                '0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f'
+            )
+        );
+        $yubikey = $this->buildSecondFactor(3.0, 'identifier-1');
+        $sms = $this->buildSecondFactor(2.0, 'identifier-2');
+        $bogus = $this->buildSecondFactor(2.0, 'identifier-3');
+        $collection = new ArrayCollection([
+            $sms,
+            $bogus,
+            $yubikey,
+        ]);
+
+        $httpRequest = new Request();
+        $cookieValue = $this->cookieValue();
+        $httpRequest->cookies->add(
+            [$this->configuration->getName() => $this->createCookieWithValue($this->encryptionHelper->encrypt($cookieValue))->getValue()]
+        );
+
+        // The Yubikey is the only suitable token available that satisfies the LoA requirement
+        $this->responseContext
+            ->shouldReceive('saveSelectedSecondFactor')
+            ->with($yubikey);
+
+        $this->expirationHelper
+            ->shouldReceive('isExpired')
+            ->andReturn(false);
+
+        // When the token cannot be found e.g. token was revoked in the meantime
+        $this->secondFactorService
+            ->shouldReceive('findByUuid')
+            ->andReturnNull();
+
+        self::assertFalse(
+            $this->service->shouldSkip2faAuthentication(
+                $this->responseContext,
+                3.0,
                 'abcdef-1234',
                 $collection,
                 $httpRequest
