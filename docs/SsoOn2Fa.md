@@ -14,7 +14,10 @@ The cookie contains several values, used to ascertain if SSO can be given. These
 | `LoA`                            | The LoA of the second factor               |
 | `Timestamp`                      | The timestamp taken during authentication. |
 
-The cookie is used to verify the SSO is issued to the correct identity (user). And to check if the LoA requirement is satisfied by the SSO cookie. The timestamp is kept mainly for audit reasons.
+The cookie is used to verify the SSO is issued to the correct identity (user). And to check if the LoA requirement is satisfied by the SSO cookie. 
+The timestamp is used to verify if the cookie value did not expire. This is determined by adding the cookie expiration time (configured in `sso_cookie_lifetime` param) 
+to the authentication timestamp found in the cookie. If those two exceed the current timestamp, the cookie is considered to be expired. Even tho the browser cookie itself 
+might still be alive. 
 
 The cookie value contains sensitive data, and its contents are authenticated and encrypted for that reason. We use the Paragonie Halite library for this. Halite uses XSalsa20 for encryption and BLAKE2b for message Authentication (MAC).
 

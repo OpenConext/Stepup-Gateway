@@ -34,4 +34,9 @@ class NullCookieValue implements CookieValueInterface
     {
         return false;
     }
+
+    public function authenticationTime(): int
+    {
+        return -1;
+    }
 }
