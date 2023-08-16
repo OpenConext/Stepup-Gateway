@@ -35,6 +35,14 @@ class ExpirationHelperTest extends TestCase
     }
 
     /**
+     * @dataProvider gracePeriodExpectations
+     */
+    public function test_grace_period(bool $isExpired, ExpirationHelper $helper, CookieValue $cookieValue)
+    {
+        self::assertEquals($isExpired, $helper->isExpired($cookieValue));
+    }
+
+    /**
      * @dataProvider invalidTimeExpectations
      */
     public function test_strange_authentication_time_values(ExpirationHelper $helper, CookieValue $cookieValue)
@@ -50,6 +58,18 @@ class ExpirationHelperTest extends TestCase
             'not expired but about to be' => [false, $this->makeExpirationHelper(3600, time() + 3600), $this->makeCookieValue(time())],
             'expired' => [true, $this->makeExpirationHelper(3600, time() + 3601), $this->makeCookieValue(time())],
             'expired more' => [true, $this->makeExpirationHelper(3600, time() + 36000), $this->makeCookieValue(time())],
+        ];
+    }
+
+    public function gracePeriodExpectations()
+    {
+        // Cookie lifetime 3600 with a grace period of 5 seconds
+        $helper = $this->makeExpirationHelper(3600, time(), 5);
+        return [
+            'within grace period (outer bound)' => [false, $helper, $this->makeCookieValue(time() - 3605)],
+            'within grace period' => [false, $helper, $this->makeCookieValue(time() - 3601)],
+            'within grace period (lower bound)' => [false, $helper, $this->makeCookieValue(time() - 3600)],
+            'outside grace period' => [true, $helper, $this->makeCookieValue(time() - 3606)],
         ];
     }
 
@@ -71,11 +91,11 @@ class ExpirationHelperTest extends TestCase
         ];
     }
 
-    private function makeExpirationHelper(int $expirationTime, int $now) : ExpirationHelper
+    private function makeExpirationHelper(int $expirationTime, int $now, int $gracePeriod = 0) : ExpirationHelper
     {
         $time = new \DateTime();
         $time->setTimestamp($now);
-        return new ExpirationHelper($expirationTime, $time);
+        return new ExpirationHelper($expirationTime, $gracePeriod, $time);
     }
 
     private function makeCookieValue(int $authenticationTime) : CookieValueInterface
