@@ -23,7 +23,10 @@ if ($trustedHosts = $_SERVER['TRUSTED_HOSTS'] ?? false) {
 // To run behat tests in smoketest mode, the app env needs to be 'dev' or 'test'
 // and the user agent needs to be that of the behat guzzle client.
 $isTestOrDev = ($_SERVER['APP_ENV'] === 'dev' || $_SERVER['APP_ENV'] === 'test');
-if ($isTestOrDev && $_SERVER['HTTP_USER_AGENT'] === 'Symfony BrowserKit') {
+// When running the selenium tests, a test cookie indicate if we should switch to the smoketest env
+$hasTestCookie = (array_key_exists('testcookie', $_COOKIE) && $_COOKIE['testcookie'] === 'testcookie');
+
+if ($isTestOrDev && ($_SERVER['HTTP_USER_AGENT'] === 'Symfony BrowserKit' || $hasTestCookie)) {
     $_SERVER['APP_ENV'] = 'smoketest';
 }
 

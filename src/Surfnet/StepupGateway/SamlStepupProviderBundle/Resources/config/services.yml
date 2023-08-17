@@ -18,16 +18,15 @@ services:
             - "@gssp.allowed_sps"
 
     gssp.session:
-        class: Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag
+        class: Symfony\Component\HttpFoundation\Session\Attribute\AttributeBag
         factory: ['@session', 'getBag']
         arguments: ['gssp']
 
-    gssp.session.namespaced_attribute_bag:
+    gssp.session.attribute_bag:
         public: false
-        class: Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag
+        class: Symfony\Component\HttpFoundation\Session\Attribute\AttributeBag
         arguments:
             - '__gssp__'
-            - '/'
         calls:
             - [setName, ['gssp']]
 

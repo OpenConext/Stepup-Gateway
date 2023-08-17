@@ -25,13 +25,13 @@ use Symfony\Component\DependencyInjection\Reference;
 class StateHandlerSessionPass implements CompilerPassInterface
 {
     /**
-     * {@inheritdoc} This is required to ensure that our NamespacedAttributeBag is registered in the session handler
+     * {@inheritdoc} This is required to ensure that our AttributeBag is registered in the session handler
      * before the session is started.
      */
     public function process(ContainerBuilder $container)
     {
         $container
             ->getDefinition('session')
-            ->addMethodCall('registerBag', [new Reference('gssp.session.namespaced_attribute_bag')]);
+            ->addMethodCall('registerBag', [new Reference('gssp.session.attribute_bag')]);
     }
 }

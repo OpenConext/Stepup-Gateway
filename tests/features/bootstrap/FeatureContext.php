@@ -157,6 +157,17 @@ class FeatureContext implements Context
         $this->minkContext->pressButton('Submit');
     }
 
+    /**
+     * @When I enter the expired SMS verification code
+     */
+    public function iEnterTheExpiredSmsVerificationCode()
+    {
+        $cookieValue = $this->minkContext->getSession()->getDriver()->getCookie('smoketest-sms-service');
+        $matches = [];
+        preg_match('/^Your\ SMS\ code:\ (.*)$/', $cookieValue, $matches);
+        $this->minkContext->fillField('gateway_verify_sms_challenge_challenge', $matches[1]);
+        $this->minkContext->pressButton('gateway_verify_sms_challenge_verify_challenge');
+    }
 
     /**
      * @When I finish the Tiqr authentication
@@ -166,8 +177,6 @@ class FeatureContext implements Context
         $this->minkContext->pressButton('Submit');
         $this->minkContext->pressButton('Submit');
     }
-
-
 
     /**
      * @Given /^a whitelisted institution ([^"]*)$/
@@ -272,7 +281,7 @@ class FeatureContext implements Context
     /**
      * @Given /^the user cleared cookies from browser$/
      */
-    public function userClearedCookide()
+    public function userClearedCookies()
     {
         $this->minkContext->visit('https://gateway.stepup.example.com/info');
         $this->minkContext->getSession()->setCookie($this->sso2faCookieName, null);

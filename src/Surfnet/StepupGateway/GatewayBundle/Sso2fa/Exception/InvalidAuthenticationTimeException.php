@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 /**
- * Copyright 2022 SURFnet bv
+ * Copyright 2023 SURFnet bv
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,17 +16,11 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject;
+namespace Surfnet\StepupGateway\GatewayBundle\Sso2fa\Exception;
 
-interface CookieValueInterface
+use Surfnet\StepupGateway\GatewayBundle\Exception\InvalidArgumentException;
+
+class InvalidAuthenticationTimeException extends InvalidArgumentException
 {
-    public static function deserialize(string $serializedData): CookieValueInterface;
 
-    public function serialize(): string;
-
-    public function meetsRequiredLoa(float $requiredLoa): bool;
-
-    public function authenticationTime(): int;
-
-    public function secondFactorId(): string;
 }

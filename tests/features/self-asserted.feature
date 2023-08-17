@@ -17,9 +17,9 @@ Feature: As an institution that uses the sefl-asserted tokens (SAT) registration
   Scenario: A self asserted Yubikey can not satisfiy LoA 2
     When urn:collab:person:stepup.example.com:eric_lilliebridge starts an SFO authentication with LoA 2
     And I pass through the Gateway
-    Then the response should match xpath '//samlp:StatusCode[@Value="urn:oasis:names:tc:SAML:2.0:status:RequestUnsupported"]'
+    Then the response should match xpath '//samlp:StatusCode[@Value="urn:oasis:names:tc:SAML:2.0:status:NoAuthnContext"]'
 
   Scenario: A self asserted Yubikey can not satisfiy LoA 3
     When urn:collab:person:stepup.example.com:eric_lilliebridge starts an SFO authentication with LoA 3
     And I pass through the Gateway
-    Then the response should match xpath '//samlp:StatusCode[@Value="urn:oasis:names:tc:SAML:2.0:status:RequestUnsupported"]'
+    Then the response should match xpath '//samlp:StatusCode[@Value="urn:oasis:names:tc:SAML:2.0:status:NoAuthnContext"]'

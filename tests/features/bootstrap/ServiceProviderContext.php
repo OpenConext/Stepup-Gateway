@@ -20,6 +20,7 @@ namespace Surfnet\StepupGateway\Behat;
 
 use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
+use Behat\Mink\Driver\Selenium2Driver;
 use Behat\Symfony2Extension\Context\KernelAwareContext;
 use RuntimeException;
 use RobRichards\XMLSecLibs\XMLSecurityKey;
@@ -38,7 +39,6 @@ use Surfnet\StepupGateway\Behat\Service\FixtureService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\KernelInterface;
-use function http_build_query;
 
 class ServiceProviderContext implements Context, KernelAwareContext
 {
@@ -174,6 +174,9 @@ class ServiceProviderContext implements Context, KernelAwareContext
         $authnRequest->setDestination(self::SFO_ENDPOINT_URL);
         $authnRequest->setProtocolBinding(Constants::BINDING_HTTP_REDIRECT);
         $authnRequest->setNameId($this->buildNameId($nameId));
+        if ($forceAuthN) {
+            $authnRequest->setForceAuthn(true);
+        }
         // Sign with random key, does not mather for now.
         $authnRequest->setSignatureKey(
             $this->loadPrivateKey(new PrivateKey('/var/www/ci/certificates/sp.key', 'default'))
@@ -183,7 +186,7 @@ class ServiceProviderContext implements Context, KernelAwareContext
             case "2":
             case "3":
                 $authnRequest->setRequestedAuthnContext(
-                    ['AuthnContextClassRef' => ['http://stepup.example.com/assurance/level' . $loa]]
+                    ['AuthnContextClassRef' => ['http://stepup.example.com/assurance/sfo-level' . $loa]]
                 );
             break;
             case "self-asserted":
@@ -230,15 +233,15 @@ class ServiceProviderContext implements Context, KernelAwareContext
     }
 
     /**
-     * @When /^([^\']*) starts an authentication$/
+     * @When /^([^\']*) starts an authentication at Default SP$/
      */
-    public function iStartAnAuthentication($nameId)
+    public function iStartAnAuthenticationAtDefaultSP($nameId)
     {
         $authnRequest = new AuthnRequest();
         // In order to later assert if the response succeeded or failed, set our own dummy ACS location
         $authnRequest->setAssertionConsumerServiceURL(SamlEntityRepository::SP_ACS_LOCATION);
         $issuerVo = new Issuer();
-        $issuerVo->setValue($this->currentSp['entityId']);
+        $issuerVo->setValue('https://ssp.stepup.example.com/module.php/saml/sp/metadata.php/default-sp');
         $authnRequest->setIssuer($issuerVo);
         $authnRequest->setDestination(self::SSO_ENDPOINT_URL);
         $authnRequest->setProtocolBinding(Constants::BINDING_HTTP_REDIRECT);
@@ -306,8 +309,10 @@ class ServiceProviderContext implements Context, KernelAwareContext
         $this->minkContext->fillField('password', $username);
         // Submit the form
         $this->minkContext->pressButton('Login');
-        // Submit the SAML Response
-        $this->minkContext->pressButton('Submit');
+        if (!$this->getSession()->getDriver() instanceof Selenium2Driver) {
+            // Submit the SAML Response
+            $this->minkContext->pressButton('Submit');
+        }
     }
 
     /**

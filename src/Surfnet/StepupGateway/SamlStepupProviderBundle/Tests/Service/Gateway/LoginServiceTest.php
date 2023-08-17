@@ -35,7 +35,7 @@ use Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\Provider;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Saml\StateHandler;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Service\Gateway\LoginService;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag;
+use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBag;
 use Symfony\Component\HttpFoundation\Session\Session;
 
 class LoginServiceTest extends GatewaySamlTestCase
@@ -160,14 +160,12 @@ class LoginServiceTest extends GatewaySamlTestCase
 
         // Assert session
         $this->assertSame([
-            'test_provider' => [
-                'request_id' => '_1b8f282a9c194b264ef68761171539380de78b45038f65b8609df868f55e',
-                'service_provider' => 'https://gateway.tld/authentication/metadata',
-                'assertion_consumer_service_url' => 'https://gateway.tld/authentication/consume-assertion',
-                'response_context_service_id' => 'gateway.proxy.response_context',
-                'relay_state' => '',
-                'gateway_request_id' => '_mocked_generated_id',
-            ],
+            'test_provider/request_id' => '_1b8f282a9c194b264ef68761171539380de78b45038f65b8609df868f55e',
+            'test_provider/service_provider' => 'https://gateway.tld/authentication/metadata',
+            'test_provider/assertion_consumer_service_url' => 'https://gateway.tld/authentication/consume-assertion',
+            'test_provider/response_context_service_id' => 'gateway.proxy.response_context',
+            'test_provider/relay_state' => '',
+            'test_provider/gateway_request_id' => '_mocked_generated_id',
         ], $this->getSessionData('attributes'));
     }
 
@@ -213,9 +211,9 @@ class LoginServiceTest extends GatewaySamlTestCase
     private function initSamlProxyService(array $remoteIdpConfiguration, array $idpConfiguration, array $spConfiguration, array $connectedServiceProviders)
     {
         $session = new Session($this->sessionStorage);
-        $namespacedSessionBag = new NamespacedAttributeBag('__gssp_session');
-        $session->registerBag($namespacedSessionBag);
-        $this->stateHandler = new StateHandler($namespacedSessionBag, 'test_provider');
+        $attributeBag = new AttributeBag('__gssp_session');
+        $session->registerBag($attributeBag);
+        $this->stateHandler = new StateHandler($attributeBag, 'test_provider');
         $samlLogger = new SamlAuthenticationLogger($this->logger);
 
         $this->remoteIdp = new IdentityProvider($remoteIdpConfiguration);

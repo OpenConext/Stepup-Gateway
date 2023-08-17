@@ -1,8 +1,9 @@
 # Changelog
 
 ## 4.2.0
-Add single sign-on on second factor tokens feature. 
+- Introduction of the SSO on 2FA feature in Stepup-Middleware
 
+**More information**
 - For additional details see `docs/SsoOn2Fa.md`
 - And https://www.pivotaltracker.com/epic/show/5024251
 

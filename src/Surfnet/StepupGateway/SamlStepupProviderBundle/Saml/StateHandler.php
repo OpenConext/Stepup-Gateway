@@ -19,7 +19,7 @@
 namespace Surfnet\StepupGateway\SamlStepupProviderBundle\Saml;
 
 use Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler;
-use Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag;
+use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 
 class StateHandler extends ProxyStateHandler
 {
@@ -29,11 +29,11 @@ class StateHandler extends ProxyStateHandler
     private $provider;
 
     /**
-     * @var NamespacedAttributeBag
+     * @var AttributeBagInterface
      */
     private $attributeBag;
 
-    public function __construct(NamespacedAttributeBag $attributeBag, $provider)
+    public function __construct(AttributeBagInterface $attributeBag, $provider)
     {
         $this->attributeBag = $attributeBag;
         $this->provider = $provider;
