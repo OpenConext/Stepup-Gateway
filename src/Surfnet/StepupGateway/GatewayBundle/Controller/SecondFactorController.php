@@ -356,7 +356,6 @@ class SecondFactorController extends Controller
 
         $context->markSecondFactorVerified();
         $this->getAuthenticationLogger()->logSecondFactorAuthentication($originalRequestId, $authenticationMode);
-        $context->setVerifiedBySsoOn2faCookie(null);
         $logger->info(sprintf(
             'Marked GSSF "%s" as verified, forwarding to Gateway controller to respond',
             $selectedSecondFactor
