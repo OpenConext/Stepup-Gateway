@@ -131,6 +131,13 @@ class SecondFactorOnlyController extends Controller
 
         // Reset state
         $this->getSecondFactorRespondService()->resetRespondState($responseContext);
+
+        // Handle SAML response
+        $httpResponse =  $responseRendering->renderResponse($responseContext, $response, $request);
+
+        $ssoCookieService = $this->get('gateway.service.sso_2fa_cookie');
+        $ssoCookieService->handleSsoOn2faCookieStorage($responseContext, $request, $httpResponse, 'sfo');
+
         // We can now forget the selected second factor.
         $responseContext->finalizeAuthentication();
 
@@ -152,8 +159,7 @@ class SecondFactorOnlyController extends Controller
             );
         }
 
-        // Handle SAML response
-        return $responseRendering->renderResponse($responseContext, $response, $request);
+        return $httpResponse;
     }
 
     /**
