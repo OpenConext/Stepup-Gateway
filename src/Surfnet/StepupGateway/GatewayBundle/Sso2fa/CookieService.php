@@ -19,6 +19,7 @@
 namespace Surfnet\StepupGateway\GatewayBundle\Sso2fa;
 
 use Doctrine\Common\Collections\Collection;
+use Exception;
 use Psr\Log\LoggerInterface;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor;
@@ -29,6 +30,7 @@ use Surfnet\StepupGateway\GatewayBundle\Service\InstitutionConfigurationService;
 use Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorService;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\DateTime\ExpirationHelperInterface;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Exception\CookieNotFoundException;
+use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Exception\DecryptionFailedException;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Exception\InvalidAuthenticationTimeException;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Http\CookieHelperInterface;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\CookieValue;
@@ -163,7 +165,6 @@ class CookieService implements CookieServiceInterface
         }
         $ssoCookie = $this->read($request);
         if ($ssoCookie instanceof NullCookieValue) {
-            $this->logger->notice('No SSO on 2FA cookie found');
             return false;
         }
         if ($ssoCookie instanceof CookieValue && !$ssoCookie->meetsRequiredLoa($requiredLoa)) {
@@ -254,6 +255,16 @@ class CookieService implements CookieServiceInterface
         try {
             return $this->cookieHelper->read($request);
         } catch (CookieNotFoundException $e) {
+            $this->logger->notice('Attempt to decrypt the cookie failed, the cookie could not be found');
+            return new NullCookieValue();
+        } catch (DecryptionFailedException $e) {
+            $this->logger->notice('Decryption of the SSO on 2FA cookie failed');
+            return new NullCookieValue();
+        } catch (Exception $e) {
+            $this->logger->notice(
+                'Decryption failed, see original message in context',
+                ['original-exception-message' => $e->getMessage()]
+            );
             return new NullCookieValue();
         }
     }

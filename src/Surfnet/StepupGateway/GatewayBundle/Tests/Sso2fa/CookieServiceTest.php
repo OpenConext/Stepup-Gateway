@@ -666,6 +666,34 @@ class CookieServiceTest extends TestCase
         );
     }
 
+    public function test_reading_cookie_can_fail()
+    {
+        $this->buildService(
+            new Configuration(
+                'test-cookie',
+                'session',
+                0,
+                '0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f'
+            )
+        );
+        $yubikey = $this->buildSecondFactor(3.0, 'identifier-1');
+        $collection = new ArrayCollection([
+            $yubikey,
+        ]);
+        $httpRequest = new Request();
+        $httpRequest->cookies->add([$this->configuration->getName() => 'thiscookieisbroken']);
+
+        self::assertFalse(
+            $this->service->shouldSkip2faAuthentication(
+                $this->responseContext,
+                3.0,
+                'abcdef-1234',
+                $collection,
+                $httpRequest
+            )
+        );
+    }
+
     private function cookieValue(): CookieValue
     {
         $secondFactor = Mockery::mock(SecondFactor::class);
