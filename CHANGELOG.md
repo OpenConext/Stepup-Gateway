@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.2.1
+Refinements and bugfixes surrounding the SSO on 2FA
+- Require step up auth when cookie is broken #296
+- Address some remaining SSO on 2FA issues #295
+
 ## 4.2.0
 - Introduction of the SSO on 2FA feature in Stepup-Middleware
 
