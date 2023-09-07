@@ -26,6 +26,11 @@ jobs:
         run: |
           echo ::set-output name=archive::$(find . -maxdepth 1 -name "$COMPONENT_NAME*.tar.bz2" -printf '%f\n')
           echo ::set-output name=shasum::$(find . -maxdepth 1 -name "$COMPONENT_NAME*.sha" -printf '%f\n')
+      - name: Build Changelog
+        id: changelog
+        uses: ardalanamini/auto-changelog@v3
+        with:
+          default-commit-type: New Features
       - name: Create Draft Release
         id: create_release
         uses: actions/create-release@v1
@@ -34,7 +39,8 @@ jobs:
         with:
           tag_name: ${{ steps.vars.outputs.tag }}
           release_name: ${{ steps.vars.outputs.tag }}
-          body: Auto generated release. Please update these release notes manually.
+          body: |
+            ${{ steps.changelog.outputs.changelog }}
           draft: false
           prerelease: true
       - uses: actions/upload-release-asset@v1.0.1
