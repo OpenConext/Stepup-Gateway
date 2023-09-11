@@ -30,6 +30,14 @@ use Symfony\Component\HttpFoundation\Response;
 class CookieHelper implements CookieHelperInterface
 {
     /**
+     * By default, we set the cookie with the SameSite: NONE attribute.
+     *
+     * SameSite: NONE ensures the browser sends the cookie on cross domain requests. Which are typically performed
+     * when doing SAML authentications. Using STRICT or LAX will cause the cookie not being sent in several scenarios.
+     */
+    private const SAME_SITE = Cookie::SAMESITE_NONE;
+
+    /**
      * @var Configuration
      */
     private $configuration;
@@ -100,7 +108,7 @@ class CookieHelper implements CookieHelperInterface
             true,
             true,
             false,
-            Cookie::SAMESITE_STRICT
+            self::SAME_SITE
         );
     }
 
