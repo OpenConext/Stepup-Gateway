@@ -136,7 +136,7 @@ class SecondFactorOnlyController extends Controller
         $httpResponse =  $responseRendering->renderResponse($responseContext, $response, $request);
 
         $ssoCookieService = $this->get('gateway.service.sso_2fa_cookie');
-        $ssoCookieService->handleSsoOn2faCookieStorage($responseContext, $request, $httpResponse, 'sfo');
+        $ssoCookieService->handleSsoOn2faCookieStorage($responseContext, $request, $httpResponse);
 
         // We can now forget the selected second factor.
         $responseContext->finalizeAuthentication();

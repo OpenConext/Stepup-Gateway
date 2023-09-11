@@ -89,8 +89,7 @@ class CookieService implements CookieServiceInterface
     public function handleSsoOn2faCookieStorage(
         ResponseContext $responseContext,
         Request $request,
-        Response $httpResponse,
-        string $authenticationMode = 'sso'
+        Response $httpResponse
     ): Response {
         // Check if this specific SP is configured to allow setting of a SSO on 2FA cookie (configured in MW config)
         $remoteSp = $this->getRemoteSp($responseContext);
