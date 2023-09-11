@@ -102,6 +102,8 @@ class CookieService implements CookieServiceInterface
             );
             return $httpResponse;
         }
+
+        // The second factor id is read from state. It is the SF Id of the token used during authentication
         $secondFactorId = $responseContext->getSelectedSecondFactor();
 
         // We can only set an SSO on 2FA cookie if a second factor authentication is being handled.
