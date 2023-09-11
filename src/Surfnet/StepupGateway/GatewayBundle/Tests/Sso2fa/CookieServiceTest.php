@@ -19,7 +19,6 @@
 namespace Surfnet\StepupGateway\GatewayBundle\Test\Sso2fa;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -35,7 +34,6 @@ use Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorService;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\CookieService;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Crypto\CryptoHelper;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Crypto\HaliteCryptoHelper;
-use Surfnet\StepupGateway\GatewayBundle\Sso2fa\DateTime\ExpirationHelper;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\DateTime\ExpirationHelperInterface;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Http\CookieHelper;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\Configuration;
@@ -67,14 +65,6 @@ class CookieServiceTest extends TestCase
      * @var InstitutionConfigurationService&Mockery\MockInterface
      */
     private $institutionService;
-    /**
-     * @var LoaResolutionService&Mockery\MockInterface
-     */
-    private $gwLoaResolution;
-    /**
-     * @var SfoLoaResolutionService&Mockery\MockInterface
-     */
-    private $sfoLoaResolution;
     /**
      * @var SecondFactorService&Mockery\MockInterface
      */
@@ -182,6 +172,8 @@ class CookieServiceTest extends TestCase
         // The name and lifetime of the cookie should match the one we configured it to be
         self::assertEquals($this->configuration->getName(), $cookie->getName());
         self::assertEquals($this->configuration->getLifetime(), $cookie->getExpiresTime());
+        // By default we set same-site header to none
+        self::assertEquals(Cookie::SAMESITE_NONE, $cookie->getSameSite());
     }
 
     public function test_storing_a_persistent_cookie()
