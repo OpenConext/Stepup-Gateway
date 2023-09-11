@@ -97,7 +97,7 @@ class CookieService implements CookieServiceInterface
         if (!$remoteSp->allowedToSetSsoCookieOn2fa()) {
             $this->logger->notice(
                 sprintf(
-                    'Ignoring SSO on 2FA for SP: %s',
+                    'SP: %s does not allow writing SSO on 2FA cookies',
                     $remoteSp->getEntityId()
                 )
             );
@@ -227,7 +227,7 @@ class CookieService implements CookieServiceInterface
         return $this->cookieHelper->fingerprint($request);
     }
 
-    private function shouldAddCookie(CookieValueInterface $ssoCookie, float $loa)
+    private function shouldAddCookie(CookieValueInterface $ssoCookie, float $loa): bool
     {
         // IF the SSO cookie is not found (we've got a NullCookieValue returned from the cookie helper)
         $cookieNotSet = $ssoCookie instanceof NullCookieValue;
