@@ -12,10 +12,11 @@ jobs:
     if: always()
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: OpenConext/Stepup-Build
           ref: master
+          fetch-depth: 0
       - name: Output the semver tag to the tag variable
         id: vars
         run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
