@@ -22,12 +22,12 @@ use DateTime;
 use Mockery;
 use SAML2\Response;
 use Surfnet\SamlBundle\Entity\IdentityProvider;
-use Surfnet\SamlBundle\Entity\ServiceProvider;
 use Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger;
 use Surfnet\StepupBundle\Service\LoaResolutionService;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupBundle\Value\Loa;
 use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor;
+use Surfnet\StepupGateway\GatewayBundle\Entity\ServiceProvider;
 use Surfnet\StepupGateway\GatewayBundle\Saml\AssertionSigningService;
 use Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler;
 use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
@@ -201,7 +201,6 @@ final class RespondServiceTest extends GatewaySamlTestCase
             'surfnet/gateway/requestselected_second_factor' => 'mocked-second-factor-id',
             'surfnet/gateway/requestselected_second_factor_verified' => false,
             'surfnet/gateway/requestlocale' => 'nl_NL',
-            'surfnet/gateway/requestverified_by_sso_on_2fa_cookie' => false,
             'surfnet/gateway/requestsso_on_2fa_cookie_fingerprint' => ''
         ], $this->getSessionData('attributes'));
     }

@@ -21,6 +21,7 @@ namespace Surfnet\StepupGateway\GatewayBundle\Saml;
 use DateTime;
 use DateTimeZone;
 use DOMDocument;
+use Exception;
 use Psr\Log\LoggerInterface;
 use SAML2\Assertion;
 use SAML2\XML\saml\Issuer;
@@ -30,7 +31,11 @@ use Surfnet\StepupGateway\GatewayBundle\Entity\ServiceProvider;
 use Surfnet\StepupGateway\GatewayBundle\Saml\Exception\RuntimeException;
 use Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler;
 use Surfnet\StepupGateway\GatewayBundle\Service\SamlEntityService;
+use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\Exception\AcsLocationNotAllowedException;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class ResponseContext
 {
     /**
@@ -39,7 +44,7 @@ class ResponseContext
     private $hostedIdentityProvider;
 
     /**
-     * @var \Surfnet\StepupGateway\GatewayBundle\Service\SamlEntityService
+     * @var SamlEntityService
      */
     private $samlEntityService;
 
@@ -59,15 +64,13 @@ class ResponseContext
     private $generationTime;
 
     /**
-     * @var IdentityProvider|null
-     */
-    private $authenticatingIdp;
-
-    /**
      * @var ServiceProvider
      */
     private $targetServiceProvider;
 
+    /**
+     * @throws Exception
+     */
     public function __construct(
         IdentityProvider $identityProvider,
         SamlEntityService $samlEntityService,
@@ -83,9 +86,9 @@ class ResponseContext
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getDestination()
+    public function getDestination(): ?string
     {
         $requestAcsUrl = $this->stateHandler->getRequestAssertionConsumerServiceUrl();
 
@@ -94,8 +97,9 @@ class ResponseContext
 
     /**
      * @return string
+     * @throws AcsLocationNotAllowedException
      */
-    public function getDestinationForAdfs()
+    public function getDestinationForAdfs(): string
     {
         $requestAcsUrl = $this->stateHandler->getRequestAssertionConsumerServiceUrl();
 
@@ -112,7 +116,7 @@ class ResponseContext
     /**
      * @return int
      */
-    public function getIssueInstant()
+    public function getIssueInstant(): int
     {
         return $this->generationTime->getTimestamp();
     }
@@ -120,7 +124,7 @@ class ResponseContext
     /**
      * @return null|string
      */
-    public function getInResponseTo()
+    public function getInResponseTo(): ?string
     {
         return $this->stateHandler->getRequestId();
     }
@@ -128,7 +132,7 @@ class ResponseContext
     /**
      * @return null|string
      */
-    public function getExpectedInResponseTo()
+    public function getExpectedInResponseTo(): ?string
     {
         return $this->stateHandler->getGatewayRequestId();
     }
@@ -136,7 +140,7 @@ class ResponseContext
     /**
      * @return null|string
      */
-    public function getRequiredLoa()
+    public function getRequiredLoa(): ?string
     {
         return $this->stateHandler->getRequiredLoaIdentifier();
     }
@@ -144,7 +148,7 @@ class ResponseContext
     /**
      * @return IdentityProvider
      */
-    public function getIdentityProvider()
+    public function getIdentityProvider(): IdentityProvider
     {
         return $this->hostedIdentityProvider;
     }
@@ -152,7 +156,7 @@ class ResponseContext
     /**
      * @return null|ServiceProvider
      */
-    public function getServiceProvider()
+    public function getServiceProvider(): ?ServiceProvider
     {
         if (isset($this->targetServiceProvider)) {
             return $this->targetServiceProvider;
@@ -166,15 +170,16 @@ class ResponseContext
     /**
      * @return null|string
      */
-    public function getRelayState()
+    public function getRelayState(): ?string
     {
         return $this->stateHandler->getRelayState();
     }
 
     /**
      * @param Assertion $assertion
+     * @throws Exception
      */
-    public function saveAssertion(Assertion $assertion)
+    public function saveAssertion(Assertion $assertion): void
     {
         $this->stateHandler->saveIdentityNameId($this->resolveNameIdValue($assertion));
         // same for the entityId of the authenticating Authority
@@ -195,8 +200,9 @@ class ResponseContext
 
     /**
      * @return Assertion
+     * @throws Exception
      */
-    public function reconstituteAssertion()
+    public function reconstituteAssertion(): Assertion
     {
         $assertionAsXML    = $this->stateHandler->getAssertion();
         $assertionDocument = new DOMDocument();
@@ -216,7 +222,7 @@ class ResponseContext
     /**
      * Return the lower-cased schacHomeOrganization value from the assertion.
      *
-     * Comparisons on SHO values should always be case insensitive. Stepup
+     * Comparisons on SHO values should always be case-insensitive. Stepup
      * configuration always contains SHO values lower-cased, so this getter
      * can be used to compare the SHO with configured values.
      *
@@ -224,7 +230,7 @@ class ResponseContext
      *
      * @return null|string
      */
-    public function getNormalizedSchacHomeOrganization()
+    public function getNormalizedSchacHomeOrganization(): ?string
     {
         return strtolower(
             $this->stateHandler->getSchacHomeOrganization()
@@ -232,31 +238,9 @@ class ResponseContext
     }
 
     /**
-     * @return null|IdentityProvider
-     */
-    public function getAuthenticatingIdp()
-    {
-        $entityId = $this->stateHandler->getAuthenticatingIdp();
-
-        if (!$entityId) {
-            return null;
-        }
-
-        if (isset($this->authenticatingIdp)) {
-            return $this->authenticatingIdp;
-        }
-
-        $this->authenticatingIdp = $this->samlEntityService->hasIdentityProvider($entityId)
-            ? $this->samlEntityService->getIdentityProvider($entityId)
-            : null;
-
-        return $this->authenticatingIdp;
-    }
-
-    /**
      * @param SecondFactor $secondFactor
      */
-    public function saveSelectedSecondFactor(SecondFactor $secondFactor)
+    public function saveSelectedSecondFactor(SecondFactor $secondFactor): void
     {
         $this->stateHandler->setSelectedSecondFactorId($secondFactor->secondFactorId);
         $this->stateHandler->setSecondFactorVerified(false);
@@ -266,30 +250,38 @@ class ResponseContext
     /**
      * @return null|string
      */
-    public function getSelectedSecondFactor()
+    public function getSelectedSecondFactor(): ?string
     {
         return $this->stateHandler->getSelectedSecondFactorId();
     }
 
-    public function markSecondFactorVerified()
+    public function markSecondFactorVerified(): void
     {
         $this->stateHandler->setSecondFactorVerified(true);
     }
 
-    public function finalizeAuthentication()
+    public function finalizeAuthentication(): void
     {
+        // The second factor ID is used right before sending the response to verify if the SSO on
+        // 2FA cookies Second Factor is still known on the platform Thats why it is forgotten at
+        // this point during authentication.
         $this->stateHandler->setSelectedSecondFactorId(null);
+        // Right before sending the response, we check if we need to update the SSO on 2FA cookie
+        // One of the triggers for storing a new cookie is if the authentication was performed with
+        // a real Second Factor token. That's why this value is purged from state at this very late
+        // point in time.
+        $this->stateHandler->setVerifiedBySsoOn2faCookie(null);
     }
 
     /**
      * @return bool
      */
-    public function isSecondFactorVerified()
+    public function isSecondFactorVerified(): bool
     {
         return $this->stateHandler->getSelectedSecondFactorId() && $this->stateHandler->isSecondFactorVerified();
     }
 
-    public function getResponseAction()
+    public function getResponseAction(): ?string
     {
         return $this->stateHandler->getResponseAction();
     }
@@ -301,25 +293,25 @@ class ResponseContext
     public function responseSent()
     {
         $this->stateHandler->setSecondFactorVerified(false);
-        $this->stateHandler->setVerifiedBySsoOn2faCookie(false);
         $this->stateHandler->setSsoOn2faCookieFingerprint('');
     }
 
     /**
      * Retrieve the ResponseContextServiceId from state
      *
-     * Used to determine we are dealing with a SFO or regular authentication. Both have different ResponseContext
+     * Used to determine we are dealing with an SFO or regular authentication. Both have different ResponseContext
      * instances, and it's imperative that successive consumers use the correct service.
      *
      * @return string|null
      */
-    public function getResponseContextServiceId()
+    public function getResponseContextServiceId(): ?string
     {
         return $this->stateHandler->getResponseContextServiceId();
     }
 
     /**
      * Either gets the internal-collabPersonId if present or falls back on the regular name id attribute
+     * @throws Exception
      */
     private function resolveNameIdValue(Assertion $assertion): string
     {
@@ -328,7 +320,7 @@ class ResponseContext
             return reset($attributes['urn:mace:surf.nl:attribute-def:internal-collabPersonId']);
         }
         $nameId = $assertion->getNameId();
-        if ($nameId && !is_null($nameId->getValue()) && is_string($nameId->getValue())) {
+        if ($nameId && is_string($nameId->getValue())) {
             return $nameId->getValue();
         }
 

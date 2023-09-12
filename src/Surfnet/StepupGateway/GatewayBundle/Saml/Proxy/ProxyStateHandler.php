@@ -265,7 +265,7 @@ class ProxyStateHandler
         return $this->get('selected_second_factor_verified') === true;
     }
 
-    public function setVerifiedBySsoOn2faCookie(bool $isVerifiedByCookie): self
+    public function setVerifiedBySsoOn2faCookie(?bool $isVerifiedByCookie): self
     {
         $this->set('verified_by_sso_on_2fa_cookie', $isVerifiedByCookie);
 
