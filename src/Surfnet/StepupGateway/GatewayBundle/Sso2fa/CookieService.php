@@ -115,13 +115,12 @@ class CookieService implements CookieServiceInterface
             $isEnabled = $this->institutionConfigurationService->ssoOn2faEnabled($secondFactor->institution);
             $this->logger->notice(
                 sprintf(
-                    'SSO on 2FA is %enabled for %s',
+                    'SSO on 2FA is %senabled for %s',
                     $isEnabled ? '' : 'not ',
                     $secondFactor->institution
                 )
             );
             if ($isEnabled) {
-                $this->logger->notice(sprintf('SSO on 2FA is enabled for %s', $secondFactor->institution));
                 // The cookie reader can return a NullCookie if the cookie is not present, was expired or was otherwise
                 // deemed invalid. See the CookieHelper::read implementation for details.
                 $ssoCookie = $this->read($request);
