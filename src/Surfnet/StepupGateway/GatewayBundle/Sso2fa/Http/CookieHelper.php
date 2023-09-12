@@ -29,6 +29,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CookieHelper implements CookieHelperInterface
 {
+    private const SAME_SITE = Cookie::SAMESITE_NONE;
+
     /**
      * @var Configuration
      */
@@ -100,7 +102,7 @@ class CookieHelper implements CookieHelperInterface
             true,
             true,
             false,
-            Cookie::SAMESITE_STRICT
+            self::SAME_SITE
         );
     }
 
