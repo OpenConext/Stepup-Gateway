@@ -24,6 +24,7 @@ use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Mink\Exception\ExpectationException;
 use RuntimeException;
 use Surfnet\StepupGateway\Behat\Service\FixtureService;
+use function sprintf;
 
 class FeatureContext implements Context
 {
@@ -45,6 +46,11 @@ class FeatureContext implements Context
     private $currentToken;
 
     private $sso2faCookieName;
+
+    /**
+     * @var string|null
+     */
+    private $previousSsoOn2faCookieValue;
 
     public function __construct(FixtureService $fixtureService)
     {
@@ -261,17 +267,50 @@ class FeatureContext implements Context
     }
 
     /**
-     * @Given /^the response should have a SSO\-2FA cookie$/
+     * @Then /^the response should have a SSO\-2FA cookie$/
+     * @throws ExpectationException
      */
     public function theResponseShouldHaveASSO2FACookie()
     {
         $this->minkContext->visit('https://gateway.stepup.example.com/info');
         $cookieValue = $this->minkContext->getSession()->getCookie($this->sso2faCookieName);
-        if (empty($cookieValue)) {
+        // Store the previous cookie value
+        $this->previousSsoOn2faCookieValue = $cookieValue;
+        $this->validateSsoOn2faCookie($cookieValue);
+    }
+
+    /**
+     * @Then /^a new SSO\-2FA cookie was written$/
+     * @throws ExpectationException
+     */
+    public function theSSO2FACookieIsRewritten()
+    {
+        $this->minkContext->visit('https://gateway.stepup.example.com/info');
+        $cookieValue = $this->minkContext->getSession()->getCookie($this->sso2faCookieName);
+        $this->validateSsoOn2faCookie($cookieValue);
+        if ($this->previousSsoOn2faCookieValue === $cookieValue) {
+            throw new ExpectationException(
+                'The SSO on 2FA cookie did not change since the previous response',
+                $this->minkContext->getSession()->getDriver()
+            );
+        }
+    }
+
+    /**
+     * @Then /^the existing SSO\-2FA cookie was used$/
+     * @throws ExpectationException
+     */
+    public function theSSO2FACookieRemainedTheSame()
+    {
+        $this->minkContext->visit('https://gateway.stepup.example.com/info');
+        $cookieValue = $this->minkContext->getSession()->getCookie($this->sso2faCookieName);
+        $this->validateSsoOn2faCookie($cookieValue);
+        if ($this->previousSsoOn2faCookieValue !== $cookieValue) {
             throw new ExpectationException(
                 sprintf(
-                    'The SSO on 2FA cookie was not present, or empty. Cookie name: %s',
-                    $this->sso2faCookieName
+                    'The SSO on 2FA cookie changed since the previous response %s vs %s',
+                    $this->previousSsoOn2faCookieValue,
+                    $cookieValue
                 ),
                 $this->minkContext->getSession()->getDriver()
             );
@@ -315,5 +354,21 @@ class FeatureContext implements Context
             $response[] = array_shift($parts);
         }
         return $response;
+    }
+
+    /**
+     * @throws ExpectationException
+     */
+    private function validateSsoOn2faCookie(?string $cookieValue)
+    {
+        if (empty($cookieValue)) {
+            throw new ExpectationException(
+                sprintf(
+                    'The SSO on 2FA cookie was not present, or empty. Cookie name: %s',
+                    $this->sso2faCookieName
+                ),
+                $this->minkContext->getSession()->getDriver()
+            );
+        }
     }
 }
