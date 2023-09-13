@@ -227,15 +227,16 @@ class ProxyStateHandler
         return $this->get('authenticating_idp');
     }
 
-    /**
-     * @param string|null $secondFactorId
-     * @return $this
-     */
-    public function setSelectedSecondFactorId($secondFactorId)
+    public function setSelectedSecondFactorId(string $secondFactorId)
     {
         $this->set('selected_second_factor', $secondFactorId);
 
         return $this;
+    }
+
+    public function unsetSelectedSecondFactorId(): void
+    {
+        $this->set('selected_second_factor', null);
     }
 
     /**
@@ -265,11 +266,16 @@ class ProxyStateHandler
         return $this->get('selected_second_factor_verified') === true;
     }
 
-    public function setVerifiedBySsoOn2faCookie(?bool $isVerifiedByCookie): self
+    public function setVerifiedBySsoOn2faCookie(bool $isVerifiedByCookie): self
     {
         $this->set('verified_by_sso_on_2fa_cookie', $isVerifiedByCookie);
 
         return $this;
+    }
+
+    public function unsetVerifiedBySsoOn2faCookie(): void
+    {
+        $this->set('verified_by_sso_on_2fa_cookie', null);
     }
 
     public function isVerifiedBySsoOn2faCookie(): bool

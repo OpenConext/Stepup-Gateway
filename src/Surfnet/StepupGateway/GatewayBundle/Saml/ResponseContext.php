@@ -263,14 +263,14 @@ class ResponseContext
     public function finalizeAuthentication(): void
     {
         // The second factor ID is used right before sending the response to verify if the SSO on
-        // 2FA cookies Second Factor is still known on the platform Thats why it is forgotten at
+        // 2FA cookies Second Factor is still known on the platform That's why it is forgotten at
         // this point during authentication.
-        $this->stateHandler->setSelectedSecondFactorId(null);
+        $this->stateHandler->unsetSelectedSecondFactorId();
         // Right before sending the response, we check if we need to update the SSO on 2FA cookie
         // One of the triggers for storing a new cookie is if the authentication was performed with
         // a real Second Factor token. That's why this value is purged from state at this very late
         // point in time.
-        $this->stateHandler->setVerifiedBySsoOn2faCookie(null);
+        $this->stateHandler->unsetVerifiedBySsoOn2faCookie();
     }
 
     /**
