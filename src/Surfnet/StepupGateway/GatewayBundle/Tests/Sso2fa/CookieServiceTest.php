@@ -18,7 +18,6 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Test\Sso2fa;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -173,7 +172,7 @@ class CookieServiceTest extends TestCase
             ->andReturn(2.0);
         $this->responseContext
             ->shouldReceive('isVerifiedBySsoOn2faCookie')
-            ->andReturn(true);
+            ->andReturn(false);
 
         $response = $this->service->handleSsoOn2faCookieStorage($this->responseContext, $request, $response);
 
@@ -230,7 +229,7 @@ class CookieServiceTest extends TestCase
             ->andReturn(3.0);
         $this->responseContext
             ->shouldReceive('isVerifiedBySsoOn2faCookie')
-            ->andReturn(true);
+            ->andReturn(false);
 
         $response = $this->service->handleSsoOn2faCookieStorage($this->responseContext, $request, $response);
 
@@ -409,10 +408,7 @@ class CookieServiceTest extends TestCase
                 '0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f'
             )
         );
-        $yubikey = $this->buildSecondFactor(3.0, 'identifier');
-        $collection = new ArrayCollection([
-            $yubikey,
-        ]);
+        $yubikey = $this->buildSecondFactor(3.0, 'abcdef-1234');
 
         $httpRequest = new Request();
         $cookieValue = $this->cookieValue();
@@ -428,17 +424,17 @@ class CookieServiceTest extends TestCase
             ->shouldReceive('isExpired')
             ->andReturn(false);
 
-        $token = Mockery::mock(SecondFactor::class);
+
         $this->secondFactorService
             ->shouldReceive('findByUuid')
-            ->andReturn($token);
+            ->with('abcdef-1234')
+            ->andReturn($yubikey);
 
         self::assertTrue(
             $this->service->shouldSkip2faAuthentication(
                 $this->responseContext,
                 3.0,
-                'abcdef-1234',
-                $collection,
+                'ident-1234',
                 $httpRequest
             )
         );
@@ -454,14 +450,7 @@ class CookieServiceTest extends TestCase
                 '0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f'
             )
         );
-        $yubikey = $this->buildSecondFactor(3.0, 'identifier-1');
-        $sms = $this->buildSecondFactor(2.0, 'identifier-2');
-        $bogus = $this->buildSecondFactor(2.0, 'identifier-3');
-        $collection = new ArrayCollection([
-            $sms,
-            $bogus,
-            $yubikey,
-        ]);
+        $yubikey = $this->buildSecondFactor(3.0, 'abcdef-1234');
 
         $httpRequest = new Request();
         $cookieValue = $this->cookieValue();
@@ -478,17 +467,16 @@ class CookieServiceTest extends TestCase
             ->shouldReceive('isExpired')
             ->andReturn(false);
 
-        $token = Mockery::mock(SecondFactor::class);
         $this->secondFactorService
             ->shouldReceive('findByUuid')
-            ->andReturn($token);
+            ->with('abcdef-1234')
+            ->andReturn($yubikey);
 
         self::assertTrue(
             $this->service->shouldSkip2faAuthentication(
                 $this->responseContext,
                 3.0,
-                'abcdef-1234',
-                $collection,
+                'ident-1234',
                 $httpRequest
             )
         );
@@ -511,7 +499,6 @@ class CookieServiceTest extends TestCase
                 $this->responseContext,
                 3.0,
                 'abcdef-1234',
-                Mockery::mock(ArrayCollection::class),
                 $httpRequest
             )
         );
@@ -553,7 +540,6 @@ class CookieServiceTest extends TestCase
                 $this->responseContext,
                 3.0,
                 'abcdef-1234',
-                Mockery::mock(ArrayCollection::class),
                 $httpRequest
             )
         );
@@ -579,7 +565,6 @@ class CookieServiceTest extends TestCase
                 $this->responseContext,
                 4.0, // LoA required by SP is 4.0, the one in the cookie is 3.0
                 'abcdef-1234',
-                Mockery::mock(ArrayCollection::class),
                 $httpRequest
             )
         );
@@ -609,7 +594,6 @@ class CookieServiceTest extends TestCase
                 $this->responseContext,
                 3.0,
                 'abcdef-1234',
-                Mockery::mock(ArrayCollection::class),
                 $httpRequest
             )
         );
@@ -635,7 +619,6 @@ class CookieServiceTest extends TestCase
                 $this->responseContext,
                 2.0,
                 'Jane Doe', // Not issued to Jane Doe but to abcdef-1234
-                Mockery::mock(ArrayCollection::class),
                 $httpRequest
             )
         );
@@ -652,13 +635,6 @@ class CookieServiceTest extends TestCase
             )
         );
         $yubikey = $this->buildSecondFactor(3.0, 'identifier-1');
-        $sms = $this->buildSecondFactor(2.0, 'identifier-2');
-        $bogus = $this->buildSecondFactor(2.0, 'identifier-3');
-        $collection = new ArrayCollection([
-            $sms,
-            $bogus,
-            $yubikey,
-        ]);
 
         $httpRequest = new Request();
         $cookieValue = $this->cookieValue();
@@ -676,7 +652,6 @@ class CookieServiceTest extends TestCase
                 $this->responseContext,
                 4.0, // LoA 4 is required, Identity only has LoA 2 and 3 tokens, no bueno
                 'abcdef-1234',
-                $collection,
                 $httpRequest
             )
         );
@@ -693,13 +668,6 @@ class CookieServiceTest extends TestCase
             )
         );
         $yubikey = $this->buildSecondFactor(3.0, 'identifier-1');
-        $sms = $this->buildSecondFactor(2.0, 'identifier-2');
-        $bogus = $this->buildSecondFactor(2.0, 'identifier-3');
-        $collection = new ArrayCollection([
-            $sms,
-            $bogus,
-            $yubikey,
-        ]);
 
         $httpRequest = new Request();
         $cookieValue = $this->cookieValue();
@@ -726,7 +694,6 @@ class CookieServiceTest extends TestCase
                 $this->responseContext,
                 3.0,
                 'abcdef-1234',
-                $collection,
                 $httpRequest
             )
         );
@@ -742,10 +709,6 @@ class CookieServiceTest extends TestCase
                 '0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f'
             )
         );
-        $yubikey = $this->buildSecondFactor(3.0, 'identifier-1');
-        $collection = new ArrayCollection([
-            $yubikey,
-        ]);
         $httpRequest = new Request();
         $httpRequest->cookies->add([$this->configuration->getName() => 'thiscookieisbroken']);
 
@@ -754,7 +717,6 @@ class CookieServiceTest extends TestCase
                 $this->responseContext,
                 3.0,
                 'abcdef-1234',
-                $collection,
                 $httpRequest
             )
         );
@@ -764,7 +726,8 @@ class CookieServiceTest extends TestCase
     {
         $secondFactor = Mockery::mock(SecondFactor::class);
         $secondFactor->secondFactorId = 'abcdef-1234';
-        $secondFactor->identityId = 'abcdef-1234';
+        $secondFactor->secondFactorIdentifier = 'identifier-abcdef-1234';
+        $secondFactor->identityId = 'ident-1234';
         $loa = new Loa(3.0, 'LoA3');
         return CookieValue::from($secondFactor->identityId, $secondFactor->secondFactorId, $loa->getLevel());
     }
@@ -788,6 +751,7 @@ class CookieServiceTest extends TestCase
     {
         $token = Mockery::mock(SecondFactor::class)->makePartial();
         $token->secondFactorId = $identifier;
+        $token->secondFactorIdentifier = 'identifier-' . $identifier;
         $token->displayLocale = 'nl';
         $token->shouldReceive('getLoaLevel')->andReturn($loaLevel);
         return $token;
