@@ -1,5 +1,13 @@
 # Changelog
 
+## 4.2.1
+Refinements and bugfixes surrounding the SSO on 2FA
+- Reset the SSO cookie on every real 2FA authentication #301
+- Require step up auth when cookie is broken #296
+- Address some remaining SSO on 2FA issues #295
+- Set SameSite response header to None #298
+- Refine log messages #299 #300
+
 ## 4.2.0
 - Introduction of the SSO on 2FA feature in Stepup-Middleware
 

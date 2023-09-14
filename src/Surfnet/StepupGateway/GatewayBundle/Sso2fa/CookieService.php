@@ -19,6 +19,7 @@
 namespace Surfnet\StepupGateway\GatewayBundle\Sso2fa;
 
 use Doctrine\Common\Collections\Collection;
+use Exception;
 use Psr\Log\LoggerInterface;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor;
@@ -29,6 +30,7 @@ use Surfnet\StepupGateway\GatewayBundle\Service\InstitutionConfigurationService;
 use Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorService;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\DateTime\ExpirationHelperInterface;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Exception\CookieNotFoundException;
+use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Exception\DecryptionFailedException;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Exception\InvalidAuthenticationTimeException;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Http\CookieHelperInterface;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\CookieValue;
@@ -87,20 +89,21 @@ class CookieService implements CookieServiceInterface
     public function handleSsoOn2faCookieStorage(
         ResponseContext $responseContext,
         Request $request,
-        Response $httpResponse,
-        string $authenticationMode = 'sso'
+        Response $httpResponse
     ): Response {
-        // Check if this specific SP is configured to allow setting of a SSO on 2FA cookie (configured in MW config)
+        // Check if this specific SP is configured to allow setting of an SSO on 2FA cookie (configured in MW config)
         $remoteSp = $this->getRemoteSp($responseContext);
         if (!$remoteSp->allowedToSetSsoCookieOn2fa()) {
             $this->logger->notice(
                 sprintf(
-                    'Ignoring SSO on 2FA for SP: %s',
+                    'SP: %s does not allow writing SSO on 2FA cookies',
                     $remoteSp->getEntityId()
                 )
             );
             return $httpResponse;
         }
+
+        // The second factor id is read from state. It is the SF Id of the token used during authentication
         $secondFactorId = $responseContext->getSelectedSecondFactor();
 
         // We can only set an SSO on 2FA cookie if a second factor authentication is being handled.
@@ -119,12 +122,16 @@ class CookieService implements CookieServiceInterface
                 )
             );
             if ($isEnabled) {
-                $this->logger->notice(sprintf('SSO on 2FA is enabled for %s', $secondFactor->institution));
+                // The cookie reader can return a NullCookie if the cookie is not present, was expired or was otherwise
+                // deemed invalid. See the CookieHelper::read implementation for details.
                 $ssoCookie = $this->read($request);
+                $identityId = $responseContext->getIdentityNameId();
                 $loa = $secondFactor->getLoaLevel($this->secondFactorTypeService);
-                // Did the LoA requirement change? If a higher LoA was requested, update the cookie value accordingly.
-                if ($this->shouldAddCookie($ssoCookie, $loa)) {
-                    $identityId = $responseContext->getIdentityNameId();
+                $isValid = $this->isCookieValid($ssoCookie, $loa, $identityId);
+                $isVerifiedBySsoOn2faCookie = $responseContext->isVerifiedBySsoOn2faCookie();
+                // Did the LoA requirement change? If a higher LoA was requested, or did a new token authentication
+                // take place? In that case create a new SSO on 2FA cookie
+                if ($this->shouldAddCookie($ssoCookie, $isValid, $loa, $isVerifiedBySsoOn2faCookie)) {
                     $cookie = CookieValue::from($identityId, $secondFactor->secondFactorId, $loa);
                     $this->store($httpResponse, $cookie);
                 }
@@ -162,8 +169,121 @@ class CookieService implements CookieServiceInterface
             return false;
         }
         $ssoCookie = $this->read($request);
+        // Perform validation on the cookie and its contents
+        if (!$this->isCookieValid($ssoCookie, $requiredLoa, $identityNameId)) {
+            return false;
+        }
+        if (!$this->secondFactorService->findByUuid($ssoCookie->secondFactorId())) {
+            $this->logger->notice(
+                'The second factor stored in the SSO cookie was revoked or has otherwise became unknown to Gateway',
+                [
+                    'secondFactorIdFromCookie' => $ssoCookie->secondFactorId()
+                ]
+            );
+            return false;
+        }
+
+        /** @var SecondFactor $secondFactor */
+        foreach ($secondFactorCollection as $secondFactor) {
+            $loa = $secondFactor->getLoaLevel($this->secondFactorTypeService);
+            if ($loa >= $requiredLoa) {
+                $this->logger->notice('Verified the current 2FA authentication can be given with the SSO on 2FA cookie');
+                $responseContext->saveSelectedSecondFactor($secondFactor);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public function getCookieFingerprint(Request $request): string
+    {
+        return $this->cookieHelper->fingerprint($request);
+    }
+
+    /**
+     * This method determines if an SSO on 2FA cookie should be created.
+     *
+     * The comments in the code block should give a good feel for what business rules
+     * are applied in this method.
+     *
+     * @param CookieValueInterface $ssoCookie           The SSO on 2FA cookie as read from the HTTP response
+     * @param float $loa                                The LoA that was requested for this authentication, used to
+     *                                                  compare to the LoA stored in the SSO cookie
+     * @param bool $wasAuthenticatedWithSsoOn2faCookie  Indicator if the currently running authentication was performed
+     *                                                  with the SSO on 2FA cookie
+     */
+    private function shouldAddCookie(
+        CookieValueInterface $ssoCookie,
+        bool $isCookieValid,
+        float $loa,
+        bool $wasAuthenticatedWithSsoOn2faCookie
+    ): bool {
+        // When the cookie is not yet set, was expired or was otherwise deemed invalid, we get a NullCookieValue
+        // back from the reader. Indicating there is no valid cookie present.
+        $cookieNotSet = $ssoCookie instanceof NullCookieValue;
+        // OR the existing cookie does exist, but the LoA stored in that cookie does not match the required LoA
+        $cookieDoesNotMeetLoaRequirement = ($ssoCookie instanceof CookieValue && !$ssoCookie->meetsRequiredLoa($loa));
+        if (!$ssoCookie instanceof NullCookieValue && $cookieDoesNotMeetLoaRequirement) {
+            $this->logger->notice(
+                sprintf(
+                    'Storing new SSO on 2FA cookie as LoA requirement (%d changed to %d) changed',
+                    $ssoCookie->getLoa(),
+                    $loa
+                )
+            );
+        }
+        // OR when a new authentication took place, we replace the existing cookie with a new one
+        if (!$wasAuthenticatedWithSsoOn2faCookie) {
+            $this->logger->notice('Storing new SSO on 2FA cookie as a new authentication took place');
+        }
+
+        // Or when the cookie is not valid for some reason (see logs for the specific error)
+        if (!$isCookieValid) {
+            $this->logger->notice('Storing new SSO on 2FA cookie, the current cookie is invalid');
+        }
+
+        return $cookieNotSet ||
+            !$isCookieValid ||
+            $cookieDoesNotMeetLoaRequirement ||
+            !$wasAuthenticatedWithSsoOn2faCookie;
+    }
+
+    private function store(Response $response, CookieValueInterface $cookieValue)
+    {
+        $this->cookieHelper->write($response, $cookieValue);
+    }
+
+    private function read(Request $request): CookieValueInterface
+    {
+        try {
+            return $this->cookieHelper->read($request);
+        } catch (CookieNotFoundException $e) {
+            $this->logger->notice('Attempt to decrypt the cookie failed, the cookie could not be found');
+            return new NullCookieValue();
+        } catch (DecryptionFailedException $e) {
+            $this->logger->notice('Decryption of the SSO on 2FA cookie failed');
+            return new NullCookieValue();
+        } catch (Exception $e) {
+            $this->logger->notice(
+                'Decryption failed, see original message in context',
+                ['original-exception-message' => $e->getMessage()]
+            );
+            return new NullCookieValue();
+        }
+    }
+
+    private function getRemoteSp(ResponseContext $responseContext): ServiceProvider
+    {
+        $remoteSp = $responseContext->getServiceProvider();
+        if (!$remoteSp) {
+            throw new RuntimeException('SP not found in the response context, unable to continue with SSO on 2FA');
+        }
+        return $remoteSp;
+    }
+
+    private function isCookieValid(CookieValueInterface $ssoCookie, float $requiredLoa, string $identityNameId): bool
+    {
         if ($ssoCookie instanceof NullCookieValue) {
-            $this->logger->notice('No SSO on 2FA cookie found');
             return false;
         }
         if ($ssoCookie instanceof CookieValue && !$ssoCookie->meetsRequiredLoa($requiredLoa)) {
@@ -198,72 +318,6 @@ class CookieService implements CookieServiceInterface
             $this->logger->notice('The SSO on 2FA cookie contained an invalid authentication time', [$e->getMessage()]);
             return false;
         }
-
-        if (!$this->secondFactorService->findByUuid($ssoCookie->secondFactorId())) {
-            $this->logger->notice(
-                'The second factor stored in the SSO cookie was revoked or has otherwise became unknown to Gateway',
-                [
-                    'secondFactorIdFromCookie' => $ssoCookie->secondFactorId()
-                ]
-            );
-            return false;
-        }
-
-        /** @var SecondFactor $secondFactor */
-        foreach ($secondFactorCollection as $secondFactor) {
-            $loa = $secondFactor->getLoaLevel($this->secondFactorTypeService);
-            if ($loa >= $requiredLoa) {
-                $this->logger->notice('Verified the current 2FA authentication can be given with the SSO on 2FA cookie');
-                $responseContext->saveSelectedSecondFactor($secondFactor);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public function getCookieFingerprint(Request $request): string
-    {
-        return $this->cookieHelper->fingerprint($request);
-    }
-
-    private function shouldAddCookie(CookieValueInterface $ssoCookie, float $loa)
-    {
-        // IF the SSO cookie is not found (we've got a NullCookieValue returned from the cookie helper)
-        $cookieNotSet = $ssoCookie instanceof NullCookieValue;
-        // OR the existing cookie does exist, but the LoA stored in that cookie does not match the required LoA
-        $cookieDoesNotMeetLoaRequirement = ($ssoCookie instanceof CookieValue && !$ssoCookie->meetsRequiredLoa($loa));
-        if ($cookieDoesNotMeetLoaRequirement) {
-            $this->logger->notice(
-                sprintf(
-                    'Storing new SSO on 2FA cookie as LoA requirement (%d changed to %d) changed',
-                    $ssoCookie->getLoa(),
-                    $loa
-                )
-            );
-        }
-        return $cookieNotSet || $cookieDoesNotMeetLoaRequirement;
-    }
-
-    private function store(Response $response, CookieValueInterface $cookieValue)
-    {
-        $this->cookieHelper->write($response, $cookieValue);
-    }
-
-    private function read(Request $request): CookieValueInterface
-    {
-        try {
-            return $this->cookieHelper->read($request);
-        } catch (CookieNotFoundException $e) {
-            return new NullCookieValue();
-        }
-    }
-
-    private function getRemoteSp(ResponseContext $responseContext): ServiceProvider
-    {
-        $remoteSp = $responseContext->getServiceProvider();
-        if (!$remoteSp) {
-            throw new RuntimeException('SP not found in the response context, unable to continue with SSO on 2FA');
-        }
-        return $remoteSp;
+        return true;
     }
 }

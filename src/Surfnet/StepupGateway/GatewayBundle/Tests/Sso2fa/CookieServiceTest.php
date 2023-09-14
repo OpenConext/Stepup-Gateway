@@ -19,11 +19,9 @@
 namespace Surfnet\StepupGateway\GatewayBundle\Test\Sso2fa;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
-use Surfnet\StepupBundle\Service\LoaResolutionService;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupBundle\Value\Loa;
 use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor;
@@ -35,12 +33,10 @@ use Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorService;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\CookieService;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Crypto\CryptoHelper;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Crypto\HaliteCryptoHelper;
-use Surfnet\StepupGateway\GatewayBundle\Sso2fa\DateTime\ExpirationHelper;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\DateTime\ExpirationHelperInterface;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Http\CookieHelper;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\Configuration;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\CookieValue;
-use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\LoaResolutionService as SfoLoaResolutionService;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -50,6 +46,8 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class CookieServiceTest extends TestCase
 {
+    use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+
     /**
      * @var CookieService
      */
@@ -68,14 +66,6 @@ class CookieServiceTest extends TestCase
      */
     private $institutionService;
     /**
-     * @var LoaResolutionService&Mockery\MockInterface
-     */
-    private $gwLoaResolution;
-    /**
-     * @var SfoLoaResolutionService&Mockery\MockInterface
-     */
-    private $sfoLoaResolution;
-    /**
      * @var SecondFactorService&Mockery\MockInterface
      */
     private $secondFactorService;
@@ -93,24 +83,32 @@ class CookieServiceTest extends TestCase
      */
     private $expirationHelper;
 
-    protected function buildService(Configuration $configuration): void
+    /**
+     * @var Mockery\Mock|(Mockery\MockInterface&LoggerInterface)
+     */
+    private $logger;
+
+    protected function buildService(Configuration $configuration, bool $shouldIgnoreLogs = true): void
     {
         // Not all dependencies are included for real, the ones not focussed on crypto and cookie storage are mocked
-        $logger = Mockery::mock(LoggerInterface::class)->shouldIgnoreMissing();
+        $this->logger = Mockery::mock(LoggerInterface::class);
+        if ($shouldIgnoreLogs) {
+            $this->logger->shouldIgnoreMissing();
+        }
         $this->institutionService = Mockery::mock(InstitutionConfigurationService::class);
         $this->secondFactorService = Mockery::mock(SecondFactorService::class);
         $this->secondFactorTypeService = Mockery::mock(SecondFactorTypeService::class);
         $this->configuration = $configuration;
         $this->encryptionHelper = new HaliteCryptoHelper($configuration);
         $this->expirationHelper = Mockery::mock(ExpirationHelperInterface::class);
-        $cookieHelper = new CookieHelper($this->configuration, $this->encryptionHelper, $logger);
+        $cookieHelper = new CookieHelper($this->configuration, $this->encryptionHelper, $this->logger);
         $this->service = new CookieService(
             $cookieHelper,
             $this->institutionService,
             $this->secondFactorService,
             $this->secondFactorTypeService,
             $this->expirationHelper,
-            $logger
+            $this->logger
         );
 
         $this->responseContext = Mockery::mock(ResponseContext::class);
@@ -173,6 +171,9 @@ class CookieServiceTest extends TestCase
         $this->secondFactorTypeService
             ->shouldReceive('getLevel')
             ->andReturn(2.0);
+        $this->responseContext
+            ->shouldReceive('isVerifiedBySsoOn2faCookie')
+            ->andReturn(true);
 
         $response = $this->service->handleSsoOn2faCookieStorage($this->responseContext, $request, $response);
 
@@ -182,6 +183,8 @@ class CookieServiceTest extends TestCase
         // The name and lifetime of the cookie should match the one we configured it to be
         self::assertEquals($this->configuration->getName(), $cookie->getName());
         self::assertEquals($this->configuration->getLifetime(), $cookie->getExpiresTime());
+        // By default we set same-site header to none
+        self::assertEquals(Cookie::SAMESITE_NONE, $cookie->getSameSite());
     }
 
     public function test_storing_a_persistent_cookie()
@@ -225,6 +228,9 @@ class CookieServiceTest extends TestCase
         $this->secondFactorTypeService
             ->shouldReceive('getLevel')
             ->andReturn(3.0);
+        $this->responseContext
+            ->shouldReceive('isVerifiedBySsoOn2faCookie')
+            ->andReturn(true);
 
         $response = $this->service->handleSsoOn2faCookieStorage($this->responseContext, $request, $response);
 
@@ -234,6 +240,61 @@ class CookieServiceTest extends TestCase
         // The name and lifetime of the cookie should match the one we configured it to be
         self::assertEquals($this->configuration->getName(), $cookie->getName());
         self::assertEquals(time() + $this->configuration->getLifetime(), $cookie->getExpiresTime());
+    }
+
+    public function test_storing_a_session_cookie_new_authentication()
+    {
+        $this->buildService(
+            new Configuration(
+                'test-cookie',
+                'session',
+                0,
+                '0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f'
+            )
+        );
+        $response = new Response('<html lang="en"><body><h1>hi</h1></body></html>', 200);
+        $request = Mockery::mock(Request::class);
+        $sfMock = Mockery::mock(SecondFactor::class)->makePartial();
+        $sfMock->secondFactorId = 'sf-id-1234';
+        $sfMock->institution = 'institution-a';
+        $sfMock->identityId = 'james-hoffman';
+        $sfMock->secondFactorType = 'sms';
+        $sfMock->identityVetted = true;
+
+        $this->responseContext
+            ->shouldReceive('getSelectedSecondFactor')
+            ->andReturn('sf-id-1234');
+        $this->responseContext
+            ->shouldReceive('finalizeAuthentication');
+        $this->secondFactorService
+            ->shouldReceive('findByUuid')
+            ->with('sf-id-1234')
+            ->andReturn($sfMock);
+        $this->institutionService
+            ->shouldReceive('ssoOn2faEnabled')
+            ->with('institution-a')
+            ->andReturn(true);
+        $this->responseContext
+            ->shouldReceive('getRequiredLoa')
+            ->andReturn('example.org:loa-2.0');
+        $this->responseContext
+            ->shouldReceive('getIdentityNameId')
+            ->andReturn('james-hoffman');
+        $this->secondFactorTypeService
+            ->shouldReceive('getLevel')
+            ->andReturn(1.5);
+        $this->responseContext
+            ->shouldReceive('isVerifiedBySsoOn2faCookie')
+            ->andReturn(false);
+
+        $response = $this->service->handleSsoOn2faCookieStorage($this->responseContext, $request, $response);
+
+        $cookieJar = $response->headers->getCookies();
+        self::assertCount(1, $cookieJar);
+        $cookie = reset($cookieJar);
+        // The name and lifetime of the cookie should match the one we configured it to be
+        self::assertEquals($this->configuration->getName(), $cookie->getName());
+        self::assertEquals($this->configuration->getLifetime(), $cookie->getExpiresTime());
     }
 
     public function test_storing_a_session_cookie_second_factor_not_found()
@@ -272,7 +333,8 @@ class CookieServiceTest extends TestCase
                 'session',
                 0,
                 '0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f'
-            )
+            ),
+            false
         );
         $this->responseContext = Mockery::mock(ResponseContext::class);
         $sp = Mockery::mock(ServiceProvider::class);
@@ -288,6 +350,10 @@ class CookieServiceTest extends TestCase
 
         $response = new Response('<html><body><h1>hi</h1></body></html>', 200);
         $request = Mockery::mock(Request::class);
+
+        // For: #186011523 verify a clear log message is stating we are not storing
+        // SSO cookie because the SP is not allowing it.
+        $this->logger->shouldReceive('notice')->with('SP: https://ra.stepup.example.com/gssf/tiqr/metadata does not allow writing SSO on 2FA cookies');
 
         $this->service->handleSsoOn2faCookieStorage($this->responseContext, $request, $response);
         $cookieJar = $response->headers->getCookies();
@@ -654,6 +720,34 @@ class CookieServiceTest extends TestCase
         $this->secondFactorService
             ->shouldReceive('findByUuid')
             ->andReturnNull();
+
+        self::assertFalse(
+            $this->service->shouldSkip2faAuthentication(
+                $this->responseContext,
+                3.0,
+                'abcdef-1234',
+                $collection,
+                $httpRequest
+            )
+        );
+    }
+
+    public function test_reading_cookie_can_fail()
+    {
+        $this->buildService(
+            new Configuration(
+                'test-cookie',
+                'session',
+                0,
+                '0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f'
+            )
+        );
+        $yubikey = $this->buildSecondFactor(3.0, 'identifier-1');
+        $collection = new ArrayCollection([
+            $yubikey,
+        ]);
+        $httpRequest = new Request();
+        $httpRequest->cookies->add([$this->configuration->getName() => 'thiscookieisbroken']);
 
         self::assertFalse(
             $this->service->shouldSkip2faAuthentication(
