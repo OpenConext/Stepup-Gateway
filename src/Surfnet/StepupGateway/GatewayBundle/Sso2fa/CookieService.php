@@ -18,11 +18,9 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Sso2fa;
 
-use Doctrine\Common\Collections\Collection;
 use Exception;
 use Psr\Log\LoggerInterface;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
-use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor;
 use Surfnet\StepupGateway\GatewayBundle\Entity\ServiceProvider;
 use Surfnet\StepupGateway\GatewayBundle\Exception\RuntimeException;
 use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
@@ -201,7 +199,7 @@ class CookieService implements CookieServiceInterface
         try {
             return $this->cookieHelper->read($request);
         } catch (CookieNotFoundException $e) {
-            $this->logger->notice('Attempt to decrypt the cookie failed, the cookie could not be found');
+            $this->logger->notice('The SSO on 2FA cookie is not found in the request header');
             return new NullCookieValue();
         } catch (DecryptionFailedException $e) {
             $this->logger->notice('Decryption of the SSO on 2FA cookie failed');
