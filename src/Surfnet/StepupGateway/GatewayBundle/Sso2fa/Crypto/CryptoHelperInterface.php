@@ -19,10 +19,11 @@
 namespace Surfnet\StepupGateway\GatewayBundle\Sso2fa\Crypto;
 
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\CookieValue;
+use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\CookieValueInterface;
 
 interface CryptoHelperInterface
 {
-    public function encrypt(CookieValue $cookieValue): string;
+    public function encrypt(CookieValueInterface $cookieValue): string;
 
     public function decrypt(string $cookieData): CookieValue;
 }
