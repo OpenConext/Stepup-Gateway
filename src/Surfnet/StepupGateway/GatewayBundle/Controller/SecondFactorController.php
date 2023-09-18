@@ -126,7 +126,6 @@ class SecondFactorController extends Controller
             $context,
             $requiredLoa->getLevel(),
             $identityNameId,
-            $secondFactorCollection,
             $request
         )) {
             $logger->notice('Skipping second factor authentication. Required LoA was met by the LoA recorded in the cookie');
@@ -354,8 +353,8 @@ class SecondFactorController extends Controller
             );
         }
 
-        $context->markSecondFactorVerified();
         $this->getAuthenticationLogger()->logSecondFactorAuthentication($originalRequestId, $authenticationMode);
+        $context->markSecondFactorVerified();
 
         $logger->info(sprintf(
             'Marked GSSF "%s" as verified, forwarding to Gateway controller to respond',
