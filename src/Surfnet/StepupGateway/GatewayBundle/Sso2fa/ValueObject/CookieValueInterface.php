@@ -29,4 +29,6 @@ interface CookieValueInterface
     public function authenticationTime(): int;
 
     public function secondFactorId(): string;
+
+    public function getLoa(): float;
 }

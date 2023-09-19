@@ -174,7 +174,7 @@ class CookieService implements CookieServiceInterface
         if (!$remoteSp->allowSsoOn2fa()) {
             $this->logger->notice(
                 sprintf(
-                    'Ignoring SSO on 2FA for SP: %s',
+                    'SSO on 2FA is disabled by config for SP: %s',
                     $remoteSp->getEntityId()
                 )
             );
