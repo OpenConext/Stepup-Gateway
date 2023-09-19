@@ -36,6 +36,7 @@ use Surfnet\StepupGateway\GatewayBundle\Form\Type\SendSmsChallengeType;
 use Surfnet\StepupGateway\GatewayBundle\Form\Type\VerifySmsChallengeType;
 use Surfnet\StepupGateway\GatewayBundle\Form\Type\VerifyYubikeyOtpType;
 use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
+use Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorService;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\CookieService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\FormError;
@@ -122,13 +123,17 @@ class SecondFactorController extends Controller
          * @var CookieService $ssoCookieService
          */
         $ssoCookieService = $this->get('gateway.service.sso_2fa_cookie');
+        $ssoCookie = $ssoCookieService->read($request);
         if ($ssoCookieService->shouldSkip2faAuthentication(
             $context,
             $requiredLoa->getLevel(),
             $identityNameId,
-            $request
+            $ssoCookie
         )) {
             $logger->notice('Skipping second factor authentication. Required LoA was met by the LoA recorded in the cookie');
+            // We use the SF from the cookie as the SF that was used for authenticating the second factor authentication
+            $secondFactor = $this->getSecondFactorService()->findByUuid($ssoCookie->secondFactorId());
+            $this->getResponseContext($authenticationMode)->saveSelectedSecondFactor($secondFactor);
             $this->getResponseContext($authenticationMode)->markSecondFactorVerified();
             $this->getResponseContext($authenticationMode)->markVerifiedBySsoOn2faCookie($ssoCookieService->getCookieFingerprint($request));
             $this->getAuthenticationLogger()->logSecondFactorAuthentication($originalRequestId, $authenticationMode);
@@ -597,6 +602,11 @@ class SecondFactorController extends Controller
     private function getAuthenticationLogger()
     {
         return $this->get('gateway.authentication_logger');
+    }
+
+    private function getSecondFactorService(): SecondFactorService
+    {
+        return $this->get('gateway.service.second_factor_service');
     }
 
     /**
