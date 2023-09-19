@@ -138,27 +138,11 @@ class CookieService implements CookieServiceInterface
     /**
      * Test if the conditions of this authentication allows a SSO on 2FA
      */
-    public function shouldSkip2faAuthentication(
-        ResponseContext $responseContext,
+    public function maySkipAuthentication(
         float $requiredLoa,
         string $identityNameId,
         CookieValueInterface $ssoCookie
     ): bool {
-        if ($responseContext->isForceAuthn()) {
-            $this->logger->notice('Ignoring SSO on 2FA cookie when ForceAuthN is specified.');
-            return false;
-        }
-        $remoteSp = $this->getRemoteSp($responseContext);
-        // Test if the SP allows SSO on 2FA to take place (configured in MW config)
-        if (!$remoteSp->allowSsoOn2fa()) {
-            $this->logger->notice(
-                sprintf(
-                    'Ignoring SSO on 2FA for SP: %s',
-                    $remoteSp->getEntityId()
-                )
-            );
-            return false;
-        }
 
         // Perform validation on the cookie and its contents
         if (!$this->isCookieValid($ssoCookie, $requiredLoa, $identityNameId)) {
@@ -176,6 +160,26 @@ class CookieService implements CookieServiceInterface
         }
 
         $this->logger->notice('Verified the current 2FA authentication can be given with the SSO on 2FA cookie');
+        return true;
+    }
+
+    public function preconditionsAreMet(ResponseContext $responseContext): bool
+    {
+        if ($responseContext->isForceAuthn()) {
+            $this->logger->notice('Ignoring SSO on 2FA cookie when ForceAuthN is specified.');
+            return false;
+        }
+        $remoteSp = $this->getRemoteSp($responseContext);
+        // Test if the SP allows SSO on 2FA to take place (configured in MW config)
+        if (!$remoteSp->allowSsoOn2fa()) {
+            $this->logger->notice(
+                sprintf(
+                    'Ignoring SSO on 2FA for SP: %s',
+                    $remoteSp->getEntityId()
+                )
+            );
+            return false;
+        }
         return true;
     }
 
@@ -225,7 +229,7 @@ class CookieService implements CookieServiceInterface
         if ($ssoCookie instanceof CookieValue && !$ssoCookie->meetsRequiredLoa($requiredLoa)) {
             $this->logger->notice(
                 sprintf(
-                    'The required LoA %d did not match the LoA of the SSO cookie %d',
+                    'The required LoA %d did not match the LoA of the SSO cookie LoA %d',
                     $requiredLoa,
                     $ssoCookie->getLoa()
                 )

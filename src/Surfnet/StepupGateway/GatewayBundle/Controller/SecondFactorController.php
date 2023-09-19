@@ -104,6 +104,26 @@ class SecondFactorController extends Controller
             return $this->forward($context->getResponseAction());
         }
 
+        // The preconditions must be met in order to give SSO on 2FA
+        // 1: AuthNRequest is not force authn. 2: The SP allows SSO on 2FA.
+        if ($this->getCookieService()->preconditionsAreMet($context)) {
+            // Now read the SSO cookie
+            $ssoCookie = $this->getCookieService()->read($request);
+            // Test if the SSO cookie can satisfy the second factor authentication requirements
+            if ($this->getCookieService()->maySkipAuthentication($requiredLoa->getLevel(), $identityNameId, $ssoCookie)) {
+                $logger->notice('Skipping second factor authentication. Required LoA was met by the LoA recorded in the cookie');
+                // We use the SF from the cookie as the SF that was used for authenticating the second factor authentication
+                $secondFactor = $this->getSecondFactorService()->findByUuid($ssoCookie->secondFactorId());
+                $this->getResponseContext($authenticationMode)->saveSelectedSecondFactor($secondFactor);
+                $this->getResponseContext($authenticationMode)->markSecondFactorVerified();
+                $this->getResponseContext($authenticationMode)->markVerifiedBySsoOn2faCookie(
+                    $this->getCookieService()->getCookieFingerprint($request)
+                );
+                $this->getAuthenticationLogger()->logSecondFactorAuthentication($originalRequestId, $authenticationMode);
+                return $this->forward($context->getResponseAction());
+            }
+        }
+
         $secondFactorCollection = $this
             ->getStepupService()
             ->determineViableSecondFactors(
@@ -111,27 +131,6 @@ class SecondFactorController extends Controller
                 $requiredLoa,
                 $this->get('gateway.service.whitelist')
             );
-
-        /**
-         * @var CookieService $ssoCookieService
-         */
-        $ssoCookieService = $this->get('gateway.service.sso_2fa_cookie');
-        $ssoCookie = $ssoCookieService->read($request);
-        if ($ssoCookieService->shouldSkip2faAuthentication(
-            $context,
-            $requiredLoa->getLevel(),
-            $identityNameId,
-            $ssoCookie
-        )) {
-            $logger->notice('Skipping second factor authentication. Required LoA was met by the LoA recorded in the cookie');
-            // We use the SF from the cookie as the SF that was used for authenticating the second factor authentication
-            $secondFactor = $this->getSecondFactorService()->findByUuid($ssoCookie->secondFactorId());
-            $this->getResponseContext($authenticationMode)->saveSelectedSecondFactor($secondFactor);
-            $this->getResponseContext($authenticationMode)->markSecondFactorVerified();
-            $this->getResponseContext($authenticationMode)->markVerifiedBySsoOn2faCookie($ssoCookieService->getCookieFingerprint($request));
-            $this->getAuthenticationLogger()->logSecondFactorAuthentication($originalRequestId, $authenticationMode);
-            return $this->forward($context->getResponseAction());
-        }
         switch (count($secondFactorCollection)) {
             case 0:
                 $logger->notice('No second factors can give the determined Loa');
@@ -590,6 +589,10 @@ class SecondFactorController extends Controller
         return $this->get('gateway.authentication_logger');
     }
 
+    private function getCookieService(): CookieService
+    {
+        return $this->get('gateway.service.sso_2fa_cookie');
+    }
     private function getSecondFactorService(): SecondFactorService
     {
         return $this->get('gateway.service.second_factor_service');
