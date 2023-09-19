@@ -136,15 +136,13 @@ class CookieService implements CookieServiceInterface
     }
 
     /**
-     * Allow high cyclomatic complexity in favour of keeping this method readable
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * Test if the conditions of this authentication allows a SSO on 2FA
      */
     public function shouldSkip2faAuthentication(
         ResponseContext $responseContext,
         float $requiredLoa,
         string $identityNameId,
-        Request $request
+        CookieValueInterface $ssoCookie
     ): bool {
         if ($responseContext->isForceAuthn()) {
             $this->logger->notice('Ignoring SSO on 2FA cookie when ForceAuthN is specified.');
@@ -162,13 +160,11 @@ class CookieService implements CookieServiceInterface
             return false;
         }
 
-        $ssoCookie = $this->read($request);
         // Perform validation on the cookie and its contents
         if (!$this->isCookieValid($ssoCookie, $requiredLoa, $identityNameId)) {
             return false;
         }
 
-        $secondFactor = $this->secondFactorService->findByUuid($ssoCookie->secondFactorId());
         if (!$this->secondFactorService->findByUuid($ssoCookie->secondFactorId())) {
             $this->logger->notice(
                 'The second factor stored in the SSO cookie was revoked or has otherwise became unknown to Gateway',
@@ -180,7 +176,6 @@ class CookieService implements CookieServiceInterface
         }
 
         $this->logger->notice('Verified the current 2FA authentication can be given with the SSO on 2FA cookie');
-        $responseContext->saveSelectedSecondFactor($secondFactor);
         return true;
     }
 
@@ -194,7 +189,7 @@ class CookieService implements CookieServiceInterface
         $this->cookieHelper->write($response, $cookieValue);
     }
 
-    private function read(Request $request): CookieValueInterface
+    public function read(Request $request): CookieValueInterface
     {
         try {
             return $this->cookieHelper->read($request);
