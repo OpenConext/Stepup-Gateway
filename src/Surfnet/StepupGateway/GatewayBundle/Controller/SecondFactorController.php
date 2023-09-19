@@ -70,22 +70,17 @@ class SecondFactorController extends Controller
     {
         $this->supportsAuthenticationMode($authenticationMode);
         $context = $this->getResponseContext($authenticationMode);
-
         $originalRequestId = $context->getInResponseTo();
-
         /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
         $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
         $logger->notice('Determining which second factor to use...');
-
         try {
             // Retrieve all requirements to determine the required LoA
             $requestedLoa = $context->getRequiredLoa();
             $spConfiguredLoas = $context->getServiceProvider()->get('configuredLoas');
-
             $identityNameId = $context->getIdentityNameId();
             $normalizedIdpSho = $context->getNormalizedSchacHomeOrganization();
             $normalizedUserSho = $this->getStepupService()->getNormalizedUserShoByIdentityNameId($identityNameId);
-
             $requiredLoa = $this
                 ->getStepupService()
                 ->resolveHighestRequiredLoa(
@@ -97,7 +92,6 @@ class SecondFactorController extends Controller
         } catch (LoaCannotBeGivenException $e) {
             // Log the message of the domain exception, this contains a meaningful message.
             $logger->notice($e->getMessage());
-
             return $this->forward(
                 'SurfnetStepupGatewayGatewayBundle:Gateway:sendLoaCannotBeGiven',
                 ['authenticationMode' => $authenticationMode]
@@ -105,7 +99,6 @@ class SecondFactorController extends Controller
         }
 
         $logger->notice(sprintf('Determined that the required Loa is "%s"', $requiredLoa));
-
         if ($this->getStepupService()->isIntrinsicLoa($requiredLoa)) {
             $this->get('gateway.authentication_logger')->logIntrinsicLoaAuthentication($originalRequestId);
             return $this->forward($context->getResponseAction());
@@ -142,13 +135,10 @@ class SecondFactorController extends Controller
         switch (count($secondFactorCollection)) {
             case 0:
                 $logger->notice('No second factors can give the determined Loa');
-
                 return $this->forward(
                     'SurfnetStepupGatewayGatewayBundle:Gateway:sendLoaCannotBeGiven',
                     ['authenticationMode' => $authenticationMode]
                 );
-                break;
-
             case 1:
                 $secondFactor = $secondFactorCollection->first();
                 $logger->notice(sprintf(
@@ -156,16 +146,12 @@ class SecondFactorController extends Controller
                     count($secondFactorCollection),
                     $secondFactor->secondFactorType
                 ));
-
                 return $this->selectAndRedirectTo($secondFactor, $context, $authenticationMode);
-                break;
-
             default:
                 return $this->forward(
                     'SurfnetStepupGatewayGatewayBundle:SecondFactor:chooseSecondFactor',
                     ['authenticationMode' => $authenticationMode, 'secondFactors' => $secondFactorCollection]
                 );
-                break;
         }
     }
 
