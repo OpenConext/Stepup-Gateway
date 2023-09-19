@@ -44,4 +44,9 @@ class NullCookieValue implements CookieValueInterface
     {
         return '';
     }
+
+    public function getLoa(): float
+    {
+        return 0.0;
+    }
 }

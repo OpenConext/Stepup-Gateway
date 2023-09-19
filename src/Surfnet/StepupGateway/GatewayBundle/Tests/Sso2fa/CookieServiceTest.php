@@ -199,7 +199,7 @@ class CookieServiceTest extends TestCase
 
         $this->logger
             ->shouldReceive('notice')
-            ->with('Ignoring SSO on 2FA for SP: https://remote.sp.stepup.example.com');
+            ->with('SSO on 2FA is disabled by config for SP: https://remote.sp.stepup.example.com');
 
         self::assertFalse($this->service->preconditionsAreMet($this->responseContext));
     }
