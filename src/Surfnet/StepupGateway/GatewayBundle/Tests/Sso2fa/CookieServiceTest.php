@@ -18,7 +18,6 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Test\Sso2fa;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -37,6 +36,7 @@ use Surfnet\StepupGateway\GatewayBundle\Sso2fa\DateTime\ExpirationHelperInterfac
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Http\CookieHelper;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\Configuration;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\CookieValue;
+use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\NullCookieValue;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -84,6 +84,10 @@ class CookieServiceTest extends TestCase
     private $expirationHelper;
 
     /**
+     * @var ServiceProvider&Mockery\Mock
+     */
+    private $sp;
+    /**
      * @var Mockery\Mock|(Mockery\MockInterface&LoggerInterface)
      */
     private $logger;
@@ -116,19 +120,88 @@ class CookieServiceTest extends TestCase
             ->shouldReceive('isForceAuthn')
             ->andReturnFalse();
 
-        $sp = Mockery::mock(ServiceProvider::class);
-        $sp
+        $this->sp = Mockery::mock(ServiceProvider::class);
+        $this->sp
             ->shouldReceive('getEntityId')
             ->andReturn('https://remote.sp.stepup.example.com');
-        $sp
+        $this->sp
             ->shouldReceive('allowedToSetSsoCookieOn2fa')
             ->andReturnTrue();
-        $sp
+        $this->sp
             ->shouldReceive('allowSsoOn2fa')
             ->andReturnTrue();
         $this->responseContext
             ->shouldReceive('getServiceProvider')
-            ->andReturn($sp);
+            ->andReturn($this->sp);
+    }
+
+    public function test_check_preconditions_happy()
+    {
+        $this->buildService(
+            new Configuration(
+                'test-cookie',
+                'session',
+                0,
+                '0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f'
+            ),
+            false
+        );
+        self::assertTrue($this->service->preconditionsAreMet($this->responseContext));
+    }
+
+    public function test_check_preconditions_is_force_authn()
+    {
+        $this->buildService(
+            new Configuration(
+                'test-cookie',
+                'session',
+                0,
+                '0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f'
+            ),
+            false
+        );
+        $this->responseContext = Mockery::mock(ResponseContext::class);
+        $this->responseContext
+            ->shouldReceive('isForceAuthn')
+            ->andReturnTrue();
+        $this->logger
+            ->shouldReceive('notice')
+            ->with('Ignoring SSO on 2FA cookie when ForceAuthN is specified.');
+
+        self::assertFalse($this->service->preconditionsAreMet($this->responseContext));
+    }
+
+    public function test_check_preconditions_is_remote_sp_disabled()
+    {
+        $this->buildService(
+            new Configuration(
+                'test-cookie',
+                'session',
+                0,
+                '0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f'
+            ),
+            false
+        );
+        $this->sp = Mockery::mock(ServiceProvider::class);
+        $this->sp
+            ->shouldReceive('allowSsoOn2fa')
+            ->andReturnFalse();
+        $this->sp
+            ->shouldReceive('getEntityId')
+            ->andReturn('https://remote.sp.stepup.example.com');
+        $this->responseContext = Mockery::mock(ResponseContext::class);
+        $this->responseContext
+            ->shouldReceive('isForceAuthn')
+            ->andReturnFalse();
+        $this->responseContext
+            ->shouldReceive('getServiceProvider')
+            ->andReturn($this->sp);
+
+        $this->logger
+            ->shouldReceive('notice')
+            ->with('SSO on 2FA is disabled by config for SP: https://remote.sp.stepup.example.com');
+
+        self::assertFalse($this->service->preconditionsAreMet($this->responseContext));
     }
 
     public function test_storing_a_session_cookie()
@@ -173,7 +246,7 @@ class CookieServiceTest extends TestCase
             ->andReturn(2.0);
         $this->responseContext
             ->shouldReceive('isVerifiedBySsoOn2faCookie')
-            ->andReturn(true);
+            ->andReturn(false);
 
         $response = $this->service->handleSsoOn2faCookieStorage($this->responseContext, $request, $response);
 
@@ -230,7 +303,7 @@ class CookieServiceTest extends TestCase
             ->andReturn(3.0);
         $this->responseContext
             ->shouldReceive('isVerifiedBySsoOn2faCookie')
-            ->andReturn(true);
+            ->andReturn(false);
 
         $response = $this->service->handleSsoOn2faCookieStorage($this->responseContext, $request, $response);
 
@@ -409,87 +482,23 @@ class CookieServiceTest extends TestCase
                 '0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f'
             )
         );
-        $yubikey = $this->buildSecondFactor(3.0, 'identifier');
-        $collection = new ArrayCollection([
-            $yubikey,
-        ]);
-
-        $httpRequest = new Request();
+        $yubikey = $this->buildSecondFactor(3.0, 'abcdef-1234');
         $cookieValue = $this->cookieValue();
-        $httpRequest->cookies->add(
-            [$this->configuration->getName() => $this->createCookieWithValue($this->encryptionHelper->encrypt($cookieValue))->getValue()]
-        );
-
-        $this->responseContext
-            ->shouldReceive('saveSelectedSecondFactor')
-            ->with($yubikey);
 
         $this->expirationHelper
             ->shouldReceive('isExpired')
             ->andReturn(false);
 
-        $token = Mockery::mock(SecondFactor::class);
         $this->secondFactorService
             ->shouldReceive('findByUuid')
-            ->andReturn($token);
+            ->with('abcdef-1234')
+            ->andReturn($yubikey);
 
         self::assertTrue(
-            $this->service->shouldSkip2faAuthentication(
-                $this->responseContext,
+            $this->service->maySkipAuthentication(
                 3.0,
-                'abcdef-1234',
-                $collection,
-                $httpRequest
-            )
-        );
-    }
-
-    public function test_skipping_authentication_succeeds_selects_correct_token()
-    {
-        $this->buildService(
-            new Configuration(
-                'test-cookie',
-                'session',
-                0,
-                '0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f'
-            )
-        );
-        $yubikey = $this->buildSecondFactor(3.0, 'identifier-1');
-        $sms = $this->buildSecondFactor(2.0, 'identifier-2');
-        $bogus = $this->buildSecondFactor(2.0, 'identifier-3');
-        $collection = new ArrayCollection([
-            $sms,
-            $bogus,
-            $yubikey,
-        ]);
-
-        $httpRequest = new Request();
-        $cookieValue = $this->cookieValue();
-        $httpRequest->cookies->add(
-            [$this->configuration->getName() => $this->createCookieWithValue($this->encryptionHelper->encrypt($cookieValue))->getValue()]
-        );
-
-        // The Yubikey is the only suitable token available that satisfies the LoA requirement
-        $this->responseContext
-            ->shouldReceive('saveSelectedSecondFactor')
-            ->with($yubikey);
-
-        $this->expirationHelper
-            ->shouldReceive('isExpired')
-            ->andReturn(false);
-
-        $token = Mockery::mock(SecondFactor::class);
-        $this->secondFactorService
-            ->shouldReceive('findByUuid')
-            ->andReturn($token);
-
-        self::assertTrue(
-            $this->service->shouldSkip2faAuthentication(
-                $this->responseContext,
-                3.0,
-                'abcdef-1234',
-                $collection,
-                $httpRequest
+                'ident-1234',
+                $cookieValue
             )
         );
     }
@@ -504,57 +513,12 @@ class CookieServiceTest extends TestCase
                 '0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f'
             )
         );
-        $httpRequest = new Request();
 
         self::assertFalse(
-            $this->service->shouldSkip2faAuthentication(
-                $this->responseContext,
+            $this->service->maySkipAuthentication(
                 3.0,
                 'abcdef-1234',
-                Mockery::mock(ArrayCollection::class),
-                $httpRequest
-            )
-        );
-    }
-
-    public function test_skip_sso_when_sp_disallows_sso_on_2fa()
-    {
-        $this->buildService(
-            new Configuration(
-                'test-cookie',
-                'session',
-                0,
-                '0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f'
-            )
-        );
-
-        $this->responseContext = Mockery::mock(ResponseContext::class);
-        $sp = Mockery::mock(ServiceProvider::class);
-        $sp
-            ->shouldReceive('getEntityId')
-            ->andReturn('https://ra.stepup.example.com/vetting-procedure/gssf/tiqr/metadata');
-        $sp
-            ->shouldReceive('allowSsoOn2fa')
-            ->andReturnFalse();
-        $this->responseContext
-            ->shouldReceive('getServiceProvider')
-            ->andReturn($sp);
-        $this->responseContext
-            ->shouldReceive('isForceAuthn')->andReturn(false);
-
-        $cookieValue = $this->cookieValue();
-        $httpRequest = new Request();
-        $httpRequest->cookies->add(
-            [$this->configuration->getName() => $this->createCookieWithValue($this->encryptionHelper->encrypt($cookieValue))->getValue()]
-        );
-
-        self::assertFalse(
-            $this->service->shouldSkip2faAuthentication(
-                $this->responseContext,
-                3.0,
-                'abcdef-1234',
-                Mockery::mock(ArrayCollection::class),
-                $httpRequest
+                Mockery::mock(NullCookieValue::class)
             )
         );
     }
@@ -567,50 +531,20 @@ class CookieServiceTest extends TestCase
                 'session',
                 0,
                 '0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f'
-            )
+            ),
+            false
         );
-        $httpRequest = new Request();
         $cookieValue = $this->cookieValue();
-        $httpRequest->cookies->add(
-            [$this->configuration->getName() => $this->createCookieWithValue($this->encryptionHelper->encrypt($cookieValue))->getValue()]
-        );
+
+        $this->logger
+            ->shouldReceive('notice')
+            ->with('The required LoA 4 did not match the LoA of the SSO cookie LoA 3');
+
         self::assertFalse(
-            $this->service->shouldSkip2faAuthentication(
-                $this->responseContext,
+            $this->service->maySkipAuthentication(
                 4.0, // LoA required by SP is 4.0, the one in the cookie is 3.0
                 'abcdef-1234',
-                Mockery::mock(ArrayCollection::class),
-                $httpRequest
-            )
-        );
-    }
-
-    public function test_skipping_authentication_fails_when_force_authn_requested()
-    {
-        $this->buildService(
-            new Configuration(
-                'test-cookie',
-                'session',
-                0,
-                '0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f'
-            )
-        );
-        $httpRequest = new Request();
-        $cookieValue = $this->cookieValue();
-        $httpRequest->cookies->add(
-            [$this->configuration->getName() => $this->createCookieWithValue($this->encryptionHelper->encrypt($cookieValue))->getValue()]
-        );
-        $this->responseContext = Mockery::mock(ResponseContext::class);
-        $this->responseContext
-            ->shouldReceive('isForceAuthn')->andReturn(true);
-
-        self::assertFalse(
-            $this->service->shouldSkip2faAuthentication(
-                $this->responseContext,
-                3.0,
-                'abcdef-1234',
-                Mockery::mock(ArrayCollection::class),
-                $httpRequest
+                $cookieValue
             )
         );
     }
@@ -623,25 +557,25 @@ class CookieServiceTest extends TestCase
                 'session',
                 0,
                 '0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f'
-            )
+            ),
+            false
         );
-        $httpRequest = new Request();
         $cookieValue = $this->cookieValue();
-        $httpRequest->cookies->add(
-            [$this->configuration->getName() => $this->createCookieWithValue($this->encryptionHelper->encrypt($cookieValue))->getValue()]
-        );
+
+        $this->logger
+            ->shouldReceive('notice')
+            ->with('The SSO on 2FA cookie was not issued to Jane Doe, but to ident-1234');
+
         self::assertFalse(
-            $this->service->shouldSkip2faAuthentication(
-                $this->responseContext,
+            $this->service->maySkipAuthentication(
                 2.0,
                 'Jane Doe', // Not issued to Jane Doe but to abcdef-1234
-                Mockery::mock(ArrayCollection::class),
-                $httpRequest
+                $cookieValue
             )
         );
     }
 
-    public function test_skipping_authentication_fails_when_no_suitable_available_token_is_present()
+    public function test_skipping_authentication_fails_when_token_expired()
     {
         $this->buildService(
             new Configuration(
@@ -649,35 +583,25 @@ class CookieServiceTest extends TestCase
                 'session',
                 0,
                 '0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f'
-            )
+            ),
+            false
         );
-        $yubikey = $this->buildSecondFactor(3.0, 'identifier-1');
-        $sms = $this->buildSecondFactor(2.0, 'identifier-2');
-        $bogus = $this->buildSecondFactor(2.0, 'identifier-3');
-        $collection = new ArrayCollection([
-            $sms,
-            $bogus,
-            $yubikey,
-        ]);
 
-        $httpRequest = new Request();
         $cookieValue = $this->cookieValue();
-        $httpRequest->cookies->add(
-            [$this->configuration->getName() => $this->createCookieWithValue($this->encryptionHelper->encrypt($cookieValue))->getValue()]
-        );
 
-        // The Yubikey is the only suitable token available that satisfies the LoA requirement
-        $this->responseContext
-            ->shouldReceive('saveSelectedSecondFactor')
-            ->with($yubikey);
+        $this->expirationHelper
+            ->shouldReceive('isExpired')
+            ->andReturn(true);
+
+        $this->logger
+            ->shouldReceive('notice')
+            ->with('The SSO on 2FA cookie has expired. Meaning [authentication time] + [cookie lifetime] is in the past');
 
         self::assertFalse(
-            $this->service->shouldSkip2faAuthentication(
-                $this->responseContext,
-                4.0, // LoA 4 is required, Identity only has LoA 2 and 3 tokens, no bueno
-                'abcdef-1234',
-                $collection,
-                $httpRequest
+            $this->service->maySkipAuthentication(
+                3.0,
+                'ident-1234',
+                $cookieValue
             )
         );
     }
@@ -690,27 +614,11 @@ class CookieServiceTest extends TestCase
                 'session',
                 0,
                 '0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f'
-            )
+            ),
+            false
         );
-        $yubikey = $this->buildSecondFactor(3.0, 'identifier-1');
-        $sms = $this->buildSecondFactor(2.0, 'identifier-2');
-        $bogus = $this->buildSecondFactor(2.0, 'identifier-3');
-        $collection = new ArrayCollection([
-            $sms,
-            $bogus,
-            $yubikey,
-        ]);
 
-        $httpRequest = new Request();
         $cookieValue = $this->cookieValue();
-        $httpRequest->cookies->add(
-            [$this->configuration->getName() => $this->createCookieWithValue($this->encryptionHelper->encrypt($cookieValue))->getValue()]
-        );
-
-        // The Yubikey is the only suitable token available that satisfies the LoA requirement
-        $this->responseContext
-            ->shouldReceive('saveSelectedSecondFactor')
-            ->with($yubikey);
 
         $this->expirationHelper
             ->shouldReceive('isExpired')
@@ -721,41 +629,15 @@ class CookieServiceTest extends TestCase
             ->shouldReceive('findByUuid')
             ->andReturnNull();
 
-        self::assertFalse(
-            $this->service->shouldSkip2faAuthentication(
-                $this->responseContext,
-                3.0,
-                'abcdef-1234',
-                $collection,
-                $httpRequest
-            )
+        $this->logger->shouldReceive('notice')->with(
+            'The second factor stored in the SSO cookie was revoked or has otherwise became unknown to Gateway',
+            ['secondFactorIdFromCookie' => 'abcdef-1234']
         );
-    }
-
-    public function test_reading_cookie_can_fail()
-    {
-        $this->buildService(
-            new Configuration(
-                'test-cookie',
-                'session',
-                0,
-                '0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f'
-            )
-        );
-        $yubikey = $this->buildSecondFactor(3.0, 'identifier-1');
-        $collection = new ArrayCollection([
-            $yubikey,
-        ]);
-        $httpRequest = new Request();
-        $httpRequest->cookies->add([$this->configuration->getName() => 'thiscookieisbroken']);
-
         self::assertFalse(
-            $this->service->shouldSkip2faAuthentication(
-                $this->responseContext,
+            $this->service->maySkipAuthentication(
                 3.0,
-                'abcdef-1234',
-                $collection,
-                $httpRequest
+                'ident-1234',
+                $cookieValue
             )
         );
     }
@@ -764,7 +646,8 @@ class CookieServiceTest extends TestCase
     {
         $secondFactor = Mockery::mock(SecondFactor::class);
         $secondFactor->secondFactorId = 'abcdef-1234';
-        $secondFactor->identityId = 'abcdef-1234';
+        $secondFactor->secondFactorIdentifier = 'identifier-abcdef-1234';
+        $secondFactor->identityId = 'ident-1234';
         $loa = new Loa(3.0, 'LoA3');
         return CookieValue::from($secondFactor->identityId, $secondFactor->secondFactorId, $loa->getLevel());
     }
@@ -788,6 +671,7 @@ class CookieServiceTest extends TestCase
     {
         $token = Mockery::mock(SecondFactor::class)->makePartial();
         $token->secondFactorId = $identifier;
+        $token->secondFactorIdentifier = 'identifier-' . $identifier;
         $token->displayLocale = 'nl';
         $token->shouldReceive('getLoaLevel')->andReturn($loaLevel);
         return $token;

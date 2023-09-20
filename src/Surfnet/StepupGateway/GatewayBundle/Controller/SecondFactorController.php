@@ -36,6 +36,7 @@ use Surfnet\StepupGateway\GatewayBundle\Form\Type\SendSmsChallengeType;
 use Surfnet\StepupGateway\GatewayBundle\Form\Type\VerifySmsChallengeType;
 use Surfnet\StepupGateway\GatewayBundle\Form\Type\VerifyYubikeyOtpType;
 use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
+use Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorService;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\CookieService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\FormError;
@@ -69,22 +70,17 @@ class SecondFactorController extends Controller
     {
         $this->supportsAuthenticationMode($authenticationMode);
         $context = $this->getResponseContext($authenticationMode);
-
         $originalRequestId = $context->getInResponseTo();
-
         /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
         $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
         $logger->notice('Determining which second factor to use...');
-
         try {
             // Retrieve all requirements to determine the required LoA
             $requestedLoa = $context->getRequiredLoa();
             $spConfiguredLoas = $context->getServiceProvider()->get('configuredLoas');
-
             $identityNameId = $context->getIdentityNameId();
             $normalizedIdpSho = $context->getNormalizedSchacHomeOrganization();
             $normalizedUserSho = $this->getStepupService()->getNormalizedUserShoByIdentityNameId($identityNameId);
-
             $requiredLoa = $this
                 ->getStepupService()
                 ->resolveHighestRequiredLoa(
@@ -96,7 +92,6 @@ class SecondFactorController extends Controller
         } catch (LoaCannotBeGivenException $e) {
             // Log the message of the domain exception, this contains a meaningful message.
             $logger->notice($e->getMessage());
-
             return $this->forward(
                 'SurfnetStepupGatewayGatewayBundle:Gateway:sendLoaCannotBeGiven',
                 ['authenticationMode' => $authenticationMode]
@@ -104,10 +99,35 @@ class SecondFactorController extends Controller
         }
 
         $logger->notice(sprintf('Determined that the required Loa is "%s"', $requiredLoa));
-
         if ($this->getStepupService()->isIntrinsicLoa($requiredLoa)) {
             $this->get('gateway.authentication_logger')->logIntrinsicLoaAuthentication($originalRequestId);
             return $this->forward($context->getResponseAction());
+        }
+
+        // The preconditions must be met in order to give SSO on 2FA
+        // 1: AuthNRequest is not force authn. 2: The SP allows SSO on 2FA.
+        if ($this->getCookieService()->preconditionsAreMet($context)) {
+            // Now read the SSO cookie
+            $ssoCookie = $this->getCookieService()->read($request);
+            // Test if the SSO cookie can satisfy the second factor authentication requirements
+            if ($this->getCookieService()->maySkipAuthentication($requiredLoa->getLevel(), $identityNameId, $ssoCookie)) {
+                $logger->notice(
+                    'Skipping second factor authentication. Required LoA was met by the LoA recorded in the cookie',
+                    [
+                        'required-loa' => $requiredLoa->getLevel(),
+                        'cookie-loa' => $ssoCookie->getLoa()
+                    ]
+                );
+                // We use the SF from the cookie as the SF that was used for authenticating the second factor authentication
+                $secondFactor = $this->getSecondFactorService()->findByUuid($ssoCookie->secondFactorId());
+                $this->getResponseContext($authenticationMode)->saveSelectedSecondFactor($secondFactor);
+                $this->getResponseContext($authenticationMode)->markSecondFactorVerified();
+                $this->getResponseContext($authenticationMode)->markVerifiedBySsoOn2faCookie(
+                    $this->getCookieService()->getCookieFingerprint($request)
+                );
+                $this->getAuthenticationLogger()->logSecondFactorAuthentication($originalRequestId, $authenticationMode);
+                return $this->forward($context->getResponseAction());
+            }
         }
 
         $secondFactorCollection = $this
@@ -117,34 +137,13 @@ class SecondFactorController extends Controller
                 $requiredLoa,
                 $this->get('gateway.service.whitelist')
             );
-
-        /**
-         * @var CookieService $ssoCookieService
-         */
-        $ssoCookieService = $this->get('gateway.service.sso_2fa_cookie');
-        if ($ssoCookieService->shouldSkip2faAuthentication(
-            $context,
-            $requiredLoa->getLevel(),
-            $identityNameId,
-            $secondFactorCollection,
-            $request
-        )) {
-            $logger->notice('Skipping second factor authentication. Required LoA was met by the LoA recorded in the cookie');
-            $this->getResponseContext($authenticationMode)->markSecondFactorVerified();
-            $this->getResponseContext($authenticationMode)->markVerifiedBySsoOn2faCookie($ssoCookieService->getCookieFingerprint($request));
-            $this->getAuthenticationLogger()->logSecondFactorAuthentication($originalRequestId, $authenticationMode);
-            return $this->forward($context->getResponseAction());
-        }
         switch (count($secondFactorCollection)) {
             case 0:
                 $logger->notice('No second factors can give the determined Loa');
-
                 return $this->forward(
                     'SurfnetStepupGatewayGatewayBundle:Gateway:sendLoaCannotBeGiven',
                     ['authenticationMode' => $authenticationMode]
                 );
-                break;
-
             case 1:
                 $secondFactor = $secondFactorCollection->first();
                 $logger->notice(sprintf(
@@ -152,16 +151,12 @@ class SecondFactorController extends Controller
                     count($secondFactorCollection),
                     $secondFactor->secondFactorType
                 ));
-
                 return $this->selectAndRedirectTo($secondFactor, $context, $authenticationMode);
-                break;
-
             default:
                 return $this->forward(
                     'SurfnetStepupGatewayGatewayBundle:SecondFactor:chooseSecondFactor',
                     ['authenticationMode' => $authenticationMode, 'secondFactors' => $secondFactorCollection]
                 );
-                break;
         }
     }
 
@@ -354,8 +349,8 @@ class SecondFactorController extends Controller
             );
         }
 
-        $context->markSecondFactorVerified();
         $this->getAuthenticationLogger()->logSecondFactorAuthentication($originalRequestId, $authenticationMode);
+        $context->markSecondFactorVerified();
 
         $logger->info(sprintf(
             'Marked GSSF "%s" as verified, forwarding to Gateway controller to respond',
@@ -598,6 +593,15 @@ class SecondFactorController extends Controller
     private function getAuthenticationLogger()
     {
         return $this->get('gateway.authentication_logger');
+    }
+
+    private function getCookieService(): CookieService
+    {
+        return $this->get('gateway.service.sso_2fa_cookie');
+    }
+    private function getSecondFactorService(): SecondFactorService
+    {
+        return $this->get('gateway.service.second_factor_service');
     }
 
     /**

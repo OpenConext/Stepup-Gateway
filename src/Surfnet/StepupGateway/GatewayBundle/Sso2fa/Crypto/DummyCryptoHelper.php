@@ -19,6 +19,7 @@
 namespace Surfnet\StepupGateway\GatewayBundle\Sso2fa\Crypto;
 
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\CookieValue;
+use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\CookieValueInterface;
 
 /**
  * Warning! Do not use this helper in a production environment
@@ -27,7 +28,7 @@ use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\CookieValue;
  */
 class DummyCryptoHelper implements CryptoHelperInterface
 {
-    public function encrypt(CookieValue $cookieValue): string
+    public function encrypt(CookieValueInterface $cookieValue): string
     {
         return $cookieValue->serialize();
     }

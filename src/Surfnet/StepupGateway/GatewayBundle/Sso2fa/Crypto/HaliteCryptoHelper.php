@@ -26,6 +26,7 @@ use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Exception\DecryptionFailedExcepti
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Exception\EncryptionFailedException;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\Configuration;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\CookieValue;
+use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\CookieValueInterface;
 
 class HaliteCryptoHelper implements CryptoHelperInterface
 {
@@ -47,7 +48,7 @@ class HaliteCryptoHelper implements CryptoHelperInterface
      * derived key, or the secret key input in the HKDF. Encrypting many messages using the same
      * secret key is not a problem in this design.
      */
-    public function encrypt(CookieValue $cookieValue): string
+    public function encrypt(CookieValueInterface $cookieValue): string
     {
         try {
             $plainTextCookieValue = new HiddenString($cookieValue->serialize());
