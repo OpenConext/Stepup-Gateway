@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.2.2
+- Simplify cookie write conditions and other improvements #302
+- Bugfix: removed unwarranted state change of the selected second factor #302
+- Remove "Stepup Gateway" title from header #303
+
 ## 4.2.1
 Refinements and bugfixes surrounding the SSO on 2FA
 - Reset the SSO cookie on every real 2FA authentication #301
