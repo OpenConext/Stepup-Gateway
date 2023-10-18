@@ -19,7 +19,9 @@
 namespace Surfnet\StepupGateway\SamlStepupProviderBundle\Saml;
 
 use Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler;
+use Surfnet\StepupGateway\SamlStepupProviderBundle\Exception\InvalidSubjectException;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
+use function strtolower;
 
 class StateHandler extends ProxyStateHandler
 {
@@ -39,12 +41,20 @@ class StateHandler extends ProxyStateHandler
         $this->provider = $provider;
     }
 
-    /**
-     * @param string $subject
-     * @return $this
-     */
-    public function setSubject($subject)
+    public function setSubject(string $subject): self
     {
+        $currentSubject = $this->get('subject');
+        if (!empty($currentSubject)) {
+            if (strtolower($currentSubject) !== strtolower($subject)) {
+                throw new InvalidSubjectException(
+                    sprintf(
+                        'The subject should not be rewritten with another value. Old: "%s", new "%s"',
+                        $currentSubject,
+                        $subject
+                    )
+                );
+            }
+        }
         $this->set('subject', $subject);
 
         return $this;
