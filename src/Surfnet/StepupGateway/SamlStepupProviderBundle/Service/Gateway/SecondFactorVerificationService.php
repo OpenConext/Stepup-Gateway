@@ -21,8 +21,8 @@ use Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger;
 use Surfnet\SamlBundle\SAML2\AuthnRequest;
 use Surfnet\SamlBundle\SAML2\AuthnRequestFactory;
 use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
+use Surfnet\StepupGateway\SamlStepupProviderBundle\Exception\InvalidSubjectException;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\Provider;
-use Symfony\Component\HttpFoundation\Request;
 
 class SecondFactorVerificationService
 {
@@ -52,7 +52,7 @@ class SecondFactorVerificationService
      * Proxy a GSSP authentication request for use in the remote GSSP SSO endpoint.
      *
      * The user is about to be sent to the remote GSSP application for
-     * registration. Verification is not initiated with a SAML AUthnRequest,
+     * registration or authentication.
      *
      * The service provider in this context is SelfService (when registering
      * a token) or RA (when vetting a token).
@@ -64,8 +64,8 @@ class SecondFactorVerificationService
      */
     public function sendSecondFactorVerificationAuthnRequest(
         Provider $provider,
-        $subjectNameId,
-        $responseContextServiceId
+        string $subjectNameId,
+        string $responseContextServiceId
     ) {
         $stateHandler = $provider->getStateHandler();
 
@@ -73,6 +73,17 @@ class SecondFactorVerificationService
             $originalRequestId = $this->sfoResponseContext->getInResponseTo();
         } else {
             $originalRequestId = $this->responseContext->getInResponseTo();
+        }
+
+        $subject = $stateHandler->getSubject();
+        if (!empty($subject) && strtolower($subjectNameId) !== strtolower($subject)) {
+            throw new InvalidSubjectException(
+                sprintf(
+                    'The subject required for authentication (%s) does not match the one found in the state handler (%s)',
+                    $subjectNameId,
+                    $stateHandler->getSubject()
+                )
+            );
         }
 
         $authnRequest = AuthnRequestFactory::createNewRequest(
