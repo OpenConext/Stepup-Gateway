@@ -158,6 +158,8 @@ services:
             - "@second_factor_only.saml_response_factory"
             - "@gateway.service.second_factor_service"
             - "@surfnet_stepup.service.second_factor_type"
+            - "@gssp.provider_repository"
+            - "@second_factor_only.http.post_binding"
 
     second_factor_only.adfs_service:
         class: Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\Gateway\AdfsService

@@ -19,14 +19,19 @@
 namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\Gateway;
 
 use SAML2\Response;
+use Surfnet\SamlBundle\Http\PostBinding;
 use Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
+use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
 use Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorService;
+use Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\ProviderRepository;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Exception\InvalidSecondFactorMethodException;
+use Surfnet\StepupGateway\SecondFactorOnlyBundle\Exception\RuntimeException;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Saml\ResponseFactory;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\LoaAliasLookupService;
 use Surfnet\StepupBundle\Service\LoaResolutionService;
+use Symfony\Component\HttpFoundation\Request;
 
 class RespondService
 {
@@ -48,22 +53,21 @@ class RespondService
     /** @var SecondFactorTypeService */
     private $secondFactorTypeService;
 
-    /**
-     * SecondFactorRespondService constructor.
-     * @param SamlAuthenticationLogger $samlLogger
-     * @param LoaResolutionService $loaResolutionService
-     * @param LoaAliasLookupService $loaAliasLookupService
-     * @param ResponseFactory $responseFactory
-     * @param SecondFactorService $secondFactorService
-     * @param SecondFactorTypeService $secondFactorTypeService
-     */
+    /** @var ProviderRepository */
+    private $providerRepository;
+
+    /** @var PostBinding  */
+    private $postBinding;
+
     public function __construct(
         SamlAuthenticationLogger $samlLogger,
         LoaResolutionService $loaResolutionService,
         LoaAliasLookupService $loaAliasLookupService,
         ResponseFactory $responseFactory,
         SecondFactorService $secondFactorService,
-        SecondFactorTypeService $secondFactorTypeService
+        SecondFactorTypeService $secondFactorTypeService,
+        ProviderRepository $providerRepository,
+        PostBinding $postBinding
     ) {
         $this->samlLogger = $samlLogger;
         $this->loaResolutionService = $loaResolutionService;
@@ -71,6 +75,8 @@ class RespondService
         $this->responseFactory = $responseFactory;
         $this->secondFactorService = $secondFactorService;
         $this->secondFactorTypeService = $secondFactorTypeService;
+        $this->providerRepository = $providerRepository;
+        $this->postBinding = $postBinding;
     }
 
 
@@ -84,7 +90,7 @@ class RespondService
      * @param ResponseContext $responseContext
      * @return Response
      */
-    public function respond(ResponseContext $responseContext)
+    public function respond(ResponseContext $responseContext, Request $request)
     {
         $originalRequestId = $responseContext->getInResponseTo();
         $logger = $this->samlLogger->forAuthentication($originalRequestId);
@@ -105,6 +111,31 @@ class RespondService
         }
 
         $secondFactor = $this->secondFactorService->findByUuid($selectedSecondFactorUuid);
+
+        $secondFactorType = new SecondFactorType($secondFactor->secondFactorType);
+        // When dealing with a GSSP response. It is advised to receive the SAML response through POST Binding,
+        // testing the preconditions.
+        if ($this->secondFactorTypeService->isGssf($secondFactorType)) {
+            $provider = $this->providerRepository->get($secondFactorType->getSecondFactorType());
+            // Receive the response via POST Binding, this will test all the regular pre-conditions
+            $samlResponse = $this->postBinding->processResponse(
+                $request,
+                $provider->getRemoteIdentityProvider(),
+                $provider->getServiceProvider()
+            );
+            $nameIdFromResponse = $samlResponse->getNameId()->getValue();
+            // Additionally test if the name id from the gssp matches the SF identifier that we have in state
+            if ($nameIdFromResponse !== $secondFactor->secondFactorIdentifier) {
+                throw new RuntimeException(
+                    sprintf(
+                        'The NameId from the GSSP (%s) did not match that of the Identity that vetted the selected ' .
+                        'Second Factor (%s). This might be an indication someone is tampering with a GSSP',
+                        $nameIdFromResponse,
+                        $secondFactor->secondFactorIdentifier
+                    )
+                );
+            }
+        }
         $grantedLoa = $this->loaResolutionService
             ->getLoaByLevel($secondFactor->getLoaLevel($this->secondFactorTypeService));
 
