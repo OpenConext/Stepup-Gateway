@@ -124,7 +124,7 @@ class SecondFactorOnlyController extends Controller
         }
 
         try {
-            $response = $this->getSecondFactorRespondService()->respond($responseContext);
+            $response = $this->getSecondFactorRespondService()->respond($responseContext, $request);
         } catch (InvalidSecondFactorMethodException $e) {
             throw new BadRequestHttpException($e->getMessage());
         }
