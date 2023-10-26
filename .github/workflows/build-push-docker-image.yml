@@ -43,7 +43,7 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           build-args: |
-            version=${{ steps.release.outputs.tag_name }}
+            APP_VERSION=${{ steps.release.outputs.tag_name }}
           tags: |
             ghcr.io/openconext/stepup-gateway/stepup-gateway:prod
             ghcr.io/openconext/stepup-gateway/stepup-gateway:${{ github.sha }}
