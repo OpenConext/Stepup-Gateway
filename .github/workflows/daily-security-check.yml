@@ -97,6 +97,6 @@ jobs:
           SLACK_COLOR: ${{ job.status }}
           SLACK_ICON: https://static.surfconext.nl/logos/idp/surfnet.png
           SLACK_MESSAGE: 'Dependency check failed :crying_cat_face:'
-          SLACK_TITLE: Dependency check wants attention
+          SLACK_TITLE: ${{ github.repository }} wants attention
           SLACK_USERNAME: NightlySecurityCheck
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
