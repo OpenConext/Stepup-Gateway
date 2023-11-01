@@ -138,6 +138,12 @@ services:
             - "@gateway.service.sso_2fa_cookie_config"
         public: false
 
+    gateway.service.sso_2fa_expiration_helper:
+        class: Surfnet\StepupGateway\GatewayBundle\Sso2fa\DateTime\ExpirationHelper
+        arguments:
+            $cookieLifetime: "%sso_cookie_lifetime%"
+            $gracePeriod: 60
+
     gateway.service.sso_2fa_cookie_helper:
         class: Surfnet\StepupGateway\GatewayBundle\Sso2fa\Http\CookieHelper
         arguments:
@@ -151,10 +157,10 @@ services:
         arguments:
             - "@gateway.service.sso_2fa_cookie_helper"
             - "@gateway.service.institution_configuration"
-            - "@logger"
             - "@gateway.service.second_factor_service"
             - "@surfnet_stepup.service.second_factor_type"
-            - "@gssp.allowed_sps"
+            - "@gateway.service.sso_2fa_expiration_helper"
+            - "@logger"
 
     gateway.service.institution_configuration:
         class: Surfnet\StepupGateway\GatewayBundle\Service\InstitutionConfigurationService

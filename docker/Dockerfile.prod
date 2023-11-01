@@ -1,4 +1,6 @@
 FROM ghcr.io/openconext/openconext-basecontainers/php72-apache2:latest AS php-build
+ARG APP_VERSION
+ENV GATEWAY_VERSION=$APP_VERSION
 COPY *.tar.bz2 /tmp/
 RUN tar -xvjf /tmp/*.tar.bz2 -C /var/www/html/ && \
   rm -rf /tmp/*.tar.bz2

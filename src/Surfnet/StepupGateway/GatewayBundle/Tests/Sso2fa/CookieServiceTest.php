@@ -35,6 +35,8 @@ use Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorService;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\CookieService;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Crypto\CryptoHelper;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Crypto\HaliteCryptoHelper;
+use Surfnet\StepupGateway\GatewayBundle\Sso2fa\DateTime\ExpirationHelper;
+use Surfnet\StepupGateway\GatewayBundle\Sso2fa\DateTime\ExpirationHelperInterface;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Http\CookieHelper;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\Configuration;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\CookieValue;
@@ -86,6 +88,11 @@ class CookieServiceTest extends TestCase
      */
     private $encryptionHelper;
 
+    /**
+     * @var Mockery\LegacyMockInterface|Mockery\MockInterface|ExpirationHelperInterface|(ExpirationHelperInterface&Mockery\LegacyMockInterface)|(ExpirationHelperInterface&Mockery\MockInterface)
+     */
+    private $expirationHelper;
+
     protected function buildService(Configuration $configuration): void
     {
         // Not all dependencies are included for real, the ones not focussed on crypto and cookie storage are mocked
@@ -95,13 +102,15 @@ class CookieServiceTest extends TestCase
         $this->secondFactorTypeService = Mockery::mock(SecondFactorTypeService::class);
         $this->configuration = $configuration;
         $this->encryptionHelper = new HaliteCryptoHelper($configuration);
+        $this->expirationHelper = Mockery::mock(ExpirationHelperInterface::class);
         $cookieHelper = new CookieHelper($this->configuration, $this->encryptionHelper, $logger);
         $this->service = new CookieService(
             $cookieHelper,
             $this->institutionService,
-            $logger,
             $this->secondFactorService,
-            $this->secondFactorTypeService
+            $this->secondFactorTypeService,
+            $this->expirationHelper,
+            $logger
         );
 
         $this->responseContext = Mockery::mock(ResponseContext::class);
@@ -349,6 +358,15 @@ class CookieServiceTest extends TestCase
             ->shouldReceive('saveSelectedSecondFactor')
             ->with($yubikey);
 
+        $this->expirationHelper
+            ->shouldReceive('isExpired')
+            ->andReturn(false);
+
+        $token = Mockery::mock(SecondFactor::class);
+        $this->secondFactorService
+            ->shouldReceive('findByUuid')
+            ->andReturn($token);
+
         self::assertTrue(
             $this->service->shouldSkip2faAuthentication(
                 $this->responseContext,
@@ -389,6 +407,15 @@ class CookieServiceTest extends TestCase
         $this->responseContext
             ->shouldReceive('saveSelectedSecondFactor')
             ->with($yubikey);
+
+        $this->expirationHelper
+            ->shouldReceive('isExpired')
+            ->andReturn(false);
+
+        $token = Mockery::mock(SecondFactor::class);
+        $this->secondFactorService
+            ->shouldReceive('findByUuid')
+            ->andReturn($token);
 
         self::assertTrue(
             $this->service->shouldSkip2faAuthentication(
@@ -582,6 +609,84 @@ class CookieServiceTest extends TestCase
             $this->service->shouldSkip2faAuthentication(
                 $this->responseContext,
                 4.0, // LoA 4 is required, Identity only has LoA 2 and 3 tokens, no bueno
+                'abcdef-1234',
+                $collection,
+                $httpRequest
+            )
+        );
+    }
+
+    public function test_skipping_authentication_fails_when_token_was_revoked()
+    {
+        $this->buildService(
+            new Configuration(
+                'test-cookie',
+                'session',
+                0,
+                '0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f'
+            )
+        );
+        $yubikey = $this->buildSecondFactor(3.0, 'identifier-1');
+        $sms = $this->buildSecondFactor(2.0, 'identifier-2');
+        $bogus = $this->buildSecondFactor(2.0, 'identifier-3');
+        $collection = new ArrayCollection([
+            $sms,
+            $bogus,
+            $yubikey,
+        ]);
+
+        $httpRequest = new Request();
+        $cookieValue = $this->cookieValue();
+        $httpRequest->cookies->add(
+            [$this->configuration->getName() => $this->createCookieWithValue($this->encryptionHelper->encrypt($cookieValue))->getValue()]
+        );
+
+        // The Yubikey is the only suitable token available that satisfies the LoA requirement
+        $this->responseContext
+            ->shouldReceive('saveSelectedSecondFactor')
+            ->with($yubikey);
+
+        $this->expirationHelper
+            ->shouldReceive('isExpired')
+            ->andReturn(false);
+
+        // When the token cannot be found e.g. token was revoked in the meantime
+        $this->secondFactorService
+            ->shouldReceive('findByUuid')
+            ->andReturnNull();
+
+        self::assertFalse(
+            $this->service->shouldSkip2faAuthentication(
+                $this->responseContext,
+                3.0,
+                'abcdef-1234',
+                $collection,
+                $httpRequest
+            )
+        );
+    }
+
+    public function test_reading_cookie_can_fail()
+    {
+        $this->buildService(
+            new Configuration(
+                'test-cookie',
+                'session',
+                0,
+                '0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f'
+            )
+        );
+        $yubikey = $this->buildSecondFactor(3.0, 'identifier-1');
+        $collection = new ArrayCollection([
+            $yubikey,
+        ]);
+        $httpRequest = new Request();
+        $httpRequest->cookies->add([$this->configuration->getName() => 'thiscookieisbroken']);
+
+        self::assertFalse(
+            $this->service->shouldSkip2faAuthentication(
+                $this->responseContext,
+                3.0,
                 'abcdef-1234',
                 $collection,
                 $httpRequest

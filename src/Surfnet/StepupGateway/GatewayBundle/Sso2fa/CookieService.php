@@ -19,6 +19,7 @@
 namespace Surfnet\StepupGateway\GatewayBundle\Sso2fa;
 
 use Doctrine\Common\Collections\Collection;
+use Exception;
 use Psr\Log\LoggerInterface;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor;
@@ -27,7 +28,10 @@ use Surfnet\StepupGateway\GatewayBundle\Exception\RuntimeException;
 use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
 use Surfnet\StepupGateway\GatewayBundle\Service\InstitutionConfigurationService;
 use Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorService;
+use Surfnet\StepupGateway\GatewayBundle\Sso2fa\DateTime\ExpirationHelperInterface;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Exception\CookieNotFoundException;
+use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Exception\DecryptionFailedException;
+use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Exception\InvalidAuthenticationTimeException;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Http\CookieHelperInterface;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\CookieValue;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\CookieValueInterface;
@@ -61,18 +65,24 @@ class CookieService implements CookieServiceInterface
      * @var SecondFactorTypeService
      */
     private $secondFactorTypeService;
+    /**
+     * @var ExpirationHelperInterface
+     */
+    private $expirationHelper;
 
     public function __construct(
         CookieHelperInterface $cookieHelper,
         InstitutionConfigurationService $institutionConfigurationService,
-        LoggerInterface $logger,
         SecondFactorService $secondFactorService,
-        SecondFactorTypeService $secondFactorTypeService
+        SecondFactorTypeService $secondFactorTypeService,
+        ExpirationHelperInterface $expirationHelper,
+        LoggerInterface $logger
     ) {
         $this->cookieHelper = $cookieHelper;
         $this->institutionConfigurationService = $institutionConfigurationService;
         $this->secondFactorService = $secondFactorService;
         $this->secondFactorTypeService = $secondFactorTypeService;
+        $this->expirationHelper = $expirationHelper;
         $this->logger = $logger;
     }
 
@@ -101,7 +111,7 @@ class CookieService implements CookieServiceInterface
             if (!$secondFactor) {
                 throw new RuntimeException(sprintf('Second Factor token not found with ID: %s', $secondFactorId));
             }
-            // Test if the institution of the Idenity this SF belongs to has SSO on 2FA enabled
+            // Test if the institution of the Identity this SF belongs to has SSO on 2FA enabled
             $isEnabled = $this->institutionConfigurationService->ssoOn2faEnabled($secondFactor->institution);
             $this->logger->notice(
                 sprintf(
@@ -155,7 +165,6 @@ class CookieService implements CookieServiceInterface
         }
         $ssoCookie = $this->read($request);
         if ($ssoCookie instanceof NullCookieValue) {
-            $this->logger->notice('No SSO on 2FA cookie found');
             return false;
         }
         if ($ssoCookie instanceof CookieValue && !$ssoCookie->meetsRequiredLoa($requiredLoa)) {
@@ -178,6 +187,29 @@ class CookieService implements CookieServiceInterface
             );
             return false;
         }
+        try {
+            $isExpired = $this->expirationHelper->isExpired($ssoCookie);
+            if ($isExpired) {
+                $this->logger->notice(
+                    'The SSO on 2FA cookie has expired. Meaning [authentication time] + [cookie lifetime] is in the past'
+                );
+                return false;
+            }
+        } catch (InvalidAuthenticationTimeException $e) {
+            $this->logger->notice('The SSO on 2FA cookie contained an invalid authentication time', [$e->getMessage()]);
+            return false;
+        }
+
+        if (!$this->secondFactorService->findByUuid($ssoCookie->secondFactorId())) {
+            $this->logger->notice(
+                'The second factor stored in the SSO cookie was revoked or has otherwise became unknown to Gateway',
+                [
+                    'secondFactorIdFromCookie' => $ssoCookie->secondFactorId()
+                ]
+            );
+            return false;
+        }
+
         /** @var SecondFactor $secondFactor */
         foreach ($secondFactorCollection as $secondFactor) {
             $loa = $secondFactor->getLoaLevel($this->secondFactorTypeService);
@@ -223,6 +255,16 @@ class CookieService implements CookieServiceInterface
         try {
             return $this->cookieHelper->read($request);
         } catch (CookieNotFoundException $e) {
+            $this->logger->notice('Attempt to decrypt the cookie failed, the cookie could not be found');
+            return new NullCookieValue();
+        } catch (DecryptionFailedException $e) {
+            $this->logger->notice('Decryption of the SSO on 2FA cookie failed');
+            return new NullCookieValue();
+        } catch (Exception $e) {
+            $this->logger->notice(
+                'Decryption failed, see original message in context',
+                ['original-exception-message' => $e->getMessage()]
+            );
             return new NullCookieValue();
         }
     }
