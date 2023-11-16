@@ -18,7 +18,7 @@ parameters:
 
     # Database connection
     database_driver:   pdo_mysql
-    database_host:     db.stepup.example.com
+    database_host:     mariadb
     database_port:     ~
 
     # The database server version is used in the dbal configuration and is required to prevent issues when the database
@@ -28,14 +28,14 @@ parameters:
 
     # Credentials for the gateway database
     database_gateway_name:     gateway
-    database_gateway_user:     gateway
-    database_gateway_password: gateway
+    database_gateway_user:     gateway_user
+    database_gateway_password: gateway_secret
 
-    database_deploy_user: deploy
-    database_deploy_password: deploy
+    database_deploy_user: gw_deploy_user
+    database_deploy_password: gw_deploy_secret
 
     mailer_transport:  smtp
-    mailer_host:       127.0.0.1
+    mailer_host:       mailcatcher
     mailer_user:       ~
     mailer_password:   ~
 
@@ -45,7 +45,7 @@ parameters:
     locales:                [nl_NL, en_GB]
     # Domain for the locale cookie that is set by the Gateway, SelfService and the RA and that is used to share the
     # user's locale preference with other (stepup) components
-    locale_cookie_domain:   openconext.org
+    locale_cookie_domain:   openconext.local
 
     # Choose which SMS service to use. At this moment you can choose: 'spryng' or 'messagebird'
     sms_service: 'spryng'
@@ -66,14 +66,14 @@ parameters:
     yubikey_client_secret: YubiSecret
 
     # Password for the "selfservice" Gateway API user
-    selfservice_api_password: ~
+    selfservice_api_password: sa_secret
     # Password for the "ra" Gateway API user
-    registration_authority_api_password: ~
+    registration_authority_api_password: ra_secret
 
     # Message originator as displayed in SMS
     # "This can be a telephone number (including country code) or an alphanumeric string.
     #  In case of an alphanumeric string, the maximum length is 11 characters."
-    sms_originator: SURFStepup
+    sms_originator: OpenConext
     # Validity time of an OTP send using SMS in seconds
     sms_otp_expiry_interval: 900 # 15 minutes
     # Maximum number of times a user may resend an SMS during authenticaton
@@ -81,21 +81,24 @@ parameters:
 
     # The private key and certificate that are used by the Gateway SP to sign SAML AuthnRequests
     # Filename of the PEM CERTIFICATE
-    saml_sp_publickey:
+    saml_sp_publickey: /config/gateway/gateway_sp.crt
     # Filename of the PEM RSA PRIVATE KEY
-    saml_sp_privatekey:
+    saml_sp_privatekey: /config/gateway/gateway_sp.key
 
     # The private key and certificate that are used by the Gateway IdP to sign SAML Responses/Assertions
     # Filename of the PEM CERTIFICATE
-    saml_idp_publickey:
+    saml_idp_publickey: /config/gateway/gateway_idp.crt
     # Filename of the PEM RSA PRIVATE KEY
-    saml_idp_privatekey:
+    saml_idp_privatekey: /config/gateway/gateway_idp.key
+
 
     # The certificate and private key that are used by the Gateway to sign the metadata that it publishes
     # Filename of the PEM CERTIFICATE
-    saml_metadata_publickey:
+    saml_metadata_publickey: /config/gateway/gateway_idp.crt
+
     # Filename of the PEM RSA PRIVATE KEY
-    saml_metadata_privatekey:
+    saml_metadata_privatekey: /config/gateway/gateway_idp.key
+
 
     # The remote IdP (i.e. not the local IdP that is part of the Gateway) is the IdP that provides the first
     # factor authentication of users to the Gateway.
@@ -112,28 +115,28 @@ parameters:
     # The ACS location is: https://{{ gateway_vhost_name }}/authentication/consume-assertion
 
     # The SAML EntityID of the Remote IdP
-    saml_remote_idp_entity_id:
+    saml_remote_idp_entity_id: https://ssp.dev.openconext.local/simplesaml/saml2/idp/metadata.php
     # The SAML SSO Location of the Remote IdP
-    saml_remote_idp_sso_url:
+    saml_remote_idp_sso_url: https://ssp.dev.openconext.local/simplesaml/module.php/saml/idp/singleSignOnService
     # The SAML Base64 encoded DER X.509 SAML Signing certificate of the Remote IdP. This is the value of the
     # X509Certificate element in the SAML Metadata of the Remote IdP.
-    saml_remote_idp_certificate: 'FOR CI ONLY, REPLACE WITH ACTUAL VALUE'
+    saml_remote_idp_certificate: 'MIIECzCCAnMCFB5yH62OMDs5L8unoJeyJOBK3rQ9MA0GCSqGSIb3DQEBCwUAMEIxFzAVBgNVBAMMDnNpbXBsZXNhbWwgSWRQMScwJQYDVQQKDB5EZXZlbG9wbWVudCBEb2NrZXIgZW52aXJvbm1lbnQwHhcNMjMwNTI1MDkzMzE1WhcNMjgwNTIzMDkzMzE1WjBCMRcwFQYDVQQDDA5zaW1wbGVzYW1sIElkUDEnMCUGA1UECgweRGV2ZWxvcG1lbnQgRG9ja2VyIGVudmlyb25tZW50MIIBojANBgkqhkiG9w0BAQEFAAOCAY8AMIIBigKCAYEAwT9bwWfEPAHHHFmKmH3MBbIAdg10gDGqyOB5bV73KY/UZG53Wqx30RNz2tuvP2HGn1VW3hCK0NM0nbZbrIYAuvwfR7QZHW98/GrYMYtZWAfqb2XxWX/uirQjXQNtxtp3gEN7u23qZdsKn6JE1DmFXx7lfcG367+IXrYdO5ySIeTZ7VXAGeXgeaubFAQjOLqpolcIM/DTyD4Tfj3vWQaHcxVvrpMs/MCZMOGPhaz29truOEAfbVaGubu+dBLtMe7MH/eogUmeOU5Xw6MFxnkWBeByzk8bOJ5bmRN6Pe4YcHjmydylMHqnNLd6I2iBx+GDnwwV3sT9E8XzYVHuC288cPHgoSiKtbEcuflBs9zn1sMMXW7CZUlEWYAxBN/fG+UDGBEx0NTjEowrYPUfP4BzHQSTkv/U2XDTTB2pmc14Vj1Jmh68+dYLuFJ+Dayet8gjC6XwjdPnQdNN9wXjPKz938qSrkPsaf0G3rNhWuHnk7ndahOLiibnqskLz2F/SXhXAgMBAAEwDQYJKoZIhvcNAQELBQADggGBALEvo9DKooOTun0TcSjT4ziumwvkDeR8yIDuHNqsE4bNJKp/oxiSDRDQyA1AT7qPbTabcgOw0wxHGB1iFY2urmXKcu2ryjsxnN7M13fUE6n6Z2Z+9u3ZuHB4hBAb1WNdjStrGexyReTkOeFtTB3XjZXxMf/FrQ7b84UPb/zUyuz+khSFUAN03Zdf7PEbGav3SFdsaLQoCtDWrJTduG3JDnoG3X+kWY8hIYuQhmzqYV1LxJDX9SBPYC2bgiM8AfnzQVxdV9pQqiuaiM9L/9wP1ZOBjudDrguOPB2mo4/wqEKdJQsVnsXp5GJvS28fI3GysuaKZbcqwwObdw8xzQnil8tUZalx2PUnTiDPNv7yoACRIc4jNFLiU+fNULaU4KbT3XjfmAzJUftHG+O60522lqVC67kA+vOwIJbz/SiikBnkmT5kr4dftbjt3YT22kVmaV0BBwMg0cvJMHquo8qjg1LwaDmGj7CAqR+OpFUGnH1CFcdT0V2svQX2XKkI5O8O9g=='
 
     # The uri's that are used to define the LoA levels used in AuthnContextClassRef
-    gateway_loa_loa1: https://gateway.tld/authentication/loa1
-    gateway_loa_loa2: https://gateway.tld/authentication/loa2
-    gateway_loa_loa3: https://gateway.tld/authentication/loa3
+    gateway_loa_loa1: http://dev.openconext.local/assurance/loa1
+    gateway_loa_loa2: http://dev.openconext.local/assurance/loa2
+    gateway_loa_loa3: http://dev.openconext.local/assurance/loa3
 
     # The uri's used by the second factor only (SFO) endpoint
-    second_factor_only_loa_loa2: https://gateway.tld/second-factor-only/level2
-    second_factor_only_loa_loa3: https://gateway.tld/second-factor-only/level3
+    second_factor_only_loa_loa2: http://dev.openconext.local/assurance/sfo-level2
+    second_factor_only_loa_loa3: http://dev.openconext.local/assurance/sfo-level3
 
     # Self-asserted token LoA uri's
-    second_factor_only_loa_self_asserted: 'http://stepup.example.com/assurance/loa-self-asserted'
-    gateway_loa_self_asserted: 'http://stepup.example.com/assurance/loa-self-asserted'
+    second_factor_only_loa_self_asserted: 'http://dev.openconext.local/assurance/sfo-level1.5'
+    gateway_loa_self_asserted: 'http://dev.openconext.local/assurance/loa1.5'
 
     # Boolean: Whether to enable (true) or disable (false) the SFO endpoint
-    second_factor_only: false
+    second_factor_only: true
 
     # The second factor types to enable
     # Available second factor types: sms, yubikey, tiqr, biometric
@@ -141,9 +144,19 @@ parameters:
         - sms
         - yubikey
         - tiqr
+        - demo_gssp
+        - webauthn
+        - azuremfa
     enabled_generic_second_factors:
+        azuremfa:
+            loa: 2
         tiqr:
+            loa: 2
+        webauthn:
             loa: 3
+        demo_gssp:
+            loa: 3
+
     # The lifetime of the SSO on second factor authentications lifetime in seconds
     # For example, 8h is 28800 seconds.
     sso_cookie_lifetime: 28800
