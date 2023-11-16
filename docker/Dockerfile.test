@@ -1,0 +1,18 @@
+FROM ghcr.io/openconext/openconext-basecontainers/php72-apache2:latest
+WORKDIR /var/www/html
+ARG APP_VERSION
+ENV GATEWAY_VERSION=$APP_VERSION
+ADD output.tar /var/www/html/
+# Add the application configuration files
+COPY .env.dist .env
+COPY config/legacy/parameters.yaml.dist config/legacy/parameters.yaml
+COPY config/legacy/samlstepupproviders_parameters.yaml.dist config/legacy/samlstepupproviders_parameters.yaml
+COPY config/packages/prod/monolog.yaml.docker config/packages/prod/monolog.yaml 
+
+# Add the config files for Apache2
+RUN rm -rf /etc/apache2/sites-enabled/*
+COPY ./docker/conf/gateway-apache2.conf /etc/apache2/sites-enabled/gateway.conf
+RUN bin/console --env=test cache:clear
+RUN rm -rf /var/www/html/var/cache/test && chown -R www-data /var/www/html/var
+
+CMD ["apache2-foreground"]
