@@ -7,4 +7,4 @@ EXPOSE 80
 # Set the default workdir
 WORKDIR /var/www/html
 
-CMD ["apache2-foreground"]
+ENTRYPOINT ["apache2-foreground"]
