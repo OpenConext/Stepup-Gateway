@@ -9,6 +9,7 @@
 /config/openconext/samlstepupproviders_parameters.yaml
 /config/openconext/global_view_parameters.yaml
 /vendor/
+/tests/vendor/
 /composer.phar
 /cache.properties
 .idea/
