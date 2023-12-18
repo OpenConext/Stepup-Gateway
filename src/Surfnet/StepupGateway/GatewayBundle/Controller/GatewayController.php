@@ -209,7 +209,7 @@ class GatewayController extends Controller
         if ($responseHelper->isAdfsResponse($inResponseTo)) {
             $adfsParameters = $responseHelper->retrieveAdfsParameters();
             $logMessage = 'Responding with additional ADFS parameters, in response to request: "%s", with view: "%s"';
-            if ($response->isSuccess()) {
+            if (!$response->isSuccess()) {
                 $logMessage = 'Responding with an AuthnFailed SamlResponse with ADFS parameters, in response to AR: "%s", with view: "%s"';
             }
             $logger->notice(sprintf($logMessage, $inResponseTo, $view));
