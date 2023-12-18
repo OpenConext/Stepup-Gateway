@@ -20,6 +20,7 @@ namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Test\Service\Gateway;
 
 use DateTime;
 use Mockery;
+use Mockery\Mock;
 use SAML2\Response;
 use Surfnet\SamlBundle\Entity\IdentityProvider;
 use Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger;
@@ -36,36 +37,42 @@ use Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorService;
 use Surfnet\StepupGateway\GatewayBundle\Tests\TestCase\GatewaySamlTestCase;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Saml\ProxyResponseFactory;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Exception\InvalidSecondFactorMethodException;
+use Surfnet\StepupGateway\SecondFactorOnlyBundle\Exception\ReceivedInvalidSubjectNameIdException;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Saml\ResponseFactory;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\Gateway\RespondService;
+use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\Gateway\ResponseValidator;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\LoaAliasLookupService;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 
 final class RespondServiceTest extends GatewaySamlTestCase
 {
-    /** @var Mockery\Mock|RespondService */
+    /** @var Mock|RespondService */
     private $gatewayRespondService;
 
-    /** @var Mockery\Mock|ProxyStateHandler */
+    /** @var Mock|ProxyStateHandler */
     private $stateHandler;
 
     /** @var ResponseContext */
     private $responseContext;
 
-    /** @var Mockery\Mock|LoaResolutionService */
+    /** @var LoaResolutionService */
     private $loaResolutionService;
 
-    /** @var Mockery\Mock|SamlEntityService */
+    /** @var Mock|SamlEntityService */
     private $samlEntityService;
 
     /** @var IdentityProvider */
     private $hostedIdp;
 
-    /** @var Mockery\Mock|SecondFactorService */
+    /** @var Mock|SecondFactorService */
     private $secondFactorService;
 
     /** @var ProxyResponseFactory */
     private $proxyResponseFactory;
+
+    /** @var Mock&ResponseValidator */
+    private $validator;
 
     public function setUp(): void
     {
@@ -139,9 +146,11 @@ final class RespondServiceTest extends GatewaySamlTestCase
         $this->responseContext->saveSelectedSecondFactor($secondFactor);
         $this->responseContext->markSecondFactorVerified();
 
+        $request = Mockery::mock(Request::class);
 
+        $this->validator->shouldReceive('validate');
         // Handle respond
-        $response = $this->gatewayRespondService->respond($this->responseContext);
+        $response = $this->gatewayRespondService->respond($this->responseContext, $request);
 
         // Assert response
         $this->assertInstanceOf(Response::class, $response);
@@ -208,6 +217,57 @@ final class RespondServiceTest extends GatewaySamlTestCase
     /**
      * @test
      */
+    public function it_halts_execution_when_saml_response_is_invalid()
+    {
+
+        $this->mockSessionData('_sf2_attributes', [
+            'surfnet/gateway/requestrequest_id' => '_7179b234fc69f75724c83cab795fc87475d2f6d88e97e43368c3966e398c',
+            'surfnet/gateway/requestservice_provider' => 'https://gateway.tld/gssp/tiqr/metadata',
+            'surfnet/gateway/requestassertion_consumer_service_url' => 'https://gateway.tld/gssp/tiqr/consume-assertion',
+            'surfnet/gateway/requestrelay_state' => '',
+            'surfnet/gateway/requestresponse_controller' => 'SurfnetStepupGatewaySecondFactorOnlyBundle:SecondFactorOnly:respond',
+            'surfnet/gateway/requestresponse_context_service_id' => 'second_factor_only.response_context',
+            'surfnet/gateway/requestname_id' => 'oom60v-3art',
+            'surfnet/gateway/requestloa_identifier' => 'http://stepup.example.com/assurance/loa2',
+        ]);
+
+        // Mock service provider
+        $serviceProvider = Mockery::mock(ServiceProvider::class)
+            ->shouldReceive('determineAcsLocation')
+            ->with('https://gateway.tld/gssp/tiqr/consume-assertion', $this->logger)
+            ->getMock();
+
+        $this->samlEntityService->shouldReceive('getServiceProvider')
+            ->with('https://gateway.tld/gssp/tiqr/metadata')
+            ->andReturn($serviceProvider);
+
+        // Mock second factor
+        $secondFactor = Mockery::mock(SecondFactor::class);
+        $secondFactor->secondFactorId = 'mocked-second-factor-id';
+        $secondFactor->displayLocale = 'nl_NL';
+        $secondFactor->shouldReceive('getLoaLevel')
+            ->andReturn(2);
+
+        // Mock second factor service
+        $this->secondFactorService->shouldReceive('findByUuid')
+            ->with('mocked-second-factor-id')
+            ->andReturn($secondFactor);
+
+        // This should be done in the SecondFactorController on success
+        $this->responseContext->saveSelectedSecondFactor($secondFactor);
+        $this->responseContext->markSecondFactorVerified();
+
+        $request = Mockery::mock(Request::class);
+
+        $this->validator->shouldReceive('validate')->andThrow(new ReceivedInvalidSubjectNameIdException());
+        // Handle respond
+        self::expectException(ReceivedInvalidSubjectNameIdException::class);
+        $this->gatewayRespondService->respond($this->responseContext, $request);
+    }
+
+    /**
+     * @test
+     */
     public function it_should_throw_an_exception_when_the_second_factor_method_is_unknown_when_the_verification_is_succeeded_on_sfo_login_flow()
     {
         $this->expectException(InvalidSecondFactorMethodException::class);
@@ -237,9 +297,10 @@ final class RespondServiceTest extends GatewaySamlTestCase
             ->with('mocked-second-factor-id')
             ->andReturn(null);
 
+        $request = Mockery::mock(Request::class);
 
         // Handle respond
-        $this->gatewayRespondService->respond($this->responseContext);
+        $this->gatewayRespondService->respond($this->responseContext, $request);
     }
 
 
@@ -284,10 +345,11 @@ final class RespondServiceTest extends GatewaySamlTestCase
 
         // This should be done in the SecondFactorController on success
         $this->responseContext->saveSelectedSecondFactor($secondFactor);
-        //$this->responseContext->markSecondFactorVerified();
+
+        $request = Mockery::mock(Request::class);
 
         // Handle respond
-        $this->gatewayRespondService->respond($this->responseContext);
+        $this->gatewayRespondService->respond($this->responseContext, $request);
     }
 
     /**
@@ -322,13 +384,16 @@ final class RespondServiceTest extends GatewaySamlTestCase
         $this->proxyResponseFactory = new ResponseFactory($this->hostedIdp, $this->stateHandler, $assertionSigningService, $now);
         $loaAliasLookup = new LoaAliasLookupService($loaAliases);
 
+        $this->validator = Mockery::mock(ResponseValidator::class);
+
         $this->gatewayRespondService = new RespondService(
             $samlLogger,
             $this->loaResolutionService,
             $loaAliasLookup,
             $this->proxyResponseFactory,
             $this->secondFactorService,
-            $secondFactorTypeService
+            $secondFactorTypeService,
+            $this->validator
         );
     }
 

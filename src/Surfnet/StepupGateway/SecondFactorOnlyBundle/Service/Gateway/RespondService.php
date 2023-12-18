@@ -27,6 +27,7 @@ use Surfnet\StepupGateway\SecondFactorOnlyBundle\Exception\InvalidSecondFactorMe
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Saml\ResponseFactory;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\LoaAliasLookupService;
 use Surfnet\StepupBundle\Service\LoaResolutionService;
+use Symfony\Component\HttpFoundation\Request;
 
 class RespondService
 {
@@ -48,22 +49,17 @@ class RespondService
     /** @var SecondFactorTypeService */
     private $secondFactorTypeService;
 
-    /**
-     * SecondFactorRespondService constructor.
-     * @param SamlAuthenticationLogger $samlLogger
-     * @param LoaResolutionService $loaResolutionService
-     * @param LoaAliasLookupService $loaAliasLookupService
-     * @param ResponseFactory $responseFactory
-     * @param SecondFactorService $secondFactorService
-     * @param SecondFactorTypeService $secondFactorTypeService
-     */
+    /** @var ResponseValidator */
+    private $responseValidator;
+
     public function __construct(
         SamlAuthenticationLogger $samlLogger,
         LoaResolutionService $loaResolutionService,
         LoaAliasLookupService $loaAliasLookupService,
         ResponseFactory $responseFactory,
         SecondFactorService $secondFactorService,
-        SecondFactorTypeService $secondFactorTypeService
+        SecondFactorTypeService $secondFactorTypeService,
+        ResponseValidator $responseValidator
     ) {
         $this->samlLogger = $samlLogger;
         $this->loaResolutionService = $loaResolutionService;
@@ -71,6 +67,7 @@ class RespondService
         $this->responseFactory = $responseFactory;
         $this->secondFactorService = $secondFactorService;
         $this->secondFactorTypeService = $secondFactorTypeService;
+        $this->responseValidator = $responseValidator;
     }
 
 
@@ -84,7 +81,7 @@ class RespondService
      * @param ResponseContext $responseContext
      * @return Response
      */
-    public function respond(ResponseContext $responseContext)
+    public function respond(ResponseContext $responseContext, Request $request)
     {
         $originalRequestId = $responseContext->getInResponseTo();
         $logger = $this->samlLogger->forAuthentication($originalRequestId);
@@ -105,6 +102,8 @@ class RespondService
         }
 
         $secondFactor = $this->secondFactorService->findByUuid($selectedSecondFactorUuid);
+        $this->responseValidator->validate($request, $secondFactor, $responseContext->getIdentityNameId());
+
         $grantedLoa = $this->loaResolutionService
             ->getLoaByLevel($secondFactor->getLoaLevel($this->secondFactorTypeService));
 
