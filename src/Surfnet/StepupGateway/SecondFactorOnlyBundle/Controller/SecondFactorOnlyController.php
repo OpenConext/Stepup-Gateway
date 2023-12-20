@@ -132,24 +132,13 @@ class SecondFactorOnlyController extends Controller
         // Reset state
         $this->getSecondFactorRespondService()->resetRespondState($responseContext);
 
-        // Handle SAML response
-        $httpResponse =  $responseRendering->renderResponse($responseContext, $response, $request);
-
-        $ssoCookieService = $this->get('gateway.service.sso_2fa_cookie');
-        $ssoCookieService->handleSsoOn2faCookieStorage($responseContext, $request, $httpResponse);
-
-        // We can now forget the selected second factor.
-        $responseContext->finalizeAuthentication();
-
-        // Check if ADFS response
+        // Check if ADFS response, if it is, we use the ADFS ACS twig template
         $adfsParameters = $this->getSecondFactorAdfsService()->handleAdfsResponse($logger, $responseContext);
-
         if (!is_null($adfsParameters)) {
             // Handle Adfs response
-            $responseRendering = $this->get('second_factor_only.response_rendering');
             $xmlResponse = $responseRendering->getResponseAsXML($response);
 
-            return $this->render(
+            $httpResponse = $this->render(
                 '@SurfnetStepupGatewaySecondFactorOnly/adfs/consume_assertion.html.twig',
                 [
                     'acu' => $responseContext->getDestinationForAdfs(),
@@ -157,7 +146,17 @@ class SecondFactorOnlyController extends Controller
                     'adfs' => $adfsParameters,
                 ]
             );
+        } else {
+            // Render the regular SAML response, we do not return it yet, the SSO on 2FA handler will use it to store
+            // the SSO on 2FA cookie.
+            $httpResponse =  $responseRendering->renderResponse($responseContext, $response, $request);
         }
+
+        $ssoCookieService = $this->get('gateway.service.sso_2fa_cookie');
+        $ssoCookieService->handleSsoOn2faCookieStorage($responseContext, $request, $httpResponse);
+
+        // We can now forget the selected second factor.
+        $responseContext->finalizeAuthentication();
 
         return $httpResponse;
     }
