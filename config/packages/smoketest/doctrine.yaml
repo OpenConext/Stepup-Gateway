@@ -3,11 +3,7 @@ doctrine:
     default_connection: gateway
     connections:
       gateway:
-<<<<<<< HEAD
         dbname: gateway_test
         host: mariadb
         password: gw_deploy_secret
         user: gw_deploy_user
-=======
-        dbname:   gateway_test
->>>>>>> d22c169 (Smoketest env: Set database name to be used in tests)
