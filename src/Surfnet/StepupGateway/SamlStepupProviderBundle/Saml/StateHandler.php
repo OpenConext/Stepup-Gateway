@@ -88,9 +88,18 @@ class StateHandler extends ProxyStateHandler
         return (bool) $this->get('is_second_factor_verification');
     }
 
+    /**
+     * Clear the complete state of this provider, leaving other provider (GSSP) states intact.
+     */
     public function clear()
     {
-        $this->attributeBag->remove($this->provider);
+        $all = $this->attributeBag->all();
+
+        foreach (array_keys($all) as $key) {
+            if (strpos($key, $this->provider . '/') === 0) {
+                $this->attributeBag->remove($key);
+            }
+        }
     }
 
     protected function set($key, $value)
