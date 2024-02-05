@@ -20,6 +20,15 @@ Feature: As an institution that uses the SSO on Second Factor authentication
     And the response should have a SSO-2FA cookie
     And the SSO-2FA cookie should contain "urn:collab:person:stepup.example.com:user-1"
 
+  Scenario: Cancelling out of an authentication should not yield a SSO cookie
+    Given a user from "stepup.example.com" identified by "urn:collab:person:stepup.example.com:jane-1" with a vetted "Yubikey" token
+    When urn:collab:person:stepup.example.com:jane-1 starts an authentication requiring LoA 2
+    And I authenticate at the IdP as jane-1
+    Then I should see the Yubikey OTP screen
+    When I cancel the authentication
+    And I pass through the Gateway
+    And the response should not have a SSO-2FA cookie
+
   Scenario: A successive authentication skips the Yubikey second factor authentication
     Given a user from "stepup.example.com" identified by "urn:collab:person:stepup.example.com:user-2" with a vetted "Yubikey" token
     When urn:collab:person:stepup.example.com:user-2 starts an authentication requiring LoA 2

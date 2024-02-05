@@ -22,8 +22,10 @@ use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\BeforeFeatureScope;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Mink\Exception\ExpectationException;
+use Exception;
 use RuntimeException;
 use Surfnet\StepupGateway\Behat\Service\FixtureService;
+use function is_null;
 use function sprintf;
 
 class FeatureContext implements Context
@@ -277,6 +279,22 @@ class FeatureContext implements Context
         // Store the previous cookie value
         $this->previousSsoOn2faCookieValue = $cookieValue;
         $this->validateSsoOn2faCookie($cookieValue);
+    }
+
+    /**
+     * @Then /^the response should not have a SSO\-2FA cookie$/
+     * @throws ExpectationException
+     */
+    public function theResponseShouldNotHaveASSO2FACookie()
+    {
+        $this->minkContext->visit('https://gateway.stepup.example.com/info');
+        $cookie = $this->minkContext->getSession()->getCookie($this->sso2faCookieName);
+        if (!is_null($cookie)) {
+            throw new ExpectationException(
+                'The SSO cookie must NOT be present',
+                $this->minkContext->getSession()->getDriver()
+            );
+        }
     }
 
     /**

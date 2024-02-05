@@ -145,7 +145,9 @@ final class ResponseRenderingService
             )
         );
 
-        $this->ssoCookieService->handleSsoOn2faCookieStorage($context, $request, $httpResponse);
+        if ($response->isSuccess()) {
+            $this->ssoCookieService->handleSsoOn2faCookieStorage($context, $request, $httpResponse);
+        }
         return $httpResponse;
     }
 
