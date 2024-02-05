@@ -20,6 +20,34 @@ Feature: As an institution that uses the SSO on Second Factor authentication
     And the response should have a SSO-2FA cookie
     And the SSO-2FA cookie should contain "urn:collab:person:stepup.example.com:user-1"
 
+  Scenario: Cancelling out of an authentication should not yield a SSO cookie
+    Given a user from "stepup.example.com" identified by "urn:collab:person:stepup.example.com:jane-1" with a vetted "Yubikey" token
+    When urn:collab:person:stepup.example.com:jane-1 starts an authentication requiring LoA 2
+    And I authenticate at the IdP as jane-1
+    Then I should see the Yubikey OTP screen
+    When I cancel the authentication
+    And I pass through the Gateway
+    And the response should not have a SSO-2FA cookie
+
+  Scenario: Cancelling an authentication yields an ADFS proof SAML AuthnFailed Response
+    Given a user from "stepup.example.com" identified by "urn:collab:person:stepup.example.com:eric_lilliebridge" with a vetted "Yubikey" token
+    When urn:collab:person:stepup.example.com:eric_lilliebridge starts an ADFS authentication requiring http://stepup.example.com/assurance/sfo-level3
+    Then I should see the Yubikey OTP screen
+    When I cancel the authentication
+    And I pass through the Gateway
+    Then the ADFS response should carry the ADFS POST parameters
+    And the ADFS response should match xpath '//samlp:StatusCode[@Value="urn:oasis:names:tc:SAML:2.0:status:AuthnFailed"]'
+    And the response should contain 'Authentication cancelled by user'
+    And the response should not have a SSO-2FA cookie
+
+  Scenario: Cancelling out of an SFO authentication should not yield a SSO cookie
+    Given a user from "stepup.example.com" identified by "urn:collab:person:stepup.example.com:joe-3" with a vetted "SMS" token
+    When urn:collab:person:stepup.example.com:joe-3 starts an SFO authentication
+    Then I should see the SMS verification screen
+    When I cancel the authentication
+    And I pass through the Gateway
+    And the response should not have a SSO-2FA cookie
+
   Scenario: A successive authentication skips the Yubikey second factor authentication
     Given a user from "stepup.example.com" identified by "urn:collab:person:stepup.example.com:user-2" with a vetted "Yubikey" token
     When urn:collab:person:stepup.example.com:user-2 starts an authentication requiring LoA 2

@@ -280,6 +280,22 @@ class FeatureContext implements Context
     }
 
     /**
+     * @Then /^the response should not have a SSO\-2FA cookie$/
+     * @throws ExpectationException
+     */
+    public function theResponseShouldNotHaveASSO2FACookie()
+    {
+        $this->minkContext->visit('https://gateway.stepup.example.com/info');
+        $cookie = $this->minkContext->getSession()->getCookie($this->sso2faCookieName);
+        if (!is_null($cookie)) {
+            throw new ExpectationException(
+                'The SSO cookie must NOT be present',
+                $this->minkContext->getSession()->getDriver()
+            );
+        }
+    }
+
+    /**
      * @Then /^a new SSO\-2FA cookie was written$/
      * @throws ExpectationException
      */

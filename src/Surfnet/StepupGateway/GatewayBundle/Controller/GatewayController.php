@@ -219,8 +219,10 @@ class GatewayController extends Controller
 
         $httpResponse = $this->render($view, $parameters);
 
-        $ssoCookieService = $this->get('gateway.service.sso_2fa_cookie');
-        $ssoCookieService->handleSsoOn2faCookieStorage($responseContext, $request, $httpResponse);
+        if ($response->isSuccess()) {
+            $ssoCookieService = $this->get('gateway.service.sso_2fa_cookie');
+            $ssoCookieService->handleSsoOn2faCookieStorage($responseContext, $request, $httpResponse);
+        }
         return $httpResponse;
     }
 
