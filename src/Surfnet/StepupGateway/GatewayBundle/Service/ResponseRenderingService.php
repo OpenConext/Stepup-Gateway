@@ -129,7 +129,7 @@ final class ResponseRenderingService
         $inResponseTo = $context->getInResponseTo();
         if ($this->responseHelper->isAdfsResponse($inResponseTo)) {
             $logMessage = 'Responding with additional ADFS parameters, in response to request: "%s", with view: "%s"';
-            if ($response->isSuccess()) {
+            if (!$response->isSuccess()) {
                 $logMessage = 'Responding with an AuthnFailed SamlResponse with ADFS parameters, in response to AR: "%s", with view: "%s"';
             }
             $this->logger->notice(sprintf($logMessage, $inResponseTo, $view));
@@ -145,7 +145,9 @@ final class ResponseRenderingService
             )
         );
 
-        $this->ssoCookieService->handleSsoOn2faCookieStorage($context, $request, $httpResponse);
+        if ($response->isSuccess()) {
+            $this->ssoCookieService->handleSsoOn2faCookieStorage($context, $request, $httpResponse);
+        }
         return $httpResponse;
     }
 

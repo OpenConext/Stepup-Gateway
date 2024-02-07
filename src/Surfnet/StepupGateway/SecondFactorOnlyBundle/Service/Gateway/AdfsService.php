@@ -77,15 +77,13 @@ class AdfsService
     }
 
     /**
-     * This method detectds if we need to return a ADFS response, If so ADFS parameters are returned.
+     * This method detects if we need to return a ADFS response, If so ADFS parameters are returned.
      *
      * Second factor verification handled by SecondFactorController is
      * finished. The user was forwarded back to this action with an internal
      * redirect. This method sends a AuthnResponse back to the service
      * provider in response to the AuthnRequest received in ssoAction().
      *
-     * @param LoggerInterface $logger
-     * @param ResponseContext $responseContext
      * @return null|\Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\ValueObject\Response
      * @throws InvalidAdfsResponseException
      */
