@@ -290,7 +290,7 @@ class ResponseContext
      * Resets some state after the response is sent
      * (e.g. resets which second factor was selected and whether it was verified).
      */
-    public function responseSent()
+    public function responseSent(): void
     {
         $this->stateHandler->setSecondFactorVerified(false);
         $this->stateHandler->setSsoOn2faCookieFingerprint('');

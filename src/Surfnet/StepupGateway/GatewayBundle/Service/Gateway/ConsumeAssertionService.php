@@ -75,7 +75,7 @@ class ConsumeAssertionService
      * @param ResponseContext $responseContext
      * @return void
      */
-    public function consumeAssertion(Request $request, ResponseContext $responseContext)
+    public function consumeAssertion(Request $request, ResponseContext $responseContext): void
     {
         $originalRequestId = $responseContext->getInResponseTo();
 

@@ -106,7 +106,7 @@ class LoginService
      * @param ReceivedAuthnRequest $originalRequest
      * @return void
      */
-    public function singleSignOn(Request $httpRequest, ReceivedAuthnRequest $originalRequest)
+    public function singleSignOn(Request $httpRequest, ReceivedAuthnRequest $originalRequest): void
     {
         $originalRequestId = $originalRequest->getRequestId();
 

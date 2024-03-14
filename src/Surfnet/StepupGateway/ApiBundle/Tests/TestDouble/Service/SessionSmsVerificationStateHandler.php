@@ -46,7 +46,7 @@ final class SessionSmsVerificationStateHandler implements SmsVerificationStateHa
     /**
      * @inheritDoc
      */
-    public function clearState(string $secondFactorId)
+    public function clearState(string $secondFactorId): void
     {
         $this->session->remove($secondFactorId);
     }

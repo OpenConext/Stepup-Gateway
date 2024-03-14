@@ -24,7 +24,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 final class CancelSecondFactorVerificationType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('cancel', SubmitType::class, [
             'label' => 'gateway.form.gateway_cancel_second_factor_verification.button.cancel_verification',

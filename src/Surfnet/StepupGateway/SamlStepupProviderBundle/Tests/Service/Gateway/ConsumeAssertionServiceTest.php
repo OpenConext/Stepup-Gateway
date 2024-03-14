@@ -117,7 +117,7 @@ class ConsumeAssertionServiceTest extends GatewaySamlTestCase
     /**
      * @test
      */
-    public function it_should_update_the_state_when_receiving_a_saml_response_when_consuming_assertions_on_gssp_registration_and_gssp_verification_flows() {
+    public function it_should_update_the_state_when_receiving_a_saml_response_when_consuming_assertions_on_gssp_registration_and_gssp_verification_flows(): void {
 
         $samlResponse = '<samlp:Response
     xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"
@@ -260,7 +260,7 @@ class ConsumeAssertionServiceTest extends GatewaySamlTestCase
     /**
      * @test
      */
-    public function it_should_throw_an_exception_when_the_post_binding_could_not_be_processed_when_receiving_a_saml_response_when_consuming_assertions_on_gssp_registration_and_gssp_verification_flows()
+    public function it_should_throw_an_exception_when_the_post_binding_could_not_be_processed_when_receiving_a_saml_response_when_consuming_assertions_on_gssp_registration_and_gssp_verification_flows(): void
     {
         $this->expectException(ResponseFailureException::class);
         $samlResponse = '<samlp:Response
@@ -369,7 +369,7 @@ class ConsumeAssertionServiceTest extends GatewaySamlTestCase
     /**
      * @test
      */
-    public function it_should_throw_an_exception_when_in_response_to_is_invalid_when_receiving_a_saml_response_when_consuming_assertions_on_gssp_registration_and_gssp_verification_flows()
+    public function it_should_throw_an_exception_when_in_response_to_is_invalid_when_receiving_a_saml_response_when_consuming_assertions_on_gssp_registration_and_gssp_verification_flows(): void
     {
         $this->expectException(UnknownInResponseToException::class);
         $samlResponse = '<samlp:Response
@@ -477,7 +477,7 @@ class ConsumeAssertionServiceTest extends GatewaySamlTestCase
     /**
      * @test
      */
-    public function it_should_throw_an_exception_when_to_subject_is_invalid_when_receiving_a_saml_response_when_consuming_assertions_on_gssp_registration_and_gssp_verification_flows()
+    public function it_should_throw_an_exception_when_to_subject_is_invalid_when_receiving_a_saml_response_when_consuming_assertions_on_gssp_registration_and_gssp_verification_flows(): void
     {
         $this->expectException(InvalidSubjectException::class);
         $samlResponse = '<samlp:Response
@@ -586,7 +586,7 @@ class ConsumeAssertionServiceTest extends GatewaySamlTestCase
     /**
      * @test
      */
-    public function it_should_throw_an_verification_exception_when_receiving_a_saml_response_when_consuming_assertions_on_gssp_registration_and_gssp_verification_flows()
+    public function it_should_throw_an_verification_exception_when_receiving_a_saml_response_when_consuming_assertions_on_gssp_registration_and_gssp_verification_flows(): void
     {
         $this->expectException(SecondfactorVerificationRequiredException::class);
         $samlResponse = '<samlp:Response
@@ -700,7 +700,7 @@ class ConsumeAssertionServiceTest extends GatewaySamlTestCase
      * @param array $connectedServiceProviders
      * @param DateTime $now
      */
-    private function initSamlProxyService(array $remoteIdpConfiguration, array $idpConfiguration, array $spConfiguration, array $connectedServiceProviders, DateTime $now)
+    private function initSamlProxyService(array $remoteIdpConfiguration, array $idpConfiguration, array $spConfiguration, array $connectedServiceProviders, DateTime $now): void
     {
         $session = new Session($this->sessionStorage);
         $sessionBag = new AttributeBag('__gssp_session');
@@ -746,7 +746,7 @@ class ConsumeAssertionServiceTest extends GatewaySamlTestCase
     /**
      * @param string $samlResponseXml
      */
-    private function mockPostBinding($samlResponseXml)
+    private function mockPostBinding($samlResponseXml): void
     {
         $previous = libxml_disable_entity_loader(true);
         $asXml    = DOMDocumentFactory::fromString($samlResponseXml);

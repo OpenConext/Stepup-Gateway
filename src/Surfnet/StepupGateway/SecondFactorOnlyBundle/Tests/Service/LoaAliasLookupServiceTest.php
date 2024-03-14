@@ -28,7 +28,7 @@ class LoaAliasLookupServiceTest extends TestCase
      * @test
      * @group secondFactorOnly
      */
-    public function it_looksup_loa_id_by_alias()
+    public function it_looksup_loa_id_by_alias(): void
     {
         $service = new LoaAliasLookupService(['a' => 'b', 'c' => 'd']);
         $loaId = $service->findLoaIdByAlias('b');
@@ -44,7 +44,7 @@ class LoaAliasLookupServiceTest extends TestCase
      * @test
      * @group secondFactorOnly
      */
-    public function it_returns_false_on_no_match()
+    public function it_returns_false_on_no_match(): void
     {
         $service = new LoaAliasLookupService(['a' => 'b']);
         $loaId = $service->findLoaIdByAlias('schaap');
@@ -56,7 +56,7 @@ class LoaAliasLookupServiceTest extends TestCase
      * @test
      * @group secondFactorOnly
      */
-    public function it_looksup_loa_alias_by_loa()
+    public function it_looksup_loa_alias_by_loa(): void
     {
         $loaA = m::mock('Surfnet\StepupBundle\Value\Loa');
         $loaA->shouldReceive('isIdentifiedBy')->withArgs(['a'])->andReturn(true);
@@ -79,7 +79,7 @@ class LoaAliasLookupServiceTest extends TestCase
      * @test
      * @group secondFactorOnly
      */
-    public function it_rejects_invalid_mappings()
+    public function it_rejects_invalid_mappings(): void
     {
         $this->expectException(InvalidArgumentException::class);
         new LoaAliasLookupService(['a' => ['a', 'b']]);

@@ -397,7 +397,7 @@ class StepUpAuthenticationService
         return $this->smsService->verifyPossession($command);
     }
 
-    public function clearSmsVerificationState(string $secondFactorId)
+    public function clearSmsVerificationState(string $secondFactorId): void
     {
         $this->smsService->clearSmsVerificationState($secondFactorId);
     }

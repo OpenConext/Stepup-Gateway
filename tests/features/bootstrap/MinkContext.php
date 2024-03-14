@@ -42,7 +42,7 @@ class MinkContext extends BaseMinkContext
     /**
      * @Then /^the response should contain \'([^\']*)\'$/
      */
-    public function theResponseShouldContain($string)
+    public function theResponseShouldContain($string): void
     {
         $this->assertSession()->responseContains($string);
     }
@@ -50,7 +50,7 @@ class MinkContext extends BaseMinkContext
     /**
      * @Then /^the response should match xpath \'([^\']*)\'$/
      */
-    public function theResponseShouldMatchXpath($xpath)
+    public function theResponseShouldMatchXpath($xpath): void
     {
         $document = new DOMDocument();
         if ($this->getSession()->getDriver() instanceof Selenium2Driver) {
@@ -77,7 +77,7 @@ class MinkContext extends BaseMinkContext
     /**
      * @Then /^the ADFS response should match xpath \'([^\']*)\'$/
      */
-    public function theAdfsResponseShouldMatchXpath($xpath)
+    public function theAdfsResponseShouldMatchXpath($xpath): void
     {
         $document = new DOMDocument();
         $xml = $this->getSession()->getPage()->findById('saml-response-xml')->getText();
@@ -99,7 +99,7 @@ class MinkContext extends BaseMinkContext
     /**
      * @Then /^the ADFS response should carry the ADFS POST parameters$/
      */
-    public function theAdfsResponseShouldHaveAdfsPostParams()
+    public function theAdfsResponseShouldHaveAdfsPostParams(): void
     {
         $context = $this->getSession()->getPage()->findById('Context')->getText();
         $authMethod = $this->getSession()->getPage()->findById('AuthMethod')->getText();
@@ -114,7 +114,7 @@ class MinkContext extends BaseMinkContext
     /**
      * @Then /^the response should not match xpath \'([^\']*)\'$/
      */
-    public function theResponseShouldNotMatchXpath($xpath)
+    public function theResponseShouldNotMatchXpath($xpath): void
     {
         $document = new DOMDocument();
         $document->loadXML($this->getSession()->getPage()->getContent());
@@ -137,7 +137,7 @@ class MinkContext extends BaseMinkContext
     /**
      * @Given /^I should see URL "([^"]*)"$/
      */
-    public function iShouldSeeUrl($url)
+    public function iShouldSeeUrl($url): void
     {
         $this->assertSession()->responseContains($url);
     }
@@ -145,7 +145,7 @@ class MinkContext extends BaseMinkContext
     /**
      * @Given /^I should not see URL "([^"]*)"$/
      */
-    public function iShouldNotSeeUrl($url)
+    public function iShouldNotSeeUrl($url): void
     {
         $this->assertSession()->responseNotContains($url);
     }
@@ -153,7 +153,7 @@ class MinkContext extends BaseMinkContext
     /**
      * @Given /^I open (\d+) browser tabs identified by "([^"]*)"$/
      */
-    public function iOpenTwoBrowserTabsIdentifiedBy($numberOfTabs, $tabNames)
+    public function iOpenTwoBrowserTabsIdentifiedBy($numberOfTabs, $tabNames): void
     {
         // On successive scenarios, reset the session to get rid of browser (session) state from previous scenarios
         if ($this->getMink()->getSession()->isStarted()) {
@@ -190,13 +190,13 @@ class MinkContext extends BaseMinkContext
     /**
      * @Given /^I switch to "([^"]*)"$/
      */
-    public function iSwitchToWindow($windowName)
+    public function iSwitchToWindow($windowName): void
     {
         // (re) set the default session to the chrome session.
         $this->switchToWindow($windowName);
     }
 
-    public function switchToWindow($windowName)
+    public function switchToWindow($windowName): void
     {
         if (!isset($this->windows[$windowName])) {
             throw new RuntimeException(sprintf('Unknown window/tab name "%s"', $windowName));

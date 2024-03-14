@@ -210,7 +210,7 @@ class IdentityProviderController extends Controller
         return $assertion;
     }
 
-    private function addSubjectConfirmationFor(Assertion $newAssertion, $destination, $requestId)
+    private function addSubjectConfirmationFor(Assertion $newAssertion, $destination, $requestId): void
     {
         $confirmation = new SubjectConfirmation();
         $confirmation->setMethod(Constants::CM_BEARER);

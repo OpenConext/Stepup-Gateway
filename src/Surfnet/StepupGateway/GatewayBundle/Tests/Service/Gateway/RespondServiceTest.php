@@ -121,7 +121,7 @@ final class RespondServiceTest extends GatewaySamlTestCase
     /**
      * @test
      */
-    public function it_should_return_a_valid_saml_response_and_update_state_when_the_verification_is_succeeded_on_login_flow()
+    public function it_should_return_a_valid_saml_response_and_update_state_when_the_verification_is_succeeded_on_login_flow(): void
     {
 
         // Mock service provider
@@ -248,7 +248,7 @@ final class RespondServiceTest extends GatewaySamlTestCase
      * @param int $now
      * @param array $sessionData
      */
-    private function initGatewayService(array $idpConfiguration, array $dictionaryAttributes, array $loaLevels, DateTime $now)
+    private function initGatewayService(array $idpConfiguration, array $dictionaryAttributes, array $loaLevels, DateTime $now): void
     {
         $session = new Session($this->sessionStorage);
         $this->stateHandler = new ProxyStateHandler($session, 'surfnet/gateway/request');

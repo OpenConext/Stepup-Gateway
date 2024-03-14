@@ -68,7 +68,7 @@ class ResponseHelperTest extends TestCase
     /**
      * @test
      */
-    public function it_can_test_if_response_is_adfs_response()
+    public function it_can_test_if_response_is_adfs_response(): void
     {
         $this->stateHandler->shouldReceive('hasMatchingRequestId')->with('my-request-id')->andReturn(true);
         $this->assertTrue($this->helper->isAdfsResponse('my-request-id'));
@@ -77,7 +77,7 @@ class ResponseHelperTest extends TestCase
     /**
      * @test
      */
-    public function it_can_test_if_response_is_not_adfs_response()
+    public function it_can_test_if_response_is_not_adfs_response(): void
     {
         $this->stateHandler->shouldReceive('hasMatchingRequestId')->with('my-request-id')->andReturn(false);
         $this->assertFalse($this->helper->isAdfsResponse('my-request-id'));
@@ -86,7 +86,7 @@ class ResponseHelperTest extends TestCase
     /**
      * @test
      */
-    public function it_retrieves_adfs_parameters()
+    public function it_retrieves_adfs_parameters(): void
     {
         $this->stateHandler->shouldReceive('getAuthMethod')->andReturn('ADFS:SCSA');
         $this->stateHandler->shouldReceive('getContext')->andReturn('<blob></blob>');
@@ -101,7 +101,7 @@ class ResponseHelperTest extends TestCase
     /**
      * @test
      */
-    public function it_rejects_malformed_adfs_parameters()
+    public function it_rejects_malformed_adfs_parameters(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->stateHandler->shouldReceive('getAuthMethod')->andReturn(null);

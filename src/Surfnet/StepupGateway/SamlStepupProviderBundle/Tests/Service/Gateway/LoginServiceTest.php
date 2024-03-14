@@ -107,7 +107,7 @@ class LoginServiceTest extends GatewaySamlTestCase
     /**
      * @test
      */
-    public function it_should_return_a_valid_saml_response_and_update_state_when_the_registration_is_started_on_gssp_registration_flow()
+    public function it_should_return_a_valid_saml_response_and_update_state_when_the_registration_is_started_on_gssp_registration_flow(): void
     {
         // Create request
         $httpRequest = new Request();
@@ -173,7 +173,7 @@ class LoginServiceTest extends GatewaySamlTestCase
     /**
      * @test
      */
-    public function it_should_throw_an_exception_when_a_sp_is_not_connected_when_the_registration_is_started_on_gssp_registration_flow()
+    public function it_should_throw_an_exception_when_a_sp_is_not_connected_when_the_registration_is_started_on_gssp_registration_flow(): void
     {
         $this->expectException(NotConnectedServiceProviderException::class);
         // Create request
@@ -208,7 +208,7 @@ class LoginServiceTest extends GatewaySamlTestCase
      * @param array $connectedServiceProviders
      * @param DateTime $now
      */
-    private function initSamlProxyService(array $remoteIdpConfiguration, array $idpConfiguration, array $spConfiguration, array $connectedServiceProviders)
+    private function initSamlProxyService(array $remoteIdpConfiguration, array $idpConfiguration, array $spConfiguration, array $connectedServiceProviders): void
     {
         $session = new Session($this->sessionStorage);
         $attributeBag = new AttributeBag('__gssp_session');
@@ -243,7 +243,7 @@ class LoginServiceTest extends GatewaySamlTestCase
     /**
      * @param string $samlResponseXml
      */
-    private function mockRedirectBinding($samlResponseXml)
+    private function mockRedirectBinding($samlResponseXml): void
     {
         $authnRequest = ReceivedAuthnRequest::from($samlResponseXml);
 

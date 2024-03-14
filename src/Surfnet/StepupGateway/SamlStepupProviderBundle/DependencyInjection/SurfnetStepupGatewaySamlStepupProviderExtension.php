@@ -36,7 +36,7 @@ class SurfnetStepupGatewaySamlStepupProviderExtension extends Extension
     /**
      * {@inheritdoc}
      */
-    public function load(array $configs, ContainerBuilder $container)
+    public function load(array $configs, ContainerBuilder $container): void
     {
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
@@ -63,7 +63,7 @@ class SurfnetStepupGatewaySamlStepupProviderExtension extends Extension
         array $configuration,
         array $routes,
         ContainerBuilder $container
-    ) {
+    ): void {
         if ($container->has('gssp.provider.' . $provider)) {
             throw new InvalidConfigurationException(sprintf('Cannot create the same provider "%s" twice', $provider));
         }
@@ -132,7 +132,7 @@ class SurfnetStepupGatewaySamlStepupProviderExtension extends Extension
         array $configuration,
         array $routes,
         ContainerBuilder $container
-    ) {
+    ): void {
         $hostedDefinition = $this->buildHostedEntityDefinition($provider, $configuration, $routes);
         $container->setDefinition('gssp.provider.' . $provider . '.hosted_entities', $hostedDefinition);
 
@@ -187,7 +187,7 @@ class SurfnetStepupGatewaySamlStepupProviderExtension extends Extension
      * @param array            $configuration
      * @param ContainerBuilder $container
      */
-    private function createRemoteDefinition($provider, array $configuration, ContainerBuilder $container)
+    private function createRemoteDefinition($provider, array $configuration, ContainerBuilder $container): void
     {
         $definition    = new Definition('Surfnet\SamlBundle\Entity\IdentityProvider', [
             [
@@ -213,7 +213,7 @@ class SurfnetStepupGatewaySamlStepupProviderExtension extends Extension
         array $configuration,
         array $routes,
         ContainerBuilder $container
-    ) {
+    ): void {
         $metadataConfiguration = new Definition('Surfnet\SamlBundle\Metadata\MetadataConfiguration');
 
         $propertyMap = [

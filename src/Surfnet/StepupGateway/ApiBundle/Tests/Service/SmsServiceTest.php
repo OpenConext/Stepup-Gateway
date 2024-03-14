@@ -53,7 +53,7 @@ final class SmsServiceTest extends TestCase
         $this->setUpMessageBird($this->logger);
     }
 
-    public function test_spryng_integration_happy_flow()
+    public function test_spryng_integration_happy_flow(): void
     {
         $this->adapter = new SmsAdapterProvider('spryng');
         $this->adapter->addSmsAdapter($this->spryng);
@@ -66,7 +66,7 @@ final class SmsServiceTest extends TestCase
         self::assertFalse($result->isSuccess());
     }
 
-    public function test_message_bird_integration_happy_flow()
+    public function test_message_bird_integration_happy_flow(): void
     {
         $this->adapter = new SmsAdapterProvider('messagebird');
         $this->adapter->addSmsAdapter($this->spryng);
@@ -88,7 +88,7 @@ final class SmsServiceTest extends TestCase
         return $smsMessage;
     }
 
-    private function setUpMessageBird(LoggerInterface $logger)
+    private function setUpMessageBird(LoggerInterface $logger): void
     {
         $apiClient = m::mock(Client::class);
         $response = m::mock(ResponseInterface::class);

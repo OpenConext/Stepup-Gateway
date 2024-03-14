@@ -88,7 +88,7 @@ final class ConsumeAssertionServiceTest extends GatewaySamlTestCase
     /**
      * @test
      */
-    public function it_should_update_the_state_when_receiving_a_saml_response_when_consuming_assertions_on_login_flow()
+    public function it_should_update_the_state_when_receiving_a_saml_response_when_consuming_assertions_on_login_flow(): void
     {
         $samlResponseXml = '<samlp:Response
         xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"
@@ -230,7 +230,7 @@ final class ConsumeAssertionServiceTest extends GatewaySamlTestCase
     /**
      * @test
      */
-    public function it_should_throw_an_exception_when_the_post_binding_could_not_be_processed_when_receiving_a_saml_response_when_consuming_assertions_on_login_flow()
+    public function it_should_throw_an_exception_when_the_post_binding_could_not_be_processed_when_receiving_a_saml_response_when_consuming_assertions_on_login_flow(): void
     {
         $this->expectException(ResponseFailureException::class);
         $samlResponseXml = '<samlp:Response
@@ -341,7 +341,7 @@ final class ConsumeAssertionServiceTest extends GatewaySamlTestCase
     /**
      * @test
      */
-    public function it_should_throw_an_exception_when_the_in_respone_to_is_invalid_when_receiving_a_saml_response_when_consuming_assertions_on_login_flow()
+    public function it_should_throw_an_exception_when_the_in_respone_to_is_invalid_when_receiving_a_saml_response_when_consuming_assertions_on_login_flow(): void
     {
         $this->expectException(UnknownInResponseToException::class);
         $samlResponseXml = '<samlp:Response
@@ -448,7 +448,7 @@ final class ConsumeAssertionServiceTest extends GatewaySamlTestCase
         $this->gatewayConsumeAssertionService->consumeAssertion($httpRequest, $this->responseContext);
     }
 
-    public function test_it_stores_correct_collab_person_id_in_state()
+    public function test_it_stores_correct_collab_person_id_in_state(): void
     {
         $samlResponseXml = '<samlp:Response xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol" xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" ID="CORTO1111111111222222222233333333334444444444" Version="2.0" IssueInstant="2014-10-22T11:09:59Z" Destination="https://gateway.org/acs" InResponseTo="_mocked_generated_id">
     <saml:Issuer>https://idp.edu/metadata</saml:Issuer>
@@ -554,7 +554,7 @@ final class ConsumeAssertionServiceTest extends GatewaySamlTestCase
         ], $this->getSessionData('attributes'));
     }
 
-    public function test_it_rejects_nameidless_responses()
+    public function test_it_rejects_nameidless_responses(): void
     {
         // When the IdP did not add a subject nameid and also skips on the internal-collabPersonId. The assertion
         // is a 'valid' message according to our SAML processor (SAML2 library). But we can't process it, in
@@ -626,7 +626,7 @@ final class ConsumeAssertionServiceTest extends GatewaySamlTestCase
      * @param array $spConfiguration
      * @param int $now
      */
-    private function initGatewayService(array $idpConfiguration, array $spConfiguration, DateTime $now)
+    private function initGatewayService(array $idpConfiguration, array $spConfiguration, DateTime $now): void
     {
         $session = new Session($this->sessionStorage);
         $this->stateHandler = new ProxyStateHandler($session, 'surfnet/gateway/request');
@@ -656,7 +656,7 @@ final class ConsumeAssertionServiceTest extends GatewaySamlTestCase
     /**
      * @param string $samlResponseXml
      */
-    private function mockPostBinding($samlResponseXml)
+    private function mockPostBinding($samlResponseXml): void
     {
         $previous = libxml_disable_entity_loader(true);
         $asXml = DOMDocumentFactory::fromString($samlResponseXml);

@@ -42,7 +42,7 @@ class ProxyStateHandler
     /**
      * Clear the complete state, leaving other states intact.
      */
-    public function clear()
+    public function clear(): void
     {
         $all = $this->session->all();
 
@@ -384,7 +384,7 @@ class ProxyStateHandler
      * @param $requestId
      * @param $authenticationMode
      */
-    public function markAuthenticationModeForRequest($requestId, $authenticationMode)
+    public function markAuthenticationModeForRequest($requestId, $authenticationMode): void
     {
         $this->session->set('surfnet/gateway/auth_mode/' . $requestId, $authenticationMode);
     }

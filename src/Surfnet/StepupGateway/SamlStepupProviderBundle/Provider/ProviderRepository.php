@@ -40,7 +40,7 @@ final class ProviderRepository
     /**
      * @param Provider $provider
      */
-    public function addProvider(Provider $provider)
+    public function addProvider(Provider $provider): void
     {
         if ($this->has($provider->getName())) {
             throw new InvalidConfigurationException(sprintf(

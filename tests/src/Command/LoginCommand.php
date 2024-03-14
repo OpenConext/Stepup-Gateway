@@ -52,7 +52,7 @@ class LoginCommand
     /**
      * @param string $username
      */
-    public function setUsername($username)
+    public function setUsername($username): void
     {
         $this->username = $username;
     }
@@ -68,7 +68,7 @@ class LoginCommand
     /**
      * @param mixed $requestId
      */
-    public function setRequestId($requestId)
+    public function setRequestId($requestId): void
     {
         $this->requestId = $requestId;
     }

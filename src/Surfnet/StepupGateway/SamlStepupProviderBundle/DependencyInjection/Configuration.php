@@ -47,7 +47,7 @@ class Configuration implements ConfigurationInterface
     /**
      * @param ArrayNodeDefinition $rootNode
      */
-    private function addRoutesSection(ArrayNodeDefinition $rootNode)
+    private function addRoutesSection(ArrayNodeDefinition $rootNode): void
     {
         $rootNode
             ->children()
@@ -88,7 +88,7 @@ class Configuration implements ConfigurationInterface
      * @param ArrayNodeDefinition $rootNode
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    private function addProvidersSection(ArrayNodeDefinition $rootNode)
+    private function addProvidersSection(ArrayNodeDefinition $rootNode): void
     {
         /** @var ArrayNodeDefinition $protoType */
         $protoType = $rootNode

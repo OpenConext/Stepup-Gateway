@@ -29,7 +29,7 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
  */
 class SurfnetStepupGatewaySecondFactorOnlyExtension extends Extension
 {
-    public function load(array $config, ContainerBuilder $container)
+    public function load(array $config, ContainerBuilder $container): void
     {
         $loader = new YamlFileLoader(
             $container,
@@ -47,7 +47,7 @@ class SurfnetStepupGatewaySecondFactorOnlyExtension extends Extension
     private function replaceLoaAliasConfig(
         array $config,
         ContainerBuilder $container
-    ) {
+    ): void {
         $loaAliasMapping = [];
         foreach ($config[0]['loa_aliases'] as $mapping) {
             if (isset($loaAliasMapping[$mapping['loa']])) {

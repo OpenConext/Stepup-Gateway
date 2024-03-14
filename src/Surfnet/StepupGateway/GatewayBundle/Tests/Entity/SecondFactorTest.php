@@ -62,7 +62,7 @@ class SecondFactorTest extends TestCase
         float $requiredLoa,
         bool $expectedResult,
         bool $isIdentityVetted = true
-    ) {
+    ): void {
         $token = $this->buildSecondFactor($tokenType, $isIdentityVetted);
         $vettingTypeService = $this->buildSecondFactorTypeService();
         $this->assertEquals(
@@ -77,7 +77,7 @@ class SecondFactorTest extends TestCase
     /**
      * @dataProvider provideErroneousIdentityVettedTestData
      */
-    public function test_reject_faulty_token_data(string $tokenType, float $requiredLoa, string $expectedMessage)
+    public function test_reject_faulty_token_data(string $tokenType, float $requiredLoa, string $expectedMessage): void
     {
         $raVettedYubikey = $this->buildSecondFactor($tokenType, true);
         $vettingTypeService = $this->buildSecondFactorTypeService();
@@ -92,7 +92,7 @@ class SecondFactorTest extends TestCase
     /**
      * @dataProvider provideLoaLevelExpectations
      */
-    public function test_get_loa(string $tokenType, bool $isIdentityVetted, float $expectedLoa)
+    public function test_get_loa(string $tokenType, bool $isIdentityVetted, float $expectedLoa): void
     {
         $token = $this->buildSecondFactor($tokenType, $isIdentityVetted);
         $service = $this->buildSecondFactorTypeService();

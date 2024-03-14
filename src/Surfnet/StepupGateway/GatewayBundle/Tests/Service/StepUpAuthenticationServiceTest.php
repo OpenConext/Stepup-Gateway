@@ -95,7 +95,7 @@ final class StepUpAuthenticationServiceTest extends TestCase
     /**
      * There is no SP/institution specific LOA configuration
      */
-    public function test_resolve_highest_required_loa_no_special_sp_loa_configuration()
+    public function test_resolve_highest_required_loa_no_special_sp_loa_configuration(): void
     {
         $this->logger
             ->shouldReceive('info')
@@ -122,7 +122,7 @@ final class StepUpAuthenticationServiceTest extends TestCase
     /**
      * There is no SP/institution specific LOA configuration
      */
-    public function test_resolve_highest_required_loa_default_loa_is_added()
+    public function test_resolve_highest_required_loa_default_loa_is_added(): void
     {
         $this->logger
             ->shouldReceive('info')
@@ -151,7 +151,7 @@ final class StepUpAuthenticationServiceTest extends TestCase
      *
      * @dataProvider configuredLoas
      */
-    public function test_resolve_highest_required_loa_special_sp_loa_configuration($loaConfiguration)
+    public function test_resolve_highest_required_loa_special_sp_loa_configuration($loaConfiguration): void
     {
         $this->logger
             ->shouldReceive('info')
@@ -195,7 +195,7 @@ final class StepUpAuthenticationServiceTest extends TestCase
      *
      * @dataProvider configuredLoas
      */
-    public function test_resolve_highest_required_loa_no_vetted_tokens_for_user_institution($loaConfiguration)
+    public function test_resolve_highest_required_loa_no_vetted_tokens_for_user_institution($loaConfiguration): void
     {
         $this->expectException(InstitutionMismatchException::class);
         $this->expectExceptionMessage('User and IdP SHO are set but do not match.');
@@ -217,7 +217,7 @@ final class StepUpAuthenticationServiceTest extends TestCase
     /**
      * No default SP LOA config is provided for this SP
      */
-    public function test_resolve_highest_required_loa_no_default_sp_configurated()
+    public function test_resolve_highest_required_loa_no_default_sp_configurated(): void
     {
         $this->expectException(LoaCannotBeGivenException::class);
         $this->expectExceptionMessage('No Loa can be found, at least one Loa should be found');
@@ -236,7 +236,7 @@ final class StepUpAuthenticationServiceTest extends TestCase
     /**
      * No default SP LOA config is provided for this SP
      */
-    public function test_resolve_highest_required_loa_no_sho_can_be_found()
+    public function test_resolve_highest_required_loa_no_sho_can_be_found(): void
     {
         $this->expectException(UnknownInstitutionException::class);
         $this->expectExceptionMessage('Unable to determine the institution for authenticating user.');
@@ -259,7 +259,7 @@ final class StepUpAuthenticationServiceTest extends TestCase
         );
     }
 
-    public function test_resolve_highest_required_loa_no_viable_loa_found()
+    public function test_resolve_highest_required_loa_no_viable_loa_found(): void
     {
         $this->expectException(LoaCannotBeGivenException::class);
         $this->expectExceptionMessage('Out of "2" candidates, no existing Loa could be found, no authentication is possible.');
@@ -358,7 +358,7 @@ final class StepUpAuthenticationServiceTest extends TestCase
         $spRequestedLoa,
         $expectedOutcome,
         $index
-    ) {
+    ): void {
 
         $this->logger->shouldReceive('info');
 

@@ -60,7 +60,7 @@ class FeatureContext implements Context
     /**
      * @BeforeFeature
      */
-    public static function setupDatabase(BeforeFeatureScope $scope)
+    public static function setupDatabase(BeforeFeatureScope $scope): void
     {
         // Generate test databases
         echo "Preparing test schemas\n";
@@ -71,7 +71,7 @@ class FeatureContext implements Context
     /**
      * @BeforeScenario
      */
-    public function gatherContexts(BeforeScenarioScope $scope)
+    public function gatherContexts(BeforeScenarioScope $scope): void
     {
         $environment = $scope->getEnvironment();
         $this->minkContext = $environment->getContext(MinkContext::class);
@@ -80,7 +80,7 @@ class FeatureContext implements Context
     /**
      * @Given /^a user from "([^"]*)" identified by "([^"]*)" with a vetted "([^"]*)" token$/
      */
-    public function aUserIdentifiedByWithAVettedToken($institution, $nameId, $tokenType)
+    public function aUserIdentifiedByWithAVettedToken($institution, $nameId, $tokenType): void
     {
         switch (strtolower($tokenType)) {
             case "yubikey":
@@ -98,7 +98,7 @@ class FeatureContext implements Context
     /**
      * @Given /^a user from "([^"]*)" identified by "([^"]*)" with a self-asserted "([^"]*)" token$/
      */
-    public function aUserIdentifiedByWithASelfAssertedToken($institution, $nameId, $tokenType)
+    public function aUserIdentifiedByWithASelfAssertedToken($institution, $nameId, $tokenType): void
     {
         switch (strtolower($tokenType)) {
             case "yubikey":
@@ -116,7 +116,7 @@ class FeatureContext implements Context
     /**
      * @Then I should see the Yubikey OTP screen
      */
-    public function iShouldSeeTheYubikeyOtpScreen()
+    public function iShouldSeeTheYubikeyOtpScreen(): void
     {
         $this->minkContext->assertPageContainsText('Your YubiKey-code');
     }
@@ -124,7 +124,7 @@ class FeatureContext implements Context
     /**
      * @Then I should see the SMS verification screen
      */
-    public function iShouldSeeTheSMSScreen()
+    public function iShouldSeeTheSMSScreen(): void
     {
         $this->minkContext->assertPageContainsText('Enter the received SMS-code');
         $this->minkContext->assertPageContainsText('Send again');
@@ -133,7 +133,7 @@ class FeatureContext implements Context
     /**
      * @Given /^I should see the Tiqr authentication screen$/
      */
-    public function iShouldSeeTheTiqrAuthenticationScreen()
+    public function iShouldSeeTheTiqrAuthenticationScreen(): void
     {
         $this->minkContext->pressButton('Submit');
         $this->minkContext->assertPageContainsText('Log in with Tiqr');
@@ -142,7 +142,7 @@ class FeatureContext implements Context
     /**
      * @When I enter the OTP
      */
-    public function iEnterTheOtp()
+    public function iEnterTheOtp(): void
     {
         $this->minkContext->fillField('gateway_verify_yubikey_otp_otp', 'bogus-otp-we-use-a-mock-yubikey-service');
         $this->minkContext->pressButton('gateway_verify_yubikey_otp_submit');
@@ -152,7 +152,7 @@ class FeatureContext implements Context
     /**
      * @When I enter the SMS verification code
      */
-    public function iEnterTheSmsVerificationCode()
+    public function iEnterTheSmsVerificationCode(): void
     {
         $cookieValue = $this->minkContext->getSession()->getDriver()->getCookie('smoketest-sms-service');
         $matches = [];
@@ -177,7 +177,7 @@ class FeatureContext implements Context
     /**
      * @When I finish the Tiqr authentication
      */
-    public function iFinishGsspAuthentication()
+    public function iFinishGsspAuthentication(): void
     {
         $this->minkContext->pressButton('Submit');
         $this->minkContext->pressButton('Submit');
@@ -186,7 +186,7 @@ class FeatureContext implements Context
     /**
      * @Given /^a whitelisted institution ([^"]*)$/
      */
-    public function aWhitelistedInstitution($institution)
+    public function aWhitelistedInstitution($institution): void
     {
         $this->whitelistedInstitutions[] = $this->fixtureService->whitelist($institution)['institution'];
     }
@@ -209,7 +209,7 @@ class FeatureContext implements Context
     /**
      * @Then /^I select my ([^"]*) token on the WAYG$/
      */
-    public function iShouldSelectMyTokenOnTheWAYG($tokenType)
+    public function iShouldSelectMyTokenOnTheWAYG($tokenType): void
     {
         switch (strtolower($tokenType)) {
             case "yubikey":
@@ -227,7 +227,7 @@ class FeatureContext implements Context
     /**
      * @Then /^I should be on the WAYG$/
      */
-    public function iShouldBeOnTheWAYG()
+    public function iShouldBeOnTheWAYG(): void
     {
         $this->minkContext->assertPageContainsText('Choose a token for login');
     }
@@ -235,7 +235,7 @@ class FeatureContext implements Context
     /**
      * @Then /^an error response is posted back to the SP$/
      */
-    public function anErrorResponseIsPostedBackToTheSP()
+    public function anErrorResponseIsPostedBackToTheSP(): void
     {
         $this->minkContext->pressButton('Submit');
 
@@ -244,7 +244,7 @@ class FeatureContext implements Context
     /**
      * @Given /^I cancel the authentication$/
      */
-    public function iCancelTheAuthentication()
+    public function iCancelTheAuthentication(): void
     {
         $this->minkContext->pressButton('Cancel');
     }
@@ -252,7 +252,7 @@ class FeatureContext implements Context
     /**
      * @Given /^I pass through the Gateway$/
      */
-    public function iPassThroughTheGateway()
+    public function iPassThroughTheGateway(): void
     {
         $this->minkContext->pressButton('Submit');
     }

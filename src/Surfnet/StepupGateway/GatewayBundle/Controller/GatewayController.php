@@ -297,7 +297,7 @@ class GatewayController extends Controller
         return $this->get('gateway.service.gateway.failed_response');
     }
 
-    private function supportsAuthenticationMode($authenticationMode)
+    private function supportsAuthenticationMode($authenticationMode): void
     {
         if (!($authenticationMode === self::MODE_SSO || $authenticationMode === self::MODE_SFO)) {
             throw new InvalidArgumentException('Invalid authentication mode requested');

@@ -58,7 +58,7 @@ class SmsAdapterProvider
         $this->selectedService = $selectedService;
     }
 
-    public function addSmsAdapter(SmsAdapterInterface $adapter)
+    public function addSmsAdapter(SmsAdapterInterface $adapter): void
     {
         $adapterName = get_class($adapter);
         if (!array_key_exists($adapterName, self::$allowedServices)) {

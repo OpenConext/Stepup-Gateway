@@ -95,7 +95,7 @@ class SecondFactorVerificationServiceTest extends GatewaySamlTestCase
     /**
      * @test
      */
-    public function it_should_return_a_valid_saml_response_and_update_state_when_the_verification_is_started_on_gssp_verification_flow() {
+    public function it_should_return_a_valid_saml_response_and_update_state_when_the_verification_is_started_on_gssp_verification_flow(): void {
 
         $subjectNameId = 'test-gssp-id';
 
@@ -157,7 +157,7 @@ class SecondFactorVerificationServiceTest extends GatewaySamlTestCase
      * @param array $connectedServiceProviders
      * @param DateTime $now
      */
-    private function initSamlProxyService(array $remoteIdpConfiguration, array $idpConfiguration, array $spConfiguration, DateTime $now)
+    private function initSamlProxyService(array $remoteIdpConfiguration, array $idpConfiguration, array $spConfiguration, DateTime $now): void
     {
         $session = new Session($this->sessionStorage);
         $attributeBag = new AttributeBag('__gssp_session');

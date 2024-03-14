@@ -53,7 +53,7 @@ final class SecondFactorLocaleListener implements EventSubscriberInterface
         $this->cookieHelper = $cookieHelper;
     }
 
-    public function setRequestLocale(GetResponseEvent $event)
+    public function setRequestLocale(GetResponseEvent $event): void
     {
         $locale = $this->getLocaleFromSelectedSecondFactor();
 

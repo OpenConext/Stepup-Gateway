@@ -68,7 +68,7 @@ class ProxyResponseFactoryTest extends GatewaySamlTestCase
         );
     }
 
-    public function test_it_can_create_an_assertion()
+    public function test_it_can_create_an_assertion(): void
     {
         $this->idp
             ->shouldReceive('getEntityId')

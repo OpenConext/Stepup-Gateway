@@ -71,7 +71,7 @@ class RequestHelperTest extends TestCase
     /**
      * @test
      */
-    public function it_can_test_if_request_is_not_from_adfs()
+    public function it_can_test_if_request_is_not_from_adfs(): void
     {
         $this->parameterBag->shouldReceive('has')->once()->andReturn(false);
         $this->assertFalse($this->helper->isAdfsRequest($this->request));
@@ -80,7 +80,7 @@ class RequestHelperTest extends TestCase
     /**
      * @test
      */
-    public function it_can_test_if_request_is_from_adfs()
+    public function it_can_test_if_request_is_from_adfs(): void
     {
         $this->parameterBag->shouldReceive('has')->andReturn(true);
         $this->assertTrue($this->helper->isAdfsRequest($this->request));
@@ -89,7 +89,7 @@ class RequestHelperTest extends TestCase
     /**
      * @test
      */
-    public function it_rejects_malformed_request()
+    public function it_rejects_malformed_request(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->request->request->shouldReceive('get')->with(RequestHelper::ADFS_PARAM_AUTH_METHOD)->andReturn('');
@@ -100,7 +100,7 @@ class RequestHelperTest extends TestCase
     /**
      * @test
      */
-    public function it_transforms_adfs_request()
+    public function it_transforms_adfs_request(): void
     {
         $authnRequest = <<<AUTHNREQUEST
 <samlp:AuthnRequest xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol" xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" ID="my-request-id" Version="2.0" IssueInstant="2017-08-16T14:25:06Z" Destination="https://gw-dev.stepup.coin.surf.net/app_dev.php/second-factor-only/single-sign-on" AssertionConsumerServiceURL="http://localhost:8989/simplesaml/module.php/saml/sp/saml2-acs.php/sfo-sp" ProtocolBinding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"><saml:Issuer>http://localhost:8989/simplesaml/module.php/saml/sp/metadata.php/sfo-sp</saml:Issuer><ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#">

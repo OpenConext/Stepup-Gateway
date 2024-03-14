@@ -138,7 +138,7 @@ class ProxyResponseService
      * @param Assertion $newAssertion
      * @param string $destination ACS URL
      */
-    private function addSubjectConfirmationFor(Assertion $newAssertion, $destination)
+    private function addSubjectConfirmationFor(Assertion $newAssertion, $destination): void
     {
         $confirmation = new SubjectConfirmation();
         $confirmation->setMethod(Constants::CM_BEARER);
@@ -157,7 +157,7 @@ class ProxyResponseService
      * @param Assertion $newAssertion
      * @param Assertion $assertion
      */
-    private function addAuthenticationStatementTo(Assertion $newAssertion, Assertion $assertion)
+    private function addAuthenticationStatementTo(Assertion $newAssertion, Assertion $assertion): void
     {
         $newAssertion->setAuthnInstant($assertion->getAuthnInstant());
         $newAssertion->setAuthnContextClassRef((string)$this->intrinsicLoa);

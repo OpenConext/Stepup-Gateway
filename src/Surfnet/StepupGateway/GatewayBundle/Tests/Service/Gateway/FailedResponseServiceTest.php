@@ -72,7 +72,7 @@ final class FailedResponseServiceTest extends GatewaySamlTestCase
     /**
      * @test
      */
-    public function it_should_handle_send_loa_could_not_be_given_based_on_the_given_state_on_login_flow()
+    public function it_should_handle_send_loa_could_not_be_given_based_on_the_given_state_on_login_flow(): void
     {
         // Mock service provider
         $serviceProvider = Mockery::mock(ServiceProvider::class)
@@ -126,7 +126,7 @@ final class FailedResponseServiceTest extends GatewaySamlTestCase
     /**
      * @test
      */
-    public function it_should_handle_authentication_cancelled_by_user_based_on_the_given_state_on_login_flow()
+    public function it_should_handle_authentication_cancelled_by_user_based_on_the_given_state_on_login_flow(): void
     {
         // Mock service provider
         $serviceProvider = Mockery::mock(ServiceProvider::class)
@@ -180,7 +180,7 @@ final class FailedResponseServiceTest extends GatewaySamlTestCase
     /**
      * @param DateTime $now
      */
-    private function initGatewayService(array $idpConfiguration, DateTime $now)
+    private function initGatewayService(array $idpConfiguration, DateTime $now): void
     {
         $session = new Session($this->sessionStorage);
         $this->stateHandler = new ProxyStateHandler($session, 'surfnet/gateway/request');
