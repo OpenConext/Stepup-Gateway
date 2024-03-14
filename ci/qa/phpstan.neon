@@ -1,5 +1,5 @@
 includes:
-#    - ./phpstan-baseline.php
+    - ./phpstan-baseline.php
 #    - ../../vendor/phpstan/phpstan-symfony/extension.neon
 rules:
 #    - Surfnet\NoDebugFunctionRule
