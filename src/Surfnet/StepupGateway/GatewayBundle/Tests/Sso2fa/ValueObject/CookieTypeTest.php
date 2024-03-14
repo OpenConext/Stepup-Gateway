@@ -24,18 +24,18 @@ use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\CookieType;
 
 class CookieTypeTest extends TestCase
 {
-    public function test_creation()
+    public function test_creation(): void
     {
         self::assertInstanceOf(CookieType::class, CookieType::fromConfiguration('persistent'));
     }
 
-    public function test_it_allows_persistent_and_session_types()
+    public function test_it_allows_persistent_and_session_types(): void
     {
         self::assertInstanceOf(CookieType::class, CookieType::fromConfiguration('persistent'));
         self::assertInstanceOf(CookieType::class, CookieType::fromConfiguration('session'));
     }
 
-    public function test_reject_other_types()
+    public function test_reject_other_types(): void
     {
         self::expectException(InvalidCookieTypeException::class);
         self::expectExceptionMessage('The SSO on second factor authentication cookie type must be one of: "persistent, session"');

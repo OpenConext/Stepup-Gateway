@@ -165,7 +165,7 @@ class FeatureContext implements Context
     /**
      * @When I enter the expired SMS verification code
      */
-    public function iEnterTheExpiredSmsVerificationCode()
+    public function iEnterTheExpiredSmsVerificationCode(): void
     {
         $cookieValue = $this->minkContext->getSession()->getDriver()->getCookie('smoketest-sms-service');
         $matches = [];
@@ -194,7 +194,7 @@ class FeatureContext implements Context
     /**
      * @Given /^an institution "([^"]*)" that allows "([^"]*)"$/
      */
-    public function anInstitutionThatAllows(string $institution, string $option)
+    public function anInstitutionThatAllows(string $institution, string $option): void
     {
         switch(true) {
             case $option === 'sso_on_2fa':
@@ -260,7 +260,7 @@ class FeatureContext implements Context
     /**
      * @Given /^I pass through the IdP/
      */
-    public function iPassThroughTheIdP()
+    public function iPassThroughTheIdP(): void
     {
         $this->minkContext->pressButton('Yes, continue');
     }
@@ -269,7 +269,7 @@ class FeatureContext implements Context
      * @Then /^the response should have a SSO\-2FA cookie$/
      * @throws ExpectationException
      */
-    public function theResponseShouldHaveASSO2FACookie()
+    public function theResponseShouldHaveASSO2FACookie(): void
     {
         $this->minkContext->visit('https://gateway.dev.openconext.local/info');
         $cookieValue = $this->minkContext->getSession()->getCookie($this->sso2faCookieName);
@@ -282,7 +282,7 @@ class FeatureContext implements Context
      * @Then /^the response should not have a SSO\-2FA cookie$/
      * @throws ExpectationException
      */
-    public function theResponseShouldNotHaveASSO2FACookie()
+    public function theResponseShouldNotHaveASSO2FACookie(): void
     {
         $this->minkContext->visit('https://gateway.dev.openconext.local/info');
         $cookie = $this->minkContext->getSession()->getCookie($this->sso2faCookieName);
@@ -298,7 +298,7 @@ class FeatureContext implements Context
      * @Then /^a new SSO\-2FA cookie was written$/
      * @throws ExpectationException
      */
-    public function theSSO2FACookieIsRewritten()
+    public function theSSO2FACookieIsRewritten(): void
     {
         $this->minkContext->visit('https://gateway.dev.openconext.local/info');
         $cookieValue = $this->minkContext->getSession()->getCookie($this->sso2faCookieName);
@@ -315,7 +315,7 @@ class FeatureContext implements Context
      * @Then /^the existing SSO\-2FA cookie was used$/
      * @throws ExpectationException
      */
-    public function theSSO2FACookieRemainedTheSame()
+    public function theSSO2FACookieRemainedTheSame(): void
     {
         $this->minkContext->visit('https://gateway.dev.openconext.local/info');
         $cookieValue = $this->minkContext->getSession()->getCookie($this->sso2faCookieName);
@@ -335,7 +335,7 @@ class FeatureContext implements Context
     /**
      * @Given /^the user cleared cookies from browser$/
      */
-    public function userClearedCookies()
+    public function userClearedCookies(): void
     {
         $this->minkContext->visit('https://gateway.dev.openconext.local/info');
         $this->minkContext->getSession()->setCookie($this->sso2faCookieName, null);
@@ -344,7 +344,7 @@ class FeatureContext implements Context
     /**
      * @Given /^the SSO\-2FA cookie should contain "([^"]*)"$/
      */
-    public function theSSO2FACookieShouldContain($expectedCookieValue)
+    public function theSSO2FACookieShouldContain($expectedCookieValue): void
     {
         $this->minkContext->visit('https://gateway.dev.openconext.local/info');
         $cookieValue = $this->minkContext->getSession()->getCookie($this->sso2faCookieName);
@@ -373,7 +373,7 @@ class FeatureContext implements Context
     /**
      * @throws ExpectationException
      */
-    private function validateSsoOn2faCookie(?string $cookieValue)
+    private function validateSsoOn2faCookie(?string $cookieValue): void
     {
         if (empty($cookieValue)) {
             throw new ExpectationException(

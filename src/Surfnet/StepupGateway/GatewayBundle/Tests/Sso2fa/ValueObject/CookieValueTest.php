@@ -27,7 +27,7 @@ use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\CookieValue;
 
 class CookieValueTest extends TestCase
 {
-    public function test_serialize()
+    public function test_serialize(): void
     {
         $secondFactor = Mockery::mock(SecondFactor::class);
         $secondFactor->secondFactorId = 'abcdef-1234';
@@ -39,7 +39,7 @@ class CookieValueTest extends TestCase
         self::assertIsString($serialized);
     }
 
-    public function test_deserialization()
+    public function test_deserialization(): void
     {
         $secondFactor = Mockery::mock(SecondFactor::class);
         $secondFactor->secondFactorId = 'abcdef-1234';
@@ -54,7 +54,7 @@ class CookieValueTest extends TestCase
     /**
      * @dataProvider loaProvider
      */
-    public function test_loa_can_be_tested_against_required_loa(float $requiredLoa, bool $expectedResult)
+    public function test_loa_can_be_tested_against_required_loa(float $requiredLoa, bool $expectedResult): void
     {
         $secondFactor = Mockery::mock(SecondFactor::class);
         $secondFactor->secondFactorId = 'abcdef-1234';

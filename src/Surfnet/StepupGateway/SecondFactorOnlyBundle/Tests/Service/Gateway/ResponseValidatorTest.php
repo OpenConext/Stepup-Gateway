@@ -71,7 +71,7 @@ final class ResponseValidatorTest extends TestCase
         parent::setUp();
     }
 
-    public function test_validate_happy_flow()
+    public function test_validate_happy_flow(): void
     {
         $request = $this->prepareRequest();
         $secondFactor = $this->prepareSecondFactor('gssp-identifier');
@@ -98,7 +98,7 @@ final class ResponseValidatorTest extends TestCase
 
         $validator->validate($request, $secondFactor, 'sufjan');
     }
-    public function test_preconditions_must_be_met()
+    public function test_preconditions_must_be_met(): void
     {
         $request = $this->prepareRequest();
         $secondFactor = $this->prepareSecondFactor('gssp-identifier');
@@ -117,7 +117,7 @@ final class ResponseValidatorTest extends TestCase
         $validator->validate($request, $secondFactor, 'sufjan');
     }
 
-    public function test_validate_response_nameid_must_match_state_nameid()
+    public function test_validate_response_nameid_must_match_state_nameid(): void
     {
         $request = $this->prepareRequest();
         $secondFactor = $this->prepareSecondFactor('gssp-identifier');

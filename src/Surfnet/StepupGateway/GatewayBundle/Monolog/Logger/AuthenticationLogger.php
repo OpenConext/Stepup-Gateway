@@ -78,7 +78,7 @@ class AuthenticationLogger
     /**
      * @param string $requestId The SAML authentication request ID of the original request (not the proxy request).
      */
-    public function logIntrinsicLoaAuthentication($requestId)
+    public function logIntrinsicLoaAuthentication($requestId): void
     {
         $context = [
             'second_factor_id'      => '',
@@ -95,7 +95,7 @@ class AuthenticationLogger
      * @param string $requestId The SAML authentication request ID of the original request (not the proxy request).
      * @param string $authenticationMode
      */
-    public function logSecondFactorAuthentication(string $requestId, string $authenticationMode)
+    public function logSecondFactorAuthentication(string $requestId, string $authenticationMode): void
     {
         $stateHandler = $this->getStateHandler($authenticationMode);
         $secondFactor = $this->secondFactorService->findByUuid($stateHandler->getSelectedSecondFactorId());
@@ -122,7 +122,7 @@ class AuthenticationLogger
      * @param array  $context
      * @param string $requestId
      */
-    private function log($message, array $context, $requestId)
+    private function log($message, array $context, $requestId): void
     {
         if (!is_string($requestId)) {
             throw InvalidArgumentException::invalidType('string', 'requestId', $requestId);

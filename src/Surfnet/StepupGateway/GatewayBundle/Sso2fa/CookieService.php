@@ -188,7 +188,7 @@ class CookieService implements CookieServiceInterface
         return $this->cookieHelper->fingerprint($request);
     }
 
-    private function store(Response $response, CookieValueInterface $cookieValue)
+    private function store(Response $response, CookieValueInterface $cookieValue): void
     {
         $this->cookieHelper->write($response, $cookieValue);
     }

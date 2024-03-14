@@ -29,7 +29,7 @@ class ExpirationHelperTest extends TestCase
     /**
      * @dataProvider expirationExpectations
      */
-    public function test_is_expired(bool $isExpired, ExpirationHelper $helper, CookieValue $cookieValue)
+    public function test_is_expired(bool $isExpired, ExpirationHelper $helper, CookieValue $cookieValue): void
     {
         self::assertEquals($isExpired, $helper->isExpired($cookieValue));
     }
@@ -37,7 +37,7 @@ class ExpirationHelperTest extends TestCase
     /**
      * @dataProvider gracePeriodExpectations
      */
-    public function test_grace_period(bool $isExpired, ExpirationHelper $helper, CookieValue $cookieValue)
+    public function test_grace_period(bool $isExpired, ExpirationHelper $helper, CookieValue $cookieValue): void
     {
         self::assertEquals($isExpired, $helper->isExpired($cookieValue));
     }
@@ -45,7 +45,7 @@ class ExpirationHelperTest extends TestCase
     /**
      * @dataProvider invalidTimeExpectations
      */
-    public function test_strange_authentication_time_values(ExpirationHelper $helper, CookieValue $cookieValue)
+    public function test_strange_authentication_time_values(ExpirationHelper $helper, CookieValue $cookieValue): void
     {
         self::expectException(InvalidAuthenticationTimeException::class);
         $helper->isExpired($cookieValue);

@@ -81,7 +81,7 @@ class ServiceProviderContext implements Context, KernelAwareContext
         $this->fixtureService = $fixtureService;
     }
 
-    public function setKernel(KernelInterface $kernel)
+    public function setKernel(KernelInterface $kernel): void
     {
         $this->kernel = $kernel;
     }
@@ -89,7 +89,7 @@ class ServiceProviderContext implements Context, KernelAwareContext
     /**
      * @BeforeScenario
      */
-    public function gatherContexts(BeforeScenarioScope $scope)
+    public function gatherContexts(BeforeScenarioScope $scope): void
     {
         $environment = $scope->getEnvironment();
         $this->minkContext = $environment->getContext(MinkContext::class);
@@ -98,7 +98,7 @@ class ServiceProviderContext implements Context, KernelAwareContext
     /**
      * @Given /^an SFO enabled SP with EntityID ([^\']*)$/
      */
-    public function anSFOEnabledSPWithEntityID($entityId)
+    public function anSFOEnabledSPWithEntityID($entityId): void
     {
         $this->registerSp($entityId, true);
     }
@@ -106,19 +106,19 @@ class ServiceProviderContext implements Context, KernelAwareContext
     /**
      * @Given /^an SP with EntityID ([^\']*)$/
      */
-    public function anSPWithEntityID($entityId)
+    public function anSPWithEntityID($entityId): void
     {
         $this->registerSp($entityId, false);
     }
     /**
      * @Given /^an IdP with EntityID ([^\']*)$/
      */
-    public function anIdPWithEntityID($entityId)
+    public function anIdPWithEntityID($entityId): void
     {
         $this->registerIdp($entityId, false);
     }
 
-    private function registerSp($entityId, $sfoEnabled)
+    private function registerSp($entityId, $sfoEnabled): void
     {
         $publicKeyLoader = new KeyLoader();
         $publicKeyLoader->loadCertificateFile('/config/ssp/sp.crt');
@@ -136,7 +136,7 @@ class ServiceProviderContext implements Context, KernelAwareContext
         }
     }
 
-    private function registerIdP($entityId)
+    private function registerIdP($entityId): void
     {
         $publicKeyLoader = new KeyLoader();
         $publicKeyLoader->loadCertificateFile('/config/ssp/idp.crt');
@@ -153,7 +153,7 @@ class ServiceProviderContext implements Context, KernelAwareContext
     /**
      * @When /^([^\']*) starts an SFO authentication$/
      */
-    public function iStartAnSFOAuthentication($nameId)
+    public function iStartAnSFOAuthentication($nameId): void
     {
         $this->iStartAnSFOAuthenticationWithLoa($nameId, "self-asserted");
     }
@@ -161,7 +161,7 @@ class ServiceProviderContext implements Context, KernelAwareContext
     /**
      * @When /^([^\']*) starts an SFO authentication with LoA ([^\']*)$/
      */
-    public function iStartAnSFOAuthenticationWithLoa($nameId, string $loa, bool $forceAuthN = false)
+    public function iStartAnSFOAuthenticationWithLoa($nameId, string $loa, bool $forceAuthN = false): void
     {
         $authnRequest = new AuthnRequest();
         // In order to later assert if the response succeeded or failed, set our own dummy ACS location
@@ -205,14 +205,14 @@ class ServiceProviderContext implements Context, KernelAwareContext
     /**
      * @When /^([^\']*) starts an SFO authentication requiring LoA ([^\']*)$/
      */
-    public function iStartAnSFOAuthenticationWithLoaRequirement($nameId, $loa)
+    public function iStartAnSFOAuthenticationWithLoaRequirement($nameId, $loa): void
     {
         $this->iStartAnSFOAuthenticationWithLoa($nameId, $loa);
     }
     /**
      * @When /^([^\']*) starts a forced SFO authentication requiring LoA ([^\']*)$/
      */
-    public function iStartAForcedSFOAuthenticationWithLoaRequirement($nameId, $loa)
+    public function iStartAForcedSFOAuthenticationWithLoaRequirement($nameId, $loa): void
     {
         $this->iStartAnSFOAuthenticationWithLoa($nameId, $loa, true);
     }
@@ -220,7 +220,7 @@ class ServiceProviderContext implements Context, KernelAwareContext
     /**
      * @When /^([^\']*) starts an ADFS authentication requiring ([^\']*)$/
      */
-    public function iStartAnADFSAuthenticationWithLoaRequirement($nameId, $loa)
+    public function iStartAnADFSAuthenticationWithLoaRequirement($nameId, $loa): void
     {
         $requestParams = [
             'loa' => $loa,
@@ -234,7 +234,7 @@ class ServiceProviderContext implements Context, KernelAwareContext
     /**
      * @When /^([^\']*) starts an authentication at Default SP$/
      */
-    public function iStartAnAuthenticationAtDefaultSP($nameId)
+    public function iStartAnAuthenticationAtDefaultSP($nameId): void
     {
         $authnRequest = new AuthnRequest();
         // In order to later assert if the response succeeded or failed, set our own dummy ACS location
@@ -261,7 +261,7 @@ class ServiceProviderContext implements Context, KernelAwareContext
     /**
      * @When /^([^\']*) starts an authentication requiring LoA ([^\']*)$/
      */
-    public function iStartAnSsoAuthenticationWithLoaRequirement($nameId, $loa)
+    public function iStartAnSsoAuthenticationWithLoaRequirement($nameId, $loa): void
     {
         $authnRequest = new AuthnRequest();
         // In order to later assert if the response succeeded or failed, set our own dummy ACS location
@@ -303,7 +303,7 @@ class ServiceProviderContext implements Context, KernelAwareContext
     /**
      * @When /^I authenticate at the IdP as ([^\']*)$/
      */
-    public function iAuthenticateAtTheIdp($username)
+    public function iAuthenticateAtTheIdp($username): void
     {
         $this->minkContext->fillField('username', $username);
         $this->minkContext->fillField('password', $username);
@@ -344,7 +344,7 @@ class ServiceProviderContext implements Context, KernelAwareContext
     /**
      * @Given /^I log out at the IdP$/
      */
-    public function iLogOutAtTheIdP()
+    public function iLogOutAtTheIdP(): void
     {
         $this->minkContext->visit(self::SSP_URL);
         $this->minkContext->pressButton('Logout');

@@ -332,7 +332,7 @@ class ResponseContext
         return $this->stateHandler->isForceAuthn();
     }
 
-    public function markVerifiedBySsoOn2faCookie(string $fingerprint)
+    public function markVerifiedBySsoOn2faCookie(string $fingerprint): void
     {
         $this->stateHandler->setVerifiedBySsoOn2faCookie(true);
         $this->stateHandler->setSsoOn2faCookieFingerprint($fingerprint);

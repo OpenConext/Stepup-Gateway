@@ -50,7 +50,7 @@ class ResponseValidator
     /**
      *
      */
-    public function validate(Request $request, SecondFactor $secondFactor, string $nameIdFromState)
+    public function validate(Request $request, SecondFactor $secondFactor, string $nameIdFromState): void
     {
         $secondFactorType = new SecondFactorType($secondFactor->secondFactorType);
         $hasSamlResponse = $request->request->has('SAMLResponse');

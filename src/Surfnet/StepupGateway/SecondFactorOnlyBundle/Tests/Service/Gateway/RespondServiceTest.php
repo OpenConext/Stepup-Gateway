@@ -107,7 +107,7 @@ final class RespondServiceTest extends GatewaySamlTestCase
     /**
      * @test
      */
-    public function it_should_return_a_valid_saml_response_and_update_state_when_the_verification_is_succeeded_on_sfo_login_flow() {
+    public function it_should_return_a_valid_saml_response_and_update_state_when_the_verification_is_succeeded_on_sfo_login_flow(): void {
 
         $this->mockSessionData('_sf2_attributes', [
             'surfnet/gateway/requestrequest_id' => '_7179b234fc69f75724c83cab795fc87475d2f6d88e97e43368c3966e398c',
@@ -217,7 +217,7 @@ final class RespondServiceTest extends GatewaySamlTestCase
     /**
      * @test
      */
-    public function it_halts_execution_when_saml_response_is_invalid()
+    public function it_halts_execution_when_saml_response_is_invalid(): void
     {
 
         $this->mockSessionData('_sf2_attributes', [
@@ -268,7 +268,7 @@ final class RespondServiceTest extends GatewaySamlTestCase
     /**
      * @test
      */
-    public function it_should_throw_an_exception_when_the_second_factor_method_is_unknown_when_the_verification_is_succeeded_on_sfo_login_flow()
+    public function it_should_throw_an_exception_when_the_second_factor_method_is_unknown_when_the_verification_is_succeeded_on_sfo_login_flow(): void
     {
         $this->expectException(InvalidSecondFactorMethodException::class);
         $this->mockSessionData('_sf2_attributes', [
@@ -307,7 +307,7 @@ final class RespondServiceTest extends GatewaySamlTestCase
     /**
      * @test
      */
-    public function it_should_throw_an_exception_when_the_second_factor_is_not_verified_when_the_verification_is_succeeded_on_sfo_login_flow()
+    public function it_should_throw_an_exception_when_the_second_factor_is_not_verified_when_the_verification_is_succeeded_on_sfo_login_flow(): void
     {
         $this->expectException(InvalidSecondFactorMethodException::class);
         $this->mockSessionData('_sf2_attributes', [
@@ -359,7 +359,7 @@ final class RespondServiceTest extends GatewaySamlTestCase
      * @param DateTime $now
      * @param array $sessionData
      */
-    private function initGatewayLoginService(array $idpConfiguration, array $loaLevels,  array $loaAliases, DateTime $now)
+    private function initGatewayLoginService(array $idpConfiguration, array $loaLevels,  array $loaAliases, DateTime $now): void
     {
         $samlLogger = new SamlAuthenticationLogger($this->logger);
         $session = new Session($this->sessionStorage);

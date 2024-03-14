@@ -37,7 +37,7 @@ class StateHandlerTest extends TestCase
         $this->stateHandler = new StateHandler($this->attributeBag, $this->providerName);
     }
 
-    public function test_state_handler_can_be_clear()
+    public function test_state_handler_can_be_clear(): void
     {
         $this->stateHandler->setSubject('admin');
         $this->stateHandler->setRelayState('Hi there buddy');
@@ -49,7 +49,7 @@ class StateHandlerTest extends TestCase
         $this->assertEmpty($this->attributeBag->all());
     }
 
-    public function test_state_handler_leaves_other_gssp_data_intact()
+    public function test_state_handler_leaves_other_gssp_data_intact(): void
     {
         // Verify that all data is cleared, but other gssp data is kept in the bag
         $this->attributeBag->set('gssp_provider_name/key1', 'value 1');
