@@ -46,7 +46,7 @@ class VerifyYubikeyOtpType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => 'Surfnet\StepupGateway\GatewayBundle\Command\VerifyYubikeyOtpCommand',
+            'data_class' => \Surfnet\StepupGateway\GatewayBundle\Command\VerifyYubikeyOtpCommand::class,
         ]);
     }
 

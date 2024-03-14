@@ -36,7 +36,7 @@ class SendSmsChallengeType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => 'Surfnet\StepupGateway\GatewayBundle\Command\SendSmsChallengeCommand',
+            'data_class' => \Surfnet\StepupGateway\GatewayBundle\Command\SendSmsChallengeCommand::class,
         ]);
     }
 
