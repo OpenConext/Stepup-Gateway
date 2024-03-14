@@ -53,8 +53,8 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
  */
 class SecondFactorController extends Controller
 {
-    const MODE_SFO = 'sfo';
-    const MODE_SSO = 'sso';
+    public const MODE_SFO = 'sfo';
+    public const MODE_SSO = 'sso';
 
     public function selectSecondFactorForVerificationSsoAction(Request $request)
     {

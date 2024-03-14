@@ -31,7 +31,7 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
  */
 class SurfnetStepupGatewaySamlStepupProviderExtension extends Extension
 {
-    const VIEW_CONFIG_TAG_NAME = 'gssp.view_config';
+    public const VIEW_CONFIG_TAG_NAME = 'gssp.view_config';
 
     /**
      * {@inheritdoc}

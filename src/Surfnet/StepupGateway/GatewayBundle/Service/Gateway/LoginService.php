@@ -31,7 +31,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class LoginService
 {
-    const RESPONSE_CONTEXT_SERVICE_ID = 'gateway.proxy.response_context';
+    public const RESPONSE_CONTEXT_SERVICE_ID = 'gateway.proxy.response_context';
 
     /** @var SamlAuthenticationLogger */
     private $samlLogger;

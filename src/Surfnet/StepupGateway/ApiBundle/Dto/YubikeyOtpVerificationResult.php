@@ -23,9 +23,9 @@ use Surfnet\StepupBundle\Value\YubikeyPublicId;
 
 class YubikeyOtpVerificationResult
 {
-    const RESULT_PUBLIC_ID_MATCHED = 0;
-    const RESULT_PUBLIC_ID_DID_NOT_MATCH = 1;
-    const RESULT_OTP_VERIFICATION_FAILED = 2;
+    public const RESULT_PUBLIC_ID_MATCHED = 0;
+    public const RESULT_PUBLIC_ID_DID_NOT_MATCH = 1;
+    public const RESULT_OTP_VERIFICATION_FAILED = 2;
 
     /**
      * @var \Surfnet\StepupBundle\Value\YubikeyPublicId|null

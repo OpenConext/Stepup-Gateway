@@ -44,9 +44,9 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
  */
 class GatewayController extends Controller
 {
-    const RESPONSE_CONTEXT_SERVICE_ID = 'gateway.proxy.response_context';
-    const MODE_SFO = 'sfo';
-    const MODE_SSO = 'sso';
+    public const RESPONSE_CONTEXT_SERVICE_ID = 'gateway.proxy.response_context';
+    public const MODE_SFO = 'sfo';
+    public const MODE_SSO = 'sso';
 
     /**
      * Receive an AuthnRequest from a service provider.
@@ -232,7 +232,7 @@ class GatewayController extends Controller
      * @param Response $response
      * @return Response
      */
-    public function render($view, array $parameters = array(), Response $response = null): Response
+    public function render($view, array $parameters = [], Response $response = null): Response
     {
         return parent::render(
             'SurfnetStepupGatewayGatewayBundle:gateway:' . $view . '.html.twig',

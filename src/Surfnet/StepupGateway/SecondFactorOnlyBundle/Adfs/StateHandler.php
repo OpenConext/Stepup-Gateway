@@ -22,7 +22,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class StateHandler
 {
-    const SESSION_PATH = 'surfnet/gateway/adfs';
+    public const SESSION_PATH = 'surfnet/gateway/adfs';
 
     /**
      * @var \Symfony\Component\HttpFoundation\Session\SessionInterface
