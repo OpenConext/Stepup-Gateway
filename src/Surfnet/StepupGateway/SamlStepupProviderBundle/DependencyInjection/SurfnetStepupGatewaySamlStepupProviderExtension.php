@@ -28,6 +28,7 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 /**
  * @SuppressWarnings(PHPMD.LongClassName)
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class SurfnetStepupGatewaySamlStepupProviderExtension extends Extension
 {
