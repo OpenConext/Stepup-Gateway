@@ -57,7 +57,7 @@
         "webmozart/assert": "^1.2"
     },
     "require-dev": {
-        "malukenho/docheader": "^1.0.0",
+        "malukenho/docheader": "^0.1.8 || ^1.0.0",
         "behat/behat": "^3.6",
         "behat/mink": "^1.8",
         "behat/mink-extension": "^2.3",
@@ -105,7 +105,7 @@
         "behat": "./ci/qa/behat",
         "behat-selenium": "./ci/qa/behat-selenium",
         "test": "./ci/qa/phpunit",
-        "license-headers": "vendor/bin/docheader check src/",
+        "license-headers": "./ci/qa/docheader",
         "frontend-install": [
             "yarn install --frozen-lockfile",
             "yarn encore production"
