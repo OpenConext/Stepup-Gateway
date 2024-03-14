@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Get all PHP files in src/ directory
-files=$(find src/ -type f -name "*.php")
+files=$(find src/ tests/ -type f -name "*.php")
 
 # Initialize counter
 counter=0
