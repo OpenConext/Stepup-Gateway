@@ -91,7 +91,7 @@ class StateHandler extends ProxyStateHandler
     /**
      * Clear the complete state of this provider, leaving other provider (GSSP) states intact.
      */
-    public function clear()
+    public function clear(): void
     {
         $all = $this->attributeBag->all();
 
