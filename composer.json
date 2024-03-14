@@ -92,6 +92,8 @@
         "check": [
             "@phplint",
             "@validate-lockfile",
+            "@license-headers",
+            "@phpstan",
             "@phpcs",
             "@phpmd",
             "@test",
@@ -102,6 +104,7 @@
         "validate-lockfile": "./ci/qa/validate",
         "phpcs": "./ci/qa/phpcs",
         "phpcbf": "./ci/qa/phpcbf",
+        "phpstan": "./ci/qa/phpstan",
         "phpmd": "./ci/qa/phpmd",
         "behat": "./ci/qa/behat",
         "behat-selenium": "./ci/qa/behat-selenium",
