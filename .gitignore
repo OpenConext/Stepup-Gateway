@@ -5,9 +5,9 @@
 /app/files/*.crt
 /app/files/*.key
 /app/files/*.pem
-/config/legacy/parameters.yaml
-/config/legacy/samlstepupproviders_parameters.yaml
-/config/legacy/global_view_parameters.yaml
+/config/openconext/parameters.yaml
+/config/openconext/samlstepupproviders_parameters.yaml
+/config/openconext/global_view_parameters.yaml
 /vendor/
 /composer.phar
 /cache.properties

@@ -152,13 +152,13 @@
         "symfony-assets-install": "relative",
         "incenteev-parameters": [
             {
-                "file": "config/legacy/parameters.yaml"
+                "file": "config/openconext/parameters.yaml"
             },
             {
-                "file": "config/legacy/samlstepupproviders_parameters.yaml"
+                "file": "config/openconext/samlstepupproviders_parameters.yaml"
             },
             {
-                "file": "config/legacy/global_view_parameters.yaml"
+                "file": "config/openconext/global_view_parameters.yaml"
             }
         ]
     }
