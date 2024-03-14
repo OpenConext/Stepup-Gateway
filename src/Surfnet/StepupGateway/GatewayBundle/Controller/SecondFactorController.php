@@ -262,7 +262,7 @@ class SecondFactorController extends Controller
 
             // Forward to action to verify possession of second factor
             return $this->selectAndRedirectTo($secondFactor, $context, $authenticationMode);
-        } else if ($form->isSubmitted() && !$form->isValid()) {
+        } elseif ($form->isSubmitted() && !$form->isValid()) {
             $form->addError(
                 new FormError(
                     $this->get('translator')

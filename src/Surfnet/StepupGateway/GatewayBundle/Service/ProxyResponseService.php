@@ -221,7 +221,7 @@ class ProxyResponseService
                 );
             }
             $newAssertion->setNameId($eptiNameId[0]);
-        } else if ($internalCollabPersonId) {
+        } elseif ($internalCollabPersonId) {
             // Remove the internal-collabPersonId from the assertion
             $attributes = $newAssertion->getAttributes();
             unset($attributes[$this->internalCollabPersonIdAttribute->getUrnMace()]);

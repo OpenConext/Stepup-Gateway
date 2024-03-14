@@ -148,7 +148,7 @@ class AuthenticationLogger
     {
         if ($authenticationMode === 'sfo') {
             return $this->sfoProxyStateHandler;
-        } else if ($authenticationMode === 'sso') {
+        } elseif ($authenticationMode === 'sso') {
             return $this->ssoProxyStateHandler;
         }
         throw new InvalidArgumentException(

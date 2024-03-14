@@ -31,7 +31,11 @@ class VerifySmsChallengeType extends AbstractType
         $builder->add('challenge', TextType::class, [
             'label'    => false,
             'required' => true,
-            'attr'     => ['autofocus' => true, 'autocomplete' => 'one-time-code', 'placeholder' => 'gateway.form.verify_sms_challenge.button.challenge_placeholder']
+            'attr'     => [
+                'autofocus' => true,
+                'autocomplete' => 'one-time-code',
+                'placeholder' => 'gateway.form.verify_sms_challenge.button.challenge_placeholder'
+            ]
         ]);
         $builder->add('verify_challenge', SubmitType::class, [
             'label' => 'gateway.form.verify_sms_challenge.button.verify_challenge',
