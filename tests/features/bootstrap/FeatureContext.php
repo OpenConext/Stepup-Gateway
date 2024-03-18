@@ -24,7 +24,6 @@ use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Mink\Exception\ExpectationException;
 use RuntimeException;
 use Surfnet\StepupGateway\Behat\Service\FixtureService;
-use function sprintf;
 
 class FeatureContext implements Context
 {
@@ -65,8 +64,8 @@ class FeatureContext implements Context
     {
         // Generate test databases
         echo "Preparing test schemas\n";
-        shell_exec("/var/www/bin/console doctrine:schema:drop --env=smoketest --force");
-        shell_exec("/var/www/bin/console doctrine:schema:create --env=smoketest");
+        shell_exec("/var/www/bin/console doctrine:schema:drop --env=test --force");
+        shell_exec("/var/www/bin/console doctrine:schema:create --env=test");
     }
 
     /**

@@ -45,5 +45,5 @@ default:
     Behat\Symfony2Extension:
       kernel:
         class: 'App\Kernel'
-        env: smoketest
+        env: test
         debug: true
