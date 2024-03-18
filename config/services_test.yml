@@ -1,13 +1,4 @@
 # Use this service definition file to override services in the test environment. For example to mock certain services
-
-parameters:
-  saml_metadata_publickey: /vagrant/deploy/tests/behat/fixtures/test_public_key.crt
-  saml_metadata_privatekey: /vagrant/deploy/tests/behat/fixtures/test_private_key.key
-  saml_sp_publickey: /vagrant/deploy/tests/behat/fixtures/test_public_key.crt
-  saml_sp_privatekey: /vagrant/deploy/tests/behat/fixtures/test_private_key.key
-  saml_idp_publickey: /vagrant/deploy/tests/behat/fixtures/test_public_key.crt
-  saml_idp_privatekey: /vagrant/deploy/tests/behat/fixtures/test_private_key.key
-
 services:
   surfnet_gateway_api.service.yubikey:
     class: Surfnet\StepupGateway\ApiBundle\Tests\TestDouble\Service\YubikeyService

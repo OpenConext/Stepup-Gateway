@@ -9,4 +9,3 @@ twig:
     form_themes: ['bootstrap_4_layout.html.twig']
     paths:
         '%kernel.project_dir%/tests/src/Resources/views/': test_resources
-

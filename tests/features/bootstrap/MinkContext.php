@@ -168,8 +168,6 @@ class MinkContext extends BaseMinkContext
                 'Please identify all tabs you are opening in order to refer to them at a later stage'
             );
         }
-        // Set the testcookie ensuring the selenium tests run in the smoketest env
-        $this->getMink()->getSession()->setCookie('testcookie', 'testcookie');
 
         foreach ($tabs as $tab) {
             $this->getMink()

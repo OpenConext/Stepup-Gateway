@@ -1,9 +1,10 @@
 imports:
   - { resource: ../../services_test.yml }
-
 framework:
   test: ~
   session:
     storage_id: session.storage.mock_file
   profiler:
     collect: false
+  php_errors:
+    log: false # prevents user deprecated warnings
