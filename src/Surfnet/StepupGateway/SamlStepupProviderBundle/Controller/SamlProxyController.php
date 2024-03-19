@@ -38,7 +38,7 @@ use Surfnet\StepupGateway\SamlStepupProviderBundle\Service\Gateway\ConsumeAssert
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Service\Gateway\LoginService;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Service\Gateway\SecondFactorVerificationService;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\ResponseHelper;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -55,7 +55,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.NPathComplexity)
  */
-class SamlProxyController extends Controller
+class SamlProxyController extends AbstractController
 {
     /**
      * Proxy a GSSP authentication request to the remote GSSP SSO endpoint.
