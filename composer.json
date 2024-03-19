@@ -46,7 +46,6 @@
         "symfony/http-foundation": "^5.0",
         "symfony/monolog-bundle": "^3.0",
         "symfony/security-bundle": "4.4.*",
-        "symfony/swiftmailer-bundle": "^3.1",
         "symfony/translation": "4.4.*",
         "symfony/twig-bundle": "4.4.*",
         "symfony/web-profiler-bundle": "4.4.*",
