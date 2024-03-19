@@ -38,7 +38,7 @@ use Surfnet\StepupGateway\GatewayBundle\Form\Type\VerifyYubikeyOtpType;
 use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
 use Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorService;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\CookieService;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -51,7 +51,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class SecondFactorController extends Controller
+class SecondFactorController extends AbstractController
 {
     public const MODE_SFO = 'sfo';
     public const MODE_SSO = 'sso';
