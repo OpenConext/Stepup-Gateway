@@ -19,13 +19,14 @@
 namespace Surfnet\StepupGateway\GatewayBundle\Controller;
 
 use Surfnet\SamlBundle\Http\XMLResponse;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Surfnet\SamlBundle\Metadata\MetadataFactory;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-class MetadataController extends Controller
+class MetadataController extends AbstractController
 {
-    public function metadataAction()
+    public function metadataAction(): XMLResponse
     {
-        /** @var \Surfnet\SamlBundle\Metadata\MetadataFactory $metadataFactory */
+        /** @var MetadataFactory $metadataFactory */
         $metadataFactory = $this->get('surfnet_saml.metadata_factory');
 
         return new XMLResponse($metadataFactory->generate());
