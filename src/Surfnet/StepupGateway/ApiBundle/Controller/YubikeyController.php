@@ -22,10 +22,10 @@ use Surfnet\StepupGateway\ApiBundle\Dto\Otp;
 use Surfnet\StepupGateway\ApiBundle\Dto\Requester;
 use Surfnet\StepupGateway\ApiBundle\Service\YubikeyService;
 use Surfnet\YubikeyApiClient\Service\OtpVerificationResult;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
-class YubikeyController extends Controller
+class YubikeyController extends AbstractController
 {
     /**
      * @param Otp $otp
