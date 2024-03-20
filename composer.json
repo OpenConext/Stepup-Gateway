@@ -20,7 +20,7 @@
         "ext-dom": "*",
         "ext-json": "*",
         "ext-libxml": "*",
-        "beberlei/assert": "^2.0",
+        "beberlei/assert": "^3.0",
         "doctrine/cache": "~1.4",
         "doctrine/common": "~2.5",
         "doctrine/dbal": "~2.5",
