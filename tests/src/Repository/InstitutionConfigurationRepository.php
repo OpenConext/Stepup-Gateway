@@ -67,14 +67,13 @@ SQL;
         } else {
             $data = [
                 'institution' => $institution,
-                'option' => $option,
                 'value' => $value,
             ];
             $sql = <<<SQL
                 update gateway.institution_configuration
-                set :option = :value
-                where institutiton = :institution
-            );
+                set sso_on2fa_enabled = :value
+                where institution = :institution
+            ;
 SQL;
             $stmt = $this->connection->prepare($sql);
             if ($stmt->execute($data)) {
