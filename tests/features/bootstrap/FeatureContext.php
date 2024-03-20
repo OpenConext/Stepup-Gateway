@@ -64,8 +64,8 @@ class FeatureContext implements Context
     {
         // Generate test databases
         echo "Preparing test schemas\n";
-        shell_exec("/var/www/bin/console doctrine:schema:drop --env=test --force");
-        shell_exec("/var/www/bin/console doctrine:schema:create --env=test");
+        shell_exec("/var/www/html/bin/console doctrine:schema:drop --env=test --force");
+        shell_exec("/var/www/html/bin/console doctrine:schema:create --env=test");
     }
 
     /**
@@ -83,15 +83,15 @@ class FeatureContext implements Context
     public function aUserIdentifiedByWithAVettedToken($institution, $nameId, $tokenType)
     {
         switch (strtolower($tokenType)) {
-            case "yubikey":
-                $this->currentToken = $this->fixtureService->registerYubikeyToken($nameId, $institution);
-                break;
-            case "sms":
-                $this->currentToken = $this->fixtureService->registerSmsToken($nameId, $institution);
-                break;
-            case "tiqr":
-                $this->currentToken = $this->fixtureService->registerTiqrToken($nameId, $institution);
-                break;
+        case "yubikey":
+            $this->currentToken = $this->fixtureService->registerYubikeyToken($nameId, $institution);
+            break;
+        case "sms":
+            $this->currentToken = $this->fixtureService->registerSmsToken($nameId, $institution);
+            break;
+        case "tiqr":
+            $this->currentToken = $this->fixtureService->registerTiqrToken($nameId, $institution);
+            break;
         }
     }
 
@@ -101,15 +101,15 @@ class FeatureContext implements Context
     public function aUserIdentifiedByWithASelfAssertedToken($institution, $nameId, $tokenType)
     {
         switch (strtolower($tokenType)) {
-            case "yubikey":
-                $this->currentToken = $this->fixtureService->registerYubikeyToken($nameId, $institution, true);
-                break;
-            case "sms":
-                $this->currentToken = $this->fixtureService->registerSmsToken($nameId, $institution, true);
-                break;
-            case "tiqr":
-                $this->currentToken = $this->fixtureService->registerTiqrToken($nameId, $institution, true);
-                break;
+        case "yubikey":
+            $this->currentToken = $this->fixtureService->registerYubikeyToken($nameId, $institution, true);
+            break;
+        case "sms":
+            $this->currentToken = $this->fixtureService->registerSmsToken($nameId, $institution, true);
+            break;
+        case "tiqr":
+            $this->currentToken = $this->fixtureService->registerTiqrToken($nameId, $institution, true);
+            break;
         }
     }
 
@@ -197,11 +197,11 @@ class FeatureContext implements Context
     public function anInstitutionThatAllows(string $institution, string $option)
     {
         switch(true) {
-            case $option === 'sso_on_2fa':
-                $optionColumnName = 'sso_on2fa_enabled';
-                break;
-            default:
-                throw new RuntimeException(sprintf('Option "%s" is not supported', $option));
+        case $option === 'sso_on_2fa':
+            $optionColumnName = 'sso_on2fa_enabled';
+            break;
+        default:
+            throw new RuntimeException(sprintf('Option "%s" is not supported', $option));
         }
         $this->fixtureService->configureBoolean($institution, $optionColumnName, true);
     }
@@ -212,15 +212,15 @@ class FeatureContext implements Context
     public function iShouldSelectMyTokenOnTheWAYG($tokenType)
     {
         switch (strtolower($tokenType)) {
-            case "yubikey":
-                $this->minkContext->pressButton('gateway_choose_second_factor_choose_yubikey');
-                break;
-            case "sms":
-                $this->minkContext->pressButton('gateway_choose_second_factor_choose_sms');
-                break;
-            case "tiqr":
-                $this->minkContext->pressButton('gateway_choose_second_factor_choose_tiqr');
-                break;
+        case "yubikey":
+            $this->minkContext->pressButton('gateway_choose_second_factor_choose_yubikey');
+            break;
+        case "sms":
+            $this->minkContext->pressButton('gateway_choose_second_factor_choose_sms');
+            break;
+        case "tiqr":
+            $this->minkContext->pressButton('gateway_choose_second_factor_choose_tiqr');
+            break;
         }
     }
 
@@ -266,7 +266,7 @@ class FeatureContext implements Context
     }
 
     /**
-     * @Then /^the response should have a SSO\-2FA cookie$/
+     * @Then   /^the response should have a SSO\-2FA cookie$/
      * @throws ExpectationException
      */
     public function theResponseShouldHaveASSO2FACookie()
@@ -279,7 +279,7 @@ class FeatureContext implements Context
     }
 
     /**
-     * @Then /^the response should not have a SSO\-2FA cookie$/
+     * @Then   /^the response should not have a SSO\-2FA cookie$/
      * @throws ExpectationException
      */
     public function theResponseShouldNotHaveASSO2FACookie()
@@ -295,7 +295,7 @@ class FeatureContext implements Context
     }
 
     /**
-     * @Then /^a new SSO\-2FA cookie was written$/
+     * @Then   /^a new SSO\-2FA cookie was written$/
      * @throws ExpectationException
      */
     public function theSSO2FACookieIsRewritten()
@@ -312,7 +312,7 @@ class FeatureContext implements Context
     }
 
     /**
-     * @Then /^the existing SSO\-2FA cookie was used$/
+     * @Then   /^the existing SSO\-2FA cookie was used$/
      * @throws ExpectationException
      */
     public function theSSO2FACookieRemainedTheSame()

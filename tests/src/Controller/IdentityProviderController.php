@@ -28,6 +28,7 @@ class IdentityProviderController extends Controller
 {
     /**
      * Handles a SSO request
+     *
      * @param Request $request
      */
     public function ssoAction(Request $request)
@@ -58,13 +59,16 @@ class IdentityProviderController extends Controller
             return $this->renderSamlResponse($response);
         }
 
-        return $this->render('@test_resources/login.html.twig', [
+        return $this->render(
+            '@test_resources/login.html.twig', [
             'form' => $form->createView(),
-        ]);
+            ]
+        );
     }
 
     /**
      * Handles a GSSP SSO request
+     *
      * @param Request $request
      */
     public function gsspSsoAction(Request $request)
@@ -82,7 +86,7 @@ class IdentityProviderController extends Controller
     }
 
     /**
-     * @param SAMLResponse $response
+     * @param  SAMLResponse $response
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function renderSamlResponse(SAMLResponse $response)
@@ -95,7 +99,8 @@ class IdentityProviderController extends Controller
 
         $response = $this->render(
             '@SurfnetStepupGatewayGateway/gateway/consume_assertion.html.twig',
-            $parameters);
+            $parameters
+        );
 
         return $response;
     }
@@ -127,7 +132,7 @@ class IdentityProviderController extends Controller
     }
 
     /**
-     * @param SAMLResponse $response
+     * @param  SAMLResponse $response
      * @return string
      */
     private function getResponseAsXML(SAMLResponse $response)
@@ -136,7 +141,7 @@ class IdentityProviderController extends Controller
     }
 
     /**
-     * @param Request $request
+     * @param  Request $request
      * @return string
      */
     private function getFullRequestUri(Request $request)
@@ -145,7 +150,7 @@ class IdentityProviderController extends Controller
     }
 
     /**
-     * @param Request $request
+     * @param  Request $request
      * @return ReceivedAuthnRequest
      */
     public function receiveSignedAuthnRequestFrom(Request $request)
@@ -172,18 +177,20 @@ class IdentityProviderController extends Controller
 
         $currentUri = $this->getFullRequestUri($request);
         if (!$authnRequest->getDestination() === $currentUri) {
-            throw new BadRequestHttpException(sprintf(
-                'Actual Destination "%s" does not match the AuthnRequest Destination "%s"',
-                $currentUri,
-                $authnRequest->getDestination()
-            ));
+            throw new BadRequestHttpException(
+                sprintf(
+                    'Actual Destination "%s" does not match the AuthnRequest Destination "%s"',
+                    $currentUri,
+                    $authnRequest->getDestination()
+                )
+            );
         }
 
         return $authnRequest;
     }
 
     /**
-     * @param Assertion $assertion
+     * @param  Assertion $assertion
      * @return Assertion
      */
     public function signAssertion(Assertion $assertion)
@@ -214,7 +221,7 @@ class IdentityProviderController extends Controller
      */
     private function loadPrivateKey()
     {
-        $key        = new PrivateKey('/var/www/ci/certificates/idp.key', 'default');
+        $key        = new PrivateKey('/var/www/html/ci/certificates/idp.key', 'default');
         $keyLoader  = new PrivateKeyLoader();
         $privateKey = $keyLoader->loadPrivateKey($key);
 
@@ -230,8 +237,10 @@ class IdentityProviderController extends Controller
     private function getPublicCertificate()
     {
         $keyLoader = new KeyLoader();
-        $keyLoader->loadCertificateFile('/var/www/ci/certificates/idp.crt');
-        /** @var \SAML2\Certificate\X509 $publicKey */
+        $keyLoader->loadCertificateFile('/var/www/html/ci/certificates/idp.crt');
+        /**
+ * @var \SAML2\Certificate\X509 $publicKey 
+*/
         $publicKey = $keyLoader->getKeys()->getOnlyElement();
 
         return $publicKey->getCertificate();

@@ -122,9 +122,11 @@ class ServiceProviderContext implements Context, KernelAwareContext
     {
         $publicKeyLoader = new KeyLoader();
         // todo: use from services_test.yml
-        $publicKeyLoader->loadCertificateFile('/var/www/ci/certificates/sp.crt');
+        $publicKeyLoader->loadCertificateFile('/var/www/html/ci/certificates/sp.crt');
         $keys = $publicKeyLoader->getKeys();
-        /** @var Key $cert */
+        /**
+ * @var Key $cert 
+*/
         $cert = $keys->first();
 
         $spEntity = $this->fixtureService->registerSP($entityId, $cert['X509Certificate'], $sfoEnabled);
@@ -141,9 +143,11 @@ class ServiceProviderContext implements Context, KernelAwareContext
     {
         $publicKeyLoader = new KeyLoader();
         // todo: use from services_test.yml
-        $publicKeyLoader->loadCertificateFile('/var/www/ci/certificates/idp.crt');
+        $publicKeyLoader->loadCertificateFile('/var/www/html/ci/certificates/idp.crt');
         $keys = $publicKeyLoader->getKeys();
-        /** @var Key $cert */
+        /**
+ * @var Key $cert 
+*/
         $cert = $keys->first();
 
         $idpEntity = $this->fixtureService->registerIdP($entityId, $cert['X509Certificate']);
@@ -179,23 +183,23 @@ class ServiceProviderContext implements Context, KernelAwareContext
         }
         // Sign with random key, does not mather for now.
         $authnRequest->setSignatureKey(
-            $this->loadPrivateKey(new PrivateKey('/var/www/ci/certificates/sp.key', 'default'))
+            $this->loadPrivateKey(new PrivateKey('/var/www/html/ci/certificates/sp.key', 'default'))
         );
         switch ($loa) {
-            case "1":
-            case "2":
-            case "3":
-                $authnRequest->setRequestedAuthnContext(
-                    ['AuthnContextClassRef' => ['http://stepup.example.com/assurance/sfo-level' . $loa]]
-                );
+        case "1":
+        case "2":
+        case "3":
+            $authnRequest->setRequestedAuthnContext(
+                ['AuthnContextClassRef' => ['http://stepup.example.com/assurance/sfo-level' . $loa]]
+            );
             break;
-            case "self-asserted":
-                $authnRequest->setRequestedAuthnContext(
-                    ['AuthnContextClassRef' => ['http://stepup.example.com/assurance/loa-self-asserted']]
-                );
+        case "self-asserted":
+            $authnRequest->setRequestedAuthnContext(
+                ['AuthnContextClassRef' => ['http://stepup.example.com/assurance/loa-self-asserted']]
+            );
             break;
-            default:
-                throw new RuntimeException(sprintf('The specified LoA-%s is not supported', $loa));
+        default:
+            throw new RuntimeException(sprintf('The specified LoA-%s is not supported', $loa));
         }
         $request = Saml2AuthnRequest::createNew($authnRequest);
         $query = $request->buildRequestQuery();
@@ -249,7 +253,7 @@ class ServiceProviderContext implements Context, KernelAwareContext
         // Sign with random key, does not mather for now.
         // todo: use from services_test.yml
         $authnRequest->setSignatureKey(
-            $this->loadPrivateKey(new PrivateKey('/var/www/ci/certificates/sp.key', 'default'))
+            $this->loadPrivateKey(new PrivateKey('/var/www/html/ci/certificates/sp.key', 'default'))
         );
         $authnRequest->setRequestedAuthnContext(
             ['AuthnContextClassRef' => ['http://stepup.example.com/assurance/level2']]
@@ -276,23 +280,23 @@ class ServiceProviderContext implements Context, KernelAwareContext
         // Sign with random key, does not mather for now.
         // todo: use from services_test.yml
         $authnRequest->setSignatureKey(
-            $this->loadPrivateKey(new PrivateKey('/var/www/ci/certificates/sp.key', 'default'))
+            $this->loadPrivateKey(new PrivateKey('/var/www/html/ci/certificates/sp.key', 'default'))
         );
 
         switch ($loa) {
-            case "1":
-            case "2":
-            case "3":
-                $authnRequest->setRequestedAuthnContext(
-                    ['AuthnContextClassRef' => ['http://stepup.example.com/assurance/level' . $loa]]
-                );
-                break;
-            case "self-asserted":
-                $authnRequest->setRequestedAuthnContext(
-                    ['AuthnContextClassRef' => ['http://stepup.example.com/assurance/loa-self-asserted']]
-                );
-            default:
-                throw new RuntimeException(sprintf('The specified LoA-%s is not supported', $loa));
+        case "1":
+        case "2":
+        case "3":
+            $authnRequest->setRequestedAuthnContext(
+                ['AuthnContextClassRef' => ['http://stepup.example.com/assurance/level' . $loa]]
+            );
+            break;
+        case "self-asserted":
+            $authnRequest->setRequestedAuthnContext(
+                ['AuthnContextClassRef' => ['http://stepup.example.com/assurance/loa-self-asserted']]
+            );
+        default:
+            throw new RuntimeException(sprintf('The specified LoA-%s is not supported', $loa));
         }
 
         $request = Saml2AuthnRequest::createNew($authnRequest);
@@ -320,7 +324,9 @@ class ServiceProviderContext implements Context, KernelAwareContext
      */
     public function getIdentityProvider()
     {
-        /** @var RequestStack $stack */
+        /**
+ * @var RequestStack $stack 
+*/
 
         $stack = $this->kernel->getContainer()->get('request_stack');
         $stack->push(Request::create('https://gateway.stepup.example.com'));
