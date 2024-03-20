@@ -20,7 +20,7 @@ namespace Surfnet\StepupGateway\SamlStepupProviderBundle\Exception;
 
 use RuntimeException;
 
-class UnknownProviderException extends RuntimeException
+final class UnknownProviderException extends RuntimeException
 {
     public static function create($unknownProvider, string $knownProviders)
     {

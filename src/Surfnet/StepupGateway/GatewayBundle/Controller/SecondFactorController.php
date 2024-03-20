@@ -585,6 +585,8 @@ class SecondFactorController extends AbstractController
                 return $this->get($this->get('gateway.proxy.sso.state_handler')->getResponseContextServiceId());
                 break;
         }
+
+        throw new InvalidArgumentException('Invalid authentication mode requested');
     }
 
     /**

@@ -19,7 +19,7 @@
 namespace Surfnet\StepupGateway\GatewayBundle\Sso2fa\Crypto;
 
 use Exception;
-use ParagonIE\Halite\HiddenString;
+use ParagonIE\HiddenString\HiddenString;
 use ParagonIE\Halite\Symmetric\Crypto;
 use ParagonIE\Halite\Symmetric\EncryptionKey;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Exception\DecryptionFailedException;

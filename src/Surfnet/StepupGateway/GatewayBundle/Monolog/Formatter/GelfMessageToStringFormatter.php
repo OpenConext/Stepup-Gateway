@@ -24,6 +24,11 @@ use Monolog\Formatter\FormatterInterface;
 class GelfMessageToStringFormatter implements FormatterInterface
 {
     /**
+     * @var GelfMessageFormatter
+     */
+    private $formatter;
+
+    /**
      * @param GelfMessageFormatter $formatter
      */
     public function __construct(GelfMessageFormatter $formatter)

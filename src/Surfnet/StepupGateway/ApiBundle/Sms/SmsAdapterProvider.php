@@ -28,7 +28,6 @@ use function sprintf;
 class SmsAdapterProvider
 {
     private const SPRYNG = 'spryng';
-    private const MESSAGEBIRD = 'messagebird';
     /**
      * @var SmsAdapterInterface[]
      */
@@ -36,7 +35,6 @@ class SmsAdapterProvider
 
     private static $allowedServices = [
         SpryngService::class => self::SPRYNG,
-        MessageBirdService::class => self::MESSAGEBIRD,
     ];
 
     /**

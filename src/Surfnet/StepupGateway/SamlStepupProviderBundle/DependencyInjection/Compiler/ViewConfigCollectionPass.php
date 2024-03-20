@@ -19,6 +19,7 @@
 namespace Surfnet\StepupGateway\SamlStepupProviderBundle\DependencyInjection\Compiler;
 
 use Surfnet\StepupGateway\SamlStepupProviderBundle\DependencyInjection\SurfnetStepupGatewaySamlStepupProviderExtension;
+use Surfnet\StepupGateway\SamlStepupProviderBundle\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;

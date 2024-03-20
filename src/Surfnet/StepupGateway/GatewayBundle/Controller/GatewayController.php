@@ -244,7 +244,7 @@ class GatewayController extends Controller
     /**
      * @return ResponseContext
      */
-    public function getResponseContext($authenticationMode)
+    public function getResponseContext($authenticationMode): ResponseContext
     {
         switch ($authenticationMode) {
             case self::MODE_SFO:
@@ -254,6 +254,8 @@ class GatewayController extends Controller
                 return $this->get($this->get('gateway.proxy.sso.state_handler')->getResponseContextServiceId());
                 break;
         }
+
+        throw new RuntimeException('Invalid authentication mode requested');
     }
 
     /**
