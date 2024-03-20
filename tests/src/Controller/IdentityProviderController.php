@@ -74,9 +74,11 @@ class IdentityProviderController extends Controller
             return $this->renderSamlResponse($response);
         }
 
-        return $this->render('@test_resources/login.html.twig', [
-            'form' => $form->createView(),
-        ]);
+        return $this->render(
+                '@test_resources/login.html.twig', [
+                'form' => $form->createView(),
+            ]
+        );
     }
 
     /**
@@ -111,7 +113,8 @@ class IdentityProviderController extends Controller
 
         $response = $this->render(
             '@SurfnetStepupGatewayGateway/gateway/consume_assertion.html.twig',
-            $parameters);
+            $parameters
+        );
 
         return $response;
     }
@@ -188,11 +191,13 @@ class IdentityProviderController extends Controller
 
         $currentUri = $this->getFullRequestUri($request);
         if (!$authnRequest->getDestination() === $currentUri) {
-            throw new BadRequestHttpException(sprintf(
-                'Actual Destination "%s" does not match the AuthnRequest Destination "%s"',
-                $currentUri,
-                $authnRequest->getDestination()
-            ));
+            throw new BadRequestHttpException(
+                sprintf(
+                    'Actual Destination "%s" does not match the AuthnRequest Destination "%s"',
+                    $currentUri,
+                    $authnRequest->getDestination()
+                )
+            );
         }
 
         return $authnRequest;
