@@ -78,21 +78,21 @@ final class ResponseValidatorTest extends TestCase
         $validator = $this->buildValidator();
 
         $this->secondFactorTypeService
-            ->shouldReceive('isGssf')
+            ->expects('isGssf')
             ->andReturnTrue();
 
         $samlResponse = Mockery::mock(Response::class);
 
         $nameId = Mockery::mock(NameID::class);
-        $nameId->shouldReceive('getValue')
+        $nameId->expects('getValue')
             ->andReturn('gssp-identifier');
 
         $samlResponse
-            ->shouldReceive('getNameId')
+            ->expects('getNameId')
             ->andReturn($nameId);
 
         $this->postBinding
-            ->shouldReceive('processResponse')
+            ->expects('processResponse')
             ->with($request, $this->remoteIdp, $this->sp)
             ->andReturn($samlResponse);
 
@@ -105,11 +105,11 @@ final class ResponseValidatorTest extends TestCase
         $validator = $this->buildValidator();
 
         $this->secondFactorTypeService
-            ->shouldReceive('isGssf')
+            ->expects('isGssf')
             ->andReturnTrue();
 
         $this->postBinding
-            ->shouldReceive('processResponse')
+            ->expects('processResponse')
             ->with($request, $this->remoteIdp, $this->sp)
             ->andThrow(PreconditionNotMetException::class);
 
@@ -124,21 +124,21 @@ final class ResponseValidatorTest extends TestCase
         $validator = $this->buildValidator();
 
         $this->secondFactorTypeService
-            ->shouldReceive('isGssf')
+            ->expects('isGssf')
             ->andReturnTrue();
 
         $samlResponse = Mockery::mock(Response::class);
 
         $nameId = Mockery::mock(NameID::class);
-        $nameId->shouldReceive('getValue')
+        $nameId->expects('getValue')
             ->andReturn('gssp-identifier-changed');
 
         $samlResponse
-            ->shouldReceive('getNameId')
+            ->expects('getNameId')
             ->andReturn($nameId);
 
         $this->postBinding
-            ->shouldReceive('processResponse')
+            ->expects('processResponse')
             ->with($request, $this->remoteIdp, $this->sp)
             ->andReturn($samlResponse);
 

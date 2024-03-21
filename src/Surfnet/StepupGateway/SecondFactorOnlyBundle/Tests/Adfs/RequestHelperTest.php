@@ -73,7 +73,7 @@ class RequestHelperTest extends TestCase
      */
     public function it_can_test_if_request_is_not_from_adfs(): void
     {
-        $this->parameterBag->shouldReceive('has')->once()->andReturn(false);
+        $this->parameterBag->expects('has')->andReturn(false);
         $this->assertFalse($this->helper->isAdfsRequest($this->request));
     }
 
@@ -82,7 +82,7 @@ class RequestHelperTest extends TestCase
      */
     public function it_can_test_if_request_is_from_adfs(): void
     {
-        $this->parameterBag->shouldReceive('has')->andReturn(true);
+        $this->parameterBag->expects('has')->twice()->andReturn(true);
         $this->assertTrue($this->helper->isAdfsRequest($this->request));
     }
 
@@ -92,8 +92,8 @@ class RequestHelperTest extends TestCase
     public function it_rejects_malformed_request(): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->request->request->shouldReceive('get')->with(RequestHelper::ADFS_PARAM_AUTH_METHOD)->andReturn('');
-        $this->request->request->shouldReceive('get')->with(RequestHelper::ADFS_PARAM_CONTEXT)->andReturn('context');
+        $this->parameterBag->expects('get')->with(RequestHelper::ADFS_PARAM_AUTH_METHOD)->andReturn('');
+        $this->parameterBag->expects('get')->with(RequestHelper::ADFS_PARAM_CONTEXT)->andReturn('context');
         $this->helper->transformRequest($this->request, 'my-request-id');
     }
 
@@ -112,14 +112,14 @@ AUTHNREQUEST;
 
         $authnRequest = base64_encode($authnRequest);
 
-        $this->request->request->shouldReceive('get')->with(RequestHelper::ADFS_PARAM_AUTH_METHOD)->andReturn('ADFS.SCSA');
-        $this->request->request->shouldReceive('get')->with(RequestHelper::ADFS_PARAM_CONTEXT)->andReturn('<EncryptedData></EncryptedData>');
-        $this->request->request->shouldReceive('remove')->with(RequestHelper::ADFS_PARAM_AUTH_METHOD);
-        $this->request->request->shouldReceive('remove')->with(RequestHelper::ADFS_PARAM_CONTEXT);
+        $this->parameterBag->expects('get')->with(RequestHelper::ADFS_PARAM_AUTH_METHOD)->andReturn('ADFS.SCSA');
+        $this->parameterBag->expects('get')->with(RequestHelper::ADFS_PARAM_CONTEXT)->andReturn('<EncryptedData></EncryptedData>');
+        $this->parameterBag->expects('remove')->with(RequestHelper::ADFS_PARAM_AUTH_METHOD);
+        $this->parameterBag->expects('remove')->with(RequestHelper::ADFS_PARAM_CONTEXT);
 
-        $this->stateHandler->shouldReceive('setRequestId')->with('my-request-id')->andReturn($this->stateHandler);
-        $this->stateHandler->shouldReceive('setAuthMethod')->with('ADFS.SCSA')->andReturn($this->stateHandler);
-        $this->stateHandler->shouldReceive('setContext')->with('<EncryptedData></EncryptedData>')->andReturn($this->stateHandler);;
+        $this->stateHandler->expects('setRequestId')->with('my-request-id')->andReturn($this->stateHandler);
+        $this->stateHandler->expects('setAuthMethod')->with('ADFS.SCSA')->andReturn($this->stateHandler);
+        $this->stateHandler->expects('setContext')->with('<EncryptedData></EncryptedData>')->andReturn($this->stateHandler);;
 
         $this->helper->transformRequest($this->request, 'my-request-id');
 
