@@ -18,12 +18,8 @@
 
 namespace Surfnet\StepupGateway\ApiBundle\Tests\TestDouble\Service;
 
-use DateInterval;
-use Mockery as m;
-use Surfnet\StepupBundle\Service\Exception\TooManyChallengesRequestedException;
 use Surfnet\StepupBundle\Service\SmsSecondFactor\OtpVerification;
 use Surfnet\StepupBundle\Service\SmsSecondFactor\SmsVerificationStateHandler;
-use Surfnet\StepupGateway\ApiBundle\Dto\Otp;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 final class SessionSmsVerificationStateHandler implements SmsVerificationStateHandler
