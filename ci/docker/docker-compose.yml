@@ -40,6 +40,8 @@ services:
              - ../certificates/idp.key:/etc/apache2/certs/gateway.stepup.example.com.key
         environment:
             APP_ENV: test
+        ports:
+            - 443:443
         depends_on:
             db.stepup.example.com:
                 condition: service_healthy
