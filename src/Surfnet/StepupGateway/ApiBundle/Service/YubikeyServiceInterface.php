@@ -27,21 +27,13 @@ interface YubikeyServiceInterface
 {
     /**
      * Verifies the OTP result status
-     *
-     * Returns an OtpVerificationResult which can be queried whether or not the OTP verification was successful.
-     *
-     * @param OtpDto $otp
-     * @param Requester $requester
-     * @return OtpVerificationResult
+     * Returns an OtpVerificationResult which can be queried
+     * whether the OTP verification was successful.
      */
-    public function verifyOtp(OtpDto $otp, Requester $requester);
+    public function verifyOtp(OtpDto $otp, Requester $requester): OtpVerificationResult;
 
     /**
      * Verifies the OTP public id matches that of the registered token
-     *
-     * @param OtpDto $otp
-     * @param $secondFactorIdentifier
-     * @return YubikeyOtpVerificationResult
      */
-    public function verifyPublicId(OtpDto $otp, $secondFactorIdentifier);
+    public function verifyPublicId(OtpDto $otp, string $secondFactorIdentifier): YubikeyOtpVerificationResult;
 }

@@ -30,32 +30,13 @@ use Surfnet\YubikeyApiClientBundle\Service\VerificationService;
 
 class YubikeyService implements YubikeyServiceInterface
 {
-    /**
-     * @var VerificationService
-     */
-    private $verificationService;
-
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
-     * @param VerificationService $verificationService
-     * @param LoggerInterface $logger
-     */
-    public function __construct(VerificationService $verificationService, LoggerInterface $logger)
-    {
-        $this->verificationService = $verificationService;
-        $this->logger = $logger;
+    public function __construct(
+        private VerificationService $verificationService,
+        private LoggerInterface $logger,
+    ) {
     }
 
-    /**
-     * @param OtpDto $otp
-     * @param Requester $requester
-     * @return OtpVerificationResult
-     */
-    public function verifyOtp(OtpDto $otp, Requester $requester)
+    public function verifyOtp(OtpDto $otp, Requester $requester): OtpVerificationResult
     {
         $this->logger->notice('Verifying Yubikey OTP.');
 
@@ -72,13 +53,7 @@ class YubikeyService implements YubikeyServiceInterface
 
         return $result;
     }
-
-    /**
-     * @param OtpDto $otp
-     * @param string $secondFactorIdentifier
-     * @return YubikeyOtpVerificationResult
-     */
-    public function verifyPublicId(OtpDto $otp, $secondFactorIdentifier)
+    public function verifyPublicId(OtpDto $otp, string $secondFactorIdentifier): YubikeyOtpVerificationResult
     {
         $this->logger->notice('Verifying Yubikey OTP public id matches that of the second factor identifier');
 

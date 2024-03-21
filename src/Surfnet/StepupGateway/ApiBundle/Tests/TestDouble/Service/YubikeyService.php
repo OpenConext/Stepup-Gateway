@@ -32,22 +32,12 @@ use Surfnet\YubikeyApiClient\Service\OtpVerificationResult;
  */
 class YubikeyService implements YubikeyServiceInterface
 {
-    /**
-     * @param OtpDto $otp
-     * @param Requester $requester
-     * @return OtpVerificationResult
-     */
-    public function verifyOtp(OtpDto $otp, Requester $requester)
+    public function verifyOtp(OtpDto $otp, Requester $requester): OtpVerificationResult
     {
         return new OtpVerificationResult(OtpVerificationResult::STATUS_OK);
     }
 
-    /**
-     * @param OtpDto $otp
-     * @param Requester $secondFactorIdentifier
-     * @return YubikeyOtpVerificationResult
-     */
-    public function verifyPublicId(OtpDto $otp, $secondFactorIdentifier)
+    public function verifyPublicId(OtpDto $otp, string $secondFactorIdentifier): YubikeyOtpVerificationResult
     {
         return new YubikeyOtpVerificationResult(
             YubikeyOtpVerificationResult::RESULT_PUBLIC_ID_MATCHED,
