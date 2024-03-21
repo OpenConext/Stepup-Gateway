@@ -31,14 +31,43 @@ mock service was created for end to end test purposes, but could be utilized in 
 4. Do not commit/push this change!
 
 ### Running Behat tests
-Chances are you are developing using the Stepup-VM development environment. And that, at this point, is the
-best option for developing the Gateway. However, when writing Behat tests, we run into a wall. As the behat tests
-do not run out of the box on the Stepup-VM.
+#### .env settings in devconf/stepup
 
-In order to run the behat tests, my personal preference is to halt the stepup-vm. And start up the Docker Compose
-containers that are used in CI. But be carefull here, running them in the same clone that you use in Stepup-VM might
-cause issues with the parameters and certificates used in the test environment. My suggestion is to create a new
-clone to run the GW Behat tests in.
+```
+APP_ENV=smoketest
+STEPUP_VERSION:test
+
+AZUREMFA_PHP_IMAGE=php82-apache2-node20-composer2:latest
+DEMOGSSP_PHP_IMAGE=php82-apache2-node20-composer2:latest
+#GATEWAY_PHP_IMAGE=php72-apache2-node14-composer2:latest
+MIDDLEWARE_PHP_IMAGE=php82-apache2-node20-composer2:latest
+RA_PHP_IMAGE=php82-apache2-node20-composer2:latest
+SELFSERVICE_PHP_IMAGE=php82-apache2-node20-composer2:latest
+TIQR_PHP_IMAGE=php82-apache2-node20-composer2:latest
+WEBAUTHN_PHP_IMAGE=php82-apache2-node20-composer2:latest
+```
+
+#### Start devconf
+
+`./start-dev-env.sh gateway:../../OpenConext-stepup/Stepup-Gateway`
+
+#### Run the Gatewy Behat tests
+
+```
+$ docker exec -it stepup-gateway-1 bash
+$ composer behat
+```            
+
+#### New addition: run a specific test
+
+The composer behat command can now also pipe the arguments to the behat call. So now, for example you can do:
+
+```
+$ composer behat tests/features/self-asserted.feature
+$ composer behat tests/features/sso.feature:34
+$ compseor behat -- -vv
+$ compseor behat -- --stop-on-failure
+```
 
 From the doc-root:
 ```bash
