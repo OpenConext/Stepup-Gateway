@@ -18,16 +18,9 @@
 
 namespace Surfnet\StepupGateway\ApiBundle\Tests\Service;
 
-use GuzzleHttp\Client;
-use Mockery as m;
 use PHPUnit\Framework\TestCase;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
-use Surfnet\MessageBirdApiClientBundle\Service\MessagingService as BundleMessagingService;
-use Surfnet\MessageBirdApiClient\Messaging\MessagingService as LibraryMessagingService;
 use Surfnet\StepupGateway\ApiBundle\Dto\SmsMessage;
-use Surfnet\StepupGateway\ApiBundle\Sms\MessageBirdMessageResult;
-use Surfnet\StepupGateway\ApiBundle\Sms\MessageBirdService;
 use Surfnet\StepupGateway\ApiBundle\Sms\SmsAdapterProvider;
 use Surfnet\StepupGateway\ApiBundle\Sms\SmsMessageResultInterface;
 use Surfnet\StepupGateway\ApiBundle\Sms\SpryngMessageResult;
@@ -43,10 +36,8 @@ final class SmsServiceTest extends TestCase
 
     public function setUp(): void
     {
-        $logger = m::mock(LoggerInterface::class);
-        $logger->shouldIgnoreMissing();
+        $logger = $this->createMock(LoggerInterface::class);
         $this->spryng = new SpryngService('apikey', '', $logger);
-        // Messy business building a MessageBird test setup
     }
 
     public function test_spryng_integration_happy_flow(): void
