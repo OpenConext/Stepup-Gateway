@@ -7,7 +7,6 @@ return [
     Nelmio\SecurityBundle\NelmioSecurityBundle::class => ['all' => true],
     Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle::class => ['all' => true],
     Surfnet\StepupGateway\ApiBundle\SurfnetStepupGatewayApiBundle::class => ['all' => true],
-    Surfnet\MessageBirdApiClientBundle\SurfnetMessageBirdApiClientBundle::class => ['all' => true],
     Surfnet\YubikeyApiClientBundle\SurfnetYubikeyApiClientBundle::class => ['all' => true],
     Surfnet\StepupBundle\SurfnetStepupBundle::class => ['all' => true],
     Surfnet\StepupGateway\GatewayBundle\SurfnetStepupGatewayGatewayBundle::class => ['all' => true],

@@ -70,8 +70,8 @@
         "phpunit/phpunit": "^8 | ^9.0",
         "ramsey/uuid": "^3.9",
         "rector/rector": "^1.0",
-        "sebastian/exporter": "^3.0",
-        "sebastian/phpcpd": "^2.0",
+        "sebastian/exporter": "^4.0",
+        "sebastian/phpcpd": "^6.0",
         "squizlabs/php_codesniffer": "^3.4",
         "symfony/phpunit-bridge": "^3.0",
         "symfony/web-profiler-bundle": "4.4.*"
@@ -127,7 +127,7 @@
         "optimize-autoloader": true,
         "sort-packages": true,
         "platform": {
-            "php": "7.2.5"
+            "php": "8.2"
         }
     },
     "archive": {
