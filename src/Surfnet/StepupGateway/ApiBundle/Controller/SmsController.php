@@ -20,6 +20,7 @@ namespace Surfnet\StepupGateway\ApiBundle\Controller;
 
 use Surfnet\StepupGateway\ApiBundle\Dto\Requester;
 use Surfnet\StepupGateway\ApiBundle\Dto\SmsMessage;
+use Surfnet\StepupGateway\ApiBundle\Service\SmsServiceInterface;
 use Surfnet\StepupGateway\ApiBundle\Sms\SmsMessageResultInterface;
 use Surfnet\StepupGateway\ApiBundle\Service\SmsService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -27,6 +28,12 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class SmsController extends AbstractController
 {
+    public function __construct(
+        private SmsServiceInterface $smsService
+    )
+    {
+    }
+
     /**
      * @param SmsMessage $message
      * @param Requester $requester
@@ -35,8 +42,7 @@ class SmsController extends AbstractController
     public function sendAction(SmsMessage $message, Requester $requester)
     {
         /** @var SmsService $smsService */
-        $smsService = $this->get('surfnet_gateway_api.service.sms');
-        $result = $smsService->send($message);
+        $result = $this->smsService->send($message);
 
         return $this->createJsonResponseFromSendMessageResult($result);
     }
