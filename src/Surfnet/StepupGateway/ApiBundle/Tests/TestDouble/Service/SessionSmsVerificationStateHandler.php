@@ -24,24 +24,16 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 final class SessionSmsVerificationStateHandler implements SmsVerificationStateHandler
 {
-    private $session;
-
-    public function __construct(SessionInterface $session)
-    {
-        $this->session = $session;
+    public function __construct(
+        private SessionInterface $session,
+    ) {
     }
 
-    /**
-     * @inheritDoc
-     */
     public function hasState(string $secondFactorId): bool
     {
         return $this->session->has($secondFactorId);
     }
 
-    /**
-     * @inheritDoc
-     */
     public function clearState(string $secondFactorId): void
     {
         $this->session->remove($secondFactorId);
@@ -55,17 +47,11 @@ final class SessionSmsVerificationStateHandler implements SmsVerificationStateHa
         return sprintf("%s-%s", $phoneNumber, $secondFactorId);
     }
 
-    /**
-     * @inheritDoc
-     */
     public function getOtpRequestsRemainingCount(string $secondFactorId): int
     {
         return 3;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function getMaximumOtpRequestsCount(): int
     {
         return 3;
