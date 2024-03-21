@@ -64,8 +64,8 @@ class FeatureContext implements Context
     {
         // Generate test databases
         echo "Preparing test schemas\n";
-        shell_exec("/var/www/bin/console doctrine:schema:drop --env=test --force");
-        shell_exec("/var/www/bin/console doctrine:schema:create --env=test");
+        shell_exec("/var/www/html/bin/console doctrine:schema:drop --env=smoketest --force");
+        shell_exec("/var/www/html/bin/console doctrine:schema:create --env=smoketest");
     }
 
     /**
@@ -262,7 +262,7 @@ class FeatureContext implements Context
      */
     public function iPassThroughTheIdP()
     {
-        $this->minkContext->pressButton('Submit');
+        $this->minkContext->pressButton('Yes, continue');
     }
 
     /**
@@ -271,7 +271,7 @@ class FeatureContext implements Context
      */
     public function theResponseShouldHaveASSO2FACookie()
     {
-        $this->minkContext->visit('https://gateway.stepup.example.com/info');
+        $this->minkContext->visit('https://gateway.dev.openconext.local/info');
         $cookieValue = $this->minkContext->getSession()->getCookie($this->sso2faCookieName);
         // Store the previous cookie value
         $this->previousSsoOn2faCookieValue = $cookieValue;
@@ -284,7 +284,7 @@ class FeatureContext implements Context
      */
     public function theResponseShouldNotHaveASSO2FACookie()
     {
-        $this->minkContext->visit('https://gateway.stepup.example.com/info');
+        $this->minkContext->visit('https://gateway.dev.openconext.local/info');
         $cookie = $this->minkContext->getSession()->getCookie($this->sso2faCookieName);
         if (!is_null($cookie)) {
             throw new ExpectationException(
@@ -300,7 +300,7 @@ class FeatureContext implements Context
      */
     public function theSSO2FACookieIsRewritten()
     {
-        $this->minkContext->visit('https://gateway.stepup.example.com/info');
+        $this->minkContext->visit('https://gateway.dev.openconext.local/info');
         $cookieValue = $this->minkContext->getSession()->getCookie($this->sso2faCookieName);
         $this->validateSsoOn2faCookie($cookieValue);
         if ($this->previousSsoOn2faCookieValue === $cookieValue) {
@@ -317,7 +317,7 @@ class FeatureContext implements Context
      */
     public function theSSO2FACookieRemainedTheSame()
     {
-        $this->minkContext->visit('https://gateway.stepup.example.com/info');
+        $this->minkContext->visit('https://gateway.dev.openconext.local/info');
         $cookieValue = $this->minkContext->getSession()->getCookie($this->sso2faCookieName);
         $this->validateSsoOn2faCookie($cookieValue);
         if ($this->previousSsoOn2faCookieValue !== $cookieValue) {
@@ -337,7 +337,7 @@ class FeatureContext implements Context
      */
     public function userClearedCookies()
     {
-        $this->minkContext->visit('https://gateway.stepup.example.com/info');
+        $this->minkContext->visit('https://gateway.dev.openconext.local/info');
         $this->minkContext->getSession()->setCookie($this->sso2faCookieName, null);
     }
 
@@ -346,7 +346,7 @@ class FeatureContext implements Context
      */
     public function theSSO2FACookieShouldContain($expectedCookieValue)
     {
-        $this->minkContext->visit('https://gateway.stepup.example.com/info');
+        $this->minkContext->visit('https://gateway.dev.openconext.local/info');
         $cookieValue = $this->minkContext->getSession()->getCookie($this->sso2faCookieName);
         if (strstr($cookieValue, $expectedCookieValue) === false) {
             throw new ExpectationException(
@@ -358,7 +358,6 @@ class FeatureContext implements Context
                 $this->minkContext->getSession()->getDriver()
             );
         }
-
     }
 
     private function getCookieNames(array $responseCookieHeaders): array

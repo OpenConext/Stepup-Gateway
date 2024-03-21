@@ -71,7 +71,12 @@ SQL;
             return $data;
         }
 
-        throw new Exception('Unable to insert the new second_factor');
+        throw new Exception(
+            sprintf(
+                'Unable to insert the new second_factor. PDO raised this error: "%s"',
+                $stmt->errorInfo()[2]
+            )
+        );
     }
 
     public function findBy(string $nameId, string $secondFactorType): array

@@ -42,9 +42,9 @@ use Symfony\Component\HttpKernel\KernelInterface;
 
 class ServiceProviderContext implements Context, KernelAwareContext
 {
-    const SSP_URL = 'https://ssp.stepup.example.com/sp.php';
-    const SSO_ENDPOINT_URL = 'https://gateway.stepup.example.com/authentication/single-sign-on';
-    const SFO_ENDPOINT_URL = 'https://gateway.stepup.example.com/second-factor-only/single-sign-on';
+    const SSP_URL = 'https://ssp.dev.openconext.local/sp.php';
+    const SSO_ENDPOINT_URL = 'https://gateway.dev.openconext.local/authentication/single-sign-on';
+    const SFO_ENDPOINT_URL = 'https://gateway.dev.openconext.local/second-factor-only/single-sign-on';
 
     /**
      * @var array
@@ -121,8 +121,7 @@ class ServiceProviderContext implements Context, KernelAwareContext
     private function registerSp($entityId, $sfoEnabled)
     {
         $publicKeyLoader = new KeyLoader();
-        // todo: use from services_test.yml
-        $publicKeyLoader->loadCertificateFile('/var/www/ci/certificates/sp.crt');
+        $publicKeyLoader->loadCertificateFile('/config/ssp/sp.crt');
         $keys = $publicKeyLoader->getKeys();
         /** @var Key $cert */
         $cert = $keys->first();
@@ -140,8 +139,7 @@ class ServiceProviderContext implements Context, KernelAwareContext
     private function registerIdP($entityId)
     {
         $publicKeyLoader = new KeyLoader();
-        // todo: use from services_test.yml
-        $publicKeyLoader->loadCertificateFile('/var/www/ci/certificates/idp.crt');
+        $publicKeyLoader->loadCertificateFile('/config/ssp/idp.crt');
         $keys = $publicKeyLoader->getKeys();
         /** @var Key $cert */
         $cert = $keys->first();
@@ -179,19 +177,20 @@ class ServiceProviderContext implements Context, KernelAwareContext
         }
         // Sign with random key, does not mather for now.
         $authnRequest->setSignatureKey(
-            $this->loadPrivateKey(new PrivateKey('/var/www/ci/certificates/sp.key', 'default'))
+            $this->loadPrivateKey(new PrivateKey('/config/ssp/sp.key', 'default'))
         );
         switch ($loa) {
             case "1":
+            case "1.5":
             case "2":
             case "3":
                 $authnRequest->setRequestedAuthnContext(
-                    ['AuthnContextClassRef' => ['http://stepup.example.com/assurance/sfo-level' . $loa]]
+                    ['AuthnContextClassRef' => ['http://dev.openconext.local/assurance/sfo-level' . $loa]]
                 );
             break;
             case "self-asserted":
                 $authnRequest->setRequestedAuthnContext(
-                    ['AuthnContextClassRef' => ['http://stepup.example.com/assurance/loa-self-asserted']]
+                    ['AuthnContextClassRef' => ['http://dev.openconext.local/assurance/sfo-level1.5']]
                 );
             break;
             default:
@@ -241,7 +240,7 @@ class ServiceProviderContext implements Context, KernelAwareContext
         // In order to later assert if the response succeeded or failed, set our own dummy ACS location
         $authnRequest->setAssertionConsumerServiceURL(SamlEntityRepository::SP_ACS_LOCATION);
         $issuerVo = new Issuer();
-        $issuerVo->setValue('https://ssp.stepup.example.com/module.php/saml/sp/metadata.php/default-sp');
+        $issuerVo->setValue('https://ssp.dev.openconext.local/module.php/saml/sp/metadata.php/default-sp');
         $authnRequest->setIssuer($issuerVo);
         $authnRequest->setDestination(self::SSO_ENDPOINT_URL);
         $authnRequest->setProtocolBinding(Constants::BINDING_HTTP_REDIRECT);
@@ -249,10 +248,10 @@ class ServiceProviderContext implements Context, KernelAwareContext
         // Sign with random key, does not mather for now.
         // todo: use from services_test.yml
         $authnRequest->setSignatureKey(
-            $this->loadPrivateKey(new PrivateKey('/var/www/ci/certificates/sp.key', 'default'))
+            $this->loadPrivateKey(new PrivateKey('/config/ssp/sp.key', 'default'))
         );
         $authnRequest->setRequestedAuthnContext(
-            ['AuthnContextClassRef' => ['http://stepup.example.com/assurance/level2']]
+            ['AuthnContextClassRef' => ['http://dev.openconext.local/assurance/level2']]
         );
         $request = Saml2AuthnRequest::createNew($authnRequest);
         $query = $request->buildRequestQuery();
@@ -274,23 +273,24 @@ class ServiceProviderContext implements Context, KernelAwareContext
         $authnRequest->setProtocolBinding(Constants::BINDING_HTTP_REDIRECT);
         $authnRequest->setNameId($this->buildNameId($nameId));
         // Sign with random key, does not mather for now.
-        // todo: use from services_test.yml
         $authnRequest->setSignatureKey(
-            $this->loadPrivateKey(new PrivateKey('/var/www/ci/certificates/sp.key', 'default'))
+            $this->loadPrivateKey(new PrivateKey('/config/ssp/sp.key', 'default'))
         );
 
         switch ($loa) {
             case "1":
+            case "1.5":
             case "2":
             case "3":
                 $authnRequest->setRequestedAuthnContext(
-                    ['AuthnContextClassRef' => ['http://stepup.example.com/assurance/level' . $loa]]
+                    ['AuthnContextClassRef' => ['http://dev.openconext.local/assurance/loa' . $loa]]
                 );
                 break;
             case "self-asserted":
                 $authnRequest->setRequestedAuthnContext(
-                    ['AuthnContextClassRef' => ['http://stepup.example.com/assurance/loa-self-asserted']]
+                    ['AuthnContextClassRef' => ['http://dev.openconext.local/assurance/loa1.5']]
                 );
+                break;
             default:
                 throw new RuntimeException(sprintf('The specified LoA-%s is not supported', $loa));
         }
@@ -310,8 +310,8 @@ class ServiceProviderContext implements Context, KernelAwareContext
         // Submit the form
         $this->minkContext->pressButton('Login');
         if (!$this->getSession()->getDriver() instanceof Selenium2Driver) {
-            // Submit the SAML Response
-            $this->minkContext->pressButton('Submit');
+            // Submit the SAML Response from SimpleSamplPHP IdP
+            $this->minkContext->pressButton('Yes, continue');
         }
     }
 
@@ -323,7 +323,7 @@ class ServiceProviderContext implements Context, KernelAwareContext
         /** @var RequestStack $stack */
 
         $stack = $this->kernel->getContainer()->get('request_stack');
-        $stack->push(Request::create('https://gateway.stepup.example.com'));
+        $stack->push(Request::create('https://gateway.dev.openconext.local'));
         $ip = $this->kernel->getContainer()->get('surfnet_saml.hosted.identity_provider');
         $stack->pop();
 

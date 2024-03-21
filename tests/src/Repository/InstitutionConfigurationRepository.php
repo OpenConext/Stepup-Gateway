@@ -41,7 +41,13 @@ SQL;
             if ($stmt->execute($data)) {
                 return $data;
             }
-            throw new Exception(sprintf('Unable to insert the new institution_configuration (%s)', $stmt->queryString));
+            throw new Exception(
+                sprintf(
+                    'Unable to insert the new institution_configuration (%s). PDO raised this error: "%s"',
+                    $stmt->queryString,
+                    $stmt->errorInfo()[2]
+                )
+            );
         } else {
             $data = [
                 'institution' => $institution,

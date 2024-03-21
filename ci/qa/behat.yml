@@ -25,13 +25,13 @@ default:
       contexts: *defaultContexts
   extensions:
     Behat\MinkExtension:
-      base_url: https://gateway.stepup.example.com/
+      base_url: https://gateway.dev.openconext.local/
       goutte: ~
       sessions:
         chrome:
           selenium2:
             browser: chrome
-            wd_host: http://selenium.stepup.example.com:4444/wd/hub
+            wd_host: http://selenium.dev.openconext.local:4444/wd/hub
             capabilities:
               chrome:
                 switches:
@@ -45,5 +45,5 @@ default:
     Behat\Symfony2Extension:
       kernel:
         class: 'App\Kernel'
-        env: test
+        env: smoketest
         debug: true

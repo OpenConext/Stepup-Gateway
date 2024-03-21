@@ -51,7 +51,7 @@ class IdentityProviderController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             $loginData = $form->getData();
             $response = $this->createResponse(
-                'https://gateway.stepup.example.com/authentication/consume-assertion',
+                'https://gateway.dev.openconext.local/authentication/consume-assertion',
                 ['Value' => $loginData->getUsername(), 'Format' => 'urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified'],
                 $loginData->getRequestId()
             );
@@ -106,7 +106,7 @@ class IdentityProviderController extends Controller
         $newAssertion->setNotBefore(time());
         $newAssertion->setNotOnOrAfter(time() + (60 * 5));//
         $newAssertion->setAttributes(['urn:mace:dir:attribute-def:eduPersonTargetedID' => [NameID::fromArray($nameId)]]);
-        $newAssertion->setIssuer('https://idp.stepup.example.com/');
+        $newAssertion->setIssuer('https://idp.dev.openconext.local/');
         $newAssertion->setIssueInstant(time());
 
         $this->signAssertion($newAssertion);
@@ -114,7 +114,7 @@ class IdentityProviderController extends Controller
         $newAssertion->setNameId($nameId);
         $response = new SAMLResponse();
         $response->setAssertions([$newAssertion]);
-        $response->setIssuer('https://gateway.stepup.example.com/idp/metadata');
+        $response->setIssuer('https://gateway.dev.openconext.local/idp/metadata');
         $response->setIssueInstant(time());
         $response->setDestination($destination);
         $response->setInResponseTo($requestId);
@@ -214,7 +214,7 @@ class IdentityProviderController extends Controller
      */
     private function loadPrivateKey()
     {
-        $key        = new PrivateKey('/var/www/ci/certificates/idp.key', 'default');
+        $key        = new PrivateKey('/config/ssp/idp.key', 'default');
         $keyLoader  = new PrivateKeyLoader();
         $privateKey = $keyLoader->loadPrivateKey($key);
 
@@ -230,7 +230,7 @@ class IdentityProviderController extends Controller
     private function getPublicCertificate()
     {
         $keyLoader = new KeyLoader();
-        $keyLoader->loadCertificateFile('/var/www/ci/certificates/idp.crt');
+        $keyLoader->loadCertificateFile('/config/ssp/idp.crt');
         /** @var \SAML2\Certificate\X509 $publicKey */
         $publicKey = $keyLoader->getKeys()->getOnlyElement();
 

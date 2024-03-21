@@ -114,7 +114,7 @@ class ServiceProviderController
         $authnRequest->setNameId($nameIdVo);
 
         $keyLoader = new PrivateKeyLoader();
-        $privateKey = $keyLoader->loadPrivateKey(new PrivateKey('/var/www/ci/certificates/sp.key', 'default'));
+        $privateKey = $keyLoader->loadPrivateKey(new PrivateKey('/config/ssp/sp.key', 'default'));
         $key = new XMLSecurityKey(XMLSecurityKey::RSA_SHA256, ['type' => 'private']);
         $key->loadKey($privateKey->getKeyAsString());
 

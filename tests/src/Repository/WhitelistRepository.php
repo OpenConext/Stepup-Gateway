@@ -38,7 +38,12 @@ class WhitelistRepository
             if ($stmt->execute($data)) {
                 return $data;
             }
-            throw new Exception('Unable add the institution to the whitelist');
+            throw new Exception(
+                sprintf(
+                    'Unable ad the institution to the whitelist. PDO raised this error: "%s"',
+                    $stmt->errorInfo()[2]
+                )
+            );
         } else {
             // Return the existing whitelist data
             return $stmt->fetchAll()[0];

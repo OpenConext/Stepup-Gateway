@@ -35,7 +35,7 @@ class SecondFactorTest extends TestCase
         $secondFactor = Mockery::mock(SecondFactor::class)->makePartial();
         $secondFactor->id = 'the-id-of-the-second-factor';
         $secondFactor->identityId = 'the-id-of-the-identity';
-        $secondFactor->nameId = 'urn:collab:person:stepup.example.com:admin';
+        $secondFactor->nameId = 'urn:collab:person:dev.openconext.local:admin';
         $secondFactor->secondFactorType = $type;
         $secondFactor->identityVetted = $identityVetted;
         return $secondFactor;
