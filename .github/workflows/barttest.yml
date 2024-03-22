@@ -1,0 +1,22 @@
+name: barttest
+on: 
+  push:
+  workflow_dispatch:
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        timeout-minutes: 30
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+            
+            - name: Checkout devconf
+              uses: actions/checkout@v2
+              with:
+                repository: OpenConext/OpenConext-devconf
+                ref: master
+                path: devconf
+                filter: stepup
+
+            - name: Debug
+              run: ls -al devconf/
