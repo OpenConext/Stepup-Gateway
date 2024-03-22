@@ -20,3 +20,6 @@ jobs:
 
             - name: Debug
               run: ls -al devconf/
+
+            - name: Debug2
+              run: ls -al devconf/stepup/
