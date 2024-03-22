@@ -16,7 +16,7 @@ jobs:
                 repository: OpenConext/OpenConext-devconf
                 ref: master
                 path: devconf
-                filter: stepup
+                sparse-checkout: stepup
 
             - name: Debug
               run: ls -al devconf/
