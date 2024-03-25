@@ -6,26 +6,37 @@ jobs:
         timeout-minutes: 30
         steps:
             - name: Checkout
-              uses: actions/checkout@master
+              uses: actions/checkout@v4
+
+            - name: Checkout devconf
+              uses: actions/checkout@v4
+              with:
+                repository: OpenConext/OpenConext-devconf
+                ref: main
+                path: devconf
+                sparse-checkout: stepup
+
+            - name: Check devconf
+              run: |
+                  cd devconf && ls -al && ls -al stepup/
+
             - name: Get Composer Cache Directory
               id: composer-cache
               run: |
                 echo "::set-output name=dir::$(composer config cache-files-dir)"
-            - uses: actions/cache@v1
+
+            - uses: actions/cache@v3
               with:
                 path: ${{ steps.composer-cache.outputs.dir }}
                 key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
                 restore-keys: |
                   ${{ runner.os }}-composer-
+
             - name: Init environment
               run: cd ci/docker && ./init.sh
+
             - name: Run CI tests
               run: |
-                  cd ci/docker && docker-compose exec -T php-fpm.stepup.example.com bash -c '
+                  cd ci/docker && docker compose exec -T gateway bash -c '
                       composer check
                   '
-              env:
-                  SYMFONY_ENV: test
-            - name: Output log files on failure
-              if: failure()
-              run: tail -2000 /var/log/syslog

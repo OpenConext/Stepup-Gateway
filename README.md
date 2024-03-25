@@ -51,7 +51,7 @@ WEBAUTHN_PHP_IMAGE=php82-apache2-node20-composer2:latest
 
 `./start-dev-env.sh gateway:../../OpenConext-stepup/Stepup-Gateway`
 
-#### Run the Gatewy Behat tests
+#### Run the Gateway Behat tests
 
 ```
 $ docker exec -it stepup-gateway-1 bash
