@@ -32,7 +32,7 @@ use Surfnet\StepupGateway\GatewayBundle\Exception\InstitutionMismatchException;
 use Surfnet\StepupGateway\GatewayBundle\Exception\LoaCannotBeGivenException;
 use Surfnet\StepupGateway\GatewayBundle\Exception\UnknownInstitutionException;
 use Surfnet\StepupGateway\GatewayBundle\Service\StepUpAuthenticationService;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class StepUpAuthenticationServiceTest extends TestCase
 {

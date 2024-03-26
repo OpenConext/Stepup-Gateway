@@ -23,78 +23,73 @@ use Surfnet\StepupBundle\Service\SecondFactorTypeTranslationService;
 use Surfnet\StepupBundle\Value\Provider\ViewConfigCollection;
 use Surfnet\StepupGateway\GatewayBundle\Exception\InvalidArgumentException as GatewayInvalidArgumentException;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\ViewConfig;
-use Twig_Extension;
-use Twig_SimpleFilter;
-use Twig_SimpleFunction;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFilter;
+use Twig\TwigFunction;
 
-final class SecondFactorType extends Twig_Extension
+final class SecondFactorType extends AbstractExtension
 {
-    /**
-     * @var SecondFactorTypeTranslationService
-     */
-    private $translator;
+    private string $logoFormat = '/images/second-factor/%s.png';
 
-    /**
-     * @var ViewConfigCollection
-     */
-    private $viewConfigCollection;
-
-    private $logoFormat = '/images/second-factor/%s.png';
-
-    public function __construct(SecondFactorTypeTranslationService $translator, ViewConfigCollection $collection)
-    {
-        $this->translator = $translator;
-        $this->viewConfigCollection = $collection;
+    public function __construct(
+        private readonly SecondFactorTypeTranslationService $translator,
+        private readonly ViewConfigCollection               $collection,
+    ) {
     }
 
-    public function getName()
+    public function getName(): string
     {
         return 'ra.twig.second_factor_type';
     }
 
-    public function getFilters()
+    public function getFilters(): array
     {
         return [
-            new Twig_SimpleFilter('trans_second_factor_type', [$this, 'translateSecondFactorType']),
+            new TwigFilter('trans_second_factor_type', [$this, 'translateSecondFactorType']),
         ];
     }
 
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return [
-            new Twig_SimpleFunction('second_factor_logo', [$this, 'getSecondFactorTypeLogoByIdentifier']),
+            new TwigFunction(
+                'second_factor_logo',
+                [$this, 'getSecondFactorTypeLogoByIdentifier']
+            ),
         ];
     }
 
-    public function translateSecondFactorType($secondFactorType)
+    public function translateSecondFactorType($secondFactorType): string
     {
-        return $this->translator->translate($secondFactorType, 'gateway.second_factor.search.type.%s');
+        return $this->translator->translate(
+            $secondFactorType,
+            'gateway.second_factor.search.type.%s'
+        );
     }
 
     /**
-     * Get the logo source for a second factor type. When GSSP, the logo source is loaded from the view config object
-     * (derived from the yml config). When a non gssp type is encountered a source is built based on the way these
-     * logo's are typically stored in the /web/images/second-factor folder
-     *
-     * @param $secondFactorType
-     * @return string
+     * Get the logo source for a second factor type. When GSSP, the logo source
+     * is loaded from the view config object (derived from the yml config). When
+     * a non gssp type is encountered a source is built based on the way these
+     * logos are typically stored in the /web/images/second-factor folder
      */
-    public function getSecondFactorTypeLogoByIdentifier($secondFactorType)
+    public function getSecondFactorTypeLogoByIdentifier($secondFactorType): string
     {
         $logo = '';
         try {
             /** @var ViewConfig $viewConfig */
-            $viewConfig = $this->viewConfigCollection->getByIdentifier($secondFactorType);
+            $viewConfig = $this->collection->getByIdentifier($secondFactorType);
             $logo = $viewConfig->getLogo();
         } catch (InvalidArgumentException $e) {
-            // There is no view config for this second factor type, indicating we are dealing with a hard coded second
+            // There is no view config for this second factor type,
+            // indicating we are dealing with a hard coded second
             // factor provider (like sms or yubikey)
             $logo = sprintf($this->logoFormat, $secondFactorType);
         }
 
         if (empty($logo)) {
             throw new GatewayInvalidArgumentException(
-                sprintf('Unable to find a logo for this second factor type "%s"', $secondFactorType)
+                "Unable to find a logo for this second factor type {$secondFactorType}"
             );
         }
 
