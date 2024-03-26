@@ -58,7 +58,6 @@ class GatewayController extends AbstractController
      * IDP configured in Stepup (most likely to be an instance of OpenConext
      * EngineBlock).
      *
-     * @param Request $httpRequest
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
      */
     public function ssoAction(Request $httpRequest)
@@ -73,7 +72,7 @@ class GatewayController extends AbstractController
 
         try {
             $proxyRequest = $gatewayLoginService->singleSignOn($httpRequest);
-        } catch (RequesterFailureException $e) {
+        } catch (RequesterFailureException) {
             $response = $this->getGatewayFailedResponseService()->createRequesterFailureResponse(
                 $this->getResponseContext(self::MODE_SSO)
             );
@@ -87,7 +86,7 @@ class GatewayController extends AbstractController
     /**
      *
      */
-    public function proxySsoAction()
+    public function proxySsoAction(): never
     {
         throw new HttpException(418, 'Not Yet Implemented');
     }
@@ -100,7 +99,6 @@ class GatewayController extends AbstractController
      * using an internal redirect to the SecondFactorController to start the
      * actual second factor verification.
      *
-     * @param Request $request
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function consumeAssertionAction(Request $request)
@@ -110,7 +108,7 @@ class GatewayController extends AbstractController
 
         try {
             $gatewayLoginService->consumeAssertion($request, $responseContext);
-        } catch (ResponseFailureException $e) {
+        } catch (ResponseFailureException) {
             $response = $this->getGatewayFailedResponseService()->createResponseFailureResponse($responseContext);
 
             return $this->renderSamlResponse('unprocessable_response', $response, $request, self::MODE_SSO);
@@ -246,20 +244,14 @@ class GatewayController extends AbstractController
      */
     public function getResponseContext($authenticationMode): ResponseContext
     {
-        switch ($authenticationMode) {
-            case self::MODE_SFO:
-                return $this->get($this->get('gateway.proxy.sfo.state_handler')->getResponseContextServiceId());
-                break;
-            case self::MODE_SSO:
-                return $this->get($this->get('gateway.proxy.sso.state_handler')->getResponseContextServiceId());
-                break;
-        }
-
-        throw new RuntimeException('Invalid authentication mode requested');
+        return match ($authenticationMode) {
+            self::MODE_SFO => $this->get($this->get('gateway.proxy.sfo.state_handler')->getResponseContextServiceId()),
+            self::MODE_SSO => $this->get($this->get('gateway.proxy.sso.state_handler')->getResponseContextServiceId()),
+            default => throw new RuntimeException('Invalid authentication mode requested'),
+        };
     }
 
     /**
-     * @param SAMLResponse $response
      * @return string
      */
     private function getResponseAsXML(SAMLResponse $response)

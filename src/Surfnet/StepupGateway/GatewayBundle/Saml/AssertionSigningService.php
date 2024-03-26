@@ -27,18 +27,11 @@ use RobRichards\XMLSecLibs\XMLSecurityKey;
 
 class AssertionSigningService
 {
-    /**
-     * @var IdentityProvider
-     */
-    private $identityProvider;
-
-    public function __construct(IdentityProvider $identityProvider)
+    public function __construct(private readonly IdentityProvider $identityProvider)
     {
-        $this->identityProvider = $identityProvider;
     }
 
     /**
-     * @param Assertion $assertion
      * @return Assertion
      */
     public function signAssertion(Assertion $assertion)

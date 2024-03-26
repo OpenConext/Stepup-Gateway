@@ -23,33 +23,11 @@ use Surfnet\StepupBundle\Service\LoaResolutionService as BaseResolutionService;
 
 class LoaResolutionService
 {
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
-     * @var LoaAliasLookupService
-     */
-    private $loaAliasLookup;
-
-    /**
-     * @var BaseResolutionService
-     */
-    private $loaResolution;
-
-    public function __construct(
-        LoggerInterface $logger,
-        LoaAliasLookupService $loaAliasLookup,
-        BaseResolutionService $loaResolution
-    ) {
-        $this->logger = $logger;
-        $this->loaAliasLookup = $loaAliasLookup;
-        $this->loaResolution = $loaResolution;
+    public function __construct(private LoggerInterface $logger, private readonly LoaAliasLookupService $loaAliasLookup, private readonly BaseResolutionService $loaResolution)
+    {
     }
 
     /**
-     * @param LoggerInterface $logger
      * @return $this
      */
     public function with(LoggerInterface $logger)

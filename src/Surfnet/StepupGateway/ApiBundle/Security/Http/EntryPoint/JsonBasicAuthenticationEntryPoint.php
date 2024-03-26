@@ -28,11 +28,8 @@ use Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface
  */
 class JsonBasicAuthenticationEntryPoint implements AuthenticationEntryPointInterface
 {
-    private $realmName;
-
-    public function __construct($realmName)
+    public function __construct(private $realmName)
     {
-        $this->realmName = $realmName;
     }
 
     /**

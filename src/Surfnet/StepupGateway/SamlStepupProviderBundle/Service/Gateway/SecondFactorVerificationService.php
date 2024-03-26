@@ -26,26 +26,11 @@ use Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\Provider;
 
 class SecondFactorVerificationService
 {
-    /** @var SamlAuthenticationLogger */
-    private $samlLogger;
-
-    /** @var ResponseContext */
-    private $responseContext;
-
-    /** @var ResponseContext */
-    private $sfoResponseContext;
-
     /**
      * SecondFactorVerificationService constructor.
-     * @param SamlAuthenticationLogger $samlLogger
-     * @param ResponseContext $responseContext
-     * @param ResponseContext $sfoResponseContext
      */
-    public function __construct(SamlAuthenticationLogger $samlLogger, ResponseContext $responseContext, ResponseContext $sfoResponseContext)
+    public function __construct(private readonly SamlAuthenticationLogger $samlLogger, private readonly ResponseContext $responseContext, private readonly ResponseContext $sfoResponseContext)
     {
-        $this->samlLogger = $samlLogger;
-        $this->responseContext = $responseContext;
-        $this->sfoResponseContext = $sfoResponseContext;
     }
 
     /**
@@ -57,9 +42,6 @@ class SecondFactorVerificationService
      * The service provider in this context is SelfService (when registering
      * a token) or RA (when vetting a token).
      *
-     * @param Provider $provider
-     * @param string $subjectNameId
-     * @param string $responseContextServiceId
      * @return AuthnRequest
      */
     public function sendSecondFactorVerificationAuthnRequest(

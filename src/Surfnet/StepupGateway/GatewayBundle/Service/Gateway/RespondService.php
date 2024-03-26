@@ -28,41 +28,11 @@ use Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorService;
 
 class RespondService
 {
-    /** @var SamlAuthenticationLogger */
-    private $samlLogger;
-
-    /** @var LoaResolutionService */
-    private $loaResolutionService;
-
-    /** @var ProxyResponseService */
-    private $responseProxy;
-
-    /** @var SecondFactorService */
-    private $secondFactorService;
-
-    /** @var SecondFactorTypeService */
-    private $secondFactorTypeService;
-
     /**
      * GatewayServiceProviderService constructor.
-     * @param SamlAuthenticationLogger $samlLogger
-     * @param LoaResolutionService $loaResolutionService
-     * @param ProxyResponseService $responseProxy
-     * @param SecondFactorService $secondFactorService
-     * @param SecondFactorTypeService $secondFactorTypeService
      */
-    public function __construct(
-        SamlAuthenticationLogger $samlLogger,
-        LoaResolutionService $loaResolutionService,
-        ProxyResponseService $responseProxy,
-        SecondFactorService $secondFactorService,
-        SecondFactorTypeService $secondFactorTypeService
-    ) {
-        $this->samlLogger = $samlLogger;
-        $this->loaResolutionService = $loaResolutionService;
-        $this->responseProxy = $responseProxy;
-        $this->secondFactorService = $secondFactorService;
-        $this->secondFactorTypeService = $secondFactorTypeService;
+    public function __construct(private readonly SamlAuthenticationLogger $samlLogger, private readonly LoaResolutionService $loaResolutionService, private readonly ProxyResponseService $responseProxy, private readonly SecondFactorService $secondFactorService, private SecondFactorTypeService $secondFactorTypeService)
+    {
     }
 
     /**
@@ -71,7 +41,6 @@ class RespondService
      * Second factor verification handled by the LoginService is
      * finished. This method sends a AuthnResponse back to the service
      * provider in response to the AuthnRequest received in the LoginService.
-     * @param ResponseContext $responseContext
      * @return SAMLResponse
      */
     public function respond(ResponseContext $responseContext)
@@ -110,8 +79,6 @@ class RespondService
 
     /**
      * Reset the state of the response
-     *
-     * @param ResponseContext $responseContext
      */
     public function resetRespondState(ResponseContext $responseContext): void
     {

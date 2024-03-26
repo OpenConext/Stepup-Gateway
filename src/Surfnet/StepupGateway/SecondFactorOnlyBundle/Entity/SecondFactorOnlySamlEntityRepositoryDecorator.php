@@ -24,16 +24,10 @@ use Surfnet\StepupGateway\GatewayBundle\Entity\SamlEntityRepository;
 /**
  * @SuppressWarnings(PHPMD.LongClassName)
  */
-final class SecondFactorOnlySamlEntityRepositoryDecorator implements SamlEntityRepository
+final readonly class SecondFactorOnlySamlEntityRepositoryDecorator implements SamlEntityRepository
 {
-    /**
-     * @var SamlEntityRepository
-     */
-    private $repository;
-
-    public function __construct(SamlEntityRepository $repository)
+    public function __construct(private SamlEntityRepository $repository)
     {
-        $this->repository = $repository;
     }
 
     public function getIdentityProvider($entityId)

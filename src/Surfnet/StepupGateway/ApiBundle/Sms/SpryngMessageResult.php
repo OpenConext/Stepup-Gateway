@@ -22,11 +22,8 @@ use Spryng\SpryngRestApi\Http\Response;
 
 class SpryngMessageResult implements SmsMessageResultInterface
 {
-    private $message;
-
-    public function __construct(?Response $message)
+    public function __construct(private readonly ?Response $message)
     {
-        $this->message = $message;
     }
 
     public function isSuccess(): bool

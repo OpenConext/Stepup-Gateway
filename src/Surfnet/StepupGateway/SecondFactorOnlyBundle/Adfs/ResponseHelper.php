@@ -30,24 +30,14 @@ use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\ValueObject\Response as Ad
  * RequestId: <RequestId>
  * Response: <The "Response" that was received from the SFO endpoint>
  */
-final class ResponseHelper
+final readonly class ResponseHelper
 {
-
-    /** @var LoggerInterface */
-    private $logger;
-
-    /** @var StateHandler */
-    private $stateHandler;
 
     /**
      * ResponseHelper constructor.
-     * @param StateHandler $stateHandler
-     * @param LoggerInterface $logger
      */
-    public function __construct(StateHandler $stateHandler, LoggerInterface $logger)
+    public function __construct(private StateHandler $stateHandler, private LoggerInterface $logger)
     {
-        $this->stateHandler = $stateHandler;
-        $this->logger = $logger;
     }
 
     /**

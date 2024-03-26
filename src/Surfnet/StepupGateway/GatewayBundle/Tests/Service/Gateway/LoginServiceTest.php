@@ -202,10 +202,7 @@ final class LoginServiceTest extends GatewaySamlTestCase
 
 
     /**
-     * @param array $idpConfiguration
-     * @param array $spConfiguration
      * @param array $dictionaryAttributes
-     * @param array $loaLevels
      * @param int $now
      * @param array $sessionData
      */
@@ -244,7 +241,6 @@ final class LoginServiceTest extends GatewaySamlTestCase
     }
 
     /**
-     * @param array $loaLevels
      * @return LoaResolutionService
      */
     private function mockLoaResolutionService(array $loaLevels)

@@ -23,14 +23,8 @@ use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactorRepository;
 
 class SecondFactorService
 {
-    /**
-     * @var \Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactorRepository
-     */
-    private $repository;
-
-    public function __construct(SecondFactorRepository $repository)
+    public function __construct(private readonly SecondFactorRepository $repository)
     {
-        $this->repository = $repository;
     }
 
     /**

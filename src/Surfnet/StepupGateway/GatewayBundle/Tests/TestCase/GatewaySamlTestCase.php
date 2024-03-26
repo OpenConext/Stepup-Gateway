@@ -27,7 +27,7 @@ use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 
 class GatewaySamlTestCase extends TestCase
 {
-    const MOCK_TIMESTAMP = 1534496300;
+    public const MOCK_TIMESTAMP = 1534496300;
 
     /** @var Logger */
     protected $logger;
@@ -101,7 +101,6 @@ class GatewaySamlTestCase extends TestCase
 
     /**
      * @param string $bag
-     * @param array $data
      */
     protected function mockSessionData($bag, array $data)
     {

@@ -27,16 +27,10 @@ use Surfnet\StepupGateway\ApiBundle\Service\SmsService as ApiSmsService;
 /**
  * Sends SMSes by calling the SMS service in the API bundle.
  */
-final class GatewayApiSmsService implements SmsService
+final readonly class GatewayApiSmsService implements SmsService
 {
-    /**
-     * @var \Surfnet\StepupGateway\ApiBundle\Service\SmsService
-     */
-    private $smsService;
-
-    public function __construct(ApiSmsService $smsService)
+    public function __construct(private ApiSmsService $smsService)
     {
-        $this->smsService = $smsService;
     }
 
     /**

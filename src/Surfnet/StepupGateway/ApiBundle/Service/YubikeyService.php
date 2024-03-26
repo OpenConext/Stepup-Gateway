@@ -31,8 +31,8 @@ use Surfnet\YubikeyApiClientBundle\Service\VerificationService;
 class YubikeyService implements YubikeyServiceInterface
 {
     public function __construct(
-        private VerificationService $verificationService,
-        private LoggerInterface $logger,
+        private readonly VerificationService $verificationService,
+        private readonly LoggerInterface $logger,
     ) {
     }
 

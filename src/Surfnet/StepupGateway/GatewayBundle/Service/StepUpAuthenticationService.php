@@ -47,66 +47,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class StepUpAuthenticationService
 {
-    /**
-     * @var \Surfnet\StepupBundle\Service\LoaResolutionService
-     */
-    private $loaResolutionService;
-
-    /**
-     * @var \Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactorRepository
-     */
-    private $secondFactorRepository;
-
-    /**
-     * @var \Surfnet\StepupGateway\ApiBundle\Service\YubikeyService
-     */
-    private $yubikeyService;
-
-    /**
-     * @var \Surfnet\StepupBundle\Service\SmsSecondFactorService
-     */
-    private $smsService;
-
-    /**
-     * @var \Symfony\Contracts\Translation\TranslatorInterface
-     */
-    private $translator;
-
-    /**
-     * @var \Psr\Log\LoggerInterface
-     */
-    private $logger;
-
-    /**
-     * @var SecondFactorTypeService
-     */
-    private $secondFactorTypeService;
-
-    /**
-     * @param LoaResolutionService   $loaResolutionService
-     * @param SecondFactorRepository $secondFactorRepository
-     * @param YubikeyServiceInterface $yubikeyService
-     * @param SmsSecondFactorService $smsService
-     * @param TranslatorInterface    $translator
-     * @param LoggerInterface        $logger
-     * @param SecondFactorTypeService $secondFactorTypeService
-     */
-    public function __construct(
-        LoaResolutionService $loaResolutionService,
-        SecondFactorRepository $secondFactorRepository,
-        YubikeyServiceInterface $yubikeyService,
-        SmsSecondFactorService $smsService,
-        TranslatorInterface $translator,
-        LoggerInterface $logger,
-        SecondFactorTypeService $secondFactorTypeService
-    ) {
-        $this->loaResolutionService = $loaResolutionService;
-        $this->secondFactorRepository = $secondFactorRepository;
-        $this->yubikeyService = $yubikeyService;
-        $this->smsService = $smsService;
-        $this->translator = $translator;
-        $this->logger = $logger;
-        $this->secondFactorTypeService = $secondFactorTypeService;
+    public function __construct(private readonly LoaResolutionService $loaResolutionService, private readonly SecondFactorRepository $secondFactorRepository, private readonly YubikeyServiceInterface $yubikeyService, private readonly SmsSecondFactorService $smsService, private readonly TranslatorInterface $translator, private readonly LoggerInterface $logger, private readonly SecondFactorTypeService $secondFactorTypeService)
+    {
     }
 
     public function determineViableSecondFactors(
@@ -293,7 +235,6 @@ class StepUpAuthenticationService
      * Test if the spConfiguredLoas has institution specific LoA configurations other than the
      * default LoA configuration.
      *
-     * @param array $spConfiguredLoas
      *
      * @return bool
      */
@@ -306,7 +247,6 @@ class StepUpAuthenticationService
     /**
      * Returns whether the given Loa identifier identifies the minimum Loa, intrinsic to being authenticated via an IdP.
      *
-     * @param Loa $loa
      * @return bool
      */
     public function isIntrinsicLoa(Loa $loa)
@@ -315,7 +255,6 @@ class StepUpAuthenticationService
     }
 
     /**
-     * @param VerifyYubikeyOtpCommand $command
      * @return YubikeyOtpVerificationResult
      */
     public function verifyYubikeyOtp(VerifyYubikeyOtpCommand $command)
@@ -368,7 +307,6 @@ class StepUpAuthenticationService
     }
 
     /**
-     * @param SendSmsChallengeCommand $command
      * @return bool
      */
     public function sendSmsChallenge(SendSmsChallengeCommand $command)
@@ -389,7 +327,6 @@ class StepUpAuthenticationService
     }
 
     /**
-     * @param VerifyPossessionOfPhoneCommand $command
      * @return OtpVerification
      */
     public function verifySmsChallenge(VerifyPossessionOfPhoneCommand $command)

@@ -27,11 +27,6 @@ use Surfnet\StepupGateway\GatewayBundle\Exception\RuntimeException;
 class SamlEntityService implements ServiceProviderRepository
 {
     /**
-     * @var SamlEntityRepository
-     */
-    private $samlEntityRepository;
-
-    /**
      * @var \Surfnet\SamlBundle\Entity\IdentityProvider[]
      */
     private $loadedIdentityProviders;
@@ -41,9 +36,8 @@ class SamlEntityService implements ServiceProviderRepository
      */
     private $loadedServiceProviders;
 
-    public function __construct(SamlEntityRepository $samlEntityRepository)
+    public function __construct(private readonly SamlEntityRepository $samlEntityRepository)
     {
-        $this->samlEntityRepository = $samlEntityRepository;
         $this->loadedIdentityProviders = [];
         $this->loadedServiceProviders = [];
     }

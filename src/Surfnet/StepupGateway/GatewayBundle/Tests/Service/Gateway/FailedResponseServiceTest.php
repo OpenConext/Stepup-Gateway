@@ -169,9 +169,6 @@ final class FailedResponseServiceTest extends GatewaySamlTestCase
     }
 
 
-    /**
-     * @param DateTime $now
-     */
     private function initGatewayService(array $idpConfiguration, DateTime $now): void
     {
         $session = new Session($this->sessionStorage);

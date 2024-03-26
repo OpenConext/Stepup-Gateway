@@ -33,35 +33,11 @@ class ConsumeAssertionService
 {
     public const RESPONSE_CONTEXT_SERVICE_ID = 'gateway.proxy.response_context';
 
-    /** @var PostBinding */
-    private $postBinding;
-
-    /** @var SamlAuthenticationLogger */
-    private $samlLogger;
-
-    /** @var ServiceProvider */
-    private $hostedServiceProvider;
-
-    /** @var IdentityProvider */
-    private $remoteIdp;
-
     /**
      * GatewayServiceProviderService constructor.
-     * @param PostBinding $postBinding
-     * @param SamlAuthenticationLogger $samlLogger
-     * @param ServiceProvider $hostedServiceProvider
-     * @param IdentityProvider $remoteIdp
      */
-    public function __construct(
-        PostBinding $postBinding,
-        SamlAuthenticationLogger $samlLogger,
-        ServiceProvider $hostedServiceProvider,
-        IdentityProvider $remoteIdp
-    ) {
-        $this->postBinding = $postBinding;
-        $this->samlLogger = $samlLogger;
-        $this->hostedServiceProvider = $hostedServiceProvider;
-        $this->remoteIdp = $remoteIdp;
+    public function __construct(private readonly PostBinding $postBinding, private readonly SamlAuthenticationLogger $samlLogger, private readonly ServiceProvider $hostedServiceProvider, private readonly IdentityProvider $remoteIdp)
+    {
     }
 
     /**
@@ -71,8 +47,6 @@ class ConsumeAssertionService
      * from the IDP. This method handles the assertion and state. After which the
      * actual second factor verification can begin.
      *
-     * @param Request $request
-     * @param ResponseContext $responseContext
      * @return void
      */
     public function consumeAssertion(Request $request, ResponseContext $responseContext): void

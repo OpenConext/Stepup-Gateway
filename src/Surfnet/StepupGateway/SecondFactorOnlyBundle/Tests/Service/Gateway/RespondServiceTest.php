@@ -354,10 +354,6 @@ final class RespondServiceTest extends GatewaySamlTestCase
     }
 
     /**
-     * @param array $idpConfiguration
-     * @param array $loaAliases
-     * @param array $loaLevels
-     * @param DateTime $now
      * @param array $sessionData
      */
     private function initGatewayLoginService(array $idpConfiguration, array $loaLevels,  array $loaAliases, DateTime $now): void
@@ -402,7 +398,6 @@ final class RespondServiceTest extends GatewaySamlTestCase
     }
 
     /**
-     * @param array $loaLevels
      * @return LoaResolutionService
      */
     private function mockLoaResolutionService(array $loaLevels)

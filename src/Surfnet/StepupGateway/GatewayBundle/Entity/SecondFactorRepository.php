@@ -25,9 +25,7 @@ use Surfnet\StepupBundle\Value\Loa;
 interface SecondFactorRepository
 {
     /**
-     * @param Loa $highestLoa
      * @param string $identityNameId
-     * @param SecondFactorTypeService $service
      * @return Collection
      */
     public function getAllMatchingFor(Loa $highestLoa, $identityNameId, SecondFactorTypeService $service);

@@ -126,7 +126,6 @@ class SecondFactor
     }
 
     /**
-     * @param SecondFactorTypeService $service
      * @return float
      */
     public function getLoaLevel(SecondFactorTypeService $service): float

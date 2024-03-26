@@ -81,7 +81,7 @@ class SecondFactorOnlyController extends AbstractController
 
         try {
             $this->loginService->singleSignOn($httpRequest, $originalRequest);
-        } catch (RequesterFailureException $e) {
+        } catch (RequesterFailureException) {
             return $this->responseRendering
                 ->renderRequesterFailureResponse($this->responseContext, $httpRequest);
         }

@@ -37,29 +37,8 @@ class CookieHelper implements CookieHelperInterface
      */
     private const SAME_SITE = Cookie::SAMESITE_NONE;
 
-    /**
-     * @var Configuration
-     */
-    private $configuration;
-
-    /**
-     * @var CryptoHelperInterface
-     */
-    private $encryptionHelper;
-
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    public function __construct(
-        Configuration $configuration,
-        CryptoHelperInterface $encryptionHelper,
-        LoggerInterface $logger
-    ) {
-        $this->configuration = $configuration;
-        $this->encryptionHelper = $encryptionHelper;
-        $this->logger = $logger;
+    public function __construct(private readonly Configuration $configuration, private readonly CryptoHelperInterface $encryptionHelper, private readonly LoggerInterface $logger)
+    {
     }
 
     public function write(Response $response, CookieValueInterface $value): void

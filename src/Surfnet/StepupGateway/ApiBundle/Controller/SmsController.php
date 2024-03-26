@@ -29,14 +29,12 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 class SmsController extends AbstractController
 {
     public function __construct(
-        private SmsServiceInterface $smsService
+        private readonly SmsServiceInterface $smsService
     )
     {
     }
 
     /**
-     * @param SmsMessage $message
-     * @param Requester $requester
      * @return JsonResponse
      */
     public function sendAction(SmsMessage $message, Requester $requester)
@@ -53,9 +51,7 @@ class SmsController extends AbstractController
             return new JsonResponse(['status' => 'OK']);
         }
 
-        $errors = array_map(function ($error) {
-            return sprintf('%s (#%d)', $error['description'], $error['code']);
-        }, $result->getRawErrors());
+        $errors = array_map(fn($error) => sprintf('%s (#%d)', $error['description'], $error['code']), $result->getRawErrors());
 
         if ($result->isMessageInvalid()) {
             return new JsonResponse(['errors' => $errors], 400);

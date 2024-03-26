@@ -41,60 +41,23 @@ use Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler;
 class ProxyResponseService
 {
     /**
-     * @var \Surfnet\SamlBundle\Entity\IdentityProvider
-     */
-    private $hostedIdentityProvider;
-
-    /**
-     * @var \Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler
-     */
-    private $proxyStateHandler;
-
-    /**
-     * @var \Surfnet\SamlBundle\SAML2\Attribute\AttributeDictionary
-     */
-    private $attributeDictionary;
-
-    /**
-     * @var \Surfnet\SamlBundle\SAML2\Attribute\AttributeDefinition
-     */
-    private $internalCollabPersonIdAttribute;
-
-    /**
      * @var \DateTime
      */
     private $currentTime;
 
-    /**
-     * @var \Surfnet\StepupGateway\GatewayBundle\Saml\AssertionSigningService
-     */
-    private $assertionSigningService;
-
-    /**
-     * @var \Surfnet\StepupBundle\Value\Loa
-     */
-    private $intrinsicLoa;
-
     public function __construct(
-        IdentityProvider        $hostedIdentityProvider,
-        ProxyStateHandler       $proxyStateHandler,
-        AssertionSigningService $assertionSigningService,
-        AttributeDictionary     $attributeDictionary,
-        AttributeDefinition     $internalCollabPersonIdAttribute,
-        Loa                     $intrinsicLoa,
+        private readonly IdentityProvider        $hostedIdentityProvider,
+        private readonly ProxyStateHandler       $proxyStateHandler,
+        private readonly AssertionSigningService $assertionSigningService,
+        private readonly AttributeDictionary     $attributeDictionary,
+        private readonly AttributeDefinition     $internalCollabPersonIdAttribute,
+        private readonly Loa                     $intrinsicLoa,
         DateTime                $now = null
     ) {
-        $this->hostedIdentityProvider = $hostedIdentityProvider;
-        $this->proxyStateHandler = $proxyStateHandler;
-        $this->assertionSigningService = $assertionSigningService;
-        $this->attributeDictionary = $attributeDictionary;
-        $this->internalCollabPersonIdAttribute = $internalCollabPersonIdAttribute;
-        $this->intrinsicLoa = $intrinsicLoa;
         $this->currentTime = is_null($now) ? new DateTime('now', new DateTimeZone('UTC')) : $now;
     }
 
     /**
-     * @param Assertion $assertion
      * @param string $destination ACS URL
      * @param string|null $loa
      * @return Response
@@ -135,7 +98,6 @@ class ProxyResponseService
     }
 
     /**
-     * @param Assertion $newAssertion
      * @param string $destination ACS URL
      */
     private function addSubjectConfirmationFor(Assertion $newAssertion, $destination): void
@@ -153,10 +115,6 @@ class ProxyResponseService
         $newAssertion->setSubjectConfirmation([$confirmation]);
     }
 
-    /**
-     * @param Assertion $newAssertion
-     * @param Assertion $assertion
-     */
     private function addAuthenticationStatementTo(Assertion $newAssertion, Assertion $assertion): void
     {
         $newAssertion->setAuthnInstant($assertion->getAuthnInstant());
@@ -172,7 +130,6 @@ class ProxyResponseService
     }
 
     /**
-     * @param Assertion $newAssertion
      * @param string $destination ACS URL
      * @return Response
      */

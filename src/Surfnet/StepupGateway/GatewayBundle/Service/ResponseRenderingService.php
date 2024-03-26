@@ -29,14 +29,14 @@ use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\ResponseHelper;
 use Twig\Environment;
 use Symfony\Component\HttpFoundation\Response;
 
-final class ResponseRenderingService
+final readonly class ResponseRenderingService
 {
     public function __construct(
-        private readonly ResponseBuilder $responseBuilder,
-        private readonly ResponseHelper  $responseHelper,
-        private readonly Environment     $templateEngine,
-        private readonly CookieService   $ssoCookieService,
-        private readonly LoggerInterface $logger
+        private ResponseBuilder $responseBuilder,
+        private ResponseHelper  $responseHelper,
+        private Environment     $templateEngine,
+        private CookieService   $ssoCookieService,
+        private LoggerInterface $logger
     ) {
     }
 

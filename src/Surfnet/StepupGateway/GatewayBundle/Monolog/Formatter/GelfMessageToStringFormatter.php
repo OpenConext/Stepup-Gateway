@@ -24,17 +24,8 @@ use Monolog\LogRecord;
 
 class GelfMessageToStringFormatter implements FormatterInterface
 {
-    /**
-     * @var GelfMessageFormatter
-     */
-    private $formatter;
-
-    /**
-     * @param GelfMessageFormatter $formatter
-     */
-    public function __construct(GelfMessageFormatter $formatter)
+    public function __construct(private readonly GelfMessageFormatter $formatter)
     {
-        $this->formatter = $formatter;
     }
 
     /**
@@ -46,7 +37,7 @@ class GelfMessageToStringFormatter implements FormatterInterface
         $message = $this->formatter->format($record);
 
         // we need to keep the last new line, otherwise everything is appended on the same line :)
-        $message->setFullMessage(str_replace("\n", ', ', $message->getFullMessage()) . "\n");
+        $message->setFullMessage(str_replace("\n", ', ', (string) $message->getFullMessage()) . "\n");
 
         return json_encode($message->toArray());
     }
@@ -59,6 +50,6 @@ class GelfMessageToStringFormatter implements FormatterInterface
      */
     public function formatBatch(array $records)
     {
-        return array_map([$this, 'format'], $records);
+        return array_map($this->format(...), $records);
     }
 }

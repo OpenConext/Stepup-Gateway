@@ -37,9 +37,6 @@ final class ProviderRepository
         $this->providers = [];
     }
 
-    /**
-     * @param Provider $provider
-     */
     public function addProvider(Provider $provider): void
     {
         if ($this->has($provider->getName())) {

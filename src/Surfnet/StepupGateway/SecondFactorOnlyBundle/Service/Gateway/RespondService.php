@@ -31,43 +31,8 @@ use Symfony\Component\HttpFoundation\Request;
 
 class RespondService
 {
-    /** @var SamlAuthenticationLogger */
-    private $samlLogger;
-
-    /** @var LoaResolutionService */
-    private $loaResolutionService;
-
-    /** @var LoaAliasLookupService */
-    private $loaAliasLookupService;
-
-    /** @var ResponseFactory */
-    private $responseFactory;
-
-    /** @var SecondFactorService */
-    private $secondFactorService;
-
-    /** @var SecondFactorTypeService */
-    private $secondFactorTypeService;
-
-    /** @var ResponseValidator */
-    private $responseValidator;
-
-    public function __construct(
-        SamlAuthenticationLogger $samlLogger,
-        LoaResolutionService $loaResolutionService,
-        LoaAliasLookupService $loaAliasLookupService,
-        ResponseFactory $responseFactory,
-        SecondFactorService $secondFactorService,
-        SecondFactorTypeService $secondFactorTypeService,
-        ResponseValidator $responseValidator
-    ) {
-        $this->samlLogger = $samlLogger;
-        $this->loaResolutionService = $loaResolutionService;
-        $this->loaAliasLookupService = $loaAliasLookupService;
-        $this->responseFactory = $responseFactory;
-        $this->secondFactorService = $secondFactorService;
-        $this->secondFactorTypeService = $secondFactorTypeService;
-        $this->responseValidator = $responseValidator;
+    public function __construct(private readonly SamlAuthenticationLogger $samlLogger, private readonly LoaResolutionService $loaResolutionService, private readonly LoaAliasLookupService $loaAliasLookupService, private readonly ResponseFactory $responseFactory, private readonly SecondFactorService $secondFactorService, private readonly SecondFactorTypeService $secondFactorTypeService, private readonly ResponseValidator $responseValidator)
+    {
     }
 
 
@@ -78,7 +43,6 @@ class RespondService
      * to send back to the service provider in response to the AuthnRequest received in
      * the SecondFactorLoginService.
      *
-     * @param ResponseContext $responseContext
      * @return Response
      */
     public function respond(ResponseContext $responseContext, Request $request)
@@ -126,8 +90,6 @@ class RespondService
 
     /**
      * Reset the state of the response
-     *
-     * @param ResponseContext $responseContext
      */
     public function resetRespondState(ResponseContext $responseContext): void
     {

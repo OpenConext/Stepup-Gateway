@@ -20,7 +20,7 @@ namespace Surfnet\StepupGateway\SamlStepupProviderBundle\Provider;
 
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Exception\InvalidArgumentException;
 
-final class AllowedServiceProviders
+final class AllowedServiceProviders implements \Stringable
 {
     /** @var array */
     private $allowed;

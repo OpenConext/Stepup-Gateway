@@ -26,7 +26,7 @@ use function setcookie;
  */
 class SmsService implements SmsServiceInterface
 {
-    const CHALLENGE_COOKIE_PREFIX = 'smoketest-sms-service';
+    public const CHALLENGE_COOKIE_PREFIX = 'smoketest-sms-service';
 
     /**
      * @inheritDoc

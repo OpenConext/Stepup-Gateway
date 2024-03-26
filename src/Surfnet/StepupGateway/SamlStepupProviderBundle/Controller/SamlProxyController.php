@@ -68,7 +68,6 @@ class SamlProxyController extends AbstractController
      * a token) or RA (when vetting a token).
      *
      * @param string $provider
-     * @param Request $httpRequest
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
     public function singleSignOnAction($provider, Request $httpRequest)
@@ -84,7 +83,7 @@ class SamlProxyController extends AbstractController
 
         try {
             $proxyRequest = $gsspLoginService->singleSignOn($provider, $httpRequest);
-        } catch (NotConnectedServiceProviderException $e) {
+        } catch (NotConnectedServiceProviderException) {
             throw new AccessDeniedHttpException();
         }
 
@@ -135,7 +134,6 @@ class SamlProxyController extends AbstractController
      *  2. in case of verification: internal redirect to SecondFactorController
      *
      * @param string $provider
-     * @param Request $httpRequest
      * @return \Symfony\Component\HttpFoundation\Response
      * @throws Exception
      */
@@ -156,7 +154,7 @@ class SamlProxyController extends AbstractController
                 $e->getMessage()
             );
             return $this->renderSamlResponse('consume_assertion', $provider->getStateHandler(), $response);
-        } catch (InvalidSubjectException $e) {
+        } catch (InvalidSubjectException) {
             return $this->renderSamlResponse(
                 'recoverable_error',
                 $provider->getStateHandler(),
@@ -165,7 +163,7 @@ class SamlProxyController extends AbstractController
                     $this->getDestination($provider->getStateHandler())
                 )
             );
-        } catch (SecondfactorVerificationRequiredException $e) {
+        } catch (SecondfactorVerificationRequiredException) {
             // The provider state handler has no access to the session object, hence we use the proxy state handler
             $stateHandler = $this->get('gateway.proxy.sso.state_handler');
             return $this->forward(
@@ -217,7 +215,6 @@ class SamlProxyController extends AbstractController
     }
 
     /**
-     * @param StateHandler $stateHandler
      * @return string
      */
     private function getDestination(StateHandler $stateHandler)
@@ -263,8 +260,6 @@ class SamlProxyController extends AbstractController
 
     /**
      * @param string $view
-     * @param StateHandler $stateHandler
-     * @param SAMLResponse $response
      * @return Response
      */
     public function renderSamlResponse($view, StateHandler $stateHandler, SAMLResponse $response)
@@ -309,7 +304,6 @@ class SamlProxyController extends AbstractController
     }
 
     /**
-     * @param SAMLResponse $response
      * @return string
      */
     private function getResponseAsXML(SAMLResponse $response)
@@ -348,7 +342,6 @@ class SamlProxyController extends AbstractController
      * Response that indicates that the authentication could not be performed correctly. In this context it means
      * that the upstream GSSP did not responsd with the same NameID as we request to authenticate in the AuthnRequest
      *
-     * @param Provider $provider
      * @param string $destination
      * @return SAMLResponse
      */
@@ -368,7 +361,6 @@ class SamlProxyController extends AbstractController
     /**
      * Creates a standard response with default status Code (success)
      *
-     * @param Provider $provider
      * @param string $destination
      * @return SAMLResponse
      */
@@ -422,7 +414,6 @@ class SamlProxyController extends AbstractController
     }
 
     /**
-     * @param Provider $provider
      * @return ProxyResponseFactory
      */
     private function getProxyResponseFactory(Provider $provider)

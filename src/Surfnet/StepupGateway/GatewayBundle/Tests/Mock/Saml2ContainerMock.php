@@ -24,14 +24,8 @@ use function sprintf;
 
 class Saml2ContainerMock extends AbstractContainer
 {
-    /**
-     * @var \Psr\Log\LoggerInterface
-     */
-    private $logger;
-
-    public function __construct(LoggerInterface $logger)
+    public function __construct(private readonly LoggerInterface $logger)
     {
-        $this->logger = $logger;
     }
 
     /**
@@ -55,20 +49,20 @@ class Saml2ContainerMock extends AbstractContainer
         $this->logger->debug($message, ['type' => $type]);
     }
 
-    public function redirect($url, $data = array()): void
+    public function redirect($url, $data = []): void
     {
         throw new BadMethodCallException(sprintf(
             "%s:%s may not be called in the Surfnet\\SamlBundle as it doesn't work with Symfony2",
-            __CLASS__,
+            self::class,
             __METHOD__
         ));
     }
 
-    public function postRedirect($url, $data = array()): void
+    public function postRedirect($url, $data = []): void
     {
         throw new BadMethodCallException(sprintf(
             "%s:%s may not be called in the Surfnet\\SamlBundle as it doesn't work with Symfony2",
-            __CLASS__,
+            self::class,
             __METHOD__
         ));
     }
@@ -77,7 +71,7 @@ class Saml2ContainerMock extends AbstractContainer
     {
         throw new BadMethodCallException(sprintf(
             "%s:%s may not be called in the Surfnet\\SamlBundle as it doesn't work with Symfony2",
-            __CLASS__,
+            self::class,
             __METHOD__
         ));
     }
@@ -86,7 +80,7 @@ class Saml2ContainerMock extends AbstractContainer
     {
         throw new BadMethodCallException(sprintf(
             "%s:%s may not be called in the Surfnet\\SamlBundle as it doesn't work with Symfony2",
-            __CLASS__,
+            self::class,
             __METHOD__
         ));
     }

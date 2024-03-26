@@ -38,47 +38,21 @@ use Surfnet\StepupGateway\GatewayBundle\Saml\AssertionSigningService;
 class ProxyResponseFactory
 {
     /**
-     * @var \Psr\Log\LoggerInterface
-     */
-    private $logger;
-
-    /**
-     * @var \Surfnet\SamlBundle\Entity\IdentityProvider
-     */
-    private $hostedIdentityProvider;
-
-    /**
-     * @var \Surfnet\StepupGateway\SamlStepupProviderBundle\Saml\StateHandler
-     */
-    private $stateHandler;
-
-    /**
-     * @var \Surfnet\StepupGateway\GatewayBundle\Saml\AssertionSigningService
-     */
-    private $assertionSigningService;
-
-    /**
      * @var \DateTime
      */
     private $currentTime;
 
     public function __construct(
-        LoggerInterface $logger,
-        IdentityProvider $hostedIdentityProvider,
-        StateHandler $stateHandler,
-        AssertionSigningService $assertionSigningService,
+        private readonly LoggerInterface $logger,
+        private readonly IdentityProvider $hostedIdentityProvider,
+        private readonly StateHandler $stateHandler,
+        private readonly AssertionSigningService $assertionSigningService,
         DateTime $now = null
     ) {
-        $this->logger                  = $logger;
-        $this->hostedIdentityProvider  = $hostedIdentityProvider;
-        $this->stateHandler            = $stateHandler;
-        $this->assertionSigningService = $assertionSigningService;
-
         $this->currentTime = is_null($now) ? new DateTime('now', new DateTimeZone('UTC')): $now;
     }
 
     /**
-     * @param Assertion $assertion
      * @param string $destination
      * @return Response
      */
@@ -105,7 +79,6 @@ class ProxyResponseFactory
     }
 
     /**
-     * @param Assertion $newAssertion
      * @param string $destination
      */
     private function addSubjectConfirmationFor(Assertion $newAssertion, $destination): void
@@ -123,10 +96,6 @@ class ProxyResponseFactory
         $newAssertion->setSubjectConfirmation([$confirmation]);
     }
 
-    /**
-     * @param Assertion $newAssertion
-     * @param Assertion $assertion
-     */
     private function addAuthenticationStatementTo(Assertion $newAssertion, Assertion $assertion): void
     {
         $newAssertion->setAuthnInstant($assertion->getAuthnInstant());
@@ -135,7 +104,6 @@ class ProxyResponseFactory
     }
 
     /**
-     * @param Assertion $newAssertion
      * @param string $destination
      * @return SAMLResponse
      */

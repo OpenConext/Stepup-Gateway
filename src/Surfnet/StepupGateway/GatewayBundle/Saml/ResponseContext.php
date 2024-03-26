@@ -39,26 +39,6 @@ use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\Exception\AcsLocationNotAl
 class ResponseContext
 {
     /**
-     * @var IdentityProvider
-     */
-    private $hostedIdentityProvider;
-
-    /**
-     * @var SamlEntityService
-     */
-    private $samlEntityService;
-
-    /**
-     * @var ProxyStateHandler
-     */
-    private $stateHandler;
-
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
      * @var DateTime
      */
     private $generationTime;
@@ -72,16 +52,12 @@ class ResponseContext
      * @throws Exception
      */
     public function __construct(
-        IdentityProvider $identityProvider,
-        SamlEntityService $samlEntityService,
-        ProxyStateHandler $stateHandler,
-        LoggerInterface $logger,
+        private readonly IdentityProvider $hostedIdentityProvider,
+        private readonly SamlEntityService $samlEntityService,
+        private readonly ProxyStateHandler $stateHandler,
+        private readonly LoggerInterface $logger,
         DateTime $now = null
     ) {
-        $this->hostedIdentityProvider = $identityProvider;
-        $this->samlEntityService      = $samlEntityService;
-        $this->stateHandler           = $stateHandler;
-        $this->logger                 = $logger;
         $this->generationTime         = is_null($now) ? new DateTime('now', new DateTimeZone('UTC')): $now;
     }
 
@@ -176,7 +152,6 @@ class ResponseContext
     }
 
     /**
-     * @param Assertion $assertion
      * @throws Exception
      */
     public function saveAssertion(Assertion $assertion): void
@@ -233,13 +208,10 @@ class ResponseContext
     public function getNormalizedSchacHomeOrganization(): ?string
     {
         return strtolower(
-            $this->stateHandler->getSchacHomeOrganization()
+            (string) $this->stateHandler->getSchacHomeOrganization()
         );
     }
 
-    /**
-     * @param SecondFactor $secondFactor
-     */
     public function saveSelectedSecondFactor(SecondFactor $secondFactor): void
     {
         $this->stateHandler->setSelectedSecondFactorId($secondFactor->secondFactorId);

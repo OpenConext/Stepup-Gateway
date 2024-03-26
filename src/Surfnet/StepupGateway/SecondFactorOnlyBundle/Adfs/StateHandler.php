@@ -25,7 +25,7 @@ class StateHandler
     public const SESSION_PATH = 'surfnet/gateway/adfs';
 
     public function __construct(
-        private RequestStack $requestStack,
+        private readonly RequestStack $requestStack,
     ) {
     }
 

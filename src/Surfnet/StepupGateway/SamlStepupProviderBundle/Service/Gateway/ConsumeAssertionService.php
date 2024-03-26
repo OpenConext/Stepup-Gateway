@@ -37,37 +37,13 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class ConsumeAssertionService
 {
-    /** @var LoggerInterface */
-    private $logger;
-
-    /** @var SamlAuthenticationLogger */
-    private $samlLogger;
-
-    /** @var PostBinding */
-    private $postBinding;
-
-    /** @var ConnectedServiceProviders */
-    private $connectedServiceProviders;
-
     private $handledRequestId = null;
 
     /**
      * ConsumeAssertionService constructor.
-     * @param LoggerInterface $logger
-     * @param SamlAuthenticationLogger $samlLogger
-     * @param PostBinding $postBinding
-     * @param ConnectedServiceProviders $connectedServiceProviders
      */
-    public function __construct(
-        LoggerInterface $logger,
-        SamlAuthenticationLogger $samlLogger,
-        PostBinding $postBinding,
-        ConnectedServiceProviders $connectedServiceProviders
-    ) {
-        $this->logger = $logger;
-        $this->samlLogger = $samlLogger;
-        $this->postBinding = $postBinding;
-        $this->connectedServiceProviders = $connectedServiceProviders;
+    public function __construct(private readonly LoggerInterface $logger, private readonly SamlAuthenticationLogger $samlLogger, private readonly PostBinding $postBinding, private readonly ConnectedServiceProviders $connectedServiceProviders)
+    {
     }
 
     /**
@@ -78,9 +54,6 @@ class ConsumeAssertionService
      *  1. in case of registration: a SAMLResponse is returned
      *  2. in case of verification: a SecondfactorVerfificationRequiredException exception is thrown
      *
-     * @param Provider $provider
-     * @param Request $httpRequest
-     * @param ProxyResponseFactory $proxyResponseFactory
      * @return \SAML2\Response
      * @throws Exception
      */

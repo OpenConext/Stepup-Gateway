@@ -45,7 +45,7 @@ final class SecondFactorType extends AbstractExtension
     public function getFilters(): array
     {
         return [
-            new TwigFilter('trans_second_factor_type', [$this, 'translateSecondFactorType']),
+            new TwigFilter('trans_second_factor_type', $this->translateSecondFactorType(...)),
         ];
     }
 
@@ -54,7 +54,7 @@ final class SecondFactorType extends AbstractExtension
         return [
             new TwigFunction(
                 'second_factor_logo',
-                [$this, 'getSecondFactorTypeLogoByIdentifier']
+                $this->getSecondFactorTypeLogoByIdentifier(...)
             ),
         ];
     }
@@ -80,7 +80,7 @@ final class SecondFactorType extends AbstractExtension
             /** @var ViewConfig $viewConfig */
             $viewConfig = $this->collection->getByIdentifier($secondFactorType);
             $logo = $viewConfig->getLogo();
-        } catch (InvalidArgumentException $e) {
+        } catch (InvalidArgumentException) {
             // There is no view config for this second factor type,
             // indicating we are dealing with a hard coded second
             // factor provider (like sms or yubikey)

@@ -91,11 +91,11 @@ class CookieValue implements CookieValueInterface
 
     public function issuedTo(string $identityNameId): bool
     {
-        return strtolower($identityNameId) === strtolower($this->identityId);
+        return strtolower($identityNameId) === strtolower((string) $this->identityId);
     }
 
     public function authenticationTime(): int
     {
-        return strtotime($this->authenticationTime);
+        return strtotime((string) $this->authenticationTime);
     }
 }

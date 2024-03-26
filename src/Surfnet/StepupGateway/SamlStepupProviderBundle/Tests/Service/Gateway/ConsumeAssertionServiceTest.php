@@ -693,13 +693,6 @@ class ConsumeAssertionServiceTest extends GatewaySamlTestCase
     }
 
 
-    /**
-     * @param array $remoteIdpConfiguration
-     * @param array $idpConfiguration
-     * @param array $spConfiguration
-     * @param array $connectedServiceProviders
-     * @param DateTime $now
-     */
     private function initSamlProxyService(array $remoteIdpConfiguration, array $idpConfiguration, array $spConfiguration, array $connectedServiceProviders, DateTime $now): void
     {
         $session = new Session($this->sessionStorage);

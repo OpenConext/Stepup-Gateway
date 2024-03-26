@@ -33,7 +33,7 @@ class StateHandler extends ProxyStateHandler
     public function setSubject(string $subject): self
     {
         $currentSubject = $this->get('subject');
-        if (!empty($currentSubject) && strtolower($currentSubject) !== strtolower($subject)) {
+        if (!empty($currentSubject) && strtolower((string) $currentSubject) !== strtolower($subject)) {
             throw new InvalidSubjectException(
                 sprintf(
                     'The subject should not be rewritten with another value. Old: "%s", new "%s"',

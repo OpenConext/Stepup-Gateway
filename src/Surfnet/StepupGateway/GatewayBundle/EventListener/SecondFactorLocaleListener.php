@@ -26,12 +26,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-final class SecondFactorLocaleListener implements EventSubscriberInterface
+final readonly class SecondFactorLocaleListener implements EventSubscriberInterface
 {
     public function __construct(
-        private readonly ResponseContext     $responseContext,
-        private readonly SecondFactorService $secondFactorService,
-        private readonly CookieHelper        $cookieHelper
+        private ResponseContext     $responseContext,
+        private SecondFactorService $secondFactorService,
+        private CookieHelper        $cookieHelper
     ) {
     }
 

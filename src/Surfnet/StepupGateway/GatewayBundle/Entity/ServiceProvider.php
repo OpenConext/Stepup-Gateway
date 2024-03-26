@@ -61,7 +61,7 @@ class ServiceProvider extends BaseServiceProvider
 
         $nameIdPatterns = $this->get('secondFactorOnlyNameIdPatterns');
         foreach ($nameIdPatterns as $nameIdPattern) {
-            if ((bool) preg_match('#^' . strtr(preg_quote($nameIdPattern, '#'), ['\*' => '.*']) . '$#', $nameId)) {
+            if ((bool) preg_match('#^' . strtr(preg_quote((string) $nameIdPattern, '#'), ['\*' => '.*']) . '$#', $nameId)) {
                 return true;
             }
         }
@@ -101,7 +101,7 @@ class ServiceProvider extends BaseServiceProvider
                     'AuthnRequest requests ACS location "%s" but it is not configured in the list of allowed ACS ' .
                     'locations, allowed locations include: [%s]',
                     $acsLocationInAuthnRequest,
-                    implode($allowedAcsLocations, ', ')
+                    implode(', ', $allowedAcsLocations)
                 )
             );
         }
@@ -138,7 +138,7 @@ class ServiceProvider extends BaseServiceProvider
         $allowedAcsLocations = $this->get('allowedAcsLocations');
 
         foreach ($allowedAcsLocations as $allowedAcsLocation) {
-            if (strpos($acsLocationInAuthnRequest, $allowedAcsLocation) === 0) {
+            if (str_starts_with((string) $acsLocationInAuthnRequest, (string) $allowedAcsLocation)) {
                 return $acsLocationInAuthnRequest;
             }
         }

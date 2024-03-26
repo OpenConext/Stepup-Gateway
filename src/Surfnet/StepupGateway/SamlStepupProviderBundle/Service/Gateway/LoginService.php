@@ -31,29 +31,11 @@ class LoginService
 {
     private const RESPONSE_CONTEXT_SERVICE_ID = 'gateway.proxy.response_context';
 
-    /** @var SamlAuthenticationLogger */
-    private $samlLogger;
-
-    /** @var RedirectBinding */
-    private $redirectBinding;
-
-    /** @var ConnectedServiceProviders */
-    private $connectedServiceProviders;
-
     /**
      * LoginService constructor.
-     * @param SamlAuthenticationLogger $samlLogger
-     * @param RedirectBinding $redirectBinding
-     * @param ConnectedServiceProviders $connectedServiceProviders
      */
-    public function __construct(
-        SamlAuthenticationLogger $samlLogger,
-        RedirectBinding $redirectBinding,
-        ConnectedServiceProviders $connectedServiceProviders
-    ) {
-        $this->samlLogger = $samlLogger;
-        $this->redirectBinding = $redirectBinding;
-        $this->connectedServiceProviders = $connectedServiceProviders;
+    public function __construct(private readonly SamlAuthenticationLogger $samlLogger, private readonly RedirectBinding $redirectBinding, private readonly ConnectedServiceProviders $connectedServiceProviders)
+    {
     }
 
     /**
@@ -65,8 +47,6 @@ class LoginService
      * The service provider in this context is SelfService (when registering
      * a token) or RA (when vetting a token).
      *
-     * @param Provider $provider
-     * @param Request $httpRequest
      * @return AuthnRequest
      */
     public function singleSignOn(Provider $provider, Request $httpRequest)

@@ -151,11 +151,7 @@ class SecondFactorVerificationServiceTest extends GatewaySamlTestCase
 
 
     /**
-     * @param array $remoteIdpConfiguration
-     * @param array $idpConfiguration
-     * @param array $spConfiguration
      * @param array $connectedServiceProviders
-     * @param DateTime $now
      */
     private function initSamlProxyService(array $remoteIdpConfiguration, array $idpConfiguration, array $spConfiguration, DateTime $now): void
     {

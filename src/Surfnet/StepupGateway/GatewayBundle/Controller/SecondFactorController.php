@@ -166,7 +166,6 @@ class SecondFactorController extends AbstractController
      * - Directly goes to SF auth when identity owns 1 token
      *
      * @Template
-     * @param Request $request
      * @param string $authenticationMode
      * @return array|RedirectResponse|Response
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
@@ -242,9 +241,7 @@ class SecondFactorController extends AbstractController
 
             // Filter the selected second factor from the array collection
             $secondFactorFiltered = $secondFactors->filter(
-                function ($secondFactor) use ($secondFactorType) {
-                    return $secondFactorType === $secondFactor->secondFactorType;
-                }
+                fn($secondFactor) => $secondFactorType === $secondFactor->secondFactorType
             );
 
             if ($secondFactorFiltered->isEmpty()) {
@@ -361,7 +358,6 @@ class SecondFactorController extends AbstractController
 
     /**
      * @Template
-     * @param Request $request
      * @return array|Response
      */
     public function verifyYubiKeySecondFactorAction(Request $request)
@@ -423,7 +419,6 @@ class SecondFactorController extends AbstractController
 
     /**
      * @Template
-     * @param Request $request
      * @param string $authenticationMode
      * @return array|Response
      */
@@ -496,7 +491,6 @@ class SecondFactorController extends AbstractController
 
     /**
      * @Template
-     * @param Request $request
      * @param string $authenticationMode
      * @return array|Response
      */
@@ -577,16 +571,11 @@ class SecondFactorController extends AbstractController
      */
     private function getResponseContext($authenticationMode)
     {
-        switch ($authenticationMode) {
-            case self::MODE_SFO:
-                return $this->get($this->get('gateway.proxy.sfo.state_handler')->getResponseContextServiceId());
-                break;
-            case self::MODE_SSO:
-                return $this->get($this->get('gateway.proxy.sso.state_handler')->getResponseContextServiceId());
-                break;
-        }
-
-        throw new InvalidArgumentException('Invalid authentication mode requested');
+        return match ($authenticationMode) {
+            self::MODE_SFO => $this->get($this->get('gateway.proxy.sfo.state_handler')->getResponseContextServiceId()),
+            self::MODE_SSO => $this->get($this->get('gateway.proxy.sso.state_handler')->getResponseContextServiceId()),
+            default => throw new InvalidArgumentException('Invalid authentication mode requested'),
+        };
     }
 
     /**
@@ -607,8 +596,6 @@ class SecondFactorController extends AbstractController
     }
 
     /**
-     * @param ResponseContext $context
-     * @param LoggerInterface $logger
      * @return string
      */
     private function getSelectedSecondFactor(ResponseContext $context, LoggerInterface $logger)

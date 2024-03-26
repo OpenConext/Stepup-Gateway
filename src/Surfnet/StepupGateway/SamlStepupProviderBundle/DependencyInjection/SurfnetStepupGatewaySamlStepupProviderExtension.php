@@ -51,7 +51,7 @@ class SurfnetStepupGatewaySamlStepupProviderExtension extends Extension
         foreach ($config['providers'] as $provider => $providerConfiguration) {
             // may seem a bit strange, but this prevents casing issue when getting/setting/creating provider
             // service definitions etc.
-            if ($provider !== strtolower($provider)) {
+            if ($provider !== strtolower((string) $provider)) {
                 throw new InvalidConfigurationException('The provider name must be completely lowercase');
             }
 
@@ -124,9 +124,6 @@ class SurfnetStepupGatewaySamlStepupProviderExtension extends Extension
 
     /**
      * @param string           $provider
-     * @param array            $configuration
-     * @param array            $routes
-     * @param ContainerBuilder $container
      */
     private function createHostedDefinitions(
         $provider,
@@ -152,8 +149,6 @@ class SurfnetStepupGatewaySamlStepupProviderExtension extends Extension
 
     /**
      * @param string $provider
-     * @param array  $configuration
-     * @param array  $routes
      * @return Definition
      */
     private function buildHostedEntityDefinition($provider, array $configuration, array $routes)
@@ -185,8 +180,6 @@ class SurfnetStepupGatewaySamlStepupProviderExtension extends Extension
 
     /**
      * @param string           $provider
-     * @param array            $configuration
-     * @param ContainerBuilder $container
      */
     private function createRemoteDefinition($provider, array $configuration, ContainerBuilder $container): void
     {
@@ -204,9 +197,6 @@ class SurfnetStepupGatewaySamlStepupProviderExtension extends Extension
 
     /**
      * @param string           $provider
-     * @param array            $configuration
-     * @param array            $routes
-     * @param ContainerBuilder $container
      * @return Definition
      */
     private function createMetadataDefinition(

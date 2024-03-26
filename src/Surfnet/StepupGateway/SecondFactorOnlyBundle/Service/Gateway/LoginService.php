@@ -31,51 +31,14 @@ use Symfony\Component\HttpFoundation\Request;
 
 class LoginService
 {
-    /** @var LoggerInterface */
-    private $logger;
-
-    /** @var SamlAuthenticationLogger */
-    private $samlLogger;
-
-    /** @var ProxyStateHandler */
-    private $stateHandler;
-
-    /** @var HttpBindingFactory */
-    private $httpBindingFactory;
-
-    /** @var SecondFactorOnlyNameIdValidationService */
-    private $secondFactorOnlyNameValidatorService;
-
-    /** @var LoaResolutionService */
-    private $loaResolutionService;
-
     /**
      * SecondFactorLoginService constructor.
-     * @param LoggerInterface $logger
-     * @param SamlAuthenticationLogger $samlLogger
-     * @param ProxyStateHandler $stateHandler
-     * @param HttpBindingFactory $httpBindingFactory
-     * @param SecondFactorOnlyNameIdValidationService $secondFactorOnlyNameValidatorService
-     * @param LoaResolutionService $loaResolutionService
      */
-    public function __construct(
-        LoggerInterface $logger,
-        SamlAuthenticationLogger $samlLogger,
-        ProxyStateHandler $stateHandler,
-        HttpBindingFactory $httpBindingFactory,
-        SecondFactorOnlyNameIdValidationService $secondFactorOnlyNameValidatorService,
-        LoaResolutionService $loaResolutionService
-    ) {
-        $this->logger = $logger;
-        $this->samlLogger = $samlLogger;
-        $this->stateHandler = $stateHandler;
-        $this->httpBindingFactory = $httpBindingFactory;
-        $this->secondFactorOnlyNameValidatorService = $secondFactorOnlyNameValidatorService;
-        $this->loaResolutionService = $loaResolutionService;
+    public function __construct(private readonly LoggerInterface $logger, private readonly SamlAuthenticationLogger $samlLogger, private readonly ProxyStateHandler $stateHandler, private readonly HttpBindingFactory $httpBindingFactory, private readonly SecondFactorOnlyNameIdValidationService $secondFactorOnlyNameValidatorService, private readonly LoaResolutionService $loaResolutionService)
+    {
     }
 
     /**
-     * @param Request $httpRequest
      * @return ReceivedAuthnRequest
      */
     public function handleBinding(Request $httpRequest)
@@ -102,8 +65,6 @@ class LoginService
      * This method will handle the state of the user before starting
      * the actual second factor verification.
      *
-     * @param Request $httpRequest
-     * @param ReceivedAuthnRequest $originalRequest
      * @return void
      */
     public function singleSignOn(Request $httpRequest, ReceivedAuthnRequest $originalRequest): void

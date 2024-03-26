@@ -22,7 +22,7 @@ use DOMDocument;
 use LogicException;
 use Surfnet\SamlBundle\Signing\Signable;
 
-class Metadata implements Signable
+class Metadata implements Signable, \Stringable
 {
     /**
      * @var string
@@ -69,8 +69,8 @@ class Metadata implements Signable
         return $this->document->documentElement->childNodes->item(0);
     }
 
-    public function __toString()
+    public function __toString(): string
     {
-        return $this->document->saveXML();
+        return (string) $this->document->saveXML();
     }
 }

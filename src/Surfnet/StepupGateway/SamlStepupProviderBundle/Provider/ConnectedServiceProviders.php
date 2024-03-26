@@ -22,22 +22,10 @@ use Surfnet\SamlBundle\Entity\ServiceProvider;
 use Surfnet\StepupGateway\GatewayBundle\Service\SamlEntityService;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Exception\UnknownProviderException;
 
-final class ConnectedServiceProviders
+final readonly class ConnectedServiceProviders
 {
-    /**
-     * @var AllowedServiceProviders
-     */
-    private $allowed;
-
-    /**
-     * @var SamlEntityService
-     */
-    private $samlEntityService;
-
-    public function __construct(SamlEntityService $samlEntityService, AllowedServiceProviders $allowed)
+    public function __construct(private SamlEntityService $samlEntityService, private AllowedServiceProviders $allowed)
     {
-        $this->samlEntityService = $samlEntityService;
-        $this->allowed = $allowed;
     }
 
     public function isConnected(string $serviceProvider): bool

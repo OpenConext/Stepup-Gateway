@@ -70,7 +70,6 @@ final class LoaAliasLookupService
     }
 
     /**
-     * @param Loa $loa
      * @return string|bool
      */
     public function findAliasByLoa(Loa $loa)

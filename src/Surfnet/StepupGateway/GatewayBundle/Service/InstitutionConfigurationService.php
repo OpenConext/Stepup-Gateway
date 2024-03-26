@@ -24,18 +24,8 @@ use Surfnet\StepupGateway\GatewayBundle\Exception\InstitutionConfigurationNotFou
 
 class InstitutionConfigurationService
 {
-    private $repository;
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    public function __construct(
-        InstitutionConfigurationRepository $institutionConfigurationRepository,
-        LoggerInterface $logger
-    ) {
-        $this->repository = $institutionConfigurationRepository;
-        $this->logger = $logger;
+    public function __construct(private readonly InstitutionConfigurationRepository $repository, private readonly LoggerInterface $logger)
+    {
     }
 
 
@@ -43,7 +33,7 @@ class InstitutionConfigurationService
     {
         try {
             return $this->repository->getInstitutionConfiguration($institution)->ssoOn2faEnabled;
-        } catch (InstitutionConfigurationNotFoundException $e) {
+        } catch (InstitutionConfigurationNotFoundException) {
             $this->logger->notice(sprintf('Institution %s is not configured to use SSO on 2FA', $institution));
         }
         return false;

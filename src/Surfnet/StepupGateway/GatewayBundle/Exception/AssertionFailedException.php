@@ -22,17 +22,10 @@ use Assert\AssertionFailedException as AssertAssertionFailedException;
 
 class AssertionFailedException extends InvalidArgumentException implements AssertAssertionFailedException
 {
-    private $propertyPath;
-    private $value;
-    private $constraints;
-
     // @codingStandardsIgnoreStart Compliance with beberlei/assert's invalid argument exception
-    public function __construct($message, $code, $propertyPath = null, $value, array $constraints = [])
+    public function __construct($message, $code, private $value, private $propertyPath = null, private readonly array $constraints = [])
     {
         parent::__construct($message, $code);
-        $this->propertyPath = $propertyPath;
-        $this->value        = $value;
-        $this->constraints  = $constraints;
     }
     // @codingStandardsIgnoreEnd
 

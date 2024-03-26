@@ -29,7 +29,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 class YubikeyController extends AbstractController
 {
     public function __construct(
-        private YubikeyServiceInterface $yubikeyService,
+        private readonly YubikeyServiceInterface $yubikeyService,
     ) {
     }
 

@@ -26,33 +26,19 @@ use Surfnet\StepupBundle\Value\Loa;
 final class EnabledSecondFactorRepository implements SecondFactorRepository
 {
     /**
-     * @var \Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactorRepository
-     */
-    private $secondFactorRepository;
-
-    /**
      * @var string[]
      */
     private $enabledTypes;
 
     /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
-     * @param SecondFactorRepository $secondFactorRepository
      * @param string[]               $enabledTypes
-     * @param LoggerInterface        $logger
      */
     public function __construct(
-        SecondFactorRepository $secondFactorRepository,
+        private readonly SecondFactorRepository $secondFactorRepository,
         array $enabledTypes,
-        LoggerInterface $logger
+        private readonly LoggerInterface $logger
     ) {
-        $this->secondFactorRepository = $secondFactorRepository;
         $this->enabledTypes = array_combine($enabledTypes, $enabledTypes);
-        $this->logger = $logger;
     }
 
     public function getAllMatchingFor(Loa $highestLoa, $identityNameId, SecondFactorTypeService $service)

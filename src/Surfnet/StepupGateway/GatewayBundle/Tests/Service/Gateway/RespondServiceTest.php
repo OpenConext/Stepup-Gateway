@@ -243,9 +243,6 @@ final class RespondServiceTest extends GatewaySamlTestCase
     }
 
     /**
-     * @param array $idpConfiguration
-     * @param array $dictionaryAttributes
-     * @param array $loaLevels
      * @param int $now
      * @param array $sessionData
      */
@@ -286,9 +283,6 @@ final class RespondServiceTest extends GatewaySamlTestCase
     }
 
     /**
-     * @param ProxyStateHandler $proxyStateHandler
-     * @param IdentityProvider $remoteIdp
-     * @param array $attributes
      * @param int $now
      * @return ProxyResponseService
      */
@@ -313,7 +307,6 @@ final class RespondServiceTest extends GatewaySamlTestCase
     }
 
     /**
-     * @param array $loaLevels
      * @return LoaResolutionService
      */
     private function mockLoaResolutionService(array $loaLevels)

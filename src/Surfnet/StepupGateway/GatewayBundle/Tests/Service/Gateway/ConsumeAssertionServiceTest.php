@@ -623,8 +623,6 @@ final class ConsumeAssertionServiceTest extends GatewaySamlTestCase
     }
 
     /**
-     * @param array $idpConfiguration
-     * @param array $spConfiguration
      * @param int $now
      */
     private function initGatewayService(array $idpConfiguration, array $spConfiguration, DateTime $now): void

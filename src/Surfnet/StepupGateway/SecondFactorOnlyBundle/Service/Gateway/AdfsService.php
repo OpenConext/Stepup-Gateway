@@ -30,30 +30,17 @@ use Symfony\Component\HttpFoundation\Request;
 
 class AdfsService
 {
-    /** @var RequestHelper */
-    private $adfsRequestHelper;
-
-    /** @var ResponseHelper */
-    private $adfsResponseHelper;
-
     /**
      * SecondFactorAdfsService constructor.
-     * @param RequestHelper $adfsRequestHelper
-     * @param ResponseHelper $adfsResponseHelper
      */
-    public function __construct(RequestHelper $adfsRequestHelper, ResponseHelper $adfsResponseHelper)
+    public function __construct(private readonly RequestHelper $adfsRequestHelper, private readonly ResponseHelper $adfsResponseHelper)
     {
-        $this->adfsRequestHelper = $adfsRequestHelper;
-        $this->adfsResponseHelper = $adfsResponseHelper;
     }
 
     /**
      * This method detects if a request is made by ADFS, and converts it to a valid
      * Saml AuthnRequest request which could be processed.
      *
-     * @param LoggerInterface $logger
-     * @param Request $httpRequest
-     * @param ReceivedAuthnRequest $originalRequest
      * @return Request
      * @throws InvalidAdfsRequestException
      */

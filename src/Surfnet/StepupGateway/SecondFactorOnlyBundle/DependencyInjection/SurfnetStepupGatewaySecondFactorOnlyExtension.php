@@ -40,10 +40,6 @@ class SurfnetStepupGatewaySecondFactorOnlyExtension extends Extension
         $this->replaceLoaAliasConfig($config, $container);
     }
 
-    /**
-     * @param array $config
-     * @param ContainerBuilder $container
-     */
     private function replaceLoaAliasConfig(
         array $config,
         ContainerBuilder $container

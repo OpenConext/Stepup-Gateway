@@ -29,50 +29,8 @@ use Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorService;
 
 class AuthenticationLogger
 {
-    /**
-     * @var ProxyStateHandler
-     */
-    private $ssoProxyStateHandler;
-
-    /**
-     * @var ProxyStateHandler
-     */
-    private $sfoProxyStateHandler;
-
-    /**
-     * @var SecondFactorService
-     */
-    private $secondFactorService;
-
-    /**
-     * @var LoaResolutionService
-     */
-    private $loaResolutionService;
-
-    /**
-     * @var SamlAuthenticationLogger
-     */
-    private $authenticationChannelLogger;
-
-    /**
-     * @var SecondFactorTypeService
-     */
-    private $secondFactorTypeService;
-
-    public function __construct(
-        LoaResolutionService $loaResolutionService,
-        ProxyStateHandler $ssoProxyStateHandler,
-        ProxyStateHandler $sfoProxyStateHandler,
-        SecondFactorService $secondFactorService,
-        SamlAuthenticationLogger $authenticationChannelLogger,
-        SecondFactorTypeService $service
-    ) {
-        $this->loaResolutionService = $loaResolutionService;
-        $this->ssoProxyStateHandler = $ssoProxyStateHandler;
-        $this->sfoProxyStateHandler = $sfoProxyStateHandler;
-        $this->secondFactorService  = $secondFactorService;
-        $this->authenticationChannelLogger = $authenticationChannelLogger;
-        $this->secondFactorTypeService = $service;
+    public function __construct(private readonly LoaResolutionService $loaResolutionService, private readonly ProxyStateHandler $ssoProxyStateHandler, private readonly ProxyStateHandler $sfoProxyStateHandler, private readonly SecondFactorService $secondFactorService, private readonly SamlAuthenticationLogger $authenticationChannelLogger, private readonly SecondFactorTypeService $secondFactorTypeService)
+    {
     }
 
     /**
@@ -93,7 +51,6 @@ class AuthenticationLogger
 
     /**
      * @param string $requestId The SAML authentication request ID of the original request (not the proxy request).
-     * @param string $authenticationMode
      */
     public function logSecondFactorAuthentication(string $requestId, string $authenticationMode): void
     {
@@ -119,7 +76,6 @@ class AuthenticationLogger
 
     /**
      * @param string $message
-     * @param array  $context
      * @param string $requestId
      */
     private function log($message, array $context, $requestId): void

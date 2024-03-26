@@ -33,13 +33,13 @@ class ExpirationHelper implements ExpirationHelperInterface
         * The SSO on 2FA cookie lifetime in seconds
         * See: config/openconext/parameters.yaml sso_cookie_lifetime
         */
-        private int $cookieLifetime,
+        private readonly int $cookieLifetime,
         /**
          * The period in seconds that we still acknowledge the
          * cookie even tho the expiration was reached. This accounts
          * for server time/sync differences that may occur.
          */
-        private int $gracePeriod,
+        private readonly int $gracePeriod,
         private ?CoreDateTime $now = null
     )
     {

@@ -26,7 +26,7 @@ final class ConfigurationTest extends TestCase
 {
     use ConfigurationTestCaseTrait;
 
-    const USE_REGEXP = true;
+    public const USE_REGEXP = true;
 
     /**
      * @test

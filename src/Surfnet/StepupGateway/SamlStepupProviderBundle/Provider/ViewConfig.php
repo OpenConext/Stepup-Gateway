@@ -25,35 +25,12 @@ use Symfony\Component\HttpFoundation\RequestStack;
 class ViewConfig implements ViewConfigInterface
 {
     /**
-     * @var
-     */
-    private $requestStack;
-
-    /**
-     * @var string
-     */
-    private $logo;
-
-    /**
-     * @var array
-     */
-    private $title;
-
-    /**
      * The arrays are arrays of translated text, indexed on locale.
      *
-     * @param RequestStack $requestStack
      * @param string $logo
-     * @param array $title
      */
-    public function __construct(
-        RequestStack $requestStack,
-        $logo,
-        array $title
-    ) {
-        $this->requestStack = $requestStack;
-        $this->logo = $logo;
-        $this->title = $title;
+    public function __construct(private readonly RequestStack $requestStack, private $logo, private readonly array $title)
+    {
     }
 
     /**
@@ -73,7 +50,6 @@ class ViewConfig implements ViewConfigInterface
     }
 
     /**
-     * @param array $translations
      * @return mixed
      * @throws LogicException
      */
