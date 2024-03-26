@@ -49,7 +49,7 @@ class Metadata implements Signable, \Stringable
      */
     public $document;
 
-    public function getRootDomElement()
+    public function getRootDomElement(): \DOMElement
     {
         if (!$this->document) {
             throw new LogicException('Cannot get the rootElement of Metadata before the document has been generated');
@@ -58,7 +58,7 @@ class Metadata implements Signable, \Stringable
         return $this->document->documentElement;
     }
 
-    public function getAppendBeforeNode()
+    public function getAppendBeforeNode(): ?\DOMNode
     {
         if (!$this->document) {
             throw new LogicException(

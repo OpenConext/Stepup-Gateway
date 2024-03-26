@@ -92,7 +92,7 @@ class ResponseBuilder
         return $response;
     }
 
-    private function isValidResponseStatus($status)
+    private function isValidResponseStatus($status): bool
     {
         return in_array($status, [
             Constants::STATUS_SUCCESS,            // weeee!
@@ -102,7 +102,7 @@ class ResponseBuilder
         ]);
     }
 
-    private function isValidResponseSubStatus($subStatus)
+    private function isValidResponseSubStatus($subStatus): bool
     {
         return in_array($subStatus, [
             Constants::STATUS_AUTHN_FAILED,               // failed authentication

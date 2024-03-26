@@ -28,7 +28,7 @@ class ServiceProvider extends BaseServiceProvider
     /**
      * @return bool
      */
-    public function mayUseGateway()
+    public function mayUseGateway(): bool
     {
         return !$this->mayUseSecondFactorOnly();
     }
@@ -36,7 +36,7 @@ class ServiceProvider extends BaseServiceProvider
     /**
      * @return bool
      */
-    public function mayUseSecondFactorOnly()
+    public function mayUseSecondFactorOnly(): bool
     {
         return (bool) $this->get('secondFactorOnly', false);
     }
@@ -45,7 +45,7 @@ class ServiceProvider extends BaseServiceProvider
      * @param string $nameId
      * @return bool
      */
-    public function isAllowedToUseSecondFactorOnlyFor($nameId)
+    public function isAllowedToUseSecondFactorOnlyFor($nameId): bool
     {
         if (!is_string($nameId)) {
             throw InvalidArgumentException::invalidType('string', 'nameId', $nameId);

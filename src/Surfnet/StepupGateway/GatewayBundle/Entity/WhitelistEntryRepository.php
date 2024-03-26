@@ -26,7 +26,7 @@ class WhitelistEntryRepository extends EntityRepository
      * @param string $institution
      * @return bool
      */
-    public function hasEntryFor($institution)
+    public function hasEntryFor($institution): bool
     {
         $count = $this->createQueryBuilder('w')
             ->select('COUNT(w.institution)')

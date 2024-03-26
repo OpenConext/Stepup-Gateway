@@ -238,7 +238,7 @@ class StepUpAuthenticationService
      *
      * @return bool
      */
-    private function hasNonDefaultSpConfiguredLoas(array $spConfiguredLoas)
+    private function hasNonDefaultSpConfiguredLoas(array $spConfiguredLoas): bool
     {
         unset($spConfiguredLoas['__default__']);
         return (count($spConfiguredLoas) > 0);
@@ -249,7 +249,7 @@ class StepUpAuthenticationService
      *
      * @return bool
      */
-    public function isIntrinsicLoa(Loa $loa)
+    public function isIntrinsicLoa(Loa $loa): bool
     {
         return $loa->levelIsLowerOrEqualTo(Loa::LOA_1);
     }
@@ -293,7 +293,7 @@ class StepUpAuthenticationService
     /**
      * @return int
      */
-    public function getSmsOtpRequestsRemainingCount(string $secondFactorId)
+    public function getSmsOtpRequestsRemainingCount(string $secondFactorId): int
     {
         return $this->smsService->getOtpRequestsRemainingCount($secondFactorId);
     }
@@ -301,7 +301,7 @@ class StepUpAuthenticationService
     /**
      * @return int
      */
-    public function getSmsMaximumOtpRequestsCount()
+    public function getSmsMaximumOtpRequestsCount(): int
     {
         return $this->smsService->getMaximumOtpRequestsCount();
     }
@@ -309,7 +309,7 @@ class StepUpAuthenticationService
     /**
      * @return bool
      */
-    public function sendSmsChallenge(SendSmsChallengeCommand $command)
+    public function sendSmsChallenge(SendSmsChallengeCommand $command): bool
     {
         /** @var SecondFactor $secondFactor */
         $secondFactor = $this->secondFactorRepository->findOneBySecondFactorId($command->secondFactorId);
@@ -351,7 +351,7 @@ class StepUpAuthenticationService
      * @param string $identityNameId Used to load vetted tokens
      * @return string either the SHO or an empty string
      */
-    public function getNormalizedUserShoByIdentityNameId($identityNameId)
+    public function getNormalizedUserShoByIdentityNameId($identityNameId): string
     {
         return strtolower(
             $this->secondFactorRepository->getInstitutionByNameId($identityNameId)

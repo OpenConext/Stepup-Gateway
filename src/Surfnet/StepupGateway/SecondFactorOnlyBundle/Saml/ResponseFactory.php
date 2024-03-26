@@ -146,7 +146,7 @@ final class ResponseFactory
      * @param string|null $interval a \DateInterval compatible interval to skew the time with
      * @return int
      */
-    private function getTimestamp($interval = null)
+    private function getTimestamp($interval = null): int
     {
         $time = clone $this->currentTime;
 

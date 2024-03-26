@@ -254,7 +254,7 @@ class GatewayController extends AbstractController
     /**
      * @return string
      */
-    private function getResponseAsXML(SAMLResponse $response)
+    private function getResponseAsXML(SAMLResponse $response): string
     {
         return base64_encode($response->toUnsignedXML()->ownerDocument->saveXML());
     }

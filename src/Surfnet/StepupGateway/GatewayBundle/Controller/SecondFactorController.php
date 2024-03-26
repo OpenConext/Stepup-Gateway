@@ -598,7 +598,7 @@ class SecondFactorController extends AbstractController
     /**
      * @return string
      */
-    private function getSelectedSecondFactor(ResponseContext $context, LoggerInterface $logger)
+    private function getSelectedSecondFactor(ResponseContext $context, LoggerInterface $logger): string
     {
         $selectedSecondFactor = $context->getSelectedSecondFactor();
 

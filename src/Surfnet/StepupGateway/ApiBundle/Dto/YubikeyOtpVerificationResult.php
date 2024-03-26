@@ -52,12 +52,12 @@ class YubikeyOtpVerificationResult
         $this->result = $result;
     }
 
-    public function didPublicIdMatch()
+    public function didPublicIdMatch(): bool
     {
         return $this->result === self::RESULT_PUBLIC_ID_MATCHED && $this->publicId !== null;
     }
 
-    public function didOtpVerificationFail()
+    public function didOtpVerificationFail(): bool
     {
         return $this->result === self::RESULT_OTP_VERIFICATION_FAILED;
     }

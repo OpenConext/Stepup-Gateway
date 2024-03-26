@@ -45,7 +45,7 @@ final class RequestHelper
     /**
      * @return bool
      */
-    public function isAdfsRequest(Request $httpRequest)
+    public function isAdfsRequest(Request $httpRequest): bool
     {
         foreach (self::$requiredParams as $param) {
             if (!$httpRequest->request->has($param)) {

@@ -30,7 +30,7 @@ class AssertionAdapter
      * @param string $inResponseTo
      * @return bool
      */
-    public function inResponseToMatches($inResponseTo)
+    public function inResponseToMatches($inResponseTo): bool
     {
          return $this->getInResponseTo() === $inResponseTo;
     }

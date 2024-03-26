@@ -62,7 +62,7 @@ class SamlEntityService implements ServiceProviderRepository
      * @param string $entityId
      * @return bool
      */
-    public function hasIdentityProvider($entityId)
+    public function hasIdentityProvider($entityId): bool
     {
         $samlEntity = $this->samlEntityRepository->getIdentityProvider($entityId);
 

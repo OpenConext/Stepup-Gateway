@@ -115,7 +115,7 @@ class GatewaySamlTestCase extends TestCase
      * @param string $file
      * @return bool|string
      */
-    protected function getKeyPath($file)
+    protected function getKeyPath($file): string
     {
         return realpath(__DIR__ . '/../Fixture').'/'.$file;
     }

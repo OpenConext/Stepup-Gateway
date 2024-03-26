@@ -153,7 +153,7 @@ class ProxyResponseService
      * @return int
      * @throws \Exception
      */
-    private function getTimestamp($interval = null)
+    private function getTimestamp($interval = null): int
     {
         $time = clone $this->currentTime;
 

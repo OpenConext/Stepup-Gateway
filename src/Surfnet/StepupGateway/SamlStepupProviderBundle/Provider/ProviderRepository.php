@@ -53,7 +53,7 @@ final class ProviderRepository
      * @param string $providerName
      * @return bool
      */
-    public function has($providerName)
+    public function has($providerName): bool
     {
         return array_key_exists($providerName, $this->providers);
     }
