@@ -18,87 +18,54 @@
 
 namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs;
 
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 
-class StateHandler
+final class StateHandler
 {
     public const SESSION_PATH = 'surfnet/gateway/adfs';
 
-    /**
-     * @var \Symfony\Component\HttpFoundation\Session\SessionInterface
-     */
-    private $session;
-
-    /**
-     * @param SessionInterface $session
-     */
-    public function __construct(SessionInterface $session)
-    {
-        $this->session = $session;
+    public function __construct(
+        private RequestStack $requestStack,
+    ) {
     }
 
-    /**
-     * @param string $originalRequestId
-     * @return $this
-     */
-    public function setRequestId($originalRequestId)
+    public function setRequestId(string $originalRequestId): StateHandler
     {
         $this->set('request_id', $originalRequestId);
 
         return $this;
     }
 
-    /**
-     * @param string $authMethod
-     * @return $this
-     */
-    public function setAuthMethod($authMethod)
+    public function setAuthMethod(string $authMethod): StateHandler
     {
         $this->set('auth_method', $authMethod);
 
         return $this;
     }
 
-    /**
-     * @param string $context
-     * @return $this
-     */
-    public function setContext($context)
+    public function setContext(string $context): StateHandler
     {
         $this->set('context', $context);
 
         return $this;
     }
 
-    /**
-     * @return mixed|null
-     */
-    public function getRequestId()
+    public function getRequestId(): mixed
     {
         return $this->get('request_id');
     }
 
-    /**
-     * @return mixed|null
-     */
-    public function getAuthMethod()
+    public function getAuthMethod(): mixed
     {
         return $this->get('auth_method');
     }
 
-    /**
-     * @return mixed|null
-     */
-    public function getContext()
+    public function getContext(): mixed
     {
         return $this->get('context');
     }
 
-    /**
-     * @param string $requestId
-     * @return bool
-     */
-    public function hasMatchingRequestId($requestId)
+    public function hasMatchingRequestId(string $requestId): bool
     {
         $requestIdFromSession = $this->get('request_id');
         if ($requestIdFromSession && $requestIdFromSession == $requestId) {
@@ -108,21 +75,13 @@ class StateHandler
         return false;
     }
 
-    /**
-     * @param string $key
-     * @param mixed $value Any scalar
-     */
-    protected function set($key, $value)
+    protected function set(string $key, mixed $value): void
     {
-        $this->session->set(self::SESSION_PATH . $key, $value);
+        $this->requestStack->getSession()->set(self::SESSION_PATH . $key, $value);
     }
 
-    /**
-     * @param string $key
-     * @return mixed|null Any scalar
-     */
-    protected function get($key)
+    protected function get(string $key): mixed
     {
-        return $this->session->get(self::SESSION_PATH . $key);
+        return $this->requestStack->getSession()->get(self::SESSION_PATH . $key);
     }
 }
