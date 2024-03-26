@@ -18,24 +18,29 @@
 
 namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Controller;
 
+use Psr\Log\LoggerInterface;
 use Surfnet\SamlBundle\Http\XMLResponse;
+use Surfnet\SamlBundle\Metadata\MetadataFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class MetadataController extends AbstractController
 {
-    public function metadataAction()
+    public function __construct(
+        private readonly LoggerInterface                              $logger,
+        private readonly MetadataFactory $metadataFactory
+    ) {
+    }
+
+    public function metadataAction(): XMLResponse
     {
         if (!$this->getParameter('second_factor_only')) {
-            $this->get('logger')->notice(sprintf(
+            $this->logger->notice(sprintf(
                 'Access to %s denied, second_factor_only parameter set to false.',
                 __METHOD__
             ));
             throw $this->createAccessDeniedException('Second Factor Only feature disabled');
         }
 
-        /** @var \Surfnet\SamlBundle\Metadata\MetadataFactory $metadataFactory */
-        $metadataFactory = $this->get('second_factor_only.metadata_factory');
-
-        return new XMLResponse($metadataFactory->generate());
+        return new XMLResponse($this->metadataFactory->generate());
     }
 }
