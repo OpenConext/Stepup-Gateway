@@ -31,6 +31,7 @@ mock service was created for end to end test purposes, but could be utilized in 
 4. Do not commit/push this change!
 
 ### Running Behat tests
+
 #### .env settings in devconf/stepup
 
 ```
@@ -39,7 +40,7 @@ STEPUP_VERSION:test
 
 AZUREMFA_PHP_IMAGE=php82-apache2-node20-composer2:latest
 DEMOGSSP_PHP_IMAGE=php82-apache2-node20-composer2:latest
-#GATEWAY_PHP_IMAGE=php72-apache2-node14-composer2:latest
+GATEWAY_PHP_IMAGE=php82-apache2-node20-composer2:latest
 MIDDLEWARE_PHP_IMAGE=php82-apache2-node20-composer2:latest
 RA_PHP_IMAGE=php82-apache2-node20-composer2:latest
 SELFSERVICE_PHP_IMAGE=php82-apache2-node20-composer2:latest
@@ -53,6 +54,19 @@ WEBAUTHN_PHP_IMAGE=php82-apache2-node20-composer2:latest
 
 #### Run the Gateway Behat tests
 
+Behat tests have their own Composer dependencies. That way we are not bound to the Gateway's project dependencies for
+our test resources. That way we dan be slightly more experimental installing test resources without breaking the other
+dev dependencies.
+
+To install them, while located in the project-root dir
+
+```
+$ docker exec -it stepup-gateway-1 bash
+$ cd tests
+$ composer install
+```
+
+And then to run the tests:
 ```
 $ docker exec -it stepup-gateway-1 bash
 $ composer behat

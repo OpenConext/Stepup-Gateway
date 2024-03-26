@@ -26,7 +26,6 @@ default:
   extensions:
     Behat\MinkExtension:
       base_url: https://gateway.dev.openconext.local/
-      goutte: ~
       sessions:
         chrome:
           selenium2:
@@ -39,11 +38,9 @@ default:
                   - "--window-size=1920,1080"
                   - "--no-sandbox"
         default:
-          goutte:
-            guzzle_parameters:
-              verify: False
-    Behat\Symfony2Extension:
+          symfony: ~
+    FriendsOfBehat\SymfonyExtension:
       kernel:
         class: 'App\Kernel'
-        env: smoketest
+        environment: smoketest
         debug: true
