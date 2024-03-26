@@ -20,23 +20,24 @@ namespace Surfnet\StepupGateway\ApiBundle\Tests\TestDouble\Service;
 
 use Surfnet\StepupBundle\Service\SmsSecondFactor\OtpVerification;
 use Surfnet\StepupBundle\Service\SmsSecondFactor\SmsVerificationStateHandler;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 final class SessionSmsVerificationStateHandler implements SmsVerificationStateHandler
 {
     public function __construct(
-        private SessionInterface $session,
+        private readonly RequestStack $requestStack,
     ) {
     }
 
     public function hasState(string $secondFactorId): bool
     {
-        return $this->session->has($secondFactorId);
+        return $this->requestStack->getSession()->has($secondFactorId);
     }
 
     public function clearState(string $secondFactorId): void
     {
-        $this->session->remove($secondFactorId);
+        $this->requestStack->getSession()->remove($secondFactorId);
     }
 
     /**
