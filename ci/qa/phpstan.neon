@@ -1,14 +1,16 @@
 includes:
     - ./phpstan-baseline.php
-#    - ../../vendor/phpstan/phpstan-symfony/extension.neon
+    - ../../vendor/phpstan/phpstan-symfony/extension.neon
+    - ../../vendor/phpstan/phpstan-deprecation-rules/rules.neon
 rules:
+    # Put here your cutom rules for this repository
 #    - Surfnet\NoDebugFunctionRule
 #    - Surfnet\InvokableControllerRule
 #    - Surfnet\UntypedIdParamRule
 #    - Surfnet\NoNullOrArrayReturnRule
 parameters:
     checkUninitializedProperties: true
-    level: 9
+    level: 1
     paths:
         - ../../src
     excludePaths:
