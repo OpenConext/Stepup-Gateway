@@ -1,6 +1,6 @@
 services:
     gateway:
-      image: ghcr.io/openconext/openconext-basecontainers/php72-apache2-node16-composer2:latest
+      image: ghcr.io/openconext/openconext-basecontainers/php82-apache2-node20-composer2:latest
       container_name: gateway
       environment:
          APP_ENV: smoketest
