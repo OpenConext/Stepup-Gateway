@@ -70,7 +70,7 @@ final readonly class SecondFactorLocaleListener implements EventSubscriberInterf
     public function getLocaleFromCookie(Request $request)
     {
         $requestCookie = $this->cookieHelper->read($request);
-        if ($requestCookie) {
+        if ($requestCookie instanceof \Symfony\Component\HttpFoundation\Cookie) {
             return $requestCookie->getValue();
         }
     }

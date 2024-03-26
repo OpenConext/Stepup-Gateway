@@ -41,10 +41,9 @@ final readonly class ResponseHelper
     }
 
     /**
-     * @param string $originalRequestId
      * @return bool
      */
-    public function isAdfsResponse($originalRequestId): bool
+    public function isAdfsResponse(string $originalRequestId): bool
     {
         return $this->stateHandler->hasMatchingRequestId($originalRequestId);
     }

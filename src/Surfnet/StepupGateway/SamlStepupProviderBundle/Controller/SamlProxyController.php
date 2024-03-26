@@ -70,7 +70,7 @@ class SamlProxyController extends AbstractController
      * @param string $provider
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
-    public function singleSignOnAction($provider, Request $httpRequest)
+    public function singleSignOnAction($provider, Request $httpRequest): \Symfony\Component\HttpFoundation\RedirectResponse
     {
         $provider = $this->getProvider($provider);
 
@@ -102,11 +102,9 @@ class SamlProxyController extends AbstractController
      * consumeAssertionAction().
      *
      * @param string $provider
-     * @param string $subjectNameId
-     * @param string $responseContextServiceId
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function sendSecondFactorVerificationAuthnRequestAction($provider, $subjectNameId, $responseContextServiceId)
+    public function sendSecondFactorVerificationAuthnRequestAction($provider, string $subjectNameId, string $responseContextServiceId): \Symfony\Component\HttpFoundation\RedirectResponse
     {
         $provider = $this->getProvider($provider);
 
@@ -186,7 +184,7 @@ class SamlProxyController extends AbstractController
      * @param string $provider
      * @return XMLResponse
      */
-    public function metadataAction($provider)
+    public function metadataAction($provider): \Surfnet\SamlBundle\Http\XMLResponse
     {
         $provider = $this->getProvider($provider);
 
@@ -259,10 +257,9 @@ class SamlProxyController extends AbstractController
     }
 
     /**
-     * @param string $view
      * @return Response
      */
-    public function renderSamlResponse($view, StateHandler $stateHandler, SAMLResponse $response)
+    public function renderSamlResponse(string $view, StateHandler $stateHandler, SAMLResponse $response)
     {
         /** @var ResponseHelper $responseHelper */
         $responseHelper = $this->get('second_factor_only.adfs.response_helper');
@@ -345,7 +342,7 @@ class SamlProxyController extends AbstractController
      * @param string $destination
      * @return SAMLResponse
      */
-    private function createAuthnFailedResponse(Provider $provider, $destination)
+    private function createAuthnFailedResponse(Provider $provider, ?string $destination)
     {
         $response = $this->createResponse($provider, $destination);
         $response->setStatus(
@@ -364,7 +361,7 @@ class SamlProxyController extends AbstractController
      * @param string $destination
      * @return SAMLResponse
      */
-    private function createResponse(Provider $provider, $destination)
+    private function createResponse(Provider $provider, ?string $destination): \SAML2\Response
     {
         $context = $this->getResponseContext();
         $response = new SAMLResponse();
@@ -380,7 +377,7 @@ class SamlProxyController extends AbstractController
      * @param string $serviceProvider
      * @return \Surfnet\StepupGateway\GatewayBundle\Entity\ServiceProvider
      */
-    private function getServiceProvider($serviceProvider)
+    private function getServiceProvider(?string $serviceProvider): \Surfnet\SamlBundle\Entity\ServiceProvider
     {
         /**
          * @var \Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\ConnectedServiceProviders $connectedServiceProviders

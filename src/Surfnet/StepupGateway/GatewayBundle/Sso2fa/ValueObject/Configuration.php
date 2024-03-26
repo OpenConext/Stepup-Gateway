@@ -25,20 +25,11 @@ use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Exception\InvalidEncryptionKeyExc
 
 class Configuration
 {
-    /**
-     * @var CookieType
-     */
-    private $type;
+    private readonly \Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\CookieType $type;
 
-    /**
-     * @var int
-     */
-    private $lifetime;
+    private readonly int $lifetime;
 
-    /**
-     * @var string
-     */
-    private $encryptionKey;
+    private readonly string $encryptionKey;
 
     public function __construct(private readonly string $name, string $type, int $lifetime, string $encryptionKey)
     {

@@ -54,7 +54,7 @@ class YubikeyOtpVerificationResult
 
     public function didPublicIdMatch(): bool
     {
-        return $this->result === self::RESULT_PUBLIC_ID_MATCHED && $this->publicId !== null;
+        return $this->result === self::RESULT_PUBLIC_ID_MATCHED && $this->publicId instanceof \Surfnet\StepupBundle\Value\YubikeyPublicId;
     }
 
     public function didOtpVerificationFail(): bool
@@ -65,7 +65,7 @@ class YubikeyOtpVerificationResult
     /**
      * @return YubikeyPublicId|null
      */
-    public function getPublicId()
+    public function getPublicId(): ?\Surfnet\StepupBundle\Value\YubikeyPublicId
     {
         return $this->publicId;
     }

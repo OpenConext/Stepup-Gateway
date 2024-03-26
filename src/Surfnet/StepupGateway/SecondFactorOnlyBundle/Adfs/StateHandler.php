@@ -68,11 +68,7 @@ class StateHandler
     public function hasMatchingRequestId(string $requestId): bool
     {
         $requestIdFromSession = $this->get('request_id');
-        if ($requestIdFromSession && $requestIdFromSession == $requestId) {
-            return true;
-        }
-
-        return false;
+        return $requestIdFromSession && $requestIdFromSession == $requestId;
     }
 
     protected function set(string $key, mixed $value): void

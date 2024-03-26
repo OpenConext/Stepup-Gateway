@@ -101,7 +101,7 @@ class GatewayController extends AbstractController
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function consumeAssertionAction(Request $request)
+    public function consumeAssertionAction(Request $request): \Symfony\Component\HttpFoundation\Response
     {
         $responseContext = $this->getResponseContext(self::MODE_SSO);
         $gatewayLoginService = $this->getGatewayConsumeAssertionService();
@@ -127,7 +127,7 @@ class GatewayController extends AbstractController
      * redirect. This method sends a AuthnResponse back to the service
      * provider in response to the AuthnRequest received in ssoAction().
      */
-    public function respondAction(Request $request)
+    public function respondAction(Request $request): \Symfony\Component\HttpFoundation\Response
     {
         $responseContext = $this->getResponseContext(self::MODE_SSO);
         $gatewayLoginService = $this->getGatewayRespondService();
@@ -143,7 +143,7 @@ class GatewayController extends AbstractController
      * @param $authenticationMode
      * @return Response
      */
-    public function sendLoaCannotBeGivenAction(Request $request)
+    public function sendLoaCannotBeGivenAction(Request $request): \Symfony\Component\HttpFoundation\Response
     {
         if (!$request->get('authenticationMode', false)) {
             throw new RuntimeException('Unable to determine the authentication mode in the sendLoaCannotBeGiven action');
@@ -161,7 +161,7 @@ class GatewayController extends AbstractController
     /**
      * @return Response
      */
-    public function sendAuthenticationCancelledByUserAction()
+    public function sendAuthenticationCancelledByUserAction(): \Symfony\Component\HttpFoundation\Response
     {
         // The authentication mode is read from the parent request, in the meantime a forward was followed, making
         // reading the auth mode from the current request impossible.
@@ -293,7 +293,7 @@ class GatewayController extends AbstractController
 
     private function supportsAuthenticationMode($authenticationMode): void
     {
-        if (!($authenticationMode === self::MODE_SSO || $authenticationMode === self::MODE_SFO)) {
+        if ($authenticationMode !== self::MODE_SSO && $authenticationMode !== self::MODE_SFO) {
             throw new InvalidArgumentException('Invalid authentication mode requested');
         }
     }

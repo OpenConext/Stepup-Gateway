@@ -26,7 +26,7 @@ final class LoaAliasLookupService
     /**
      * @var array<string,string>
      */
-    private $loaAliases;
+    private readonly array $loaAliases;
 
     /**
      * @param array<string,string> $loaAliases

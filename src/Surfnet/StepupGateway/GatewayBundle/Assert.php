@@ -59,14 +59,14 @@ final class Assert extends Assertion
             $required = array_diff($expectedKeys, $givenKeys);
 
             $message = 'Keys do not match requirements';
-            if (!empty($additional)) {
+            if ($additional !== []) {
                 $message .= sprintf(
                     ', additional keys "%s" found',
                     implode('", "', array_diff($givenKeys, $expectedKeys))
                 );
             }
 
-            if (!empty($required)) {
+            if ($required !== []) {
                 $message .= sprintf(
                     ', required keys "%s" are missing',
                     implode('", "', array_diff($expectedKeys, $givenKeys))

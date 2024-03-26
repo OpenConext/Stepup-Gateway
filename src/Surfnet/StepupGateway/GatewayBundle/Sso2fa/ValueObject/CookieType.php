@@ -28,7 +28,7 @@ final class CookieType
     // the expiration date is reached.
     private const TYPE_PERSISTENT = 'persistent';
 
-    private $type;
+    private readonly string $type;
 
     private function __construct(string $type)
     {

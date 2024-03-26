@@ -21,6 +21,7 @@ namespace Surfnet\StepupGateway\GatewayBundle\Saml;
 use SAML2\Assertion;
 use SAML2\Certificate\KeyLoader;
 use SAML2\Certificate\PrivateKeyLoader;
+use SAML2\Certificate\X509;
 use SAML2\Configuration\PrivateKey;
 use Surfnet\SamlBundle\Entity\IdentityProvider;
 use RobRichards\XMLSecLibs\XMLSecurityKey;
@@ -34,7 +35,7 @@ class AssertionSigningService
     /**
      * @return Assertion
      */
-    public function signAssertion(Assertion $assertion)
+    public function signAssertion(Assertion $assertion): Assertion
     {
         $assertion->setSignatureKey($this->loadPrivateKey());
         $assertion->setCertificates([$this->getPublicCertificate()]);
@@ -45,7 +46,7 @@ class AssertionSigningService
     /**
      * @return XMLSecurityKey
      */
-    private function loadPrivateKey()
+    private function loadPrivateKey(): XMLSecurityKey
     {
         $key        = $this->identityProvider->getPrivateKey(PrivateKey::NAME_DEFAULT);
         $keyLoader  = new PrivateKeyLoader();
@@ -60,11 +61,11 @@ class AssertionSigningService
     /**
      * @return string
      */
-    private function getPublicCertificate()
+    private function getPublicCertificate(): string
     {
         $keyLoader = new KeyLoader();
         $keyLoader->loadCertificateFile($this->identityProvider->getCertificateFile());
-        /** @var \SAML2\Certificate\X509 $publicKey */
+        /** @var X509 $publicKey */
         $publicKey = $keyLoader->getKeys()->getOnlyElement();
 
         return $publicKey->getCertificate();

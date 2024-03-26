@@ -35,25 +35,21 @@ use Symfony\Component\HttpFoundation\Session\Session;
 class SecondFactorVerificationServiceTest extends GatewaySamlTestCase
 {
     /** @var Mockery\Mock|SecondFactorVerificationService */
-    private $samlProxySecondFactorService;
+    private ?\Surfnet\StepupGateway\SamlStepupProviderBundle\Service\Gateway\SecondFactorVerificationService $samlProxySecondFactorService = null;
 
     /** @var Mockery\Mock|StateHandler */
-    private $stateHandler;
+    private ?\Surfnet\StepupGateway\SamlStepupProviderBundle\Saml\StateHandler $stateHandler = null;
 
-    /** @var ResponseContext */
-    private $responseContext;
+    private ?\Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext $responseContext = null;
 
     /** @var Mockery\Mock|SamlEntityService */
     private $samlEntityService;
 
-    /** @var IdentityProvider */
-    private $remoteIdp;
+    private ?\Surfnet\SamlBundle\Entity\IdentityProvider $remoteIdp = null;
 
-    /** @var IdentityProvider */
-    private $idp;
+    private ?\Surfnet\SamlBundle\Entity\IdentityProvider $idp = null;
 
-    /** @var Provider */
-    private $provider;
+    private ?\Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\Provider $provider = null;
 
     public function setUp(): void
     {

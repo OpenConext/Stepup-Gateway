@@ -29,7 +29,7 @@ final class SecondFactorOnlyNameIdValidationService
     /**
      * @return $this
      */
-    public function with(LoggerInterface $logger)
+    public function with(LoggerInterface $logger): self
     {
         $this->logger = $logger;
         return $this;
@@ -40,7 +40,7 @@ final class SecondFactorOnlyNameIdValidationService
      */
     public function validate(string $spEntityId, string $nameId): bool
     {
-        if (!$nameId) {
+        if ($nameId === '' || $nameId === '0') {
             $this->logger->notice(
                 'No NameID provided, sending response with status Requester Error'
             );

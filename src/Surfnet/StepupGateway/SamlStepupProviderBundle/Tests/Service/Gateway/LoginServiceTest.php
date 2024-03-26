@@ -41,10 +41,10 @@ use Symfony\Component\HttpFoundation\Session\Session;
 class LoginServiceTest extends GatewaySamlTestCase
 {
     /** @var Mockery\Mock|LoginService */
-    private $samlProxyLoginService;
+    private ?\Surfnet\StepupGateway\SamlStepupProviderBundle\Service\Gateway\LoginService $samlProxyLoginService = null;
 
     /** @var Mockery\Mock|StateHandler */
-    private $stateHandler;
+    private ?\Surfnet\StepupGateway\SamlStepupProviderBundle\Saml\StateHandler $stateHandler = null;
 
     /** @var Mockery\Mock|PostBinding */
     private $postBinding;
@@ -55,14 +55,11 @@ class LoginServiceTest extends GatewaySamlTestCase
     /** @var Mockery\Mock|SamlEntityService */
     private $samlEntityService;
 
-    /** @var IdentityProvider */
-    private $remoteIdp;
+    private ?\Surfnet\SamlBundle\Entity\IdentityProvider $remoteIdp = null;
 
-    /** @var IdentityProvider */
-    private $idp;
+    private ?\Surfnet\SamlBundle\Entity\IdentityProvider $idp = null;
 
-    /** @var Provider */
-    private $provider;
+    private ?\Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\Provider $provider = null;
 
     public function setUp(): void
     {
@@ -236,10 +233,7 @@ class LoginServiceTest extends GatewaySamlTestCase
         );
     }
 
-    /**
-     * @param string $samlResponseXml
-     */
-    private function mockRedirectBinding($samlResponseXml): void
+    private function mockRedirectBinding(string $samlResponseXml): void
     {
         $authnRequest = ReceivedAuthnRequest::from($samlResponseXml);
 

@@ -33,7 +33,7 @@ class RequestHelperTest extends TestCase
     /**
      * @var RequestHelper
      */
-    private $helper;
+    private \Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\RequestHelper $helper;
 
     /**
      * @var Request

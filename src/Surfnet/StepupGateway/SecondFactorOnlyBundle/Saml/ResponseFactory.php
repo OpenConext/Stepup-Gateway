@@ -37,10 +37,7 @@ use Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler;
  */
 final class ResponseFactory
 {
-    /**
-     * @var \DateTime
-     */
-    private $currentTime;
+    private readonly \DateTime $currentTime;
 
     public function __construct(
         private readonly IdentityProvider $hostedIdentityProvider,
@@ -52,12 +49,11 @@ final class ResponseFactory
     }
 
     /**
-     * @param string $nameId
      * @param string $destination
      * @param string|null $authnContextClassRef
      * @return Response
      */
-    public function createSecondFactorOnlyResponse($nameId, $destination, $authnContextClassRef)
+    public function createSecondFactorOnlyResponse(string $nameId, ?string $destination, ?string $authnContextClassRef): \SAML2\Response
     {
         return $this->createNewAuthnResponse(
             $this->createNewAssertion(
@@ -73,7 +69,7 @@ final class ResponseFactory
      * @param string $destination The ACS location
      * @return Response
      */
-    private function createNewAuthnResponse(Assertion $newAssertion, $destination)
+    private function createNewAuthnResponse(Assertion $newAssertion, ?string $destination): \SAML2\Response
     {
         $response = new Response();
         $response->setAssertions([$newAssertion]);
@@ -88,12 +84,11 @@ final class ResponseFactory
     }
 
     /**
-     * @param string $nameId
      * @param string $authnContextClassRef
      * @param string $destination The ACS location
      * @return Assertion
      */
-    private function createNewAssertion($nameId, $authnContextClassRef, $destination)
+    private function createNewAssertion(string $nameId, ?string $authnContextClassRef, ?string $destination): \SAML2\Assertion
     {
         $newAssertion = new Assertion();
         $newAssertion->setNotBefore($this->currentTime->getTimestamp());
@@ -117,7 +112,7 @@ final class ResponseFactory
     /**
      * @param string $destination The ACS location
      */
-    private function addSubjectConfirmationFor(Assertion $newAssertion, $destination): void
+    private function addSubjectConfirmationFor(Assertion $newAssertion, ?string $destination): void
     {
         $confirmation = new SubjectConfirmation();
         $confirmation->setMethod(Constants::CM_BEARER);
@@ -135,7 +130,7 @@ final class ResponseFactory
     /**
      * @param $authnContextClassRef
      */
-    private function addAuthenticationStatementTo(Assertion $assertion, $authnContextClassRef): void
+    private function addAuthenticationStatementTo(Assertion $assertion, ?string $authnContextClassRef): void
     {
         $assertion->setAuthnInstant($this->getTimestamp());
         $assertion->setAuthnContextClassRef($authnContextClassRef);

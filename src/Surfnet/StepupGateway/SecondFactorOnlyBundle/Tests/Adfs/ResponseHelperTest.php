@@ -30,7 +30,7 @@ class ResponseHelperTest extends TestCase
     /**
      * @var ResponseHelper
      */
-    private $helper;
+    private \Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\ResponseHelper $helper;
 
     /**
      * @var Request

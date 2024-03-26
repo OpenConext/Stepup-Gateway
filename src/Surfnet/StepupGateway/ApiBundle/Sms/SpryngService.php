@@ -26,10 +26,7 @@ use Surfnet\StepupGateway\ApiBundle\Dto\SmsMessage;
 
 class SpryngService implements SmsAdapterInterface
 {
-    /**
-     * @var MessageClient
-     */
-    private $client;
+    private readonly \Spryng\SpryngRestApi\Resources\MessageClient $client;
 
     public function __construct(string $apiKey, /**
      * @var string

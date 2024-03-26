@@ -50,7 +50,7 @@ class ProxyResponseFactoryTest extends GatewaySamlTestCase
     /**
      * @var ResponseFactory
      */
-    private $factory;
+    private \Surfnet\StepupGateway\SamlStepupProviderBundle\Saml\ProxyResponseFactory $factory;
 
     public function setUp(): void
     {

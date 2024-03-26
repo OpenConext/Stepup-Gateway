@@ -110,7 +110,7 @@ class LoginService
             $originalRequest->getAuthenticationContextClassRef()
         );
 
-        if (empty($loaId)) {
+        if ($loaId === '' || $loaId === '0') {
             throw new RequesterFailureException();
         }
 

@@ -99,7 +99,7 @@ class SecondFactorTest extends TestCase
         $this->assertEquals($expectedLoa, $token->getLoaLevel($service));
     }
 
-    public function provideIdentityVettedTestData()
+    public function provideIdentityVettedTestData(): array
     {
         return [
             'identity vetted yubikey satisfies loa3' => ['yubikey', 3.0, true],
@@ -134,7 +134,7 @@ class SecondFactorTest extends TestCase
         ];
     }
 
-    public function provideErroneousIdentityVettedTestData()
+    public function provideErroneousIdentityVettedTestData(): array
     {
         return [
             'unknown token type' => ['tjoepiekey', 3.0, "The Loa level of this type: tjoepiekey can't be retrieved."],
@@ -146,7 +146,7 @@ class SecondFactorTest extends TestCase
         ];
     }
 
-    public function provideLoaLevelExpectations()
+    public function provideLoaLevelExpectations(): array
     {
         return [
             'identity vetted yubikey yields loa 3.0' => ['yubikey', true, 3.0],

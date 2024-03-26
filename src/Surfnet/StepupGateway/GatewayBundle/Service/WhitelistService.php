@@ -31,7 +31,7 @@ class WhitelistService
      * @param string $institution
      * @return bool
      */
-    public function contains($institution)
+    public function contains($institution): bool
     {
         if (!is_string($institution)) {
             throw InvalidArgumentException::invalidType('string', 'institution', $institution);

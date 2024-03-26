@@ -43,7 +43,7 @@ class ExpirationHelper implements ExpirationHelperInterface
         private ?CoreDateTime $now = null
     )
     {
-        if ($now === null) {
+        if (!$now instanceof \DateTime) {
             $now = DateTime::now();
         }
         $this->now = $now;

@@ -73,7 +73,7 @@ final class SecondFactorType extends AbstractExtension
      * a non gssp type is encountered a source is built based on the way these
      * logos are typically stored in the /web/images/second-factor folder
      */
-    public function getSecondFactorTypeLogoByIdentifier($secondFactorType): string
+    public function getSecondFactorTypeLogoByIdentifier(string $secondFactorType): string
     {
         $logo = '';
         try {

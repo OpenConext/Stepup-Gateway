@@ -39,9 +39,9 @@ final class StepUpAuthenticationServiceTest extends TestCase
     /**
      * @var StepUpAuthenticationService
      */
-    private $service;
+    private \Surfnet\StepupGateway\GatewayBundle\Service\StepUpAuthenticationService $service;
 
-    private $loaResolutionService;
+    private \Surfnet\StepupBundle\Service\LoaResolutionService $loaResolutionService;
     private $secondFactorRepository;
     private $yubikeyService;
     private $smsSfService;
@@ -151,7 +151,7 @@ final class StepUpAuthenticationServiceTest extends TestCase
      *
      * @dataProvider configuredLoas
      */
-    public function test_resolve_highest_required_loa_special_sp_loa_configuration($loaConfiguration): void
+    public function test_resolve_highest_required_loa_special_sp_loa_configuration(array $loaConfiguration): void
     {
         $this->logger
             ->shouldReceive('info')
@@ -195,7 +195,7 @@ final class StepUpAuthenticationServiceTest extends TestCase
      *
      * @dataProvider configuredLoas
      */
-    public function test_resolve_highest_required_loa_no_vetted_tokens_for_user_institution($loaConfiguration): void
+    public function test_resolve_highest_required_loa_no_vetted_tokens_for_user_institution(array $loaConfiguration): void
     {
         $this->expectException(InstitutionMismatchException::class);
         $this->expectExceptionMessage('User and IdP SHO are set but do not match.');
@@ -288,7 +288,7 @@ final class StepUpAuthenticationServiceTest extends TestCase
      *
      * @return array
      */
-    public function configuredLoas() {
+    public function configuredLoas(): array {
         return [
             [
                 [
@@ -352,12 +352,12 @@ final class StepUpAuthenticationServiceTest extends TestCase
      * @param $index
      */
     public function test_resolve_highest_required_loa_conbinations(
-        $configuredLoas,
-        $identityOrganisation,
-        $institutionsBasedOnVettedTokens,
-        $spRequestedLoa,
-        $expectedOutcome,
-        $index
+        array $configuredLoas,
+        string $identityOrganisation,
+        string $institutionsBasedOnVettedTokens,
+        string $spRequestedLoa,
+        string $expectedOutcome,
+        int $index
     ): void {
 
         $this->logger->shouldReceive('info');
@@ -375,7 +375,7 @@ final class StepUpAuthenticationServiceTest extends TestCase
         }
     }
 
-    public function combinationProvider()
+    public function combinationProvider(): array
     {
         // All possible output options
         $expectedLoa1 = 'https://gw-dev.stepup.coin.surf.net/authentication/loa1';
@@ -414,7 +414,7 @@ final class StepUpAuthenticationServiceTest extends TestCase
         // d4. SP requests LoA = 3
         $d4 = 'https://gw-dev.stepup.coin.surf.net/authentication/loa3';
 
-        $combinations = [
+        return [
 
             [$a1, $b1, $c1, $d1, $expectedLoa1,                  1],
             [$a2, $b1, $c1, $d1, $expectedLoa2,                  2],
@@ -472,8 +472,6 @@ final class StepUpAuthenticationServiceTest extends TestCase
             [$a1, $b3, $c2, $d4, $expectedLoa3,                  47],
             [$a2, $b3, $c2, $d4, $expectedLoa3,                  48],
         ];
-
-        return $combinations;
     }
 
 }

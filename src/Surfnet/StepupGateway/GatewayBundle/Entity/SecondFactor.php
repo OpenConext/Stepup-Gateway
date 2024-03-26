@@ -132,8 +132,7 @@ class SecondFactor
     {
         $secondFactorType = new SecondFactorType($this->secondFactorType);
         $vettingType = $this->determineVettingType($this->identityVetted);
-        $level = $service->getLevel($secondFactorType, $vettingType);
-        return $level;
+        return $service->getLevel($secondFactorType, $vettingType);
     }
 
     private function determineVettingType(bool $identityVetted): VettingType

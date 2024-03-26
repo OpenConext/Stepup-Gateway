@@ -46,16 +46,15 @@ use Symfony\Component\HttpFoundation\Session\Session;
 final class RespondServiceTest extends GatewaySamlTestCase
 {
     /** @var Mockery\Mock|RespondService */
-    private $gatewayRespondService;
+    private ?\Surfnet\StepupGateway\GatewayBundle\Service\Gateway\RespondService $gatewayRespondService = null;
 
     /** @var Mockery\Mock|ProxyStateHandler */
-    private $stateHandler;
+    private ?\Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler $stateHandler = null;
 
-    /** @var ResponseContext */
-    private $responseContext;
+    private ?\Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext $responseContext = null;
 
     /** @var Mockery\Mock|LoaResolutionService */
-    private $loaResolutionService;
+    private ?\Surfnet\StepupBundle\Service\LoaResolutionService $loaResolutionService = null;
 
     /** @var Mockery\Mock|PostBinding */
     private $postBinding;
@@ -66,11 +65,9 @@ final class RespondServiceTest extends GatewaySamlTestCase
     /** @var Mockery\Mock|SamlEntityService */
     private $samlEntityService;
 
-    /** @var IdentityProvider */
-    private $remoteIdp;
+    private ?\Surfnet\SamlBundle\Entity\IdentityProvider $remoteIdp = null;
 
-    /** @var AttributeDictionary */
-    private $attributeDictionary;
+    private ?\Surfnet\SamlBundle\SAML2\Attribute\AttributeDictionary $attributeDictionary = null;
 
     /** @var Mockery\Mock|SecondFactorService */
     private $secondFactorService;
@@ -286,7 +283,7 @@ final class RespondServiceTest extends GatewaySamlTestCase
      * @param int $now
      * @return ProxyResponseService
      */
-    private function mockResponseProxy(ProxyStateHandler $proxyStateHandler, IdentityProvider $remoteIdp, array $attributes, DateTime $now)
+    private function mockResponseProxy(ProxyStateHandler $proxyStateHandler, IdentityProvider $remoteIdp, array $attributes, DateTime $now): \Surfnet\StepupGateway\GatewayBundle\Service\ProxyResponseService
     {
         $assertionSigningService = new AssertionSigningService($remoteIdp);
 
@@ -309,7 +306,7 @@ final class RespondServiceTest extends GatewaySamlTestCase
     /**
      * @return LoaResolutionService
      */
-    private function mockLoaResolutionService(array $loaLevels)
+    private function mockLoaResolutionService(array $loaLevels): \Surfnet\StepupBundle\Service\LoaResolutionService
     {
         $loaLevelObjects = [];
         foreach ($loaLevels as $level) {

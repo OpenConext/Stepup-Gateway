@@ -69,7 +69,7 @@ class SamlEntity
     /**
      * @return IdentityProvider
      */
-    public function toIdentityProvider()
+    public function toIdentityProvider(): \Surfnet\SamlBundle\Entity\IdentityProvider
     {
         if (!$this->type === self::TYPE_IDP) {
             throw new RuntimeException(sprintf(
@@ -92,7 +92,7 @@ class SamlEntity
     /**
      * @return ServiceProvider
      */
-    public function toServiceProvider()
+    public function toServiceProvider(): \Surfnet\StepupGateway\GatewayBundle\Entity\ServiceProvider
     {
         if (!$this->type === self::TYPE_SP) {
             throw new RuntimeException(sprintf(

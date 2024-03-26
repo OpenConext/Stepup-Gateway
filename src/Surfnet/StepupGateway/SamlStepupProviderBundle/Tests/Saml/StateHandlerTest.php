@@ -25,12 +25,12 @@ use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBag;
 class StateHandlerTest extends TestCase
 {
     /** @var StateHandler */
-    private $stateHandler;
+    private \Surfnet\StepupGateway\SamlStepupProviderBundle\Saml\StateHandler $stateHandler;
 
     /** @var AttributeBag */
-    private $attributeBag;
+    private \Symfony\Component\HttpFoundation\Session\Attribute\AttributeBag $attributeBag;
 
-    private $providerName = 'gssp_provider_name';
+    private string $providerName = 'gssp_provider_name';
     protected function setUp(): void
     {
         $this->attributeBag = new AttributeBag($this->providerName);

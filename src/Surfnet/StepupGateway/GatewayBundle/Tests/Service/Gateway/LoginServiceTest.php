@@ -43,16 +43,15 @@ use Symfony\Component\HttpFoundation\Session\Session;
 final class LoginServiceTest extends GatewaySamlTestCase
 {
     /** @var Mockery\Mock|LoginService */
-    private $gatewayLoginService;
+    private ?\Surfnet\StepupGateway\GatewayBundle\Service\Gateway\LoginService $gatewayLoginService = null;
 
     /** @var Mockery\Mock|ProxyStateHandler */
-    private $stateHandler;
+    private ?\Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler $stateHandler = null;
 
-    /** @var ResponseContext */
-    private $responseContext;
+    private ?\Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext $responseContext = null;
 
     /** @var Mockery\Mock|LoaResolutionService */
-    private $loaResolutionService;
+    private ?\Surfnet\StepupBundle\Service\LoaResolutionService $loaResolutionService = null;
 
     /** @var Mockery\Mock|PostBinding */
     private $redirectBinding;
@@ -60,8 +59,7 @@ final class LoginServiceTest extends GatewaySamlTestCase
     /** @var Mockery\Mock|SamlEntityService */
     private $samlEntityService;
 
-    /** @var IdentityProvider */
-    private $remoteIdp;
+    private ?\Surfnet\SamlBundle\Entity\IdentityProvider $remoteIdp = null;
 
     /** @var Mockery\Mock|SecondFactorService */
     private $secondFactorService;
@@ -243,7 +241,7 @@ final class LoginServiceTest extends GatewaySamlTestCase
     /**
      * @return LoaResolutionService
      */
-    private function mockLoaResolutionService(array $loaLevels)
+    private function mockLoaResolutionService(array $loaLevels): \Surfnet\StepupBundle\Service\LoaResolutionService
     {
         $loaLevelObjects = [];
         foreach ($loaLevels as $level) {
@@ -252,10 +250,7 @@ final class LoginServiceTest extends GatewaySamlTestCase
         return new LoaResolutionService($loaLevelObjects);
     }
 
-    /**
-     * @param string $samlResponseXml
-     */
-    private function mockRedirectBinding($samlResponseXml): void
+    private function mockRedirectBinding(string $samlResponseXml): void
     {
         $authnRequest = ReceivedAuthnRequest::from($samlResponseXml);
 

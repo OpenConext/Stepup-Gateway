@@ -28,9 +28,9 @@ class DoctrineSecondFactorRepository extends EntityRepository implements SecondF
     /**
      * @var SecondFactor[]
      */
-    private $secondFactorsById = [];
+    private array $secondFactorsById = [];
 
-    public function getAllMatchingFor(Loa $highestLoa, $identityNameId, SecondFactorTypeService $service)
+    public function getAllMatchingFor(Loa $highestLoa, $identityNameId, SecondFactorTypeService $service): \Doctrine\Common\Collections\ArrayCollection
     {
         /** @var \Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor[] $secondFactors */
         $secondFactors = $this->findAllByIdentityNameId($identityNameId);

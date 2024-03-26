@@ -76,7 +76,7 @@ class CookieHelper implements CookieHelperInterface
         return $this->hashFingerprint($cookie);
     }
 
-    private function createCookieWithValue($value): Cookie
+    private function createCookieWithValue(string $value): Cookie
     {
         return new Cookie(
             $this->configuration->getName(),

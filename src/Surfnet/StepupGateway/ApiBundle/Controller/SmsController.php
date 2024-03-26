@@ -37,7 +37,7 @@ class SmsController extends AbstractController
     /**
      * @return JsonResponse
      */
-    public function sendAction(SmsMessage $message, Requester $requester)
+    public function sendAction(SmsMessage $message, Requester $requester): \Symfony\Component\HttpFoundation\JsonResponse
     {
         /** @var SmsService $smsService */
         $result = $this->smsService->send($message);
@@ -51,7 +51,7 @@ class SmsController extends AbstractController
             return new JsonResponse(['status' => 'OK']);
         }
 
-        $errors = array_map(fn($error) => sprintf('%s (#%d)', $error['description'], $error['code']), $result->getRawErrors());
+        $errors = array_map(fn($error): string => sprintf('%s (#%d)', $error['description'], $error['code']), $result->getRawErrors());
 
         if ($result->isMessageInvalid()) {
             return new JsonResponse(['errors' => $errors], 400);

@@ -30,7 +30,7 @@ class LoaResolutionService
     /**
      * @return $this
      */
-    public function with(LoggerInterface $logger)
+    public function with(LoggerInterface $logger): static
     {
         $this->logger = $logger;
         return $this;
@@ -47,7 +47,7 @@ class LoaResolutionService
      * @return string
      *   LOA Id
      */
-    public function resolve($loaId)
+    public function resolve($loaId): string
     {
         if (empty($loaId)) {
             $this->logger->notice('No LOA requested, sending response with status Requester Error');

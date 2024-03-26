@@ -49,28 +49,24 @@ use Symfony\Component\HttpFoundation\Session\Session;
 final class RespondServiceTest extends GatewaySamlTestCase
 {
     /** @var Mock|RespondService */
-    private $gatewayRespondService;
+    private ?\Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\Gateway\RespondService $gatewayRespondService = null;
 
     /** @var Mock|ProxyStateHandler */
-    private $stateHandler;
+    private ?\Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler $stateHandler = null;
 
-    /** @var ResponseContext */
-    private $responseContext;
+    private ?\Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext $responseContext = null;
 
-    /** @var LoaResolutionService */
-    private $loaResolutionService;
+    private ?\Surfnet\StepupBundle\Service\LoaResolutionService $loaResolutionService = null;
 
     /** @var Mock|SamlEntityService */
     private $samlEntityService;
 
-    /** @var IdentityProvider */
-    private $hostedIdp;
+    private ?\Surfnet\SamlBundle\Entity\IdentityProvider $hostedIdp = null;
 
     /** @var Mock|SecondFactorService */
     private $secondFactorService;
 
-    /** @var ProxyResponseFactory */
-    private $proxyResponseFactory;
+    private ?\Surfnet\StepupGateway\SecondFactorOnlyBundle\Saml\ResponseFactory $proxyResponseFactory = null;
 
     /** @var Mock&ResponseValidator */
     private $validator;
@@ -400,7 +396,7 @@ final class RespondServiceTest extends GatewaySamlTestCase
     /**
      * @return LoaResolutionService
      */
-    private function mockLoaResolutionService(array $loaLevels)
+    private function mockLoaResolutionService(array $loaLevels): \Surfnet\StepupBundle\Service\LoaResolutionService
     {
         $loaLevelObjects = [];
         foreach ($loaLevels as $level) {

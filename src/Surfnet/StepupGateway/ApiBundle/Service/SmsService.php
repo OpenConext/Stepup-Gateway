@@ -25,10 +25,7 @@ use Surfnet\StepupGateway\ApiBundle\Sms\SmsMessageResultInterface;
 
 class SmsService implements SmsServiceInterface
 {
-    /**
-     * @var SmsAdapterInterface
-     */
-    private $messagingService;
+    private readonly \Surfnet\StepupGateway\ApiBundle\Sms\SmsAdapterInterface $messagingService;
 
     public function __construct(SmsAdapterProvider $provider)
     {

@@ -72,7 +72,7 @@ final readonly class ResponseRenderingService
         ResponseContext $context,
         SAMLResponse $response,
         Request $request
-    ) {
+    ): \Symfony\Component\HttpFoundation\Response {
         return $this->renderSamlResponse($context, 'consume_assertion', $request, $response);
     }
 

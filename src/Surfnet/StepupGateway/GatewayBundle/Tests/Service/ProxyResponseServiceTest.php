@@ -38,6 +38,7 @@ use Surfnet\StepupGateway\SamlStepupProviderBundle\Saml\StateHandler;
 
 final class ProxyResponseServiceTest extends GatewaySamlTestCase
 {
+    public $attributeDefinition;
     /**
      * @var Mockery\MockInterface|IdentityProvider
      */

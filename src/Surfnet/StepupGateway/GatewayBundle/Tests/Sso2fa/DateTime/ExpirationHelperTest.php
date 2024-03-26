@@ -51,7 +51,7 @@ class ExpirationHelperTest extends TestCase
         $helper->isExpired($cookieValue);
     }
 
-    public function expirationExpectations()
+    public function expirationExpectations(): array
     {
         return [
             'not expired' => [false, $this->makeExpirationHelper(3600, time()), $this->makeCookieValue(time())],
@@ -61,7 +61,7 @@ class ExpirationHelperTest extends TestCase
         ];
     }
 
-    public function gracePeriodExpectations()
+    public function gracePeriodExpectations(): array
     {
         // Cookie lifetime 3600 with a grace period of 5 seconds
         $helper = $this->makeExpirationHelper(3600, time(), 5);
@@ -73,7 +73,7 @@ class ExpirationHelperTest extends TestCase
         ];
     }
 
-    public function invalidTimeExpectations()
+    public function invalidTimeExpectations(): array
     {
         $goodOldHelper = $this->makeExpirationHelper(3600, time());
         return [
@@ -111,7 +111,7 @@ class ExpirationHelperTest extends TestCase
         return CookieValue::deserialize(json_encode($data));
     }
 
-    private function makeCookieValueUnrestrictedAuthTime($authenticationTime) : CookieValueInterface
+    private function makeCookieValueUnrestrictedAuthTime(string|float|int|bool|null $authenticationTime) : CookieValueInterface
     {
         $data = [
             'tokenId' => 'tokenId',

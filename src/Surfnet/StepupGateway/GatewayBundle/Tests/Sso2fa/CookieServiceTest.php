@@ -48,15 +48,9 @@ class CookieServiceTest extends TestCase
 {
     use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 
-    /**
-     * @var CookieService
-     */
-    private $service;
+    private ?\Surfnet\StepupGateway\GatewayBundle\Sso2fa\CookieService $service = null;
 
-    /**
-     * @var Configuration
-     */
-    private $configuration;
+    private ?\Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\Configuration $configuration = null;
     /**
      * @var ResponseContext&Mockery\MockInterface
      */
@@ -73,10 +67,7 @@ class CookieServiceTest extends TestCase
      * @var SecondFactorTypeService&Mockery\MockInterface
      */
     private $secondFactorTypeService;
-    /**
-     * @var HaliteCryptoHelper
-     */
-    private $encryptionHelper;
+    private ?\Surfnet\StepupGateway\GatewayBundle\Sso2fa\Crypto\HaliteCryptoHelper $encryptionHelper = null;
 
     /**
      * @var Mockery\LegacyMockInterface|Mockery\MockInterface|ExpirationHelperInterface|(ExpirationHelperInterface&Mockery\LegacyMockInterface)|(ExpirationHelperInterface&Mockery\MockInterface)

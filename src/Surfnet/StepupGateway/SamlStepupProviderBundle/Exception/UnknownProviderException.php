@@ -22,9 +22,9 @@ use RuntimeException;
 
 final class UnknownProviderException extends RuntimeException
 {
-    public static function create($unknownProvider, string $knownProviders)
+    public static function create($unknownProvider, string $knownProviders): static
     {
-        return new static(sprintf(
+        return new self(sprintf(
             'Unknown Generic SAML Stepup Provider requested "%s", known providers: "%s"',
             is_object($unknownProvider) ? '(object)' . $unknownProvider::class : $unknownProvider,
             $knownProviders

@@ -46,13 +46,12 @@ use Symfony\Component\HttpFoundation\Session\Session;
 class ConsumeAssertionServiceTest extends GatewaySamlTestCase
 {
     /** @var Mockery\Mock|ConsumeAssertionService */
-    private $samlProxyConsumeAssertionService;
+    private ?\Surfnet\StepupGateway\SamlStepupProviderBundle\Service\Gateway\ConsumeAssertionService $samlProxyConsumeAssertionService = null;
 
     /** @var Mockery\Mock|StateHandler */
-    private $stateHandler;
+    private ?\Surfnet\StepupGateway\SamlStepupProviderBundle\Saml\StateHandler $stateHandler = null;
 
-    /** @var ResponseContext */
-    private $responseContext;
+    private ?\Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext $responseContext = null;
 
     /** @var Mockery\Mock|PostBinding */
     private $postBinding;
@@ -60,17 +59,13 @@ class ConsumeAssertionServiceTest extends GatewaySamlTestCase
     /** @var Mockery\Mock|SamlEntityService */
     private $samlEntityService;
 
-    /** @var IdentityProvider */
-    private $remoteIdp;
+    private ?\Surfnet\SamlBundle\Entity\IdentityProvider $remoteIdp = null;
 
-    /** @var IdentityProvider */
-    private $idp;
+    private ?\Surfnet\SamlBundle\Entity\IdentityProvider $idp = null;
 
-    /** @var Provider */
-    private $provider;
+    private ?\Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\Provider $provider = null;
 
-    /** @var ProxyResponseFactory */
-    private $proxyResponseFactory;
+    private ?\Surfnet\StepupGateway\SamlStepupProviderBundle\Saml\ProxyResponseFactory $proxyResponseFactory = null;
 
     public function setUp(): void
     {
@@ -736,10 +731,7 @@ class ConsumeAssertionServiceTest extends GatewaySamlTestCase
         );
     }
 
-    /**
-     * @param string $samlResponseXml
-     */
-    private function mockPostBinding($samlResponseXml): void
+    private function mockPostBinding(string $samlResponseXml): void
     {
         $previous = libxml_disable_entity_loader(true);
         $asXml    = DOMDocumentFactory::fromString($samlResponseXml);

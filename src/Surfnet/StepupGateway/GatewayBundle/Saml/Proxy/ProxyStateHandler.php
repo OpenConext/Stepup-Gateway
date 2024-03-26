@@ -283,17 +283,17 @@ class ProxyStateHandler
      * @param $requestId
      * @param $authenticationMode
      */
-    public function markAuthenticationModeForRequest($requestId, $authenticationMode): void
+    public function markAuthenticationModeForRequest(string $requestId, $authenticationMode): void
     {
         $this->requestStack->getSession()->set('surfnet/gateway/auth_mode/' . $requestId, $authenticationMode);
     }
 
-    public function getAuthenticationModeForRequestId($requestId)
+    public function getAuthenticationModeForRequestId(string $requestId)
     {
         return $this->requestStack->getSession()->get('surfnet/gateway/auth_mode/' . $requestId);
     }
 
-    protected function set($key, $value): void
+    protected function set(string $key, $value): void
     {
         $this->requestStack->getSession()->set($this->sessionPath . $key, $value);
     }

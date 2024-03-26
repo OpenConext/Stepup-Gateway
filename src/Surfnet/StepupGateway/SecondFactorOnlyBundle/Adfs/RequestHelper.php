@@ -33,7 +33,7 @@ final class RequestHelper
     public const ADFS_PARAM_AUTH_METHOD = 'AuthMethod';
     public const ADFS_PARAM_CONTEXT = 'Context';
 
-    private static $requiredParams = [
+    private static array $requiredParams = [
         self::ADFS_PARAM_AUTH_METHOD,
         self::ADFS_PARAM_CONTEXT,
     ];
@@ -62,7 +62,7 @@ final class RequestHelper
      * @return Request
      * @throws InvalidArgumentException
      */
-    public function transformRequest(Request $httpRequest, $requestId)
+    public function transformRequest(Request $httpRequest, string $requestId): Request
     {
         $this->logger->notice('Receiving and validating ADFS request parameters');
         $authMethod = $httpRequest->request->get(self::ADFS_PARAM_AUTH_METHOD);

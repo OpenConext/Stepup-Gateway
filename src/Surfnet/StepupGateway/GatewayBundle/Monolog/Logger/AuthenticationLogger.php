@@ -75,10 +75,9 @@ class AuthenticationLogger
     }
 
     /**
-     * @param string $message
      * @param string $requestId
      */
-    private function log($message, array $context, $requestId): void
+    private function log(string $message, array $context, $requestId): void
     {
         if (!is_string($requestId)) {
             throw InvalidArgumentException::invalidType('string', 'requestId', $requestId);
@@ -100,7 +99,7 @@ class AuthenticationLogger
      * @param string $authenticationMode
      * @return ProxyStateHandler
      */
-    private function getStateHandler($authenticationMode)
+    private function getStateHandler($authenticationMode): \Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler
     {
         if ($authenticationMode === 'sfo') {
             return $this->sfoProxyStateHandler;

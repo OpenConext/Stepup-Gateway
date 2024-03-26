@@ -72,11 +72,10 @@ class GatewaySamlTestCase extends TestCase
 
     /**
      * @param string $name
-     * @param string $file
      * @param string|null $passPhrase
      * @return PrivateKey|Mockery\Mock $privateKey
      */
-    protected function mockConfigurationPrivateKey($name, $file, $passPhrase = null)
+    protected function mockConfigurationPrivateKey($name, string $file, $passPhrase = null)
     {
         return Mockery::mock(PrivateKey::class)
             ->shouldReceive('getName')
@@ -94,7 +93,7 @@ class GatewaySamlTestCase extends TestCase
      * @param $bag
      * @return array
      */
-    protected function getSessionData($bag)
+    protected function getSessionData(string $bag)
     {
         return $this->sessionStorage->getBag($bag)->getBag()->all();
     }
@@ -112,10 +111,9 @@ class GatewaySamlTestCase extends TestCase
     }
 
     /**
-     * @param string $file
      * @return bool|string
      */
-    protected function getKeyPath($file): string
+    protected function getKeyPath(string $file): string
     {
         return realpath(__DIR__ . '/../Fixture').'/'.$file;
     }

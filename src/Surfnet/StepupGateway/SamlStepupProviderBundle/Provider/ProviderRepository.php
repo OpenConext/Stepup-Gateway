@@ -30,11 +30,10 @@ final class ProviderRepository
     /**
      * @var []Provider
      */
-    private $providers;
+    private array $providers = [];
 
     public function __construct()
     {
-        $this->providers = [];
     }
 
     public function addProvider(Provider $provider): void

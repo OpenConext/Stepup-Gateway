@@ -27,15 +27,9 @@ use Webmozart\Assert\Assert;
  */
 class Response
 {
-    /**
-     * @var string
-     */
-    private $authMethod;
+    private ?string $authMethod = null;
 
-    /**
-     * @var string
-     */
-    private $context;
+    private ?string $context = null;
 
     /**
      * Creates and validates an Adfs response value object
@@ -44,7 +38,7 @@ class Response
      * @param string $context
      * @return Response
      */
-    public static function fromValues($authMethod, $context)
+    public static function fromValues($authMethod, $context): \Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\ValueObject\Response
     {
         Assert::stringNotEmpty($authMethod);
         Assert::stringNotEmpty($context);
@@ -59,7 +53,7 @@ class Response
     /**
      * @return mixed
      */
-    public function getAuthMethod()
+    public function getAuthMethod(): ?string
     {
         return $this->authMethod;
     }
@@ -67,7 +61,7 @@ class Response
     /**
      * @return mixed
      */
-    public function getContext()
+    public function getContext(): ?string
     {
         return $this->context;
     }

@@ -38,15 +38,9 @@ use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\Exception\AcsLocationNotAl
  */
 class ResponseContext
 {
-    /**
-     * @var DateTime
-     */
-    private $generationTime;
+    private readonly \DateTime $generationTime;
 
-    /**
-     * @var ServiceProvider
-     */
-    private $targetServiceProvider;
+    private ?\Surfnet\SamlBundle\Entity\ServiceProvider $targetServiceProvider = null;
 
     /**
      * @throws Exception
@@ -134,7 +128,7 @@ class ResponseContext
      */
     public function getServiceProvider(): ?ServiceProvider
     {
-        if (isset($this->targetServiceProvider)) {
+        if ($this->targetServiceProvider instanceof \Surfnet\SamlBundle\Entity\ServiceProvider) {
             return $this->targetServiceProvider;
         }
 
@@ -159,7 +153,7 @@ class ResponseContext
         $this->stateHandler->saveIdentityNameId($this->resolveNameIdValue($assertion));
         // same for the entityId of the authenticating Authority
         $authenticatingAuthorities = $assertion->getAuthenticatingAuthority();
-        if (!empty($authenticatingAuthorities)) {
+        if ($authenticatingAuthorities !== []) {
             $this->stateHandler->setAuthenticatingIdp(reset($authenticatingAuthorities));
         }
 

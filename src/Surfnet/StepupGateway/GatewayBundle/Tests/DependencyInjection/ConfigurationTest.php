@@ -64,7 +64,7 @@ final class ConfigurationTest extends TestCase
         $this->assertConfigurationIsValid([['enabled_second_factors' => ['sms', 'yubikey']]], 'enabled_second_factors');
     }
 
-    protected function getConfiguration()
+    protected function getConfiguration(): \Surfnet\StepupGateway\GatewayBundle\DependencyInjection\Configuration
     {
         return new Configuration();
     }

@@ -33,7 +33,7 @@ class ProviderRepositoryTest extends TestCase
     /**
      * @var \Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\Provider
      */
-    private $provider;
+    private \Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\Provider $provider;
 
     protected function setUp(): void
     {

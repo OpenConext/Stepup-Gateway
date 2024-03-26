@@ -58,7 +58,7 @@ class SecondFactorVerificationService
         }
 
         $subject = $stateHandler->getSubject();
-        if (!empty($subject) && strtolower($subjectNameId) !== strtolower($subject)) {
+        if ($subject !== null && $subject !== '' && $subject !== '0' && strtolower($subjectNameId) !== strtolower($subject)) {
             throw new InvalidSubjectException(
                 sprintf(
                     'The subject required for authentication (%s) does not match the one found in the state handler (%s)',

@@ -26,12 +26,12 @@ final class GlobalViewParameters
     /**
      * @var string[]
      */
-    private $locales;
+    private readonly array $locales;
 
     /**
      * @var string[]
      */
-    private $supportUrl;
+    private array $supportUrl;
 
     /**
      * @param string[] $locales

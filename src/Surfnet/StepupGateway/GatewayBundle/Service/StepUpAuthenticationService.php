@@ -192,7 +192,7 @@ class StepUpAuthenticationService
             }
         }
 
-        if (!count($loaCandidates)) {
+        if (count($loaCandidates) === 0) {
             throw new LoaCannotBeGivenException('No Loa can be found, at least one Loa should be found');
         }
 
@@ -206,7 +206,7 @@ class StepUpAuthenticationService
             }
         }
 
-        if (!count($actualLoas)) {
+        if (count($actualLoas) === 0) {
             throw new LoaCannotBeGivenException(
                 sprintf(
                     'Out of "%d" candidates, no existing Loa could be found, no authentication is possible.',
@@ -241,7 +241,7 @@ class StepUpAuthenticationService
     private function hasNonDefaultSpConfiguredLoas(array $spConfiguredLoas): bool
     {
         unset($spConfiguredLoas['__default__']);
-        return (count($spConfiguredLoas) > 0);
+        return ($spConfiguredLoas !== []);
     }
 
     /**
@@ -329,7 +329,7 @@ class StepUpAuthenticationService
     /**
      * @return OtpVerification
      */
-    public function verifySmsChallenge(VerifyPossessionOfPhoneCommand $command)
+    public function verifySmsChallenge(VerifyPossessionOfPhoneCommand $command): \Surfnet\StepupBundle\Service\SmsSecondFactor\OtpVerification
     {
         return $this->smsService->verifyPossession($command);
     }

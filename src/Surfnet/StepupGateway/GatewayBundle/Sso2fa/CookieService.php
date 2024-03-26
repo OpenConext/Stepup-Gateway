@@ -177,7 +177,7 @@ class CookieService implements CookieServiceInterface
     private function getRemoteSp(ResponseContext $responseContext): ServiceProvider
     {
         $remoteSp = $responseContext->getServiceProvider();
-        if (!$remoteSp) {
+        if (!$remoteSp instanceof \Surfnet\StepupGateway\GatewayBundle\Entity\ServiceProvider) {
             throw new RuntimeException('SP not found in the response context, unable to continue with SSO on 2FA');
         }
         return $remoteSp;

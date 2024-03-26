@@ -31,16 +31,13 @@ class SmsAdapterProvider
     /**
      * @var SmsAdapterInterface[]
      */
-    private $services;
+    private ?array $services = null;
 
-    private static $allowedServices = [
+    private static array $allowedServices = [
         SpryngService::class => self::SPRYNG,
     ];
 
-    /**
-     * @var string
-     */
-    private $selectedService;
+    private readonly string $selectedService;
 
     public function __construct(string $selectedService)
     {

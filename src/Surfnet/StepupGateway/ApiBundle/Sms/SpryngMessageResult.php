@@ -28,7 +28,7 @@ class SpryngMessageResult implements SmsMessageResultInterface
 
     public function isSuccess(): bool
     {
-        if (!$this->message) {
+        if (!$this->message instanceof \Spryng\SpryngRestApi\Http\Response) {
             return false;
         }
         return $this->message->wasSuccessful();
@@ -36,7 +36,7 @@ class SpryngMessageResult implements SmsMessageResultInterface
 
     public function isMessageInvalid(): bool
     {
-        if (!$this->message) {
+        if (!$this->message instanceof \Spryng\SpryngRestApi\Http\Response) {
             return false;
         }
         return $this->message->serverError();
@@ -44,7 +44,7 @@ class SpryngMessageResult implements SmsMessageResultInterface
 
     public function getRawErrors(): array
     {
-        if (!$this->message) {
+        if (!$this->message instanceof \Spryng\SpryngRestApi\Http\Response) {
             return [];
         }
         return [$this->message->getRawResponse()];

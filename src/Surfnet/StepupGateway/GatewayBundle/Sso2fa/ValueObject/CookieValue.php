@@ -26,7 +26,7 @@ class CookieValue implements CookieValueInterface
 {
     private $tokenId;
     private $identityId;
-    private $loa;
+    private ?float $loa = null;
     private $authenticationTime;
 
     /**

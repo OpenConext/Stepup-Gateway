@@ -40,10 +40,7 @@ use Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler;
  */
 class ProxyResponseService
 {
-    /**
-     * @var \DateTime
-     */
-    private $currentTime;
+    private readonly \DateTime $currentTime;
 
     public function __construct(
         private readonly IdentityProvider        $hostedIdentityProvider,
@@ -62,7 +59,7 @@ class ProxyResponseService
      * @param string|null $loa
      * @return Response
      */
-    public function createProxyResponse(Assertion $assertion, $destination, $loa = null)
+    public function createProxyResponse(Assertion $assertion, ?string $destination, $loa = null): \SAML2\Response
     {
         $newAssertion = new Assertion();
         $newAssertion->setNotBefore($this->currentTime->getTimestamp());
@@ -100,7 +97,7 @@ class ProxyResponseService
     /**
      * @param string $destination ACS URL
      */
-    private function addSubjectConfirmationFor(Assertion $newAssertion, $destination): void
+    private function addSubjectConfirmationFor(Assertion $newAssertion, ?string $destination): void
     {
         $confirmation = new SubjectConfirmation();
         $confirmation->setMethod(Constants::CM_BEARER);
@@ -122,10 +119,7 @@ class ProxyResponseService
 
         $authority = $assertion->getAuthenticatingAuthority();
         $newAssertion->setAuthenticatingAuthority(
-            array_merge(
-                (empty($authority) ? [] : $authority),
-                [$assertion->getIssuer()->getValue()]
-            )
+            [$assertion->getIssuer()->getValue()]
         );
     }
 
@@ -133,7 +127,7 @@ class ProxyResponseService
      * @param string $destination ACS URL
      * @return Response
      */
-    private function createNewAuthnResponse(Assertion $newAssertion, $destination)
+    private function createNewAuthnResponse(Assertion $newAssertion, ?string $destination): \SAML2\Response
     {
         $response = new Response();
         $response->setAssertions([$newAssertion]);
@@ -165,7 +159,7 @@ class ProxyResponseService
     }
 
     private function updateNewAssertionWith(
-        $eptiNameId,
+        array $eptiNameId,
         $internalCollabPersonId,
         Assertion $newAssertion,
         Assertion $originalAssertion

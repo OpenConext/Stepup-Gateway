@@ -51,7 +51,7 @@ class ServiceProvider extends BaseServiceProvider
             throw InvalidArgumentException::invalidType('string', 'nameId', $nameId);
         }
 
-        if (empty($nameId)) {
+        if ($nameId === '' || $nameId === '0') {
             return false;
         }
 
@@ -95,7 +95,7 @@ class ServiceProvider extends BaseServiceProvider
             return $acsLocationInAuthnRequest;
         }
 
-        if ($logger !== null) {
+        if ($logger instanceof \Psr\Log\LoggerInterface) {
             $logger->warning(
                 sprintf(
                     'AuthnRequest requests ACS location "%s" but it is not configured in the list of allowed ACS ' .

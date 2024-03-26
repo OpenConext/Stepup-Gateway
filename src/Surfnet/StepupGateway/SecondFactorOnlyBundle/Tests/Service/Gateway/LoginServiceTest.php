@@ -43,13 +43,13 @@ use Symfony\Component\HttpFoundation\Session\Session;
 final class LoginServiceTest extends GatewaySamlTestCase
 {
     /** @var Mockery\Mock|LoginService */
-    private $gatewayLoginService;
+    private ?\Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\Gateway\LoginService $gatewayLoginService = null;
 
     /** @var Mockery\Mock|ProxyStateHandler */
-    private $stateHandler;
+    private ?\Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler $stateHandler = null;
 
     /** @var Mockery\Mock|LoaResolutionService */
-    private $loaResolutionService;
+    private ?\Surfnet\StepupBundle\Service\LoaResolutionService $loaResolutionService = null;
 
     /** @var Mockery\Mock|PostBinding */
     private $postBinding;
@@ -279,7 +279,7 @@ final class LoginServiceTest extends GatewaySamlTestCase
     /**
      * @return LoaResolutionService
      */
-    private function mockLoaResolutionService(array $loaLevels)
+    private function mockLoaResolutionService(array $loaLevels): \Surfnet\StepupBundle\Service\LoaResolutionService
     {
         $loaLevelObjects = [];
         foreach ($loaLevels as $level) {

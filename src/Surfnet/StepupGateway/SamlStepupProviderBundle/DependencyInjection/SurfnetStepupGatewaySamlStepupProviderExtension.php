@@ -60,7 +60,7 @@ class SurfnetStepupGatewaySamlStepupProviderExtension extends Extension
     }
 
     private function loadProviderConfiguration(
-        $provider,
+        string $provider,
         array $configuration,
         array $routes,
         ContainerBuilder $container
@@ -122,11 +122,8 @@ class SurfnetStepupGatewaySamlStepupProviderExtension extends Extension
         $container->setDefinition('gssp.view_config.' . $provider, $viewConfigDefinition);
     }
 
-    /**
-     * @param string           $provider
-     */
     private function createHostedDefinitions(
-        $provider,
+        string $provider,
         array $configuration,
         array $routes,
         ContainerBuilder $container
@@ -148,10 +145,9 @@ class SurfnetStepupGatewaySamlStepupProviderExtension extends Extension
     }
 
     /**
-     * @param string $provider
      * @return Definition
      */
-    private function buildHostedEntityDefinition($provider, array $configuration, array $routes)
+    private function buildHostedEntityDefinition(string $provider, array $configuration, array $routes): \Symfony\Component\DependencyInjection\Definition
     {
         $entityId = ['entity_id_route' => $this->createRouteConfig($provider, $routes['metadata'])];
         $spAdditional = [
@@ -178,10 +174,7 @@ class SurfnetStepupGatewaySamlStepupProviderExtension extends Extension
         return $hostedDefinition;
     }
 
-    /**
-     * @param string           $provider
-     */
-    private function createRemoteDefinition($provider, array $configuration, ContainerBuilder $container): void
+    private function createRemoteDefinition(string $provider, array $configuration, ContainerBuilder $container): void
     {
         $definition    = new Definition(\Surfnet\SamlBundle\Entity\IdentityProvider::class, [
             [
@@ -196,11 +189,10 @@ class SurfnetStepupGatewaySamlStepupProviderExtension extends Extension
     }
 
     /**
-     * @param string           $provider
      * @return Definition
      */
     private function createMetadataDefinition(
-        $provider,
+        string $provider,
         array $configuration,
         array $routes,
         ContainerBuilder $container
@@ -231,7 +223,7 @@ class SurfnetStepupGatewaySamlStepupProviderExtension extends Extension
         $container->setDefinition('gssp.provider.' . $provider . '.metadata.factory', $metadataFactory);
     }
 
-    private function createRouteConfig($provider, $routeName)
+    private function createRouteConfig(string $provider, $routeName): array
     {
         return [
             'route'      => $routeName,

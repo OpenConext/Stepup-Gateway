@@ -41,13 +41,12 @@ use Symfony\Component\HttpFoundation\Session\Session;
 final class ConsumeAssertionServiceTest extends GatewaySamlTestCase
 {
     /** @var Mockery\Mock|ConsumeAssertionService */
-    private $gatewayConsumeAssertionService;
+    private ?\Surfnet\StepupGateway\GatewayBundle\Service\Gateway\ConsumeAssertionService $gatewayConsumeAssertionService = null;
 
     /** @var Mockery\Mock|ProxyStateHandler */
-    private $stateHandler;
+    private ?\Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler $stateHandler = null;
 
-    /** @var ResponseContext */
-    private $responseContext;
+    private ?\Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext $responseContext = null;
 
     /** @var Mockery\Mock|PostBinding */
     private $postBinding;
@@ -55,8 +54,7 @@ final class ConsumeAssertionServiceTest extends GatewaySamlTestCase
     /** @var Mockery\Mock|SamlEntityService */
     private $samlEntityService;
 
-    /** @var IdentityProvider */
-    private $remoteIdp;
+    private ?\Surfnet\SamlBundle\Entity\IdentityProvider $remoteIdp = null;
 
     public function setUp(): void
     {
@@ -655,10 +653,7 @@ final class ConsumeAssertionServiceTest extends GatewaySamlTestCase
         );
     }
 
-    /**
-     * @param string $samlResponseXml
-     */
-    private function mockPostBinding($samlResponseXml): void
+    private function mockPostBinding(string $samlResponseXml): void
     {
         $previous = libxml_disable_entity_loader(true);
         $asXml = DOMDocumentFactory::fromString($samlResponseXml);

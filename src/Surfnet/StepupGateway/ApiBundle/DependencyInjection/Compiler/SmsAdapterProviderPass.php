@@ -31,7 +31,7 @@ class SmsAdapterProviderPass implements CompilerPassInterface
     {
         $definition = $container->findDefinition('surfnet_gateway_api.service.provider');
         $taggedServices = $container->findTaggedServiceIds('sms_provider');
-        foreach ($taggedServices as $id => $tags) {
+        foreach (array_keys($taggedServices) as $id) {
             $definition->addMethodCall('addSmsAdapter', [new Reference($id)]);
         }
     }

@@ -22,8 +22,7 @@ use Surfnet\StepupGateway\SamlStepupProviderBundle\Exception\InvalidArgumentExce
 
 final class AllowedServiceProviders implements \Stringable
 {
-    /** @var array */
-    private $allowed;
+    private readonly array $allowed;
 
     public function __construct(array $allowed)
     {

@@ -94,25 +94,21 @@ class FailedResponseService
      */
     public function createRequesterFailureResponse(ResponseContext $responseContext)
     {
-        $response = $this->responseBuilder
+        return $this->responseBuilder
             ->createNewResponse($responseContext)
             ->setResponseStatus(Constants::STATUS_REQUESTER, Constants::STATUS_REQUEST_UNSUPPORTED)
             ->get();
-
-        return $response;
     }
 
     /**
      * @param $context
      * @return SAMLResponse
      */
-    public function createResponseFailureResponse($context)
+    public function createResponseFailureResponse(\Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext $context)
     {
-        $response = $this->responseBuilder
+        return $this->responseBuilder
             ->createNewResponse($context)
             ->setResponseStatus(Constants::STATUS_RESPONDER)
             ->get();
-
-        return $response;
     }
 }

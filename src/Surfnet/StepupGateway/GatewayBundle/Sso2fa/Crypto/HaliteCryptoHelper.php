@@ -30,7 +30,7 @@ use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\CookieValueInterface;
 
 class HaliteCryptoHelper implements CryptoHelperInterface
 {
-    private $encryptionKey;
+    private readonly \ParagonIE\Halite\Symmetric\EncryptionKey $encryptionKey;
 
     public function __construct(Configuration $configuration)
     {

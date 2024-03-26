@@ -46,7 +46,7 @@ class ResponseFactoryTest extends GatewaySamlTestCase
     /**
      * @var ResponseFactory
      */
-    private $factory;
+    private \Surfnet\StepupGateway\SecondFactorOnlyBundle\Saml\ResponseFactory $factory;
 
     public function setUp(): void
     {

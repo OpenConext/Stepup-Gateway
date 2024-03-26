@@ -29,17 +29,15 @@ class SamlEntityService implements ServiceProviderRepository
     /**
      * @var \Surfnet\SamlBundle\Entity\IdentityProvider[]
      */
-    private $loadedIdentityProviders;
+    private array $loadedIdentityProviders = [];
 
     /**
      * @var \Surfnet\SamlBundle\Entity\ServiceProvider[]
      */
-    private $loadedServiceProviders;
+    private array $loadedServiceProviders = [];
 
     public function __construct(private readonly SamlEntityRepository $samlEntityRepository)
     {
-        $this->loadedIdentityProviders = [];
-        $this->loadedServiceProviders = [];
     }
 
     /**

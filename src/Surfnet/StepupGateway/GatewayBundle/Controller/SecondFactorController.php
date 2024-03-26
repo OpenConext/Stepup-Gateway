@@ -56,17 +56,17 @@ class SecondFactorController extends AbstractController
     public const MODE_SFO = 'sfo';
     public const MODE_SSO = 'sso';
 
-    public function selectSecondFactorForVerificationSsoAction(Request $request)
+    public function selectSecondFactorForVerificationSsoAction(Request $request): \Symfony\Component\HttpFoundation\Response
     {
         return $this->selectSecondFactorForVerificationAction(self::MODE_SSO, $request);
     }
 
-    public function selectSecondFactorForVerificationSfoAction(Request $request)
+    public function selectSecondFactorForVerificationSfoAction(Request $request): \Symfony\Component\HttpFoundation\Response
     {
         return $this->selectSecondFactorForVerificationAction(self::MODE_SFO, $request);
     }
 
-    public function selectSecondFactorForVerificationAction($authenticationMode, Request $request)
+    public function selectSecondFactorForVerificationAction(string $authenticationMode, Request $request): \Symfony\Component\HttpFoundation\Response|\Symfony\Component\HttpFoundation\RedirectResponse
     {
         $this->supportsAuthenticationMode($authenticationMode);
         $context = $this->getResponseContext($authenticationMode);
@@ -170,7 +170,7 @@ class SecondFactorController extends AbstractController
      * @return array|RedirectResponse|Response
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function chooseSecondFactorAction(Request $request, $authenticationMode)
+    public function chooseSecondFactorAction(Request $request, $authenticationMode): \Symfony\Component\HttpFoundation\Response|\Symfony\Component\HttpFoundation\RedirectResponse|array
     {
         $this->supportsAuthenticationMode($authenticationMode);
         $context = $this->getResponseContext($authenticationMode);
@@ -241,7 +241,7 @@ class SecondFactorController extends AbstractController
 
             // Filter the selected second factor from the array collection
             $secondFactorFiltered = $secondFactors->filter(
-                fn($secondFactor) => $secondFactorType === $secondFactor->secondFactorType
+                fn($secondFactor): bool => $secondFactorType === $secondFactor->secondFactorType
             );
 
             if ($secondFactorFiltered->isEmpty()) {
@@ -275,7 +275,7 @@ class SecondFactorController extends AbstractController
         ];
     }
 
-    public function verifyGssfAction(Request $request)
+    public function verifyGssfAction(Request $request): \Symfony\Component\HttpFoundation\Response
     {
         if (!$request->get('authenticationMode', false)) {
             throw new RuntimeException('Unable to determine the authentication mode in the GSSP verification action');
@@ -321,7 +321,7 @@ class SecondFactorController extends AbstractController
         );
     }
 
-    public function gssfVerifiedAction(Request $request)
+    public function gssfVerifiedAction(Request $request): \Symfony\Component\HttpFoundation\Response
     {
         $authenticationMode = $request->get('authenticationMode');
         $this->supportsAuthenticationMode($authenticationMode);
@@ -360,7 +360,7 @@ class SecondFactorController extends AbstractController
      * @Template
      * @return array|Response
      */
-    public function verifyYubiKeySecondFactorAction(Request $request)
+    public function verifyYubiKeySecondFactorAction(Request $request): array|\Symfony\Component\HttpFoundation\Response
     {
         if (!$request->get('authenticationMode', false)) {
             throw new RuntimeException('Unable to determine the authentication mode in Yubikey verification action');
@@ -422,7 +422,7 @@ class SecondFactorController extends AbstractController
      * @param string $authenticationMode
      * @return array|Response
      */
-    public function verifySmsSecondFactorAction(Request $request)
+    public function verifySmsSecondFactorAction(Request $request): array|\Symfony\Component\HttpFoundation\RedirectResponse
     {
         if (!$request->get('authenticationMode', false)) {
             throw new RuntimeException('Unable to determine the authentication mode in the SMS verification action');
@@ -494,7 +494,7 @@ class SecondFactorController extends AbstractController
      * @param string $authenticationMode
      * @return array|Response
      */
-    public function verifySmsSecondFactorChallengeAction(Request $request)
+    public function verifySmsSecondFactorChallengeAction(Request $request): \Symfony\Component\HttpFoundation\Response|array
     {
         if (!$request->get('authenticationMode', false)) {
             throw new RuntimeException('Unable to determine the authentication mode in the SMS challenge action');
@@ -553,7 +553,7 @@ class SecondFactorController extends AbstractController
         return ['form' => $form->createView(), 'cancelForm' => $cancelForm->createView()];
     }
 
-    public function cancelAuthenticationAction()
+    public function cancelAuthenticationAction(): \Symfony\Component\HttpFoundation\Response
     {
         return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:sendAuthenticationCancelledByUser');
     }
@@ -611,7 +611,7 @@ class SecondFactorController extends AbstractController
         return $selectedSecondFactor;
     }
 
-    private function selectAndRedirectTo(SecondFactor $secondFactor, ResponseContext $context, $authenticationMode)
+    private function selectAndRedirectTo(SecondFactor $secondFactor, ResponseContext $context, $authenticationMode): \Symfony\Component\HttpFoundation\RedirectResponse
     {
         $context->saveSelectedSecondFactor($secondFactor);
 
@@ -634,7 +634,7 @@ class SecondFactorController extends AbstractController
      * @param string $authenticationMode
      * @return FormInterface
      */
-    private function buildCancelAuthenticationForm($authenticationMode)
+    private function buildCancelAuthenticationForm($authenticationMode): \Symfony\Component\Form\FormInterface
     {
         $cancelFormAction = $this->generateUrl(
             'gateway_cancel_authentication',
@@ -650,7 +650,7 @@ class SecondFactorController extends AbstractController
 
     private function supportsAuthenticationMode($authenticationMode): void
     {
-        if (!($authenticationMode === self::MODE_SSO || $authenticationMode === self::MODE_SFO)) {
+        if ($authenticationMode !== self::MODE_SSO && $authenticationMode !== self::MODE_SFO) {
             throw new InvalidArgumentException('Invalid authentication mode requested');
         }
     }

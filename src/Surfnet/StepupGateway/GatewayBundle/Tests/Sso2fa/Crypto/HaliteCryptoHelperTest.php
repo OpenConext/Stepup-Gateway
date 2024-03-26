@@ -35,7 +35,7 @@ class HaliteCryptoHelperTest extends TestCase
     /**
      * @var HaliteCryptoHelper
      */
-    private $helper;
+    private \Surfnet\StepupGateway\GatewayBundle\Sso2fa\Crypto\HaliteCryptoHelper $helper;
 
     protected function setUp(): void
     {

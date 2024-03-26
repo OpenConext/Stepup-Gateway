@@ -28,7 +28,7 @@ final class EnabledSecondFactorRepository implements SecondFactorRepository
     /**
      * @var string[]
      */
-    private $enabledTypes;
+    private readonly array $enabledTypes;
 
     /**
      * @param string[]               $enabledTypes
@@ -41,7 +41,7 @@ final class EnabledSecondFactorRepository implements SecondFactorRepository
         $this->enabledTypes = array_combine($enabledTypes, $enabledTypes);
     }
 
-    public function getAllMatchingFor(Loa $highestLoa, $identityNameId, SecondFactorTypeService $service)
+    public function getAllMatchingFor(Loa $highestLoa, $identityNameId, SecondFactorTypeService $service): \Doctrine\Common\Collections\ArrayCollection
     {
         $enabledSecondFactors = new ArrayCollection();
 

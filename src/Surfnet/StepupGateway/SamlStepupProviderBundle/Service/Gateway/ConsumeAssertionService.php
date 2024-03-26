@@ -37,7 +37,7 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class ConsumeAssertionService
 {
-    private $handledRequestId = null;
+    private ?string $handledRequestId = null;
 
     /**
      * ConsumeAssertionService constructor.
@@ -135,10 +135,9 @@ class ConsumeAssertionService
     }
 
     /**
-     * @param string $serviceProvider
      * @return ServiceProvider
      */
-    private function getServiceProvider($serviceProvider)
+    private function getServiceProvider(string $serviceProvider): \Surfnet\SamlBundle\Entity\ServiceProvider
     {
         return $this->connectedServiceProviders->getConfigurationOf($serviceProvider);
     }
@@ -146,7 +145,7 @@ class ConsumeAssertionService
     /**
      * @return null|string
      */
-    public function getReceivedRequestId()
+    public function getReceivedRequestId(): ?string
     {
         return $this->handledRequestId;
     }
