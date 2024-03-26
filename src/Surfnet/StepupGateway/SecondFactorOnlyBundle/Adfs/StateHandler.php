@@ -20,7 +20,7 @@ namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs;
 
 use Symfony\Component\HttpFoundation\RequestStack;
 
-final class StateHandler
+class StateHandler
 {
     public const SESSION_PATH = 'surfnet/gateway/adfs';
 

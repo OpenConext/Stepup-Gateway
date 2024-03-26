@@ -22,7 +22,7 @@ use Surfnet\StepupGateway\GatewayBundle\Saml\Exception\RuntimeException;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
-final class ProxyStateHandler
+class ProxyStateHandler
 {
     public function __construct(
         private readonly RequestStack $requestStack,

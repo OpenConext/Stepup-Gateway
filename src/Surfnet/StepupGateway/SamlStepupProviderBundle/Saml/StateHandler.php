@@ -24,20 +24,10 @@ use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 
 class StateHandler extends ProxyStateHandler
 {
-    /**
-     * @var string
-     */
-    private $provider;
-
-    /**
-     * @var AttributeBagInterface
-     */
-    private $attributeBag;
-
-    public function __construct(AttributeBagInterface $attributeBag, $provider)
-    {
-        $this->attributeBag = $attributeBag;
-        $this->provider = $provider;
+    public function __construct(
+        private readonly AttributeBagInterface $attributeBag,
+        private readonly string                $provider,
+    ) {
     }
 
     public function setSubject(string $subject): self
@@ -57,10 +47,7 @@ class StateHandler extends ProxyStateHandler
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getSubject()
+    public function getSubject(): ?string
     {
         return $this->get('subject');
     }
@@ -68,12 +55,12 @@ class StateHandler extends ProxyStateHandler
     /**
      * @return bool
      */
-    public function hasSubject()
+    public function hasSubject(): bool
     {
         return (bool) $this->getSubject();
     }
 
-    public function markRequestAsSecondFactorVerification()
+    public function markRequestAsSecondFactorVerification(): static
     {
         $this->set('is_second_factor_verification', true);
 
@@ -83,7 +70,7 @@ class StateHandler extends ProxyStateHandler
     /**
      * @return bool
      */
-    public function secondFactorVerificationRequested()
+    public function secondFactorVerificationRequested(): bool
     {
         return (bool) $this->get('is_second_factor_verification');
     }
@@ -96,18 +83,18 @@ class StateHandler extends ProxyStateHandler
         $all = $this->attributeBag->all();
 
         foreach (array_keys($all) as $key) {
-            if (strpos($key, $this->provider . '/') === 0) {
+            if (str_starts_with($key, $this->provider . '/')) {
                 $this->attributeBag->remove($key);
             }
         }
     }
 
-    protected function set($key, $value)
+    protected function set($key, $value): void
     {
         $this->attributeBag->set($this->provider . '/' . $key, $value);
     }
 
-    protected function get($key)
+    protected function get($key): mixed
     {
         return $this->attributeBag->get($this->provider . '/' . $key);
     }
