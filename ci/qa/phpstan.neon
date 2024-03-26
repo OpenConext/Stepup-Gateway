@@ -1,6 +1,8 @@
 includes:
     - ./phpstan-baseline.php
     - ../../vendor/phpstan/phpstan-symfony/extension.neon
+    - ../../vendor/phpstan/phpstan-phpunit/extension.neon
+    - ../../vendor/phpstan/phpstan-mockery/extension.neon
     - ../../vendor/phpstan/phpstan-deprecation-rules/rules.neon
 rules:
     # Put here your cutom rules for this repository
