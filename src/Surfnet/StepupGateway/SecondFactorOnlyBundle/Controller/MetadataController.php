@@ -19,9 +19,9 @@
 namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Controller;
 
 use Surfnet\SamlBundle\Http\XMLResponse;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-class MetadataController extends Controller
+class MetadataController extends AbstractController
 {
     public function metadataAction()
     {

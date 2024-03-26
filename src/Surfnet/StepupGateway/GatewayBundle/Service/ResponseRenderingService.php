@@ -31,44 +31,16 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class ResponseRenderingService
 {
-    /**
-     * @var ResponseBuilder
-     */
-    private $responseBuilder;
-
-    /**
-     * @var Environment
-     */
-    private $templateEngine;
-
-    private $responseHelper;
-
-    private $logger;
-
-    /**
-     * @var CookieService
-     */
-    private $ssoCookieService;
-
     public function __construct(
-        ResponseBuilder $responseBuilder,
-        ResponseHelper $responseHelper,
-        Environment $templateEngine,
-        CookieService $cookieService,
-        LoggerInterface $logger
+        private readonly ResponseBuilder $responseBuilder,
+        private readonly ResponseHelper  $responseHelper,
+        private readonly Environment     $templateEngine,
+        private readonly CookieService   $ssoCookieService,
+        private readonly LoggerInterface $logger
     ) {
-        $this->responseBuilder = $responseBuilder;
-        $this->responseHelper = $responseHelper;
-        $this->templateEngine = $templateEngine;
-        $this->logger = $logger;
-        $this->ssoCookieService = $cookieService;
     }
 
-    /**
-     * @param ResponseContext $context
-     * @return Response
-     */
-    public function renderRequesterFailureResponse(ResponseContext $context, Request $request)
+    public function renderRequesterFailureResponse(ResponseContext $context, Request $request): Response
     {
         return $this->renderResponse(
             $context,
@@ -83,7 +55,7 @@ final class ResponseRenderingService
         );
     }
 
-    public function renderUnprocessableResponse(ResponseContext $context, Request $request)
+    public function renderUnprocessableResponse(ResponseContext $context, Request $request): Response
     {
         return $this->renderSamlResponse(
             $context,
@@ -151,11 +123,7 @@ final class ResponseRenderingService
         return $httpResponse;
     }
 
-    /**
-     * @param SAMLResponse $response
-     * @return string
-     */
-    public function getResponseAsXML(SAMLResponse $response)
+    public function getResponseAsXML(SAMLResponse $response): string
     {
         return base64_encode($response->toUnsignedXML()->ownerDocument->saveXML());
     }

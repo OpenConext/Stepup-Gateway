@@ -29,7 +29,7 @@ use Surfnet\StepupGateway\GatewayBundle\Service\Gateway\FailedResponseService;
 use Surfnet\StepupGateway\GatewayBundle\Service\Gateway\LoginService;
 use Surfnet\StepupGateway\GatewayBundle\Service\Gateway\RespondService;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\ResponseHelper;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -42,7 +42,7 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class GatewayController extends Controller
+class GatewayController extends AbstractController
 {
     public const RESPONSE_CONTEXT_SERVICE_ID = 'gateway.proxy.response_context';
     public const MODE_SFO = 'sfo';
