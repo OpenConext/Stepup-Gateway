@@ -153,9 +153,6 @@
     "openconext/monitor-bundle": {
         "version": "2.0"
     },
-    "overtrue/phplint": {
-        "version": "1.2.4"
-    },
     "paragonie/constant_time_encoding": {
         "version": "v2.4.0"
     },
@@ -479,9 +476,6 @@
     },
     "symfony/polyfill-php80": {
         "version": "v1.22.1"
-    },
-    "symfony/process": {
-        "version": "v4.4.19"
     },
     "symfony/property-access": {
         "version": "v4.4.19"
