@@ -2,7 +2,6 @@ twig:
     default_path: '%kernel.project_dir%/templates'
     debug: '%kernel.debug%'
     strict_variables: '%kernel.debug%'
-    exception_controller: SurfnetStepupGatewayGatewayBundle:Exception:show
     globals:
       global_view_parameters: "@gateway.service.global_view_parameters"
       app_name: "%app_name%"

@@ -26,7 +26,7 @@
         "doctrine/orm": "^2",
         "graylog2/gelf-php": "^2",
         "incenteev/composer-parameter-handler": "^2.0",
-        "jms/translation-bundle": "^1.7 || ^2",
+        "jms/translation-bundle": "^2",
         "nelmio/security-bundle": "^2",
         "openconext/monitor-bundle": "^3.0 || ^4",
         "paragonie/halite": "^5",

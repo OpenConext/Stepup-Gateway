@@ -3,9 +3,8 @@ framework:
   esi:             false
   secret:          "%secret%"
   form:            ~
+  error_controller: Surfnet\StepupGateway\GatewayBundle\Controller\ExceptionController::show
   csrf_protection: ~
-  templating:
-    engines: ['twig']
   trusted_hosts:   ~
   session:
     # handler_id set to null will use default session handler from php.ini
