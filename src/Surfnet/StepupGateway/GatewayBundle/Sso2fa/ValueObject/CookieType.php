@@ -37,8 +37,8 @@ final class CookieType
             throw new InvalidCookieTypeException(
                 sprintf(
                     'The SSO on second factor authentication cookie type must be one of: "%s"',
-                    implode(', ', $allowedTypes)
-                )
+                    implode(', ', $allowedTypes),
+                ),
             );
         }
         $this->type = $type;

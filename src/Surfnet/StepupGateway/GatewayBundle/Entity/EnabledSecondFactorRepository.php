@@ -36,13 +36,16 @@ final class EnabledSecondFactorRepository implements SecondFactorRepository
     public function __construct(
         private readonly SecondFactorRepository $secondFactorRepository,
         array $enabledTypes,
-        private readonly LoggerInterface $logger
+        private readonly LoggerInterface $logger,
     ) {
         $this->enabledTypes = array_combine($enabledTypes, $enabledTypes);
     }
 
-    public function getAllMatchingFor(Loa $highestLoa, $identityNameId, SecondFactorTypeService $service): \Doctrine\Common\Collections\ArrayCollection
-    {
+    public function getAllMatchingFor(
+        Loa $highestLoa,
+        $identityNameId,
+        SecondFactorTypeService $service,
+    ): ArrayCollection {
         $enabledSecondFactors = new ArrayCollection();
 
         foreach ($this->secondFactorRepository->getAllMatchingFor($highestLoa, $identityNameId, $service) as $secondFactor) {
@@ -50,8 +53,8 @@ final class EnabledSecondFactorRepository implements SecondFactorRepository
                 $this->logger->info(
                     sprintf(
                         'Discarding second factor; its second factor type "%s" is not enabled',
-                        $secondFactor->secondFactorType
-                    )
+                        $secondFactor->secondFactorType,
+                    ),
                 );
 
                 continue;

@@ -37,7 +37,7 @@ class ViewConfigCollectionPass implements CompilerPassInterface
 
         $definition = $container->findDefinition('surfnet_stepup.provider.collection');
         $taggedServices = $container->findTaggedServiceIds(
-            SurfnetStepupGatewaySamlStepupProviderExtension::VIEW_CONFIG_TAG_NAME
+            SurfnetStepupGatewaySamlStepupProviderExtension::VIEW_CONFIG_TAG_NAME,
         );
 
         $taggedServices = array_keys($taggedServices);

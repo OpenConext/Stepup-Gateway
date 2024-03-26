@@ -37,13 +37,13 @@ use Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler;
  */
 final class ResponseFactory
 {
-    private readonly \DateTime $currentTime;
+    private readonly DateTime $currentTime;
 
     public function __construct(
         private readonly IdentityProvider $hostedIdentityProvider,
         private readonly ProxyStateHandler $proxyStateHandler,
         private readonly AssertionSigningService $assertionSigningService,
-        DateTime $now = null
+        DateTime $now = null,
     ) {
         $this->currentTime = is_null($now) ? new DateTime('now', new DateTimeZone('UTC')): $now;
     }
@@ -53,15 +53,18 @@ final class ResponseFactory
      * @param string|null $authnContextClassRef
      * @return Response
      */
-    public function createSecondFactorOnlyResponse(string $nameId, ?string $destination, ?string $authnContextClassRef): \SAML2\Response
-    {
+    public function createSecondFactorOnlyResponse(
+        string $nameId,
+        ?string $destination,
+        ?string $authnContextClassRef,
+    ): Response {
         return $this->createNewAuthnResponse(
             $this->createNewAssertion(
                 $nameId,
                 $authnContextClassRef,
-                $destination
+                $destination,
             ),
-            $destination
+            $destination,
         );
     }
 
@@ -69,7 +72,7 @@ final class ResponseFactory
      * @param string $destination The ACS location
      * @return Response
      */
-    private function createNewAuthnResponse(Assertion $newAssertion, ?string $destination): \SAML2\Response
+    private function createNewAuthnResponse(Assertion $newAssertion, ?string $destination): Response
     {
         $response = new Response();
         $response->setAssertions([$newAssertion]);
@@ -88,8 +91,11 @@ final class ResponseFactory
      * @param string $destination The ACS location
      * @return Assertion
      */
-    private function createNewAssertion(string $nameId, ?string $authnContextClassRef, ?string $destination): \SAML2\Assertion
-    {
+    private function createNewAssertion(
+        string $nameId,
+        ?string $authnContextClassRef,
+        ?string $destination,
+    ): Assertion {
         $newAssertion = new Assertion();
         $newAssertion->setNotBefore($this->currentTime->getTimestamp());
         $newAssertion->setNotOnOrAfter($this->getTimestamp('PT5M'));

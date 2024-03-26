@@ -37,8 +37,11 @@ class CookieHelper implements CookieHelperInterface
      */
     private const SAME_SITE = Cookie::SAMESITE_NONE;
 
-    public function __construct(private readonly Configuration $configuration, private readonly CryptoHelperInterface $encryptionHelper, private readonly LoggerInterface $logger)
-    {
+    public function __construct(
+        private readonly Configuration $configuration,
+        private readonly CryptoHelperInterface $encryptionHelper,
+        private readonly LoggerInterface $logger,
+    ) {
     }
 
     public function write(Response $response, CookieValueInterface $value): void
@@ -87,7 +90,7 @@ class CookieHelper implements CookieHelperInterface
             true,
             true,
             false,
-            self::SAME_SITE
+            self::SAME_SITE,
         );
     }
 

@@ -35,7 +35,7 @@ final readonly class SecondFactorOnlySamlEntityRepositoryDecorator implements Sa
         return $this->repository->getIdentityProvider($entityId);
     }
 
-    public function getServiceProvider($entityId): ?\Surfnet\StepupGateway\GatewayBundle\Entity\SamlEntity
+    public function getServiceProvider($entityId): ?SamlEntity
     {
         $serviceProvider = $this->repository->getServiceProvider($entityId);
 

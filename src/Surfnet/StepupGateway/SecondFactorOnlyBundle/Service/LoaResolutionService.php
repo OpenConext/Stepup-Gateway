@@ -23,8 +23,11 @@ use Surfnet\StepupBundle\Service\LoaResolutionService as BaseResolutionService;
 
 class LoaResolutionService
 {
-    public function __construct(private LoggerInterface $logger, private readonly LoaAliasLookupService $loaAliasLookup, private readonly BaseResolutionService $loaResolution)
-    {
+    public function __construct(
+        private LoggerInterface $logger,
+        private readonly LoaAliasLookupService $loaAliasLookup,
+        private readonly BaseResolutionService $loaResolution,
+    ) {
     }
 
     /**
@@ -59,7 +62,7 @@ class LoaResolutionService
         if (!$derefLoaId) {
             $this->logger->notice(sprintf(
                 'Requested required Loa "%s" does not have a second factor alias',
-                $loaId
+                $loaId,
             ));
             return '';
         }
@@ -67,7 +70,7 @@ class LoaResolutionService
         if (!$this->loaResolution->hasLoa($derefLoaId)) {
             $this->logger->notice(sprintf(
                 'Requested required Loa "%s" does not exist',
-                $derefLoaId
+                $derefLoaId,
             ));
             return '';
         }

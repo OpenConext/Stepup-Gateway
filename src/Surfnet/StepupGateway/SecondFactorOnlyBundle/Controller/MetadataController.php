@@ -27,7 +27,7 @@ class MetadataController extends AbstractController
 {
     public function __construct(
         private readonly LoggerInterface                              $logger,
-        private readonly MetadataFactory $metadataFactory
+        private readonly MetadataFactory $metadataFactory,
     ) {
     }
 
@@ -36,7 +36,7 @@ class MetadataController extends AbstractController
         if (!$this->getParameter('second_factor_only')) {
             $this->logger->notice(sprintf(
                 'Access to %s denied, second_factor_only parameter set to false.',
-                __METHOD__
+                __METHOD__,
             ));
             throw $this->createAccessDeniedException('Second Factor Only feature disabled');
         }

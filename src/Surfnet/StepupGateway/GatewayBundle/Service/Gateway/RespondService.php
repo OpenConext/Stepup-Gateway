@@ -31,8 +31,13 @@ class RespondService
     /**
      * GatewayServiceProviderService constructor.
      */
-    public function __construct(private readonly SamlAuthenticationLogger $samlLogger, private readonly LoaResolutionService $loaResolutionService, private readonly ProxyResponseService $responseProxy, private readonly SecondFactorService $secondFactorService, private SecondFactorTypeService $secondFactorTypeService)
-    {
+    public function __construct(
+        private readonly SamlAuthenticationLogger $samlLogger,
+        private readonly LoaResolutionService $loaResolutionService,
+        private readonly ProxyResponseService $responseProxy,
+        private readonly SecondFactorService $secondFactorService,
+        private SecondFactorTypeService $secondFactorTypeService,
+    ) {
     }
 
     /**
@@ -53,25 +58,25 @@ class RespondService
         $grantedLoa = null;
         if ($responseContext->isSecondFactorVerified()) {
             $secondFactor = $this->secondFactorService->findByUuid(
-                $responseContext->getSelectedSecondFactor()
+                $responseContext->getSelectedSecondFactor(),
             );
 
             $secondFactorTypeService = $this->secondFactorTypeService;
             $grantedLoa = $this->loaResolutionService->getLoaByLevel(
-                $secondFactor->getLoaLevel($secondFactorTypeService)
+                $secondFactor->getLoaLevel($secondFactorTypeService),
             );
         }
 
         $response = $this->responseProxy->createProxyResponse(
             $responseContext->reconstituteAssertion(),
             $responseContext->getDestination(),
-            (string)$grantedLoa
+            (string)$grantedLoa,
         );
 
         $logger->notice(sprintf(
             'Responding to request "%s" with response based on response from the remote IdP with response "%s"',
             $responseContext->getInResponseTo(),
-            $response->getId()
+            $response->getId(),
         ));
 
         return $response;

@@ -36,8 +36,14 @@ class LoginService
     /**
      * GatewayServiceProviderService constructor.
      */
-    public function __construct(private readonly SamlAuthenticationLogger $samlLogger, private readonly ProxyStateHandler $stateHandler, private readonly LoaResolutionService $loaResolutionService, private readonly ServiceProvider $hostedServiceProvider, private readonly IdentityProvider $remoteIdp, private readonly RedirectBinding $redirectBinding)
-    {
+    public function __construct(
+        private readonly SamlAuthenticationLogger $samlLogger,
+        private readonly ProxyStateHandler $stateHandler,
+        private readonly LoaResolutionService $loaResolutionService,
+        private readonly ServiceProvider $hostedServiceProvider,
+        private readonly IdentityProvider $remoteIdp,
+        private readonly RedirectBinding $redirectBinding,
+    ) {
     }
 
     /**
@@ -61,7 +67,7 @@ class LoginService
         $logger->notice(sprintf(
             'AuthnRequest processing complete, received AuthnRequest from "%s", request ID: "%s"',
             $originalRequest->getServiceProvider(),
-            $originalRequest->getRequestId()
+            $originalRequest->getRequestId(),
         ));
 
         // Clear the state of the previous SSO action. Request data of previous
@@ -84,7 +90,7 @@ class LoginService
         if ($requiredLoa && !$this->loaResolutionService->hasLoa($requiredLoa)) {
             $message = sprintf(
                 'Requested required Loa "%s" does not exist, sending response with status Requester Error',
-                $requiredLoa
+                $requiredLoa,
             );
             $logger->info($message);
 
@@ -95,7 +101,7 @@ class LoginService
 
         $proxyRequest = AuthnRequestFactory::createNewRequest(
             $this->hostedServiceProvider,
-            $this->remoteIdp
+            $this->remoteIdp,
         );
 
         $proxyRequest->setScoping([$originalRequest->getServiceProvider()]);
@@ -104,7 +110,7 @@ class LoginService
         $logger->notice(sprintf(
             'Sending Proxy AuthnRequest with request ID: "%s" for original AuthnRequest "%s"',
             $proxyRequest->getRequestId(),
-            $originalRequest->getRequestId()
+            $originalRequest->getRequestId(),
         ));
 
         return $proxyRequest;

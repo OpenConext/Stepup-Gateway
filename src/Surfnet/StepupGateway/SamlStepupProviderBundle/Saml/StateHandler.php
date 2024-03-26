@@ -38,8 +38,8 @@ class StateHandler extends ProxyStateHandler
                 sprintf(
                     'The subject should not be rewritten with another value. Old: "%s", new "%s"',
                     $currentSubject,
-                    $subject
-                )
+                    $subject,
+                ),
             );
         }
         $this->set('subject', $subject);

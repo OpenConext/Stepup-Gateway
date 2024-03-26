@@ -29,8 +29,11 @@ class SecondFactorVerificationService
     /**
      * SecondFactorVerificationService constructor.
      */
-    public function __construct(private readonly SamlAuthenticationLogger $samlLogger, private readonly ResponseContext $responseContext, private readonly ResponseContext $sfoResponseContext)
-    {
+    public function __construct(
+        private readonly SamlAuthenticationLogger $samlLogger,
+        private readonly ResponseContext $responseContext,
+        private readonly ResponseContext $sfoResponseContext,
+    ) {
     }
 
     /**
@@ -47,7 +50,7 @@ class SecondFactorVerificationService
     public function sendSecondFactorVerificationAuthnRequest(
         Provider $provider,
         string $subjectNameId,
-        string $responseContextServiceId
+        string $responseContextServiceId,
     ) {
         $stateHandler = $provider->getStateHandler();
 
@@ -63,14 +66,14 @@ class SecondFactorVerificationService
                 sprintf(
                     'The subject required for authentication (%s) does not match the one found in the state handler (%s)',
                     $subjectNameId,
-                    $stateHandler->getSubject()
-                )
+                    $stateHandler->getSubject(),
+                ),
             );
         }
 
         $authnRequest = AuthnRequestFactory::createNewRequest(
             $provider->getServiceProvider(),
-            $provider->getRemoteIdentityProvider()
+            $provider->getRemoteIdentityProvider(),
         );
         $authnRequest->setSubject($subjectNameId);
 
@@ -88,7 +91,7 @@ class SecondFactorVerificationService
             $authnRequest->getRequestId(),
             $provider->getName(),
             $provider->getRemoteIdentityProvider()->getSsoUrl(),
-            $subjectNameId
+            $subjectNameId,
         ));
 
         return $authnRequest;

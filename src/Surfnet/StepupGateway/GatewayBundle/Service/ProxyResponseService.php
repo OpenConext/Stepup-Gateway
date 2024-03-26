@@ -40,7 +40,7 @@ use Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler;
  */
 class ProxyResponseService
 {
-    private readonly \DateTime $currentTime;
+    private readonly DateTime $currentTime;
 
     public function __construct(
         private readonly IdentityProvider        $hostedIdentityProvider,
@@ -49,7 +49,7 @@ class ProxyResponseService
         private readonly AttributeDictionary     $attributeDictionary,
         private readonly AttributeDefinition     $internalCollabPersonIdAttribute,
         private readonly Loa                     $intrinsicLoa,
-        DateTime                $now = null
+        DateTime                $now = null,
     ) {
         $this->currentTime = is_null($now) ? new DateTime('now', new DateTimeZone('UTC')) : $now;
     }
@@ -59,7 +59,7 @@ class ProxyResponseService
      * @param string|null $loa
      * @return Response
      */
-    public function createProxyResponse(Assertion $assertion, ?string $destination, $loa = null): \SAML2\Response
+    public function createProxyResponse(Assertion $assertion, ?string $destination, $loa = null): Response
     {
         $newAssertion = new Assertion();
         $newAssertion->setNotBefore($this->currentTime->getTimestamp());
@@ -79,7 +79,7 @@ class ProxyResponseService
         if (is_null($eptiNameId) && is_null($internalCollabPersonId)) {
             throw new RuntimeException(
                 'Neither "urn:mace:dir:attribute-def:eduPersonTargetedID" nor ' .
-                '"urn:mace:surf.nl:attribute-def:internal-collabPersonId" is present'
+                '"urn:mace:surf.nl:attribute-def:internal-collabPersonId" is present',
             );
         }
         $this->updateNewAssertionWith($eptiNameId, $internalCollabPersonId, $newAssertion, $assertion);
@@ -119,7 +119,7 @@ class ProxyResponseService
 
         $authority = $assertion->getAuthenticatingAuthority();
         $newAssertion->setAuthenticatingAuthority(
-            [$assertion->getIssuer()->getValue()]
+            [$assertion->getIssuer()->getValue()],
         );
     }
 
@@ -127,7 +127,7 @@ class ProxyResponseService
      * @param string $destination ACS URL
      * @return Response
      */
-    private function createNewAuthnResponse(Assertion $newAssertion, ?string $destination): \SAML2\Response
+    private function createNewAuthnResponse(Assertion $newAssertion, ?string $destination): Response
     {
         $response = new Response();
         $response->setAssertions([$newAssertion]);
@@ -162,13 +162,13 @@ class ProxyResponseService
         array $eptiNameId,
         $internalCollabPersonId,
         Assertion $newAssertion,
-        Assertion $originalAssertion
+        Assertion $originalAssertion,
     ) :void {
         if (!$internalCollabPersonId && $eptiNameId) {
             if (is_null($internalCollabPersonId) && (!array_key_exists(0, $eptiNameId) || !$eptiNameId[0]->getValue())) {
                 throw new RuntimeException(
                     'The "urn:mace:dir:attribute-def:eduPersonTargetedID" attribute does not contain a NameID ' .
-                    'with a value.'
+                    'with a value.',
                 );
             }
             $newAssertion->setNameId($eptiNameId[0]);

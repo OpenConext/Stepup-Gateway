@@ -29,8 +29,8 @@ class InvalidArgumentException extends CoreInvalidArgumentException
                 'Invalid Argument, parameter "%s" should be of type "%s", "%s" given',
                 $parameter,
                 $expectedType,
-                get_debug_type($value)
-            )
+                get_debug_type($value),
+            ),
         );
     }
 }

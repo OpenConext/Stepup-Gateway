@@ -27,6 +27,6 @@ interface CookieServiceInterface
     public function handleSsoOn2faCookieStorage(
         ResponseContext $responseContext,
         Request $request,
-        Response $httpResponse
+        Response $httpResponse,
     ): Response;
 }

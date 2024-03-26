@@ -37,7 +37,7 @@ class YubikeyOtpVerificationResult
      * @param YubikeyPublicId|null $publicId
      * @throws DomainException When $result is not one of the RESULT constants.
      */
-    public function __construct($result, private readonly ?\Surfnet\StepupBundle\Value\YubikeyPublicId $publicId = null)
+    public function __construct($result, private readonly ?YubikeyPublicId $publicId = null)
     {
         $acceptableResults = [
             self::RESULT_PUBLIC_ID_MATCHED,
@@ -54,7 +54,7 @@ class YubikeyOtpVerificationResult
 
     public function didPublicIdMatch(): bool
     {
-        return $this->result === self::RESULT_PUBLIC_ID_MATCHED && $this->publicId instanceof \Surfnet\StepupBundle\Value\YubikeyPublicId;
+        return $this->result === self::RESULT_PUBLIC_ID_MATCHED && $this->publicId instanceof YubikeyPublicId;
     }
 
     public function didOtpVerificationFail(): bool
@@ -65,7 +65,7 @@ class YubikeyOtpVerificationResult
     /**
      * @return YubikeyPublicId|null
      */
-    public function getPublicId(): ?\Surfnet\StepupBundle\Value\YubikeyPublicId
+    public function getPublicId(): ?YubikeyPublicId
     {
         return $this->publicId;
     }

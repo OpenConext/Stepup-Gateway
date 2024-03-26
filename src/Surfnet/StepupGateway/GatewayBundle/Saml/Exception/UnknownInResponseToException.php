@@ -26,8 +26,8 @@ class UnknownInResponseToException extends RuntimeException
             sprintf(
                 'Received SAMLResponse in response to an unknown Request identified by "%s", "%s".',
                 $actual,
-                ($expected ? 'expected "' . $expected . '"' : ' no response expected')
-            )
+                ($expected ? 'expected "' . $expected . '"' : ' no response expected'),
+            ),
         );
     }
 }

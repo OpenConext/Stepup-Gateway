@@ -43,7 +43,6 @@ class YubikeyController extends AbstractController
     private function createJsonResponseFromVerifyYubikeyResult(OtpVerificationResult $result): JsonResponse
     {
         if ($result->isSuccessful()) {
-
             return new JsonResponse(['status' => 'OK']);
         }
 

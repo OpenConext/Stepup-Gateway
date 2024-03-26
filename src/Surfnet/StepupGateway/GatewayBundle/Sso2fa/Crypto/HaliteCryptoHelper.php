@@ -30,7 +30,7 @@ use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\CookieValueInterface;
 
 class HaliteCryptoHelper implements CryptoHelperInterface
 {
-    private readonly \ParagonIE\Halite\Symmetric\EncryptionKey $encryptionKey;
+    private readonly EncryptionKey $encryptionKey;
 
     public function __construct(Configuration $configuration)
     {
@@ -55,12 +55,12 @@ class HaliteCryptoHelper implements CryptoHelperInterface
             // Encryption (we use the default encoding: Halite::ENCODE_BASE64URLSAFE)
             $encryptedData = Crypto::encrypt(
                 $plainTextCookieValue,
-                $this->encryptionKey
+                $this->encryptionKey,
             );
         } catch (Exception $e) {
             throw new EncryptionFailedException(
                 'Encrypting the CookieValue for failed',
-                $e
+                $e,
             );
         }
         return $encryptedData;
@@ -77,12 +77,12 @@ class HaliteCryptoHelper implements CryptoHelperInterface
             // Decryption: (we use the default encoding: Halite::DECODE_BASE64URLSAFE)
             $decryptedData = Crypto::decrypt(
                 $cookieData,
-                $this->encryptionKey
+                $this->encryptionKey,
             );
         } catch (Exception $e) {
             throw new DecryptionFailedException(
                 'Decrypting the CookieValue failed, see embedded error message for details',
-                $e
+                $e,
             );
         }
         return CookieValue::deserialize($decryptedData->getString());

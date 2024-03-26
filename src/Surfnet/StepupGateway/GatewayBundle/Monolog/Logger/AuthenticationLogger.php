@@ -29,8 +29,14 @@ use Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorService;
 
 class AuthenticationLogger
 {
-    public function __construct(private readonly LoaResolutionService $loaResolutionService, private readonly ProxyStateHandler $ssoProxyStateHandler, private readonly ProxyStateHandler $sfoProxyStateHandler, private readonly SecondFactorService $secondFactorService, private readonly SamlAuthenticationLogger $authenticationChannelLogger, private readonly SecondFactorTypeService $secondFactorTypeService)
-    {
+    public function __construct(
+        private readonly LoaResolutionService $loaResolutionService,
+        private readonly ProxyStateHandler $ssoProxyStateHandler,
+        private readonly ProxyStateHandler $sfoProxyStateHandler,
+        private readonly SecondFactorService $secondFactorService,
+        private readonly SamlAuthenticationLogger $authenticationChannelLogger,
+        private readonly SecondFactorTypeService $secondFactorTypeService,
+    ) {
     }
 
     /**
@@ -99,15 +105,16 @@ class AuthenticationLogger
      * @param string $authenticationMode
      * @return ProxyStateHandler
      */
-    private function getStateHandler($authenticationMode): \Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler
-    {
+    private function getStateHandler(
+        $authenticationMode,
+    ): ProxyStateHandler {
         if ($authenticationMode === 'sfo') {
             return $this->sfoProxyStateHandler;
         } elseif ($authenticationMode === 'sso') {
             return $this->ssoProxyStateHandler;
         }
         throw new InvalidArgumentException(
-            sprintf('Retrieving a state handler for authentication type %s is not supported', $authenticationMode)
+            sprintf('Retrieving a state handler for authentication type %s is not supported', $authenticationMode),
         );
     }
 }

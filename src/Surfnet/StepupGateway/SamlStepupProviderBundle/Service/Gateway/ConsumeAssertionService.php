@@ -42,8 +42,12 @@ class ConsumeAssertionService
     /**
      * ConsumeAssertionService constructor.
      */
-    public function __construct(private readonly LoggerInterface $logger, private readonly SamlAuthenticationLogger $samlLogger, private readonly PostBinding $postBinding, private readonly ConnectedServiceProviders $connectedServiceProviders)
-    {
+    public function __construct(
+        private readonly LoggerInterface $logger,
+        private readonly SamlAuthenticationLogger $samlLogger,
+        private readonly PostBinding $postBinding,
+        private readonly ConnectedServiceProviders $connectedServiceProviders,
+    ) {
     }
 
     /**
@@ -57,8 +61,11 @@ class ConsumeAssertionService
      * @return \SAML2\Response
      * @throws Exception
      */
-    public function consumeAssertion(Provider $provider, Request $httpRequest, ProxyResponseFactory $proxyResponseFactory)
-    {
+    public function consumeAssertion(
+        Provider $provider,
+        Request $httpRequest,
+        ProxyResponseFactory $proxyResponseFactory,
+    ) {
         $stateHandler = $provider->getStateHandler();
         $originalRequestId = $stateHandler->getRequestId();
 
@@ -68,14 +75,14 @@ class ConsumeAssertionService
 
         $action = $stateHandler->hasSubject() ? 'Second Factor Verification' : 'Proxy Response';
         $logger->notice(
-            sprintf('Received SAMLResponse, attempting to process for %s', $action)
+            sprintf('Received SAMLResponse, attempting to process for %s', $action),
         );
 
         try {
             $assertion = $this->postBinding->processResponse(
                 $httpRequest,
                 $provider->getRemoteIdentityProvider(),
-                $provider->getServiceProvider()
+                $provider->getServiceProvider(),
             );
         } catch (Exception $exception) {
             $message = sprintf('Could not process received Response, error: "%s"', $exception->getMessage());
@@ -89,7 +96,7 @@ class ConsumeAssertionService
         if (!$adaptedAssertion->inResponseToMatches($expectedResponse)) {
             throw new UnknownInResponseToException(
                 $adaptedAssertion->getInResponseTo(),
-                $expectedResponse
+                $expectedResponse,
             );
         }
 
@@ -99,7 +106,7 @@ class ConsumeAssertionService
             $message = sprintf(
                 'Requested Subject NameID "%s" and Response NameID "%s" do not match',
                 $stateHandler->getSubject(),
-                $authenticatedNameId->getValue()
+                $authenticatedNameId->getValue(),
             );
             $logger->critical($message);
 
@@ -121,14 +128,14 @@ class ConsumeAssertionService
             $assertion,
             $targetServiceProvider->determineAcsLocation(
                 $stateHandler->getRequestAssertionConsumerServiceUrl(),
-                $this->logger
-            )
+                $this->logger,
+            ),
         );
 
         $logger->notice(sprintf(
             'Responding to request "%s" with response based on response from the remote IdP with response "%s"',
             $stateHandler->getRequestId(),
-            $response->getId()
+            $response->getId(),
         ));
 
         return $response;

@@ -21,6 +21,7 @@ namespace Surfnet\StepupGateway\GatewayBundle\Saml;
 use SAML2\Constants;
 use SAML2\Response;
 use Surfnet\SamlBundle\Exception\LogicException;
+use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
 
 class ResponseBuilder
 {
@@ -29,7 +30,7 @@ class ResponseBuilder
      */
     private $response;
 
-    private ?\Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext $responseContext = null;
+    private ?ResponseContext $responseContext = null;
 
     public function createNewResponse(ResponseContext $context): static
     {

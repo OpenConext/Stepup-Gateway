@@ -46,7 +46,7 @@ class ChooseSecondFactorType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => \Surfnet\StepupGateway\GatewayBundle\Command\ChooseSecondFactorCommand::class,
+            'data_class' => ChooseSecondFactorCommand::class,
         ]);
     }
 

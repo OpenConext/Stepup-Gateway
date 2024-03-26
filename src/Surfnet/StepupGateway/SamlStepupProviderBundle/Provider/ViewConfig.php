@@ -29,8 +29,11 @@ class ViewConfig implements ViewConfigInterface
      *
      * @param string $logo
      */
-    public function __construct(private readonly RequestStack $requestStack, private $logo, private readonly array $title)
-    {
+    public function __construct(
+        private readonly RequestStack $requestStack,
+        private $logo,
+        private readonly array $title,
+    ) {
     }
 
     /**
@@ -66,8 +69,8 @@ class ViewConfig implements ViewConfigInterface
             sprintf(
                 'The requested translation is not available in this language: %s. Available languages: %s',
                 $currentLocale,
-                implode(', ', array_keys($translations))
-            )
+                implode(', ', array_keys($translations)),
+            ),
         );
     }
 }

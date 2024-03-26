@@ -37,13 +37,13 @@ class JsonBasicAuthenticationEntryPoint implements AuthenticationEntryPointInter
      */
     public function start(Request $request, AuthenticationException $authException = null)
     {
-        $authExceptionMessage = $authException instanceof \Symfony\Component\Security\Core\Exception\AuthenticationException ? $authException->getMessage() : '';
+        $authExceptionMessage = $authException instanceof AuthenticationException ? $authException->getMessage() : '';
         $error = sprintf('You are required to authorise before accessing this API (%s).', $authExceptionMessage);
 
         return new JsonResponse(
             ['errors' => [$error]],
             401,
-            ['WWW-Authenticate' => sprintf('Basic realm="%s"', $this->realmName)]
+            ['WWW-Authenticate' => sprintf('Basic realm="%s"', $this->realmName)],
         );
     }
 }

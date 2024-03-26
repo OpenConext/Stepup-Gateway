@@ -122,7 +122,7 @@ class SecondFactorOnlyController extends AbstractController
         if (!$this->getParameter('second_factor_only')) {
             $logger->notice(sprintf(
                 'Access to %s denied, second_factor_only parameter set to false.',
-                __METHOD__
+                __METHOD__,
             ));
             throw $this->createAccessDeniedException('Second Factor Only feature disabled');
         }
@@ -148,7 +148,7 @@ class SecondFactorOnlyController extends AbstractController
                     'acu' => $responseContext->getDestinationForAdfs(),
                     'samlResponse' => $xmlResponse,
                     'adfs' => $adfsParameters,
-                ]
+                ],
             );
         } else {
             // Render the regular SAML response, we do not return it yet, the SSO on 2FA handler will use it to store
@@ -177,5 +177,4 @@ class SecondFactorOnlyController extends AbstractController
             throw $this->createAccessDeniedException('Second Factor Only feature is disabled');
         }
     }
-
 }

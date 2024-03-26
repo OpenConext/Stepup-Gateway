@@ -46,8 +46,8 @@ class SmsAdapterProvider
                 sprintf(
                     'The selected SMS service (%s) is not supported, choose one of: %s',
                     $selectedService,
-                    implode(', ', self::$allowedServices)
-                )
+                    implode(', ', self::$allowedServices),
+                ),
             );
         }
         $this->selectedService = $selectedService;
@@ -60,8 +60,8 @@ class SmsAdapterProvider
             throw new InvalidArgumentException(
                 sprintf(
                     'Unable to add this adapter, this implementation (%s) is not supported',
-                    $adapterName
-                )
+                    $adapterName,
+                ),
             );
         }
         $this->services[self::$allowedServices[$adapterName]] = $adapter;

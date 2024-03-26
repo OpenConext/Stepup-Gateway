@@ -38,14 +38,14 @@ final class LoaAliasLookupService
                 throw InvalidArgumentException::invalidType(
                     'string',
                     'loaId',
-                    $alias
+                    $alias,
                 );
             }
             if (!is_string($alias)) {
                 throw InvalidArgumentException::invalidType(
                     'string',
                     'alias',
-                    $alias
+                    $alias,
                 );
             }
         }
@@ -63,7 +63,7 @@ final class LoaAliasLookupService
             throw InvalidArgumentException::invalidType(
                 'string',
                 'alias',
-                $alias
+                $alias,
             );
         }
         return array_search($alias, $this->loaAliases);

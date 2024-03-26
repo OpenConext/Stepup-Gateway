@@ -49,7 +49,7 @@ class SamlEntityService implements ServiceProviderRepository
         if (!array_key_exists($entityId, $this->loadedIdentityProviders) && !$this->hasIdentityProvider($entityId)) {
             throw new RuntimeException(sprintf(
                 'Failed at attempting to load unknown IdentityProvider with EntityId "%s"',
-                $entityId
+                $entityId,
             ));
         }
 
@@ -83,7 +83,7 @@ class SamlEntityService implements ServiceProviderRepository
         if (!array_key_exists($entityId, $this->loadedServiceProviders) && !$this->hasServiceProvider($entityId)) {
             throw new RuntimeException(sprintf(
                 'Failed at attempting to load unknown ServiceProvider with EntityId "%s"',
-                $entityId
+                $entityId,
             ));
         }
 

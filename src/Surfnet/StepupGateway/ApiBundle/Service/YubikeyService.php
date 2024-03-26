@@ -64,7 +64,7 @@ class YubikeyService implements YubikeyServiceInterface
             $this->logger->warning('Yubikey OTP verification failed (Public Id did not match)');
             return new YubikeyOtpVerificationResult(
                 YubikeyOtpVerificationResult::RESULT_PUBLIC_ID_DID_NOT_MATCH,
-                $publicId
+                $publicId,
             );
         }
 

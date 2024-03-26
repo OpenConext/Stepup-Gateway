@@ -41,7 +41,7 @@ final class ProviderRepository
         if ($this->has($provider->getName())) {
             throw new InvalidConfigurationException(sprintf(
                 'Provider "%s" has already been added to the repository',
-                $provider->getName()
+                $provider->getName(),
             ));
         }
 

@@ -19,6 +19,7 @@
 namespace Surfnet\StepupGateway\GatewayBundle\Entity;
 
 use Surfnet\StepupGateway\GatewayBundle\Exception\InvalidArgumentException;
+use Surfnet\StepupGateway\GatewayBundle\Entity\SamlEntity;
 
 final readonly class GatewaySamlEntityRepositoryDecorator implements SamlEntityRepository
 {
@@ -43,7 +44,7 @@ final readonly class GatewaySamlEntityRepositoryDecorator implements SamlEntityR
      * @param string $entityId
      * @return null|SamlEntity
      */
-    public function getServiceProvider($entityId): ?\Surfnet\StepupGateway\GatewayBundle\Entity\SamlEntity
+    public function getServiceProvider($entityId): ?SamlEntity
     {
         if (!is_string($entityId)) {
             throw InvalidArgumentException::invalidType('string', 'entityId', $entityId);

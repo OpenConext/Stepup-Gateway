@@ -34,8 +34,11 @@ class LoginService
     /**
      * LoginService constructor.
      */
-    public function __construct(private readonly SamlAuthenticationLogger $samlLogger, private readonly RedirectBinding $redirectBinding, private readonly ConnectedServiceProviders $connectedServiceProviders)
-    {
+    public function __construct(
+        private readonly SamlAuthenticationLogger $samlLogger,
+        private readonly RedirectBinding $redirectBinding,
+        private readonly ConnectedServiceProviders $connectedServiceProviders,
+    ) {
     }
 
     /**
@@ -58,7 +61,7 @@ class LoginService
         $logger->notice(sprintf(
             'AuthnRequest processing complete, received AuthnRequest from "%s", request ID: "%s"',
             $originalRequest->getServiceProvider(),
-            $originalRequest->getRequestId()
+            $originalRequest->getRequestId(),
         ));
 
         $logger->debug('Checking if SP "%s" is supported');
@@ -66,7 +69,7 @@ class LoginService
         if (!$this->connectedServiceProviders->isConnected($originalRequest->getServiceProvider())) {
             $message = sprintf(
                 'Received AuthnRequest from SP "%s", while SP is not allowed to use this for SSO',
-                $originalRequest->getServiceProvider()
+                $originalRequest->getServiceProvider(),
             );
             $logger->warning($message);
 
@@ -89,7 +92,7 @@ class LoginService
 
         $proxyRequest = AuthnRequestFactory::createNewRequest(
             $provider->getServiceProvider(),
-            $provider->getRemoteIdentityProvider()
+            $provider->getRemoteIdentityProvider(),
         );
 
         if ($originalRequest->getExtensions()) {
@@ -112,7 +115,7 @@ class LoginService
             $proxyRequest->getRequestId(),
             $originalRequest->getRequestId(),
             $provider->getName(),
-            $provider->getRemoteIdentityProvider()->getSsoUrl()
+            $provider->getRemoteIdentityProvider()->getSsoUrl(),
         ));
 
         return $proxyRequest;

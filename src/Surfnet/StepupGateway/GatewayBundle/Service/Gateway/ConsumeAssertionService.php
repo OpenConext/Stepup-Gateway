@@ -36,8 +36,12 @@ class ConsumeAssertionService
     /**
      * GatewayServiceProviderService constructor.
      */
-    public function __construct(private readonly PostBinding $postBinding, private readonly SamlAuthenticationLogger $samlLogger, private readonly ServiceProvider $hostedServiceProvider, private readonly IdentityProvider $remoteIdp)
-    {
+    public function __construct(
+        private readonly PostBinding $postBinding,
+        private readonly SamlAuthenticationLogger $samlLogger,
+        private readonly ServiceProvider $hostedServiceProvider,
+        private readonly IdentityProvider $remoteIdp,
+    ) {
     }
 
     /**
@@ -60,7 +64,7 @@ class ConsumeAssertionService
             $assertion = $this->postBinding->processResponse(
                 $request,
                 $this->remoteIdp,
-                $this->hostedServiceProvider
+                $this->hostedServiceProvider,
             );
         } catch (Exception $exception) {
             $message = sprintf('Could not process received Response, error: "%s"', $exception->getMessage());
@@ -74,7 +78,7 @@ class ConsumeAssertionService
         if (!$adaptedAssertion->inResponseToMatches($expectedInResponseTo)) {
             throw new UnknownInResponseToException(
                 $adaptedAssertion->getInResponseTo(),
-                $expectedInResponseTo
+                $expectedInResponseTo,
             );
         }
 

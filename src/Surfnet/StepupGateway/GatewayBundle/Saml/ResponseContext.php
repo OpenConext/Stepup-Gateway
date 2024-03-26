@@ -38,7 +38,7 @@ use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\Exception\AcsLocationNotAl
  */
 class ResponseContext
 {
-    private readonly \DateTime $generationTime;
+    private readonly DateTime $generationTime;
 
     private ?\Surfnet\SamlBundle\Entity\ServiceProvider $targetServiceProvider = null;
 
@@ -50,7 +50,7 @@ class ResponseContext
         private readonly SamlEntityService $samlEntityService,
         private readonly ProxyStateHandler $stateHandler,
         private readonly LoggerInterface $logger,
-        DateTime $now = null
+        DateTime $now = null,
     ) {
         $this->generationTime         = is_null($now) ? new DateTime('now', new DateTimeZone('UTC')): $now;
     }
@@ -202,7 +202,7 @@ class ResponseContext
     public function getNormalizedSchacHomeOrganization(): ?string
     {
         return strtolower(
-            (string) $this->stateHandler->getSchacHomeOrganization()
+            (string) $this->stateHandler->getSchacHomeOrganization(),
         );
     }
 

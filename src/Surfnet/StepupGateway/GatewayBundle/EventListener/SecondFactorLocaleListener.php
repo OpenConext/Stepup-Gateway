@@ -25,13 +25,14 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\HttpFoundation\Cookie;
 
 final readonly class SecondFactorLocaleListener implements EventSubscriberInterface
 {
     public function __construct(
         private ResponseContext     $responseContext,
         private SecondFactorService $secondFactorService,
-        private CookieHelper        $cookieHelper
+        private CookieHelper        $cookieHelper,
     ) {
     }
 
@@ -70,7 +71,7 @@ final readonly class SecondFactorLocaleListener implements EventSubscriberInterf
     public function getLocaleFromCookie(Request $request)
     {
         $requestCookie = $this->cookieHelper->read($request);
-        if ($requestCookie instanceof \Symfony\Component\HttpFoundation\Cookie) {
+        if ($requestCookie instanceof Cookie) {
             return $requestCookie->getValue();
         }
     }

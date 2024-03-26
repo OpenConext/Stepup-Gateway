@@ -22,6 +22,7 @@ use Doctrine\ORM\Mapping as ORM;
 use GuzzleHttp;
 use Surfnet\SamlBundle\Entity\IdentityProvider;
 use Surfnet\StepupGateway\GatewayBundle\Exception\RuntimeException;
+use Surfnet\StepupGateway\GatewayBundle\Entity\ServiceProvider;
 
 /**
  * @ORM\Entity(repositoryClass="Surfnet\StepupGateway\GatewayBundle\Entity\DoctrineSamlEntityRepository")
@@ -69,13 +70,13 @@ class SamlEntity
     /**
      * @return IdentityProvider
      */
-    public function toIdentityProvider(): \Surfnet\SamlBundle\Entity\IdentityProvider
+    public function toIdentityProvider(): IdentityProvider
     {
         if (!$this->type === self::TYPE_IDP) {
             throw new RuntimeException(sprintf(
                 'Cannot cast a SAMLEntity to an IdentityProvider if it is not of the type "%s", current type: "%s"',
                 self::TYPE_IDP,
-                $this->type
+                $this->type,
             ));
         }
 
@@ -92,13 +93,13 @@ class SamlEntity
     /**
      * @return ServiceProvider
      */
-    public function toServiceProvider(): \Surfnet\StepupGateway\GatewayBundle\Entity\ServiceProvider
+    public function toServiceProvider(): ServiceProvider
     {
         if (!$this->type === self::TYPE_SP) {
             throw new RuntimeException(sprintf(
                 'Cannot cast a SAMLEntity to a ServiceProvider if it is not of the type "%s", current type: "%s"',
                 self::TYPE_SP,
-                $this->type
+                $this->type,
             ));
         }
 

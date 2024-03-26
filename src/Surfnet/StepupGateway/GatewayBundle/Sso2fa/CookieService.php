@@ -42,14 +42,20 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class CookieService implements CookieServiceInterface
 {
-    public function __construct(private readonly CookieHelperInterface $cookieHelper, private readonly InstitutionConfigurationService $institutionConfigurationService, private readonly SecondFactorService $secondFactorService, private readonly SecondFactorTypeService $secondFactorTypeService, private readonly ExpirationHelperInterface $expirationHelper, private readonly LoggerInterface $logger)
-    {
+    public function __construct(
+        private readonly CookieHelperInterface $cookieHelper,
+        private readonly InstitutionConfigurationService $institutionConfigurationService,
+        private readonly SecondFactorService $secondFactorService,
+        private readonly SecondFactorTypeService $secondFactorTypeService,
+        private readonly ExpirationHelperInterface $expirationHelper,
+        private readonly LoggerInterface $logger,
+    ) {
     }
 
     public function handleSsoOn2faCookieStorage(
         ResponseContext $responseContext,
         Request $request,
-        Response $httpResponse
+        Response $httpResponse,
     ): Response {
         // Check if this specific SP is configured to allow setting of an SSO on 2FA cookie (configured in MW config)
         $remoteSp = $this->getRemoteSp($responseContext);
@@ -57,8 +63,8 @@ class CookieService implements CookieServiceInterface
             $this->logger->notice(
                 sprintf(
                     'SP: %s does not allow writing SSO on 2FA cookies',
-                    $remoteSp->getEntityId()
-                )
+                    $remoteSp->getEntityId(),
+                ),
             );
             return $httpResponse;
         }
@@ -78,8 +84,8 @@ class CookieService implements CookieServiceInterface
                 sprintf(
                     'SSO on 2FA is %senabled for %s',
                     $isEnabled ? '' : 'not ',
-                    $secondFactor->institution
-                )
+                    $secondFactor->institution,
+                ),
             );
 
             if ($isEnabled) {
@@ -103,7 +109,7 @@ class CookieService implements CookieServiceInterface
     public function maySkipAuthentication(
         float $requiredLoa,
         string $identityNameId,
-        CookieValueInterface $ssoCookie
+        CookieValueInterface $ssoCookie,
     ): bool {
 
         // Perform validation on the cookie and its contents
@@ -116,7 +122,7 @@ class CookieService implements CookieServiceInterface
                 'The second factor stored in the SSO cookie was revoked or has otherwise became unknown to Gateway',
                 [
                     'secondFactorIdFromCookie' => $ssoCookie->secondFactorId()
-                ]
+                ],
             );
             return false;
         }
@@ -137,8 +143,8 @@ class CookieService implements CookieServiceInterface
             $this->logger->notice(
                 sprintf(
                     'SSO on 2FA is disabled by config for SP: %s',
-                    $remoteSp->getEntityId()
-                )
+                    $remoteSp->getEntityId(),
+                ),
             );
             return false;
         }
@@ -168,7 +174,7 @@ class CookieService implements CookieServiceInterface
         } catch (Exception $e) {
             $this->logger->notice(
                 'Decryption failed, see original message in context',
-                ['original-exception-message' => $e->getMessage()]
+                ['original-exception-message' => $e->getMessage()],
             );
             return new NullCookieValue();
         }
@@ -177,7 +183,7 @@ class CookieService implements CookieServiceInterface
     private function getRemoteSp(ResponseContext $responseContext): ServiceProvider
     {
         $remoteSp = $responseContext->getServiceProvider();
-        if (!$remoteSp instanceof \Surfnet\StepupGateway\GatewayBundle\Entity\ServiceProvider) {
+        if (!$remoteSp instanceof ServiceProvider) {
             throw new RuntimeException('SP not found in the response context, unable to continue with SSO on 2FA');
         }
         return $remoteSp;
@@ -193,8 +199,8 @@ class CookieService implements CookieServiceInterface
                 sprintf(
                     'The required LoA %d did not match the LoA of the SSO cookie LoA %d',
                     $requiredLoa,
-                    $ssoCookie->getLoa()
-                )
+                    $ssoCookie->getLoa(),
+                ),
             );
             return false;
         }
@@ -203,8 +209,8 @@ class CookieService implements CookieServiceInterface
                 sprintf(
                     'The SSO on 2FA cookie was not issued to %s, but to %s',
                     $identityNameId,
-                    $ssoCookie->getIdentityId()
-                )
+                    $ssoCookie->getIdentityId(),
+                ),
             );
             return false;
         }
@@ -212,7 +218,7 @@ class CookieService implements CookieServiceInterface
             $isExpired = $this->expirationHelper->isExpired($ssoCookie);
             if ($isExpired) {
                 $this->logger->notice(
-                    'The SSO on 2FA cookie has expired. Meaning [authentication time] + [cookie lifetime] is in the past'
+                    'The SSO on 2FA cookie has expired. Meaning [authentication time] + [cookie lifetime] is in the past',
                 );
                 return false;
             }

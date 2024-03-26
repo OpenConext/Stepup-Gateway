@@ -28,8 +28,11 @@ use Symfony\Component\HttpFoundation\Request;
 
 class ResponseValidator
 {
-    public function __construct(private readonly SecondFactorTypeService $secondFactorTypeService, private readonly ProviderRepository $providerRepository, private readonly PostBinding $postBinding)
-    {
+    public function __construct(
+        private readonly SecondFactorTypeService $secondFactorTypeService,
+        private readonly ProviderRepository $providerRepository,
+        private readonly PostBinding $postBinding,
+    ) {
     }
 
     /**
@@ -47,7 +50,7 @@ class ResponseValidator
             $samlResponse = $this->postBinding->processResponse(
                 $request,
                 $provider->getRemoteIdentityProvider(),
-                $provider->getServiceProvider()
+                $provider->getServiceProvider(),
             );
             $subjectNameIdFromResponse = $samlResponse->getNameId()->getValue();
             // Additionally test if the name id from the GSSP matches the SF identifier that we have in state
@@ -58,8 +61,8 @@ class ResponseValidator
                         'might be an indication someone is tampering with a GSSP. The authentication was started by %s',
                         $subjectNameIdFromResponse,
                         $secondFactor->secondFactorIdentifier,
-                        $nameIdFromState
-                    )
+                        $nameIdFromState,
+                    ),
                 );
             }
         }

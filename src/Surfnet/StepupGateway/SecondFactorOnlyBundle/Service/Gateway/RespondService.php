@@ -31,8 +31,15 @@ use Symfony\Component\HttpFoundation\Request;
 
 class RespondService
 {
-    public function __construct(private readonly SamlAuthenticationLogger $samlLogger, private readonly LoaResolutionService $loaResolutionService, private readonly LoaAliasLookupService $loaAliasLookupService, private readonly ResponseFactory $responseFactory, private readonly SecondFactorService $secondFactorService, private readonly SecondFactorTypeService $secondFactorTypeService, private readonly ResponseValidator $responseValidator)
-    {
+    public function __construct(
+        private readonly SamlAuthenticationLogger $samlLogger,
+        private readonly LoaResolutionService $loaResolutionService,
+        private readonly LoaAliasLookupService $loaAliasLookupService,
+        private readonly ResponseFactory $responseFactory,
+        private readonly SecondFactorService $secondFactorService,
+        private readonly SecondFactorTypeService $secondFactorTypeService,
+        private readonly ResponseValidator $responseValidator,
+    ) {
     }
 
 
@@ -55,13 +62,13 @@ class RespondService
         $selectedSecondFactorUuid = $responseContext->getSelectedSecondFactor();
         if (!$selectedSecondFactorUuid) {
             throw new InvalidSecondFactorMethodException(
-                'Cannot verify possession of an unknown second factor.'
+                'Cannot verify possession of an unknown second factor.',
             );
         }
 
         if (!$responseContext->isSecondFactorVerified()) {
             throw new InvalidSecondFactorMethodException(
-                'Second factor was not verified'
+                'Second factor was not verified',
             );
         }
 
@@ -76,13 +83,13 @@ class RespondService
         $response = $this->responseFactory->createSecondFactorOnlyResponse(
             $responseContext->getIdentityNameId(),
             $responseContext->getDestination(),
-            $authnContextClassRef
+            $authnContextClassRef,
         );
 
         $logger->notice(sprintf(
             'Responding to request "%s" with newly created response "%s"',
             $responseContext->getInResponseTo(),
-            $response->getId()
+            $response->getId(),
         ));
 
         return $response;

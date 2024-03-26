@@ -74,7 +74,7 @@ class GatewayController extends AbstractController
             $proxyRequest = $gatewayLoginService->singleSignOn($httpRequest);
         } catch (RequesterFailureException) {
             $response = $this->getGatewayFailedResponseService()->createRequesterFailureResponse(
-                $this->getResponseContext(self::MODE_SSO)
+                $this->getResponseContext(self::MODE_SSO),
             );
 
             return $this->renderSamlResponse('consume_assertion', $response, $httpRequest, self::MODE_SSO);
@@ -101,7 +101,7 @@ class GatewayController extends AbstractController
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function consumeAssertionAction(Request $request): \Symfony\Component\HttpFoundation\Response
+    public function consumeAssertionAction(Request $request): Response
     {
         $responseContext = $this->getResponseContext(self::MODE_SSO);
         $gatewayLoginService = $this->getGatewayConsumeAssertionService();
@@ -127,7 +127,7 @@ class GatewayController extends AbstractController
      * redirect. This method sends a AuthnResponse back to the service
      * provider in response to the AuthnRequest received in ssoAction().
      */
-    public function respondAction(Request $request): \Symfony\Component\HttpFoundation\Response
+    public function respondAction(Request $request): Response
     {
         $responseContext = $this->getResponseContext(self::MODE_SSO);
         $gatewayLoginService = $this->getGatewayRespondService();
@@ -143,7 +143,7 @@ class GatewayController extends AbstractController
      * @param $authenticationMode
      * @return Response
      */
-    public function sendLoaCannotBeGivenAction(Request $request): \Symfony\Component\HttpFoundation\Response
+    public function sendLoaCannotBeGivenAction(Request $request): Response
     {
         if (!$request->get('authenticationMode', false)) {
             throw new RuntimeException('Unable to determine the authentication mode in the sendLoaCannotBeGiven action');
@@ -161,7 +161,7 @@ class GatewayController extends AbstractController
     /**
      * @return Response
      */
-    public function sendAuthenticationCancelledByUserAction(): \Symfony\Component\HttpFoundation\Response
+    public function sendAuthenticationCancelledByUserAction(): Response
     {
         // The authentication mode is read from the parent request, in the meantime a forward was followed, making
         // reading the auth mode from the current request impossible.
@@ -187,7 +187,7 @@ class GatewayController extends AbstractController
         string $view,
         SAMLResponse $response,
         Request $request,
-        string $authenticationMode
+        string $authenticationMode,
     ): Response {
         $logger = $this->get('logger');
         /** @var ResponseHelper $responseHelper */
@@ -235,7 +235,7 @@ class GatewayController extends AbstractController
         return parent::render(
             'SurfnetStepupGatewayGatewayBundle:gateway:' . $view . '.html.twig',
             $parameters,
-            $response
+            $response,
         );
     }
 

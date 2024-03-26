@@ -34,8 +34,14 @@ class LoginService
     /**
      * SecondFactorLoginService constructor.
      */
-    public function __construct(private readonly LoggerInterface $logger, private readonly SamlAuthenticationLogger $samlLogger, private readonly ProxyStateHandler $stateHandler, private readonly HttpBindingFactory $httpBindingFactory, private readonly SecondFactorOnlyNameIdValidationService $secondFactorOnlyNameValidatorService, private readonly LoaResolutionService $loaResolutionService)
-    {
+    public function __construct(
+        private readonly LoggerInterface $logger,
+        private readonly SamlAuthenticationLogger $samlLogger,
+        private readonly ProxyStateHandler $stateHandler,
+        private readonly HttpBindingFactory $httpBindingFactory,
+        private readonly SecondFactorOnlyNameIdValidationService $secondFactorOnlyNameValidatorService,
+        private readonly LoaResolutionService $loaResolutionService,
+    ) {
     }
 
     /**
@@ -53,7 +59,7 @@ class LoginService
         $logger->notice(sprintf(
             'AuthnRequest processing complete, received AuthnRequest from "%s", request ID: "%s"',
             $originalRequest->getServiceProvider(),
-            $originalRequest->getRequestId()
+            $originalRequest->getRequestId(),
         ));
 
         return  $originalRequest;
@@ -96,7 +102,7 @@ class LoginService
         $secondFactorOnlyNameIdValidator = $this->secondFactorOnlyNameValidatorService->with($logger);
         $serviceProviderMayUseSecondFactorOnly = $secondFactorOnlyNameIdValidator->validate(
             $originalRequest->getServiceProvider(),
-            $nameId
+            $nameId,
         );
 
         if (!$serviceProviderMayUseSecondFactorOnly) {
@@ -107,7 +113,7 @@ class LoginService
 
         // Check if the requested Loa is provided and supported.
         $loaId = $this->loaResolutionService->with($logger)->resolve(
-            $originalRequest->getAuthenticationContextClassRef()
+            $originalRequest->getAuthenticationContextClassRef(),
         );
 
         if ($loaId === '' || $loaId === '0') {

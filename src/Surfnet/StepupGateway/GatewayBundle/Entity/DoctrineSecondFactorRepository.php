@@ -30,8 +30,11 @@ class DoctrineSecondFactorRepository extends EntityRepository implements SecondF
      */
     private array $secondFactorsById = [];
 
-    public function getAllMatchingFor(Loa $highestLoa, $identityNameId, SecondFactorTypeService $service): \Doctrine\Common\Collections\ArrayCollection
-    {
+    public function getAllMatchingFor(
+        Loa $highestLoa,
+        $identityNameId,
+        SecondFactorTypeService $service,
+    ): ArrayCollection {
         /** @var \Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor[] $secondFactors */
         $secondFactors = $this->findAllByIdentityNameId($identityNameId);
 

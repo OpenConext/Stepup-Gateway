@@ -27,8 +27,8 @@ class AcsLocationNotAllowedException extends Exception
         parent::__construct(
             sprintf(
                 'ADFS AuthnRequest requests ACS location "%s" but it is not configured in the list of allowed ACS locations',
-                $requestedAcsLocation
-            )
+                $requestedAcsLocation,
+            ),
         );
     }
 }

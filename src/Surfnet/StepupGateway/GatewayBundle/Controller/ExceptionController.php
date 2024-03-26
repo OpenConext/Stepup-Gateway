@@ -21,6 +21,7 @@ namespace Surfnet\StepupGateway\GatewayBundle\Controller;
 use Exception;
 use Surfnet\StepupBundle\Controller\ExceptionController as BaseExceptionController;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\Exception\AcsLocationNotAllowedException;
+use Throwable;
 
 final class ExceptionController extends BaseExceptionController
 {
@@ -28,7 +29,7 @@ final class ExceptionController extends BaseExceptionController
      * @param Exception $exception
      * @return array View parameters 'title' and 'description'
      */
-    protected function getPageTitleAndDescription(Exception|\Throwable $exception): array
+    protected function getPageTitleAndDescription(Exception|Throwable $exception): array
     {
         $translator = $this->getTranslator();
 

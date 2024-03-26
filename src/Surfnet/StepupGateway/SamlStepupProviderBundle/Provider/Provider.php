@@ -27,14 +27,19 @@ final class Provider
     /**
      * @param string $name
      */
-    public function __construct(private $name, private readonly IdentityProvider $identityProvider, private readonly ServiceProvider $serviceProvider, private readonly IdentityProvider $remoteIdentityProvider, private readonly StateHandler $stateHandler)
-    {
+    public function __construct(
+        private $name,
+        private readonly IdentityProvider $identityProvider,
+        private readonly ServiceProvider $serviceProvider,
+        private readonly IdentityProvider $remoteIdentityProvider,
+        private readonly StateHandler $stateHandler,
+    ) {
     }
 
     /**
      * @return StateHandler
      */
-    public function getStateHandler(): \Surfnet\StepupGateway\SamlStepupProviderBundle\Saml\StateHandler
+    public function getStateHandler(): StateHandler
     {
         return $this->stateHandler;
     }
@@ -42,7 +47,7 @@ final class Provider
     /**
      * @return IdentityProvider
      */
-    public function getRemoteIdentityProvider(): \Surfnet\SamlBundle\Entity\IdentityProvider
+    public function getRemoteIdentityProvider(): IdentityProvider
     {
         return $this->remoteIdentityProvider;
     }
@@ -50,7 +55,7 @@ final class Provider
     /**
      * @return ServiceProvider
      */
-    public function getServiceProvider(): \Surfnet\SamlBundle\Entity\ServiceProvider
+    public function getServiceProvider(): ServiceProvider
     {
         return $this->serviceProvider;
     }
@@ -58,7 +63,7 @@ final class Provider
     /**
      * @return IdentityProvider
      */
-    public function getIdentityProvider(): \Surfnet\SamlBundle\Entity\IdentityProvider
+    public function getIdentityProvider(): IdentityProvider
     {
         return $this->identityProvider;
     }

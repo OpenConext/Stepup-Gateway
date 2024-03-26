@@ -33,7 +33,7 @@ class SurfnetStepupGatewaySecondFactorOnlyExtension extends Extension
     {
         $loader = new YamlFileLoader(
             $container,
-            new FileLocator(__DIR__ . '/../Resources/config')
+            new FileLocator(__DIR__ . '/../Resources/config'),
         );
         $loader->load('services.yml');
 
@@ -42,13 +42,13 @@ class SurfnetStepupGatewaySecondFactorOnlyExtension extends Extension
 
     private function replaceLoaAliasConfig(
         array $config,
-        ContainerBuilder $container
+        ContainerBuilder $container,
     ): void {
         $loaAliasMapping = [];
         foreach ($config[0]['loa_aliases'] as $mapping) {
             if (isset($loaAliasMapping[$mapping['loa']])) {
                 throw new InvalidConfigurationException(
-                    'Duplicate loa identifiers in surfnet_stepup_gateway_gateway.loa_domains.gateway'
+                    'Duplicate loa identifiers in surfnet_stepup_gateway_gateway.loa_domains.gateway',
                 );
             }
 

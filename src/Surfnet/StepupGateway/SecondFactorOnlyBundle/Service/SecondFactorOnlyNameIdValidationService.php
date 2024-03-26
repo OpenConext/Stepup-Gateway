@@ -42,7 +42,7 @@ final class SecondFactorOnlyNameIdValidationService
     {
         if ($nameId === '' || $nameId === '0') {
             $this->logger->notice(
-                'No NameID provided, sending response with status Requester Error'
+                'No NameID provided, sending response with status Requester Error',
             );
             return false;
         }
@@ -54,8 +54,8 @@ final class SecondFactorOnlyNameIdValidationService
                 sprintf(
                     'SP "%s" may not use SecondFactorOnly mode for nameid "%s", sending response with status Requester Error',
                     $spEntityId,
-                    $nameId
-                )
+                    $nameId,
+                ),
             );
             return false;
         }
@@ -64,8 +64,8 @@ final class SecondFactorOnlyNameIdValidationService
             sprintf(
                 'SP "%s" is allowed to use SecondFactorOnly mode for nameid "%s"',
                 $spEntityId,
-                $nameId
-            )
+                $nameId,
+            ),
         );
 
         return true;

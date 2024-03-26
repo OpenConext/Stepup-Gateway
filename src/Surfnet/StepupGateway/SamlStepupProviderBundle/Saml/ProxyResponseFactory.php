@@ -37,14 +37,14 @@ use Surfnet\StepupGateway\GatewayBundle\Saml\AssertionSigningService;
  */
 class ProxyResponseFactory
 {
-    private readonly \DateTime $currentTime;
+    private readonly DateTime $currentTime;
 
     public function __construct(
         private readonly LoggerInterface $logger,
         private readonly IdentityProvider $hostedIdentityProvider,
         private readonly StateHandler $stateHandler,
         private readonly AssertionSigningService $assertionSigningService,
-        DateTime $now = null
+        DateTime $now = null,
     ) {
         $this->currentTime = is_null($now) ? new DateTime('now', new DateTimeZone('UTC')): $now;
     }
@@ -53,7 +53,7 @@ class ProxyResponseFactory
      * @param string $destination
      * @return Response
      */
-    public function createProxyResponse(Assertion $assertion, ?string $destination): \SAML2\Response
+    public function createProxyResponse(Assertion $assertion, ?string $destination): Response
     {
         $newAssertion = new Assertion();
         $newAssertion->setNotBefore($this->currentTime->getTimestamp());
@@ -104,7 +104,7 @@ class ProxyResponseFactory
      * @param string $destination
      * @return SAMLResponse
      */
-    private function createNewAuthnResponse(Assertion $newAssertion, ?string $destination): \SAML2\Response
+    private function createNewAuthnResponse(Assertion $newAssertion, ?string $destination): Response
     {
         $response = new SAMLResponse();
         $response->setAssertions([$newAssertion]);

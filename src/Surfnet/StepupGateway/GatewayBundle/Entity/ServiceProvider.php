@@ -95,14 +95,14 @@ class ServiceProvider extends BaseServiceProvider
             return $acsLocationInAuthnRequest;
         }
 
-        if ($logger instanceof \Psr\Log\LoggerInterface) {
+        if ($logger instanceof LoggerInterface) {
             $logger->warning(
                 sprintf(
                     'AuthnRequest requests ACS location "%s" but it is not configured in the list of allowed ACS ' .
                     'locations, allowed locations include: [%s]',
                     $acsLocationInAuthnRequest,
-                    implode(', ', $allowedAcsLocations)
-                )
+                    implode(', ', $allowedAcsLocations),
+                ),
             );
         }
 
@@ -146,7 +146,7 @@ class ServiceProvider extends BaseServiceProvider
         // The exception listener will log relevant information to the log.
 
         throw new AcsLocationNotAllowedException(
-            $acsLocationInAuthnRequest
+            $acsLocationInAuthnRequest,
         );
     }
 

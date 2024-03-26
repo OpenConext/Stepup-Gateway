@@ -27,7 +27,7 @@ final class UnknownProviderException extends RuntimeException
         return new self(sprintf(
             'Unknown Generic SAML Stepup Provider requested "%s", known providers: "%s"',
             is_object($unknownProvider) ? '(object)' . $unknownProvider::class : $unknownProvider,
-            $knownProviders
+            $knownProviders,
         ));
     }
 }

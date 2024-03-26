@@ -54,7 +54,7 @@ final class SecondFactorType extends AbstractExtension
         return [
             new TwigFunction(
                 'second_factor_logo',
-                $this->getSecondFactorTypeLogoByIdentifier(...)
+                $this->getSecondFactorTypeLogoByIdentifier(...),
             ),
         ];
     }
@@ -63,7 +63,7 @@ final class SecondFactorType extends AbstractExtension
     {
         return $this->translator->translate(
             $secondFactorType,
-            'gateway.second_factor.search.type.%s'
+            'gateway.second_factor.search.type.%s',
         );
     }
 
@@ -89,7 +89,7 @@ final class SecondFactorType extends AbstractExtension
 
         if (empty($logo)) {
             throw new GatewayInvalidArgumentException(
-                "Unable to find a logo for this second factor type {$secondFactorType}"
+                "Unable to find a logo for this second factor type {$secondFactorType}",
             );
         }
 

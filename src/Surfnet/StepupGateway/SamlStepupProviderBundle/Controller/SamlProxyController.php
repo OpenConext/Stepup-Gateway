@@ -43,6 +43,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Surfnet\SamlBundle\Entity\ServiceProvider;
 
 /**
  * Handling of GSSP registration and verification.
@@ -70,8 +72,10 @@ class SamlProxyController extends AbstractController
      * @param string $provider
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
-    public function singleSignOnAction($provider, Request $httpRequest): \Symfony\Component\HttpFoundation\RedirectResponse
-    {
+    public function singleSignOnAction(
+        $provider,
+        Request $httpRequest,
+    ): RedirectResponse {
         $provider = $this->getProvider($provider);
 
         /** @var \Surfnet\SamlBundle\Http\RedirectBinding $redirectBinding */
@@ -104,8 +108,11 @@ class SamlProxyController extends AbstractController
      * @param string $provider
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function sendSecondFactorVerificationAuthnRequestAction($provider, string $subjectNameId, string $responseContextServiceId): \Symfony\Component\HttpFoundation\RedirectResponse
-    {
+    public function sendSecondFactorVerificationAuthnRequestAction(
+        $provider,
+        string $subjectNameId,
+        string $responseContextServiceId,
+    ): RedirectResponse {
         $provider = $this->getProvider($provider);
 
         $gsspSecondFactorVerificationService = $this->getGsspSecondFactorVerificationService();
@@ -113,7 +120,7 @@ class SamlProxyController extends AbstractController
         $authnRequest = $gsspSecondFactorVerificationService->sendSecondFactorVerificationAuthnRequest(
             $provider,
             $subjectNameId,
-            $responseContextServiceId
+            $responseContextServiceId,
         );
 
         /** @var \Surfnet\SamlBundle\Http\RedirectBinding $redirectBinding */
@@ -149,7 +156,7 @@ class SamlProxyController extends AbstractController
                 $provider,
                 $this->getDestination($provider->getStateHandler()),
                 $this->getIssuer($provider->getStateHandler()),
-                $e->getMessage()
+                $e->getMessage(),
             );
             return $this->renderSamlResponse('consume_assertion', $provider->getStateHandler(), $response);
         } catch (InvalidSubjectException) {
@@ -158,8 +165,8 @@ class SamlProxyController extends AbstractController
                 $provider->getStateHandler(),
                 $this->createAuthnFailedResponse(
                     $provider,
-                    $this->getDestination($provider->getStateHandler())
-                )
+                    $this->getDestination($provider->getStateHandler()),
+                ),
             );
         } catch (SecondfactorVerificationRequiredException) {
             // The provider state handler has no access to the session object, hence we use the proxy state handler
@@ -169,9 +176,9 @@ class SamlProxyController extends AbstractController
                 [
                     // The authentication mode is loaded from session, based on the request id
                     'authenticationMode' => $stateHandler->getAuthenticationModeForRequestId(
-                        $consumeAssertionService->getReceivedRequestId()
+                        $consumeAssertionService->getReceivedRequestId(),
                     ),
-                ]
+                ],
             );
         } catch (Exception $e) {
             throw $e;
@@ -184,7 +191,7 @@ class SamlProxyController extends AbstractController
      * @param string $provider
      * @return XMLResponse
      */
-    public function metadataAction($provider): \Surfnet\SamlBundle\Http\XMLResponse
+    public function metadataAction($provider): XMLResponse
     {
         $provider = $this->getProvider($provider);
 
@@ -205,7 +212,7 @@ class SamlProxyController extends AbstractController
 
         if (!$providerRepository->has($provider)) {
             throw new NotFoundHttpException(
-                sprintf('Requested GSSP "%s" does not exist or is not registered', $provider)
+                sprintf('Requested GSSP "%s" does not exist or is not registered', $provider),
             );
         }
 
@@ -225,12 +232,12 @@ class SamlProxyController extends AbstractController
         } else {
             // GSSP registration action, return to SP remembered in ssoAction().
             $serviceProvider = $this->getServiceProvider(
-                $stateHandler->getRequestServiceProvider()
+                $stateHandler->getRequestServiceProvider(),
             );
 
             $destination = $serviceProvider->determineAcsLocation(
                 $stateHandler->getRequestAssertionConsumerServiceUrl(),
-                $this->get('logger')
+                $this->get('logger'),
             );
         }
 
@@ -246,8 +253,8 @@ class SamlProxyController extends AbstractController
                 sprintf(
                     'Unable to find the ResponseContext service-id for this authentication or registration, ' .
                     'service-id provided was: "%s"',
-                    $responseContextServiceId
-                )
+                    $responseContextServiceId,
+                ),
             );
         }
         // GSSP verification action, return to SP from GatewayController state!
@@ -291,7 +298,7 @@ class SamlProxyController extends AbstractController
 
         $response = parent::render(
             'SurfnetStepupGatewaySamlStepupProviderBundle:saml_proxy:' . $view . '.html.twig',
-            $parameters
+            $parameters,
         );
 
         // clear the state so we can call again :)
@@ -321,7 +328,7 @@ class SamlProxyController extends AbstractController
         Provider $provider,
         string $destination,
         Issuer $issuer,
-        string $message
+        string $message,
     ): SAMLResponse {
         $response = $this->createResponse($provider, $destination);
         // Overwrite the issuer with the correct issuer for the saml failed response
@@ -349,7 +356,7 @@ class SamlProxyController extends AbstractController
             [
                 'Code' => Constants::STATUS_RESPONDER,
                 'SubCode' => Constants::STATUS_AUTHN_FAILED,
-            ]
+            ],
         );
 
         return $response;
@@ -377,7 +384,7 @@ class SamlProxyController extends AbstractController
      * @param string $serviceProvider
      * @return \Surfnet\StepupGateway\GatewayBundle\Entity\ServiceProvider
      */
-    private function getServiceProvider(?string $serviceProvider): \Surfnet\SamlBundle\Entity\ServiceProvider
+    private function getServiceProvider(?string $serviceProvider): ServiceProvider
     {
         /**
          * @var \Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\ConnectedServiceProviders $connectedServiceProviders

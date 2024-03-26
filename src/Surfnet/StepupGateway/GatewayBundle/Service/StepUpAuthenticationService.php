@@ -47,23 +47,30 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class StepUpAuthenticationService
 {
-    public function __construct(private readonly LoaResolutionService $loaResolutionService, private readonly SecondFactorRepository $secondFactorRepository, private readonly YubikeyServiceInterface $yubikeyService, private readonly SmsSecondFactorService $smsService, private readonly TranslatorInterface $translator, private readonly LoggerInterface $logger, private readonly SecondFactorTypeService $secondFactorTypeService)
-    {
+    public function __construct(
+        private readonly LoaResolutionService $loaResolutionService,
+        private readonly SecondFactorRepository $secondFactorRepository,
+        private readonly YubikeyServiceInterface $yubikeyService,
+        private readonly SmsSecondFactorService $smsService,
+        private readonly TranslatorInterface $translator,
+        private readonly LoggerInterface $logger,
+        private readonly SecondFactorTypeService $secondFactorTypeService,
+    ) {
     }
 
     public function determineViableSecondFactors(
         string $identityNameId,
         Loa $requiredLoa,
-        WhitelistService $whitelistService
+        WhitelistService $whitelistService,
     ): Collection {
 
         $candidateSecondFactors = $this->secondFactorRepository->getAllMatchingFor(
             $requiredLoa,
             $identityNameId,
-            $this->secondFactorTypeService
+            $this->secondFactorTypeService,
         );
         $this->logger->info(
-            sprintf('Loaded %d matching candidate second factors', count($candidateSecondFactors))
+            sprintf('Loaded %d matching candidate second factors', count($candidateSecondFactors)),
         );
 
         foreach ($candidateSecondFactors as $key => $secondFactor) {
@@ -72,8 +79,8 @@ class StepUpAuthenticationService
                     sprintf(
                         'Second factor "%s" is listed for institution "%s" which is not on the whitelist',
                         $secondFactor->secondFactorId,
-                        $secondFactor->institution
-                    )
+                        $secondFactor->institution,
+                    ),
                 );
 
                 $candidateSecondFactors->remove($key);
@@ -148,7 +155,7 @@ class StepUpAuthenticationService
         $requestedLoa,
         array $spConfiguredLoas,
         $normalizedIdpSho,
-        $normalizedUserSho
+        $normalizedUserSho,
     ) {
         // Candidate LoA's are stored in a collection. At the end of this procedure, the highest LoA is selected from
         // this collection.
@@ -210,8 +217,8 @@ class StepUpAuthenticationService
             throw new LoaCannotBeGivenException(
                 sprintf(
                     'Out of "%d" candidates, no existing Loa could be found, no authentication is possible.',
-                    count($loaCandidates)
-                )
+                    count($loaCandidates),
+                ),
             );
         }
 
@@ -225,7 +232,7 @@ class StepUpAuthenticationService
         }
 
         $this->logger->info(
-            sprintf('Out of %d candidate Loa\'s, Loa "%s" is the highest', count($loaCandidates), $highestLoa)
+            sprintf('Out of %d candidate Loa\'s, Loa "%s" is the highest', count($loaCandidates), $highestLoa),
         );
 
         return $highestLoa;
@@ -329,8 +336,9 @@ class StepUpAuthenticationService
     /**
      * @return OtpVerification
      */
-    public function verifySmsChallenge(VerifyPossessionOfPhoneCommand $command): \Surfnet\StepupBundle\Service\SmsSecondFactor\OtpVerification
-    {
+    public function verifySmsChallenge(
+        VerifyPossessionOfPhoneCommand $command,
+    ): OtpVerification {
         return $this->smsService->verifyPossession($command);
     }
 
@@ -354,7 +362,7 @@ class StepUpAuthenticationService
     public function getNormalizedUserShoByIdentityNameId($identityNameId): string
     {
         return strtolower(
-            $this->secondFactorRepository->getInstitutionByNameId($identityNameId)
+            $this->secondFactorRepository->getInstitutionByNameId($identityNameId),
         );
     }
 }

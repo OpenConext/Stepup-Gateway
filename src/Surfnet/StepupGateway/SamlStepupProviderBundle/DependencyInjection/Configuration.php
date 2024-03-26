@@ -112,7 +112,7 @@ class Configuration implements ConfigurationInterface
                                     ->isRequired()
                                     ->info(
                                         'Name of the service that is the Entity Repository. Must implement the '
-                                        . ' Surfnet\SamlBundle\Entity\ServiceProviderRepository interface.'
+                                        . ' Surfnet\SamlBundle\Entity\ServiceProviderRepository interface.',
                                     )
                                 ->end()
                                 ->scalarNode('public_key')
@@ -153,7 +153,7 @@ class Configuration implements ConfigurationInterface
                             ->isRequired()
                             ->info(
                                 'The contents of the certificate used to sign the AuthnResponse with, if different from'
-                                . ' the public key configured below'
+                                . ' the public key configured below',
                             )
                         ->end()
                     ->end()

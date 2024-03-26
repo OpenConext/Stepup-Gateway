@@ -36,7 +36,7 @@ final readonly class ResponseRenderingService
         private ResponseHelper  $responseHelper,
         private Environment     $templateEngine,
         private CookieService   $ssoCookieService,
-        private LoggerInterface $logger
+        private LoggerInterface $logger,
     ) {
     }
 
@@ -48,10 +48,10 @@ final readonly class ResponseRenderingService
                 ->createNewResponse($context)
                 ->setResponseStatus(
                     Constants::STATUS_REQUESTER,
-                    Constants::STATUS_REQUEST_UNSUPPORTED
+                    Constants::STATUS_REQUEST_UNSUPPORTED,
                 )
                 ->get(),
-            $request
+            $request,
         );
     }
 
@@ -64,15 +64,15 @@ final readonly class ResponseRenderingService
             $this->responseBuilder
                 ->createNewResponse($context)
                 ->setResponseStatus(Constants::STATUS_RESPONDER)
-                ->get()
+                ->get(),
         );
     }
 
     public function renderResponse(
         ResponseContext $context,
         SAMLResponse $response,
-        Request $request
-    ): \Symfony\Component\HttpFoundation\Response {
+        Request $request,
+    ): Response {
         return $this->renderSamlResponse($context, 'consume_assertion', $request, $response);
     }
 
@@ -91,7 +91,7 @@ final readonly class ResponseRenderingService
         ResponseContext $context,
         string $view,
         Request $request,
-        SAMLResponse $response
+        SAMLResponse $response,
     ): Response {
         $parameters = [
             'acu' => $context->getDestination(),
@@ -113,8 +113,8 @@ final readonly class ResponseRenderingService
         $httpResponse = (new Response)->setContent(
             $this->templateEngine->render(
                 'SurfnetStepupGatewayGatewayBundle:gateway:' . $view . '.html.twig',
-                $parameters
-            )
+                $parameters,
+            ),
         );
 
         if ($response->isSuccess()) {

@@ -30,9 +30,9 @@ class ExpirationHelper implements ExpirationHelperInterface
 {
     public function __construct(
         /**
-        * The SSO on 2FA cookie lifetime in seconds
-        * See: config/openconext/parameters.yaml sso_cookie_lifetime
-        */
+         * The SSO on 2FA cookie lifetime in seconds
+         * See: config/openconext/parameters.yaml sso_cookie_lifetime
+         */
         private readonly int $cookieLifetime,
         /**
          * The period in seconds that we still acknowledge the
@@ -40,9 +40,8 @@ class ExpirationHelper implements ExpirationHelperInterface
          * for server time/sync differences that may occur.
          */
         private readonly int $gracePeriod,
-        private ?CoreDateTime $now = null
-    )
-    {
+        private ?CoreDateTime $now = null,
+    ) {
         if (!$now instanceof \DateTime) {
             $now = DateTime::now();
         }
@@ -57,20 +56,20 @@ class ExpirationHelper implements ExpirationHelperInterface
             throw new InvalidAuthenticationTimeException(
                 'The authentication time contained a non-int value',
                 0,
-                $error
+                $error,
             );
         }
 
         if ($authenticationTimestamp < 0) {
             throw new InvalidAuthenticationTimeException(
-                'The authentication time is from before the Unix timestamp epoch'
+                'The authentication time is from before the Unix timestamp epoch',
             );
         }
 
         if ($authenticationTimestamp > $this->now->getTimestamp()) {
             throw new InvalidAuthenticationTimeException(
                 'The authentication time is from the future, which indicates the clock settings ' .
-                'are incorrect, or the time in the cookie value was tampered with.'
+                'are incorrect, or the time in the cookie value was tampered with.',
             );
         }
 

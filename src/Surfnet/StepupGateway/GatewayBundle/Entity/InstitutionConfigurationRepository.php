@@ -30,8 +30,8 @@ class InstitutionConfigurationRepository extends EntityRepository
             throw new InstitutionConfigurationNotFoundException(
                 sprintf(
                     'Institution configuration for %s could not be found',
-                    $institution
-                )
+                    $institution,
+                ),
             );
         }
         return $institutionConfiguration;

@@ -33,8 +33,10 @@ class AdfsService
     /**
      * SecondFactorAdfsService constructor.
      */
-    public function __construct(private readonly RequestHelper $adfsRequestHelper, private readonly ResponseHelper $adfsResponseHelper)
-    {
+    public function __construct(
+        private readonly RequestHelper $adfsRequestHelper,
+        private readonly ResponseHelper $adfsResponseHelper,
+    ) {
     }
 
     /**
@@ -44,18 +46,21 @@ class AdfsService
      * @return Request
      * @throws InvalidAdfsRequestException
      */
-    public function handleAdfsRequest(LoggerInterface $logger, Request $httpRequest, ReceivedAuthnRequest $originalRequest)
-    {
+    public function handleAdfsRequest(
+        LoggerInterface $logger,
+        Request $httpRequest,
+        ReceivedAuthnRequest $originalRequest,
+    ) {
         if ($this->adfsRequestHelper->isAdfsRequest($httpRequest)) {
             $logger->notice('Received AuthnRequest from an ADFS');
             try {
                 $httpRequest = $this->adfsRequestHelper->transformRequest(
                     $httpRequest,
-                    $originalRequest->getRequestId()
+                    $originalRequest->getRequestId(),
                 );
             } catch (Exception $e) {
                 throw new InvalidAdfsRequestException(
-                    sprintf('Could not process ADFS Request, error: "%s"', $e->getMessage())
+                    sprintf('Could not process ADFS Request, error: "%s"', $e->getMessage()),
                 );
             }
         }
@@ -81,7 +86,7 @@ class AdfsService
                 $adfsParameters = $this->adfsResponseHelper->retrieveAdfsParameters();
             } catch (Exception $e) {
                 throw new InvalidAdfsResponseException(
-                    sprintf('Could not process ADFS Response parameters, error: "%s"', $e->getMessage())
+                    sprintf('Could not process ADFS Response parameters, error: "%s"', $e->getMessage()),
                 );
             }
 

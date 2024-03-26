@@ -29,8 +29,10 @@ class FailedResponseService
     /**
      * GatewayServiceProviderService constructor.
      */
-    public function __construct(private readonly SamlAuthenticationLogger $samlLogger, private readonly ResponseBuilder $responseBuilder)
-    {
+    public function __construct(
+        private readonly SamlAuthenticationLogger $samlLogger,
+        private readonly ResponseBuilder $responseBuilder,
+    ) {
     }
 
     /**
@@ -53,7 +55,7 @@ class FailedResponseService
         $logger->notice(sprintf(
             'Responding to request "%s" with response based on response from the remote IdP with response "%s"',
             $responseContext->getInResponseTo(),
-            $response->getId()
+            $response->getId(),
         ));
 
         return $response;
@@ -76,14 +78,14 @@ class FailedResponseService
             ->setResponseStatus(
                 Constants::STATUS_RESPONDER,
                 Constants::STATUS_AUTHN_FAILED,
-                'Authentication cancelled by user'
+                'Authentication cancelled by user',
             )
             ->get();
 
         $logger->notice(sprintf(
             'Responding to request "%s" with response based on response from the remote IdP with response "%s"',
             $responseContext->getInResponseTo(),
-            $response->getId()
+            $response->getId(),
         ));
 
         return $response;
@@ -104,7 +106,7 @@ class FailedResponseService
      * @param $context
      * @return SAMLResponse
      */
-    public function createResponseFailureResponse(\Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext $context)
+    public function createResponseFailureResponse(ResponseContext $context)
     {
         return $this->responseBuilder
             ->createNewResponse($context)

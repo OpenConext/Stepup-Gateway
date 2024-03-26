@@ -29,16 +29,17 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 class SmsController extends AbstractController
 {
     public function __construct(
-        private readonly SmsServiceInterface $smsService
-    )
-    {
+        private readonly SmsServiceInterface $smsService,
+    ) {
     }
 
     /**
      * @return JsonResponse
      */
-    public function sendAction(SmsMessage $message, Requester $requester): \Symfony\Component\HttpFoundation\JsonResponse
-    {
+    public function sendAction(
+        SmsMessage $message,
+        Requester $requester,
+    ): JsonResponse {
         /** @var SmsService $smsService */
         $result = $this->smsService->send($message);
 

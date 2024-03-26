@@ -38,8 +38,10 @@ class Response
      * @param string $context
      * @return Response
      */
-    public static function fromValues($authMethod, $context): \Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\ValueObject\Response
-    {
+    public static function fromValues(
+        $authMethod,
+        $context,
+    ): Response {
         Assert::stringNotEmpty($authMethod);
         Assert::stringNotEmpty($context);
 

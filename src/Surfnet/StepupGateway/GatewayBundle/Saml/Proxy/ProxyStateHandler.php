@@ -26,7 +26,7 @@ class ProxyStateHandler
 {
     public function __construct(
         private readonly RequestStack $requestStack,
-        private                       $sessionPath,
+        private $sessionPath,
     ) {
     }
 
@@ -144,7 +144,7 @@ class ProxyStateHandler
 
         if (!is_string($nameId)) {
             throw new RuntimeException(
-                sprintf('Unable to retrieve NameId, must be a string, but a %s was set', gettype($nameId))
+                sprintf('Unable to retrieve NameId, must be a string, but a %s was set', gettype($nameId)),
             );
         }
         return $nameId;
