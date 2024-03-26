@@ -37,6 +37,7 @@ use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\LoaAliasLookupService;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\LoaResolutionService as SecondFactorLoaResolutionService;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\SecondFactorOnlyNameIdValidationService;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Session;
 
 final class LoginServiceTest extends GatewaySamlTestCase
@@ -251,7 +252,10 @@ final class LoginServiceTest extends GatewaySamlTestCase
     private function initGatewayLoginService(array $loaLevels,  array $loaAliases): void
     {
         $session = new Session($this->sessionStorage);
-        $this->stateHandler = new ProxyStateHandler($session, 'surfnet/gateway/request');
+        $requestStackMock = $this->createMock(RequestStack::class);
+        $requestStackMock->method('getSession')->willReturn($session);
+
+        $this->stateHandler = new ProxyStateHandler($requestStackMock, 'surfnet/gateway/request');
         $samlLogger = new SamlAuthenticationLogger($this->logger);
 
         $this->loaResolutionService = $this->mockLoaResolutionService($loaLevels);
