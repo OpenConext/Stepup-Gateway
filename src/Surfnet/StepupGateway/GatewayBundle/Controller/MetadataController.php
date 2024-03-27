@@ -24,7 +24,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class MetadataController extends AbstractController
 {
-    public function metadataAction(): XMLResponse
+    public function metadata(): XMLResponse
     {
         /** @var MetadataFactory $metadataFactory */
         $metadataFactory = $this->get('surfnet_saml.metadata_factory');

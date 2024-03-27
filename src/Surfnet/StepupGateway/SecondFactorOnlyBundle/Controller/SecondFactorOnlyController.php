@@ -67,7 +67,7 @@ class SecondFactorOnlyController extends AbstractController
      *
      * @throws InvalidAdfsRequestException
      */
-    public function ssoAction(Request $httpRequest): Response
+    public function sso(Request $httpRequest): Response
     {
         $this->isSecondFactorOnlyAllowed();
 
@@ -110,7 +110,7 @@ class SecondFactorOnlyController extends AbstractController
      *
      * @throws InvalidAdfsResponseException|\Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\Exception\AcsLocationNotAllowedException
      */
-    public function respondAction(Request $request): Response
+    public function respond(Request $request): Response
     {
         $responseContext = $this->responseContext;
         $originalRequestId = $responseContext->getInResponseTo();

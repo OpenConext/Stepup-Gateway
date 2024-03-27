@@ -60,7 +60,7 @@ class GatewayController extends AbstractController
      *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
      */
-    public function ssoAction(Request $httpRequest)
+    public function sso(Request $httpRequest)
     {
         /** @var \Psr\Log\LoggerInterface $logger */
         $logger = $this->get('logger');
@@ -86,7 +86,7 @@ class GatewayController extends AbstractController
     /**
      *
      */
-    public function proxySsoAction(): never
+    public function proxySso(): never
     {
         throw new HttpException(418, 'Not Yet Implemented');
     }
@@ -101,7 +101,7 @@ class GatewayController extends AbstractController
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function consumeAssertionAction(Request $request): Response
+    public function consumeAssertion(Request $request): Response
     {
         $responseContext = $this->getResponseContext(self::MODE_SSO);
         $gatewayLoginService = $this->getGatewayConsumeAssertionService();
@@ -127,7 +127,7 @@ class GatewayController extends AbstractController
      * redirect. This method sends a AuthnResponse back to the service
      * provider in response to the AuthnRequest received in ssoAction().
      */
-    public function respondAction(Request $request): Response
+    public function respond(Request $request): Response
     {
         $responseContext = $this->getResponseContext(self::MODE_SSO);
         $gatewayLoginService = $this->getGatewayRespondService();
@@ -143,7 +143,7 @@ class GatewayController extends AbstractController
      * @param $authenticationMode
      * @return Response
      */
-    public function sendLoaCannotBeGivenAction(Request $request): Response
+    public function sendLoaCannotBeGiven(Request $request): Response
     {
         if (!$request->get('authenticationMode', false)) {
             throw new RuntimeException('Unable to determine the authentication mode in the sendLoaCannotBeGiven action');
@@ -161,7 +161,7 @@ class GatewayController extends AbstractController
     /**
      * @return Response
      */
-    public function sendAuthenticationCancelledByUserAction(): Response
+    public function sendAuthenticationCancelledByUser(): Response
     {
         // The authentication mode is read from the parent request, in the meantime a forward was followed, making
         // reading the auth mode from the current request impossible.

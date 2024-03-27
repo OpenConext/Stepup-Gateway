@@ -31,7 +31,7 @@ class MetadataController extends AbstractController
     ) {
     }
 
-    public function metadataAction(): XMLResponse
+    public function metadata(): XMLResponse
     {
         if (!$this->getParameter('second_factor_only')) {
             $this->logger->notice(sprintf(

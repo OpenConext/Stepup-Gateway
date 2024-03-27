@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2014 SURFnet bv
+ * Copyright 2014 SURFnet bv.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,11 +20,12 @@ namespace Surfnet\StepupGateway\ApiBundle\Controller;
 
 use Surfnet\StepupGateway\ApiBundle\Dto\Requester;
 use Surfnet\StepupGateway\ApiBundle\Dto\SmsMessage;
+use Surfnet\StepupGateway\ApiBundle\Service\SmsService;
 use Surfnet\StepupGateway\ApiBundle\Service\SmsServiceInterface;
 use Surfnet\StepupGateway\ApiBundle\Sms\SmsMessageResultInterface;
-use Surfnet\StepupGateway\ApiBundle\Service\SmsService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Routing\Attribute\Route;
 
 class SmsController extends AbstractController
 {
@@ -33,10 +34,12 @@ class SmsController extends AbstractController
     ) {
     }
 
-    /**
-     * @return JsonResponse
-     */
-    public function sendAction(
+    #[Route(
+        path: '/verify-yubikey',
+        methods: ['POST'],
+        condition: "request.headers.get('Content-Type') == 'application/json' && request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
+    )]
+    public function send(
         SmsMessage $message,
         Requester $requester,
     ): JsonResponse {
@@ -52,7 +55,7 @@ class SmsController extends AbstractController
             return new JsonResponse(['status' => 'OK']);
         }
 
-        $errors = array_map(fn($error): string => sprintf('%s (#%d)', $error['description'], $error['code']), $result->getRawErrors());
+        $errors = array_map(fn ($error): string => sprintf('%s (#%d)', $error['description'], $error['code']), $result->getRawErrors());
 
         if ($result->isMessageInvalid()) {
             return new JsonResponse(['errors' => $errors], 400);

@@ -56,19 +56,19 @@ class SecondFactorController extends AbstractController
     public const MODE_SFO = 'sfo';
     public const MODE_SSO = 'sso';
 
-    public function selectSecondFactorForVerificationSsoAction(
+    public function selectSecondFactorForVerificationSso(
         Request $request,
     ): Response {
         return $this->selectSecondFactorForVerificationAction(self::MODE_SSO, $request);
     }
 
-    public function selectSecondFactorForVerificationSfoAction(
+    public function selectSecondFactorForVerificationSfo(
         Request $request,
     ): Response {
         return $this->selectSecondFactorForVerificationAction(self::MODE_SFO, $request);
     }
 
-    public function selectSecondFactorForVerificationAction(
+    public function selectSecondFactorForVerification(
         string $authenticationMode,
         Request $request,
     ): Response|RedirectResponse {
@@ -174,7 +174,7 @@ class SecondFactorController extends AbstractController
      * @return array|RedirectResponse|Response
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function chooseSecondFactorAction(
+    public function chooseSecondFactor(
         Request $request,
         $authenticationMode,
     ): Response|RedirectResponse|array {
@@ -281,7 +281,7 @@ class SecondFactorController extends AbstractController
         ];
     }
 
-    public function verifyGssfAction(Request $request): Response
+    public function verifyGssf(Request $request): Response
     {
         if (!$request->get('authenticationMode', false)) {
             throw new RuntimeException('Unable to determine the authentication mode in the GSSP verification action');
@@ -327,7 +327,7 @@ class SecondFactorController extends AbstractController
         );
     }
 
-    public function gssfVerifiedAction(Request $request): Response
+    public function gssfVerified(Request $request): Response
     {
         $authenticationMode = $request->get('authenticationMode');
         $this->supportsAuthenticationMode($authenticationMode);
@@ -366,7 +366,7 @@ class SecondFactorController extends AbstractController
      * @Template
      * @return array|Response
      */
-    public function verifyYubiKeySecondFactorAction(Request $request): array|Response
+    public function verifyYubiKeySecondFactor(Request $request): array|Response
     {
         if (!$request->get('authenticationMode', false)) {
             throw new RuntimeException('Unable to determine the authentication mode in Yubikey verification action');
@@ -428,7 +428,7 @@ class SecondFactorController extends AbstractController
      * @param string $authenticationMode
      * @return array|Response
      */
-    public function verifySmsSecondFactorAction(
+    public function verifySmsSecondFactor(
         Request $request,
     ): array|RedirectResponse {
         if (!$request->get('authenticationMode', false)) {
@@ -501,7 +501,7 @@ class SecondFactorController extends AbstractController
      * @param string $authenticationMode
      * @return array|Response
      */
-    public function verifySmsSecondFactorChallengeAction(
+    public function verifySmsSecondFactorChallenge(
         Request $request,
     ): Response|array {
         if (!$request->get('authenticationMode', false)) {
@@ -561,7 +561,7 @@ class SecondFactorController extends AbstractController
         return ['form' => $form->createView(), 'cancelForm' => $cancelForm->createView()];
     }
 
-    public function cancelAuthenticationAction(): Response
+    public function cancelAuthentication(): Response
     {
         return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:sendAuthenticationCancelledByUser');
     }

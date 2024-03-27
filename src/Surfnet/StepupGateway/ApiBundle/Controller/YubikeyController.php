@@ -25,6 +25,7 @@ use Surfnet\StepupGateway\ApiBundle\Service\YubikeyServiceInterface;
 use Surfnet\YubikeyApiClient\Service\OtpVerificationResult;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Routing\Attribute\Route;
 
 class YubikeyController extends AbstractController
 {
@@ -33,7 +34,12 @@ class YubikeyController extends AbstractController
     ) {
     }
 
-    public function verifyAction(Otp $otp, Requester $requester): JsonResponse
+    #[Route(
+        path: '/verify-yubikey',
+        methods: ['POST'],
+        condition: "request.headers.get('Content-Type') == 'application/json' && request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
+    )]
+    public function verify(Otp $otp, Requester $requester): JsonResponse
     {
         $result = $this->yubikeyService->verifyOtp($otp, $requester);
 
