@@ -6,22 +6,26 @@ jobs:
         timeout-minutes: 30
         steps:
             - name: Checkout
-              uses: actions/checkout@master
+              uses: actions/checkout@v4
+
             - name: Get Composer Cache Directory
               id: composer-cache
               run: |
                 echo "::set-output name=dir::$(composer config cache-files-dir)"
-            - uses: actions/cache@v1
+        
+            - uses: actions/cache@v4
               with:
                 path: ${{ steps.composer-cache.outputs.dir }}
                 key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
                 restore-keys: |
                   ${{ runner.os }}-composer-
+
             - name: Init environment
               run: cd ci/docker && ./init.sh
+
             - name: Run CI tests
               run: |
-                  cd ci/docker && docker-compose exec -T php-fpm.stepup.example.com bash -c '
+                  cd ci/docker && docker-compose exec -T gateway.stepup.example.com bash -c '
                       composer check
                   '
               env:
