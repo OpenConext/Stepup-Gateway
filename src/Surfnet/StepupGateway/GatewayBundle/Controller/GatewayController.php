@@ -18,11 +18,14 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Controller;
 
+use Psr\Log\LoggerInterface;
 use SAML2\Response as SAMLResponse;
+use Surfnet\SamlBundle\Http\RedirectBinding;
 use Surfnet\StepupGateway\GatewayBundle\Exception\InvalidArgumentException;
 use Surfnet\StepupGateway\GatewayBundle\Exception\RequesterFailureException;
 use Surfnet\StepupGateway\GatewayBundle\Exception\ResponseFailureException;
 use Surfnet\StepupGateway\GatewayBundle\Exception\RuntimeException;
+use Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler;
 use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
 use Surfnet\StepupGateway\GatewayBundle\Service\Gateway\ConsumeAssertionService;
 use Surfnet\StepupGateway\GatewayBundle\Service\Gateway\FailedResponseService;
@@ -30,6 +33,7 @@ use Surfnet\StepupGateway\GatewayBundle\Service\Gateway\LoginService;
 use Surfnet\StepupGateway\GatewayBundle\Service\Gateway\RespondService;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\ResponseHelper;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -45,6 +49,18 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class GatewayController extends AbstractController
 {
+
+    public function __construct(
+        private readonly LoggerInterface         $logger,
+        private readonly RedirectBinding         $redirectBinding,
+        private readonly LoginService            $gatewayLoginService,
+        private readonly FailedResponseService   $gatewayFailedResponseService,
+        private readonly ConsumeAssertionService $consumeAssertionService,
+        private readonly ProxyStateHandler       $ssoProxyStateHandler,
+        private readonly ProxyStateHandler       $sfoProxyStateHandler,
+    ) {
+    }
+
     public const RESPONSE_CONTEXT_SERVICE_ID = 'gateway.proxy.response_context';
     public const MODE_SFO = 'sfo';
     public const MODE_SSO = 'sso';
@@ -58,35 +74,27 @@ class GatewayController extends AbstractController
      * This single sign-on action will start a new SAML request to the remote
      * IDP configured in Stepup (most likely to be an instance of OpenConext
      * EngineBlock).
-     *
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
      */
     #[Route(
         path: '/authentication/single-sign-on',
         name: 'gateway_identityprovider_sso',
         methods: ['GET', 'POST']
     )]
-    public function sso(Request $httpRequest)
+    public function sso(Request $httpRequest): Response
     {
-        /** @var \Psr\Log\LoggerInterface $logger */
-        $logger = $this->get('logger');
-
-        $redirectBinding = $this->get('surfnet_saml.http.redirect_binding');
-        $gatewayLoginService = $this->getGatewayLoginService();
-
-        $logger->notice('Received AuthnRequest, started processing');
+        $this->logger->notice('Received AuthnRequest, started processing');
 
         try {
-            $proxyRequest = $gatewayLoginService->singleSignOn($httpRequest);
+            $proxyRequest = $this->gatewayLoginService->singleSignOn($httpRequest);
         } catch (RequesterFailureException) {
-            $response = $this->getGatewayFailedResponseService()->createRequesterFailureResponse(
+            $response = $this->gatewayFailedResponseService->createRequesterFailureResponse(
                 $this->getResponseContext(self::MODE_SSO),
             );
 
             return $this->renderSamlResponse('consume_assertion', $response, $httpRequest, self::MODE_SSO);
         }
 
-        return $redirectBinding->createResponseFor($proxyRequest);
+        return $this->redirectBinding->createResponseFor($proxyRequest);
     }
 
     #[Route(
@@ -115,12 +123,11 @@ class GatewayController extends AbstractController
     public function consumeAssertion(Request $request): Response
     {
         $responseContext = $this->getResponseContext(self::MODE_SSO);
-        $gatewayLoginService = $this->getGatewayConsumeAssertionService();
 
         try {
-            $gatewayLoginService->consumeAssertion($request, $responseContext);
+            $this->consumeAssertionService->consumeAssertion($request, $responseContext);
         } catch (ResponseFailureException) {
-            $response = $this->getGatewayFailedResponseService()->createResponseFailureResponse($responseContext);
+            $response = $this->gatewayFailedResponseService->createResponseFailureResponse($responseContext);
 
             return $this->renderSamlResponse('unprocessable_response', $response, $request, self::MODE_SSO);
         }
@@ -160,9 +167,8 @@ class GatewayController extends AbstractController
         $authenticationMode = $request->get('authenticationMode');
         $this->supportsAuthenticationMode($authenticationMode);
         $responseContext = $this->getResponseContext($authenticationMode);
-        $gatewayLoginService = $this->getGatewayFailedResponseService();
 
-        $response = $gatewayLoginService->sendLoaCannotBeGiven($responseContext);
+        $response = $this->gatewayFailedResponseService->sendLoaCannotBeGiven($responseContext);
 
         return $this->renderSamlResponse('consume_assertion', $response, $request, $authenticationMode);
     }
@@ -172,7 +178,7 @@ class GatewayController extends AbstractController
         // The authentication mode is read from the parent request, in the meantime a forward was followed, making
         // reading the auth mode from the current request impossible.
         // @see: \Surfnet\StepupGateway\GatewayBundle\Controller\SecondFactorController::cancelAuthenticationAction
-        $requestStack = $this->get('request_stack');
+        $requestStack = $this->container->get('request_stack');
         $request = $requestStack->getParentRequest();
         if (!$request->get('authenticationMode', false)) {
             throw new RuntimeException('Unable to determine the authentication mode in the sendAuthenticationCancelledByUser action');
@@ -181,9 +187,8 @@ class GatewayController extends AbstractController
 
         $this->supportsAuthenticationMode($authenticationMode);
         $responseContext = $this->getResponseContext($authenticationMode);
-        $gatewayLoginService = $this->getGatewayFailedResponseService();
 
-        $response = $gatewayLoginService->sendAuthenticationCancelledByUser($responseContext);
+        $response = $this->gatewayFailedResponseService->sendAuthenticationCancelledByUser($responseContext);
 
         return $this->renderSamlResponse('consume_assertion', $response, $request, $authenticationMode);
     }
@@ -194,9 +199,9 @@ class GatewayController extends AbstractController
         Request $request,
         string $authenticationMode,
     ): Response {
-        $logger = $this->get('logger');
+        $logger = $this->container->get('logger');
         /** @var ResponseHelper $responseHelper */
-        $responseHelper = $this->get('second_factor_only.adfs.response_helper');
+        $responseHelper = $this->container->get('second_factor_only.adfs.response_helper');
 
         $this->supportsAuthenticationMode($authenticationMode);
         $responseContext = $this->getResponseContext($authenticationMode);
@@ -223,7 +228,7 @@ class GatewayController extends AbstractController
         $httpResponse = $this->render($view, $parameters);
 
         if ($response->isSuccess()) {
-            $ssoCookieService = $this->get('gateway.service.sso_2fa_cookie');
+            $ssoCookieService = $this->container->get('gateway.service.sso_2fa_cookie');
             $ssoCookieService->handleSsoOn2faCookieStorage($responseContext, $request, $httpResponse);
         }
 
@@ -242,11 +247,12 @@ class GatewayController extends AbstractController
         );
     }
 
+    // TODO: check for return type. With service container get ist wasnt a problem
     public function getResponseContext($authenticationMode): ResponseContext
     {
         return match ($authenticationMode) {
-            self::MODE_SFO => $this->get($this->get('gateway.proxy.sfo.state_handler')->getResponseContextServiceId()),
-            self::MODE_SSO => $this->get($this->get('gateway.proxy.sso.state_handler')->getResponseContextServiceId()),
+            self::MODE_SFO => $this->sfoProxyStateHandler->getResponseContextServiceId(),
+            self::MODE_SSO => $this->ssoProxyStateHandler->getResponseContextServiceId(),
             default => throw new RuntimeException('Invalid authentication mode requested'),
         };
     }
@@ -256,20 +262,10 @@ class GatewayController extends AbstractController
         return base64_encode($response->toUnsignedXML()->ownerDocument->saveXML());
     }
 
-    /**
-     * @return LoginService
-     */
-    private function getGatewayLoginService()
-    {
-        return $this->get('gateway.service.gateway.login');
-    }
 
-    /**
-     * @return ConsumeAssertionService
-     */
     private function getGatewayConsumeAssertionService()
     {
-        return $this->get('gateway.service.gateway.consume_assertion');
+        return $this->container->get('gateway.service.gateway.consume_assertion');
     }
 
     /**
@@ -277,15 +273,7 @@ class GatewayController extends AbstractController
      */
     private function getGatewayRespondService()
     {
-        return $this->get('gateway.service.gateway.respond');
-    }
-
-    /**
-     * @return FailedResponseService
-     */
-    private function getGatewayFailedResponseService()
-    {
-        return $this->get('gateway.service.gateway.failed_response');
+        return $this->container->get('gateway.service.gateway.respond');
     }
 
     private function supportsAuthenticationMode($authenticationMode): void
