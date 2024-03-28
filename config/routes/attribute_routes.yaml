@@ -1,0 +1,19 @@
+gateway_controllers:
+    resource: ../../src/Surfnet/StepupGateway/GatewayBundle/Controller
+    type: attribute
+
+api_controllers:
+    resource: ../../src/Surfnet/StepupGateway/ApiBundle/Controller
+    type: attribute
+
+saml_controllers:
+    resource: ../../src/Surfnet/StepupGateway/SamlStepupProviderBundle/Controller
+    type: attribute
+
+second_factor_only_controllers:
+    resource: ../../src/Surfnet/StepupGateway/SecondFactorOnlyBundle/Controller
+    type: attribute
+
+kernel:
+    resource: ../../src/Kernel.php
+    type: attribute
