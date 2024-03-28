@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2014 SURFnet bv
+ * Copyright 2014 SURFnet bv.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Entry point for the Stepup login flow.
@@ -60,6 +61,11 @@ class GatewayController extends AbstractController
      *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
      */
+    #[Route(
+        path: '/authentication/single-sign-on',
+        name: 'gateway_identityprovider_sso',
+        methods: ['GET', 'POST']
+    )]
     public function sso(Request $httpRequest)
     {
         /** @var \Psr\Log\LoggerInterface $logger */
@@ -83,9 +89,11 @@ class GatewayController extends AbstractController
         return $redirectBinding->createResponseFor($proxyRequest);
     }
 
-    /**
-     *
-     */
+    #[Route(
+        path: '/authentication/single-sign-on/{idpKey}',
+        name: 'gateway_identityprovider_sso_proxy',
+        methods: ['POST']
+    )]
     public function proxySso(): never
     {
         throw new HttpException(418, 'Not Yet Implemented');
@@ -98,9 +106,12 @@ class GatewayController extends AbstractController
      * from the IDP. This method handles the assertion and forwards the user
      * using an internal redirect to the SecondFactorController to start the
      * actual second factor verification.
-     *
-     * @return \Symfony\Component\HttpFoundation\Response
      */
+    #[Route(
+        path: '/authentication/consume-assertion',
+        name: 'gateway_serviceprovider_consume_assertion',
+        methods: ['POST']
+    )]
     public function consumeAssertion(Request $request): Response
     {
         $responseContext = $this->getResponseContext(self::MODE_SSO);
@@ -139,9 +150,7 @@ class GatewayController extends AbstractController
     }
 
     /**
-     * This action is also used from the context of SecondFactorOnly authentications
-     * @param $authenticationMode
-     * @return Response
+     * This action is also used from the context of SecondFactorOnly authentications.
      */
     public function sendLoaCannotBeGiven(Request $request): Response
     {
@@ -158,9 +167,6 @@ class GatewayController extends AbstractController
         return $this->renderSamlResponse('consume_assertion', $response, $request, $authenticationMode);
     }
 
-    /**
-     * @return Response
-     */
     public function sendAuthenticationCancelledByUser(): Response
     {
         // The authentication mode is read from the parent request, in the meantime a forward was followed, making
@@ -182,7 +188,6 @@ class GatewayController extends AbstractController
         return $this->renderSamlResponse('consume_assertion', $response, $request, $authenticationMode);
     }
 
-
     public function renderSamlResponse(
         string $view,
         SAMLResponse $response,
@@ -199,7 +204,7 @@ class GatewayController extends AbstractController
         $parameters = [
             'acu' => $responseContext->getDestination(),
             'response' => $this->getResponseAsXML($response),
-            'relayState' => $responseContext->getRelayState()
+            'relayState' => $responseContext->getRelayState(),
         ];
 
         // Test if we should add ADFS response parameters
@@ -221,27 +226,22 @@ class GatewayController extends AbstractController
             $ssoCookieService = $this->get('gateway.service.sso_2fa_cookie');
             $ssoCookieService->handleSsoOn2faCookieStorage($responseContext, $request, $httpResponse);
         }
+
         return $httpResponse;
     }
 
     /**
-     * @param string   $view
-     * @param array    $parameters
-     * @param Response $response
-     * @return Response
+     * @param string $view
      */
-    public function render($view, array $parameters = [], Response $response = null): Response
+    public function render($view, array $parameters = [], ?Response $response = null): Response
     {
         return parent::render(
-            'SurfnetStepupGatewayGatewayBundle:gateway:' . $view . '.html.twig',
+            '@Default/gateway/'.$view.'.html.twig',
             $parameters,
             $response,
         );
     }
 
-    /**
-     * @return ResponseContext
-     */
     public function getResponseContext($authenticationMode): ResponseContext
     {
         return match ($authenticationMode) {
@@ -251,9 +251,6 @@ class GatewayController extends AbstractController
         };
     }
 
-    /**
-     * @return string
-     */
     private function getResponseAsXML(SAMLResponse $response): string
     {
         return base64_encode($response->toUnsignedXML()->ownerDocument->saveXML());
@@ -293,7 +290,7 @@ class GatewayController extends AbstractController
 
     private function supportsAuthenticationMode($authenticationMode): void
     {
-        if ($authenticationMode !== self::MODE_SSO && $authenticationMode !== self::MODE_SFO) {
+        if (self::MODE_SSO !== $authenticationMode && self::MODE_SFO !== $authenticationMode) {
             throw new InvalidArgumentException('Invalid authentication mode requested');
         }
     }
