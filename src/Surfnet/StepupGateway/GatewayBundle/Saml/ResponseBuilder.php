@@ -51,13 +51,7 @@ class ResponseBuilder
         return $this;
     }
 
-    /**
-     * @param string $status
-     * @param string|null $subStatus
-     * @param string|null $message
-     * @return $this
-     */
-    public function setResponseStatus(array $status, $subStatus = null, $message = null): static
+    public function setResponseStatus(string $status, ?string $subStatus = null, ?string $message = null): static
     {
         if (!$this->isValidResponseStatus($status)) {
             throw new LogicException('Trying to set invalid Response Status');
@@ -90,7 +84,7 @@ class ResponseBuilder
         return $response;
     }
 
-    private function isValidResponseStatus(array $status): bool
+    private function isValidResponseStatus(string $status): bool
     {
         return in_array($status, [
             Constants::STATUS_SUCCESS,            // weeee!
