@@ -20,6 +20,7 @@ namespace Surfnet\StepupGateway\GatewayBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use GuzzleHttp;
+use GuzzleHttp\Utils;
 use Surfnet\SamlBundle\Entity\IdentityProvider;
 use Surfnet\StepupGateway\GatewayBundle\Exception\RuntimeException;
 use Surfnet\StepupGateway\GatewayBundle\Entity\ServiceProvider;
@@ -145,8 +146,8 @@ class SamlEntity
      *
      * @return array
      */
-    private function decodeConfiguration()
+    private function decodeConfiguration(): array
     {
-        return GuzzleHttp\json_decode($this->configuration, true);
+        return Utils::jsonDecode($this->configuration, true);
     }
 }
