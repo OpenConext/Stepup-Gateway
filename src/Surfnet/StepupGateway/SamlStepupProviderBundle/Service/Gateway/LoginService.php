@@ -49,12 +49,11 @@ class LoginService
      *
      * The service provider in this context is SelfService (when registering
      * a token) or RA (when vetting a token).
-     *
-     * @return AuthnRequest
      */
-    public function singleSignOn(Provider $provider, Request $httpRequest)
+    public function singleSignOn(Provider $provider, Request $httpRequest): AuthnRequest
     {
-        $originalRequest = $this->redirectBinding->processSignedRequest($httpRequest);
+//        $originalRequest = $this->redirectBinding->processSignedRequest($httpRequest);
+        $originalRequest = $this->redirectBinding->receiveSignedAuthnRequestFrom($httpRequest);
 
         $originalRequestId = $originalRequest->getRequestId();
         $logger = $this->samlLogger->forAuthentication($originalRequestId);

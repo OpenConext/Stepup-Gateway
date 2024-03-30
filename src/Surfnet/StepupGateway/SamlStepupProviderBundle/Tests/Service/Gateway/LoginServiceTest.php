@@ -237,7 +237,7 @@ class LoginServiceTest extends GatewaySamlTestCase
     {
         $authnRequest = ReceivedAuthnRequest::from($samlResponseXml);
 
-        $this->redirectBinding->shouldReceive('processSignedRequest')
+        $this->redirectBinding->shouldReceive('receiveSignedAuthnRequestFrom')
             ->andReturn($authnRequest);
     }
 }
