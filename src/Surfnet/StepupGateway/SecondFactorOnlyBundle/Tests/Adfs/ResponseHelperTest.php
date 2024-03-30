@@ -103,7 +103,8 @@ class ResponseHelperTest extends TestCase
      */
     public function it_rejects_malformed_adfs_parameters(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        // TODO: decide if this test is useful as the typesystem prevents this from happening
+        $this->expectException(\TypeError::class);
         $this->stateHandler->shouldReceive('getAuthMethod')->andReturn(null);
         $this->stateHandler->shouldReceive('getContext')->andReturn('<blob></blob>');
         $this->stateHandler->shouldReceive('getRequestId')->andReturn('my-request-id');
