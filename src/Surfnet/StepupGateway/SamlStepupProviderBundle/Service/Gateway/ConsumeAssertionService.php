@@ -17,8 +17,10 @@
 
 namespace Surfnet\StepupGateway\SamlStepupProviderBundle\Service\Gateway;
 
+
 use Exception;
 use Psr\Log\LoggerInterface;
+use SAML2\Response;
 use Surfnet\SamlBundle\Http\PostBinding;
 use Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger;
 use Surfnet\StepupGateway\GatewayBundle\Entity\ServiceProvider;
@@ -58,14 +60,15 @@ class ConsumeAssertionService
      *  1. in case of registration: a SAMLResponse is returned
      *  2. in case of verification: a SecondfactorVerfificationRequiredException exception is thrown
      *
-     * @return \SAML2\Response
+     * @return Response
      * @throws Exception
      */
     public function consumeAssertion(
         Provider $provider,
         Request $httpRequest,
         ProxyResponseFactory $proxyResponseFactory,
-    ) {
+    ): Response
+    {
         $stateHandler = $provider->getStateHandler();
         $originalRequestId = $stateHandler->getRequestId();
 
