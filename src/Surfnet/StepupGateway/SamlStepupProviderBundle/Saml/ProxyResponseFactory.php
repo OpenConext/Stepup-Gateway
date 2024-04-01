@@ -21,7 +21,6 @@ namespace Surfnet\StepupGateway\SamlStepupProviderBundle\Saml;
 use DateInterval;
 use DateTime;
 use DateTimeZone;
-use Psr\Log\LoggerInterface;
 use SAML2\Assertion;
 use SAML2\Constants;
 use SAML2\Response;
@@ -40,7 +39,6 @@ class ProxyResponseFactory
     private readonly DateTime $currentTime;
 
     public function __construct(
-        private readonly LoggerInterface $logger,
         private readonly IdentityProvider $hostedIdentityProvider,
         private readonly StateHandler $stateHandler,
         private readonly AssertionSigningService $assertionSigningService,
@@ -49,10 +47,6 @@ class ProxyResponseFactory
         $this->currentTime = is_null($now) ? new DateTime('now', new DateTimeZone('UTC')): $now;
     }
 
-    /**
-     * @param string $destination
-     * @return Response
-     */
     public function createProxyResponse(Assertion $assertion, ?string $destination): Response
     {
         $newAssertion = new Assertion();
@@ -75,9 +69,6 @@ class ProxyResponseFactory
         return $this->createNewAuthnResponse($newAssertion, $destination);
     }
 
-    /**
-     * @param string $destination
-     */
     private function addSubjectConfirmationFor(Assertion $newAssertion, ?string $destination): void
     {
         $confirmation = new SubjectConfirmation();
@@ -100,10 +91,6 @@ class ProxyResponseFactory
         $newAssertion->setAuthenticatingAuthority($assertion->getAuthenticatingAuthority());
     }
 
-    /**
-     * @param string $destination
-     * @return SAMLResponse
-     */
     private function createNewAuthnResponse(Assertion $newAssertion, ?string $destination): Response
     {
         $response = new SAMLResponse();
@@ -119,10 +106,9 @@ class ProxyResponseFactory
     }
 
     /**
-     * @param string $interval a DateInterval compatible interval to skew the time with
-     * @return int
+     * a DateInterval compatible interval to skew the time with
      */
-    private function getTimestamp($interval = null): int
+    private function getTimestamp(?string $interval = null): int
     {
         $time = clone $this->currentTime;
 

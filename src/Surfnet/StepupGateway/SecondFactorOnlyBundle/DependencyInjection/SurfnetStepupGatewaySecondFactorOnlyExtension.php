@@ -35,7 +35,7 @@ class SurfnetStepupGatewaySecondFactorOnlyExtension extends Extension
             $container,
             new FileLocator(__DIR__ . '/../Resources/config'),
         );
-        $loader->load('services.yml');
+        $loader->load('services.yaml');
 
         $this->replaceLoaAliasConfig($config, $container);
     }

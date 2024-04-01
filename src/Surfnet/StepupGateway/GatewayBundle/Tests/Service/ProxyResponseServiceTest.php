@@ -199,6 +199,7 @@ final class ProxyResponseServiceTest extends GatewaySamlTestCase
             $this->loa
         );
 
+
         $originalAssertion = new Assertion();
         $originalAssertion->setIssuer($this->getIssuer('https://idp.example/metadata'));
         $originalAssertion->setAuthenticatingAuthority(['https://previous.idp.example/metadata']);

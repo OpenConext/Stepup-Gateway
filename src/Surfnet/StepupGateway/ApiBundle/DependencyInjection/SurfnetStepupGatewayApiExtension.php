@@ -35,7 +35,7 @@ class SurfnetStepupGatewayApiExtension extends Extension
             $container,
             new FileLocator(__DIR__ . '/../Resources/config'),
         );
-        $loader->load('services.yml');
+        $loader->load('services.yaml');
 
         $entryPoint = $container->getDefinition('surfnet_gateway_api.security.json_basic_auth_entry_point');
         $entryPoint->replaceArgument(0, $config['http_basic_realm']);

@@ -22,15 +22,21 @@ use Psr\Log\LoggerInterface;
 use Surfnet\SamlBundle\Http\XMLResponse;
 use Surfnet\SamlBundle\Metadata\MetadataFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Routing\Attribute\Route;
 
 class MetadataController extends AbstractController
 {
     public function __construct(
-        private readonly LoggerInterface                              $logger,
+        private readonly LoggerInterface $logger,
         private readonly MetadataFactory $metadataFactory,
     ) {
     }
 
+    #[Route(
+        path: '/second-factor-only/metadata',
+        name: 'gateway_second_factor_only_metadata',
+        methods: ['GET']
+    )]
     public function metadata(): XMLResponse
     {
         if (!$this->getParameter('second_factor_only')) {

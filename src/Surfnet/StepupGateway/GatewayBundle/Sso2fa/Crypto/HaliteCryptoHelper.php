@@ -71,7 +71,7 @@ class HaliteCryptoHelper implements CryptoHelperInterface
      * Again using the encryption key, used to encrypt the data.
      * The decrypt method will return a deserialized CookieValue value object
      */
-    public function decrypt(string $cookieData): CookieValue
+    public function decrypt(string $cookieData): CookieValueInterface
     {
         try {
             // Decryption: (we use the default encoding: Halite::DECODE_BASE64URLSAFE)

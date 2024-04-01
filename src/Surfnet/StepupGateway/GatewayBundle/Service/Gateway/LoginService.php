@@ -58,7 +58,7 @@ class LoginService
      *
      * @return AuthnRequest
      */
-    public function singleSignOn(Request $httpRequest)
+    public function singleSignOn(Request $httpRequest): AuthnRequest
     {
         $originalRequest = $this->redirectBinding->receiveSignedAuthnRequestFrom($httpRequest);
 

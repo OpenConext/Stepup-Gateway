@@ -5,14 +5,10 @@ includes:
     - ../../vendor/phpstan/phpstan-mockery/extension.neon
     - ../../vendor/phpstan/phpstan-deprecation-rules/rules.neon
 rules:
-    # Put here your cutom rules for this repository
-#    - Surfnet\NoDebugFunctionRule
-#    - Surfnet\InvokableControllerRule
-#    - Surfnet\UntypedIdParamRule
-#    - Surfnet\NoNullOrArrayReturnRule
+    # Put here your custom or individual rules for this repository
 parameters:
     checkUninitializedProperties: true
-    level: 1
+    level: 4
     paths:
         - ../../src
     excludePaths:

@@ -31,7 +31,7 @@ class ChooseSecondFactorType extends AbstractType
         /** @var ChooseSecondFactorCommand $data */
         $data = $builder->getData();
 
-        foreach ($data->secondFactors->getValues() as $secondFactor) {
+        foreach ($data->secondFactors as $secondFactor) {
             $type = $secondFactor->secondFactorType;
             $builder->add('choose_' . $type, SubmitType::class, [
                 'label' => 'gateway.second_factor.choose_second_factor.select',

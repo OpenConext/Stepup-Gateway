@@ -52,7 +52,7 @@ class ResponseContext
         private readonly LoggerInterface $logger,
         DateTime $now = null,
     ) {
-        $this->generationTime         = is_null($now) ? new DateTime('now', new DateTimeZone('UTC')): $now;
+        $this->generationTime = is_null($now) ? new DateTime('now', new DateTimeZone('UTC')): $now;
     }
 
     /**
@@ -123,12 +123,9 @@ class ResponseContext
         return $this->hostedIdentityProvider;
     }
 
-    /**
-     * @return null|ServiceProvider
-     */
     public function getServiceProvider(): ?ServiceProvider
     {
-        if ($this->targetServiceProvider instanceof \Surfnet\SamlBundle\Entity\ServiceProvider) {
+        if ($this->targetServiceProvider instanceof ServiceProvider) {
             return $this->targetServiceProvider;
         }
 
@@ -180,10 +177,7 @@ class ResponseContext
         return new Assertion($assertionDocument->documentElement);
     }
 
-    /**
-     * @return null|string
-     */
-    public function getIdentityNameId(): string
+    public function getIdentityNameId(): ?string
     {
         return $this->stateHandler->getIdentityNameId();
     }

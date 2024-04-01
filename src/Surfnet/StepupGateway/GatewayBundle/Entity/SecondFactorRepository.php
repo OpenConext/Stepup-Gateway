@@ -28,7 +28,7 @@ interface SecondFactorRepository
      * @param string $identityNameId
      * @return Collection
      */
-    public function getAllMatchingFor(Loa $highestLoa, $identityNameId, SecondFactorTypeService $service);
+    public function getAllMatchingFor(Loa $highestLoa, string $identityNameId, SecondFactorTypeService $service): Collection;
 
     /**
      * Loads a second factor by its ID. Subsequent calls do not hit the database.
@@ -36,7 +36,7 @@ interface SecondFactorRepository
      * @param string $secondFactorId
      * @return null|SecondFactor
      */
-    public function findOneBySecondFactorId($secondFactorId);
+    public function findOneBySecondFactorId(string $secondFactorId): ?SecondFactor;
 
     /**
      * Load the institution for a given identity name id based on the vetted tokens.
@@ -44,5 +44,5 @@ interface SecondFactorRepository
      * @param $identityNameId
      * @return string
      */
-    public function getInstitutionByNameId($identityNameId);
+    public function getInstitutionByNameId(string $identityNameId): string;
 }

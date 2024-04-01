@@ -53,7 +53,7 @@ class SurfnetStepupGatewaySamlStepupProviderExtension extends Extension
         $config = $this->processConfiguration($configuration, $configs);
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-        $loader->load('services.yml');
+        $loader->load('services.yaml');
 
         $connectedServiceProviders = $container->getDefinition('gssp.allowed_sps');
         $connectedServiceProviders->replaceArgument(0, $config['allowed_sps']);
@@ -84,7 +84,7 @@ class SurfnetStepupGatewaySamlStepupProviderExtension extends Extension
         $this->createRemoteDefinition($provider, $configuration['remote'], $container);
 
         $stateHandlerDefinition = new Definition(StateHandler::class, [
-            new Reference('gssp.session'),
+            new Reference('request_stack'),
             $provider
         ]);
         $container->setDefinition('gssp.provider.' . $provider . '.statehandler', $stateHandlerDefinition);
@@ -201,9 +201,6 @@ class SurfnetStepupGatewaySamlStepupProviderExtension extends Extension
         $container->setDefinition('gssp.provider.' . $provider . '.remote.idp', $definition);
     }
 
-    /**
-     * @return Definition
-     */
     private function createMetadataDefinition(
         string $provider,
         array $configuration,

@@ -121,7 +121,6 @@ final class RespondServiceTest extends GatewaySamlTestCase
      */
     public function it_should_return_a_valid_saml_response_and_update_state_when_the_verification_is_succeeded_on_login_flow(): void
     {
-
         // Mock service provider
         $serviceProvider = Mockery::mock(ServiceProvider::class)
             ->shouldReceive('determineAcsLocation')

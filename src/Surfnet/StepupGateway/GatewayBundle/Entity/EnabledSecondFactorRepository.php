@@ -42,10 +42,11 @@ final class EnabledSecondFactorRepository implements SecondFactorRepository
     }
 
     public function getAllMatchingFor(
-        Loa $highestLoa,
-        $identityNameId,
+        Loa                     $highestLoa,
+        string                  $identityNameId,
         SecondFactorTypeService $service,
     ): ArrayCollection {
+
         $enabledSecondFactors = new ArrayCollection();
 
         foreach ($this->secondFactorRepository->getAllMatchingFor($highestLoa, $identityNameId, $service) as $secondFactor) {
@@ -66,7 +67,7 @@ final class EnabledSecondFactorRepository implements SecondFactorRepository
         return $enabledSecondFactors;
     }
 
-    public function findOneBySecondFactorId($secondFactorId)
+    public function findOneBySecondFactorId(string $secondFactorId): ?SecondFactor
     {
         $secondFactor = $this->secondFactorRepository->findOneBySecondFactorId($secondFactorId);
 
@@ -77,7 +78,7 @@ final class EnabledSecondFactorRepository implements SecondFactorRepository
         return $secondFactor;
     }
 
-    public function getInstitutionByNameId($identityNameId)
+    public function getInstitutionByNameId($identityNameId): string
     {
         return $this->secondFactorRepository->getInstitutionByNameId($identityNameId);
     }

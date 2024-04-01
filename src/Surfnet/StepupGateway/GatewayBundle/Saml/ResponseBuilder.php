@@ -25,12 +25,8 @@ use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
 
 class ResponseBuilder
 {
-    /**
-     * @var Response
-     */
-    private $response;
+    private ?Response $response = null;
 
-    private ?ResponseContext $responseContext = null;
 
     public function createNewResponse(ResponseContext $context): static
     {
@@ -38,7 +34,6 @@ class ResponseBuilder
             throw new LogicException('Cannot create a new Response when still building a response.');
         }
 
-        $this->responseContext = $context;
 
         $response = new Response();
         $response->setDestination($context->getDestination());
@@ -74,12 +69,10 @@ class ResponseBuilder
         return $this;
     }
 
-    public function get()
+    public function get(): ?Response
     {
         $response = $this->response;
-
         $this->response = null;
-        $this->responseContext = null;
 
         return $response;
     }

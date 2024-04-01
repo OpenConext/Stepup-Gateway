@@ -20,12 +20,13 @@ namespace Surfnet\StepupGateway\SamlStepupProviderBundle\Saml;
 
 use Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Exception\InvalidSubjectException;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 
 class StateHandler extends ProxyStateHandler
 {
     public function __construct(
-        private readonly AttributeBagInterface $attributeBag,
+        private readonly RequestStack $requestStack,
         private readonly string                $provider,
     ) {
     }
@@ -80,22 +81,23 @@ class StateHandler extends ProxyStateHandler
      */
     public function clear(): void
     {
-        $all = $this->attributeBag->all();
+        $all = $this->requestStack->getSession()->all();
 
         foreach (array_keys($all) as $key) {
             if (str_starts_with($key, $this->provider . '/')) {
-                $this->attributeBag->remove($key);
+                $this->requestStack->getSession()->remove($key);
             }
         }
     }
 
+
     protected function set($key, $value): void
     {
-        $this->attributeBag->set($this->provider . '/' . $key, $value);
+        $this->requestStack->getSession()->set($this->provider . '/' . $key, $value);
     }
 
     protected function get($key): mixed
     {
-        return $this->attributeBag->get($this->provider . '/' . $key);
+        return $this->requestStack->getSession()->get($this->provider . '/' . $key);
     }
 }

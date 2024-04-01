@@ -24,6 +24,7 @@ use Surfnet\StepupGateway\GatewayBundle\Exception\RequesterFailureException;
 use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
 use Surfnet\StepupGateway\GatewayBundle\Service\ResponseRenderingService;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\CookieService;
+use Surfnet\StepupGateway\GatewayBundle\Sso2fa\CookieServiceInterface;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\Exception\InvalidAdfsRequestException;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\Exception\InvalidAdfsResponseException;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Exception\InvalidSecondFactorMethodException;
@@ -34,6 +35,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Routing\Attribute\Route;
 
 /**
  * Entry point for the Stepup SFO flow.
@@ -46,11 +48,11 @@ class SecondFactorOnlyController extends AbstractController
     public function __construct(
         private readonly LoggerInterface          $logger,
         private readonly LoginService             $loginService,
-        private readonly ResponseContext          $responseContext,
+        private readonly ResponseContext          $sfoContext,
         private readonly RespondService           $respondService,
         private readonly AdfsService              $adfsService,
         private readonly ResponseRenderingService $responseRendering,
-        private readonly CookieService            $cookieService,
+        private readonly CookieServiceInterface   $cookieService,
         private readonly SamlAuthenticationLogger $samlLogger,
     ) {
     }
@@ -67,6 +69,11 @@ class SecondFactorOnlyController extends AbstractController
      *
      * @throws InvalidAdfsRequestException
      */
+    #[Route(
+        path: '/second-factor-only/single-sign-on',
+        name: 'gateway_second_factor_only_identityprovider_sso',
+        methods: ['GET', 'POST']
+    )]
     public function sso(Request $httpRequest): Response
     {
         $this->isSecondFactorOnlyAllowed();
@@ -83,7 +90,7 @@ class SecondFactorOnlyController extends AbstractController
             $this->loginService->singleSignOn($httpRequest, $originalRequest);
         } catch (RequesterFailureException) {
             return $this->responseRendering
-                ->renderRequesterFailureResponse($this->responseContext, $httpRequest);
+                ->renderRequesterFailureResponse($this->sfoContext, $httpRequest);
         }
 
         $logger->notice('Forwarding to second factor controller for loa determination and handling');
@@ -112,7 +119,7 @@ class SecondFactorOnlyController extends AbstractController
      */
     public function respond(Request $request): Response
     {
-        $responseContext = $this->responseContext;
+        $responseContext = $this->sfoContext;
         $originalRequestId = $responseContext->getInResponseTo();
 
         $logger = $this->samlLogger->forAuthentication($originalRequestId);
@@ -143,7 +150,7 @@ class SecondFactorOnlyController extends AbstractController
             $xmlResponse = $responseRendering->getResponseAsXML($response);
 
             $httpResponse = $this->render(
-                '@SurfnetStepupGatewaySecondFactorOnly/adfs/consume_assertion.html.twig',
+                '@default/adfs/consume_assertion.html.twig',
                 [
                     'acu' => $responseContext->getDestinationForAdfs(),
                     'samlResponse' => $xmlResponse,

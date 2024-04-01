@@ -1,4 +1,7 @@
 twig:
+    paths:
+        '%kernel.project_dir%/templates': default
+        '%kernel.project_dir%/vendor/surfnet/stepup-saml-bundle/templates': 'SurfnetSaml'
     default_path: '%kernel.project_dir%/templates'
     debug: '%kernel.debug%'
     strict_variables: '%kernel.debug%'

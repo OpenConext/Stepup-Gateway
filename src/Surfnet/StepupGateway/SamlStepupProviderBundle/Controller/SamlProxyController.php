@@ -26,7 +26,6 @@ use SAML2\Response as SAMLResponse;
 use SAML2\XML\saml\Issuer;
 use Surfnet\SamlBundle\Http\RedirectBinding;
 use Surfnet\SamlBundle\Http\XMLResponse;
-use Surfnet\SamlBundle\Metadata\MetadataFactory;
 use Surfnet\StepupGateway\GatewayBundle\Controller\GatewayController;
 use Surfnet\StepupGateway\GatewayBundle\Exception\ResponseFailureException;
 use Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler;
@@ -39,19 +38,20 @@ use Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\ConnectedServiceProv
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\Provider;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\ProviderRepository;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Saml\ProxyResponseFactory;
+use Surfnet\StepupGateway\SamlStepupProviderBundle\Saml\ProxyResponseFactoryCollection;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Saml\StateHandler;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Service\Gateway\ConsumeAssertionService;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Service\Gateway\LoginService;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Service\Gateway\SecondFactorVerificationService;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\ResponseHelper;
+use Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\MetadataFactoryCollection;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Surfnet\SamlBundle\Entity\ServiceProvider;
+use Symfony\Component\Routing\Attribute\Route;
 
 /**
  * Handling of GSSP registration and verification.
@@ -70,13 +70,15 @@ class SamlProxyController extends AbstractController
     private const SECOND_FACTOR_MODE = 'gateway.proxy.sfo.state_handler';
 
     public function __construct(
-        private readonly LoggerInterface $logger,
-        private readonly MetadataFactory $metadataFactory,
-        private readonly RedirectBinding $redirectBinding,
+        private readonly LoggerInterface           $logger,
+        private readonly ProviderRepository        $providerRepository,
+        private readonly MetadataFactoryCollection $metadataFactoryCollection,
+        private readonly RedirectBinding           $redirectBinding,
         private readonly ConnectedServiceProviders $connectedServiceProviders,
-        private readonly LoginService $gsspLoginService,
-        private readonly ProxyStateHandler $ssoProxyStateHandler,
-        private readonly ProxyStateHandler $sfoProxyStateHandler,
+        private readonly LoginService              $gsspLoginService,
+        private readonly ProxyStateHandler         $ssoProxyStateHandler,
+        private readonly ProxyStateHandler         $sfoProxyStateHandler,
+        private readonly ProxyResponseFactoryCollection $proxyResponseFactoryCollection,
     ) {
     }
 
@@ -90,11 +92,16 @@ class SamlProxyController extends AbstractController
      * The service provider in this context is SelfService (when registering
      * a token) or RA (when vetting a token).
      */
+    #[Route(
+        path: '/gssp/{provider}/single-sign-on',
+        name: 'gssp_verify',
+        methods: ['GET']
+    )]
     public function singleSignOn(
         string  $provider,
         Request $httpRequest,
     ): RedirectResponse {
-        $provider = $this->getProvider($provider);
+        $provider = $this->providerRepository->get($provider);
 
         $this->logger->notice('Received AuthnRequest, started processing');
 
@@ -124,7 +131,7 @@ class SamlProxyController extends AbstractController
         string $responseContextServiceId,
     ): RedirectResponse {
 
-        $provider = $this->getProvider($provider);
+        $provider = $this->providerRepository->get($provider);
         $gsspSecondFactorVerificationService = $this->getGsspSecondFactorVerificationService();
 
         $authnRequest = $gsspSecondFactorVerificationService->sendSecondFactorVerificationAuthnRequest(
@@ -147,9 +154,14 @@ class SamlProxyController extends AbstractController
      *
      * @throws Exception
      */
+    #[Route(
+        path: '/gssp/{provider}/consume-assertion',
+        name: 'gssp_consume_assertion',
+        methods: ['POST']
+    )]
     public function consumeAssertion(string $provider, Request $httpRequest): Response
     {
-        $provider = $this->getProvider($provider);
+        $provider = $this->providerRepository->get($provider);
 
         $consumeAssertionService = $this->getGsspConsumeAssertionService();
         $proxyResponseFactory = $this->getProxyResponseFactory($provider);
@@ -192,28 +204,18 @@ class SamlProxyController extends AbstractController
         return $this->renderSamlResponse('consume_assertion', $provider->getStateHandler(), $response);
     }
 
+    #[Route(
+        path: '/gssp/{provider}/metadata',
+        name: 'gssp_saml_metadata',
+        methods: ['GET']
+    )]
     public function metadata(string $provider): XMLResponse
     {
-        $provider = $this->getProvider($provider);
+        $provider = $this->providerRepository->get($provider);
+        $factory = $this->metadataFactoryCollection->getByIdentifier($provider->getName());
 
-        /** @var MetadataFactory $factory */
-        $factory = $this->container->get('gssp.provider.' . $provider->getName() . '.metadata.factory');
 
         return new XMLResponse($factory->generate());
-    }
-
-    private function getProvider(string $provider): Provider
-    {
-        /** @var ProviderRepository $providerRepository */
-        $providerRepository = $this->container->get('gssp.provider_repository');
-
-        if (!$providerRepository->has($provider)) {
-            throw new NotFoundHttpException(
-                sprintf('Requested GSSP "%s" does not exist or is not registered', $provider),
-            );
-        }
-
-        return $providerRepository->get($provider);
     }
 
     /**
@@ -374,24 +376,21 @@ class SamlProxyController extends AbstractController
         return $this->connectedServiceProviders->getConfigurationOf($serviceProvider);
     }
 
-    /**
-     * @return SecondFactorVerificationService
-     */
-    private function getGsspSecondFactorVerificationService()
+    private function getGsspSecondFactorVerificationService(): SecondFactorVerificationService
     {
         return $this->container->get('gssp.service.gssp.second_factor_verification');
     }
 
-    /**
-     * @return ConsumeAssertionService
-     */
-    private function getGsspConsumeAssertionService()
+    private function getGsspConsumeAssertionService(): ConsumeAssertionService
     {
         return $this->container->get('gssp.service.gssp.consume_assertion');
     }
 
     private function getProxyResponseFactory(Provider $provider): ProxyResponseFactory
     {
+
+        $proxyResponseFactory = $this->proxyResponseFactoryCollection->getByIdentifier($provider->getName());
+
         return $this->container->get('gssp.provider.' . $provider->getName() . '.response_proxy');
     }
 

@@ -3,7 +3,7 @@ framework:
   esi:             false
   secret:          "%secret%"
   form:            ~
-  error_controller: Surfnet\StepupGateway\GatewayBundle\Controller\ExceptionController::show
+#  error_controller: Surfnet\StepupGateway\GatewayBundle\Controller\ExceptionController::show
   csrf_protection: ~
   trusted_hosts:   ~
   session:

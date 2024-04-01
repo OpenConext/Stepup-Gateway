@@ -22,25 +22,19 @@ use SAML2\Assertion;
 
 class AssertionAdapter
 {
-    public function __construct(private readonly Assertion $assertion)
-    {
+    public function __construct(
+        private readonly Assertion $assertion,
+    ) {
     }
 
-    /**
-     * @param string $inResponseTo
-     * @return bool
-     */
-    public function inResponseToMatches($inResponseTo): bool
+    public function inResponseToMatches(string $inResponseTo): bool
     {
          return $this->getInResponseTo() === $inResponseTo;
     }
 
-    /**
-     * @return null|string
-     */
-    public function getInResponseTo()
+
+    public function getInResponseTo(): ?string
     {
-        /** @var \SAML2\XML\saml\SubjectConfirmation $subjectConfirmation */
         $subjectConfirmation = $this->assertion->getSubjectConfirmation()[0];
 
         return $subjectConfirmation->getSubjectConfirmationData()->getInResponseTo();

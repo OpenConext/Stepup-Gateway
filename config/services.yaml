@@ -5,6 +5,37 @@ imports:
   - { resource: 'openconext/samlstepupproviders.yaml' }
 
 services:
+    # default configuration for services in *this* file
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+
+#  Surfnet\StepupGateway\:
+#    resource: '../src/Surfnet/StepupGateway/*'
+
+  Surfnet\StepupGateway\SecondFactorOnlyBundle\Controller\:
+    resource: '../src/Surfnet/StepupGateway/SecondFactorOnlyBundle/Controller/*'
+    tags: [ 'controller.service_arguments' ]
+
+  Surfnet\StepupGateway\GatewayBundle\Controller\:
+    resource: '../src/Surfnet/StepupGateway/GatewayBundle/Controller/*'
+    tags: [ 'controller.service_arguments' ]
+
+  Surfnet\StepupGateway\ApiBundle\Controller\:
+    resource: '../src/Surfnet/StepupGateway/ApiBundle/Controller/*'
+    tags: [ 'controller.service_arguments' ]
+
+  Surfnet\StepupGateway\SamlStepupProviderBundle\Controller\:
+    resource: '../src/Surfnet/StepupGateway/SamlStepupProviderBundle/Controller/*'
+    tags: [ 'controller.service_arguments' ]
+
+  surfnet_gateway_api.service.provider:
+    class: Surfnet\StepupGateway\ApiBundle\Sms\SmsAdapterProvider
+    arguments: [ "%sms_service%" ]
+  Surfnet\StepupGateway\ApiBundle\Sms\SmsAdapterProvider:
+    alias: surfnet_gateway_api.service.provider
+
   logger:
     alias: 'monolog.logger'
     public: true
@@ -16,3 +47,5 @@ services:
 #  twig.extension.intl:
 #    class: Twig_Extensions_Extension_Intl
 #    tags: [{ name: twig.extension }]
+  Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\MetadataFactoryCollection:
+  Surfnet\StepupGateway\SamlStepupProviderBundle\Saml\ProxyResponseFactoryCollection:

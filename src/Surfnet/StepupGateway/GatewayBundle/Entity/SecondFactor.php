@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2014 SURFnet bv
+ * Copyright 2014 SURFnet bv.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ use Surfnet\StepupBundle\Value\VettingType;
  * @see Surfnet\StepupMiddleware\GatewayBundle\Entity\SecondFactor (in OpenConext/Stepup-Middleware project)
  *
  * @ORM\Entity(repositoryClass="Surfnet\StepupGateway\GatewayBundle\Entity\DoctrineSecondFactorRepository")
+ *
  * @ORM\Table(
  *      indexes={
  *          @ORM\Index(name="idx_secondfactor_nameid", columns={"name_id"}),
@@ -43,6 +44,7 @@ class SecondFactor
      * @var int
      *
      * @ORM\Id
+     *
      * @ORM\Column(length=36)
      */
     public $id;
@@ -51,6 +53,7 @@ class SecondFactor
      * @var string
      *
      * @ORM\Id
+     *
      * @ORM\Column(length=36)
      */
     public $identityId;
@@ -112,7 +115,7 @@ class SecondFactor
     public $identityVetted;
 
     /**
-     * No new second factors should be created by the gateway
+     * No new second factors should be created by the gateway.
      */
     final private function __construct()
     {
@@ -122,16 +125,15 @@ class SecondFactor
     {
         $secondFactorType = new SecondFactorType($this->secondFactorType);
         $vettingType = $this->determineVettingType($this->identityVetted);
+
         return $service->canSatisfy($secondFactorType, $loa, $vettingType);
     }
 
-    /**
-     * @return float
-     */
     public function getLoaLevel(SecondFactorTypeService $service): float
     {
         $secondFactorType = new SecondFactorType($this->secondFactorType);
         $vettingType = $this->determineVettingType($this->identityVetted);
+
         return $service->getLevel($secondFactorType, $vettingType);
     }
 
@@ -140,6 +142,7 @@ class SecondFactor
         if ($identityVetted) {
             return new VettingType(VettingType::TYPE_ON_PREMISE);
         }
+
         return new VettingType(VettingType::TYPE_SELF_ASSERTED_REGISTRATION);
     }
 }

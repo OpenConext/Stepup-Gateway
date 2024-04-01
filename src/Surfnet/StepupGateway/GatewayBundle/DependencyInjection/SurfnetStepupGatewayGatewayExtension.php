@@ -32,8 +32,8 @@ class SurfnetStepupGatewayGatewayExtension extends Extension
         $config = $processor->processConfiguration(new Configuration(), $config);
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
-        $loader->load('services.yml');
-        $loader->load('repositories.yml');
+        $loader->load('services.yaml');
+        $loader->load('repositories.yaml');
 
         $container
             ->getDefinition('gateway.security.intrinsic_loa')

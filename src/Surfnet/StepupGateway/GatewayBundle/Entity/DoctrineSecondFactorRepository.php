@@ -31,11 +31,11 @@ class DoctrineSecondFactorRepository extends EntityRepository implements SecondF
     private array $secondFactorsById = [];
 
     public function getAllMatchingFor(
-        Loa $highestLoa,
-        $identityNameId,
+        Loa                     $highestLoa,
+        string                  $identityNameId,
         SecondFactorTypeService $service,
     ): ArrayCollection {
-        /** @var \Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor[] $secondFactors */
+
         $secondFactors = $this->findAllByIdentityNameId($identityNameId);
 
         $matches = new ArrayCollection();
@@ -48,7 +48,7 @@ class DoctrineSecondFactorRepository extends EntityRepository implements SecondF
         return $matches;
     }
 
-    public function findOneBySecondFactorId($secondFactorId)
+    public function findOneBySecondFactorId(string $secondFactorId): ?SecondFactor
     {
         if (!isset($this->secondFactorsById[$secondFactorId])) {
             $this->secondFactorsById[$secondFactorId] = $this->findOneBy(['secondFactorId' => $secondFactorId]);
@@ -61,9 +61,9 @@ class DoctrineSecondFactorRepository extends EntityRepository implements SecondF
      * @param $identityNameId
      * @return string
      */
-    public function getInstitutionByNameId($identityNameId)
+    public function getInstitutionByNameId($identityNameId): string
     {
-        /** @var \Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor $secondFactor **/
+        /** @var SecondFactor $secondFactor **/
         $secondFactor = $this->createQueryBuilder('sf')
             ->where('sf.nameId = :nameId')
             ->setParameter('nameId', $identityNameId)
@@ -79,11 +79,10 @@ class DoctrineSecondFactorRepository extends EntityRepository implements SecondF
 
     /**
      * @param $identityNameId
-     * @return \Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor[]
+     * @return SecondFactor[]
      */
-    private function findAllByIdentityNameId($identityNameId)
+    private function findAllByIdentityNameId($identityNameId): array
     {
-        /** @var \Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor[] $secondFactors */
         return $this->createQueryBuilder('sf')
             ->where('sf.nameId = :nameId')
             ->setParameter('nameId', $identityNameId)

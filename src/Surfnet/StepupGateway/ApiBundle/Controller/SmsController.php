@@ -44,7 +44,7 @@ class SmsController extends AbstractController
         SmsMessage $message,
         Requester $requester,
     ): JsonResponse {
-        /** @var SmsService $smsService */
+
         $result = $this->smsService->send($message);
 
         return $this->createJsonResponseFromSendMessageResult($result);

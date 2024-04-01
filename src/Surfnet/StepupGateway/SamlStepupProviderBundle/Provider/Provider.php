@@ -24,15 +24,13 @@ use Surfnet\StepupGateway\SamlStepupProviderBundle\Saml\StateHandler;
 
 final class Provider
 {
-    /**
-     * @param string $name
-     */
+
     public function __construct(
-        private $name,
+        private readonly string           $name,
         private readonly IdentityProvider $identityProvider,
-        private readonly ServiceProvider $serviceProvider,
+        private readonly ServiceProvider  $serviceProvider,
         private readonly IdentityProvider $remoteIdentityProvider,
-        private readonly StateHandler $stateHandler,
+        private readonly StateHandler     $stateHandler,
     ) {
     }
 

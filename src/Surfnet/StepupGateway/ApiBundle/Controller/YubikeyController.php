@@ -20,7 +20,6 @@ namespace Surfnet\StepupGateway\ApiBundle\Controller;
 
 use Surfnet\StepupGateway\ApiBundle\Dto\Otp;
 use Surfnet\StepupGateway\ApiBundle\Dto\Requester;
-use Surfnet\StepupGateway\ApiBundle\Service\YubikeyService;
 use Surfnet\StepupGateway\ApiBundle\Service\YubikeyServiceInterface;
 use Surfnet\YubikeyApiClient\Service\OtpVerificationResult;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

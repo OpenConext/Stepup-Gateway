@@ -51,7 +51,7 @@ class VerifyYubikeyOtpType extends AbstractType
         ]);
     }
 
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'gateway_verify_yubikey_otp';
     }

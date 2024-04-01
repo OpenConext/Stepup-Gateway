@@ -49,7 +49,10 @@ class FailedResponseService
 
         $response = $this->responseBuilder
             ->createNewResponse($responseContext)
-            ->setResponseStatus(Constants::STATUS_RESPONDER, Constants::STATUS_NO_AUTHN_CONTEXT)
+            ->setResponseStatus(
+                Constants::STATUS_RESPONDER,
+                Constants::STATUS_NO_AUTHN_CONTEXT
+            )
             ->get();
 
         $logger->notice(sprintf(

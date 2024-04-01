@@ -20,7 +20,9 @@ namespace Surfnet\StepupGateway\GatewayBundle\Controller;
 
 use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger;
 use Surfnet\StepupBundle\Command\VerifyPossessionOfPhoneCommand;
+use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupBundle\Value\PhoneNumber\InternationalPhoneNumber;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupGateway\GatewayBundle\Command\ChooseSecondFactorCommand;
@@ -35,10 +37,16 @@ use Surfnet\StepupGateway\GatewayBundle\Form\Type\ChooseSecondFactorType;
 use Surfnet\StepupGateway\GatewayBundle\Form\Type\SendSmsChallengeType;
 use Surfnet\StepupGateway\GatewayBundle\Form\Type\VerifySmsChallengeType;
 use Surfnet\StepupGateway\GatewayBundle\Form\Type\VerifyYubikeyOtpType;
+use Surfnet\StepupGateway\GatewayBundle\Monolog\Logger\AuthenticationLogger;
+use Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler;
 use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
 use Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorService;
+use Surfnet\StepupGateway\GatewayBundle\Service\StepUpAuthenticationService;
+use Surfnet\StepupGateway\GatewayBundle\Service\WhitelistService;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\CookieService;
+use Surfnet\StepupGateway\GatewayBundle\Sso2fa\CookieServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -46,6 +54,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Translation\IdentityTranslator;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -57,27 +67,42 @@ class SecondFactorController extends AbstractController
     public const MODE_SFO = 'sfo';
     public const MODE_SSO = 'sso';
 
+    public function __construct(
+        private ProxyStateHandler                    $ssoProxyStateHandler,
+        private ProxyStateHandler                    $sfoProxyStateHandler,
+        private readonly AuthenticationLogger        $authenticationLogger,
+        private readonly SamlAuthenticationLogger    $samlAuthenticationLogger,
+        private readonly WhitelistService            $whitelistService,
+        private readonly TranslatorInterface          $translator,
+        private readonly StepUpAuthenticationService $stepUpAuthenticationService,
+        private readonly SecondFactorTypeService     $secondFactorTypeService,
+        private readonly SecondFactorService         $secondFactorService,
+        private readonly CookieServiceInterface      $cookieService,
+    )
+    {
+    }
+
     public function selectSecondFactorForVerificationSso(
         Request $request,
     ): Response {
-        return $this->selectSecondFactorForVerificationAction(self::MODE_SSO, $request);
+        return $this->selectSecondFactorForVerification(self::MODE_SSO, $request);
     }
 
     public function selectSecondFactorForVerificationSfo(
         Request $request,
     ): Response {
-        return $this->selectSecondFactorForVerificationAction(self::MODE_SFO, $request);
+        return $this->selectSecondFactorForVerification(self::MODE_SFO, $request);
     }
 
     public function selectSecondFactorForVerification(
         string $authenticationMode,
         Request $request,
-    ): Response|RedirectResponse {
+    ): Response {
+
         $this->supportsAuthenticationMode($authenticationMode);
         $context = $this->getResponseContext($authenticationMode);
         $originalRequestId = $context->getInResponseTo();
-        /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
-        $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
+        $logger = $this->samlAuthenticationLogger->forAuthentication($originalRequestId);
         $logger->notice('Determining which second factor to use...');
         try {
             // Retrieve all requirements to determine the required LoA
@@ -85,9 +110,9 @@ class SecondFactorController extends AbstractController
             $spConfiguredLoas = $context->getServiceProvider()->get('configuredLoas');
             $identityNameId = $context->getIdentityNameId();
             $normalizedIdpSho = $context->getNormalizedSchacHomeOrganization();
-            $normalizedUserSho = $this->getStepupService()->getNormalizedUserShoByIdentityNameId($identityNameId);
+            $normalizedUserSho = $this->stepUpAuthenticationService->getNormalizedUserShoByIdentityNameId($identityNameId);
             $requiredLoa = $this
-                ->getStepupService()
+                ->stepUpAuthenticationService
                 ->resolveHighestRequiredLoa(
                     $requestedLoa,
                     $spConfiguredLoas,
@@ -105,19 +130,19 @@ class SecondFactorController extends AbstractController
         }
 
         $logger->notice(sprintf('Determined that the required Loa is "%s"', $requiredLoa));
-        if ($this->getStepupService()->isIntrinsicLoa($requiredLoa)) {
-            $this->get('gateway.authentication_logger')->logIntrinsicLoaAuthentication($originalRequestId);
+        if ($this->stepUpAuthenticationService->isIntrinsicLoa($requiredLoa)) {
+            $this->authenticationLogger->logIntrinsicLoaAuthentication($originalRequestId);
 
             return $this->forward($context->getResponseAction());
         }
 
         // The preconditions must be met in order to give SSO on 2FA
         // 1: AuthNRequest is not force authn. 2: The SP allows SSO on 2FA.
-        if ($this->getCookieService()->preconditionsAreMet($context)) {
+        if ($this->cookieService->preconditionsAreMet($context)) {
             // Now read the SSO cookie
-            $ssoCookie = $this->getCookieService()->read($request);
+            $ssoCookie = $this->cookieService->read($request);
             // Test if the SSO cookie can satisfy the second factor authentication requirements
-            if ($this->getCookieService()->maySkipAuthentication($requiredLoa->getLevel(), $identityNameId, $ssoCookie)) {
+            if ($this->cookieService->maySkipAuthentication($requiredLoa->getLevel(), $identityNameId, $ssoCookie)) {
                 $logger->notice(
                     'Skipping second factor authentication. Required LoA was met by the LoA recorded in the cookie',
                     [
@@ -126,25 +151,27 @@ class SecondFactorController extends AbstractController
                     ],
                 );
                 // We use the SF from the cookie as the SF that was used for authenticating the second factor authentication
-                $secondFactor = $this->getSecondFactorService()->findByUuid($ssoCookie->secondFactorId());
+                $secondFactor = $this->secondFactorService->findByUuid($ssoCookie->secondFactorId());
                 $this->getResponseContext($authenticationMode)->saveSelectedSecondFactor($secondFactor);
                 $this->getResponseContext($authenticationMode)->markSecondFactorVerified();
                 $this->getResponseContext($authenticationMode)->markVerifiedBySsoOn2faCookie(
-                    $this->getCookieService()->getCookieFingerprint($request),
+                    $this->cookieService->getCookieFingerprint($request),
                 );
-                $this->getAuthenticationLogger()->logSecondFactorAuthentication($originalRequestId, $authenticationMode);
+                $this->authenticationLogger->logSecondFactorAuthentication($originalRequestId, $authenticationMode);
+                $this->authenticationLogger->logSecondFactorAuthentication($originalRequestId, $authenticationMode);
 
                 return $this->forward($context->getResponseAction());
             }
         }
 
-        $secondFactorCollection = $this
-            ->getStepupService()
-            ->determineViableSecondFactors(
-                $context->getIdentityNameId(),
-                $requiredLoa,
-                $this->get('gateway.service.whitelist'),
-            );
+        $secondFactorCollection =
+            $this->stepUpAuthenticationService
+                ->determineViableSecondFactors(
+                    $context->getIdentityNameId(),
+                    $requiredLoa,
+                    $this->whitelistService,
+                );
+
         switch (count($secondFactorCollection)) {
             case 0:
                 $logger->notice('No second factors can give the determined Loa');
@@ -156,8 +183,7 @@ class SecondFactorController extends AbstractController
             case 1:
                 $secondFactor = $secondFactorCollection->first();
                 $logger->notice(sprintf(
-                    'Found "%d" second factors, using second factor of type "%s"',
-                    count($secondFactorCollection),
+                    'Found 1 second factor, using second factor of type "%s"',
                     $secondFactor->secondFactorType,
                 ));
 
@@ -175,8 +201,6 @@ class SecondFactorController extends AbstractController
      * - Shows the token selection screen if you own > 1 token
      * - Directly goes to SF auth when identity owns 1 token.
      *
-     * @Template
-     *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     #[Route(
@@ -188,13 +212,12 @@ class SecondFactorController extends AbstractController
     public function chooseSecondFactor(
         Request $request,
         string $authenticationMode,
-    ): Response|RedirectResponse|array {
+    ): Response {
         $this->supportsAuthenticationMode($authenticationMode);
         $context = $this->getResponseContext($authenticationMode);
         $originalRequestId = $context->getInResponseTo();
 
-        /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
-        $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
+        $logger = $this->samlAuthenticationLogger->forAuthentication($originalRequestId);
         $logger->notice('Ask the user which one of his suitable second factor tokens to use...');
 
         try {
@@ -203,10 +226,10 @@ class SecondFactorController extends AbstractController
             $spConfiguredLoas = $context->getServiceProvider()->get('configuredLoas');
 
             $normalizedIdpSho = $context->getNormalizedSchacHomeOrganization();
-            $normalizedUserSho = $this->getStepupService()->getNormalizedUserShoByIdentityNameId($context->getIdentityNameId());
+            $normalizedUserSho = $this->stepUpAuthenticationService->getNormalizedUserShoByIdentityNameId($context->getIdentityNameId());
 
             $requiredLoa = $this
-                ->getStepupService()
+                ->stepUpAuthenticationService
                 ->resolveHighestRequiredLoa(
                     $requestedLoa,
                     $spConfiguredLoas,
@@ -223,11 +246,11 @@ class SecondFactorController extends AbstractController
         $logger->notice(sprintf('Determined that the required Loa is "%s"', $requiredLoa));
 
         $secondFactors = $this
-            ->getStepupService()
+            ->stepUpAuthenticationService
             ->determineViableSecondFactors(
                 $context->getIdentityNameId(),
                 $requiredLoa,
-                $this->get('gateway.service.whitelist'),
+                $this->whitelistService,
             );
 
         $command = new ChooseSecondFactorCommand();
@@ -240,6 +263,8 @@ class SecondFactorController extends AbstractController
                 ['action' => $this->generateUrl('gateway_verify_second_factor_choose_second_factor', ['authenticationMode' => $authenticationMode])],
             )
             ->handleRequest($request);
+        assert($form instanceof Form);
+
         $cancelForm = $this->buildCancelAuthenticationForm($authenticationMode)->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -270,17 +295,21 @@ class SecondFactorController extends AbstractController
         } elseif ($form->isSubmitted() && !$form->isValid()) {
             $form->addError(
                 new FormError(
-                    $this->get('translator')
+                    $this->translator
                       ->trans('gateway.form.gateway_choose_second_factor.unknown_second_factor_type'),
                 ),
             );
         }
 
-        return [
-            'form' => $form->createView(),
-            'cancelForm' => $cancelForm->createView(),
-            'secondFactors' => $secondFactors,
-        ];
+        return $this->render(
+            '@default/second_factor/choose_second_factor.html.twig',
+            [
+                'form' => $form->createView(),
+                'cancelForm' => $cancelForm->createView(),
+                'secondFactors' => $secondFactors,
+            ],
+        );
+
     }
 
     #[Route(
@@ -299,8 +328,7 @@ class SecondFactorController extends AbstractController
 
         $originalRequestId = $context->getInResponseTo();
 
-        /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
-        $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
+        $logger = $this->samlAuthenticationLogger->forAuthentication($originalRequestId);
         $logger->info('Received request to verify GSSF');
 
         $selectedSecondFactor = $this->getSelectedSecondFactor($context, $logger);
@@ -310,10 +338,9 @@ class SecondFactorController extends AbstractController
             $selectedSecondFactor,
         ));
 
-        /** @var SecondFactorService $secondFactorService */
-        $secondFactorService = $this->get('gateway.service.second_factor_service');
-        /** @var SecondFactor $secondFactor */
+        $secondFactorService = $this->secondFactorService;
         $secondFactor = $secondFactorService->findByUuid($selectedSecondFactor);
+
         if (!$secondFactor) {
             throw new RuntimeException(sprintf('Requested verification of GSSF "%s", however that Second Factor no longer exists', $selectedSecondFactor));
         }
@@ -339,19 +366,18 @@ class SecondFactorController extends AbstractController
 
         $originalRequestId = $context->getInResponseTo();
 
-        /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
-        $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
+        $logger = $this->samlAuthenticationLogger->forAuthentication($originalRequestId);
         $logger->info('Attempting to mark GSSF as verified');
 
         $selectedSecondFactor = $this->getSelectedSecondFactor($context, $logger);
 
-        /** @var SecondFactor $secondFactor */
-        $secondFactor = $this->get('gateway.service.second_factor_service')->findByUuid($selectedSecondFactor);
+        $secondFactor = $this->secondFactorService->findByUuid($selectedSecondFactor);
+
         if (!$secondFactor) {
             throw new RuntimeException(sprintf('Verification of GSSF "%s" succeeded, however that Second Factor no longer exists', $selectedSecondFactor));
         }
 
-        $this->getAuthenticationLogger()->logSecondFactorAuthentication($originalRequestId, $authenticationMode);
+        $this->authenticationLogger->logSecondFactorAuthentication($originalRequestId, $authenticationMode);
         $context->markSecondFactorVerified();
 
         $logger->info(sprintf(
@@ -362,16 +388,13 @@ class SecondFactorController extends AbstractController
         return $this->forward($context->getResponseAction());
     }
 
-    /**
-     * @Template
-     */
     #[Route(
         path: '/verify-second-factor/{authenticationMode}/yubikey',
         name: 'gateway_verify_second_factor_yubikey',
         requirements: ['authenticationMode' => 'sso|sfo'],
         methods: ['GET', 'POST']
     )]
-    public function verifyYubiKeySecondFactor(Request $request): array|Response
+    public function verifyYubiKeySecondFactor(Request $request): Response
     {
         if (!$request->get('authenticationMode', false)) {
             throw new RuntimeException('Unable to determine the authentication mode in Yubikey verification action');
@@ -381,8 +404,7 @@ class SecondFactorController extends AbstractController
         $context = $this->getResponseContext($authenticationMode);
         $originalRequestId = $context->getInResponseTo();
 
-        /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
-        $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
+        $logger = $this->samlAuthenticationLogger->forAuthentication($originalRequestId);
 
         $selectedSecondFactor = $this->getSelectedSecondFactor($context, $logger);
 
@@ -395,25 +417,31 @@ class SecondFactorController extends AbstractController
         $cancelForm = $this->buildCancelAuthenticationForm($authenticationMode)->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $result = $this->getStepupService()->verifyYubikeyOtp($command);
+            $result = $this->stepUpAuthenticationService->verifyYubikeyOtp($command);
             if ($result->didOtpVerificationFail()) {
                 $form->addError(
-                    new FormError($this->get('translator')->trans('gateway.form.verify_yubikey.otp_verification_failed')),
+                    new FormError($this->translator->trans('gateway.form.verify_yubikey.otp_verification_failed')),
                 );
 
                 // OTP field is rendered empty in the template.
-                return ['form' => $form->createView(), 'cancelForm' => $cancelForm->createView()];
+                return $this->render(
+                    '@default/second_factor/verify_yubikey_second_factor.html.twig',
+                    ['form' => $form->createView(), 'cancelForm' => $cancelForm->createView()],
+                );
             } elseif (!$result->didPublicIdMatch()) {
                 $form->addError(
-                    new FormError($this->get('translator')->trans('gateway.form.verify_yubikey.public_id_mismatch')),
+                    new FormError($this->translator->trans('gateway.form.verify_yubikey.public_id_mismatch')),
                 );
 
                 // OTP field is rendered empty in the template.
-                return ['form' => $form->createView(), 'cancelForm' => $cancelForm->createView()];
+                return $this->render(
+                    '@default/second_factor/verify_yubikey_second_factor.html.twig',
+                    ['form' => $form->createView(), 'cancelForm' => $cancelForm->createView()],
+                );
             }
 
             $this->getResponseContext($authenticationMode)->markSecondFactorVerified();
-            $this->getAuthenticationLogger()->logSecondFactorAuthentication($originalRequestId, $authenticationMode);
+            $this->authenticationLogger->logSecondFactorAuthentication($originalRequestId, $authenticationMode);
 
             $logger->info(
                 sprintf(
@@ -426,14 +454,14 @@ class SecondFactorController extends AbstractController
         }
 
         // OTP field is rendered empty in the template.
-        return ['form' => $form->createView(), 'cancelForm' => $cancelForm->createView()];
+        return $this->render(
+            '@default/second_factor/verify_yubikey_second_factor.html.twig',
+            ['form' => $form->createView(), 'cancelForm' => $cancelForm->createView()],
+        );
+
+
     }
 
-    /**
-     * @Template
-     *
-     * @return array|Response
-     */
     #[Route(
         path: '/verify-second-factor/sms/send-challenge',
         name: 'gateway_verify_second_factor_sms',
@@ -441,7 +469,7 @@ class SecondFactorController extends AbstractController
     )]
     public function verifySmsSecondFactor(
         Request $request,
-    ): array|RedirectResponse {
+    ): Response {
         if (!$request->get('authenticationMode', false)) {
             throw new RuntimeException('Unable to determine the authentication mode in the SMS verification action');
         }
@@ -450,8 +478,7 @@ class SecondFactorController extends AbstractController
         $context = $this->getResponseContext($authenticationMode);
         $originalRequestId = $context->getInResponseTo();
 
-        /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
-        $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
+        $logger = $this->samlAuthenticationLogger->forAuthentication($originalRequestId);
 
         $selectedSecondFactor = $this->getSelectedSecondFactor($context, $logger);
 
@@ -463,7 +490,7 @@ class SecondFactorController extends AbstractController
         $form = $this->createForm(SendSmsChallengeType::class, $command)->handleRequest($request);
         $cancelForm = $this->buildCancelAuthenticationForm($authenticationMode)->handleRequest($request);
 
-        $stepupService = $this->getStepupService();
+        $stepupService = $this->stepUpAuthenticationService;
         $phoneNumber = InternationalPhoneNumber::fromStringFormat(
             $stepupService->getSecondFactorIdentifier($selectedSecondFactor),
         );
@@ -473,13 +500,16 @@ class SecondFactorController extends AbstractController
         $viewVariables = ['otpRequestsRemaining' => $otpRequestsRemaining, 'maximumOtpRequests' => $maximumOtpRequests];
 
         if ($form->isSubmitted() && !$form->isValid()) {
-            return array_merge(
-                $viewVariables,
-                [
-                    'phoneNumber' => $phoneNumber,
-                    'form' => $form->createView(),
-                    'cancelForm' => $cancelForm->createView(),
-                ],
+            return $this->render(
+                '@default/second_factor/verify_sms_second_factor.html.twig',
+                array_merge(
+                    $viewVariables,
+                    [
+                        'phoneNumber' => $phoneNumber,
+                        'form' => $form->createView(),
+                        'cancelForm' => $cancelForm->createView(),
+                    ],
+                )
             );
         }
 
@@ -487,16 +517,19 @@ class SecondFactorController extends AbstractController
 
         if (!$stepupService->sendSmsChallenge($command)) {
             $form->addError(
-                new FormError($this->get('translator')->trans('gateway.form.send_sms_challenge.sms_sending_failed')),
+                new FormError($this->translator->trans('gateway.form.send_sms_challenge.sms_sending_failed')),
             );
 
-            return array_merge(
-                $viewVariables,
-                [
-                    'phoneNumber' => $phoneNumber,
-                    'form' => $form->createView(),
-                    'cancelForm' => $cancelForm->createView(),
-                ],
+            return $this->render(
+                '@default/second_factor/verify_sms_second_factor.html.twig',
+                array_merge(
+                    $viewVariables,
+                    [
+                        'phoneNumber' => $phoneNumber,
+                        'form' => $form->createView(),
+                        'cancelForm' => $cancelForm->createView(),
+                    ],
+                )
             );
         }
 
@@ -508,9 +541,6 @@ class SecondFactorController extends AbstractController
         );
     }
 
-    /**
-     * @Template
-     */
     #[Route(
         path: '/verify-second-factor/sms/verify-challenge',
         name: 'gateway_verify_second_factor_sms_verify_challenge',
@@ -518,17 +548,18 @@ class SecondFactorController extends AbstractController
     )]
     public function verifySmsSecondFactorChallenge(
         Request $request,
-    ): Response|array {
+    ): Response {
+
         if (!$request->get('authenticationMode', false)) {
             throw new RuntimeException('Unable to determine the authentication mode in the SMS challenge action');
         }
+
         $authenticationMode = $request->get('authenticationMode');
         $this->supportsAuthenticationMode($authenticationMode);
         $context = $this->getResponseContext($authenticationMode);
         $originalRequestId = $context->getInResponseTo();
 
-        /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
-        $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
+        $logger = $this->samlAuthenticationLogger->forAuthentication($originalRequestId);
 
         $selectedSecondFactor = $this->getSelectedSecondFactor($context, $logger);
 
@@ -539,13 +570,13 @@ class SecondFactorController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $logger->notice('Verifying input SMS challenge matches');
             $command->secondFactorId = $selectedSecondFactor;
-            $verification = $this->getStepupService()->verifySmsChallenge($command);
+            $verification = $this->stepUpAuthenticationService->verifySmsChallenge($command);
 
             if ($verification->wasSuccessful()) {
-                $this->getStepupService()->clearSmsVerificationState($selectedSecondFactor);
+                $this->stepUpAuthenticationService->clearSmsVerificationState($selectedSecondFactor);
 
                 $this->getResponseContext($authenticationMode)->markSecondFactorVerified();
-                $this->getAuthenticationLogger()->logSecondFactorAuthentication($originalRequestId, $authenticationMode);
+                $this->authenticationLogger->logSecondFactorAuthentication($originalRequestId, $authenticationMode);
 
                 $logger->info(
                     sprintf(
@@ -558,24 +589,30 @@ class SecondFactorController extends AbstractController
             } elseif ($verification->didOtpExpire()) {
                 $logger->notice('SMS challenge expired');
                 $form->addError(
-                    new FormError($this->get('translator')->trans('gateway.form.send_sms_challenge.challenge_expired')),
+                    new FormError($this->translator->trans('gateway.form.send_sms_challenge.challenge_expired')),
                 );
             } elseif ($verification->wasAttemptedTooManyTimes()) {
                 $logger->notice('SMS challenge verification was attempted too many times');
                 $form->addError(
-                    new FormError($this->get('translator')->trans('gateway.form.send_sms_challenge.too_many_attempts')),
+                    new FormError($this->translator->trans('gateway.form.send_sms_challenge.too_many_attempts')),
                 );
             } else {
                 $logger->notice('SMS challenge did not match');
                 $form->addError(
                     new FormError(
-                        $this->get('translator')->trans('gateway.form.send_sms_challenge.sms_challenge_incorrect'),
+                        $this->translator->trans('gateway.form.send_sms_challenge.sms_challenge_incorrect'),
                     ),
                 );
             }
         }
 
-        return ['form' => $form->createView(), 'cancelForm' => $cancelForm->createView()];
+        return $this->render(
+            '@default/second_factor/verify_sms_second_factor_challenge.html.twig',
+            [
+                'form' => $form->createView(),
+                'cancelForm' => $cancelForm->createView(),
+            ],
+        );
     }
 
     #[Route(
@@ -588,45 +625,20 @@ class SecondFactorController extends AbstractController
         return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:sendAuthenticationCancelledByUser');
     }
 
-    /**
-     * @return \Surfnet\StepupGateway\GatewayBundle\Service\StepupAuthenticationService
-     */
-    private function getStepupService()
-    {
-        return $this->get('gateway.service.stepup_authentication');
-    }
-
-    /**
-     * @return ResponseContext
-     */
-    private function getResponseContext($authenticationMode)
+    // TODO: how to handle this with DI?
+    private function getResponseContext($authenticationMode): ResponseContext
     {
         return match ($authenticationMode) {
-            self::MODE_SFO => $this->get($this->get('gateway.proxy.sfo.state_handler')->getResponseContextServiceId()),
-            self::MODE_SSO => $this->get($this->get('gateway.proxy.sso.state_handler')->getResponseContextServiceId()),
+            self::MODE_SFO => $this->container->get($this->sfoProxyStateHandler->getResponseContextServiceId()),
+            self::MODE_SSO => $this->container->get($this->ssoProxyStateHandler->getResponseContextServiceId()),
             default => throw new InvalidArgumentException('Invalid authentication mode requested'),
         };
     }
 
-    /**
-     * @return \Surfnet\StepupGateway\GatewayBundle\Monolog\Logger\AuthenticationLogger
-     */
-    private function getAuthenticationLogger()
-    {
-        return $this->get('gateway.authentication_logger');
-    }
-
-    private function getCookieService(): CookieService
-    {
-        return $this->get('gateway.service.sso_2fa_cookie');
-    }
-
-    private function getSecondFactorService(): SecondFactorService
-    {
-        return $this->get('gateway.service.second_factor_service');
-    }
-
-    private function getSelectedSecondFactor(ResponseContext $context, LoggerInterface $logger): string
+    private function getSelectedSecondFactor(
+        ResponseContext $context, 
+        LoggerInterface $logger,
+    ): string 
     {
         $selectedSecondFactor = $context->getSelectedSecondFactor();
 
@@ -642,17 +654,17 @@ class SecondFactorController extends AbstractController
     private function selectAndRedirectTo(
         SecondFactor $secondFactor,
         ResponseContext $context,
-        $authenticationMode,
-    ): RedirectResponse {
+        string $authenticationMode,
+    ): RedirectResponse 
+    {
         $context->saveSelectedSecondFactor($secondFactor);
 
-        $this->getStepupService()->clearSmsVerificationState($secondFactor->secondFactorId);
+        $this->stepUpAuthenticationService->clearSmsVerificationState($secondFactor->secondFactorId);
 
-        $secondFactorTypeService = $this->get('surfnet_stepup.service.second_factor_type');
         $secondFactorType = new SecondFactorType($secondFactor->secondFactorType);
 
         $route = 'gateway_verify_second_factor_';
-        if ($secondFactorTypeService->isGssf($secondFactorType)) {
+        if ($this->secondFactorTypeService->isGssf($secondFactorType)) {
             $route .= 'gssf';
         } else {
             $route .= strtolower($secondFactor->secondFactorType);
@@ -661,10 +673,7 @@ class SecondFactorController extends AbstractController
         return $this->redirect($this->generateUrl($route, ['authenticationMode' => $authenticationMode]));
     }
 
-    /**
-     * @param string $authenticationMode
-     */
-    private function buildCancelAuthenticationForm($authenticationMode): FormInterface
+    private function buildCancelAuthenticationForm(string $authenticationMode): FormInterface
     {
         $cancelFormAction = $this->generateUrl(
             'gateway_cancel_authentication',

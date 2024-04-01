@@ -61,7 +61,6 @@ class ProxyResponseFactoryTest extends GatewaySamlTestCase
         $this->assertionSigningService = m::mock(AssertionSigningService::class);
 
         $this->factory = new ProxyResponseFactory(
-            new NullLogger(),
             $this->idp,
             $this->stateHandler,
             $this->assertionSigningService

@@ -33,7 +33,7 @@ class DummyCryptoHelper implements CryptoHelperInterface
         return $cookieValue->serialize();
     }
 
-    public function decrypt(string $cookieData): CookieValue
+    public function decrypt(string $cookieData): CookieValueInterface
     {
         return CookieValue::deserialize($cookieData);
     }

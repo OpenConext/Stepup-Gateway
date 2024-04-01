@@ -37,9 +37,7 @@ class SmsAdapterProvider
         SpryngService::class => self::SPRYNG,
     ];
 
-    private readonly string $selectedService;
-
-    public function __construct(string $selectedService)
+    public function __construct(private readonly string $selectedService)
     {
         if (!in_array($selectedService, self::$allowedServices)) {
             throw new InvalidArgumentException(
@@ -50,7 +48,6 @@ class SmsAdapterProvider
                 ),
             );
         }
-        $this->selectedService = $selectedService;
     }
 
     public function addSmsAdapter(SmsAdapterInterface $adapter): void

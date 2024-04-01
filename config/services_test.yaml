@@ -22,9 +22,12 @@ services:
       - '@Surfnet\StepupGateway\Behat\Repository\Connection'
 
   Surfnet\StepupGateway\Behat\Repository\InstitutionConfigurationRepository:
+    autowire: true
     class: Surfnet\StepupGateway\Behat\Repository\InstitutionConfigurationRepository
     arguments:
       - '@Surfnet\StepupGateway\Behat\Repository\Connection'
+    tags: ['doctrine.repository_service']
+#    alias: gateway.repository.institution_configuration
 
   Surfnet\StepupGateway\Behat\Repository\Connection:
     class: Surfnet\StepupGateway\Behat\Repository\Connection

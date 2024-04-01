@@ -53,11 +53,8 @@ final class LoaAliasLookupService
         $this->loaAliases = $loaAliases;
     }
 
-    /**
-     * @param string $alias
-     * @return string|bool
-     */
-    public function findLoaIdByAlias($alias): string|false
+
+    public function findLoaIdByAlias(string $alias): string|false
     {
         if (!is_string($alias)) {
             throw InvalidArgumentException::invalidType(

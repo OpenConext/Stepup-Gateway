@@ -27,42 +27,31 @@ use Webmozart\Assert\Assert;
  */
 class Response
 {
-    private ?string $authMethod = null;
-
-    private ?string $context = null;
-
-    /**
-     * Creates and validates an Adfs response value object
-     *
-     * @param string $authMethod
-     * @param string $context
-     * @return Response
-     */
-    public static function fromValues(
-        $authMethod,
-        $context,
-    ): Response {
+    private function __construct(
+        private readonly string $authMethod,
+        private readonly string $context
+    )
+    {
         Assert::stringNotEmpty($authMethod);
         Assert::stringNotEmpty($context);
-
-        $response = new Response();
-        $response->authMethod = $authMethod;
-        $response->context = $context;
-
-        return $response;
     }
 
     /**
-     * @return mixed
+     * Creates and validates an Adfs response value object
      */
+    public static function fromValues(
+        string $authMethod,
+        string $context,
+    ): Response {
+
+        return new Response($authMethod, $context);
+    }
+
     public function getAuthMethod(): ?string
     {
         return $this->authMethod;
     }
 
-    /**
-     * @return mixed
-     */
     public function getContext(): ?string
     {
         return $this->context;

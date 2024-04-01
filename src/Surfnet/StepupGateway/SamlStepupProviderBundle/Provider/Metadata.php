@@ -27,30 +27,15 @@ use DOMNode;
 
 class Metadata implements Signable, Stringable
 {
-    /**
-     * @var string
-     */
-    public $entityId;
+    public string $entityId;
 
-    /**
-     * @var string
-     */
-    public $assertionConsumerUrl;
+    public string $assertionConsumerUrl;
 
-    /**
-     * @var string
-     */
-    public $ssoUrl;
+    public string $ssoUrl;
 
-    /**
-     * @var string
-     */
-    public $idpCertificateFile;
+    public string $idpCertificateFile;
 
-    /**
-     * @var DOMDocument
-     */
-    public $document;
+    public ?DOMDocument $document;
 
     public function getRootDomElement(): DOMElement
     {

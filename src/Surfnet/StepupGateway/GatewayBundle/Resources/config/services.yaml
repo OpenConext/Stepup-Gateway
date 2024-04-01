@@ -20,6 +20,8 @@ services:
         alias: gateway.entity_service
 
     gateway.proxy.sso.state_handler:
+        autowire: false
+        public: true
         class: Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler
         arguments:
             - "@request_stack"
@@ -28,6 +30,7 @@ services:
         alias: gateway.proxy.sso.state_handler
 
     gateway.proxy.sfo.state_handler:
+        autowire: false
         class: Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler
         arguments:
             - "@request_stack"
@@ -47,7 +50,7 @@ services:
             - "@gateway.entity_service"
             - "@gateway.proxy.sso.state_handler"
             - "@logger"
-    Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext:
+    Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext $gatewayProxyResponseContext:
         alias: gateway.proxy.response_context
 
     gateway.service.gateway.login:
@@ -205,7 +208,7 @@ services:
             - "@surfnet_stepup.service.second_factor_type"
             - "@gateway.service.sso_2fa_expiration_helper"
             - "@logger"
-    Surfnet\StepupGateway\GatewayBundle\Sso2fa\CookieService:
+    Surfnet\StepupGateway\GatewayBundle\Sso2fa\CookieServiceInterface:
         alias: gateway.service.sso_2fa_cookie
 
     gateway.service.institution_configuration:

@@ -35,10 +35,7 @@ use Symfony\Component\HttpFoundation\Session\Session;
 
 final class FailedResponseServiceTest extends GatewaySamlTestCase
 {
-    /**
-     * @var \Symfony\Component\HttpFoundation\RequestStack
-     */
-    public $requestStack;
+    public RequestStack $requestStack;
     private Mockery\Mock|FailedResponseService $gatewayFailedResponseService;
     private ResponseContext $responseContext;
     private Mockery\Mock|SamlEntityService $samlEntityService;
