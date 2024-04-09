@@ -6,7 +6,6 @@
         "psr-4": {
             "Surfnet\\": "src\\Surfnet",
             "Surfnet\\StepupGateway\\Behat\\": [
-                "tests/features/bootstrap",
                 "tests/src"
             ]
         },
@@ -16,65 +15,60 @@
     },
     "minimum-stability": "stable",
     "require": {
-        "php": "^8.0",
+        "php": "^8.2",
         "ext-dom": "*",
         "ext-json": "*",
         "ext-libxml": "*",
         "beberlei/assert": "^3.0",
-        "doctrine/cache": "^2.0",
+        "doctrine/annotations": "^2.0",
         "doctrine/common": "^3.4.3",
-        "doctrine/dbal": "~2.5",
+        "doctrine/dbal": "^3.5",
         "doctrine/doctrine-bundle": "^2.0",
-        "doctrine/orm": "^2.5",
-        "graylog2/gelf-php": "^1.5",
+        "doctrine/orm": "^2",
+        "graylog2/gelf-php": "^2",
         "incenteev/composer-parameter-handler": "^2.0",
-        "jms/translation-bundle": "^1.7",
+        "jms/translation-bundle": "^2.2",
         "nelmio/security-bundle": "^2",
-        "openconext/monitor-bundle": "^2.1",
-        "paragonie/halite": "^4.8",
-        "sensio/framework-extra-bundle": "^5.0",
+        "openconext/monitor-bundle": "^4",
+        "paragonie/halite": "^5",
         "spryng/rest-api-php": "^1.1",
-        "surfnet/stepup-bundle": "^5.0",
-        "surfnet/yubikey-api-client-bundle": "^4.0.0",
-        "symfony/config": "4.4.*",
-        "symfony/console": "4.4.*",
-        "symfony/dotenv": "4.4.*",
-        "symfony/expression-language": "4.4.*",
-        "symfony/flex": "^1.8",
-        "symfony/form": "4.4.*",
-        "symfony/http-foundation": "^5.0",
+        "surfnet/stepup-bundle": "^6.0",
+        "surfnet/yubikey-api-client-bundle": "^5.0.0-beta1",
+        "symfony/config": "6.4.*",
+        "symfony/console": "6.4.*",
+        "symfony/expression-language": "6.4.*",
+        "symfony/flex": "^2",
+        "symfony/form": "6.4.*",
+        "symfony/http-foundation": "^6",
         "symfony/monolog-bundle": "^3.0",
-        "symfony/security-bundle": "4.4.*",
-        "symfony/translation": "4.4.*",
-        "symfony/twig-bundle": "4.4.*",
+        "symfony/runtime": "6.4.*",
+        "symfony/security-bundle": "6.4.*",
+        "symfony/translation": "6.4.*",
+        "symfony/twig-bundle": "6.4.*",
         "symfony/webpack-encore-bundle": "^1.8",
-        "twig/extensions": "^1.5",
-        "twig/extra-bundle": "^2.12|^3.0",
-        "twig/twig": "^2",
-        "webmozart/assert": "^1.2"
+        "twig/extra-bundle": "^3.0",
+        "twig/twig": "^3",
+        "webmozart/assert": "^1.11"
     },
     "require-dev": {
-        "behat/behat": "^3.6",
-        "behat/mink": "^1.8",
-        "friends-of-behat/mink-extension": "^2.3",
-        "behat/mink-goutte-driver": "^1.0",
-        "behat/mink-selenium2-driver": "^1.4",
-        "behat/symfony2-extension": "^2.1",
-        "malukenho/docheader": "^0.1.8 || ^1.0.0",
+        "malukenho/docheader": "^1.0.0",
         "matthiasnoback/symfony-config-test": "^4",
         "mockery/mockery": "^1.0",
-        "overtrue/phplint": "^1.2",
         "phpmd/phpmd": "^2.6",
+        "phpstan/phpstan-deprecation-rules": "^1.1",
         "phpstan/phpstan-doctrine": "^1.3",
+        "phpstan/phpstan-mockery": "^1.1",
+        "phpstan/phpstan-phpunit": "^1.3",
         "phpstan/phpstan-symfony": "^1.3",
-        "phpunit/phpunit": "^8 | ^9.0",
-        "ramsey/uuid": "^3.9",
+        "phpunit/phpunit": "^9.6",
+        "ramsey/uuid": "^4",
         "rector/rector": "^1.0",
         "sebastian/exporter": "^4.0",
         "sebastian/phpcpd": "^6.0",
+        "slevomat/coding-standard": "^8.15",
         "squizlabs/php_codesniffer": "^3.4",
-        "symfony/phpunit-bridge": "^3.0",
-        "symfony/web-profiler-bundle": "4.4.*"
+        "symfony/phpunit-bridge": "^7.0",
+        "symfony/web-profiler-bundle": "6.4.*"
     },
     "scripts": {
         "auto-scripts": {
@@ -122,7 +116,8 @@
     "config": {
         "allow-plugins": {
             "symfony/flex": true,
-            "symfony/runtime": true
+            "symfony/runtime": true,
+            "dealerdirect/phpcodesniffer-composer-installer": true
         },
         "optimize-autoloader": true,
         "sort-packages": true,
@@ -151,7 +146,7 @@
     "extra": {
         "symfony": {
             "allow-contrib": false,
-            "require": "4.4.*"
+            "require": "6.4.*"
         },
         "symfony-assets-install": "relative",
         "incenteev-parameters": [

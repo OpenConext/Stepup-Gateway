@@ -1,4 +1,8 @@
 parameters:
+    app_env: prod
+    app_debug: false
+    app_secret: SeTW1ThY0uR0WnS3cR37
+
     # Set to a unique string at each update te prevent asset cashing issues after an update
     asset_version: 1
 
