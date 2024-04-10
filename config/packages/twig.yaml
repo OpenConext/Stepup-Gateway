@@ -9,3 +9,11 @@ twig:
       global_view_parameters: "@gateway.service.global_view_parameters"
       app_name: "%app_name%"
     form_themes: ['bootstrap_4_layout.html.twig']
+
+when@smoketest: &templateTest
+  twig:
+    paths:
+      '%kernel.project_dir%/templates': default
+      '%kernel.project_dir%/tests/src/Resources/views/': test_resources
+
+when@test: *templateTest

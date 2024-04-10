@@ -14,3 +14,28 @@ framework:
     cookie_secure: true
   fragments:       false
   http_method_override: true
+
+when@dev:
+  framework:
+    router:
+      strict_requirements: true
+    profiler: { only_exceptions: false }
+
+when@smoketest: &testOverride
+  imports:
+    - { resource: ../../services_test.yaml }
+  framework:
+    test: ~
+    session:
+      handler_id: null
+      storage_factory_id: session.storage.factory.mock_file
+    profiler:
+      only_exceptions: false
+      collect: false
+    php_errors:
+      log: false
+
+    validation:
+      not_compromised_password: false
+
+when@test: *testOverride

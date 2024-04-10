@@ -2,10 +2,8 @@
 
 return [
     Doctrine\Bundle\DoctrineBundle\DoctrineBundle::class => ['all' => true],
-    JMS\TranslationBundle\JMSTranslationBundle::class => ['all' => true],
     Symfony\Bundle\FrameworkBundle\FrameworkBundle::class => ['all' => true],
     Nelmio\SecurityBundle\NelmioSecurityBundle::class => ['all' => true],
-    Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle::class => ['all' => true],
     Surfnet\StepupGateway\ApiBundle\SurfnetStepupGatewayApiBundle::class => ['all' => true],
     Surfnet\YubikeyApiClientBundle\SurfnetYubikeyApiClientBundle::class => ['all' => true],
     Surfnet\StepupBundle\SurfnetStepupBundle::class => ['all' => true],
@@ -20,4 +18,5 @@ return [
     Symfony\Bundle\WebProfilerBundle\WebProfilerBundle::class => ['dev' => true, 'test' => true, 'smoketest' => true],
     Symfony\WebpackEncoreBundle\WebpackEncoreBundle::class => ['all' => true],
     Twig\Extra\TwigExtraBundle\TwigExtraBundle::class => ['all' => true],
+    JMS\TranslationBundle\JMSTranslationBundle::class => ['all' => true],
 ];

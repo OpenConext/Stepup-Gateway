@@ -36,3 +36,25 @@ doctrine:
         connection: deploy
         naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
         mappings: []
+when@smoketest:
+  doctrine:
+    dbal:
+      default_connection: gateway
+      connections:
+        gateway:
+          dbname: gateway_test
+          host: mariadb
+          password: gw_deploy_secret
+          user: gw_deploy_user
+
+when@test:
+  doctrine:
+    dbal:
+      default_connection: gateway
+      connections:
+        gateway:
+          driver: "%database_driver%"
+          port: "%database_port%"
+          host: db.stepup.example.com
+          dbname: gateway
+

@@ -23,3 +23,14 @@ nelmio_security:
           - 'self'
         block-all-mixed-content: true # defaults to false, blocks HTTP content over HTTPS transport
         upgrade-insecure-requests: true # defaults to false, upgrades HTTP requests to HTTPS transport
+
+when@dev: &template
+  nelmio_security:
+    csp:
+      enforce:
+        img-src: [ self, 'data:' ]
+        script-src: [ self, unsafe-inline ]
+        style-src: [ self, unsafe-inline ]
+
+when@test: *template
+when@smoketest: *template

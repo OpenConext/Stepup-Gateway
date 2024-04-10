@@ -33,10 +33,9 @@ class SurfnetStepupGatewaySecondFactorOnlyExtension extends Extension
     {
         $loader = new YamlFileLoader(
             $container,
-            new FileLocator(__DIR__ . '/../Resources/config'),
+            new FileLocator(dirname(__DIR__, 5) . '/config'),
         );
         $loader->load('services.yaml');
-
         $this->replaceLoaAliasConfig($config, $container);
     }
 

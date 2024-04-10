@@ -1,5 +1,5 @@
 imports:
-    - { resource: samlstepupproviders_parameters.yaml }
+    - { resource: ../openconext/samlstepupproviders_parameters.yaml }
 
 surfnet_stepup_gateway_saml_stepup_provider:
     allowed_sps: "%gssp_allowed_sps%"
