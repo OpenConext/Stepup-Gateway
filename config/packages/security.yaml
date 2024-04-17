@@ -12,7 +12,7 @@ security:
       anonymous: ~
       logout_on_user_change: true
     monitor:
-      pattern: ^/(info|health)$
+      pattern: ^/(internal/)?(info|health)$
       security: false
     csp_report:
       pattern: ^/csp/report$
