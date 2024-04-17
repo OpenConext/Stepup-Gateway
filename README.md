@@ -83,20 +83,6 @@ $ compseor behat -- -vv
 $ compseor behat -- --stop-on-failure
 ```
 
-From the doc-root:
-```bash
-$ cd ci/docker
-$ ./init.sh
-# If this fails, possibly you'll have to make the app/files folder writable for your docker user
-$ docker-compose exec -T php-fpm.stepup.example.com bash -c 'composer behat'
-```
-
-Be aware! Make sure any parameter changes are also applied in the `ci/config/parameters.yaml`.
-
-When finished working on behat tests, stop the containers (`docker-compose down`), and restart your stepup-vm.
-
-Having them running simultaneous might cause hostname issues, but your mileage may vary.
-
 ## Release strategy
 Please read: https://github.com/OpenConext/Stepup-Deploy/wiki/Release-Management fro more information on the release strategy used in Stepup projects.
 
