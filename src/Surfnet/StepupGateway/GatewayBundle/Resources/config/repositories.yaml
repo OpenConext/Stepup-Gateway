@@ -1,0 +1,35 @@
+services:
+    gateway.repository.gateway_saml_entity:
+        class: Surfnet\StepupGateway\GatewayBundle\Entity\GatewaySamlEntityRepositoryDecorator
+        arguments:
+            - "@gateway.repository.saml_entity"
+
+    gateway.repository.saml_entity:
+        class: Surfnet\StepupGateway\GatewayBundle\Entity\SamlEntityRepository
+        factory: ['@doctrine', 'getRepository']
+        arguments: [Surfnet\StepupGateway\GatewayBundle\Entity\SamlEntity]
+
+    gateway.repository.second_factor:
+        alias: gateway.repository.second_factor.enabled
+
+    gateway.repository.second_factor.enabled:
+        class: Surfnet\StepupGateway\GatewayBundle\Entity\EnabledSecondFactorRepository
+        arguments:
+            - "@gateway.repository.second_factor.doctrine"
+            - [] # Enabled second factor types, see extension
+            - "@logger"
+
+    gateway.repository.second_factor.doctrine:
+        class: Surfnet\StepupGateway\GatewayBundle\Entity\DoctrineSecondFactorRepository
+        factory: ['@doctrine', 'getRepository']
+        arguments: [Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor]
+
+    gateway.repository.whitelist_entry:
+        class:           Surfnet\StepupGateway\GatewayBundle\Entity\WhitelistEntryRepository
+        factory: ['@doctrine', 'getRepository']
+        arguments: [Surfnet\StepupGateway\GatewayBundle\Entity\WhitelistEntry]
+
+    gateway.repository.institution_configuration:
+        class: Surfnet\StepupGateway\GatewayBundle\Entity\InstitutionConfigurationRepository
+        factory: ['@doctrine', 'getRepository']
+        arguments: [Surfnet\StepupGateway\GatewayBundle\Entity\InstitutionConfiguration]

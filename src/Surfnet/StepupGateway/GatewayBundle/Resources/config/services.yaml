@@ -1,0 +1,341 @@
+services:
+    # Remove the public: true default once DI is implemented throughout the StepUp applications. See Pivotal #138225085
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    saml.entity_repository:
+        class: Surfnet\StepupGateway\GatewayBundle\Service\SamlEntityService
+        arguments:
+            - "@gateway.repository.saml_entity"
+    Surfnet\StepupGateway\GatewayBundle\Service\SamlEntityService $samlEntityService:
+        alias: saml.entity_repository
+
+    gateway.entity_service:
+        class: Surfnet\StepupGateway\GatewayBundle\Service\SamlEntityService
+        arguments:
+            - "@gateway.repository.gateway_saml_entity"
+    Surfnet\StepupGateway\GatewayBundle\Service\SamlEntityService $gatewayEntityService:
+        alias: gateway.entity_service
+
+    gateway.proxy.sso.state_handler:
+        autowire: false
+        public: true
+        class: Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler
+        arguments:
+            - "@request_stack"
+            - "surfnet/gateway/request"
+    Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler $ssoProxyStateHandler:
+        alias: gateway.proxy.sso.state_handler
+
+    gateway.proxy.sfo.state_handler:
+        autowire: false
+        class: Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler
+        arguments:
+            - "@request_stack"
+            - "surfnet/gateway/sfo/request"
+    Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler $sfoProxyStateHandler:
+        alias: gateway.proxy.sfo.state_handler
+
+    gateway.proxy.response_builder:
+        class: Surfnet\StepupGateway\GatewayBundle\Saml\ResponseBuilder
+    Surfnet\StepupGateway\GatewayBundle\Saml\ResponseBuilder:
+        alias: gateway.proxy.response_builder
+
+    gateway.proxy.response_context:
+        class: Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext
+        arguments:
+            - "@surfnet_saml.hosted.identity_provider"
+            - "@gateway.entity_service"
+            - "@gateway.proxy.sso.state_handler"
+            - "@logger"
+    Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext $gatewayProxyResponseContext:
+        alias: gateway.proxy.response_context
+
+    gateway.service.gateway.login:
+        class: Surfnet\StepupGateway\GatewayBundle\Service\Gateway\LoginService
+        arguments:
+            - "@surfnet_saml.logger"
+            - "@gateway.proxy.sso.state_handler"
+            - "@surfnet_stepup.service.loa_resolution"
+            - "@surfnet_saml.hosted.service_provider"
+            - "@surfnet_saml.remote.idp"
+            - "@surfnet_saml.http.redirect_binding"
+    Surfnet\StepupGateway\GatewayBundle\Service\Gateway\LoginService:
+        alias: gateway.service.gateway.login
+
+    gateway.service.gateway.consume_assertion:
+        class: Surfnet\StepupGateway\GatewayBundle\Service\Gateway\ConsumeAssertionService
+        arguments:
+            - "@surfnet_saml.http.post_binding"
+            - "@surfnet_saml.logger"
+            - "@surfnet_saml.hosted.service_provider"
+            - "@surfnet_saml.remote.idp"
+    Surfnet\StepupGateway\GatewayBundle\Service\Gateway\ConsumeAssertionService:
+        alias: gateway.service.gateway.consume_assertion
+
+    gateway.service.gateway.respond:
+        class: Surfnet\StepupGateway\GatewayBundle\Service\Gateway\RespondService
+        arguments:
+            - "@surfnet_saml.logger"
+            - "@surfnet_stepup.service.loa_resolution"
+            - "@gateway.service.response_proxy"
+            - "@gateway.service.second_factor_service"
+            - "@surfnet_stepup.service.second_factor_type"
+    Surfnet\StepupGateway\GatewayBundle\Service\Gateway\RespondService:
+        alias: gateway.service.gateway.respond
+
+    gateway.service.gateway.failed_response:
+        class: Surfnet\StepupGateway\GatewayBundle\Service\Gateway\FailedResponseService
+        arguments:
+            - "@surfnet_saml.logger"
+            - "@gateway.proxy.response_builder"
+    Surfnet\StepupGateway\GatewayBundle\Service\Gateway\FailedResponseService:
+        alias: gateway.service.gateway.failed_response
+
+    gateway.service.second_factor_service:
+        class: Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorService
+        arguments:
+            - "@gateway.repository.second_factor"
+    Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorService:
+        alias: gateway.service.second_factor_service
+
+    gateway.service.response_proxy:
+        class: Surfnet\StepupGateway\GatewayBundle\Service\ProxyResponseService
+        arguments:
+            - "@surfnet_saml.hosted.identity_provider"
+            - "@gateway.proxy.sso.state_handler"
+            - "@gateway.service.assertion_signing"
+            - "@surfnet_saml.saml.attribute_dictionary"
+            - "@saml.attribute.internalCollabPersonId"
+            - "@gateway.security.intrinsic_loa"
+    Surfnet\StepupGateway\GatewayBundle\Service\ProxyResponseService:
+        alias: gateway.service.response_proxy
+
+    gateway.security.intrinsic_loa:
+        public: false
+        class: Surfnet\StepupBundle\Value\Loa
+        factory: ['@surfnet_stepup.service.loa_resolution', 'getLoa']
+        arguments:
+            $loaIdentifier: '%gateway_loa_loa1%'
+
+    Surfnet\StepupBundle\Value\Loa:
+        alias: gateway.security.intrinsic_loa
+
+    gateway.service.assertion_signing:
+        class: Surfnet\StepupGateway\GatewayBundle\Saml\AssertionSigningService
+        arguments:
+            - "@surfnet_saml.hosted.identity_provider"
+    Surfnet\StepupGateway\GatewayBundle\Saml\AssertionSigningService:
+        alias: gateway.service.assertion_signing
+
+    gateway.service.stepup_authentication:
+        class: Surfnet\StepupGateway\GatewayBundle\Service\StepUpAuthenticationService
+        arguments:
+            - "@surfnet_stepup.service.loa_resolution"
+            - "@gateway.repository.second_factor"
+            - "@surfnet_gateway_api.service.yubikey"
+            - "@surfnet_stepup.service.sms_second_factor"
+            - "@translator"
+            - "@logger"
+            - "@surfnet_stepup.service.second_factor_type"
+            - [] # See extension
+    Surfnet\StepupGateway\GatewayBundle\Service\StepUpAuthenticationService:
+        alias: gateway.service.stepup_authentication
+
+    gateway.service.gateway_api_sms:
+        class: Surfnet\StepupGateway\GatewayBundle\Service\GatewayApiSmsService
+        arguments:
+            - "@surfnet_gateway_api.service.sms"
+    Surfnet\StepupGateway\GatewayBundle\Service\GatewayApiSmsService:
+        alias: gateway.service.gateway_api_sms
+
+    gateway.service.whitelist:
+        class: Surfnet\StepupGateway\GatewayBundle\Service\WhitelistService
+        arguments:
+            - "@gateway.repository.whitelist_entry"
+    Surfnet\StepupGateway\GatewayBundle\Service\WhitelistService:
+        alias: gateway.service.whitelist
+
+    gateway.service.global_view_parameters:
+        class: Surfnet\StepupGateway\GatewayBundle\Service\GlobalViewParameters
+        arguments:
+            - "@translator"
+            - "%locales%"
+            - "%support_url%"
+    Surfnet\StepupGateway\GatewayBundle\Service\GlobalViewParameters:
+        alias: gateway.service.global_view_parameters
+
+    gateway.service.sso_2fa_cookie_config:
+        class: Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\Configuration
+        arguments:
+            - "%sso_cookie_name%"
+            - "%sso_cookie_type%"
+            - "%sso_cookie_lifetime%"
+            - "%sso_encryption_key%"
+        public: false
+    Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\Configuration:
+        alias: gateway.service.sso_2fa_cookie_config
+
+    gateway.service.sso_2fa_cookie_crypto_helper:
+        class: Surfnet\StepupGateway\GatewayBundle\Sso2fa\Crypto\HaliteCryptoHelper
+        arguments:
+            - "@gateway.service.sso_2fa_cookie_config"
+    Surfnet\StepupGateway\GatewayBundle\Sso2fa\Crypto\HaliteCryptoHelper:
+        alias: gateway.service.sso_2fa_cookie_crypto_helper
+
+    gateway.service.sso_2fa_expiration_helper:
+        class: Surfnet\StepupGateway\GatewayBundle\Sso2fa\DateTime\ExpirationHelper
+        arguments:
+            $cookieLifetime: "%sso_cookie_lifetime%"
+            $gracePeriod: 60
+    Surfnet\StepupGateway\GatewayBundle\Sso2fa\DateTime\ExpirationHelper:
+        alias: gateway.service.sso_2fa_expiration_helper
+
+    gateway.service.sso_2fa_cookie_helper:
+        class: Surfnet\StepupGateway\GatewayBundle\Sso2fa\Http\CookieHelper
+        arguments:
+            - "@gateway.service.sso_2fa_cookie_config"
+            - "@gateway.service.sso_2fa_cookie_crypto_helper"
+            - "@logger"
+    Surfnet\StepupGateway\GatewayBundle\Sso2fa\Http\CookieHelper:
+        alias: gateway.service.sso_2fa_cookie_helper
+
+    gateway.service.sso_2fa_cookie:
+        class: Surfnet\StepupGateway\GatewayBundle\Sso2fa\CookieService
+        arguments:
+            - "@gateway.service.sso_2fa_cookie_helper"
+            - "@gateway.service.institution_configuration"
+            - "@gateway.service.second_factor_service"
+            - "@surfnet_stepup.service.second_factor_type"
+            - "@gateway.service.sso_2fa_expiration_helper"
+            - "@logger"
+    Surfnet\StepupGateway\GatewayBundle\Sso2fa\CookieServiceInterface:
+        alias: gateway.service.sso_2fa_cookie
+
+    gateway.service.institution_configuration:
+        class: Surfnet\StepupGateway\GatewayBundle\Service\InstitutionConfigurationService
+        arguments:
+            - "@gateway.repository.institution_configuration"
+            - "@logger"
+    Surfnet\StepupGateway\GatewayBundle\Service\InstitutionConfigurationService:
+        alias: gateway.service.institution_configuration
+
+    # Logging
+    gateway.authentication_logger:
+        class: Surfnet\StepupGateway\GatewayBundle\Monolog\Logger\AuthenticationLogger
+        arguments:
+            - "@surfnet_stepup.service.loa_resolution"
+            - "@gateway.proxy.sso.state_handler"
+            - "@gateway.proxy.sfo.state_handler"
+            - "@gateway.service.second_factor_service"
+            - "@gateway.authentication_logger.logger"
+            - "@surfnet_stepup.service.second_factor_type"
+    Surfnet\StepupGateway\GatewayBundle\Monolog\Logger\AuthenticationLogger:
+        alias: gateway.authentication_logger
+
+    gateway.authentication_logger.logger:
+        class: Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger
+        arguments:
+            - "@monolog.logger.authentication"
+
+    Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger:
+        alias: gateway.authentication_logger.logger
+
+    gateway.monolog.gelf_to_string_formatter:
+        class: Surfnet\StepupGateway\GatewayBundle\Monolog\Formatter\GelfMessageToStringFormatter
+        arguments:
+            - "@gateway.monolog.gelf_message_formatter"
+    Surfnet\StepupGateway\GatewayBundle\Monolog\Formatter\GelfMessageToStringFormatter:
+        alias: gateway.monolog.gelf_to_string_formatter
+
+    gateway.monolog.gelf_message_formatter:
+        public: false
+        class: Monolog\Formatter\GelfMessageFormatter
+    Monolog\Formatter\GelfMessageFormatter:
+        alias: gateway.monolog.gelf_message_formatter
+
+    # Forms
+    gateway.form.type.anchor:
+        class: Surfnet\StepupGateway\GatewayBundle\Form\Type\AnchorType
+        tags: [{ name: form.type, alias: anchor }]
+    Surfnet\StepupGateway\GatewayBundle\Form\Type\AnchorType:
+        alias: gateway.form.type.anchor
+
+    gateway_cancel_authentication:
+        class: Surfnet\StepupGateway\GatewayBundle\Form\Type\CancelAuthenticationType
+        tags: [{ name: form.type, alias: gateway_cancel_authentication }]
+    Surfnet\StepupGateway\GatewayBundle\Form\Type\CancelAuthenticationType:
+        alias: gateway_cancel_authentication
+
+    gateway.form.verify_yubikey:
+        class: Surfnet\StepupGateway\GatewayBundle\Form\Type\VerifyYubikeyOtpType
+        tags: [{ name: form.type, alias: gateway_verify_yubikey_otp }]
+    Surfnet\StepupGateway\GatewayBundle\Form\Type\VerifyYubikeyOtpType:
+        alias: gateway.form.verify_yubikey
+
+    gateway.form.choose_second_factor:
+        class: Surfnet\StepupGateway\GatewayBundle\Form\Type\ChooseSecondFactorType
+        tags: [{ name: form.type, alias: gateway_choose_second_factor }]
+    Surfnet\StepupGateway\GatewayBundle\Form\Type\ChooseSecondFactorType:
+        alias: gateway.form.choose_second_factor
+
+    gateway.form.send_sms_challenge:
+        class: Surfnet\StepupGateway\GatewayBundle\Form\Type\SendSmsChallengeType
+        tags: [{ name: form.type, alias: gateway_send_sms_challenge }]
+    Surfnet\StepupGateway\GatewayBundle\Form\Type\SendSmsChallengeType:
+        alias: gateway.form.send_sms_challenge
+
+    gateway.form.verify_sms_challenge:
+        class: Surfnet\StepupGateway\GatewayBundle\Form\Type\VerifySmsChallengeType
+        tags: [{ name: form.type, alias: gateway_verify_sms_challenge }]
+    Surfnet\StepupGateway\GatewayBundle\Form\Type\VerifySmsChallengeType:
+        alias: gateway.form.verify_sms_challenge
+
+    gateway.form.cancel_second_factor_verification:
+        class: Surfnet\StepupGateway\GatewayBundle\Form\Type\CancelSecondFactorVerificationType
+        tags: [{ name: form.type, alias: gateway_cancel_second_factor_verification }]
+    Surfnet\StepupGateway\GatewayBundle\Form\Type\CancelSecondFactorVerificationType:
+        alias: gateway.form.cancel_second_factor_verification
+
+    # Listeners
+    gateway.event_listener.locale:
+        class: Surfnet\StepupGateway\GatewayBundle\EventListener\SecondFactorLocaleListener
+        arguments:
+            - "@gateway.proxy.response_context"
+            - "@gateway.service.second_factor_service"
+            - "@surfnet_stepup.locale_cookie_helper"
+        tags: [{ name: kernel.event_subscriber }]
+    Surfnet\StepupGateway\GatewayBundle\EventListener\SecondFactorLocaleListener:
+        alias: gateway.event_listener.locale
+
+    gateway.locale_provider:
+        public: false
+        class: Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorLocaleProvider
+        arguments:
+            - "@gateway.proxy.sso.state_handler"
+    Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorLocaleProvider:
+        alias: gateway.locale_provider
+
+    gateway.locale_cookie_listener:
+        class: Surfnet\StepupBundle\EventListener\LocaleCookieListener
+        arguments:
+            - "@surfnet_stepup.locale_cookie_helper"
+            - "@gateway.locale_provider"
+            - "@logger"
+        tags:
+            - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse }
+    Surfnet\StepupBundle\EventListener\LocaleCookieListener:
+        alias: gateway.locale_cookie_listener
+
+    # Twig
+    ra.twig.second_factor_type:
+        class: Surfnet\StepupGateway\GatewayBundle\Twig\Extensions\Extension\SecondFactorType
+        arguments:
+            - "@surfnet_stepup.service.second_factor_type_translator"
+            - "@surfnet_stepup.provider.collection"
+        tags:
+            - { name : twig.extension }
+    Surfnet\StepupGateway\GatewayBundle\Twig\Extensions\Extension\SecondFactorType:
+        alias: ra.twig.second_factor_type

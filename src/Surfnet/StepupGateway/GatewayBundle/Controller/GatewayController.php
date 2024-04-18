@@ -31,7 +31,6 @@ use Surfnet\StepupGateway\GatewayBundle\Service\Gateway\ConsumeAssertionService;
 use Surfnet\StepupGateway\GatewayBundle\Service\Gateway\FailedResponseService;
 use Surfnet\StepupGateway\GatewayBundle\Service\Gateway\LoginService;
 use Surfnet\StepupGateway\GatewayBundle\Service\Gateway\RespondService;
-use Surfnet\StepupGateway\GatewayBundle\Sso2fa\CookieService;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\CookieServiceInterface;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\ResponseHelper;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -245,15 +244,8 @@ class GatewayController extends AbstractController
         );
     }
 
-    // TODO:
-    // This resolves to a service. Then the service is used to get the ID.
-    // Then the ID is used to get the ResponseContext.
-    // This is a bit convoluted. Can we simplify this?
     public function getResponseContext($authenticationMode): ResponseContext
     {
-        $sfoResponseContextServiceId = $this->sfoProxyStateHandler->getResponseContextServiceId();
-        $ssoResponseContextServiceId = $this->ssoProxyStateHandler->getResponseContextServiceId();
-
         return match ($authenticationMode) {
             self::MODE_SFO => $this->sfoContext,
             self::MODE_SSO => $this->gatewayProxyResponseContext,

@@ -1,0 +1,36 @@
+services:
+    # Remove the public: true default once DI is implemented throughout the StepUp applications. See Pivotal #138225085
+    _defaults:
+        public: true
+
+    surfnet_gateway_api.service.sms:
+        class: Surfnet\StepupGateway\ApiBundle\Service\SmsService
+        arguments:
+        - "@surfnet_gateway_api.service.provider"
+    Surfnet\StepupGateway\ApiBundle\Service\SmsServiceInterface:
+        alias: surfnet_gateway_api.service.sms
+
+    surfnet_gateway_api.service.provider:
+        class: Surfnet\StepupGateway\ApiBundle\Sms\SmsAdapterProvider
+        arguments: ["%sms_service%"]
+
+    surfnet_gateway_api_service.sms.spryng:
+        class: Surfnet\StepupGateway\ApiBundle\Sms\SpryngService
+        arguments:
+            - "%spryng_api_key%"
+            - "%spryng_route%"
+            - "@logger"
+        tags: ['sms_provider']
+
+    surfnet_gateway_api.service.yubikey:
+        class: Surfnet\StepupGateway\ApiBundle\Service\YubikeyService
+        arguments:
+            - "@surfnet_yubikey_api_client.verification_service"
+            - "@logger"
+    Surfnet\StepupGateway\ApiBundle\Service\YubikeyServiceInterface:
+        alias: surfnet_gateway_api.service.yubikey
+
+    surfnet_gateway_api.security.json_basic_auth_entry_point:
+        class: Surfnet\StepupGateway\ApiBundle\Security\Http\EntryPoint\JsonBasicAuthenticationEntryPoint
+        arguments:
+            - ~ # HTTP Basic realm string, see extension

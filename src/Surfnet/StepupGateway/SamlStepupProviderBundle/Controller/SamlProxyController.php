@@ -213,8 +213,6 @@ class SamlProxyController extends AbstractController
     {
         $provider = $this->providerRepository->get($provider);
         $factory = $this->metadataFactoryCollection->getByIdentifier($provider->getName());
-
-
         return new XMLResponse($factory->generate());
     }
 

@@ -52,10 +52,7 @@ class SurfnetStepupGatewaySamlStepupProviderExtension extends Extension
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
-        $loader = new YamlFileLoader(
-            $container,
-            new FileLocator(dirname(__DIR__, 5) . '/config'),
-        );
+        $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yaml');
 
         $connectedServiceProviders = $container->getDefinition('gssp.allowed_sps');
@@ -118,7 +115,6 @@ class SurfnetStepupGatewaySamlStepupProviderExtension extends Extension
                 new Reference('gssp.provider.' . $provider . '.assertion_signing')
             ],
         );
-        $proxyResponseFactory->setPublic(true);
         $container->setDefinition('gssp.provider.' . $provider . '.response_proxy', $proxyResponseFactory);
 
         $container
@@ -233,7 +229,12 @@ class SurfnetStepupGatewaySamlStepupProviderExtension extends Extension
             new Reference('gssp.provider.' . $provider . 'metadata.configuration')
         ]);
         $metadataFactory->setPublic(true);
-        $container->setDefinition('gssp.provider.' . $provider . '.metadata.factory', $metadataFactory);
+        $providerFactoryId = 'gssp.provider.' . $provider . '.metadata.factory';
+        $container->setDefinition($providerFactoryId, $metadataFactory);
+
+        $container
+            ->getDefinition('Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\MetadataFactoryCollection')
+            ->addMethodCall('add', [new Reference($providerFactoryId)]);
     }
 
     private function createRouteConfig(string $provider, $routeName): array

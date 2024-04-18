@@ -19,7 +19,6 @@
 namespace Surfnet\StepupGateway\GatewayBundle\Controller;
 
 use Psr\Log\LoggerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger;
 use Surfnet\StepupBundle\Command\VerifyPossessionOfPhoneCommand;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
@@ -43,7 +42,6 @@ use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
 use Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorService;
 use Surfnet\StepupGateway\GatewayBundle\Service\StepUpAuthenticationService;
 use Surfnet\StepupGateway\GatewayBundle\Service\WhitelistService;
-use Surfnet\StepupGateway\GatewayBundle\Sso2fa\CookieService;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\CookieServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Form;
@@ -54,7 +52,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Translation\IdentityTranslator;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -78,6 +75,8 @@ class SecondFactorController extends AbstractController
         private readonly SecondFactorTypeService     $secondFactorTypeService,
         private readonly SecondFactorService         $secondFactorService,
         private readonly CookieServiceInterface      $cookieService,
+        private readonly ResponseContext $ssoResponseContext,
+        private readonly ResponseContext $sfoResponseContext,
     )
     {
     }
@@ -625,12 +624,11 @@ class SecondFactorController extends AbstractController
         return $this->forward('Surfnet\StepupGateway\GatewayBundle\Controller\GatewayController::sendAuthenticationCancelledByUser');
     }
 
-    // TODO: how to handle this with DI?
     private function getResponseContext($authenticationMode): ResponseContext
     {
         return match ($authenticationMode) {
-            self::MODE_SFO => $this->container->get($this->sfoProxyStateHandler->getResponseContextServiceId()),
-            self::MODE_SSO => $this->container->get($this->ssoProxyStateHandler->getResponseContextServiceId()),
+            self::MODE_SFO => $this->sfoResponseContext,
+            self::MODE_SSO => $this->ssoResponseContext,
             default => throw new InvalidArgumentException('Invalid authentication mode requested'),
         };
     }

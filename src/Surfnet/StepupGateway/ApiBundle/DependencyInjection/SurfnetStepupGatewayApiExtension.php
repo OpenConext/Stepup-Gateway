@@ -30,9 +30,10 @@ class SurfnetStepupGatewayApiExtension extends Extension
     {
         $processor = new Processor();
         $config = $processor->processConfiguration(new Configuration(), $config);
+
         $loader = new YamlFileLoader(
             $container,
-            new FileLocator(dirname(__DIR__, 5) . '/config'),
+            new FileLocator(__DIR__ . '/../Resources/config'),
         );
         $loader->load('services.yaml');
 
