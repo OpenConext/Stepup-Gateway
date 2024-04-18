@@ -92,7 +92,7 @@ class ProxyStateHandler
         return $this->get('relay_state');
     }
 
-    public function setRequiredLoaIdentifier(string $loaIdentifier): ProxyStateHandler
+    public function setRequiredLoaIdentifier(?string $loaIdentifier): ProxyStateHandler
     {
         $this->set('loa_identifier', $loaIdentifier);
 

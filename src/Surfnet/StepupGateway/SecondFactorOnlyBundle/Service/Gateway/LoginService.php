@@ -89,7 +89,7 @@ class LoginService
             ->setRequestAssertionConsumerServiceUrl($originalRequest->getAssertionConsumerServiceURL())
             ->setRelayState($httpRequest->get(AuthnRequest::PARAMETER_RELAY_STATE, ''))
             ->setIsForceAuthn($originalRequest->isForceAuthn())
-            ->setResponseAction('SurfnetStepupGatewaySecondFactorOnlyBundle:SecondFactorOnly:respond')
+            ->setResponseAction('Surfnet\StepupGateway\SecondFactorOnlyBundle\Controller\SecondFactorOnlyController::respond')
             ->setResponseContextServiceId('second_factor_only.response_context');
 
         $this->stateHandler->markAuthenticationModeForRequest($originalRequestId, 'sfo');

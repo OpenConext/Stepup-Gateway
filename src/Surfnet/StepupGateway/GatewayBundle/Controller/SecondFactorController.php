@@ -124,7 +124,7 @@ class SecondFactorController extends AbstractController
             $logger->notice($e->getMessage());
 
             return $this->forward(
-                'SurfnetStepupGatewayGatewayBundle:Gateway:sendLoaCannotBeGiven',
+                'Surfnet\StepupGateway\GatewayBundle\Controller\GatewayController::sendLoaCannotBeGiven',
                 ['authenticationMode' => $authenticationMode],
             );
         }
@@ -177,7 +177,7 @@ class SecondFactorController extends AbstractController
                 $logger->notice('No second factors can give the determined Loa');
 
                 return $this->forward(
-                    'SurfnetStepupGatewayGatewayBundle:Gateway:sendLoaCannotBeGiven',
+                    'Surfnet\StepupGateway\GatewayBundle\Controller\GatewayController::sendLoaCannotBeGiven',
                     ['authenticationMode' => $authenticationMode],
                 );
             case 1:
@@ -190,7 +190,7 @@ class SecondFactorController extends AbstractController
                 return $this->selectAndRedirectTo($secondFactor, $context, $authenticationMode);
             default:
                 return $this->forward(
-                    'SurfnetStepupGatewayGatewayBundle:SecondFactor:chooseSecondFactor',
+                    'Surfnet\StepupGateway\GatewayBundle\Controller\SecondFactorController::chooseSecondFactor',
                     ['authenticationMode' => $authenticationMode, 'secondFactors' => $secondFactorCollection],
                 );
         }
@@ -240,7 +240,7 @@ class SecondFactorController extends AbstractController
             // Log the message of the domain exception, this contains a meaningful message.
             $logger->notice($e->getMessage());
 
-            return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:sendLoaCannotBeGiven');
+            return $this->forward('Surfnet\StepupGateway\GatewayBundle\Controller\GatewayController::sendLoaCannotBeGiven');
         }
 
         $logger->notice(sprintf('Determined that the required Loa is "%s"', $requiredLoa));
@@ -349,7 +349,7 @@ class SecondFactorController extends AbstractController
         $responseContextServiceId = $context->getResponseContextServiceId();
 
         return $this->forward(
-            'SurfnetStepupGatewaySamlStepupProviderBundle:SamlProxy:sendSecondFactorVerificationAuthnRequest',
+            'Surfnet\StepupGateway\SamlStepupProviderBundle\Controller\SamlProxyController::sendSecondFactorVerificationAuthnRequest',
             [
                 'provider' => $secondFactor->secondFactorType,
                 'subjectNameId' => $secondFactor->secondFactorIdentifier,
@@ -622,7 +622,7 @@ class SecondFactorController extends AbstractController
     )]
     public function cancelAuthentication(): Response
     {
-        return $this->forward('SurfnetStepupGatewayGatewayBundle:Gateway:sendAuthenticationCancelledByUser');
+        return $this->forward('Surfnet\StepupGateway\GatewayBundle\Controller\GatewayController::sendAuthenticationCancelledByUser');
     }
 
     // TODO: how to handle this with DI?
