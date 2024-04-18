@@ -2,7 +2,6 @@ imports:
   - { resource: 'openconext/samlstepupproviders_parameters.yaml' }
   - { resource: 'openconext/global_view_parameters.yaml' }
   - { resource: 'openconext/parameters.yaml' }
-  - { resource: 'packages/samlstepupproviders.yaml' }
 
 services:
     # default configuration for services in *this* file
@@ -10,9 +9,6 @@ services:
     autowire: true
     autoconfigure: true
     public: false
-
-#  Surfnet\StepupGateway\:
-#    resource: '../src/Surfnet/StepupGateway/*'
 
   Surfnet\StepupGateway\SecondFactorOnlyBundle\Controller\:
     resource: '../src/Surfnet/StepupGateway/SecondFactorOnlyBundle/Controller/*'
@@ -225,7 +221,10 @@ services:
   gateway.security.intrinsic_loa:
     public: false
     class: Surfnet\StepupBundle\Value\Loa
-    factory: ["@surfnet_stepup.service.loa_resolution", getLoa]
+    factory: ['@surfnet_stepup.service.loa_resolution', 'getLoa']
+    arguments:
+      $loaIdentifier: '%gateway_loa_loa1%'
+
   Surfnet\StepupBundle\Value\Loa:
     alias: gateway.security.intrinsic_loa
 
@@ -345,6 +344,7 @@ services:
     class: Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger
     arguments:
       - "@monolog.logger.authentication"
+
   Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger:
     alias: gateway.authentication_logger.logger
 

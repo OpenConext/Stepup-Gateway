@@ -1,4 +1,6 @@
 monolog:
+  channels: [ authentication ]
+
   handlers:
     prod-signaler:
       type: fingers_crossed

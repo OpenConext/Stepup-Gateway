@@ -37,10 +37,6 @@ class SurfnetStepupGatewayGatewayExtension extends Extension
         );
         $loader->load('services.yaml');
 
-        $container
-            ->getDefinition('gateway.security.intrinsic_loa')
-            ->addArgument($config['intrinsic_loa']);
-
         // Enabled second factor types (specific and generic) are merged into 'ss.enabled_second_factors'
         $gssfSecondFactors = array_keys($config['enabled_generic_second_factors']);
         $container
