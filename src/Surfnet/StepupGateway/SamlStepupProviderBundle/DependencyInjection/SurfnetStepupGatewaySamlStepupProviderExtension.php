@@ -207,15 +207,14 @@ class SurfnetStepupGatewaySamlStepupProviderExtension extends Extension
         ContainerBuilder $container,
     ): void {
         $metadataConfiguration = new Definition(MetadataConfiguration::class);
-
         $propertyMap = [
             'entityIdRoute'          => $this->createRouteConfig($provider, $routes['metadata']),
             'isSp'                   => true,
             'assertionConsumerRoute' => $this->createRouteConfig($provider, $routes['consume_assertion']),
             'isIdP'                  => true,
             'ssoRoute'               => $this->createRouteConfig($provider, $routes['sso']),
-            'publicKey'              => $configuration['metadata']['public_key'],
-            'privateKey'             => $configuration['metadata']['private_key'],
+            'publicKey'              => (string) $configuration['metadata']['public_key'],
+            'privateKey'             => (string) $configuration['metadata']['private_key'],
         ];
 
         $metadataConfiguration->setProperties($propertyMap);
@@ -234,7 +233,7 @@ class SurfnetStepupGatewaySamlStepupProviderExtension extends Extension
 
         $container
             ->getDefinition('Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\MetadataFactoryCollection')
-            ->addMethodCall('add', [new Reference($providerFactoryId)]);
+            ->addMethodCall('add', [$provider, new Reference($providerFactoryId)]);
     }
 
     private function createRouteConfig(string $provider, $routeName): array

@@ -30,7 +30,7 @@ class MetadataFactoryCollection
         if (array_key_exists($name, $this->factories)) {
             throw new InvalidConfigurationException(sprintf('The metadata factory for GSSP "%s" already exists.', $name));
         }
-        $factory[$name] = $factory;
+        $this->factories[$name] = $factory;
     }
 
     public function getByIdentifier(string $name): MetadataFactory

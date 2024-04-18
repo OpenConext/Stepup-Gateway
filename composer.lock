@@ -3169,16 +3169,16 @@
         },
         {
             "name": "surfnet/stepup-saml-bundle",
-            "version": "6.0.20",
+            "version": "6.0.23",
             "source": {
                 "type": "git",
                 "url": "https://github.com/OpenConext/Stepup-saml-bundle.git",
-                "reference": "d3c9ce75f25ba95b1267db4cbb5c7fe553200c01"
+                "reference": "aa2b5cd5dfe288a46a14605e5dc283bc497c046a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/OpenConext/Stepup-saml-bundle/zipball/d3c9ce75f25ba95b1267db4cbb5c7fe553200c01",
-                "reference": "d3c9ce75f25ba95b1267db4cbb5c7fe553200c01",
+                "url": "https://api.github.com/repos/OpenConext/Stepup-saml-bundle/zipball/aa2b5cd5dfe288a46a14605e5dc283bc497c046a",
+                "reference": "aa2b5cd5dfe288a46a14605e5dc283bc497c046a",
                 "shasum": ""
             },
             "require": {
@@ -3235,9 +3235,9 @@
             ],
             "support": {
                 "issues": "https://github.com/OpenConext/Stepup-saml-bundle/issues",
-                "source": "https://github.com/OpenConext/Stepup-saml-bundle/tree/6.0.20"
+                "source": "https://github.com/OpenConext/Stepup-saml-bundle/tree/6.0.23"
             },
-            "time": "2024-02-28T10:22:25+00:00"
+            "time": "2024-04-18T10:08:17+00:00"
         },
         {
             "name": "surfnet/yubikey-api-client",

@@ -11,30 +11,12 @@ services:
         arguments:
             - "@router"
             - "@request_stack"
-            - null
-            - enabled: true
-              entity_id_route: 'gateway_second_factor_only_metadata'
-              sso_route: 'gateway_second_factor_only_identityprovider_sso'
-              public_key: '%saml_idp_publickey%'
-              private_key: '%saml_idp_privatekey%'
+            - ~
 
     second_factor_only.hosted.identity_provider:
         public: false
         class: Surfnet\SamlBundle\Entity\IdentityProvider
         factory: ['@second_factor_only.configuration.hosted_entities', getIdentityProvider]
-
-    second_factor_only.configuration.metadata:
-        public: false
-        class: Surfnet\SamlBundle\Metadata\MetadataConfiguration
-        properties:
-            entityIdRoute: 'gateway_second_factor_only_metadata'
-            isSp: false
-            isIdP: true
-            ssoRoute: 'gateway_second_factor_only_identityprovider_sso'
-            idpCertificate: '%saml_idp_publickey%'
-            publicKey: '%saml_metadata_publickey%'
-            privateKey: '%saml_metadata_privatekey%'
-
 
     Surfnet\SamlBundle\Metadata\MetadataFactory:
         arguments:
