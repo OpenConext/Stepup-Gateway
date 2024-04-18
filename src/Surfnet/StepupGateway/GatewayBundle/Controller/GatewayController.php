@@ -127,7 +127,7 @@ class GatewayController extends AbstractController
 
         // Forward to the selectSecondFactorForVerificationSsoAction, this in turn will forward to the correct
         // verification action (based on authentication type sso/sfo)
-        return $this->forward('SurfnetStepupGatewayGatewayBundle:SecondFactor:selectSecondFactorForVerificationSso');
+        return $this->forward('Surfnet\StepupGateway\GatewayBundle\Controller\SecondFactorController::selectSecondFactorForVerificationSso');
     }
 
     /**

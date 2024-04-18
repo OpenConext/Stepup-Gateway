@@ -111,7 +111,7 @@ class LoginService
             ->setRequestAssertionConsumerServiceUrl($originalRequest->getAssertionConsumerServiceURL())
             ->setRelayState($httpRequest->get(AuthnRequest::PARAMETER_RELAY_STATE, ''))
             ->setIsForceAuthn($originalRequest->isForceAuthn())
-            ->setResponseAction('SurfnetStepupGatewayGatewayBundle:Gateway:respond')
+            ->setResponseAction('Surfnet\StepupGateway\GatewayBundle\Controller\GatewayController::respond')
             ->setResponseContextServiceId(static::RESPONSE_CONTEXT_SERVICE_ID);
 
         $this->stateHandler->markAuthenticationModeForRequest($originalRequestId, 'sso');

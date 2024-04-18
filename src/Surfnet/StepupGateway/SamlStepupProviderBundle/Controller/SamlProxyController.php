@@ -167,7 +167,7 @@ class SamlProxyController extends AbstractController
             $stateHandler = $this->get('gateway.proxy.sso.state_handler');
 
             return $this->forward(
-                'SurfnetStepupGatewayGatewayBundle:SecondFactor:gssfVerified',
+                'Surfnet\StepupGateway\GatewayBundle\Controller\SecondFactorController::gssfVerified',
                 [
                     // The authentication mode is loaded from session, based on the request id
                     'authenticationMode' => $stateHandler->getAuthenticationModeForRequestId(
