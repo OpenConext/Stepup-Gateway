@@ -16,13 +16,13 @@ services:
     gateway.proxy.sso.state_handler:
         class: Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler
         arguments:
-            - "@session"
+            - "@request_stack"
             - "surfnet/gateway/request"
 
     gateway.proxy.sfo.state_handler:
         class: Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler
         arguments:
-            - "@session"
+            - "@request_stack"
             - "surfnet/gateway/sfo/request"
 
     gateway.proxy.response_builder:

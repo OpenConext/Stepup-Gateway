@@ -24,15 +24,16 @@ use Surfnet\StepupGateway\ApiBundle\Service\YubikeyService;
 use Surfnet\YubikeyApiClient\Service\OtpVerificationResult;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Routing\Attribute\Route;
 
 class YubikeyController extends AbstractController
 {
-    /**
-     * @param Otp $otp
-     * @param Requester $requester
-     * @return JsonResponse
-     */
-    public function verifyAction(Otp $otp, Requester $requester)
+    #[Route(
+        path: '/verify-yubikey',
+        methods: ['POST'],
+        condition: "request.headers.get('Content-Type') == 'application/json' && request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
+    )]
+    public function verify(Otp $otp, Requester $requester): JsonResponse
     {
         /** @var YubikeyService $yubikeyService */
         $yubikeyService = $this->get('surfnet_gateway_api.service.yubikey');
@@ -41,28 +42,16 @@ class YubikeyController extends AbstractController
         return $this->createJsonResponseFromVerifyYubikeyResult($result);
     }
 
-    /**
-     * @param OtpVerificationResult $result
-     * @return JsonResponse
-     */
-    private function createJsonResponseFromVerifyYubikeyResult(OtpVerificationResult $result)
+    private function createJsonResponseFromVerifyYubikeyResult(OtpVerificationResult $result): JsonResponse
     {
         if ($result->isSuccessful()) {
             return new JsonResponse(['status' => 'OK']);
         }
 
-        switch ($result->getError()) {
-            case 'BAD_OTP':
-            case 'REPLAYED_OTP':
-                // Bad OTP means user/client entered invalid OTP
-                // REPLAYED_OTP can mean the user/client entered OTP and immediately pressed RETURN, causing the
-                // form to be submitted twice.
-                $statusCode = 400;
-                break;
-            default:
-                // Other errors are Yubico server errors.
-                $statusCode = 502;
-        }
+        $statusCode = match ($result->getError()) {
+            'BAD_OTP', 'REPLAYED_OTP' => 400,
+            default => 502,
+        };
 
         $errorMessage = sprintf('Yubikey verification failed (%s)', $result->getError());
 

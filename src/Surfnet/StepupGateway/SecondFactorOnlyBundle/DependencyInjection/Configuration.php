@@ -25,9 +25,9 @@ final class Configuration implements ConfigurationInterface
 {
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
+        $treeBuilder = new TreeBuilder('surfnet_stepup_gateway_second_factor_only');
 
-        $rootNode = $treeBuilder->root('surfnet_stepup_gateway_second_factor_only');
+        $rootNode = $treeBuilder->getRootNode();
 
         $rootNode
             ->children()

@@ -23,37 +23,19 @@ use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
 use Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorService;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 final class SecondFactorLocaleListener implements EventSubscriberInterface
 {
-    /**
-     * @var \Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext
-     */
-    private $responseContext;
-
-    /**
-     * @var \Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorService
-     */
-    private $secondFactorService;
-
-    /**
-     * @var CookieHelper
-     */
-    private $cookieHelper;
-
     public function __construct(
-        ResponseContext $responseContext,
-        SecondFactorService $secondFactorService,
-        CookieHelper $cookieHelper
+        private readonly ResponseContext     $responseContext,
+        private readonly SecondFactorService $secondFactorService,
+        private readonly CookieHelper        $cookieHelper
     ) {
-        $this->responseContext = $responseContext;
-        $this->secondFactorService = $secondFactorService;
-        $this->cookieHelper = $cookieHelper;
     }
 
-    public function setRequestLocale(GetResponseEvent $event): void
+    public function setRequestLocale(RequestEvent $event): void
     {
         $locale = $this->getLocaleFromSelectedSecondFactor();
 

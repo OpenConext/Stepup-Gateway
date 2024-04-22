@@ -22,6 +22,7 @@ use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase;
+use SAML2\Assertion;
 use SAML2\Response;
 use SAML2\Response\Exception\PreconditionNotMetException;
 use SAML2\XML\saml\NameID;
@@ -42,20 +43,15 @@ final class ResponseValidatorTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    /** @var MockInterface&SecondFactorTypeService */
-    private $secondFactorTypeService;
+    private (MockInterface&Mockery\LegacyMockInterface)|SecondFactorTypeService $secondFactorTypeService;
 
-    /** @var MockInterface&ProviderRepository */
-    private $providerRepository;
+    private ProviderRepository $providerRepository;
 
-    /** @var MockInterface&PostBinding */
-    private $postBinding;
+    private (MockInterface&Mockery\LegacyMockInterface)|PostBinding $postBinding;
 
-    /** @var MockInterface|IdentityProvider */
-    private $remoteIdp;
+    private MockInterface|IdentityProvider $remoteIdp;
 
-    /** @var MockInterface|ServiceProvider */
-    private $sp;
+    private MockInterface|ServiceProvider $sp;
 
     protected function setUp(): void
     {
@@ -81,7 +77,9 @@ final class ResponseValidatorTest extends TestCase
             ->expects('isGssf')
             ->andReturnTrue();
 
-        $samlResponse = Mockery::mock(Response::class);
+//        $samlResponse = Mockery::mock(Response::class);
+
+        $samlResponse = Mockery::mock(Assertion::class);
 
         $nameId = Mockery::mock(NameID::class);
         $nameId->expects('getValue')
@@ -127,7 +125,7 @@ final class ResponseValidatorTest extends TestCase
             ->expects('isGssf')
             ->andReturnTrue();
 
-        $samlResponse = Mockery::mock(Response::class);
+        $samlResponse = Mockery::mock(Assertion::class);
 
         $nameId = Mockery::mock(NameID::class);
         $nameId->expects('getValue')

@@ -19,24 +19,15 @@
 namespace Surfnet\StepupGateway\GatewayBundle\Saml\Proxy;
 
 use Surfnet\StepupGateway\GatewayBundle\Saml\Exception\RuntimeException;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class ProxyStateHandler
 {
-    private $sessionPath;
-
-    /**
-     * @var \Symfony\Component\HttpFoundation\Session\SessionInterface
-     */
-    private $session;
-
-    /**
-     * @param SessionInterface $session
-     */
-    public function __construct(SessionInterface $session, $sessionPath)
-    {
-        $this->sessionPath = $sessionPath;
-        $this->session = $session;
+    public function __construct(
+        private readonly RequestStack $requestStack,
+        private                       $sessionPath,
+    ) {
     }
 
     /**
@@ -44,149 +35,100 @@ class ProxyStateHandler
      */
     public function clear(): void
     {
-        $all = $this->session->all();
+        $all = $this->requestStack->getSession()->all();
 
         foreach (array_keys($all) as $key) {
-            if (strpos($key, $this->sessionPath) === 0) {
-                $this->session->remove($key);
+            if (str_starts_with($key, $this->sessionPath)) {
+                $this->requestStack->getSession()->remove($key);
             }
         }
     }
 
-    /**
-     * @param string $originalRequestId
-     * @return $this
-     */
-    public function setRequestId($originalRequestId)
+    public function setRequestId(string $originalRequestId): ProxyStateHandler
     {
         $this->set('request_id', $originalRequestId);
 
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getRequestId()
+    public function getRequestId(): ?string
     {
         return $this->get('request_id');
     }
 
-    /**
-     * @param string $serviceProvider
-     * @return $this
-     */
-    public function setRequestServiceProvider($serviceProvider)
+    public function setRequestServiceProvider(string $serviceProvider): ProxyStateHandler
     {
         $this->set('service_provider', $serviceProvider);
 
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getRequestServiceProvider()
+    public function getRequestServiceProvider(): ?string
     {
         return $this->get('service_provider');
     }
 
-    /**
-     * @param string $url
-     * @return $this
-     */
-    public function setRequestAssertionConsumerServiceUrl($url)
+    public function setRequestAssertionConsumerServiceUrl(string $url): ProxyStateHandler
     {
         $this->set('assertion_consumer_service_url', $url);
 
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getRequestAssertionConsumerServiceUrl()
+    public function getRequestAssertionConsumerServiceUrl(): ?string
     {
         return $this->get('assertion_consumer_service_url');
     }
 
-    /**
-     * @param string $relayState
-     * @return $this
-     */
-    public function setRelayState($relayState)
+    public function setRelayState(string $relayState): ProxyStateHandler
     {
         $this->set('relay_state', $relayState);
 
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getRelayState()
+    public function getRelayState(): ?string
     {
         return $this->get('relay_state');
     }
 
-    /**
-     * @param string $loaIdentifier
-     * @return $this
-     */
-    public function setRequiredLoaIdentifier($loaIdentifier)
+    public function setRequiredLoaIdentifier(string $loaIdentifier): ProxyStateHandler
     {
         $this->set('loa_identifier', $loaIdentifier);
 
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getRequiredLoaIdentifier()
+    public function getRequiredLoaIdentifier(): ?string
     {
         return $this->get('loa_identifier');
     }
 
-    /**
-     * @param string $requestId
-     * @return $this
-     */
-    public function setGatewayRequestId($requestId)
+    public function setGatewayRequestId(string $requestId): ProxyStateHandler
     {
         $this->set('gateway_request_id', $requestId);
 
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getGatewayRequestId()
+    public function getGatewayRequestId(): ?string
     {
         return $this->get('gateway_request_id');
     }
 
-    /**
-     * @param string $assertionAsXmlString
-     * @return $this
-     */
-    public function saveAssertion($assertionAsXmlString)
+    public function saveAssertion(string $assertionAsXmlString): ProxyStateHandler
     {
         $this->set('response_assertion', $assertionAsXmlString);
 
         return $this;
     }
 
-    /**
-     * @return null|string
-     */
-    public function getAssertion()
+    public function getAssertion(): ?string
     {
         return $this->get('response_assertion');
     }
 
-    public function saveIdentityNameId(string $nameId)
+    public function saveIdentityNameId(string $nameId): ProxyStateHandler
     {
         $this->set('name_id', $nameId);
 
@@ -208,26 +150,19 @@ class ProxyStateHandler
         return $nameId;
     }
 
-    /**
-     * @param string $idpEntityId
-     * @return $this
-     */
-    public function setAuthenticatingIdp($idpEntityId)
+    public function setAuthenticatingIdp(string $idpEntityId): ProxyStateHandler
     {
         $this->set('authenticating_idp', $idpEntityId);
 
         return $this;
     }
 
-    /**
-     * @return null|string
-     */
-    public function getAuthenticatingIdp()
+    public function getAuthenticatingIdp(): ?string
     {
         return $this->get('authenticating_idp');
     }
 
-    public function setSelectedSecondFactorId(string $secondFactorId)
+    public function setSelectedSecondFactorId(string $secondFactorId): ProxyStateHandler
     {
         $this->set('selected_second_factor', $secondFactorId);
 
@@ -239,34 +174,24 @@ class ProxyStateHandler
         $this->set('selected_second_factor', null);
     }
 
-    /**
-     * @return null|string
-     */
-    public function getSelectedSecondFactorId()
+    public function getSelectedSecondFactorId(): ?string
     {
         return $this->get('selected_second_factor');
     }
 
-    /**
-     * @param bool $verified
-     * @return $this
-     */
-    public function setSecondFactorVerified($verified)
+    public function setSecondFactorVerified(bool $verified): ProxyStateHandler
     {
         $this->set('selected_second_factor_verified', $verified);
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function isSecondFactorVerified()
+    public function isSecondFactorVerified(): bool
     {
         return $this->get('selected_second_factor_verified') === true;
     }
 
-    public function setVerifiedBySsoOn2faCookie(bool $isVerifiedByCookie): self
+    public function setVerifiedBySsoOn2faCookie(bool $isVerifiedByCookie): ProxyStateHandler
     {
         $this->set('verified_by_sso_on_2fa_cookie', $isVerifiedByCookie);
 
@@ -283,7 +208,7 @@ class ProxyStateHandler
         return $this->get('verified_by_sso_on_2fa_cookie') === true;
     }
 
-    public function setSsoOn2faCookieFingerprint(string $fingerprint)
+    public function setSsoOn2faCookieFingerprint(string $fingerprint): ProxyStateHandler
     {
         $this->set('sso_on_2fa_cookie_fingerprint', $fingerprint);
 
@@ -295,84 +220,58 @@ class ProxyStateHandler
         return $this->get('sso_on_2fa_cookie_fingerprint');
     }
 
-    /**
-     * @param string $controllerName
-     * @return $this
-     */
-    public function setResponseAction($controllerName)
+    public function setResponseAction(string $controllerName): ProxyStateHandler
     {
         $this->set('response_controller', $controllerName);
         return $this;
     }
-    /**
-     * @return string|null
-     */
-    public function getResponseAction()
+
+    public function getResponseAction(): ?string
     {
         return $this->get('response_controller');
     }
-    /**
-     * @param string $serviceId
-     * @return $this
-     */
-    public function setResponseContextServiceId($serviceId)
+
+    public function setResponseContextServiceId(string $serviceId): ProxyStateHandler
     {
         $this->set('response_context_service_id', $serviceId);
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getResponseContextServiceId()
+    public function getResponseContextServiceId(): ?string
     {
         return $this->get('response_context_service_id');
     }
 
-    /**
-     * @param $organization
-     * @return $this
-     */
-    public function setSchacHomeOrganization($organization)
+    public function setSchacHomeOrganization($organization): ProxyStateHandler
     {
         $this->set('schac_home_organization', $organization);
         return $this;
     }
 
-
-    public function setIsForceAuthn(bool $forceAuthn): self
+    public function setIsForceAuthn(bool $forceAuthn): ProxyStateHandler
     {
         $this->set('force_authn', $forceAuthn);
         return $this;
     }
 
-
     public function isForceAuthn(): bool
     {
         return $this->get('force_authn') === true;
     }
-    /**
-     * @return string|null
-     */
-    public function getSchacHomeOrganization()
+
+    public function getSchacHomeOrganization(): ?string
     {
         return $this->get('schac_home_organization');
     }
 
-    /**
-     * @param string $locale
-     * @return $this
-     */
-    public function setPreferredLocale($locale)
+
+    public function setPreferredLocale($locale): ProxyStateHandler
     {
         $this->set('locale', $locale);
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getPreferredLocale()
+    public function getPreferredLocale(): ?string
     {
         return $this->get('locale');
     }
@@ -386,29 +285,21 @@ class ProxyStateHandler
      */
     public function markAuthenticationModeForRequest($requestId, $authenticationMode): void
     {
-        $this->session->set('surfnet/gateway/auth_mode/' . $requestId, $authenticationMode);
+        $this->requestStack->getSession()->set('surfnet/gateway/auth_mode/' . $requestId, $authenticationMode);
     }
 
     public function getAuthenticationModeForRequestId($requestId)
     {
-        return $this->session->get('surfnet/gateway/auth_mode/' . $requestId);
+        return $this->requestStack->getSession()->get('surfnet/gateway/auth_mode/' . $requestId);
     }
 
-    /**
-     * @param string $key
-     * @param mixed $value Any scalar
-     */
-    protected function set($key, $value)
+    protected function set($key, $value): void
     {
-        $this->session->set($this->sessionPath . $key, $value);
+        $this->requestStack->getSession()->set($this->sessionPath . $key, $value);
     }
 
-    /**
-     * @param string $key
-     * @return mixed|null Any scalar
-     */
-    protected function get($key)
+    protected function get(string $key): mixed
     {
-        return $this->session->get($this->sessionPath . $key);
+        return $this->requestStack->getSession()->get($this->sessionPath . $key);
     }
 }

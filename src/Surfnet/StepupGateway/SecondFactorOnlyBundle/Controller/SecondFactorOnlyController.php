@@ -52,7 +52,7 @@ class SecondFactorOnlyController extends Controller
      * @return Response
      * @throws InvalidAdfsRequestException
      */
-    public function ssoAction(Request $httpRequest)
+    public function sso(Request $httpRequest): Response
     {
         $logger = $this->get('logger');
 
@@ -84,7 +84,8 @@ class SecondFactorOnlyController extends Controller
 
         $logger->notice('Forwarding to second factor controller for loa determination and handling');
 
-        // Forward to the selectSecondFactorForVerificationSsoAction, this in turn will forward to the correct
+        // Forward to the selectSecondFactorForVerificationSsoAction,
+        // this in turn will forward to the correct
         // verification action (based on authentication type sso/sfo)
         return $this->forward('SurfnetStepupGatewayGatewayBundle:SecondFactor:selectSecondFactorForVerificationSfo');
     }
@@ -106,7 +107,7 @@ class SecondFactorOnlyController extends Controller
      * @return Response
      * @throws InvalidAdfsResponseException
      */
-    public function respondAction(Request $request)
+    public function respond(Request $request): Response
     {
         $responseContext = $this->getResponseContext();
         $originalRequestId = $responseContext->getInResponseTo();

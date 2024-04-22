@@ -29,12 +29,9 @@ class ResponseBuilder
      */
     private $response;
 
-    /**
-     * @var \Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext
-     */
-    private $responseContext;
+    private ?ResponseContext $responseContext = null;
 
-    public function createNewResponse(ResponseContext $context)
+    public function createNewResponse(ResponseContext $context): static
     {
         if ($this->response) {
             throw new LogicException('Cannot create a new Response when still building a response.');
@@ -53,20 +50,14 @@ class ResponseBuilder
         return $this;
     }
 
-    /**
-     * @param string $status
-     * @param string|null $subStatus
-     * @param string|null $message
-     * @return $this
-     */
-    public function setResponseStatus($status, $subStatus = null, $message = null)
+    public function setResponseStatus(string $status, ?string $subStatus = null, ?string $message = null): static
     {
         if (!$this->isValidResponseStatus($status)) {
-            throw new LogicException(sprintf('Trying to set invalid Response Status'));
+            throw new LogicException('Trying to set invalid Response Status');
         }
 
         if ($subStatus && !$this->isValidResponseSubStatus($subStatus)) {
-            throw new LogicException(sprintf('Trying to set invalid Response SubStatus'));
+            throw new LogicException('Trying to set invalid Response SubStatus');
         }
 
         $status = ['Code' => $status];
@@ -92,7 +83,7 @@ class ResponseBuilder
         return $response;
     }
 
-    private function isValidResponseStatus($status)
+    private function isValidResponseStatus(string $status): bool
     {
         return in_array($status, [
             Constants::STATUS_SUCCESS,            // weeee!
@@ -102,7 +93,7 @@ class ResponseBuilder
         ]);
     }
 
-    private function isValidResponseSubStatus($subStatus)
+    private function isValidResponseSubStatus($subStatus): bool
     {
         return in_array($subStatus, [
             Constants::STATUS_AUTHN_FAILED,               // failed authentication

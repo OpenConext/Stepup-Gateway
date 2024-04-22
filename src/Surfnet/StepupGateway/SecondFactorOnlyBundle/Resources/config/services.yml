@@ -124,7 +124,7 @@ services:
     second_factor_only.adfs.state_handler:
         public: false
         arguments:
-            - "@session"
+            - "@request_stack"
 
         class: Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\StateHandler
 

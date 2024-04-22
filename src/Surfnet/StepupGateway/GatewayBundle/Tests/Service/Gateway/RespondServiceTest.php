@@ -40,6 +40,7 @@ use Surfnet\StepupGateway\GatewayBundle\Service\ProxyResponseService;
 use Surfnet\StepupGateway\GatewayBundle\Service\SamlEntityService;
 use Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorService;
 use Surfnet\StepupGateway\GatewayBundle\Tests\TestCase\GatewaySamlTestCase;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Session;
 
 final class RespondServiceTest extends GatewaySamlTestCase
@@ -251,7 +252,10 @@ final class RespondServiceTest extends GatewaySamlTestCase
     private function initGatewayService(array $idpConfiguration, array $dictionaryAttributes, array $loaLevels, DateTime $now): void
     {
         $session = new Session($this->sessionStorage);
-        $this->stateHandler = new ProxyStateHandler($session, 'surfnet/gateway/request');
+        $requestStackMock = $this->createMock(RequestStack::class);
+        $requestStackMock->method('getSession')->willReturn($session);
+
+        $this->stateHandler = new ProxyStateHandler($requestStackMock, 'surfnet/gateway/request');
         $samlLogger = new SamlAuthenticationLogger($this->logger);
 
         $this->remoteIdp = new IdentityProvider($idpConfiguration);

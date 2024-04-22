@@ -19,7 +19,7 @@ services:
 
     gssp.session:
         class: Symfony\Component\HttpFoundation\Session\Attribute\AttributeBag
-        factory: ['@session', 'getBag']
+        factory: ['@request_stack', 'getBag']
         arguments: ['gssp']
 
     gssp.session.attribute_bag:

@@ -20,6 +20,7 @@ namespace Surfnet\StepupGateway\GatewayBundle\Monolog\Formatter;
 
 use Monolog\Formatter\GelfMessageFormatter;
 use Monolog\Formatter\FormatterInterface;
+use Monolog\LogRecord;
 
 class GelfMessageToStringFormatter implements FormatterInterface
 {
@@ -40,7 +41,7 @@ class GelfMessageToStringFormatter implements FormatterInterface
      * {@inheritdoc} the gelf message is an array which cannot be logged into a single line
      * By jsonencoding the message we can write it on a single line
      */
-    public function format(array $record)
+    public function format(array|LogRecord $record)
     {
         $message = $this->formatter->format($record);
 
