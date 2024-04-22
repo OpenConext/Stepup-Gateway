@@ -1,8 +1,19 @@
 twig:
-    default_path: '%kernel.project_dir%/templates'
-    debug: '%kernel.debug%'
-    strict_variables: '%kernel.debug%'
-    globals:
-      global_view_parameters: "@gateway.service.global_view_parameters"
-      app_name: "%app_name%"
-    form_themes: ['bootstrap_4_layout.html.twig']
+  paths:
+    '%kernel.project_dir%/templates': default
+    '%kernel.project_dir%/vendor/surfnet/stepup-saml-bundle/templates': 'SurfnetSaml'
+  default_path: '%kernel.project_dir%/templates'
+  debug: '%kernel.debug%'
+  strict_variables: '%kernel.debug%'
+  globals:
+    global_view_parameters: "@gateway.service.global_view_parameters"
+    app_name: "%app_name%"
+  form_themes: ['bootstrap_4_layout.html.twig']
+
+when@smoketest: &templateTest
+  twig:
+    paths:
+      '%kernel.project_dir%/templates': default
+      '%kernel.project_dir%/tests/src/Resources/views/': test_resources
+
+when@test: *templateTest

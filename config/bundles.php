@@ -5,7 +5,6 @@ return [
     JMS\TranslationBundle\JMSTranslationBundle::class => ['all' => true],
     Symfony\Bundle\FrameworkBundle\FrameworkBundle::class => ['all' => true],
     Nelmio\SecurityBundle\NelmioSecurityBundle::class => ['all' => true],
-    Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle::class => ['all' => true],
     Surfnet\StepupGateway\ApiBundle\SurfnetStepupGatewayApiBundle::class => ['all' => true],
     Surfnet\YubikeyApiClientBundle\SurfnetYubikeyApiClientBundle::class => ['all' => true],
     Surfnet\StepupBundle\SurfnetStepupBundle::class => ['all' => true],

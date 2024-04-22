@@ -25,7 +25,7 @@ use Surfnet\StepupGateway\SecondFactorOnlyBundle\Exception\InvalidSecondFactorMe
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\Gateway\AdfsService;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\Gateway\RespondService;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\Gateway\LoginService;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -36,7 +36,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
  * See docs/GatewayState.md for a high-level diagram on how this controller
  * interacts with outside actors and other parts of Stepup.
  */
-class SecondFactorOnlyController extends Controller
+class SecondFactorOnlyController extends AbstractController
 {
     /**
      * Receive an AuthnRequest from a service provider.

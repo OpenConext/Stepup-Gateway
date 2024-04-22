@@ -25,7 +25,6 @@ use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\Exception\AcsLocationNotAl
 final class ExceptionController extends BaseExceptionController
 {
     /**
-     * @param Exception $exception
      * @return array View parameters 'title' and 'description'
      */
     protected function getPageTitleAndDescription(Exception|\Throwable $exception): array

@@ -19,7 +19,6 @@
 namespace Surfnet\StepupGateway\GatewayBundle\Controller;
 
 use Psr\Log\LoggerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Surfnet\StepupBundle\Command\VerifyPossessionOfPhoneCommand;
 use Surfnet\StepupBundle\Value\PhoneNumber\InternationalPhoneNumber;
 use Surfnet\StepupBundle\Value\SecondFactorType;
@@ -60,13 +59,13 @@ class SecondFactorController extends AbstractController
     public function selectSecondFactorForVerificationSso(
         Request $request,
     ): Response {
-        return $this->selectSecondFactorForVerificationAction(self::MODE_SSO, $request);
+        return $this->selectSecondFactorForVerification(self::MODE_SSO, $request);
     }
 
     public function selectSecondFactorForVerificationSfo(
         Request $request,
     ): Response {
-        return $this->selectSecondFactorForVerificationAction(self::MODE_SFO, $request);
+        return $this->selectSecondFactorForVerification(self::MODE_SFO, $request);
     }
 
     public function selectSecondFactorForVerification(
@@ -175,8 +174,6 @@ class SecondFactorController extends AbstractController
      * - Shows the token selection screen if you own > 1 token
      * - Directly goes to SF auth when identity owns 1 token.
      *
-     * @Template
-     *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     #[Route(
@@ -276,11 +273,14 @@ class SecondFactorController extends AbstractController
             );
         }
 
-        return [
-            'form' => $form->createView(),
-            'cancelForm' => $cancelForm->createView(),
-            'secondFactors' => $secondFactors,
-        ];
+        return $this->render(
+            '@default/second_factor/choose_second_factor.html.twig',
+            [
+                'form' => $form->createView(),
+                'cancelForm' => $cancelForm->createView(),
+                'secondFactors' => $secondFactors,
+            ]
+        );
     }
 
     #[Route(
@@ -362,16 +362,13 @@ class SecondFactorController extends AbstractController
         return $this->forward($context->getResponseAction());
     }
 
-    /**
-     * @Template
-     */
     #[Route(
         path: '/verify-second-factor/{authenticationMode}/yubikey',
         name: 'gateway_verify_second_factor_yubikey',
         requirements: ['authenticationMode' => 'sso|sfo'],
         methods: ['GET', 'POST']
     )]
-    public function verifyYubiKeySecondFactor(Request $request): array|Response
+    public function verifyYubiKeySecondFactor(Request $request): Response
     {
         if (!$request->get('authenticationMode', false)) {
             throw new RuntimeException('Unable to determine the authentication mode in Yubikey verification action');
@@ -402,14 +399,20 @@ class SecondFactorController extends AbstractController
                 );
 
                 // OTP field is rendered empty in the template.
-                return ['form' => $form->createView(), 'cancelForm' => $cancelForm->createView()];
+                return $this->render(
+                    '@default/second_factor/verify_yubikey_second_factor.html.twig',
+                    ['form' => $form->createView(), 'cancelForm' => $cancelForm->createView()],
+                );
             } elseif (!$result->didPublicIdMatch()) {
                 $form->addError(
                     new FormError($this->get('translator')->trans('gateway.form.verify_yubikey.public_id_mismatch')),
                 );
 
                 // OTP field is rendered empty in the template.
-                return ['form' => $form->createView(), 'cancelForm' => $cancelForm->createView()];
+                return $this->render(
+                    '@default/second_factor/verify_yubikey_second_factor.html.twig',
+                    ['form' => $form->createView(), 'cancelForm' => $cancelForm->createView()],
+                );
             }
 
             $this->getResponseContext($authenticationMode)->markSecondFactorVerified();
@@ -426,14 +429,13 @@ class SecondFactorController extends AbstractController
         }
 
         // OTP field is rendered empty in the template.
-        return ['form' => $form->createView(), 'cancelForm' => $cancelForm->createView()];
+        return $this->render(
+            '@default/second_factor/verify_yubikey_second_factor.html.twig',
+            ['form' => $form->createView(), 'cancelForm' => $cancelForm->createView()],
+        );
+
     }
 
-    /**
-     * @Template
-     *
-     * @return array|Response
-     */
     #[Route(
         path: '/verify-second-factor/sms/send-challenge',
         name: 'gateway_verify_second_factor_sms',
@@ -441,7 +443,7 @@ class SecondFactorController extends AbstractController
     )]
     public function verifySmsSecondFactor(
         Request $request,
-    ): array|RedirectResponse {
+    ): Response|RedirectResponse {
         if (!$request->get('authenticationMode', false)) {
             throw new RuntimeException('Unable to determine the authentication mode in the SMS verification action');
         }
@@ -473,13 +475,16 @@ class SecondFactorController extends AbstractController
         $viewVariables = ['otpRequestsRemaining' => $otpRequestsRemaining, 'maximumOtpRequests' => $maximumOtpRequests];
 
         if ($form->isSubmitted() && !$form->isValid()) {
-            return array_merge(
-                $viewVariables,
-                [
-                    'phoneNumber' => $phoneNumber,
-                    'form' => $form->createView(),
-                    'cancelForm' => $cancelForm->createView(),
-                ],
+            return $this->render(
+                '@default/second_factor/verify_sms_second_factor.html.twig',
+                array_merge(
+                    $viewVariables,
+                    [
+                        'phoneNumber' => $phoneNumber,
+                        'form' => $form->createView(),
+                        'cancelForm' => $cancelForm->createView(),
+                    ],
+                )
             );
         }
 
@@ -490,13 +495,16 @@ class SecondFactorController extends AbstractController
                 new FormError($this->get('translator')->trans('gateway.form.send_sms_challenge.sms_sending_failed')),
             );
 
-            return array_merge(
-                $viewVariables,
-                [
-                    'phoneNumber' => $phoneNumber,
-                    'form' => $form->createView(),
-                    'cancelForm' => $cancelForm->createView(),
-                ],
+            return $this->render(
+                '@default/second_factor/verify_sms_second_factor.html.twig',
+                array_merge(
+                    $viewVariables,
+                    [
+                        'phoneNumber' => $phoneNumber,
+                        'form' => $form->createView(),
+                        'cancelForm' => $cancelForm->createView(),
+                    ],
+                )
             );
         }
 
@@ -508,9 +516,6 @@ class SecondFactorController extends AbstractController
         );
     }
 
-    /**
-     * @Template
-     */
     #[Route(
         path: '/verify-second-factor/sms/verify-challenge',
         name: 'gateway_verify_second_factor_sms_verify_challenge',
@@ -575,7 +580,13 @@ class SecondFactorController extends AbstractController
             }
         }
 
-        return ['form' => $form->createView(), 'cancelForm' => $cancelForm->createView()];
+        return $this->render(
+            '@default/second_factor/verify_sms_second_factor_challenge.html.twig',
+            [
+                'form' => $form->createView(),
+                'cancelForm' => $cancelForm->createView(),
+            ],
+        );
     }
 
     #[Route(
