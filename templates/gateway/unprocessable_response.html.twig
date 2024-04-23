@@ -18,7 +18,7 @@
         <input type="hidden" name="RelayState" value="{{ relayState|escape }}"/>
     {% endif %}
     {# Optionally add the ADFS response parameters #}
-    {% include "@SurfnetStepupGatewaySecondFactorOnly/adfs/partial/adfs.html.twig" %}
+    {% include "adfs/partial/adfs.html.twig" %}
         <input type="submit" value="{{ 'gateway.submit.click_to_go_back_to_sp'|trans }}"/>
     </form>
 {% endblock content %}

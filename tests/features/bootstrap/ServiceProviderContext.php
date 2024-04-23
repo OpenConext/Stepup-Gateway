@@ -246,7 +246,6 @@ class ServiceProviderContext implements Context, KernelAwareContext
         $authnRequest->setProtocolBinding(Constants::BINDING_HTTP_REDIRECT);
         $authnRequest->setNameId($this->buildNameId($nameId));
         // Sign with random key, does not mather for now.
-        // todo: use from services_test.yml
         $authnRequest->setSignatureKey(
             $this->loadPrivateKey(new PrivateKey('/config/ssp/sp.key', 'default'))
         );

@@ -1,9 +1,0 @@
-doctrine:
-  dbal:
-    default_connection: gateway
-    connections:
-      gateway:
-        dbname: gateway_test
-        host: mariadb
-        password: gw_deploy_secret
-        user: gw_deploy_user

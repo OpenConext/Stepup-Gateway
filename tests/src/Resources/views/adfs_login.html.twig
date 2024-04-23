@@ -7,7 +7,7 @@
     One moment please...
     <form method="post" action="{{ ssoUrl }}">
         <input type="hidden" name="SAMLRequest" value="{{ authNRequest }}" />
-        {% include "@SurfnetStepupGatewaySecondFactorOnly/adfs/partial/adfs.html.twig" %}
+        {% include "adfs/partial/adfs.html.twig" %}
         <input type="submit" class="hidden" />
         <noscript>
             <input type="submit" value="Submit"/>

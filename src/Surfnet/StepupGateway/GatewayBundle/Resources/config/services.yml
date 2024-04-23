@@ -3,11 +3,6 @@ services:
     _defaults:
         public: true
 
-    Surfnet\StepupGateway\GatewayBundle\Controller\ExceptionController:
-        arguments:
-            - '@translator'
-            - '@surfnet_stepup.request.request_id'
-
     saml.entity_repository:
         class: Surfnet\StepupGateway\GatewayBundle\Service\SamlEntityService
         arguments:

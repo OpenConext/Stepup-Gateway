@@ -25,6 +25,7 @@ use SAML2\Response as SAMLResponse;
 use SAML2\XML\saml\Issuer;
 use Surfnet\SamlBundle\Http\XMLResponse;
 use Surfnet\SamlBundle\Metadata\MetadataFactory;
+use Surfnet\StepupGateway\GatewayBundle\Container\ContainerController;
 use Surfnet\StepupGateway\GatewayBundle\Controller\GatewayController;
 use Surfnet\StepupGateway\GatewayBundle\Exception\ResponseFailureException;
 use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
@@ -46,6 +47,7 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Surfnet\SamlBundle\Entity\ServiceProvider;
+use Symfony\Component\Routing\Attribute\Route;
 
 /**
  * Handling of GSSP registration and verification.
@@ -58,10 +60,8 @@ use Surfnet\SamlBundle\Entity\ServiceProvider;
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.NPathComplexity)
  */
-class SamlProxyController extends AbstractController
+class SamlProxyController extends ContainerController
 {
-    private const SINGLE_SIGN_ON_MODE = 'gateway.proxy.sso.state_handler';
-    private const SECOND_FACTOR_MODE = 'gateway.proxy.sfo.state_handler';
     /**
      * Proxy a GSSP authentication request to the remote GSSP SSO endpoint.
      *
@@ -72,6 +72,11 @@ class SamlProxyController extends AbstractController
      * The service provider in this context is SelfService (when registering
      * a token) or RA (when vetting a token).
      */
+    #[Route(
+        path: '/gssp/{provider}/single-sign-on',
+        name: 'gssp_verify',
+        methods: ['GET']
+    )]
     public function singleSignOn(
         string  $provider,
         Request $httpRequest,
@@ -135,6 +140,11 @@ class SamlProxyController extends AbstractController
      *
      * @throws Exception
      */
+    #[Route(
+        path: '/gssp/{provider}/consume-assertion',
+        name: 'gssp_consume_assertion',
+        methods: ['POST']
+    )]
     public function consumeAssertion(string $provider, Request $httpRequest): Response
     {
         $provider = $this->getProvider($provider);
@@ -182,12 +192,18 @@ class SamlProxyController extends AbstractController
         return $this->renderSamlResponse('consume_assertion', $provider->getStateHandler(), $response);
     }
 
+
+    #[Route(
+        path: '/gssp/{provider}/metadata',
+        name: 'gssp_saml_metadata',
+        methods: ['GET']
+    )]
     public function metadata(string $provider): XMLResponse
     {
         $provider = $this->getProvider($provider);
 
         /** @var MetadataFactory $factory */
-        $factory = $this->container->get('gssp.provider.' . $provider->getName() . '.metadata.factory');
+        $factory = $this->get('gssp.provider.' . $provider->getName() . '.metadata.factory');
 
         return new XMLResponse($factory->generate());
     }
@@ -195,7 +211,7 @@ class SamlProxyController extends AbstractController
     private function getProvider(string $provider): Provider
     {
         /** @var ProviderRepository $providerRepository */
-        $providerRepository = $this->container->get('gssp.provider_repository');
+        $providerRepository = $this->get('gssp.provider_repository');
 
         if (!$providerRepository->has($provider)) {
             throw new NotFoundHttpException(
@@ -206,9 +222,6 @@ class SamlProxyController extends AbstractController
         return $providerRepository->get($provider);
     }
 
-    /**
-     * @return string
-     */
     private function getDestination(StateHandler $stateHandler): string
     {
         if ($stateHandler->secondFactorVerificationRequested()) {
@@ -216,7 +229,7 @@ class SamlProxyController extends AbstractController
             // Both use a ResponseContext service of their own
             $responseContextServiceId = $stateHandler->getResponseContextServiceId();
             // GSSP verification action, return to SP from GatewayController state!
-            $destination = $this->container->get($responseContextServiceId)->getDestination();
+            $destination = $this->get($responseContextServiceId)->getDestination();
         } else {
             // GSSP registration action, return to SP remembered in ssoAction().
             $serviceProvider = $this->getServiceProvider(
@@ -247,14 +260,14 @@ class SamlProxyController extends AbstractController
         }
         // GSSP verification action, return to SP from GatewayController state!
         /** @var ResponseContext $responseService */
-        $responseService = $this->container->get($responseContextServiceId);
+        $responseService = $this->get($responseContextServiceId);
         return $responseService->getIssuer();
     }
 
     public function renderSamlResponse(string $view, StateHandler $stateHandler, SAMLResponse $response): Response
     {
         /** @var ResponseHelper $responseHelper */
-        $responseHelper = $this->container->get('second_factor_only.adfs.response_helper');
+        $responseHelper = $this->get('second_factor_only.adfs.response_helper');
         $logger = $this->get('logger');
         $logger->notice(sprintf('Rendering SAML Response with view "%s"', $view));
 
@@ -357,11 +370,12 @@ class SamlProxyController extends AbstractController
 
         return $response;
     }
-
-    private function getServiceProvider(?string $serviceProvider): ServiceProvider
+    /**
+     * @return LoginService
+     */
+    private function getGsspLoginService()
     {
-
-        return $this->connectedServiceProviders->getConfigurationOf($serviceProvider);
+        return $this->get('gssp.service.gssp.login');
     }
 
     /**
@@ -369,7 +383,7 @@ class SamlProxyController extends AbstractController
      */
     private function getGsspSecondFactorVerificationService()
     {
-        return $this->container->get('gssp.service.gssp.second_factor_verification');
+        return $this->get('gssp.service.gssp.second_factor_verification');
     }
 
     /**
@@ -377,27 +391,31 @@ class SamlProxyController extends AbstractController
      */
     private function getGsspConsumeAssertionService()
     {
-        return $this->container->get('gssp.service.gssp.consume_assertion');
+        return $this->get('gssp.service.gssp.consume_assertion');
     }
 
-    private function getProxyResponseFactory(Provider $provider): ProxyResponseFactory
+    /**
+     * @param Provider $provider
+     * @return ProxyResponseFactory
+     */
+    private function getProxyResponseFactory(Provider $provider)
     {
-        return $this->container->get('gssp.provider.' . $provider->getName() . '.response_proxy');
+        return $this->get('gssp.provider.' . $provider->getName() . '.response_proxy');
     }
 
-    public function getResponseContext($mode = self::SINGLE_SIGN_ON_MODE): ResponseContext
+    /**
+     * @return \Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext
+     */
+    public function getResponseContext($mode = 'gateway.proxy.sso.state_handler')
     {
-        $stateHandler = match ($mode) {
-            self::SINGLE_SIGN_ON_MODE => $this->ssoProxyStateHandler,
-            self::SECOND_FACTOR_MODE => $this->sfoProxyStateHandler,
-        };
+        $stateHandler = $this->get($mode);
 
         $responseContextServiceId = $stateHandler->getResponseContextServiceId();
 
         if (!$responseContextServiceId) {
-            return $this->container->get(GatewayController::RESPONSE_CONTEXT_SERVICE_ID);
+            return $this->get(GatewayController::RESPONSE_CONTEXT_SERVICE_ID);
         }
 
-        return $this->container->get($responseContextServiceId);
+        return $this->get($responseContextServiceId);
     }
 }

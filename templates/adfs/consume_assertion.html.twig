@@ -9,7 +9,7 @@
     One moment please...
     <form method="post" action="{{ acu }}">
         <input type="hidden" name="_SAMLResponse" value="{{ samlResponse }}" />
-        {% include "@SurfnetStepupGatewaySecondFactorOnly/adfs/partial/adfs.html.twig" %}
+        {% include "adfs/partial/adfs.html.twig" %}
         <input type="submit" class="hidden" />
         <noscript>
             <input type="submit" value="Submit"/>

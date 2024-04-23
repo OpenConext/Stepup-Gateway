@@ -110,7 +110,8 @@ class SurfnetStepupGatewaySamlStepupProviderExtension extends Extension
 
         $container
             ->getDefinition('gssp.provider_repository')
-            ->addMethodCall('addProvider', [new Reference('gssp.provider.' . $provider)]);
+            ->addMethodCall('addProvider', [new Reference('gssp.provider.' . $provider)])
+            ->setPublic(true);
 
         $viewConfigDefinition = new Definition(\Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\ViewConfig::class, [
             new Reference('request_stack'),

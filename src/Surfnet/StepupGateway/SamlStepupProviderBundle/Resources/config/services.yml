@@ -17,18 +17,20 @@ services:
             - "@saml.entity_repository"
             - "@gssp.allowed_sps"
 
-    gssp.session:
-        class: Symfony\Component\HttpFoundation\Session\Attribute\AttributeBag
-        factory: ['@request_stack', 'getBag']
-        arguments: ['gssp']
+    Surfnet\StepupGateway\SamlStepupProviderBundle\Session\SessionFactoryGsspBag:
+        decorates: session.factory
+        arguments: [ '@.inner' ]
 
-    gssp.session.attribute_bag:
-        public: false
-        class: Symfony\Component\HttpFoundation\Session\Attribute\AttributeBag
-        arguments:
-            - '__gssp__'
-        calls:
-            - [setName, ['gssp']]
+    gssp.session:
+        class: Surfnet\StepupGateway\SamlStepupProviderBundle\Session\GsspBag
+
+#    gssp.session.attribute_bag:
+#        public: false
+#        class: Symfony\Component\HttpFoundation\Session\Attribute\AttributeBag
+#        arguments:
+#            - '__gssp__'
+#        calls:
+#            - [setName, ['gssp']]
 
     gssp.service.gssp.login:
         class: Surfnet\StepupGateway\SamlStepupProviderBundle\Service\Gateway\LoginService
