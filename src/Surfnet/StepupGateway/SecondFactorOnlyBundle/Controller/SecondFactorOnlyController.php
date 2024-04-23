@@ -18,17 +18,18 @@
 
 namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Controller;
 
+use Surfnet\StepupGateway\GatewayBundle\Container\ContainerController;
 use Surfnet\StepupGateway\GatewayBundle\Exception\RequesterFailureException;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\Exception\InvalidAdfsRequestException;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\Exception\InvalidAdfsResponseException;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Exception\InvalidSecondFactorMethodException;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\Gateway\AdfsService;
-use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\Gateway\RespondService;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\Gateway\LoginService;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\Gateway\RespondService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Routing\Attribute\Route;
 
 /**
  * Entry point for the Stepup SFO flow.
@@ -36,7 +37,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
  * See docs/GatewayState.md for a high-level diagram on how this controller
  * interacts with outside actors and other parts of Stepup.
  */
-class SecondFactorOnlyController extends AbstractController
+class SecondFactorOnlyController extends ContainerController
 {
     /**
      * Receive an AuthnRequest from a service provider.
@@ -52,6 +53,11 @@ class SecondFactorOnlyController extends AbstractController
      * @return Response
      * @throws InvalidAdfsRequestException
      */
+    #[Route(
+        path: '/second-factor-only/single-sign-on',
+        name: 'gateway_second_factor_only_identityprovider_sso',
+        methods: ['GET', 'POST']
+    )]
     public function sso(Request $httpRequest): Response
     {
         $logger = $this->get('logger');

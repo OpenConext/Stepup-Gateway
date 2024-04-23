@@ -21,9 +21,10 @@ namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Controller;
 use Psr\Log\LoggerInterface;
 use Surfnet\SamlBundle\Http\XMLResponse;
 use Surfnet\SamlBundle\Metadata\MetadataFactory;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Surfnet\StepupGateway\GatewayBundle\Container\ContainerController;
+use Symfony\Component\Routing\Attribute\Route;
 
-class MetadataController extends AbstractController
+class MetadataController extends ContainerController
 {
     public function __construct(
         private readonly LoggerInterface                              $logger,
@@ -31,6 +32,11 @@ class MetadataController extends AbstractController
     ) {
     }
 
+    #[Route(
+        path: '/second-factor-only/metadata',
+        name: 'gateway_second_factor_only_metadata',
+        methods: ['GET']
+    )]
     public function metadata(): XMLResponse
     {
         if (!$this->getParameter('second_factor_only')) {

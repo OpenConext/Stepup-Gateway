@@ -21,12 +21,13 @@ namespace Surfnet\StepupGateway\ApiBundle\Controller;
 use Surfnet\StepupGateway\ApiBundle\Dto\Otp;
 use Surfnet\StepupGateway\ApiBundle\Dto\Requester;
 use Surfnet\StepupGateway\ApiBundle\Service\YubikeyService;
+use Surfnet\StepupGateway\GatewayBundle\Container\ContainerController;
 use Surfnet\YubikeyApiClient\Service\OtpVerificationResult;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 
-class YubikeyController extends AbstractController
+class YubikeyController extends ContainerController
 {
     #[Route(
         path: '/verify-yubikey',

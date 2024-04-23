@@ -19,6 +19,7 @@
 namespace Surfnet\StepupGateway\GatewayBundle\Controller;
 
 use SAML2\Response as SAMLResponse;
+use Surfnet\StepupGateway\GatewayBundle\Container\ContainerController;
 use Surfnet\StepupGateway\GatewayBundle\Exception\InvalidArgumentException;
 use Surfnet\StepupGateway\GatewayBundle\Exception\RequesterFailureException;
 use Surfnet\StepupGateway\GatewayBundle\Exception\ResponseFailureException;
@@ -29,7 +30,6 @@ use Surfnet\StepupGateway\GatewayBundle\Service\Gateway\FailedResponseService;
 use Surfnet\StepupGateway\GatewayBundle\Service\Gateway\LoginService;
 use Surfnet\StepupGateway\GatewayBundle\Service\Gateway\RespondService;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\ResponseHelper;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -43,7 +43,7 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class GatewayController extends AbstractController
+class GatewayController extends ContainerController
 {
     public const RESPONSE_CONTEXT_SERVICE_ID = 'gateway.proxy.response_context';
     public const MODE_SFO = 'sfo';
@@ -236,7 +236,7 @@ class GatewayController extends AbstractController
     public function render($view, array $parameters = [], ?Response $response = null): Response
     {
         return parent::render(
-            '@Default/gateway/'.$view.'.html.twig',
+            '@default/gateway/'.$view.'.html.twig',
             $parameters,
             $response,
         );

@@ -20,10 +20,10 @@ namespace Surfnet\StepupGateway\GatewayBundle\Controller;
 
 use Surfnet\SamlBundle\Http\XMLResponse;
 use Surfnet\SamlBundle\Metadata\MetadataFactory;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Surfnet\StepupGateway\GatewayBundle\Container\ContainerController;
 use Symfony\Component\Routing\Attribute\Route;
 
-class MetadataController extends AbstractController
+class MetadataController extends ContainerController
 {
     public function __construct(
         private readonly MetadataFactory $metadataFactory,

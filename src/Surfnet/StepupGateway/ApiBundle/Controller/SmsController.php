@@ -23,10 +23,11 @@ use Surfnet\StepupGateway\ApiBundle\Dto\SmsMessage;
 use Surfnet\StepupGateway\ApiBundle\Service\SmsServiceInterface;
 use Surfnet\StepupGateway\ApiBundle\Sms\SmsMessageResultInterface;
 use Surfnet\StepupGateway\ApiBundle\Service\SmsService;
+use Surfnet\StepupGateway\GatewayBundle\Container\ContainerController;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
-class SmsController extends AbstractController
+class SmsController extends ContainerController
 {
     public function __construct(
         private SmsServiceInterface $smsService,

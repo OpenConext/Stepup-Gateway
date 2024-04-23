@@ -25,6 +25,7 @@ use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupGateway\GatewayBundle\Command\ChooseSecondFactorCommand;
 use Surfnet\StepupGateway\GatewayBundle\Command\SendSmsChallengeCommand;
 use Surfnet\StepupGateway\GatewayBundle\Command\VerifyYubikeyOtpCommand;
+use Surfnet\StepupGateway\GatewayBundle\Container\ContainerController;
 use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor;
 use Surfnet\StepupGateway\GatewayBundle\Exception\InvalidArgumentException;
 use Surfnet\StepupGateway\GatewayBundle\Exception\LoaCannotBeGivenException;
@@ -37,7 +38,6 @@ use Surfnet\StepupGateway\GatewayBundle\Form\Type\VerifyYubikeyOtpType;
 use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
 use Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorService;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\CookieService;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -45,13 +45,15 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Attribute\Route;
+use const FILTER_DEFAULT;
+use const FILTER_FORCE_ARRAY;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class SecondFactorController extends AbstractController
+class SecondFactorController extends ContainerController
 {
     public const MODE_SFO = 'sfo';
     public const MODE_SSO = 'sso';
@@ -241,8 +243,7 @@ class SecondFactorController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $buttonName = $form->getClickedButton()->getName();
-            $formResults = $request->request->get('gateway_choose_second_factor', false);
-
+            $formResults = $request->request->filter('gateway_choose_second_factor', false, FILTER_DEFAULT, ['flags' => FILTER_FORCE_ARRAY]);
             if (!isset($formResults[$buttonName])) {
                 throw new InvalidArgumentException(sprintf('Second factor type "%s" could not be found in the posted form results.', $buttonName));
             }
