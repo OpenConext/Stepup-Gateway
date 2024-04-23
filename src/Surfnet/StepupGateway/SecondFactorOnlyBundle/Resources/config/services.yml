@@ -10,6 +10,7 @@ services:
             - "@router"
             - "@request_stack"
             - null
+            # Note that: the IdP is injected with Yaml config where we usually do this by reference
             - enabled: true
               entity_id_route: 'gateway_second_factor_only_metadata'
               sso_route: 'gateway_second_factor_only_identityprovider_sso'
