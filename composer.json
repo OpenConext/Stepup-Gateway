@@ -102,9 +102,7 @@
             "@phpstan",
             "@phpcs",
             "@phpmd",
-            "@test",
-            "@behat",
-            "@behat-selenium"
+            "@test"
         ],
         "phplint": "./ci/qa/phplint",
         "validate-lockfile": "./ci/qa/validate",
