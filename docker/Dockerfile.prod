@@ -7,9 +7,8 @@ RUN tar -xvjf /tmp/*.tar.bz2 -C /var/www/html/ && \
 
 # Add the application configuration files
 COPY .env.dist .env
-COPY config/legacy/parameters.yaml.dist config/legacy/parameters.yaml
-COPY config/legacy/samlstepupproviders_parameters.yaml.dist config/legacy/samlstepupproviders_parameters.yaml
-COPY config/packages/prod/monolog.yaml.docker config/packages/prod/monolog.yaml 
+COPY config/openconext/parameters.yaml.dist config/openconext/parameters.yaml
+COPY config/openconext/samlstepupproviders_parameters.yaml.dist config/openconext/samlstepupproviders_parameters.yaml
 
 # Add the config files for Apache2
 RUN rm -rf /etc/apache2/sites-enabled/*

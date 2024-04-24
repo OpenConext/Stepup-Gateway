@@ -38,7 +38,7 @@ The parameters in the cookie are used during authentication to:
 - `Second Factor Identifier`: To verify that the second factor is still active (i.e. it was not revoked)
 
 ## Configuration options
-When using SSO on second factor authentications (SSO on 2FA), you must configure the parameters below. The configuration options are configured in `config/legacy/parameters.yaml`
+When using SSO on second factor authentications (SSO on 2FA), you must configure the parameters below. The configuration options are configured in `config/openconext/parameters.yaml`
 
 | __Parameter name__    | __Description__                                                                                             | __Data type__                                          |
 |-----------------------|-------------------------------------------------------------------------------------------------------------|--------------------------------------------------------|
