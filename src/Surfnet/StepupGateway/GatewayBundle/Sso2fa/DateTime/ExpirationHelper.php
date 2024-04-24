@@ -30,9 +30,9 @@ class ExpirationHelper implements ExpirationHelperInterface
 {
     public function __construct(
         /**
-        * The SSO on 2FA cookie lifetime in seconds
-        * See: config/openconext/parameters.yaml sso_cookie_lifetime
-        */
+         * The SSO on 2FA cookie lifetime in seconds
+         * See: config/openconext/parameters.yaml sso_cookie_lifetime
+         */
         private int $cookieLifetime,
         /**
          * The period in seconds that we still acknowledge the
@@ -41,8 +41,7 @@ class ExpirationHelper implements ExpirationHelperInterface
          */
         private int $gracePeriod,
         private ?CoreDateTime $now = null
-    )
-    {
+    ) {
         if ($now === null) {
             $now = DateTime::now();
         }

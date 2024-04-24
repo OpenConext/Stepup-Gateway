@@ -17,12 +17,12 @@
 
 namespace Surfnet\StepupGateway\SamlStepupProviderBundle\Session;
 
-
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBag;
 
 class GsspBag extends AttributeBag
 {
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct('__gssp__');
         $this->setName('gssp');
     }

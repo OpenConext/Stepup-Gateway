@@ -38,6 +38,7 @@ use Surfnet\StepupGateway\GatewayBundle\Form\Type\VerifyYubikeyOtpType;
 use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
 use Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorService;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\CookieService;
+use Surfnet\StepupGateway\SamlStepupProviderBundle\Controller\SamlProxyController;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -70,6 +71,9 @@ class SecondFactorController extends ContainerController
         return $this->selectSecondFactorForVerification(self::MODE_SFO, $request);
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     public function selectSecondFactorForVerification(
         string $authenticationMode,
         Request $request,
@@ -236,16 +240,31 @@ class SecondFactorController extends ContainerController
             ->createForm(
                 ChooseSecondFactorType::class,
                 $command,
-                ['action' => $this->generateUrl('gateway_verify_second_factor_choose_second_factor', ['authenticationMode' => $authenticationMode])],
+                [
+                    'action' => $this->generateUrl(
+                        'gateway_verify_second_factor_choose_second_factor',
+                        ['authenticationMode' => $authenticationMode]
+                    )
+                ],
             )
             ->handleRequest($request);
         $cancelForm = $this->buildCancelAuthenticationForm($authenticationMode)->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $buttonName = $form->getClickedButton()->getName();
-            $formResults = $request->request->filter('gateway_choose_second_factor', false, FILTER_DEFAULT, ['flags' => FILTER_FORCE_ARRAY]);
+            $formResults = $request->request->filter(
+                'gateway_choose_second_factor',
+                false,
+                FILTER_DEFAULT,
+                ['flags' => FILTER_FORCE_ARRAY]
+            );
             if (!isset($formResults[$buttonName])) {
-                throw new InvalidArgumentException(sprintf('Second factor type "%s" could not be found in the posted form results.', $buttonName));
+                throw new InvalidArgumentException(
+                    sprintf(
+                        'Second factor type "%s" could not be found in the posted form results.',
+                        $buttonName
+                    )
+                );
             }
 
             $secondFactorType = $formResults[$buttonName];
@@ -256,7 +275,12 @@ class SecondFactorController extends ContainerController
             );
 
             if ($secondFactorFiltered->isEmpty()) {
-                throw new InvalidArgumentException(sprintf('Second factor type "%s" could not be found in the collection of available second factors.', $secondFactorType));
+                throw new InvalidArgumentException(
+                    sprintf(
+                        'Second factor type "%s" could not be found in the collection of available second factors.',
+                        $secondFactorType
+                    )
+                );
             }
 
             $secondFactor = $secondFactorFiltered->first();
@@ -316,14 +340,19 @@ class SecondFactorController extends ContainerController
         /** @var SecondFactor $secondFactor */
         $secondFactor = $secondFactorService->findByUuid($selectedSecondFactor);
         if (!$secondFactor) {
-            throw new RuntimeException(sprintf('Requested verification of GSSF "%s", however that Second Factor no longer exists', $selectedSecondFactor));
+            throw new RuntimeException(
+                sprintf(
+                    'Requested verification of GSSF "%s", however that Second Factor no longer exists',
+                    $selectedSecondFactor
+                )
+            );
         }
 
         // Also send the response context service id, as later we need to know if this is regular SSO or SFO authn.
         $responseContextServiceId = $context->getResponseContextServiceId();
 
         return $this->forward(
-            'Surfnet\StepupGateway\SamlStepupProviderBundle\Controller\SamlProxyController::sendSecondFactorVerificationAuthnRequest',
+            SamlProxyController::class . '::sendSecondFactorVerificationAuthnRequest',
             [
                 'provider' => $secondFactor->secondFactorType,
                 'subjectNameId' => $secondFactor->secondFactorIdentifier,
@@ -349,7 +378,12 @@ class SecondFactorController extends ContainerController
         /** @var SecondFactor $secondFactor */
         $secondFactor = $this->get('gateway.service.second_factor_service')->findByUuid($selectedSecondFactor);
         if (!$secondFactor) {
-            throw new RuntimeException(sprintf('Verification of GSSF "%s" succeeded, however that Second Factor no longer exists', $selectedSecondFactor));
+            throw new RuntimeException(
+                sprintf(
+                    'Verification of GSSF "%s" succeeded, however that Second Factor no longer exists',
+                    $selectedSecondFactor
+                )
+            );
         }
 
         $this->getAuthenticationLogger()->logSecondFactorAuthentication($originalRequestId, $authenticationMode);
@@ -434,7 +468,6 @@ class SecondFactorController extends ContainerController
             '@default/second_factor/verify_yubikey_second_factor.html.twig',
             ['form' => $form->createView(), 'cancelForm' => $cancelForm->createView()],
         );
-
     }
 
     #[Route(
@@ -597,7 +630,7 @@ class SecondFactorController extends ContainerController
     )]
     public function cancelAuthentication(): Response
     {
-        return $this->forward('Surfnet\StepupGateway\GatewayBundle\Controller\GatewayController::sendAuthenticationCancelledByUser');
+        return $this->forward(GatewayController::class . '::sendAuthenticationCancelledByUser');
     }
 
     /**

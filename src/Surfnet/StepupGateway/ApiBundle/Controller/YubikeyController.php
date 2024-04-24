@@ -31,7 +31,8 @@ class YubikeyController extends ContainerController
     #[Route(
         path: '/verify-yubikey',
         methods: ['POST'],
-        condition: "request.headers.get('Content-Type') == 'application/json' && request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
+        condition: "request.headers.get('Content-Type') == 'application/json' && 
+                    request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
     )]
     public function verify(Otp $otp, Requester $requester): JsonResponse
     {

@@ -160,7 +160,7 @@ final class LoginServiceTest extends GatewaySamlTestCase
             'surfnet/gateway/requestassertion_consumer_service_url' => 'https://sp.com/acs',
             'surfnet/gateway/requestrelay_state' => 'relay_state',
             'surfnet/gateway/requestforce_authn' => false,
-            'surfnet/gateway/requestresponse_controller' => 'SurfnetStepupGatewayGatewayBundle:Gateway:respond',
+            'surfnet/gateway/requestresponse_controller' => 'Surfnet\StepupGateway\GatewayBundle\Controller\GatewayController::respond',
             'surfnet/gateway/requestresponse_context_service_id' => 'gateway.proxy.response_context',
             'surfnet/gateway/auth_mode/_123456789012345678901234567890123456789012' => 'sso',
             'surfnet/gateway/requestloa_identifier' => 'http://stepup.example.com/assurance/loa2',

@@ -23,7 +23,7 @@ when@dev:
 
 when@smoketest: &testOverride
   imports:
-    - { resource: ../../services_test.yaml }
+    - { resource: ../services_test.yaml }
   framework:
     test: ~
     session:

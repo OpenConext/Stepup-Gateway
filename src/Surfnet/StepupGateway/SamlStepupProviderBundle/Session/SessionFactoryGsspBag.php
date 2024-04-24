@@ -17,15 +17,17 @@
 
 namespace Surfnet\StepupGateway\SamlStepupProviderBundle\Session;
 
-
 use Symfony\Component\HttpFoundation\Session\SessionFactoryInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class SessionFactoryGsspBag implements SessionFactoryInterface
 {
-    public function __construct(private SessionFactoryInterface $delegate) {}
+    public function __construct(private SessionFactoryInterface $delegate)
+    {
+    }
 
-    public function createSession(): SessionInterface {
+    public function createSession(): SessionInterface
+    {
         $session = $this->delegate->createSession();
         $session->registerBag(new GsspBag());
         return $session;

@@ -35,6 +35,7 @@ use Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\Provider;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Saml\StateHandler;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Service\Gateway\LoginService;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBag;
 use Symfony\Component\HttpFoundation\Session\Session;
 
@@ -128,7 +129,7 @@ class LoginServiceTest extends GatewaySamlTestCase
 
         $this->mockRedirectBinding($authnRequest);
 
-        $this->mockSessionData('__gssp_session', []);
+        $this->mockSessionData('_sf2_attributes', []);
 
         // Init request
         $proxyRequest = $this->samlProxyLoginService->singleSignOn($this->provider, $httpRequest);
@@ -160,12 +161,12 @@ class LoginServiceTest extends GatewaySamlTestCase
 
         // Assert session
         $this->assertSame([
-            'test_provider/request_id' => '_1b8f282a9c194b264ef68761171539380de78b45038f65b8609df868f55e',
-            'test_provider/service_provider' => 'https://gateway.tld/authentication/metadata',
-            'test_provider/assertion_consumer_service_url' => 'https://gateway.tld/authentication/consume-assertion',
-            'test_provider/response_context_service_id' => 'gateway.proxy.response_context',
-            'test_provider/relay_state' => '',
-            'test_provider/gateway_request_id' => '_mocked_generated_id',
+            'surfnet/gateway/gssp/test_provider/request_id' => '_1b8f282a9c194b264ef68761171539380de78b45038f65b8609df868f55e',
+            'surfnet/gateway/gssp/test_provider/service_provider' => 'https://gateway.tld/authentication/metadata',
+            'surfnet/gateway/gssp/test_provider/assertion_consumer_service_url' => 'https://gateway.tld/authentication/consume-assertion',
+            'surfnet/gateway/gssp/test_provider/response_context_service_id' => 'gateway.proxy.response_context',
+            'surfnet/gateway/gssp/test_provider/relay_state' => '',
+            'surfnet/gateway/gssp/test_provider/gateway_request_id' => '_mocked_generated_id',
         ], $this->getSessionData('attributes'));
     }
 
@@ -195,7 +196,7 @@ class LoginServiceTest extends GatewaySamlTestCase
 
         $this->mockRedirectBinding($authnRequest);
 
-        $this->mockSessionData('__gssp_session', []);
+        $this->mockSessionData('_sf2_attributes', []);
 
         // Init request
         $this->samlProxyLoginService->singleSignOn($this->provider, $httpRequest);
@@ -211,9 +212,9 @@ class LoginServiceTest extends GatewaySamlTestCase
     private function initSamlProxyService(array $remoteIdpConfiguration, array $idpConfiguration, array $spConfiguration, array $connectedServiceProviders): void
     {
         $session = new Session($this->sessionStorage);
-        $attributeBag = new AttributeBag('__gssp_session');
-        $session->registerBag($attributeBag);
-        $this->stateHandler = new StateHandler($attributeBag, 'test_provider');
+        $requestStack = Mockery::mock(RequestStack::class);
+        $requestStack->shouldReceive('getSession')->andReturn($session);
+        $this->stateHandler = new StateHandler($requestStack, 'test_provider');
         $samlLogger = new SamlAuthenticationLogger($this->logger);
 
         $this->remoteIdp = new IdentityProvider($remoteIdpConfiguration);

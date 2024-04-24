@@ -94,7 +94,6 @@ class SecondFactorOnlyController extends ContainerController
         // this in turn will forward to the correct
         // verification action (based on authentication type sso/sfo)
         return $this->forward('Surfnet\StepupGateway\GatewayBundle\Controller\SecondFactorController::selectSecondFactorForVerificationSfo');
-
     }
 
     /**

@@ -18,7 +18,7 @@
 namespace Surfnet\StepupGateway\SamlStepupProviderBundle\Tests\Service\Gateway;
 
 use DateTime;
-use Mockery;
+use Mockery as m;
 use Surfnet\SamlBundle\Entity\IdentityProvider;
 use Surfnet\SamlBundle\Entity\ServiceProvider;
 use Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger;
@@ -29,21 +29,22 @@ use Surfnet\StepupGateway\GatewayBundle\Tests\TestCase\GatewaySamlTestCase;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\Provider;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Saml\StateHandler;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Service\Gateway\SecondFactorVerificationService;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBag;
 use Symfony\Component\HttpFoundation\Session\Session;
 
 class SecondFactorVerificationServiceTest extends GatewaySamlTestCase
 {
-    /** @var Mockery\Mock|SecondFactorVerificationService */
+    /** @var m::Mock|SecondFactorVerificationService */
     private $samlProxySecondFactorService;
 
-    /** @var Mockery\Mock|StateHandler */
+    /** @var m::Mock|StateHandler */
     private $stateHandler;
 
     /** @var ResponseContext */
     private $responseContext;
 
-    /** @var Mockery\Mock|SamlEntityService */
+    /** @var m::Mock|SamlEntityService */
     private $samlEntityService;
 
     /** @var IdentityProvider */
@@ -99,12 +100,12 @@ class SecondFactorVerificationServiceTest extends GatewaySamlTestCase
 
         $subjectNameId = 'test-gssp-id';
 
-        $this->mockSessionData('__gssp_session', [
-            'test_provider/request_id' => '_1b8f282a9c194b264ef68761171539380de78b45038f65b8609df868f55e',
-            'test_provider/service_provider' => 'https://gateway.tld/authentication/metadata',
-            'test_provider/assertion_consumer_service_url' => 'https://gateway.tld/authentication/consume-assertion',
-            'test_provider/relay_state' => '',
-            'test_provider/gateway_request_id' => '_mocked_generated_id',
+        $this->mockSessionData('_sf2_attributes', [
+            'surfnet/gateway/gssp/test_provider/request_id' => '_1b8f282a9c194b264ef68761171539380de78b45038f65b8609df868f55e',
+            'surfnet/gateway/gssp/test_provider/service_provider' => 'https://gateway.tld/authentication/metadata',
+            'surfnet/gateway/gssp/test_provider/assertion_consumer_service_url' => 'https://gateway.tld/authentication/consume-assertion',
+            'surfnet/gateway/gssp/test_provider/relay_state' => '',
+            'surfnet/gateway/gssp/test_provider/gateway_request_id' => '_mocked_generated_id',
         ]);
 
         // Handle request
@@ -138,14 +139,14 @@ class SecondFactorVerificationServiceTest extends GatewaySamlTestCase
 
         // Assert session
         $this->assertSame([
-            'test_provider/request_id' => '_1b8f282a9c194b264ef68761171539380de78b45038f65b8609df868f55e',
-            'test_provider/service_provider' => 'https://gateway.tld/authentication/metadata',
-            'test_provider/assertion_consumer_service_url' => 'https://gateway.tld/authentication/consume-assertion',
-            'test_provider/relay_state' => '',
-            'test_provider/gateway_request_id' => '_mocked_generated_id',
-            'test_provider/subject' => 'test-gssp-id',
-            'test_provider/response_context_service_id' => 'service_id',
-            'test_provider/is_second_factor_verification' => true,
+            'surfnet/gateway/gssp/test_provider/request_id' => '_1b8f282a9c194b264ef68761171539380de78b45038f65b8609df868f55e',
+            'surfnet/gateway/gssp/test_provider/service_provider' => 'https://gateway.tld/authentication/metadata',
+            'surfnet/gateway/gssp/test_provider/assertion_consumer_service_url' => 'https://gateway.tld/authentication/consume-assertion',
+            'surfnet/gateway/gssp/test_provider/relay_state' => '',
+            'surfnet/gateway/gssp/test_provider/gateway_request_id' => '_mocked_generated_id',
+            'surfnet/gateway/gssp/test_provider/subject' => 'test-gssp-id',
+            'surfnet/gateway/gssp/test_provider/response_context_service_id' => 'service_id',
+            'surfnet/gateway/gssp/test_provider/is_second_factor_verification' => true,
         ], $this->getSessionData('attributes'));
     }
 
@@ -160,15 +161,15 @@ class SecondFactorVerificationServiceTest extends GatewaySamlTestCase
     private function initSamlProxyService(array $remoteIdpConfiguration, array $idpConfiguration, array $spConfiguration, DateTime $now): void
     {
         $session = new Session($this->sessionStorage);
-        $attributeBag = new AttributeBag('__gssp_session');
-        $session->registerBag($attributeBag);
-        $this->stateHandler = new StateHandler($attributeBag, 'test_provider');
+        $requestStack = m::mock(RequestStack::class);
+        $requestStack->shouldReceive('getSession')->andReturn($session);
+        $this->stateHandler = new StateHandler($requestStack, 'test_provider');
         $samlLogger = new SamlAuthenticationLogger($this->logger);
 
         $this->remoteIdp = new IdentityProvider($remoteIdpConfiguration);
         $this->idp = new IdentityProvider($idpConfiguration);
         $serviceProvider = new ServiceProvider($spConfiguration);
-        $this->samlEntityService = Mockery::mock(SamlEntityService::class);
+        $this->samlEntityService = m::mock(SamlEntityService::class);
 
         $this->provider = new Provider(
             'testProvider',

@@ -83,9 +83,9 @@ class StateHandler extends ProxyStateHandler
     public function clear(): void
     {
         $all = $this->getSession()->all();
-
+        $prefix = $this->getPrefix();
         foreach (array_keys($all) as $key) {
-            if (str_starts_with($key, $this->getPrefix())) {
+            if (str_starts_with($key, $prefix)) {
                 $this->getSession()->remove($key);
             }
         }

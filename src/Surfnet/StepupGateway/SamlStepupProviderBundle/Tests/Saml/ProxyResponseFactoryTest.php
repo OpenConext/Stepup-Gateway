@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupGateway\SamlStepupProviderBundle\Test\Saml;
+namespace Surfnet\StepupGateway\SamlStepupProviderBundle\Tests\Saml;
 
 use Mockery as m;
 use Mockery\Mock;
