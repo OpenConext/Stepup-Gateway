@@ -21,7 +21,6 @@ namespace Surfnet\StepupGateway\Behat;
 use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Mink\Driver\Selenium2Driver;
-use Behat\Symfony2Extension\Context\KernelAwareContext;
 use RuntimeException;
 use RobRichards\XMLSecLibs\XMLSecurityKey;
 use SAML2\AuthnRequest;
@@ -40,7 +39,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\KernelInterface;
 
-class ServiceProviderContext implements Context, KernelAwareContext
+class ServiceProviderContext implements Context
 {
     const SSP_URL = 'https://ssp.dev.openconext.local/sp.php';
     const SSO_ENDPOINT_URL = 'https://gateway.dev.openconext.local/authentication/single-sign-on';
@@ -76,13 +75,11 @@ class ServiceProviderContext implements Context, KernelAwareContext
      */
     private $minkContext;
 
-    public function __construct(FixtureService $fixtureService)
-    {
+    public function __construct(
+        FixtureService $fixtureService,
+        KernelInterface $kernel
+    ) {
         $this->fixtureService = $fixtureService;
-    }
-
-    public function setKernel(KernelInterface $kernel): void
-    {
         $this->kernel = $kernel;
     }
 

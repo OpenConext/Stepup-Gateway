@@ -35,14 +35,6 @@ services:
       - 'gateway_test'
       - '%database_host%'
 
-  Surfnet\StepupGateway\Behat\Service\FixtureService:
-    class: Surfnet\StepupGateway\Behat\Service\FixtureService
-    public: true
-    arguments:
-      - '@Surfnet\StepupGateway\Behat\Repository\SecondFactorRepository'
-      - '@Surfnet\StepupGateway\Behat\Repository\SamlEntityRepository'
-      - '@Surfnet\StepupGateway\Behat\Repository\WhitelistRepository'
-      - '@Surfnet\StepupGateway\Behat\Repository\InstitutionConfigurationRepository'
 
   Surfnet\StepupGateway\Behat\Controller\ServiceProviderController:
     class: Surfnet\StepupGateway\Behat\Controller\ServiceProviderController
@@ -67,3 +59,23 @@ services:
       - "@gateway.service.sso_2fa_cookie_crypto_helper_dummy"
       - "@logger"
     public: false
+
+  Surfnet\StepupGateway\Behat\Service\FixtureService:
+    class: Surfnet\StepupGateway\Behat\Service\FixtureService
+    public: true
+    arguments:
+      - '@Surfnet\StepupGateway\Behat\Repository\SecondFactorRepository'
+      - '@Surfnet\StepupGateway\Behat\Repository\SamlEntityRepository'
+      - '@Surfnet\StepupGateway\Behat\Repository\WhitelistRepository'
+      - '@Surfnet\StepupGateway\Behat\Repository\InstitutionConfigurationRepository'
+
+  Surfnet\StepupGateway\Behat\FeatureContext:
+    public: true
+    arguments:
+      $fixtureService: '@Surfnet\StepupGateway\Behat\Service\FixtureService'
+
+  Surfnet\StepupGateway\Behat\ServiceProviderContext:
+    public: true
+    arguments:
+      $fixtureService: '@Surfnet\StepupGateway\Behat\Service\FixtureService'
+      $kernel: '@kernel'

@@ -10,7 +10,10 @@
             ]
         },
         "classmap": [
-            "src/Kernel.php"
+            "src/Kernel.php",
+            "tests/features/bootstrap/FeatureContext.php",
+            "tests/features/bootstrap/MinkContext.php",
+            "tests/features/bootstrap/ServiceProviderContext.php"
         ]
     },
     "minimum-stability": "stable",
@@ -52,6 +55,12 @@
         "webmozart/assert": "^1.11"
     },
     "require-dev": {
+        "behat/behat": "^3.6",
+        "behat/mink": "^1.9",
+        "behat/mink-browserkit-driver": "^2.1",
+        "behat/mink-selenium2-driver": "^1.7",
+        "friends-of-behat/symfony-extension": "^2.4",
+        "friends-of-behat/mink-extension": "^2.7",
         "malukenho/docheader": "^1.0.0",
         "matthiasnoback/symfony-config-test": "^4",
         "mockery/mockery": "^1.0",
@@ -69,6 +78,7 @@
         "sebastian/phpcpd": "^6.0",
         "slevomat/coding-standard": "^8.15",
         "squizlabs/php_codesniffer": "^3.4",
+        "symfony/browser-kit": "6.4.*",
         "symfony/phpunit-bridge": "^7.0",
         "symfony/web-profiler-bundle": "6.4.*"
     },
