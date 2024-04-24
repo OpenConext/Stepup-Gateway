@@ -55,6 +55,22 @@ services:
       - '@translator'
       - '@surfnet_stepup.request.request_id'
 
+  Surfnet\StepupGateway\GatewayBundle\Controller\MetadataController:
+    calls:
+      - [ setContainer, [ '@service_container' ] ]
+    arguments:
+      - '@surfnet_saml.metadata_factory'
+    tags: [ 'controller.service_arguments' ]
+
+  Surfnet\StepupGateway\SecondFactorOnlyBundle\Controller\MetadataController:
+    calls:
+      - [ setContainer, [ '@service_container' ] ]
+    arguments:
+      - '@logger'
+      - '@second_factor_only.metadata_factory'
+      - '%second_factor_only%'
+    tags: [ 'controller.service_arguments' ]
+
   # Service overrides to make 3rd party service publicly available
   surfnet_stepup.service.second_factor_type:
     class: Surfnet\StepupBundle\Service\SecondFactorTypeService

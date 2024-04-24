@@ -3,8 +3,8 @@ Feature: As an institution that uses the regular Step Up authentication feature
   I must be able to successfully authenticate with my second factor tokens
 
   Background:
-    Given an SP with EntityID https://sp.dev.openconext.local/module.php/saml/sp/metadata.php/default-sp
-    And an IdP with EntityID https://sp.dev.openconext.local/saml2/idp/metadata.php
+    Given an SP with EntityID https://ssp.dev.openconext.local/simplesaml/module.php/saml/sp/metadata.php/default-sp
+    And an IdP with EntityID https://ssp.dev.openconext.local/simplesaml/saml2/idp/metadata.php
     And a whitelisted institution dev.openconext.local
 
   Scenario: SSO without a token yields a SAML error response

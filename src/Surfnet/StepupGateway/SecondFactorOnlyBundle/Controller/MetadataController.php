@@ -27,8 +27,9 @@ use Symfony\Component\Routing\Attribute\Route;
 class MetadataController extends ContainerController
 {
     public function __construct(
-        private readonly LoggerInterface                              $logger,
+        private readonly LoggerInterface $logger,
         private readonly MetadataFactory $metadataFactory,
+        private readonly bool $secondFactorEnabled,
     ) {
     }
 
@@ -39,7 +40,7 @@ class MetadataController extends ContainerController
     )]
     public function metadata(): XMLResponse
     {
-        if (!$this->getParameter('second_factor_only')) {
+        if (!$this->secondFactorEnabled) {
             $this->logger->notice(sprintf(
                 'Access to %s denied, second_factor_only parameter set to false.',
                 __METHOD__,
