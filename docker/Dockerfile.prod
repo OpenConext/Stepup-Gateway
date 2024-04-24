@@ -6,7 +6,6 @@ RUN tar -xvjf /tmp/*.tar.bz2 -C /var/www/html/ && \
   rm -rf /tmp/*.tar.bz2
 
 # Add the application configuration files
-COPY .env.dist .env
 COPY config/openconext/parameters.yaml.dist config/openconext/parameters.yaml
 COPY config/openconext/samlstepupproviders_parameters.yaml.dist config/openconext/samlstepupproviders_parameters.yaml
 
