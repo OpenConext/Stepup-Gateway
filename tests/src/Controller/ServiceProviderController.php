@@ -38,7 +38,6 @@ use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\ValueObject\Response as Ad
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;
-use function base64_encode;
 
 class ServiceProviderController
 {
@@ -66,7 +65,6 @@ class ServiceProviderController
             $_POST['SAMLResponse'] = $request->request->get('_SAMLResponse');
             $isAdfs = true;
         }
-        libxml_disable_entity_loader(true);
         try {
             $this->logger->notice('Process the assertion on the test SP (try POST binding)');
             $httpPostBinding = new HTTPPost();
@@ -76,7 +74,7 @@ class ServiceProviderController
                 $this->logger->alert('Processing failed on the test SP');
                 $httpRedirectBinding = new HTTPRedirect();
                 $message = $httpRedirectBinding->receive();
-            } catch (Exception $e2) {
+            } catch (Exception) {
                 throw new RuntimeException('Unable to retrieve SAML message?', 1, $e1);
             }
         }
@@ -98,9 +96,9 @@ class ServiceProviderController
                     'authMethod' => $request->request->get('AuthMethod'),
                 ]
             );
-            return Response::create($html);
+            return new Response($html);
         }
-        return XMLResponse::create($xml);
+        return new XMLResponse($xml);
     }
 
     /**

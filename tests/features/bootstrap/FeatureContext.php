@@ -22,7 +22,11 @@ use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\BeforeFeatureScope;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Mink\Exception\ExpectationException;
+use Psr\Log\LoggerInterface;
 use RuntimeException;
+use SAML2\Compat\ContainerSingleton;
+use SAML2\Compat\Ssp\Container;
+use Surfnet\SamlBundle\Tests\TestSaml2Container;
 use Surfnet\StepupGateway\Behat\Service\FixtureService;
 
 class FeatureContext implements Context
@@ -51,10 +55,13 @@ class FeatureContext implements Context
      */
     private $previousSsoOn2faCookieValue;
 
-    public function __construct(FixtureService $fixtureService)
+    public function __construct(FixtureService $fixtureService, LoggerInterface $logger)
     {
         $this->fixtureService = $fixtureService;
         $this->sso2faCookieName = 'stepup-gateway_sso-on-second-factor-authentication';
+
+        // Set a test container for the SAML2 Library to work with (the compat container is broken)
+        ContainerSingleton::setContainer(new TestSaml2Container($logger));
     }
 
     /**

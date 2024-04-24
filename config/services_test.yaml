@@ -73,6 +73,7 @@ services:
     public: true
     arguments:
       $fixtureService: '@Surfnet\StepupGateway\Behat\Service\FixtureService'
+      $logger: '@logger'
 
   Surfnet\StepupGateway\Behat\ServiceProviderContext:
     public: true

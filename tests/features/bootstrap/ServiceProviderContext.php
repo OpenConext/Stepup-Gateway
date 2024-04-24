@@ -41,7 +41,7 @@ use Symfony\Component\HttpKernel\KernelInterface;
 
 class ServiceProviderContext implements Context
 {
-    const SSP_URL = 'https://ssp.dev.openconext.local/sp.php';
+    const SSP_URL = 'https://ssp.dev.openconext.local/simplesaml/sp.php';
     const SSO_ENDPOINT_URL = 'https://gateway.dev.openconext.local/authentication/single-sign-on';
     const SFO_ENDPOINT_URL = 'https://gateway.dev.openconext.local/second-factor-only/single-sign-on';
 

@@ -18,14 +18,12 @@
 
 namespace Surfnet\StepupGateway\Behat\Controller;
 
-use Psr\Log\LoggerInterface;
 use RobRichards\XMLSecLibs\XMLSecurityKey;
 use SAML2\Assertion;
 use SAML2\Certificate\KeyLoader;
 use SAML2\Certificate\PrivateKeyLoader;
 use SAML2\Configuration\PrivateKey;
 use SAML2\Constants;
-use SAML2\Response;
 use SAML2\Response as SAMLResponse;
 use SAML2\XML\saml\NameID;
 use SAML2\XML\saml\SubjectConfirmation;
@@ -34,19 +32,21 @@ use Surfnet\SamlBundle\Http\Exception\UnsignedRequestException;
 use Surfnet\SamlBundle\Http\ReceivedAuthnRequestQueryString;
 use Surfnet\SamlBundle\SAML2\ReceivedAuthnRequest;
 use Surfnet\StepupGateway\Behat\Command\LoginCommand;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-class IdentityProviderController extends Controller
+class IdentityProviderController extends AbstractController
 {
     /**
      * Handles a SSO request
      * @param Request $request
      */
-    public function ssoAction(Request $request)
+    public function ssoAction(Request $request): Response
     {
         // Receives the AuthnRequest and sends a SAML response
         $authnRequest = $this->receiveSignedAuthnRequestFrom($request);
@@ -99,11 +99,7 @@ class IdentityProviderController extends Controller
         return $this->renderSamlResponse($response);
     }
 
-    /**
-     * @param SAMLResponse $response
-     * @return \Symfony\Component\HttpFoundation\Response
-     */
-    public function renderSamlResponse(SAMLResponse $response)
+    public function renderSamlResponse(SAMLResponse $response): Response
     {
         $parameters = [
             'acu' => $response->getDestination(),
@@ -119,7 +115,7 @@ class IdentityProviderController extends Controller
         return $response;
     }
 
-    public function createResponse(string $destination, array $nameId, $requestId)
+    public function createResponse(string $destination, array $nameId, $requestId): SAMLResponse
     {
         $newAssertion = new Assertion();
         $newAssertion->setNotBefore(time());
@@ -145,32 +141,20 @@ class IdentityProviderController extends Controller
         return $response;
     }
 
-    /**
-     * @param SAMLResponse $response
-     * @return string
-     */
-    private function getResponseAsXML(SAMLResponse $response)
+    private function getResponseAsXML(SAMLResponse $response): string
     {
         return base64_encode($response->toUnsignedXML()->ownerDocument->saveXML());
     }
 
-    /**
-     * @param Request $request
-     * @return string
-     */
-    private function getFullRequestUri(Request $request)
+    private function getFullRequestUri(Request $request): string
     {
         return $request->getSchemeAndHttpHost() . $request->getBasePath() . $request->getRequestUri();
     }
 
-    /**
-     * @param Request $request
-     * @return ReceivedAuthnRequest
-     */
-    public function receiveSignedAuthnRequestFrom(Request $request)
+    public function receiveSignedAuthnRequestFrom(Request $request): ?ReceivedAuthnRequest
     {
         if (!$request->isMethod(Request::METHOD_GET)) {
-            return;
+            return null;
         }
 
         $requestUri = $request->getRequestUri();
