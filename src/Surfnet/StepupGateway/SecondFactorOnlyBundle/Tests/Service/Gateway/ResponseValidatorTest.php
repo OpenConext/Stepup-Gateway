@@ -23,7 +23,6 @@ use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase;
 use SAML2\Assertion;
-use SAML2\Response;
 use SAML2\Response\Exception\PreconditionNotMetException;
 use SAML2\XML\saml\NameID;
 use Surfnet\SamlBundle\Entity\IdentityProvider;

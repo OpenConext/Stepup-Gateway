@@ -19,12 +19,12 @@ namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Test\Adfs;
 
 use Mockery as m;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\RequestHelper;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\StateHandler;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
-use PHPUnit\Framework\TestCase;
 
 class RequestHelperTest extends TestCase
 {

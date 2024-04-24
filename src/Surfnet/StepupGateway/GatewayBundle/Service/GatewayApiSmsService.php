@@ -20,7 +20,6 @@ namespace Surfnet\StepupGateway\GatewayBundle\Service;
 
 use Surfnet\StepupBundle\Command\SendSmsCommand;
 use Surfnet\StepupBundle\Service\SmsService;
-use Surfnet\StepupGateway\ApiBundle\Dto\Requester;
 use Surfnet\StepupGateway\ApiBundle\Dto\SmsMessage;
 use Surfnet\StepupGateway\ApiBundle\Service\SmsService as ApiSmsService;
 

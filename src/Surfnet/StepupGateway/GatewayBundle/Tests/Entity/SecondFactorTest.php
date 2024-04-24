@@ -19,11 +19,11 @@
 namespace Surfnet\StepupGateway\GatewayBundle\Test\Entity;
 
 use Mockery;
+use PHPUnit\Framework\TestCase;
+use Surfnet\StepupBundle\Exception\DomainException;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupBundle\Value\Loa;
 use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor;
-use PHPUnit\Framework\TestCase;
-use Surfnet\StepupBundle\Exception\DomainException;
 
 /**
  * Integration test

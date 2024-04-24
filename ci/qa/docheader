@@ -2,4 +2,4 @@
 
 cd $(dirname $0)/../../
 
-./vendor/bin/docheader --no-ansi check src/ tests/
+./vendor/bin/docheader --no-ansi check src/

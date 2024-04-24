@@ -18,9 +18,9 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Test\Entity;
 
+use PHPUnit\Framework\TestCase;
 use Surfnet\StepupGateway\GatewayBundle\Entity\ServiceProvider;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\Exception\AcsLocationNotAllowedException;
-use PHPUnit\Framework\TestCase;
 
 class ServiceProviderTest extends TestCase
 {

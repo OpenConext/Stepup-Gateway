@@ -23,9 +23,9 @@ use Surfnet\SamlBundle\Http\HttpBindingFactory;
 use Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger;
 use Surfnet\SamlBundle\SAML2\AuthnRequest;
 use Surfnet\SamlBundle\SAML2\ReceivedAuthnRequest;
-use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\LoaResolutionService;
 use Surfnet\StepupGateway\GatewayBundle\Exception\RequesterFailureException;
 use Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler;
+use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\LoaResolutionService;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\SecondFactorOnlyNameIdValidationService;
 use Symfony\Component\HttpFoundation\Request;
 

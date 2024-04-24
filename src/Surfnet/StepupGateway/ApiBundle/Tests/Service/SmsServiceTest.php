@@ -21,11 +21,11 @@ namespace Surfnet\StepupGateway\ApiBundle\Tests\Service;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Surfnet\StepupGateway\ApiBundle\Dto\SmsMessage;
+use Surfnet\StepupGateway\ApiBundle\Service\SmsService;
 use Surfnet\StepupGateway\ApiBundle\Sms\SmsAdapterProvider;
 use Surfnet\StepupGateway\ApiBundle\Sms\SmsMessageResultInterface;
 use Surfnet\StepupGateway\ApiBundle\Sms\SpryngMessageResult;
 use Surfnet\StepupGateway\ApiBundle\Sms\SpryngService;
-use Surfnet\StepupGateway\ApiBundle\Service\SmsService;
 
 /**
  * Integration test for Sms services (spryng)

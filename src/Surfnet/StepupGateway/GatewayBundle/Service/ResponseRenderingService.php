@@ -24,10 +24,10 @@ use SAML2\Response as SAMLResponse;
 use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseBuilder;
 use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\CookieService;
-use Symfony\Component\HttpFoundation\Request;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\ResponseHelper;
-use Twig\Environment;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Twig\Environment;
 
 final class ResponseRenderingService
 {

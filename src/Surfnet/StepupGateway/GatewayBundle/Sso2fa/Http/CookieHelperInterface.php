@@ -18,7 +18,6 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Sso2fa\Http;
 
-use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\CookieValue;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\CookieValueInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

@@ -18,10 +18,10 @@
 namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Test\Service;
 
 use Mockery as m;
+use PHPUnit\Framework\TestCase;
 use Surfnet\StepupBundle\Value\Loa;
 use Surfnet\StepupGateway\GatewayBundle\Exception\InvalidArgumentException;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\LoaAliasLookupService;
-use PHPUnit\Framework\TestCase;
 
 class LoaAliasLookupServiceTest extends TestCase
 {

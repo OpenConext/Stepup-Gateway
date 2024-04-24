@@ -18,8 +18,8 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Monolog\Formatter;
 
-use Monolog\Formatter\GelfMessageFormatter;
 use Monolog\Formatter\FormatterInterface;
+use Monolog\Formatter\GelfMessageFormatter;
 use Monolog\LogRecord;
 
 class GelfMessageToStringFormatter implements FormatterInterface
