@@ -4,7 +4,6 @@ ARG APP_VERSION
 ENV GATEWAY_VERSION=$APP_VERSION
 ADD output.tar /var/www/html/
 # Add the application configuration files
-COPY .env.dist .env
 COPY config/openconext/parameters.yaml.dist config/openconext/parameters.yaml
 COPY config/openconext/samlstepupproviders_parameters.yaml.dist config/openconext/samlstepupproviders_parameters.yaml
 
