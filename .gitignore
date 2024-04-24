@@ -26,3 +26,4 @@ npm-debug.log
 yarn-error.log
 /app/
 /web/
+/tests/vendor/

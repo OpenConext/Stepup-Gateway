@@ -55,6 +55,7 @@
         "malukenho/docheader": "^1.0.0",
         "matthiasnoback/symfony-config-test": "^4",
         "mockery/mockery": "^1.0",
+        "overtrue/phplint": "*",
         "phpmd/phpmd": "^2.6",
         "phpstan/phpstan-deprecation-rules": "^1.1",
         "phpstan/phpstan-doctrine": "^1.3",
