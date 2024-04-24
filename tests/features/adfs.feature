@@ -3,7 +3,7 @@ Feature: As an institution that uses ADFS support on the second factor only feat
   I must be able to successfully authenticate with my second factor tokens
 
   Background:
-    Given an SFO enabled SP with EntityID https://sp.dev.openconext.local
+    Given an SFO enabled SP with EntityID https://ssp.dev.openconext.local
     And an IdP with EntityID https://idp.dev.openconext.local
     And a whitelisted institution dev.openconext.local
     And a user from "dev.openconext.local" identified by "urn:collab:person:dev.openconext.local:eric_lilliebridge" with a vetted "Yubikey" token
