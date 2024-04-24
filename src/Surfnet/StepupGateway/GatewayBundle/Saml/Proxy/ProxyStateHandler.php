@@ -26,7 +26,7 @@ class ProxyStateHandler
 {
     public function __construct(
         private readonly RequestStack $requestStack,
-        private                       $sessionPath,
+        private $sessionPath,
     ) {
     }
 

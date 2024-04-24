@@ -18,6 +18,9 @@
 
 namespace Surfnet\StepupGateway\SamlStepupProviderBundle\DependencyInjection;
 
+use Surfnet\StepupGateway\GatewayBundle\Saml\AssertionSigningService;
+use Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\Provider;
+use Surfnet\StepupGateway\SamlStepupProviderBundle\Saml\StateHandler;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -73,13 +76,13 @@ class SurfnetStepupGatewaySamlStepupProviderExtension extends Extension
         $this->createMetadataDefinition($provider, $configuration['hosted'], $routes, $container);
         $this->createRemoteDefinition($provider, $configuration['remote'], $container);
 
-        $stateHandlerDefinition = new Definition(\Surfnet\StepupGateway\SamlStepupProviderBundle\Saml\StateHandler::class, [
-            new Reference('gssp.session'),
+        $stateHandlerDefinition = new Definition(StateHandler::class, [
+            new Reference('request_stack'),
             $provider
         ]);
         $container->setDefinition('gssp.provider.' . $provider . '.statehandler', $stateHandlerDefinition);
 
-        $providerDefinition = new Definition(\Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\Provider::class, [
+        $providerDefinition = new Definition(Provider::class, [
             $provider,
             new Reference('gssp.provider.' . $provider . '.hosted.idp'),
             new Reference('gssp.provider.' . $provider . '.hosted.sp'),
@@ -90,7 +93,7 @@ class SurfnetStepupGatewaySamlStepupProviderExtension extends Extension
         $providerDefinition->setPublic(false);
         $container->setDefinition('gssp.provider.' . $provider, $providerDefinition);
 
-        $assertionSigningService = new Definition(\Surfnet\StepupGateway\GatewayBundle\Saml\AssertionSigningService::class, [
+        $assertionSigningService = new Definition(AssertionSigningService::class, [
             new Reference('gssp.provider.' . $provider . '.hosted.idp')
         ]);
         $assertionSigningService->setPublic('false');

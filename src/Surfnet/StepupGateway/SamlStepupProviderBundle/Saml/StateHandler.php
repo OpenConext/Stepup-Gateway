@@ -20,13 +20,15 @@ namespace Surfnet\StepupGateway\SamlStepupProviderBundle\Saml;
 
 use Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Exception\InvalidSubjectException;
-use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class StateHandler extends ProxyStateHandler
 {
+    private const SESSION_PATH = 'surfnet/gateway/gssp';
     public function __construct(
-        private readonly AttributeBagInterface $attributeBag,
-        private readonly string                $provider,
+        private RequestStack $requestStack,
+        private readonly string $provider,
     ) {
     }
 
@@ -80,22 +82,32 @@ class StateHandler extends ProxyStateHandler
      */
     public function clear(): void
     {
-        $all = $this->attributeBag->all();
+        $all = $this->getSession()->all();
 
         foreach (array_keys($all) as $key) {
-            if (str_starts_with($key, $this->provider . '/')) {
-                $this->attributeBag->remove($key);
+            if (str_starts_with($key, $this->getPrefix())) {
+                $this->getSession()->remove($key);
             }
         }
     }
 
     protected function set($key, $value): void
     {
-        $this->attributeBag->set($this->provider . '/' . $key, $value);
+        $this->getSession()->set($this->getPrefix() . $key, $value);
     }
 
     protected function get($key): mixed
     {
-        return $this->attributeBag->get($this->provider . '/' . $key);
+        return $this->getSession()->get($this->getPrefix() . $key);
+    }
+
+    private function getPrefix(): string
+    {
+        return sprintf('%s/%s/', self::SESSION_PATH, $this->provider);
+    }
+
+    private function getSession(): SessionInterface
+    {
+        return $this->requestStack->getSession();
     }
 }
