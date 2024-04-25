@@ -12,63 +12,35 @@ jobs:
     if: always()
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: OpenConext/Stepup-Build
           ref: master
           fetch-depth: 0
+
       - name: Output the semver tag to the tag variable
         id: vars
-        run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
+        run: echo "tag=${GITHUB_REF#refs/*/}" >> $GITHUB_OUTPUT
+      
       - name: Run release script
         run: ./stepup-build.sh ${COMPONENT_NAME} --tag ${{ steps.vars.outputs.tag }}
+      
       - name: Grab the archive filename
         id: archive
         run: |
-          echo ::set-output name=archive::$(find . -maxdepth 1 -name "$COMPONENT_NAME*.tar.bz2" -printf '%f\n')
-          echo ::set-output name=shasum::$(find . -maxdepth 1 -name "$COMPONENT_NAME*.sha" -printf '%f\n')
-      - name: Build Changelog
-        id: changelog
-        uses: ardalanamini/auto-changelog@v3
+          echo "archive=$(find . -maxdepth 1 -name "$COMPONENT_NAME*.tar.bz2" -printf '%f\n')" >> $GITHUB_OUTPUT
+          echo "shasum=$(find . -maxdepth 1 -name "$COMPONENT_NAME*.sha" -printf '%f\n')" >> $GITHUB_OUTPUT
+      
+      - name: Release
+        uses: softprops/action-gh-release@v2
         with:
-          default-commit-type: New Features
-      - name: Create Draft Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ steps.vars.outputs.tag }}
-          release_name: ${{ steps.vars.outputs.tag }}
-          body: |
-            ${{ steps.changelog.outputs.changelog }}
-          draft: false
-          prerelease: true
-      - uses: actions/upload-release-asset@v1.0.1
-        name: Upload the release artefact tarbal
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ steps.archive.outputs.archive }}
-          asset_name: ${{ steps.archive.outputs.archive }}
-          asset_content_type: application/gzip
-      - uses: actions/upload-release-asset@v1.0.1
-        name: Upload the release artefact verification shasum
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ steps.archive.outputs.shasum }}
-          asset_name: ${{ steps.archive.outputs.shasum }}
-          asset_content_type: text/plain
-      - uses: eregon/publish-release@v1
-        name: Publish the new release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          release_id: ${{ steps.create_release.outputs.id }}
-
+          files: |
+            ${{ steps.archive.outputs.archive }}
+            ${{ steps.archive.outputs.shasum }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fail_on_unmatched_files: true
+          generate_release_notes: true
+  
   after_build:
     needs: build
     runs-on: ubuntu-latest
