@@ -46,6 +46,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Attribute\Route;
+use function is_null;
 use const FILTER_DEFAULT;
 use const FILTER_FORCE_ARRAY;
 
@@ -646,11 +647,20 @@ class SecondFactorController extends ContainerController
      */
     private function getResponseContext($authenticationMode)
     {
-        return match ($authenticationMode) {
-            self::MODE_SFO => $this->get($this->get('gateway.proxy.sfo.state_handler')->getResponseContextServiceId()),
-            self::MODE_SSO => $this->get($this->get('gateway.proxy.sso.state_handler')->getResponseContextServiceId()),
+        // Select the state handler that matches the current authentication mode
+        $stateHandlerServiceId = match ($authenticationMode) {
+            self::MODE_SFO => 'gateway.proxy.sfo.state_handler',
+            self::MODE_SSO => 'gateway.proxy.sso.state_handler',
             default => throw new InvalidArgumentException('Invalid authentication mode requested'),
         };
+
+        // We then load the correct state handler service. And retrieve the ResponseContext service id that was set on it
+        $responseContextServiceId = $this->get($stateHandlerServiceId)->getResponseContextServiceId();
+        if (is_null($responseContextServiceId)) {
+            throw new RuntimeException('The RequestContext service id is not set on the state handler %s');
+        }
+        // Finally return the ResponseContext
+        return $this->get($responseContextServiceId);
     }
 
     /**
