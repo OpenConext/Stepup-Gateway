@@ -2987,16 +2987,16 @@
         },
         {
             "name": "simplesamlphp/saml2",
-            "version": "v4.6.11",
+            "version": "v4.6.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/simplesamlphp/saml2.git",
-                "reference": "1b5d48753c78d02e88667068e633531c233141fb"
+                "reference": "42f95f405ccad8ed7e5c2f6a662e30f32d04f0dd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/simplesamlphp/saml2/zipball/1b5d48753c78d02e88667068e633531c233141fb",
-                "reference": "1b5d48753c78d02e88667068e633531c233141fb",
+                "url": "https://api.github.com/repos/simplesamlphp/saml2/zipball/42f95f405ccad8ed7e5c2f6a662e30f32d04f0dd",
+                "reference": "42f95f405ccad8ed7e5c2f6a662e30f32d04f0dd",
                 "shasum": ""
             },
             "require": {
@@ -3039,9 +3039,9 @@
             "description": "SAML2 PHP library from SimpleSAMLphp",
             "support": {
                 "issues": "https://github.com/simplesamlphp/saml2/issues",
-                "source": "https://github.com/simplesamlphp/saml2/tree/v4.6.11"
+                "source": "https://github.com/simplesamlphp/saml2/tree/v4.6.12"
             },
-            "time": "2024-01-25T19:39:46+00:00"
+            "time": "2024-04-24T12:09:35+00:00"
         },
         {
             "name": "spryng/rest-api-php",
@@ -3169,16 +3169,16 @@
         },
         {
             "name": "surfnet/stepup-saml-bundle",
-            "version": "6.0.26",
+            "version": "6.0.28",
             "source": {
                 "type": "git",
                 "url": "https://github.com/OpenConext/Stepup-saml-bundle.git",
-                "reference": "6c5ed1bc660a4474875ad27bccf8b5b3b34e14bd"
+                "reference": "98bcb5dca342aee0a05bce34e3e21cdfac584027"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/OpenConext/Stepup-saml-bundle/zipball/6c5ed1bc660a4474875ad27bccf8b5b3b34e14bd",
-                "reference": "6c5ed1bc660a4474875ad27bccf8b5b3b34e14bd",
+                "url": "https://api.github.com/repos/OpenConext/Stepup-saml-bundle/zipball/98bcb5dca342aee0a05bce34e3e21cdfac584027",
+                "reference": "98bcb5dca342aee0a05bce34e3e21cdfac584027",
                 "shasum": ""
             },
             "require": {
@@ -3235,9 +3235,9 @@
             ],
             "support": {
                 "issues": "https://github.com/OpenConext/Stepup-saml-bundle/issues",
-                "source": "https://github.com/OpenConext/Stepup-saml-bundle/tree/6.0.26"
+                "source": "https://github.com/OpenConext/Stepup-saml-bundle/tree/6.0.28"
             },
-            "time": "2024-04-22T06:10:59+00:00"
+            "time": "2024-04-25T06:13:55+00:00"
         },
         {
             "name": "surfnet/yubikey-api-client",
@@ -3290,16 +3290,16 @@
         },
         {
             "name": "surfnet/yubikey-api-client-bundle",
-            "version": "5.0.0-beta1",
+            "version": "5.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SURFnet/yubikey-api-client-bundle.git",
-                "reference": "97b1492bb71cf32ddfa2fbbe6df2ab77a0201f55"
+                "reference": "7570741edee59055251097abe8d82606afe3827a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SURFnet/yubikey-api-client-bundle/zipball/97b1492bb71cf32ddfa2fbbe6df2ab77a0201f55",
-                "reference": "97b1492bb71cf32ddfa2fbbe6df2ab77a0201f55",
+                "url": "https://api.github.com/repos/SURFnet/yubikey-api-client-bundle/zipball/7570741edee59055251097abe8d82606afe3827a",
+                "reference": "7570741edee59055251097abe8d82606afe3827a",
                 "shasum": ""
             },
             "require": {
@@ -3344,9 +3344,9 @@
             ],
             "support": {
                 "issues": "https://github.com/SURFnet/yubikey-api-client-bundle/issues",
-                "source": "https://github.com/SURFnet/yubikey-api-client-bundle/tree/5.0.0-beta1"
+                "source": "https://github.com/SURFnet/yubikey-api-client-bundle/tree/5.0.0"
             },
-            "time": "2024-03-25T14:09:13+00:00"
+            "time": "2024-04-24T12:55:38+00:00"
         },
         {
             "name": "symfony/asset",
