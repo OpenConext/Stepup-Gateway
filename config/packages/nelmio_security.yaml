@@ -1,25 +1,36 @@
 nelmio_security:
-    # prevents framing of the entire site
-    clickjacking:
-        paths:
-            '^/.*': DENY
+  # prevents framing of the entire site
+  clickjacking:
+    paths:
+      '^/.*': DENY
 
-    # disables content type sniffing for script resources
-    content_type:
-        nosniff: true
+  # disables content type sniffing for script resources
+  content_type:
+    nosniff: true
 
-    # forces Microsoft's XSS-Protection with
-    # its block mode
-    xss_protection:
-        enabled: true
-        mode_block: true
+  # forces Microsoft's XSS-Protection with
+  # its block mode
+  xss_protection:
+    enabled: true
+    mode_block: true
 
   # Content Security Policy
+  csp:
+    report_logger_service: monolog.logger.security
+    enforce:
+      report-uri: "%router.request_context.base_url%/csp/report"
+      default-src:
+        - 'self'
+      block-all-mixed-content: true # defaults to false, blocks HTTP content over HTTPS transport
+      upgrade-insecure-requests: true # defaults to false, upgrades HTTP requests to HTTPS transport
+
+when@dev: &template
+  nelmio_security:
     csp:
-      report_logger_service: monolog.logger.security
       enforce:
-        report-uri: "%router.request_context.base_url%/csp/report"
-        default-src:
-          - 'self'
-        block-all-mixed-content: true # defaults to false, blocks HTTP content over HTTPS transport
-        upgrade-insecure-requests: true # defaults to false, upgrades HTTP requests to HTTPS transport
+        img-src: [ self, 'data:' ]
+        script-src: [ self, unsafe-inline ]
+        style-src: [ self, unsafe-inline ]
+
+when@test: *template
+when@smoketest: *template
