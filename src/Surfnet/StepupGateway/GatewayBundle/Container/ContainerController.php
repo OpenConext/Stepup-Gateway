@@ -54,6 +54,13 @@ class ContainerController extends AbstractController
 
     public function get(string $serviceName): mixed
     {
+        $logger = $this->container->get('logger');
+        $logger->notice(
+            sprintf(
+                'Reading the "%s" service from the container (temporary ContainerController solution)',
+                $serviceName
+            )
+        );
         try {
             $service = $this->container->get($serviceName);
         } catch (Exception) {
