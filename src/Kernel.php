@@ -19,9 +19,13 @@ namespace App;
 
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\HttpKernel\Kernel as BaseKernel;
-use Symfony\Component\Routing\RouteCollectionBuilder;
 
 class Kernel extends BaseKernel
 {
     use MicroKernelTrait;
+
+    public function getProjectDir(): string
+    {
+        return dirname(__DIR__, 1);
+    }
 }
