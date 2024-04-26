@@ -81,7 +81,6 @@ services:
     second_factor_only.http.redirect_binding:
         class: Surfnet\SamlBundle\Http\RedirectBinding
         arguments:
-            - "@logger"
             - "@surfnet_saml.signing.signature_verifier"
             - "@second_factor_only.entity_service"
 
@@ -89,7 +88,6 @@ services:
         class: Surfnet\SamlBundle\Http\PostBinding
         arguments:
             - "@surfnet_saml.saml2.response_processor"
-            - "@logger"
             - "@surfnet_saml.signing.signature_verifier"
             - "@second_factor_only.entity_service"
 
