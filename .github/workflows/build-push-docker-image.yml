@@ -16,8 +16,8 @@ jobs:
         id: release
         uses: robinraju/release-downloader@v1.7
         with:
-          latest: true
           fileName: "*.tar.bz2"
+          tag: "${{ github.ref_name }}" 
       
       - name: Get commit details for the tag from the latest release
         id: commit_details
