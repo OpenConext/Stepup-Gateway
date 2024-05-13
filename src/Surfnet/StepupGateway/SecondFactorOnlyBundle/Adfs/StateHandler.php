@@ -65,7 +65,7 @@ class StateHandler
         return $this->get('context');
     }
 
-    public function hasMatchingRequestId(string $requestId): bool
+    public function hasMatchingRequestId(?string $requestId): bool
     {
         $requestIdFromSession = $this->get('request_id');
         if ($requestIdFromSession && $requestIdFromSession == $requestId) {
