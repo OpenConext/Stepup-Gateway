@@ -12,6 +12,7 @@ services:
     alias: 'monolog.logger'
     public: true
 
+
   Surfnet\StepupGateway\SecondFactorOnlyBundle\Controller\:
     resource: '../src/Surfnet/StepupGateway/SecondFactorOnlyBundle/Controller/*'
     calls:
@@ -48,13 +49,6 @@ services:
       - 'controller.service_arguments'
       - 'container.service_subscriber'
 
-  Surfnet\StepupGateway\GatewayBundle\Controller\ExceptionController:
-    tags:
-      - 'controller.service_arguments'
-    arguments:
-      - '@translator'
-      - '@surfnet_stepup.request.request_id'
-
   Surfnet\StepupGateway\GatewayBundle\Controller\MetadataController:
     calls:
       - [ setContainer, [ '@service_container' ] ]
@@ -70,6 +64,17 @@ services:
       - '@second_factor_only.metadata_factory'
       - '%second_factor_only%'
     tags: [ 'controller.service_arguments' ]
+
+  Surfnet\StepupGateway\GatewayBundle\Controller\ExceptionController:
+    calls:
+      - [ setContainer, [ '@service_container' ] ]
+    tags:
+      - 'controller.service_arguments'
+      - 'container.service_subscriber'
+    arguments:
+      - '@translator'
+      - '@surfnet_stepup.request.request_id'
+      - '@twig'
 
   # Service overrides to make 3rd party service publicly available
   surfnet_stepup.service.second_factor_type:

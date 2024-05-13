@@ -22,16 +22,25 @@ use DateTime;
 use DateTimeInterface;
 use Surfnet\StepupBundle\Controller\ExceptionController as BaseExceptionController;
 use Surfnet\StepupBundle\Exception\Art;
+use Surfnet\StepupBundle\Request\RequestId;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\Exception\AcsLocationNotAllowedException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Throwable;
+use Twig\Environment;
 
 final class ExceptionController extends BaseExceptionController
 {
+    public function __construct(
+        protected readonly TranslatorInterface $translator,
+        // Service: surfnet_stepup.request.request_id
+        protected RequestId $requestId,
+        protected Environment $twig
+    ) {
+    }
+
     /**
-     * @param \Exception $exception
-     *
      * @return array View parameters 'title' and 'description'
      */
     protected function getPageTitleAndDescription(\Exception|Throwable $exception): array
@@ -57,8 +66,6 @@ final class ExceptionController extends BaseExceptionController
             $template = '@default/bundles/TwigBundle/Exception/error404.html.twig';
         }
 
-        $response = new Response('', $statusCode);
-
         $timestamp = (new DateTime)->format(DateTimeInterface::ATOM);
         $hostname  = $request->getHost();
         $requestId = $this->requestId;
@@ -66,17 +73,19 @@ final class ExceptionController extends BaseExceptionController
         $userAgent = $request->headers->get('User-Agent');
         $ipAddress = $request->getClientIp();
 
-        return $this->render(
-            $template,
-            [
-                'timestamp'   => $timestamp,
-                'hostname'    => $hostname,
-                'request_id'  => $requestId->get(),
-                'error_code'  => $errorCode,
-                'user_agent'  => $userAgent,
-                'ip_address'  => $ipAddress,
-            ] + $this->getPageTitleAndDescription($exception),
-            $response,
+        return new Response(
+            $this->twig->render(
+                $template,
+                [
+                    'timestamp'   => $timestamp,
+                    'hostname'    => $hostname,
+                    'request_id'  => $requestId->get(),
+                    'error_code'  => $errorCode,
+                    'user_agent'  => $userAgent,
+                    'ip_address'  => $ipAddress,
+                ] + $this->getPageTitleAndDescription($exception),
+            ),
+            $statusCode
         );
     }
 }

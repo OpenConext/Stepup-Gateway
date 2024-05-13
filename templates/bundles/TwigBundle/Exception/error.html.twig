@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'Error - ' ~ title }}{% endblock %}
+
+{% block content %}
+    <p class="error-description">{{ description }}</p>
+
+    <table class="table table-bordered">
+        <tr>
+            <th>{{ 'stepup.error.timestamp'|trans }}</th>
+            <td>{{ timestamp }}</td>
+        </tr>
+        <tr>
+            <th>{{ 'stepup.error.hostname'|trans }}</th>
+            <td>{{ hostname }}</td>
+        </tr>
+        <tr>
+            <th>{{ 'stepup.error.request_id'|trans }}</th>
+            <td>{{ request_id }}</td>
+        </tr>
+        <tr>
+            <th>{{ 'stepup.error.error_code'|trans }}</th>
+            <td>{{ error_code }}</td>
+        </tr>
+        {% if user_agent %}
+        <tr>
+            <th>{{ 'stepup.error.user_agent'|trans }}</th>
+            <td>{{ user_agent }}</td>
+        </tr>
+        {% endif %}
+        <tr>
+            <th>{{ 'stepup.error.ip_address'|trans }}</th>
+            <td>{{ ip_address }}</td>
+        </tr>
+    </table>
+
+    <p class="error-description">{{ 'stepup.error.support_page.text'|trans({'%support_url%': global_view_parameters.supportUrl })|raw }}</p>
+
+    {# For now the back button is not shown on the error page until a more intelligent solution is thought of #}
+    {% block back_button %}{% endblock %}
+
+{% endblock %}
