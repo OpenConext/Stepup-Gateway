@@ -292,7 +292,7 @@ class SamlProxyController extends ContainerController
         }
 
         $response = parent::render(
-            'SurfnetStepupGatewaySamlStepupProviderBundle:saml_proxy:' . $view . '.html.twig',
+            '@default/saml_proxy/' . $view . '.html.twig',
             $parameters,
         );
 

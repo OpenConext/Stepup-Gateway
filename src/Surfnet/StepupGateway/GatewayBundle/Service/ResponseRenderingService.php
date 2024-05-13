@@ -140,7 +140,7 @@ final class ResponseRenderingService
 
         $httpResponse = (new Response)->setContent(
             $this->templateEngine->render(
-                'SurfnetStepupGatewayGatewayBundle:gateway:' . $view . '.html.twig',
+                '@default/gateway/'.$view.'.html.twig',
                 $parameters
             )
         );
