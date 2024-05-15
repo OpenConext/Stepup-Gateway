@@ -27,6 +27,7 @@ use Surfnet\SamlBundle\Http\XMLResponse;
 use Surfnet\SamlBundle\Metadata\MetadataFactory;
 use Surfnet\StepupGateway\GatewayBundle\Container\ContainerController;
 use Surfnet\StepupGateway\GatewayBundle\Controller\GatewayController;
+use Surfnet\StepupGateway\GatewayBundle\Entity\ServiceProvider;
 use Surfnet\StepupGateway\GatewayBundle\Exception\ResponseFailureException;
 use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Exception\InvalidSubjectException;
@@ -38,6 +39,7 @@ use Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\ProviderRepository;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Saml\ProxyResponseFactory;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Saml\StateHandler;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Service\Gateway\ConsumeAssertionService;
+use Surfnet\StepupGateway\SamlStepupProviderBundle\Service\Gateway\LoginService;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Service\Gateway\SecondFactorVerificationService;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\ResponseHelper;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -415,5 +417,11 @@ class SamlProxyController extends ContainerController
         }
 
         return $this->get($responseContextServiceId);
+    }
+
+    private function getServiceProvider(?string $serviceProvider)
+    {
+        $connectedServiceProviders = $this->get('gssp.connected_service_providers');
+        return $connectedServiceProviders->getConfigurationOf($serviceProvider);
     }
 }
