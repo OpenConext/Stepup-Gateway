@@ -27,5 +27,6 @@ security:
             password: "%registration_authority_api_password%"
             roles: 'ROLE_API_CLIENT'
 
-#  encoders:
-#    Symfony\Component\Security\Core\User\User: plaintext
+  password_hashers:
+    Symfony\Component\Security\Core\User\InMemoryUser:
+      algorithm: plaintext

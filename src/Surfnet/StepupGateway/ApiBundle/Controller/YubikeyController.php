@@ -29,13 +29,15 @@ use Symfony\Component\Routing\Attribute\Route;
 class YubikeyController extends ContainerController
 {
     #[Route(
-        path: '/verify-yubikey',
+        path: '/api/verify-yubikey',
         methods: ['POST'],
         condition: "request.headers.get('Content-Type') == 'application/json' && 
                     request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
     )]
-    public function verify(Otp $otp, Requester $requester): JsonResponse
-    {
+    public function verify(
+        Otp $otp,
+        Requester $requester,
+    ): JsonResponse {
         /** @var YubikeyService $yubikeyService */
         $yubikeyService = $this->get('surfnet_gateway_api.service.yubikey');
         $result = $yubikeyService->verifyOtp($otp, $requester);

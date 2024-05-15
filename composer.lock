@@ -3100,16 +3100,16 @@
         },
         {
             "name": "surfnet/stepup-bundle",
-            "version": "6.0.15",
+            "version": "6.0.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/OpenConext/Stepup-bundle.git",
-                "reference": "91710da88adc35dfc49a0144b10ea035063b34ad"
+                "reference": "99e40c0125c597f142acd0f53a53985f29cc13dc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/OpenConext/Stepup-bundle/zipball/91710da88adc35dfc49a0144b10ea035063b34ad",
-                "reference": "91710da88adc35dfc49a0144b10ea035063b34ad",
+                "url": "https://api.github.com/repos/OpenConext/Stepup-bundle/zipball/99e40c0125c597f142acd0f53a53985f29cc13dc",
+                "reference": "99e40c0125c597f142acd0f53a53985f29cc13dc",
                 "shasum": ""
             },
             "require": {
@@ -3165,9 +3165,9 @@
             ],
             "support": {
                 "issues": "https://github.com/OpenConext/Stepup-bundle/issues",
-                "source": "https://github.com/OpenConext/Stepup-bundle/tree/6.0.15"
+                "source": "https://github.com/OpenConext/Stepup-bundle/tree/6.0.16"
             },
-            "time": "2024-04-17T14:21:55+00:00"
+            "time": "2024-05-15T06:24:05+00:00"
         },
         {
             "name": "surfnet/stepup-saml-bundle",
@@ -7762,16 +7762,16 @@
         },
         {
             "name": "twig/twig",
-            "version": "v3.10.1",
+            "version": "v3.10.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twigphp/Twig.git",
-                "reference": "3af5ab2e52279e5e23dc192b1a26db3b8cffa4e7"
+                "reference": "7aaed0b8311a557cc8c4047a71fd03153a00e755"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/Twig/zipball/3af5ab2e52279e5e23dc192b1a26db3b8cffa4e7",
-                "reference": "3af5ab2e52279e5e23dc192b1a26db3b8cffa4e7",
+                "url": "https://api.github.com/repos/twigphp/Twig/zipball/7aaed0b8311a557cc8c4047a71fd03153a00e755",
+                "reference": "7aaed0b8311a557cc8c4047a71fd03153a00e755",
                 "shasum": ""
             },
             "require": {
@@ -7825,7 +7825,7 @@
             ],
             "support": {
                 "issues": "https://github.com/twigphp/Twig/issues",
-                "source": "https://github.com/twigphp/Twig/tree/v3.10.1"
+                "source": "https://github.com/twigphp/Twig/tree/v3.10.2"
             },
             "funding": [
                 {
@@ -7837,7 +7837,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-05-12T06:16:18+00:00"
+            "time": "2024-05-14T06:04:16+00:00"
         },
         {
             "name": "ua-parser/uap-php",
