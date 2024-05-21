@@ -2,6 +2,7 @@
 services:
   surfnet_gateway_api.service.yubikey:
     class: Surfnet\StepupGateway\ApiBundle\Tests\TestDouble\Service\YubikeyService
+    public: true
 
   gateway.service.gateway_api_sms:
     class: Surfnet\StepupGateway\ApiBundle\Tests\TestDouble\Service\SmsService
