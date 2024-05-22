@@ -6,10 +6,12 @@ monolog:
       passthru_level: NOTICE # this means that all message of level NOTICE or higher are always logged
       handler: main_syslog
       bubble: false # if we handle it, nothing else should
+      channels: [ "!deprecation" ]
     main_syslog:
       type: stream
       path: "php://stderr"
       formatter: surfnet_stepup.monolog.json_formatter
+      channels: [ "!deprecation" ]
 
 when@dev: &override
   monolog:
