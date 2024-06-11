@@ -358,6 +358,7 @@ class SecondFactorController extends ContainerController
                 'provider' => $secondFactor->secondFactorType,
                 'subjectNameId' => $secondFactor->secondFactorIdentifier,
                 'responseContextServiceId' => $responseContextServiceId,
+                'relayState' => $context->getRelayState(),
             ],
         );
     }

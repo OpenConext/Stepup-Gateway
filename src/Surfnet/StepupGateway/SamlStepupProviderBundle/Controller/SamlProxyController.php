@@ -27,7 +27,6 @@ use Surfnet\SamlBundle\Http\XMLResponse;
 use Surfnet\SamlBundle\Metadata\MetadataFactory;
 use Surfnet\StepupGateway\GatewayBundle\Container\ContainerController;
 use Surfnet\StepupGateway\GatewayBundle\Controller\GatewayController;
-use Surfnet\StepupGateway\GatewayBundle\Entity\ServiceProvider;
 use Surfnet\StepupGateway\GatewayBundle\Exception\ResponseFailureException;
 use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Exception\InvalidSubjectException;
@@ -114,16 +113,18 @@ class SamlProxyController extends ContainerController
         string $provider,
         string $subjectNameId,
         string $responseContextServiceId,
+        string $relayState,
     ): RedirectResponse {
 
         $provider = $this->getProvider($provider);
         $gsspSecondFactorVerificationService = $this->getGsspSecondFactorVerificationService();
-
         $authnRequest = $gsspSecondFactorVerificationService->sendSecondFactorVerificationAuthnRequest(
             $provider,
             $subjectNameId,
             $responseContextServiceId,
         );
+        $provider->getStateHandler()->setRelayState($relayState);
+
         $redirectBinding = $this->get('surfnet_saml.http.redirect_binding');
 
         return $redirectBinding->createResponseFor($authnRequest);
