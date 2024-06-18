@@ -9,7 +9,8 @@ counter=0
 for file in $files
 do
     # Get the year of the first commit of the file
-    year=$(git log --follow --format=%ad --date=format:'%Y' $file | tail -1)
+    year=$(git log --all --reverse --full-history --format="%ai" $file | awk '{print $1}' | cut -d '-' -f1 | head -n 1)
+#    year=$(git log --follow --format=%ad --date=format:'%Y' $file | tail -1)
 
     # Check if year is a valid 4-digit number
     if [[ ! $year =~ ^[0-9]{4}$ ]]
