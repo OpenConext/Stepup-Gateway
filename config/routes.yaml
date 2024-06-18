@@ -1,5 +1,6 @@
 openconext_monitor:
-  resource: "@OpenConextMonitorBundle/Resources/config/routing.yml"
+  resource: "@OpenConextMonitorBundle/src/Controller"
+  type: attribute
   prefix: /
 
 nelmio_security_report:

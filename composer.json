@@ -37,7 +37,7 @@
         "psr/container": "^2.0",
         "spryng/rest-api-php": "^1.1",
         "surfnet/stepup-bundle": "^6.0",
-        "surfnet/yubikey-api-client-bundle": "^5.0.0-beta1",
+        "surfnet/yubikey-api-client-bundle": "^5.0",
         "symfony/config": "6.4.*",
         "symfony/console": "6.4.*",
         "symfony/expression-language": "6.4.*",
@@ -127,7 +127,8 @@
         "allow-plugins": {
             "symfony/flex": true,
             "symfony/runtime": true,
-            "dealerdirect/phpcodesniffer-composer-installer": true
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "endroid/installer": true
         },
         "optimize-autoloader": true,
         "sort-packages": true,
