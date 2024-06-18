@@ -1,18 +1,97 @@
 imports:
-  - { resource: 'legacy/samlstepupproviders_parameters.yaml' }
-  - { resource: 'legacy/global_view_parameters.yaml' }
-  - { resource: 'legacy/parameters.yaml' }
-  - { resource: 'legacy/samlstepupproviders.yaml' }
+  - { resource: 'openconext/samlstepupproviders_parameters.yaml' }
+  - { resource: 'openconext/global_view_parameters.yaml' }
+  - { resource: 'openconext/parameters.yaml' }
+  - { resource: 'openconext/samlstepupproviders.yaml' }
 
 services:
+  _defaults:
+    public: true
+
   logger:
     alias: 'monolog.logger'
     public: true
 
-  twig.extension.text: # Required by JMSTranslationBundle
-    class: Twig_Extensions_Extension_Text
-    tags: [{ name: twig.extension }]
 
-  twig.extension.intl:
-    class: Twig_Extensions_Extension_Intl
-    tags: [{ name: twig.extension }]
+  Surfnet\StepupGateway\SecondFactorOnlyBundle\Controller\:
+    resource: '../src/Surfnet/StepupGateway/SecondFactorOnlyBundle/Controller/*'
+    calls:
+      - [setContainer, ['@Psr\Container\ContainerInterface']]
+      - [setServiceContainer, ['@service_container']]
+    tags:
+      - 'controller.service_arguments'
+      - 'container.service_subscriber'
+
+  Surfnet\StepupGateway\GatewayBundle\Controller\:
+    resource: '../src/Surfnet/StepupGateway/GatewayBundle/Controller/*'
+    calls:
+      - [setContainer, ['@Psr\Container\ContainerInterface']]
+      - [setServiceContainer, ['@service_container']]
+    tags:
+      - 'controller.service_arguments'
+      - 'container.service_subscriber'
+
+  Surfnet\StepupGateway\ApiBundle\Controller\:
+    resource: '../src/Surfnet/StepupGateway/ApiBundle/Controller/*'
+    calls:
+      - [setContainer, ['@Psr\Container\ContainerInterface']]
+      - [setServiceContainer, ['@service_container']]
+    tags:
+      - 'controller.service_arguments'
+      - 'container.service_subscriber'
+
+  Surfnet\StepupGateway\SamlStepupProviderBundle\Controller\:
+    resource: '../src/Surfnet/StepupGateway/SamlStepupProviderBundle/Controller/*'
+    calls:
+      - [setContainer, ['@Psr\Container\ContainerInterface']]
+      - [setServiceContainer, ['@service_container']]
+    tags:
+      - 'controller.service_arguments'
+      - 'container.service_subscriber'
+
+  Surfnet\StepupGateway\GatewayBundle\Controller\MetadataController:
+    calls:
+      - [ setContainer, [ '@service_container' ] ]
+    arguments:
+      - '@surfnet_saml.metadata_factory'
+    tags: [ 'controller.service_arguments' ]
+
+  Surfnet\StepupGateway\SecondFactorOnlyBundle\Controller\MetadataController:
+    calls:
+      - [ setContainer, [ '@service_container' ] ]
+    arguments:
+      - '@logger'
+      - '@second_factor_only.metadata_factory'
+      - '%second_factor_only%'
+    tags: [ 'controller.service_arguments' ]
+
+  Surfnet\StepupGateway\GatewayBundle\Controller\ExceptionController:
+    calls:
+      - [ setContainer, [ '@service_container' ] ]
+    tags:
+      - 'controller.service_arguments'
+      - 'container.service_subscriber'
+    arguments:
+      - '@translator'
+      - '@surfnet_stepup.request.request_id'
+      - '@twig'
+
+  # Service overrides to make 3rd party service publicly available
+  surfnet_stepup.service.second_factor_type:
+    class: Surfnet\StepupBundle\Service\SecondFactorTypeService
+    arguments:
+      - "%enabled_generic_second_factors%"
+    public: true
+
+  surfnet_saml.logger:
+    class: Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger
+    arguments:
+      - '@logger'
+    public: true
+
+  surfnet_saml.http.redirect_binding:
+    class: Surfnet\SamlBundle\Http\RedirectBinding
+    public: true
+    arguments:
+      - '@surfnet_saml.signing.signature_verifier'
+      - '@?surfnet_saml.entity.entity_repository'

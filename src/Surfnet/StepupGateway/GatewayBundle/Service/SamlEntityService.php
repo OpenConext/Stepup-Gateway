@@ -27,7 +27,7 @@ use Surfnet\StepupGateway\GatewayBundle\Exception\RuntimeException;
 class SamlEntityService implements ServiceProviderRepository
 {
     /**
-     * @var \Surfnet\StepupGateway\GatewayBundle\Entity\SamlEntityRepository
+     * @var SamlEntityRepository
      */
     private $samlEntityRepository;
 
@@ -86,7 +86,7 @@ class SamlEntityService implements ServiceProviderRepository
      * @param string $entityId
      * @return ServiceProvider
      */
-    public function getServiceProvider($entityId)
+    public function getServiceProvider(string $entityId): \Surfnet\SamlBundle\Entity\ServiceProvider
     {
         if (!array_key_exists($entityId, $this->loadedServiceProviders) && !$this->hasServiceProvider($entityId)) {
             throw new RuntimeException(sprintf(
@@ -102,7 +102,7 @@ class SamlEntityService implements ServiceProviderRepository
      * @param string $entityId
      * @return bool
      */
-    public function hasServiceProvider($entityId)
+    public function hasServiceProvider(string $entityId): bool
     {
         $samlEntity = $this->samlEntityRepository->getServiceProvider($entityId);
 

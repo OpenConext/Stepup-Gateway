@@ -44,7 +44,7 @@ class HaliteCryptoHelperTest extends TestCase
         $this->helper = new HaliteCryptoHelper($configuration);
     }
 
-    public function test_encrypt_decrypt_with_authentication()
+    public function test_encrypt_decrypt_with_authentication(): void
     {
         $cookie = $this->createCookieValue();
         $data = $this->helper->encrypt($cookie);
@@ -53,7 +53,7 @@ class HaliteCryptoHelperTest extends TestCase
         self::assertEquals($cookie, $cookieDecrypted);
     }
 
-    public function test_encrypt_decrypt_with_authentication_decryption_impossible_if_tampered_with()
+    public function test_encrypt_decrypt_with_authentication_decryption_impossible_if_tampered_with(): void
     {
         $cookie = $this->createCookieValue();
         $data = $this->helper->encrypt($cookie);

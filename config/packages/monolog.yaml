@@ -1,5 +1,4 @@
 monolog:
-  channels: [authentication]
   handlers:
     prod-signaler:
       type: fingers_crossed
@@ -7,16 +6,24 @@ monolog:
       passthru_level: NOTICE # this means that all message of level NOTICE or higher are always logged
       handler: main_syslog
       bubble: false # if we handle it, nothing else should
-      channels: ["!authentication"] # the auth channel is logged by the next handler
+      channels: [ "!deprecation" ]
     main_syslog:
-      type: syslog
-      ident: stepup-gateway
-      facility: user
+      type: stream
+      path: "php://stderr"
       formatter: surfnet_stepup.monolog.json_formatter
-    authenthentication_syslog:
-      type: syslog
-      ident: stepup-authentication
-      facility: user
-      level: INFO
-      channels: [authentication]
-      formatter: gateway.monolog.gelf_to_string_formatter
+      channels: [ "!deprecation" ]
+
+when@dev: &override
+  monolog:
+    handlers:
+      main_syslog:
+        type: stream
+        path: php://stderr
+        level: error
+        channels: ["!event", "!doctrine", "!deprecation", "!console"]
+      console:
+        type: console
+        process_psr_3_messages: false
+        channels: ["!event", "!doctrine", "!deprecation", "!console"]
+when@test: *override
+when@smoketest: *override

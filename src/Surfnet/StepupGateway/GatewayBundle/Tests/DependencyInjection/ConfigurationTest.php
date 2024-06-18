@@ -32,7 +32,7 @@ final class ConfigurationTest extends TestCase
      * @test
      * @group configuration
      */
-    public function it_requires_intrinsic_loa_to_be_configured()
+    public function it_requires_intrinsic_loa_to_be_configured(): void
     {
         $this->assertConfigurationIsInvalid([[]], '~intrinsic_loa.+must be configured~', self::USE_REGEXP);
     }
@@ -41,7 +41,7 @@ final class ConfigurationTest extends TestCase
      * @test
      * @group configuration
      */
-    public function it_requires_second_factors_to_be_configured()
+    public function it_requires_second_factors_to_be_configured(): void
     {
         $this->assertPartialConfigurationIsInvalid([[]], 'enabled_second_factors', '~enabled_second_factors.+must be configured~', self::USE_REGEXP);
     }
@@ -50,7 +50,7 @@ final class ConfigurationTest extends TestCase
      * @test
      * @group configuration
      */
-    public function it_allows_one_enabled_second_factor()
+    public function it_allows_one_enabled_second_factor(): void
     {
         $this->assertConfigurationIsValid([['enabled_second_factors' => ['sms']]], 'enabled_second_factors');
     }
@@ -59,7 +59,7 @@ final class ConfigurationTest extends TestCase
      * @test
      * @group configuration
      */
-    public function it_allows_two_enabled_second_factors()
+    public function it_allows_two_enabled_second_factors(): void
     {
         $this->assertConfigurationIsValid([['enabled_second_factors' => ['sms', 'yubikey']]], 'enabled_second_factors');
     }

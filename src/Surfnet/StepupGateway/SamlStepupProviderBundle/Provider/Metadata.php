@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2014 SURFnet bv
+ * Copyright 2015 SURFnet bv
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,8 @@
 namespace Surfnet\StepupGateway\SamlStepupProviderBundle\Provider;
 
 use DOMDocument;
+use DOMElement;
+use DOMNode;
 use LogicException;
 use Surfnet\SamlBundle\Signing\Signable;
 
@@ -49,7 +51,7 @@ class Metadata implements Signable
      */
     public $document;
 
-    public function getRootDomElement()
+    public function getRootDomElement(): DOMElement
     {
         if (!$this->document) {
             throw new LogicException('Cannot get the rootElement of Metadata before the document has been generated');
@@ -58,7 +60,7 @@ class Metadata implements Signable
         return $this->document->documentElement;
     }
 
-    public function getAppendBeforeNode()
+    public function getAppendBeforeNode(): ?DOMNode
     {
         if (!$this->document) {
             throw new LogicException(

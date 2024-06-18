@@ -59,7 +59,7 @@ class ViewConfig implements ViewConfigInterface
     /**
      * @return string
      */
-    public function getLogo()
+    public function getLogo(): string
     {
         return $this->logo;
     }
@@ -67,7 +67,7 @@ class ViewConfig implements ViewConfigInterface
     /**
      * @return string
      */
-    public function getTitle()
+    public function getTitle(): string
     {
         return $this->getTranslation($this->title);
     }
@@ -77,7 +77,7 @@ class ViewConfig implements ViewConfigInterface
      * @return mixed
      * @throws LogicException
      */
-    private function getTranslation(array $translations)
+    private function getTranslation(array $translations): mixed
     {
         $currentLocale = $this->requestStack->getCurrentRequest()->getLocale();
         if (is_null($currentLocale)) {

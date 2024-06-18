@@ -30,28 +30,20 @@ use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
 use Surfnet\StepupGateway\GatewayBundle\Service\Gateway\FailedResponseService;
 use Surfnet\StepupGateway\GatewayBundle\Service\SamlEntityService;
 use Surfnet\StepupGateway\GatewayBundle\Tests\TestCase\GatewaySamlTestCase;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Session;
 
 final class FailedResponseServiceTest extends GatewaySamlTestCase
 {
-    /** @var Mockery\Mock|FailedResponseService */
-    private $gatewayFailedResponseService;
-
-    /** @var Mockery\Mock|ProxyStateHandler */
-    private $stateHandler;
-
-    /** @var ResponseContext */
-    private $responseContext;
-
-    /** @var Mockery\Mock|SamlEntityService */
-    private $samlEntityService;
-
-    /** @var IdentityProvider */
-    private $remoteIdp;
+    private Mockery\Mock|FailedResponseService $gatewayFailedResponseService;
+    private ResponseContext $responseContext;
+    private Mockery\Mock|SamlEntityService $samlEntityService;
 
     public function setUp(): void
     {
         parent::setUp();
+
+        $this->requestStack = new RequestStack();
 
         $now = new \DateTime('@' . static::MOCK_TIMESTAMP);
 
@@ -72,7 +64,7 @@ final class FailedResponseServiceTest extends GatewaySamlTestCase
     /**
      * @test
      */
-    public function it_should_handle_send_loa_could_not_be_given_based_on_the_given_state_on_login_flow()
+    public function it_should_handle_send_loa_could_not_be_given_based_on_the_given_state_on_login_flow(): void
     {
         // Mock service provider
         $serviceProvider = Mockery::mock(ServiceProvider::class)
@@ -126,7 +118,7 @@ final class FailedResponseServiceTest extends GatewaySamlTestCase
     /**
      * @test
      */
-    public function it_should_handle_authentication_cancelled_by_user_based_on_the_given_state_on_login_flow()
+    public function it_should_handle_authentication_cancelled_by_user_based_on_the_given_state_on_login_flow(): void
     {
         // Mock service provider
         $serviceProvider = Mockery::mock(ServiceProvider::class)
@@ -180,20 +172,23 @@ final class FailedResponseServiceTest extends GatewaySamlTestCase
     /**
      * @param DateTime $now
      */
-    private function initGatewayService(array $idpConfiguration, DateTime $now)
+    private function initGatewayService(array $idpConfiguration, DateTime $now): void
     {
         $session = new Session($this->sessionStorage);
-        $this->stateHandler = new ProxyStateHandler($session, 'surfnet/gateway/request');
+        $requestStackMock = $this->createMock(RequestStack::class);
+        $requestStackMock->method('getSession')->willReturn($session);
+
+        $stateHandler = new ProxyStateHandler($requestStackMock, 'surfnet/gateway/request');
         $samlLogger = new SamlAuthenticationLogger($this->logger);
 
-        $this->remoteIdp = new IdentityProvider($idpConfiguration);
+        $remoteIdp = new IdentityProvider($idpConfiguration);
         $responseBuilder = new ResponseBuilder();
         $this->samlEntityService = Mockery::mock(SamlEntityService::class);
 
         $this->responseContext = new ResponseContext(
-            $this->remoteIdp,
+            $remoteIdp,
             $this->samlEntityService,
-            $this->stateHandler,
+            $stateHandler,
             $this->logger,
             $now
         );

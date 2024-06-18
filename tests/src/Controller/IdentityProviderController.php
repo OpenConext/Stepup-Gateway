@@ -1,15 +1,29 @@
 <?php
 
+/**
+ * Copyright 2020 SURFnet bv
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 namespace Surfnet\StepupGateway\Behat\Controller;
 
-use Psr\Log\LoggerInterface;
 use RobRichards\XMLSecLibs\XMLSecurityKey;
 use SAML2\Assertion;
 use SAML2\Certificate\KeyLoader;
 use SAML2\Certificate\PrivateKeyLoader;
 use SAML2\Configuration\PrivateKey;
 use SAML2\Constants;
-use SAML2\Response;
 use SAML2\Response as SAMLResponse;
 use SAML2\XML\saml\NameID;
 use SAML2\XML\saml\SubjectConfirmation;
@@ -18,19 +32,21 @@ use Surfnet\SamlBundle\Http\Exception\UnsignedRequestException;
 use Surfnet\SamlBundle\Http\ReceivedAuthnRequestQueryString;
 use Surfnet\SamlBundle\SAML2\ReceivedAuthnRequest;
 use Surfnet\StepupGateway\Behat\Command\LoginCommand;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-class IdentityProviderController extends Controller
+class IdentityProviderController extends AbstractController
 {
     /**
      * Handles a SSO request
      * @param Request $request
      */
-    public function ssoAction(Request $request)
+    public function ssoAction(Request $request): Response
     {
         // Receives the AuthnRequest and sends a SAML response
         $authnRequest = $this->receiveSignedAuthnRequestFrom($request);
@@ -51,16 +67,18 @@ class IdentityProviderController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             $loginData = $form->getData();
             $response = $this->createResponse(
-                'https://gateway.stepup.example.com/authentication/consume-assertion',
+                'https://gateway.dev.openconext.local/authentication/consume-assertion',
                 ['Value' => $loginData->getUsername(), 'Format' => 'urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified'],
                 $loginData->getRequestId()
             );
             return $this->renderSamlResponse($response);
         }
 
-        return $this->render('@test_resources/login.html.twig', [
-            'form' => $form->createView(),
-        ]);
+        return $this->render(
+                '@test_resources/login.html.twig', [
+                'form' => $form->createView(),
+            ]
+        );
     }
 
     /**
@@ -81,11 +99,7 @@ class IdentityProviderController extends Controller
         return $this->renderSamlResponse($response);
     }
 
-    /**
-     * @param SAMLResponse $response
-     * @return \Symfony\Component\HttpFoundation\Response
-     */
-    public function renderSamlResponse(SAMLResponse $response)
+    public function renderSamlResponse(SAMLResponse $response): Response
     {
         $parameters = [
             'acu' => $response->getDestination(),
@@ -95,18 +109,19 @@ class IdentityProviderController extends Controller
 
         $response = $this->render(
             '@SurfnetStepupGatewayGateway/gateway/consume_assertion.html.twig',
-            $parameters);
+            $parameters
+        );
 
         return $response;
     }
 
-    public function createResponse(string $destination, array $nameId, $requestId)
+    public function createResponse(string $destination, array $nameId, $requestId): SAMLResponse
     {
         $newAssertion = new Assertion();
         $newAssertion->setNotBefore(time());
         $newAssertion->setNotOnOrAfter(time() + (60 * 5));//
         $newAssertion->setAttributes(['urn:mace:dir:attribute-def:eduPersonTargetedID' => [NameID::fromArray($nameId)]]);
-        $newAssertion->setIssuer('https://idp.stepup.example.com/');
+        $newAssertion->setIssuer('https://idp.dev.openconext.local/');
         $newAssertion->setIssueInstant(time());
 
         $this->signAssertion($newAssertion);
@@ -114,7 +129,7 @@ class IdentityProviderController extends Controller
         $newAssertion->setNameId($nameId);
         $response = new SAMLResponse();
         $response->setAssertions([$newAssertion]);
-        $response->setIssuer('https://gateway.stepup.example.com/idp/metadata');
+        $response->setIssuer('https://gateway.dev.openconext.local/idp/metadata');
         $response->setIssueInstant(time());
         $response->setDestination($destination);
         $response->setInResponseTo($requestId);
@@ -126,32 +141,20 @@ class IdentityProviderController extends Controller
         return $response;
     }
 
-    /**
-     * @param SAMLResponse $response
-     * @return string
-     */
-    private function getResponseAsXML(SAMLResponse $response)
+    private function getResponseAsXML(SAMLResponse $response): string
     {
         return base64_encode($response->toUnsignedXML()->ownerDocument->saveXML());
     }
 
-    /**
-     * @param Request $request
-     * @return string
-     */
-    private function getFullRequestUri(Request $request)
+    private function getFullRequestUri(Request $request): string
     {
         return $request->getSchemeAndHttpHost() . $request->getBasePath() . $request->getRequestUri();
     }
 
-    /**
-     * @param Request $request
-     * @return ReceivedAuthnRequest
-     */
-    public function receiveSignedAuthnRequestFrom(Request $request)
+    public function receiveSignedAuthnRequestFrom(Request $request): ?ReceivedAuthnRequest
     {
         if (!$request->isMethod(Request::METHOD_GET)) {
-            return;
+            return null;
         }
 
         $requestUri = $request->getRequestUri();
@@ -172,11 +175,13 @@ class IdentityProviderController extends Controller
 
         $currentUri = $this->getFullRequestUri($request);
         if (!$authnRequest->getDestination() === $currentUri) {
-            throw new BadRequestHttpException(sprintf(
-                'Actual Destination "%s" does not match the AuthnRequest Destination "%s"',
-                $currentUri,
-                $authnRequest->getDestination()
-            ));
+            throw new BadRequestHttpException(
+                sprintf(
+                    'Actual Destination "%s" does not match the AuthnRequest Destination "%s"',
+                    $currentUri,
+                    $authnRequest->getDestination()
+                )
+            );
         }
 
         return $authnRequest;
@@ -194,7 +199,7 @@ class IdentityProviderController extends Controller
         return $assertion;
     }
 
-    private function addSubjectConfirmationFor(Assertion $newAssertion, $destination, $requestId)
+    private function addSubjectConfirmationFor(Assertion $newAssertion, $destination, $requestId): void
     {
         $confirmation = new SubjectConfirmation();
         $confirmation->setMethod(Constants::CM_BEARER);
@@ -214,7 +219,7 @@ class IdentityProviderController extends Controller
      */
     private function loadPrivateKey()
     {
-        $key        = new PrivateKey('/var/www/ci/certificates/idp.key', 'default');
+        $key        = new PrivateKey('/config/ssp/idp.key', 'default');
         $keyLoader  = new PrivateKeyLoader();
         $privateKey = $keyLoader->loadPrivateKey($key);
 
@@ -230,7 +235,7 @@ class IdentityProviderController extends Controller
     private function getPublicCertificate()
     {
         $keyLoader = new KeyLoader();
-        $keyLoader->loadCertificateFile('/var/www/ci/certificates/idp.crt');
+        $keyLoader->loadCertificateFile('/config/ssp/idp.crt');
         /** @var \SAML2\Certificate\X509 $publicKey */
         $publicKey = $keyLoader->getKeys()->getOnlyElement();
 

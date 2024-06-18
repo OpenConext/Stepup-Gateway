@@ -3,14 +3,10 @@ security:
     api:
       pattern: ^/api/
       http_basic: ~
-      logout_on_user_change: true
       entry_point: surfnet_gateway_api.security.json_basic_auth_entry_point
     dev:
       pattern: ^/(_(profiler|wdt)|css|images|js)/
       security: false
-    default:
-      anonymous: ~
-      logout_on_user_change: true
     monitor:
       pattern: ^/(internal/)?(info|health)$
       security: false
@@ -31,5 +27,6 @@ security:
             password: "%registration_authority_api_password%"
             roles: 'ROLE_API_CLIENT'
 
-  encoders:
-    Symfony\Component\Security\Core\User\User: plaintext
+  password_hashers:
+    Symfony\Component\Security\Core\User\InMemoryUser:
+      algorithm: plaintext

@@ -1,9 +1,0 @@
-doctrine:
-  dbal:
-    default_connection: gateway
-    connections:
-      gateway:
-        driver:   "%database_driver%"
-        port:     "%database_port%"
-        host:     db.stepup.example.com
-        dbname:   gateway

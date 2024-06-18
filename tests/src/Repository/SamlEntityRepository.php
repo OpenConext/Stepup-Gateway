@@ -1,5 +1,21 @@
 <?php
 
+/**
+ * Copyright 2020 SURFnet bv
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 namespace Surfnet\StepupGateway\Behat\Repository;
 
 use Exception;
@@ -11,9 +27,9 @@ use Ramsey\Uuid\Uuid;
  */
 class SamlEntityRepository
 {
-    const SP_ACS_LOCATION = 'https://gateway.stepup.example.com/test/authentication/consume-assertion';
+    const SP_ACS_LOCATION = 'https://gateway.dev.openconext.local/test/authentication/consume-assertion';
 
-    const SP_ADFS_SSO_LOCATION = 'https://gateway.stepup.example.com/test/authentication/adfs/sso';
+    const SP_ADFS_SSO_LOCATION = 'https://gateway.dev.openconext.local/test/authentication/adfs/sso';
 
     /**
      * @var Connection
@@ -37,13 +53,13 @@ class SamlEntityRepository
             $type = 'sp';
             $configuration['acs'] = [self::SP_ACS_LOCATION];
             $configuration['public_key'] = $certificate;
-            $configuration['loa'] = ['__default__' => 'http://stepup.example.com/assurance/loa1'];
+            $configuration['loa'] = ['__default__' => 'http://dev.openconext.local/assurance/loa1'];
             $configuration['second_factor_only'] = $sfoEnabled;
             $configuration['set_sso_cookie_on_2fa'] = true;
             $configuration['allow_sso_on_2fa'] = true;
             $configuration['second_factor_only_nameid_patterns'] = [
                 'urn:collab:person:stepup.example.com:admin',
-                'urn:collab:person:stepup.example.com:*',
+                'urn:collab:person:dev.openconext.local:*',
             ];
 
             $data = [
@@ -71,7 +87,12 @@ SQL;
                 return $data;
             }
 
-            throw new Exception('Unable to insert the new SP saml_entity');
+            throw new Exception(
+                sprintf(
+                    'Unable to insert the new SP saml_entity. PDO raised this error: "%s"',
+                    $stmt->errorInfo()[2]
+               )
+            );
         } else {
             // Return the SP data
             $results = $stmt->fetchAll();
@@ -125,7 +146,12 @@ SQL;
                 return $data;
             }
 
-            throw new Exception('Unable to insert the new SP saml_entity');
+            throw new Exception(
+                sprintf(
+                    'Unable to insert the new SP saml_entity. PDO raised this error: "%s"',
+                    $stmt->errorInfo()[2]
+                )
+            );
         } else {
             // Return the SP data
             $results = $stmt->fetchAll();

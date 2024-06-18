@@ -135,7 +135,7 @@ class CookieServiceTest extends TestCase
             ->andReturn($this->sp);
     }
 
-    public function test_check_preconditions_happy()
+    public function test_check_preconditions_happy(): void
     {
         $this->buildService(
             new Configuration(
@@ -149,7 +149,7 @@ class CookieServiceTest extends TestCase
         self::assertTrue($this->service->preconditionsAreMet($this->responseContext));
     }
 
-    public function test_check_preconditions_is_force_authn()
+    public function test_check_preconditions_is_force_authn(): void
     {
         $this->buildService(
             new Configuration(
@@ -171,7 +171,7 @@ class CookieServiceTest extends TestCase
         self::assertFalse($this->service->preconditionsAreMet($this->responseContext));
     }
 
-    public function test_check_preconditions_is_remote_sp_disabled()
+    public function test_check_preconditions_is_remote_sp_disabled(): void
     {
         $this->buildService(
             new Configuration(
@@ -204,7 +204,7 @@ class CookieServiceTest extends TestCase
         self::assertFalse($this->service->preconditionsAreMet($this->responseContext));
     }
 
-    public function test_storing_a_session_cookie()
+    public function test_storing_a_session_cookie(): void
     {
         $this->buildService(
             new Configuration(
@@ -260,7 +260,7 @@ class CookieServiceTest extends TestCase
         self::assertEquals(Cookie::SAMESITE_NONE, $cookie->getSameSite());
     }
 
-    public function test_storing_a_persistent_cookie()
+    public function test_storing_a_persistent_cookie(): void
     {
         $this->buildService(
             new Configuration(
@@ -315,7 +315,7 @@ class CookieServiceTest extends TestCase
         self::assertEquals(time() + $this->configuration->getLifetime(), $cookie->getExpiresTime());
     }
 
-    public function test_storing_a_session_cookie_new_authentication()
+    public function test_storing_a_session_cookie_new_authentication(): void
     {
         $this->buildService(
             new Configuration(
@@ -370,7 +370,7 @@ class CookieServiceTest extends TestCase
         self::assertEquals($this->configuration->getLifetime(), $cookie->getExpiresTime());
     }
 
-    public function test_storing_a_session_cookie_second_factor_not_found()
+    public function test_storing_a_session_cookie_second_factor_not_found(): void
     {
         $this->buildService(
             new Configuration(
@@ -398,7 +398,7 @@ class CookieServiceTest extends TestCase
         $this->service->handleSsoOn2faCookieStorage($this->responseContext, $request, $response);
     }
 
-    public function test_storing_a_session_cookie_disallowed_sp()
+    public function test_storing_a_session_cookie_disallowed_sp(): void
     {
         $this->buildService(
             new Configuration(
@@ -433,7 +433,7 @@ class CookieServiceTest extends TestCase
         self::assertCount(0, $cookieJar);
     }
 
-    public function test_storing_a_session_cookie_not_enabled_for_institution()
+    public function test_storing_a_session_cookie_not_enabled_for_institution(): void
     {
         $this->buildService(
             new Configuration(
@@ -472,7 +472,7 @@ class CookieServiceTest extends TestCase
         self::assertCount(0, $cookieJar);
     }
 
-    public function test_skipping_authentication_succeeds()
+    public function test_skipping_authentication_succeeds(): void
     {
         $this->buildService(
             new Configuration(
@@ -503,7 +503,7 @@ class CookieServiceTest extends TestCase
         );
     }
 
-    public function test_skipping_authentication_fails_when_no_sso_cookie_present()
+    public function test_skipping_authentication_fails_when_no_sso_cookie_present(): void
     {
         $this->buildService(
             new Configuration(
@@ -523,7 +523,7 @@ class CookieServiceTest extends TestCase
         );
     }
 
-    public function test_skipping_authentication_fails_when_no_sso_cookie_has_too_low_of_a_loa()
+    public function test_skipping_authentication_fails_when_no_sso_cookie_has_too_low_of_a_loa(): void
     {
         $this->buildService(
             new Configuration(
@@ -549,7 +549,7 @@ class CookieServiceTest extends TestCase
         );
     }
 
-    public function test_skipping_authentication_fails_when_identity_id_doesnt_match()
+    public function test_skipping_authentication_fails_when_identity_id_doesnt_match(): void
     {
         $this->buildService(
             new Configuration(
@@ -575,7 +575,7 @@ class CookieServiceTest extends TestCase
         );
     }
 
-    public function test_skipping_authentication_fails_when_token_expired()
+    public function test_skipping_authentication_fails_when_token_expired(): void
     {
         $this->buildService(
             new Configuration(
@@ -606,7 +606,7 @@ class CookieServiceTest extends TestCase
         );
     }
 
-    public function test_skipping_authentication_fails_when_token_was_revoked()
+    public function test_skipping_authentication_fails_when_token_was_revoked(): void
     {
         $this->buildService(
             new Configuration(

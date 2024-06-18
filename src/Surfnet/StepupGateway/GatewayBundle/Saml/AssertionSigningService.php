@@ -18,12 +18,12 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Saml;
 
+use RobRichards\XMLSecLibs\XMLSecurityKey;
 use SAML2\Assertion;
 use SAML2\Certificate\KeyLoader;
 use SAML2\Certificate\PrivateKeyLoader;
 use SAML2\Configuration\PrivateKey;
 use Surfnet\SamlBundle\Entity\IdentityProvider;
-use RobRichards\XMLSecLibs\XMLSecurityKey;
 
 class AssertionSigningService
 {

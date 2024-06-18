@@ -31,7 +31,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class ConsumeAssertionService
 {
-    const RESPONSE_CONTEXT_SERVICE_ID = 'gateway.proxy.response_context';
+    public const RESPONSE_CONTEXT_SERVICE_ID = 'gateway.proxy.response_context';
 
     /** @var PostBinding */
     private $postBinding;
@@ -75,7 +75,7 @@ class ConsumeAssertionService
      * @param ResponseContext $responseContext
      * @return void
      */
-    public function consumeAssertion(Request $request, ResponseContext $responseContext)
+    public function consumeAssertion(Request $request, ResponseContext $responseContext): void
     {
         $originalRequestId = $responseContext->getInResponseTo();
 

@@ -10,6 +10,7 @@ services:
             - "@router"
             - "@request_stack"
             - null
+            # Note that: the IdP is injected with Yaml config where we usually do this by reference
             - enabled: true
               entity_id_route: 'gateway_second_factor_only_metadata'
               sso_route: 'gateway_second_factor_only_identityprovider_sso'
@@ -80,7 +81,6 @@ services:
     second_factor_only.http.redirect_binding:
         class: Surfnet\SamlBundle\Http\RedirectBinding
         arguments:
-            - "@logger"
             - "@surfnet_saml.signing.signature_verifier"
             - "@second_factor_only.entity_service"
 
@@ -88,7 +88,6 @@ services:
         class: Surfnet\SamlBundle\Http\PostBinding
         arguments:
             - "@surfnet_saml.saml2.response_processor"
-            - "@logger"
             - "@surfnet_saml.signing.signature_verifier"
             - "@second_factor_only.entity_service"
 
@@ -124,7 +123,7 @@ services:
     second_factor_only.adfs.state_handler:
         public: false
         arguments:
-            - "@session"
+            - "@request_stack"
 
         class: Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\StateHandler
 

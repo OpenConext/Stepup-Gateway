@@ -20,13 +20,13 @@ namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\Gateway;
 
 use SAML2\Response;
 use Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger;
+use Surfnet\StepupBundle\Service\LoaResolutionService;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
 use Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorService;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Exception\InvalidSecondFactorMethodException;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Saml\ResponseFactory;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\LoaAliasLookupService;
-use Surfnet\StepupBundle\Service\LoaResolutionService;
 use Symfony\Component\HttpFoundation\Request;
 
 class RespondService
@@ -129,7 +129,7 @@ class RespondService
      *
      * @param ResponseContext $responseContext
      */
-    public function resetRespondState(ResponseContext $responseContext)
+    public function resetRespondState(ResponseContext $responseContext): void
     {
         $responseContext->responseSent();
     }

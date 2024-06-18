@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2014 SURFnet bv
+ * Copyright 2015 SURFnet bv
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@ final class ProviderRepository
     /**
      * @param Provider $provider
      */
-    public function addProvider(Provider $provider)
+    public function addProvider(Provider $provider): void
     {
         if ($this->has($provider->getName())) {
             throw new InvalidConfigurationException(sprintf(

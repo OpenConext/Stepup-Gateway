@@ -23,9 +23,9 @@ use Surfnet\SamlBundle\Http\HttpBindingFactory;
 use Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger;
 use Surfnet\SamlBundle\SAML2\AuthnRequest;
 use Surfnet\SamlBundle\SAML2\ReceivedAuthnRequest;
-use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\LoaResolutionService;
 use Surfnet\StepupGateway\GatewayBundle\Exception\RequesterFailureException;
 use Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler;
+use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\LoaResolutionService;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\SecondFactorOnlyNameIdValidationService;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -106,7 +106,7 @@ class LoginService
      * @param ReceivedAuthnRequest $originalRequest
      * @return void
      */
-    public function singleSignOn(Request $httpRequest, ReceivedAuthnRequest $originalRequest)
+    public function singleSignOn(Request $httpRequest, ReceivedAuthnRequest $originalRequest): void
     {
         $originalRequestId = $originalRequest->getRequestId();
 
@@ -122,7 +122,7 @@ class LoginService
             ->setRequestAssertionConsumerServiceUrl($originalRequest->getAssertionConsumerServiceURL())
             ->setRelayState($httpRequest->get(AuthnRequest::PARAMETER_RELAY_STATE, ''))
             ->setIsForceAuthn($originalRequest->isForceAuthn())
-            ->setResponseAction('SurfnetStepupGatewaySecondFactorOnlyBundle:SecondFactorOnly:respond')
+            ->setResponseAction('Surfnet\StepupGateway\SecondFactorOnlyBundle\Controller\SecondFactorOnlyController::respond')
             ->setResponseContextServiceId('second_factor_only.response_context');
 
         $this->stateHandler->markAuthenticationModeForRequest($originalRequestId, 'sfo');

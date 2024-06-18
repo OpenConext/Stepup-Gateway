@@ -1,5 +1,21 @@
 <?php
 
+/**
+ * Copyright 2020 SURFnet bv
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 namespace Surfnet\StepupGateway\Behat\Controller;
 
 use Exception;
@@ -22,7 +38,6 @@ use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\ValueObject\Response as Ad
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;
-use function base64_encode;
 
 class ServiceProviderController
 {
@@ -50,7 +65,6 @@ class ServiceProviderController
             $_POST['SAMLResponse'] = $request->request->get('_SAMLResponse');
             $isAdfs = true;
         }
-        libxml_disable_entity_loader(true);
         try {
             $this->logger->notice('Process the assertion on the test SP (try POST binding)');
             $httpPostBinding = new HTTPPost();
@@ -60,7 +74,7 @@ class ServiceProviderController
                 $this->logger->alert('Processing failed on the test SP');
                 $httpRedirectBinding = new HTTPRedirect();
                 $message = $httpRedirectBinding->receive();
-            } catch (Exception $e2) {
+            } catch (Exception) {
                 throw new RuntimeException('Unable to retrieve SAML message?', 1, $e1);
             }
         }
@@ -82,9 +96,9 @@ class ServiceProviderController
                     'authMethod' => $request->request->get('AuthMethod'),
                 ]
             );
-            return Response::create($html);
+            return new Response($html);
         }
-        return XMLResponse::create($xml);
+        return new XMLResponse($xml);
     }
 
     /**
@@ -114,7 +128,7 @@ class ServiceProviderController
         $authnRequest->setNameId($nameIdVo);
 
         $keyLoader = new PrivateKeyLoader();
-        $privateKey = $keyLoader->loadPrivateKey(new PrivateKey('/var/www/ci/certificates/sp.key', 'default'));
+        $privateKey = $keyLoader->loadPrivateKey(new PrivateKey('/config/ssp/sp.key', 'default'));
         $key = new XMLSecurityKey(XMLSecurityKey::RSA_SHA256, ['type' => 'private']);
         $key->loadKey($privateKey->getKeyAsString());
 

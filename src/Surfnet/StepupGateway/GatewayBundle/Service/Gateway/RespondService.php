@@ -113,7 +113,7 @@ class RespondService
      *
      * @param ResponseContext $responseContext
      */
-    public function resetRespondState(ResponseContext $responseContext)
+    public function resetRespondState(ResponseContext $responseContext): void
     {
         $responseContext->responseSent();
     }

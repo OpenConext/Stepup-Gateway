@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2018 SURFnet bv
+ * Copyright 2015 SURFnet bv
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,11 +18,17 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Monolog\Formatter;
 
-use Monolog\Formatter\GelfMessageFormatter;
 use Monolog\Formatter\FormatterInterface;
+use Monolog\Formatter\GelfMessageFormatter;
+use Monolog\LogRecord;
 
 class GelfMessageToStringFormatter implements FormatterInterface
 {
+    /**
+     * @var GelfMessageFormatter
+     */
+    private $formatter;
+
     /**
      * @param GelfMessageFormatter $formatter
      */
@@ -35,7 +41,7 @@ class GelfMessageToStringFormatter implements FormatterInterface
      * {@inheritdoc} the gelf message is an array which cannot be logged into a single line
      * By jsonencoding the message we can write it on a single line
      */
-    public function format(array $record)
+    public function format(array|LogRecord $record)
     {
         $message = $this->formatter->format($record);
 

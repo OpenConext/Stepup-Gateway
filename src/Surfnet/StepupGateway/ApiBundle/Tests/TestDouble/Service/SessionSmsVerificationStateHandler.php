@@ -18,37 +18,25 @@
 
 namespace Surfnet\StepupGateway\ApiBundle\Tests\TestDouble\Service;
 
-use DateInterval;
-use Mockery as m;
-use Surfnet\StepupBundle\Service\Exception\TooManyChallengesRequestedException;
 use Surfnet\StepupBundle\Service\SmsSecondFactor\OtpVerification;
 use Surfnet\StepupBundle\Service\SmsSecondFactor\SmsVerificationStateHandler;
-use Surfnet\StepupGateway\ApiBundle\Dto\Otp;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 final class SessionSmsVerificationStateHandler implements SmsVerificationStateHandler
 {
-    private $session;
-
-    public function __construct(SessionInterface $session)
-    {
-        $this->session = $session;
+    public function __construct(
+        private readonly RequestStack $requestStack,
+    ) {
     }
 
-    /**
-     * @inheritDoc
-     */
     public function hasState(string $secondFactorId): bool
     {
-        return $this->session->has($secondFactorId);
+        return $this->requestStack->getSession()->has($secondFactorId);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function clearState(string $secondFactorId)
+    public function clearState(string $secondFactorId): void
     {
-        $this->session->remove($secondFactorId);
+        $this->requestStack->getSession()->remove($secondFactorId);
     }
 
     /**
@@ -59,17 +47,11 @@ final class SessionSmsVerificationStateHandler implements SmsVerificationStateHa
         return sprintf("%s-%s", $phoneNumber, $secondFactorId);
     }
 
-    /**
-     * @inheritDoc
-     */
     public function getOtpRequestsRemainingCount(string $secondFactorId): int
     {
         return 3;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function getMaximumOtpRequestsCount(): int
     {
         return 3;

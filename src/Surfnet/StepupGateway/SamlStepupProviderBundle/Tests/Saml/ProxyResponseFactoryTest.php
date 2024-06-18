@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2020 SURFnet bv
+ * Copyright 2018 SURFnet bv
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupGateway\SamlStepupProviderBundle\Test\Saml;
+namespace Surfnet\StepupGateway\SamlStepupProviderBundle\Tests\Saml;
 
 use Mockery as m;
 use Mockery\Mock;
@@ -68,7 +68,7 @@ class ProxyResponseFactoryTest extends GatewaySamlTestCase
         );
     }
 
-    public function test_it_can_create_an_assertion()
+    public function test_it_can_create_an_assertion(): void
     {
         $this->idp
             ->shouldReceive('getEntityId')

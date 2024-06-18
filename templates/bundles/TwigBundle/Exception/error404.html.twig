@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'stepup.error.page_not_found.title'|trans }}{% endblock %}
+
+{% block content %}
+    <p>{{ 'stepup.error.page_not_found.text'|trans }}</p>
+
+    <hr>
+
+    <p>{{ 'stepup.error.support_page.text'|trans({'%support_url%': global_view_parameters.supportUrl })|raw }}</p>
+
+    {# For now the back button is not shown on the error page until a more intelligent solution is thought of #}
+    {% block back_button %}{% endblock %}
+
+{% endblock %}

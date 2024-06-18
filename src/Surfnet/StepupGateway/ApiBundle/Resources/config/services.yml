@@ -12,13 +12,6 @@ services:
         class: Surfnet\StepupGateway\ApiBundle\Sms\SmsAdapterProvider
         arguments: ["%sms_service%"]
 
-    surfnet_gateway_api_service.sms.messagebird:
-        class: Surfnet\StepupGateway\ApiBundle\Sms\MessageBirdService
-        arguments:
-            - "@surfnet_message_bird_api_client.messaging"
-            - "@logger"
-        tags: ['sms_provider']
-
     surfnet_gateway_api_service.sms.spryng:
         class: Surfnet\StepupGateway\ApiBundle\Sms\SpryngService
         arguments:

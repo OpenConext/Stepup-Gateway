@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2014 SURFnet bv
+ * Copyright 2015 SURFnet bv
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ namespace Surfnet\StepupGateway\GatewayBundle\Service;
 
 use Surfnet\StepupBundle\Command\SendSmsCommand;
 use Surfnet\StepupBundle\Service\SmsService;
-use Surfnet\StepupGateway\ApiBundle\Dto\Requester;
 use Surfnet\StepupGateway\ApiBundle\Dto\SmsMessage;
 use Surfnet\StepupGateway\ApiBundle\Service\SmsService as ApiSmsService;
 

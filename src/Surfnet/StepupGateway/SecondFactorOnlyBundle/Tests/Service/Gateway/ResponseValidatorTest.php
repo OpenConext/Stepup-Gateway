@@ -22,7 +22,7 @@ use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase;
-use SAML2\Response;
+use SAML2\Assertion;
 use SAML2\Response\Exception\PreconditionNotMetException;
 use SAML2\XML\saml\NameID;
 use Surfnet\SamlBundle\Entity\IdentityProvider;
@@ -42,20 +42,15 @@ final class ResponseValidatorTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    /** @var MockInterface&SecondFactorTypeService */
-    private $secondFactorTypeService;
+    private (MockInterface&Mockery\LegacyMockInterface)|SecondFactorTypeService $secondFactorTypeService;
 
-    /** @var MockInterface&ProviderRepository */
-    private $providerRepository;
+    private ProviderRepository $providerRepository;
 
-    /** @var MockInterface&PostBinding */
-    private $postBinding;
+    private (MockInterface&Mockery\LegacyMockInterface)|PostBinding $postBinding;
 
-    /** @var MockInterface|IdentityProvider */
-    private $remoteIdp;
+    private MockInterface|IdentityProvider $remoteIdp;
 
-    /** @var MockInterface|ServiceProvider */
-    private $sp;
+    private MockInterface|ServiceProvider $sp;
 
     protected function setUp(): void
     {
@@ -71,45 +66,47 @@ final class ResponseValidatorTest extends TestCase
         parent::setUp();
     }
 
-    public function test_validate_happy_flow()
+    public function test_validate_happy_flow(): void
     {
         $request = $this->prepareRequest();
         $secondFactor = $this->prepareSecondFactor('gssp-identifier');
         $validator = $this->buildValidator();
 
         $this->secondFactorTypeService
-            ->shouldReceive('isGssf')
+            ->expects('isGssf')
             ->andReturnTrue();
 
-        $samlResponse = Mockery::mock(Response::class);
+//        $samlResponse = Mockery::mock(Response::class);
+
+        $samlResponse = Mockery::mock(Assertion::class);
 
         $nameId = Mockery::mock(NameID::class);
-        $nameId->shouldReceive('getValue')
+        $nameId->expects('getValue')
             ->andReturn('gssp-identifier');
 
         $samlResponse
-            ->shouldReceive('getNameId')
+            ->expects('getNameId')
             ->andReturn($nameId);
 
         $this->postBinding
-            ->shouldReceive('processResponse')
+            ->expects('processResponse')
             ->with($request, $this->remoteIdp, $this->sp)
             ->andReturn($samlResponse);
 
         $validator->validate($request, $secondFactor, 'sufjan');
     }
-    public function test_preconditions_must_be_met()
+    public function test_preconditions_must_be_met(): void
     {
         $request = $this->prepareRequest();
         $secondFactor = $this->prepareSecondFactor('gssp-identifier');
         $validator = $this->buildValidator();
 
         $this->secondFactorTypeService
-            ->shouldReceive('isGssf')
+            ->expects('isGssf')
             ->andReturnTrue();
 
         $this->postBinding
-            ->shouldReceive('processResponse')
+            ->expects('processResponse')
             ->with($request, $this->remoteIdp, $this->sp)
             ->andThrow(PreconditionNotMetException::class);
 
@@ -117,28 +114,28 @@ final class ResponseValidatorTest extends TestCase
         $validator->validate($request, $secondFactor, 'sufjan');
     }
 
-    public function test_validate_response_nameid_must_match_state_nameid()
+    public function test_validate_response_nameid_must_match_state_nameid(): void
     {
         $request = $this->prepareRequest();
         $secondFactor = $this->prepareSecondFactor('gssp-identifier');
         $validator = $this->buildValidator();
 
         $this->secondFactorTypeService
-            ->shouldReceive('isGssf')
+            ->expects('isGssf')
             ->andReturnTrue();
 
-        $samlResponse = Mockery::mock(Response::class);
+        $samlResponse = Mockery::mock(Assertion::class);
 
         $nameId = Mockery::mock(NameID::class);
-        $nameId->shouldReceive('getValue')
+        $nameId->expects('getValue')
             ->andReturn('gssp-identifier-changed');
 
         $samlResponse
-            ->shouldReceive('getNameId')
+            ->expects('getNameId')
             ->andReturn($nameId);
 
         $this->postBinding
-            ->shouldReceive('processResponse')
+            ->expects('processResponse')
             ->with($request, $this->remoteIdp, $this->sp)
             ->andReturn($samlResponse);
 

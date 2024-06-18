@@ -25,6 +25,10 @@ use Surfnet\StepupGateway\GatewayBundle\Exception\InstitutionConfigurationNotFou
 class InstitutionConfigurationService
 {
     private $repository;
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
 
     public function __construct(
         InstitutionConfigurationRepository $institutionConfigurationRepository,

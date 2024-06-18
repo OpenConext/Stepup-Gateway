@@ -1,22 +1,24 @@
-FROM ghcr.io/openconext/openconext-basecontainers/php72-apache2:latest AS php-build
+FROM ghcr.io/openconext/openconext-basecontainers/php82-apache2:latest AS php-build
 ARG APP_VERSION
-ENV GATEWAY_VERSION=$APP_VERSION
+ARG GIT_SHA
+ARG GIT_COMMIT_TIME
+ENV OPENCONEXT_APP_VERSION=${APP_VERSION}
+ENV OPENCONEXT_GIT_SHA=${GIT_SHA}
+ENV OPENCONEXT_COMMIT_DATE=${GIT_COMMIT_TIME}
+
+# Set the default workdir
+WORKDIR /var/www/html
 COPY *.tar.bz2 /tmp/
 RUN tar -xvjf /tmp/*.tar.bz2 -C /var/www/html/ && \
   rm -rf /tmp/*.tar.bz2
 
 # Add the application configuration files
-COPY .env.dist .env
-COPY config/legacy/parameters.yaml.dist config/legacy/parameters.yaml
-COPY config/legacy/samlstepupproviders_parameters.yaml.dist config/legacy/samlstepupproviders_parameters.yaml
-COPY config/packages/prod/monolog.yaml.docker config/packages/prod/monolog.yaml 
+COPY config/openconext/parameters.yaml.dist config/openconext/parameters.yaml
+COPY config/openconext/samlstepupproviders_parameters.yaml.dist config/openconext/samlstepupproviders_parameters.yaml
 
 # Add the config files for Apache2
 RUN rm -rf /etc/apache2/sites-enabled/*
 COPY ./docker/conf/gateway-apache2.conf /etc/apache2/sites-enabled/gateway.conf
 RUN rm -rf /var/www/html/var/cache/prod && chown -R www-data /var/www/html/var
-
-# Set the default workdir
-WORKDIR /var/www/html
 
 CMD ["apache2-foreground"]

@@ -31,7 +31,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class LoginService
 {
-    const RESPONSE_CONTEXT_SERVICE_ID = 'gateway.proxy.response_context';
+    public const RESPONSE_CONTEXT_SERVICE_ID = 'gateway.proxy.response_context';
 
     /** @var SamlAuthenticationLogger */
     private $samlLogger;
@@ -111,7 +111,7 @@ class LoginService
             ->setRequestAssertionConsumerServiceUrl($originalRequest->getAssertionConsumerServiceURL())
             ->setRelayState($httpRequest->get(AuthnRequest::PARAMETER_RELAY_STATE, ''))
             ->setIsForceAuthn($originalRequest->isForceAuthn())
-            ->setResponseAction('SurfnetStepupGatewayGatewayBundle:Gateway:respond')
+            ->setResponseAction('Surfnet\StepupGateway\GatewayBundle\Controller\GatewayController::respond')
             ->setResponseContextServiceId(static::RESPONSE_CONTEXT_SERVICE_ID);
 
         $this->stateHandler->markAuthenticationModeForRequest($originalRequestId, 'sso');

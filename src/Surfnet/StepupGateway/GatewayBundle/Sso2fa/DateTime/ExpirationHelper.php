@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /**
  * Copyright 2023 SURFnet bv
@@ -26,30 +28,21 @@ use TypeError;
 
 class ExpirationHelper implements ExpirationHelperInterface
 {
-    /**
-     * @var CoreDateTime
-     */
-    private $now;
-
-    /*
-     * The period in seconds that we still acknowledge the
-     * cookie even tho the expiration was reached. This accounts
-     * for server time/sync differences that may occur.
-     */
-    private $gracePeriod;
-
-    /*
-     * The SSO on 2FA cookie lifetime in seconds
-     *
-     * See: config/legacy/parameters.yaml sso_cookie_lifetime
-     */
-    private $cookieLifetime;
-
-    public function __construct(int $cookieLifetime, int $gracePeriod, CoreDateTime $now = null)
-    {
-        $this->cookieLifetime = $cookieLifetime;
-        $this->gracePeriod = $gracePeriod;
-        if (!$now) {
+    public function __construct(
+        /**
+         * The SSO on 2FA cookie lifetime in seconds
+         * See: config/openconext/parameters.yaml sso_cookie_lifetime
+         */
+        private int $cookieLifetime,
+        /**
+         * The period in seconds that we still acknowledge the
+         * cookie even tho the expiration was reached. This accounts
+         * for server time/sync differences that may occur.
+         */
+        private int $gracePeriod,
+        private ?CoreDateTime $now = null
+    ) {
+        if ($now === null) {
             $now = DateTime::now();
         }
         $this->now = $now;
@@ -66,11 +59,13 @@ class ExpirationHelper implements ExpirationHelperInterface
                 $error
             );
         }
+
         if ($authenticationTimestamp < 0) {
             throw new InvalidAuthenticationTimeException(
                 'The authentication time is from before the Unix timestamp epoch'
             );
         }
+
         if ($authenticationTimestamp > $this->now->getTimestamp()) {
             throw new InvalidAuthenticationTimeException(
                 'The authentication time is from the future, which indicates the clock settings ' .
@@ -80,6 +75,7 @@ class ExpirationHelper implements ExpirationHelperInterface
 
         $expirationTimestamp = $authenticationTimestamp + $this->cookieLifetime + $this->gracePeriod;
         $currentTimestamp = $this->now->getTimestamp();
+
         // Is the current time greater than the expiration time?
         return $currentTimestamp > $expirationTimestamp;
     }

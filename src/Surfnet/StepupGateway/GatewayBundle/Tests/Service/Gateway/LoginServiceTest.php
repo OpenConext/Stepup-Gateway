@@ -37,6 +37,7 @@ use Surfnet\StepupGateway\GatewayBundle\Service\SamlEntityService;
 use Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorService;
 use Surfnet\StepupGateway\GatewayBundle\Tests\TestCase\GatewaySamlTestCase;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Session;
 
 final class LoginServiceTest extends GatewaySamlTestCase
@@ -102,7 +103,7 @@ final class LoginServiceTest extends GatewaySamlTestCase
     /**
      * @test
      */
-    public function it_should_return_a_valid_authn_request_and_update_state_when_starting_on_login_flow()
+    public function it_should_return_a_valid_authn_request_and_update_state_when_starting_on_login_flow(): void
     {
         // Create request
         $httpRequest = new Request([AuthnRequest::PARAMETER_RELAY_STATE => 'relay_state']);
@@ -159,7 +160,7 @@ final class LoginServiceTest extends GatewaySamlTestCase
             'surfnet/gateway/requestassertion_consumer_service_url' => 'https://sp.com/acs',
             'surfnet/gateway/requestrelay_state' => 'relay_state',
             'surfnet/gateway/requestforce_authn' => false,
-            'surfnet/gateway/requestresponse_controller' => 'SurfnetStepupGatewayGatewayBundle:Gateway:respond',
+            'surfnet/gateway/requestresponse_controller' => 'Surfnet\StepupGateway\GatewayBundle\Controller\GatewayController::respond',
             'surfnet/gateway/requestresponse_context_service_id' => 'gateway.proxy.response_context',
             'surfnet/gateway/auth_mode/_123456789012345678901234567890123456789012' => 'sso',
             'surfnet/gateway/requestloa_identifier' => 'http://stepup.example.com/assurance/loa2',
@@ -170,7 +171,7 @@ final class LoginServiceTest extends GatewaySamlTestCase
     /**
      * @test
      */
-    public function it_should_throw_an_exception_when_an_invalid_loa_is_requested_when_starting_on_login_flow()
+    public function it_should_throw_an_exception_when_an_invalid_loa_is_requested_when_starting_on_login_flow(): void
     {
         $this->expectException(RequesterFailureException::class);
         // Create request
@@ -208,10 +209,13 @@ final class LoginServiceTest extends GatewaySamlTestCase
      * @param int $now
      * @param array $sessionData
      */
-    private function initGatewayService(array $idpConfiguration, array $spConfiguration, array $loaLevels, DateTime $now)
+    private function initGatewayService(array $idpConfiguration, array $spConfiguration, array $loaLevels, DateTime $now): void
     {
         $session = new Session($this->sessionStorage);
-        $this->stateHandler = new ProxyStateHandler($session, 'surfnet/gateway/request');
+        $requestStackMock = $this->createMock(RequestStack::class);
+        $requestStackMock->method('getSession')->willReturn($session);
+
+        $this->stateHandler = new ProxyStateHandler($requestStackMock, 'surfnet/gateway/request');
         $samlLogger = new SamlAuthenticationLogger($this->logger);
 
         $hostedServiceProvider = new ServiceProvider($spConfiguration);
@@ -255,7 +259,7 @@ final class LoginServiceTest extends GatewaySamlTestCase
     /**
      * @param string $samlResponseXml
      */
-    private function mockRedirectBinding($samlResponseXml)
+    private function mockRedirectBinding($samlResponseXml): void
     {
         $authnRequest = ReceivedAuthnRequest::from($samlResponseXml);
 

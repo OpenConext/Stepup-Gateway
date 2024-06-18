@@ -1,5 +1,21 @@
 <?php
 
+/**
+ * Copyright 2020 SURFnet bv
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 namespace Surfnet\StepupGateway\Behat\Repository;
 
 use Exception;
@@ -38,7 +54,12 @@ class WhitelistRepository
             if ($stmt->execute($data)) {
                 return $data;
             }
-            throw new Exception('Unable add the institution to the whitelist');
+            throw new Exception(
+                sprintf(
+                    'Unable ad the institution to the whitelist. PDO raised this error: "%s"',
+                    $stmt->errorInfo()[2]
+                )
+            );
         } else {
             // Return the existing whitelist data
             return $stmt->fetchAll()[0];

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2014 SURFnet bv
+ * Copyright 2016 SURFnet bv
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,24 +18,36 @@
 
 namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Controller;
 
+use Psr\Log\LoggerInterface;
 use Surfnet\SamlBundle\Http\XMLResponse;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Surfnet\SamlBundle\Metadata\MetadataFactory;
+use Surfnet\StepupGateway\GatewayBundle\Container\ContainerController;
+use Symfony\Component\Routing\Attribute\Route;
 
-class MetadataController extends Controller
+class MetadataController extends ContainerController
 {
-    public function metadataAction()
+    public function __construct(
+        private readonly LoggerInterface $logger,
+        private readonly MetadataFactory $metadataFactory,
+        private readonly bool $secondFactorEnabled,
+    ) {
+    }
+
+    #[Route(
+        path: '/second-factor-only/metadata',
+        name: 'gateway_second_factor_only_metadata',
+        methods: ['GET']
+    )]
+    public function metadata(): XMLResponse
     {
-        if (!$this->getParameter('second_factor_only')) {
-            $this->get('logger')->notice(sprintf(
+        if (!$this->secondFactorEnabled) {
+            $this->logger->notice(sprintf(
                 'Access to %s denied, second_factor_only parameter set to false.',
-                __METHOD__
+                __METHOD__,
             ));
             throw $this->createAccessDeniedException('Second Factor Only feature disabled');
         }
 
-        /** @var \Surfnet\SamlBundle\Metadata\MetadataFactory $metadataFactory */
-        $metadataFactory = $this->get('second_factor_only.metadata_factory');
-
-        return new XMLResponse($metadataFactory->generate());
+        return new XMLResponse($this->metadataFactory->generate());
     }
 }

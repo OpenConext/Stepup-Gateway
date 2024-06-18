@@ -36,8 +36,8 @@ final class RequestHelper
     /** @var StateHandler */
     private $stateHandler;
 
-    const ADFS_PARAM_AUTH_METHOD = 'AuthMethod';
-    const ADFS_PARAM_CONTEXT = 'Context';
+    public const ADFS_PARAM_AUTH_METHOD = 'AuthMethod';
+    public const ADFS_PARAM_CONTEXT = 'Context';
 
     private static $requiredParams = [
         self::ADFS_PARAM_AUTH_METHOD,

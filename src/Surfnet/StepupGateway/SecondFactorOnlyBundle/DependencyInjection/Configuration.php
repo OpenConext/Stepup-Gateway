@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2014 SURFnet bv
+ * Copyright 2016 SURFnet bv
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,9 +25,9 @@ final class Configuration implements ConfigurationInterface
 {
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
+        $treeBuilder = new TreeBuilder('surfnet_stepup_gateway_second_factor_only');
 
-        $rootNode = $treeBuilder->root('surfnet_stepup_gateway_second_factor_only');
+        $rootNode = $treeBuilder->getRootNode();
 
         $rootNode
             ->children()

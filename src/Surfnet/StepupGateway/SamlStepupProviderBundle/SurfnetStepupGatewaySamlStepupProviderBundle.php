@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2014 SURFnet bv
+ * Copyright 2015 SURFnet bv
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@
 
 namespace Surfnet\StepupGateway\SamlStepupProviderBundle;
 
-use Surfnet\StepupGateway\SamlStepupProviderBundle\DependencyInjection\Compiler\StateHandlerSessionPass;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\DependencyInjection\Compiler\ViewConfigCollectionPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
@@ -28,9 +27,8 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
  */
 class SurfnetStepupGatewaySamlStepupProviderBundle extends Bundle
 {
-    public function build(ContainerBuilder $container)
+    public function build(ContainerBuilder $container): void
     {
-        $container->addCompilerPass(new StateHandlerSessionPass());
         $container->addCompilerPass(new ViewConfigCollectionPass());
     }
 }

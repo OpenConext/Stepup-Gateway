@@ -23,7 +23,7 @@ use Surfnet\StepupGateway\ApiBundle\Sms\SmsAdapterInterface;
 use Surfnet\StepupGateway\ApiBundle\Sms\SmsAdapterProvider;
 use Surfnet\StepupGateway\ApiBundle\Sms\SmsMessageResultInterface;
 
-class SmsService
+class SmsService implements SmsServiceInterface
 {
     /**
      * @var SmsAdapterInterface

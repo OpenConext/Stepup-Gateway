@@ -22,7 +22,11 @@ use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\BeforeFeatureScope;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Mink\Exception\ExpectationException;
+use Psr\Log\LoggerInterface;
 use RuntimeException;
+use SAML2\Compat\ContainerSingleton;
+use SAML2\Compat\Ssp\Container;
+use Surfnet\SamlBundle\Tests\TestSaml2Container;
 use Surfnet\StepupGateway\Behat\Service\FixtureService;
 
 class FeatureContext implements Context
@@ -51,27 +55,30 @@ class FeatureContext implements Context
      */
     private $previousSsoOn2faCookieValue;
 
-    public function __construct(FixtureService $fixtureService)
+    public function __construct(FixtureService $fixtureService, LoggerInterface $logger)
     {
         $this->fixtureService = $fixtureService;
         $this->sso2faCookieName = 'stepup-gateway_sso-on-second-factor-authentication';
+
+        // Set a test container for the SAML2 Library to work with (the compat container is broken)
+        ContainerSingleton::setContainer(new TestSaml2Container($logger));
     }
 
     /**
      * @BeforeFeature
      */
-    public static function setupDatabase(BeforeFeatureScope $scope)
+    public static function setupDatabase(BeforeFeatureScope $scope): void
     {
         // Generate test databases
         echo "Preparing test schemas\n";
-        shell_exec("/var/www/bin/console doctrine:schema:drop --env=test --force");
-        shell_exec("/var/www/bin/console doctrine:schema:create --env=test");
+        shell_exec("/var/www/html/bin/console doctrine:schema:drop --env=smoketest --force");
+        shell_exec("/var/www/html/bin/console doctrine:schema:create --env=smoketest");
     }
 
     /**
      * @BeforeScenario
      */
-    public function gatherContexts(BeforeScenarioScope $scope)
+    public function gatherContexts(BeforeScenarioScope $scope): void
     {
         $environment = $scope->getEnvironment();
         $this->minkContext = $environment->getContext(MinkContext::class);
@@ -80,7 +87,7 @@ class FeatureContext implements Context
     /**
      * @Given /^a user from "([^"]*)" identified by "([^"]*)" with a vetted "([^"]*)" token$/
      */
-    public function aUserIdentifiedByWithAVettedToken($institution, $nameId, $tokenType)
+    public function aUserIdentifiedByWithAVettedToken($institution, $nameId, $tokenType): void
     {
         switch (strtolower($tokenType)) {
             case "yubikey":
@@ -98,7 +105,7 @@ class FeatureContext implements Context
     /**
      * @Given /^a user from "([^"]*)" identified by "([^"]*)" with a self-asserted "([^"]*)" token$/
      */
-    public function aUserIdentifiedByWithASelfAssertedToken($institution, $nameId, $tokenType)
+    public function aUserIdentifiedByWithASelfAssertedToken($institution, $nameId, $tokenType): void
     {
         switch (strtolower($tokenType)) {
             case "yubikey":
@@ -116,7 +123,7 @@ class FeatureContext implements Context
     /**
      * @Then I should see the Yubikey OTP screen
      */
-    public function iShouldSeeTheYubikeyOtpScreen()
+    public function iShouldSeeTheYubikeyOtpScreen(): void
     {
         $this->minkContext->assertPageContainsText('Your YubiKey-code');
     }
@@ -124,7 +131,7 @@ class FeatureContext implements Context
     /**
      * @Then I should see the SMS verification screen
      */
-    public function iShouldSeeTheSMSScreen()
+    public function iShouldSeeTheSMSScreen(): void
     {
         $this->minkContext->assertPageContainsText('Enter the received SMS-code');
         $this->minkContext->assertPageContainsText('Send again');
@@ -133,7 +140,7 @@ class FeatureContext implements Context
     /**
      * @Given /^I should see the Tiqr authentication screen$/
      */
-    public function iShouldSeeTheTiqrAuthenticationScreen()
+    public function iShouldSeeTheTiqrAuthenticationScreen(): void
     {
         $this->minkContext->pressButton('Submit');
         $this->minkContext->assertPageContainsText('Log in with Tiqr');
@@ -142,7 +149,7 @@ class FeatureContext implements Context
     /**
      * @When I enter the OTP
      */
-    public function iEnterTheOtp()
+    public function iEnterTheOtp(): void
     {
         $this->minkContext->fillField('gateway_verify_yubikey_otp_otp', 'bogus-otp-we-use-a-mock-yubikey-service');
         $this->minkContext->pressButton('gateway_verify_yubikey_otp_submit');
@@ -152,7 +159,7 @@ class FeatureContext implements Context
     /**
      * @When I enter the SMS verification code
      */
-    public function iEnterTheSmsVerificationCode()
+    public function iEnterTheSmsVerificationCode(): void
     {
         $cookieValue = $this->minkContext->getSession()->getDriver()->getCookie('smoketest-sms-service');
         $matches = [];
@@ -165,7 +172,7 @@ class FeatureContext implements Context
     /**
      * @When I enter the expired SMS verification code
      */
-    public function iEnterTheExpiredSmsVerificationCode()
+    public function iEnterTheExpiredSmsVerificationCode(): void
     {
         $cookieValue = $this->minkContext->getSession()->getDriver()->getCookie('smoketest-sms-service');
         $matches = [];
@@ -177,7 +184,7 @@ class FeatureContext implements Context
     /**
      * @When I finish the Tiqr authentication
      */
-    public function iFinishGsspAuthentication()
+    public function iFinishGsspAuthentication(): void
     {
         $this->minkContext->pressButton('Submit');
         $this->minkContext->pressButton('Submit');
@@ -186,7 +193,7 @@ class FeatureContext implements Context
     /**
      * @Given /^a whitelisted institution ([^"]*)$/
      */
-    public function aWhitelistedInstitution($institution)
+    public function aWhitelistedInstitution($institution): void
     {
         $this->whitelistedInstitutions[] = $this->fixtureService->whitelist($institution)['institution'];
     }
@@ -194,7 +201,7 @@ class FeatureContext implements Context
     /**
      * @Given /^an institution "([^"]*)" that allows "([^"]*)"$/
      */
-    public function anInstitutionThatAllows(string $institution, string $option)
+    public function anInstitutionThatAllows(string $institution, string $option): void
     {
         switch(true) {
             case $option === 'sso_on_2fa':
@@ -209,7 +216,7 @@ class FeatureContext implements Context
     /**
      * @Then /^I select my ([^"]*) token on the WAYG$/
      */
-    public function iShouldSelectMyTokenOnTheWAYG($tokenType)
+    public function iShouldSelectMyTokenOnTheWAYG($tokenType): void
     {
         switch (strtolower($tokenType)) {
             case "yubikey":
@@ -227,7 +234,7 @@ class FeatureContext implements Context
     /**
      * @Then /^I should be on the WAYG$/
      */
-    public function iShouldBeOnTheWAYG()
+    public function iShouldBeOnTheWAYG(): void
     {
         $this->minkContext->assertPageContainsText('Choose a token for login');
     }
@@ -235,7 +242,7 @@ class FeatureContext implements Context
     /**
      * @Then /^an error response is posted back to the SP$/
      */
-    public function anErrorResponseIsPostedBackToTheSP()
+    public function anErrorResponseIsPostedBackToTheSP(): void
     {
         $this->minkContext->pressButton('Submit');
 
@@ -244,7 +251,7 @@ class FeatureContext implements Context
     /**
      * @Given /^I cancel the authentication$/
      */
-    public function iCancelTheAuthentication()
+    public function iCancelTheAuthentication(): void
     {
         $this->minkContext->pressButton('Cancel');
     }
@@ -252,7 +259,7 @@ class FeatureContext implements Context
     /**
      * @Given /^I pass through the Gateway$/
      */
-    public function iPassThroughTheGateway()
+    public function iPassThroughTheGateway(): void
     {
         $this->minkContext->pressButton('Submit');
     }
@@ -260,18 +267,18 @@ class FeatureContext implements Context
     /**
      * @Given /^I pass through the IdP/
      */
-    public function iPassThroughTheIdP()
+    public function iPassThroughTheIdP(): void
     {
-        $this->minkContext->pressButton('Submit');
+        $this->minkContext->pressButton('Yes, continue');
     }
 
     /**
      * @Then /^the response should have a SSO\-2FA cookie$/
      * @throws ExpectationException
      */
-    public function theResponseShouldHaveASSO2FACookie()
+    public function theResponseShouldHaveASSO2FACookie(): void
     {
-        $this->minkContext->visit('https://gateway.stepup.example.com/info');
+        $this->minkContext->visit('https://gateway.dev.openconext.local/info');
         $cookieValue = $this->minkContext->getSession()->getCookie($this->sso2faCookieName);
         // Store the previous cookie value
         $this->previousSsoOn2faCookieValue = $cookieValue;
@@ -282,9 +289,9 @@ class FeatureContext implements Context
      * @Then /^the response should not have a SSO\-2FA cookie$/
      * @throws ExpectationException
      */
-    public function theResponseShouldNotHaveASSO2FACookie()
+    public function theResponseShouldNotHaveASSO2FACookie(): void
     {
-        $this->minkContext->visit('https://gateway.stepup.example.com/info');
+        $this->minkContext->visit('https://gateway.dev.openconext.local/info');
         $cookie = $this->minkContext->getSession()->getCookie($this->sso2faCookieName);
         if (!is_null($cookie)) {
             throw new ExpectationException(
@@ -298,9 +305,9 @@ class FeatureContext implements Context
      * @Then /^a new SSO\-2FA cookie was written$/
      * @throws ExpectationException
      */
-    public function theSSO2FACookieIsRewritten()
+    public function theSSO2FACookieIsRewritten(): void
     {
-        $this->minkContext->visit('https://gateway.stepup.example.com/info');
+        $this->minkContext->visit('https://gateway.dev.openconext.local/info');
         $cookieValue = $this->minkContext->getSession()->getCookie($this->sso2faCookieName);
         $this->validateSsoOn2faCookie($cookieValue);
         if ($this->previousSsoOn2faCookieValue === $cookieValue) {
@@ -315,9 +322,9 @@ class FeatureContext implements Context
      * @Then /^the existing SSO\-2FA cookie was used$/
      * @throws ExpectationException
      */
-    public function theSSO2FACookieRemainedTheSame()
+    public function theSSO2FACookieRemainedTheSame(): void
     {
-        $this->minkContext->visit('https://gateway.stepup.example.com/info');
+        $this->minkContext->visit('https://gateway.dev.openconext.local/info');
         $cookieValue = $this->minkContext->getSession()->getCookie($this->sso2faCookieName);
         $this->validateSsoOn2faCookie($cookieValue);
         if ($this->previousSsoOn2faCookieValue !== $cookieValue) {
@@ -335,18 +342,18 @@ class FeatureContext implements Context
     /**
      * @Given /^the user cleared cookies from browser$/
      */
-    public function userClearedCookies()
+    public function userClearedCookies(): void
     {
-        $this->minkContext->visit('https://gateway.stepup.example.com/info');
+        $this->minkContext->visit('https://gateway.dev.openconext.local/info');
         $this->minkContext->getSession()->setCookie($this->sso2faCookieName, null);
     }
 
     /**
      * @Given /^the SSO\-2FA cookie should contain "([^"]*)"$/
      */
-    public function theSSO2FACookieShouldContain($expectedCookieValue)
+    public function theSSO2FACookieShouldContain($expectedCookieValue): void
     {
-        $this->minkContext->visit('https://gateway.stepup.example.com/info');
+        $this->minkContext->visit('https://gateway.dev.openconext.local/info');
         $cookieValue = $this->minkContext->getSession()->getCookie($this->sso2faCookieName);
         if (strstr($cookieValue, $expectedCookieValue) === false) {
             throw new ExpectationException(
@@ -358,7 +365,6 @@ class FeatureContext implements Context
                 $this->minkContext->getSession()->getDriver()
             );
         }
-
     }
 
     private function getCookieNames(array $responseCookieHeaders): array
@@ -374,7 +380,7 @@ class FeatureContext implements Context
     /**
      * @throws ExpectationException
      */
-    private function validateSsoOn2faCookie(?string $cookieValue)
+    private function validateSsoOn2faCookie(?string $cookieValue): void
     {
         if (empty($cookieValue)) {
             throw new ExpectationException(

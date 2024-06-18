@@ -1,3 +1,8 @@
+build:
+    image: default-jammy
+    environment:
+        php: 8.2
+
 filter:
     excluded_paths:
         - "*/Tests/*"

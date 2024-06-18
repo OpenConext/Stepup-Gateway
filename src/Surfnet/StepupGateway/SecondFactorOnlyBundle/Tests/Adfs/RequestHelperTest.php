@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2020 SURFnet bv
+ * Copyright 2017 SURFnet bv
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,12 +19,12 @@ namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Test\Adfs;
 
 use Mockery as m;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\RequestHelper;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\StateHandler;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
-use PHPUnit\Framework\TestCase;
 
 class RequestHelperTest extends TestCase
 {
@@ -71,36 +71,36 @@ class RequestHelperTest extends TestCase
     /**
      * @test
      */
-    public function it_can_test_if_request_is_not_from_adfs()
+    public function it_can_test_if_request_is_not_from_adfs(): void
     {
-        $this->parameterBag->shouldReceive('has')->once()->andReturn(false);
+        $this->parameterBag->expects('has')->andReturn(false);
         $this->assertFalse($this->helper->isAdfsRequest($this->request));
     }
 
     /**
      * @test
      */
-    public function it_can_test_if_request_is_from_adfs()
+    public function it_can_test_if_request_is_from_adfs(): void
     {
-        $this->parameterBag->shouldReceive('has')->andReturn(true);
+        $this->parameterBag->expects('has')->twice()->andReturn(true);
         $this->assertTrue($this->helper->isAdfsRequest($this->request));
     }
 
     /**
      * @test
      */
-    public function it_rejects_malformed_request()
+    public function it_rejects_malformed_request(): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->request->request->shouldReceive('get')->with(RequestHelper::ADFS_PARAM_AUTH_METHOD)->andReturn('');
-        $this->request->request->shouldReceive('get')->with(RequestHelper::ADFS_PARAM_CONTEXT)->andReturn('context');
+        $this->parameterBag->expects('get')->with(RequestHelper::ADFS_PARAM_AUTH_METHOD)->andReturn('');
+        $this->parameterBag->expects('get')->with(RequestHelper::ADFS_PARAM_CONTEXT)->andReturn('context');
         $this->helper->transformRequest($this->request, 'my-request-id');
     }
 
     /**
      * @test
      */
-    public function it_transforms_adfs_request()
+    public function it_transforms_adfs_request(): void
     {
         $authnRequest = <<<AUTHNREQUEST
 <samlp:AuthnRequest xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol" xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" ID="my-request-id" Version="2.0" IssueInstant="2017-08-16T14:25:06Z" Destination="https://gw-dev.stepup.coin.surf.net/app_dev.php/second-factor-only/single-sign-on" AssertionConsumerServiceURL="http://localhost:8989/simplesaml/module.php/saml/sp/saml2-acs.php/sfo-sp" ProtocolBinding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"><saml:Issuer>http://localhost:8989/simplesaml/module.php/saml/sp/metadata.php/sfo-sp</saml:Issuer><ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
@@ -112,14 +112,14 @@ AUTHNREQUEST;
 
         $authnRequest = base64_encode($authnRequest);
 
-        $this->request->request->shouldReceive('get')->with(RequestHelper::ADFS_PARAM_AUTH_METHOD)->andReturn('ADFS.SCSA');
-        $this->request->request->shouldReceive('get')->with(RequestHelper::ADFS_PARAM_CONTEXT)->andReturn('<EncryptedData></EncryptedData>');
-        $this->request->request->shouldReceive('remove')->with(RequestHelper::ADFS_PARAM_AUTH_METHOD);
-        $this->request->request->shouldReceive('remove')->with(RequestHelper::ADFS_PARAM_CONTEXT);
+        $this->parameterBag->expects('get')->with(RequestHelper::ADFS_PARAM_AUTH_METHOD)->andReturn('ADFS.SCSA');
+        $this->parameterBag->expects('get')->with(RequestHelper::ADFS_PARAM_CONTEXT)->andReturn('<EncryptedData></EncryptedData>');
+        $this->parameterBag->expects('remove')->with(RequestHelper::ADFS_PARAM_AUTH_METHOD);
+        $this->parameterBag->expects('remove')->with(RequestHelper::ADFS_PARAM_CONTEXT);
 
-        $this->stateHandler->shouldReceive('setRequestId')->with('my-request-id')->andReturn($this->stateHandler);
-        $this->stateHandler->shouldReceive('setAuthMethod')->with('ADFS.SCSA')->andReturn($this->stateHandler);
-        $this->stateHandler->shouldReceive('setContext')->with('<EncryptedData></EncryptedData>')->andReturn($this->stateHandler);;
+        $this->stateHandler->expects('setRequestId')->with('my-request-id')->andReturn($this->stateHandler);
+        $this->stateHandler->expects('setAuthMethod')->with('ADFS.SCSA')->andReturn($this->stateHandler);
+        $this->stateHandler->expects('setContext')->with('<EncryptedData></EncryptedData>')->andReturn($this->stateHandler);;
 
         $this->helper->transformRequest($this->request, 'my-request-id');
 

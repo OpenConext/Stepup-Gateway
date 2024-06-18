@@ -48,7 +48,7 @@ class ProviderRepositoryTest extends TestCase
     /**
      * @test
      */
-    public function can_construct_repository()
+    public function can_construct_repository(): void
     {
         $repo = new ProviderRepository();
         self::assertInstanceOf(ProviderRepository::class, $repo);
@@ -57,7 +57,7 @@ class ProviderRepositoryTest extends TestCase
     /**
      * @test
      */
-    public function verify_add_provider()
+    public function verify_add_provider(): void
     {
         $this->expectException(InvalidConfigurationException::class);
         $repo = new ProviderRepository();
@@ -68,7 +68,7 @@ class ProviderRepositoryTest extends TestCase
     /**
      * @test
      */
-    public function verify_has_provider()
+    public function verify_has_provider(): void
     {
         $repo = new ProviderRepository();
         $repo->addProvider($this->provider);
@@ -79,7 +79,7 @@ class ProviderRepositoryTest extends TestCase
     /**
      * @test
      */
-    public function verify_get_provider()
+    public function verify_get_provider(): void
     {
         $repo = new ProviderRepository();
         $repo->addProvider($this->provider);
@@ -89,7 +89,7 @@ class ProviderRepositoryTest extends TestCase
     /**
      * @test
      */
-    public function verify_get_unknown_provider()
+    public function verify_get_unknown_provider(): void
     {
         $this->expectException(UnknownProviderException::class);
         $repo = new ProviderRepository();

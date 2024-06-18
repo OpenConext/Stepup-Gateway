@@ -1,0 +1,21 @@
+version: '3.6'
+include: 
+  - ../../devconf/stepup/docker-compose.yml
+
+services:
+
+    selenium:
+       image: selenium/standalone-chrome:latest
+       container_name: gateway-selenium
+       environment:
+           START_XVFB: "false"
+       volumes:
+            - /dev/shm:/dev/shm
+       networks:
+         gateway_openconextdev:
+           aliases:
+             - selenium.dev.openconext.local
+
+networks: 
+  gateway_openconextdev:
+    external: true

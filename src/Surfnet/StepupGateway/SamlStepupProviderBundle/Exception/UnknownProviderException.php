@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2014 SURFnet bv
+ * Copyright 2015 SURFnet bv
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ namespace Surfnet\StepupGateway\SamlStepupProviderBundle\Exception;
 
 use RuntimeException;
 
-class UnknownProviderException extends RuntimeException
+final class UnknownProviderException extends RuntimeException
 {
     public static function create($unknownProvider, string $knownProviders)
     {

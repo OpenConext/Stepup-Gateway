@@ -19,15 +19,24 @@
 namespace Surfnet\StepupGateway\GatewayBundle\Controller;
 
 use Surfnet\SamlBundle\Http\XMLResponse;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Surfnet\SamlBundle\Metadata\MetadataFactory;
+use Surfnet\StepupGateway\GatewayBundle\Container\ContainerController;
+use Symfony\Component\Routing\Attribute\Route;
 
-class MetadataController extends Controller
+class MetadataController extends ContainerController
 {
-    public function metadataAction()
-    {
-        /** @var \Surfnet\SamlBundle\Metadata\MetadataFactory $metadataFactory */
-        $metadataFactory = $this->get('surfnet_saml.metadata_factory');
+    public function __construct(
+        private readonly MetadataFactory $metadataFactory,
+    ) {
+    }
 
-        return new XMLResponse($metadataFactory->generate());
+    #[Route(
+        path: '/authentication/metadata',
+        name: 'gateway_saml_metadata',
+        methods: ['GET']
+    )]
+    public function __invoke(): XMLResponse
+    {
+        return new XMLResponse($this->metadataFactory->generate());
     }
 }

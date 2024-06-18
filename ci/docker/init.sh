@@ -1,16 +1,18 @@
 #!/usr/bin/env bash
-uid=$(id -u)
-gid=$(id -g)
-
-printf "UID=${uid}\nGID=${gid}\nCOMPOSE_PROJECT_NAME=gateway" > .env
-
-docker-compose up -d --build
-
-docker-compose exec -T php-fpm.stepup.example.com bash -c '
-  cp ./ci/config/*.yaml ./config/legacy/ && \
-  mkdir -p app/files && \
-  cp ./ci/certificates/* ./app/files/ && \
+cp ../../devconf/stepup/gateway/surfnet_yubikey.yaml.dist ../../devconf/stepup/gateway/surfnet_yubikey.yaml
+echo "pulling the images"
+docker compose pull gateway selenium haproxy ssp mariadb
+echo "starting the images"
+docker compose up gateway selenium haproxy ssp mariadb -d
+echo "intialising the environment"
+docker compose exec -T gateway bash -c '
+  cp /var/www/html/devconf/stepup/gateway/surfnet_yubikey.yaml.dist /var/www/html/devconf/stepup/gateway/surfnet_yubikey.yaml && \
+  cp /var/www/html/config/openconext/parameters.yaml.dist /var/www/html/config/openconext/parameters.yaml && \
+  cp /var/www/html/config/openconext/samlstepupproviders_parameters.yaml.dist /var/www/html/config/openconext/samlstepupproviders_parameters.yaml && \
+  cp /var/www/html/config/openconext/global_view_parameters.yaml.dist /var/www/html/config/openconext/global_view_parameters.yaml && \
   composer install --prefer-dist -n -o --no-scripts && \
-  composer frontend-install && \
-  ./bin/console assets:install --env=test --verbose
+  composer frontend-install && \global_view_parameters.yaml.dist
+  ./bin/console assets:install --env=smoketest --verbose && \
+  ./bin/console cache:clear --env=smoketest && \
+  chown -R www-data:www-data /var/www/html/var/
 '

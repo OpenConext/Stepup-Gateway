@@ -28,9 +28,9 @@ use Surfnet\StepupGateway\GatewayBundle\Exception\AssertionFailedException;
  */
 final class Assert extends Assertion
 {
-    protected static $exceptionClass = '\Surfnet\StepupGateway\GatewayBundle\Exception\AssertionFailedException';
+    protected static $exceptionClass = \Surfnet\StepupGateway\GatewayBundle\Exception\AssertionFailedException::class;
 
-    public static function keysAre(array $array, array $expectedKeys, $propertyPath = null)
+    public static function keysAre(array $array, array $expectedKeys, $propertyPath = null): void
     {
         $givenKeys = array_keys($array);
 

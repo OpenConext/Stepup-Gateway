@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2014 SURFnet bv
+ * Copyright 2015 SURFnet bv
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -108,7 +108,7 @@ class ProxyResponseFactory
      * @param Assertion $newAssertion
      * @param string $destination
      */
-    private function addSubjectConfirmationFor(Assertion $newAssertion, $destination)
+    private function addSubjectConfirmationFor(Assertion $newAssertion, $destination): void
     {
         $confirmation = new SubjectConfirmation();
         $confirmation->setMethod(Constants::CM_BEARER);
@@ -127,7 +127,7 @@ class ProxyResponseFactory
      * @param Assertion $newAssertion
      * @param Assertion $assertion
      */
-    private function addAuthenticationStatementTo(Assertion $newAssertion, Assertion $assertion)
+    private function addAuthenticationStatementTo(Assertion $newAssertion, Assertion $assertion): void
     {
         $newAssertion->setAuthnInstant($assertion->getAuthnInstant());
         $newAssertion->setAuthnContextClassRef($assertion->getAuthnContextClassRef());

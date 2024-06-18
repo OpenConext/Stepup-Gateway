@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2014 SURFnet bv
+ * Copyright 2018 SURFnet bv
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,9 +23,9 @@ use Surfnet\StepupBundle\Value\YubikeyPublicId;
 
 class YubikeyOtpVerificationResult
 {
-    const RESULT_PUBLIC_ID_MATCHED = 0;
-    const RESULT_PUBLIC_ID_DID_NOT_MATCH = 1;
-    const RESULT_OTP_VERIFICATION_FAILED = 2;
+    public const RESULT_PUBLIC_ID_MATCHED = 0;
+    public const RESULT_PUBLIC_ID_DID_NOT_MATCH = 1;
+    public const RESULT_OTP_VERIFICATION_FAILED = 2;
 
     /**
      * @var \Surfnet\StepupBundle\Value\YubikeyPublicId|null

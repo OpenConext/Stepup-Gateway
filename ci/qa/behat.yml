@@ -1,7 +1,6 @@
 default:
   calls:
-    error_reporting: 16383 # E_ALL & ~E_USER_DREPRECATED
-
+    error_reporting: 16383 # E_ALL & ~E_USER_DEPRECATED
   suites:
     default:
       paths:
@@ -10,10 +9,8 @@ default:
         tags: "~@selenium&&~@SKIP"
       contexts: &defaultContexts
         - Surfnet\StepupGateway\Behat\MinkContext
-        - Surfnet\StepupGateway\Behat\FeatureContext:
-            fixtureService: '@Surfnet\StepupGateway\Behat\Service\FixtureService'
-        - Surfnet\StepupGateway\Behat\ServiceProviderContext:
-            fixtureService: '@Surfnet\StepupGateway\Behat\Service\FixtureService'
+        - Surfnet\StepupGateway\Behat\FeatureContext
+        - Surfnet\StepupGateway\Behat\ServiceProviderContext
     selenium:
       paths:
         - '%paths.base%/../../tests/features'
@@ -25,13 +22,12 @@ default:
       contexts: *defaultContexts
   extensions:
     Behat\MinkExtension:
-      base_url: https://gateway.stepup.example.com/
-      goutte: ~
+      base_url: https://gateway.dev.openconext.local/
       sessions:
         chrome:
           selenium2:
             browser: chrome
-            wd_host: http://selenium.stepup.example.com:4444/wd/hub
+            wd_host: http://selenium.dev.openconext.local:4444/wd/hub
             capabilities:
               chrome:
                 switches:
@@ -39,11 +35,9 @@ default:
                   - "--window-size=1920,1080"
                   - "--no-sandbox"
         default:
-          goutte:
-            guzzle_parameters:
-              verify: False
-    Behat\Symfony2Extension:
+          symfony: ~
+    FriendsOfBehat\SymfonyExtension:
       kernel:
         class: 'App\Kernel'
-        env: test
+        environment: smoketest
         debug: true

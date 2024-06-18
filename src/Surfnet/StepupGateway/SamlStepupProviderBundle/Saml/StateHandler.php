@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2014 SURFnet bv
+ * Copyright 2015 SURFnet bv
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,24 +20,16 @@ namespace Surfnet\StepupGateway\SamlStepupProviderBundle\Saml;
 
 use Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Exception\InvalidSubjectException;
-use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class StateHandler extends ProxyStateHandler
 {
-    /**
-     * @var string
-     */
-    private $provider;
-
-    /**
-     * @var AttributeBagInterface
-     */
-    private $attributeBag;
-
-    public function __construct(AttributeBagInterface $attributeBag, $provider)
-    {
-        $this->attributeBag = $attributeBag;
-        $this->provider = $provider;
+    private const SESSION_PATH = 'surfnet/gateway/gssp';
+    public function __construct(
+        private RequestStack $requestStack,
+        private readonly string $provider,
+    ) {
     }
 
     public function setSubject(string $subject): self
@@ -57,10 +49,7 @@ class StateHandler extends ProxyStateHandler
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getSubject()
+    public function getSubject(): ?string
     {
         return $this->get('subject');
     }
@@ -68,12 +57,12 @@ class StateHandler extends ProxyStateHandler
     /**
      * @return bool
      */
-    public function hasSubject()
+    public function hasSubject(): bool
     {
         return (bool) $this->getSubject();
     }
 
-    public function markRequestAsSecondFactorVerification()
+    public function markRequestAsSecondFactorVerification(): static
     {
         $this->set('is_second_factor_verification', true);
 
@@ -83,7 +72,7 @@ class StateHandler extends ProxyStateHandler
     /**
      * @return bool
      */
-    public function secondFactorVerificationRequested()
+    public function secondFactorVerificationRequested(): bool
     {
         return (bool) $this->get('is_second_factor_verification');
     }
@@ -91,24 +80,34 @@ class StateHandler extends ProxyStateHandler
     /**
      * Clear the complete state of this provider, leaving other provider (GSSP) states intact.
      */
-    public function clear()
+    public function clear(): void
     {
-        $all = $this->attributeBag->all();
-
+        $all = $this->getSession()->all();
+        $prefix = $this->getPrefix();
         foreach (array_keys($all) as $key) {
-            if (strpos($key, $this->provider . '/') === 0) {
-                $this->attributeBag->remove($key);
+            if (str_starts_with($key, $prefix)) {
+                $this->getSession()->remove($key);
             }
         }
     }
 
-    protected function set($key, $value)
+    protected function set($key, $value): void
     {
-        $this->attributeBag->set($this->provider . '/' . $key, $value);
+        $this->getSession()->set($this->getPrefix() . $key, $value);
     }
 
-    protected function get($key)
+    protected function get($key): mixed
     {
-        return $this->attributeBag->get($this->provider . '/' . $key);
+        return $this->getSession()->get($this->getPrefix() . $key);
+    }
+
+    private function getPrefix(): string
+    {
+        return sprintf('%s/%s/', self::SESSION_PATH, $this->provider);
+    }
+
+    private function getSession(): SessionInterface
+    {
+        return $this->requestStack->getSession();
     }
 }

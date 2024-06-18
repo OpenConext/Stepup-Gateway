@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2014 SURFnet bv
+ * Copyright 2016 SURFnet bv
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -137,7 +137,7 @@ final class ResponseFactory
      * @param Assertion $newAssertion
      * @param string $destination The ACS location
      */
-    private function addSubjectConfirmationFor(Assertion $newAssertion, $destination)
+    private function addSubjectConfirmationFor(Assertion $newAssertion, $destination): void
     {
         $confirmation = new SubjectConfirmation();
         $confirmation->setMethod(Constants::CM_BEARER);
@@ -156,7 +156,7 @@ final class ResponseFactory
      * @param Assertion $assertion
      * @param $authnContextClassRef
      */
-    private function addAuthenticationStatementTo(Assertion $assertion, $authnContextClassRef)
+    private function addAuthenticationStatementTo(Assertion $assertion, $authnContextClassRef): void
     {
         $assertion->setAuthnInstant($this->getTimestamp());
         $assertion->setAuthnContextClassRef($authnContextClassRef);

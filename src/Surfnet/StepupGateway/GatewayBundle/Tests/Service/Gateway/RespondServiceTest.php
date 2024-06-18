@@ -40,6 +40,7 @@ use Surfnet\StepupGateway\GatewayBundle\Service\ProxyResponseService;
 use Surfnet\StepupGateway\GatewayBundle\Service\SamlEntityService;
 use Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorService;
 use Surfnet\StepupGateway\GatewayBundle\Tests\TestCase\GatewaySamlTestCase;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Session;
 
 final class RespondServiceTest extends GatewaySamlTestCase
@@ -121,7 +122,7 @@ final class RespondServiceTest extends GatewaySamlTestCase
     /**
      * @test
      */
-    public function it_should_return_a_valid_saml_response_and_update_state_when_the_verification_is_succeeded_on_login_flow()
+    public function it_should_return_a_valid_saml_response_and_update_state_when_the_verification_is_succeeded_on_login_flow(): void
     {
 
         // Mock service provider
@@ -151,7 +152,7 @@ final class RespondServiceTest extends GatewaySamlTestCase
             'surfnet/gateway/requestservice_provider' => 'https://sp.com/metadata',
             'surfnet/gateway/requestassertion_consumer_service_url' => 'https://sp.com/acs',
             'surfnet/gateway/requestrelay_state' => 'relay_state',
-            'surfnet/gateway/requestresponse_controller' => 'SurfnetStepupGatewayGatewayBundle:Gateway:respond',
+            'surfnet/gateway/requestresponse_controller' => 'Surfnet\StepupGateway\GatewayBundle\Controller\GatewayController::respond',
             'surfnet/gateway/requestresponse_context_service_id' => 'gateway.proxy.response_context',
             'surfnet/gateway/requestloa_identifier' => 'http://stepup.example.com/assurance/loa2',
             'surfnet/gateway/requestgateway_request_id' => '_mocked_generated_id',
@@ -200,7 +201,7 @@ final class RespondServiceTest extends GatewaySamlTestCase
             'surfnet/gateway/requestservice_provider' => 'https://sp.com/metadata',
             'surfnet/gateway/requestassertion_consumer_service_url' => 'https://sp.com/acs',
             'surfnet/gateway/requestrelay_state' => 'relay_state',
-            'surfnet/gateway/requestresponse_controller' => 'SurfnetStepupGatewayGatewayBundle:Gateway:respond',
+            'surfnet/gateway/requestresponse_controller' => 'Surfnet\StepupGateway\GatewayBundle\Controller\GatewayController::respond',
             'surfnet/gateway/requestresponse_context_service_id' => 'gateway.proxy.response_context',
             'surfnet/gateway/requestloa_identifier' => 'http://stepup.example.com/assurance/loa2',
             'surfnet/gateway/requestgateway_request_id' => '_mocked_generated_id',
@@ -224,7 +225,7 @@ final class RespondServiceTest extends GatewaySamlTestCase
             'surfnet/gateway/requestservice_provider' => 'https://sp.com/metadata',
             'surfnet/gateway/requestassertion_consumer_service_url' => 'https://sp.com/acs',
             'surfnet/gateway/requestrelay_state' => 'relay_state',
-            'surfnet/gateway/requestresponse_controller' => 'SurfnetStepupGatewayGatewayBundle:Gateway:respond',
+            'surfnet/gateway/requestresponse_controller' => 'Surfnet\StepupGateway\GatewayBundle\Controller\GatewayController::respond',
             'surfnet/gateway/requestresponse_context_service_id' => 'gateway.proxy.response_context',
             'surfnet/gateway/requestloa_identifier' => 'http://stepup.example.com/assurance/loa2',
             'surfnet/gateway/requestgateway_request_id' => '_mocked_generated_id',
@@ -248,10 +249,13 @@ final class RespondServiceTest extends GatewaySamlTestCase
      * @param int $now
      * @param array $sessionData
      */
-    private function initGatewayService(array $idpConfiguration, array $dictionaryAttributes, array $loaLevels, DateTime $now)
+    private function initGatewayService(array $idpConfiguration, array $dictionaryAttributes, array $loaLevels, DateTime $now): void
     {
         $session = new Session($this->sessionStorage);
-        $this->stateHandler = new ProxyStateHandler($session, 'surfnet/gateway/request');
+        $requestStackMock = $this->createMock(RequestStack::class);
+        $requestStackMock->method('getSession')->willReturn($session);
+
+        $this->stateHandler = new ProxyStateHandler($requestStackMock, 'surfnet/gateway/request');
         $samlLogger = new SamlAuthenticationLogger($this->logger);
 
         $this->remoteIdp = new IdentityProvider($idpConfiguration);

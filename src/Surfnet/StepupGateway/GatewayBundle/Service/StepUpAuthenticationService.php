@@ -40,7 +40,7 @@ use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactorRepository;
 use Surfnet\StepupGateway\GatewayBundle\Exception\InstitutionMismatchException;
 use Surfnet\StepupGateway\GatewayBundle\Exception\LoaCannotBeGivenException;
 use Surfnet\StepupGateway\GatewayBundle\Exception\UnknownInstitutionException;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -68,7 +68,7 @@ class StepUpAuthenticationService
     private $smsService;
 
     /**
-     * @var \Symfony\Component\Translation\TranslatorInterface
+     * @var \Symfony\Contracts\Translation\TranslatorInterface
      */
     private $translator;
 
@@ -397,7 +397,7 @@ class StepUpAuthenticationService
         return $this->smsService->verifyPossession($command);
     }
 
-    public function clearSmsVerificationState(string $secondFactorId)
+    public function clearSmsVerificationState(string $secondFactorId): void
     {
         $this->smsService->clearSmsVerificationState($secondFactorId);
     }

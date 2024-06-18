@@ -23,7 +23,7 @@ use Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\AllowedServiceProvid
 
 class AllowedServiceProvidersTest extends TestCase
 {
-    public function test_allowed_gssps_can_be_tested()
+    public function test_allowed_gssps_can_be_tested(): void
     {
         $allowedProviders = new AllowedServiceProviders(
             ['https://ra.stepup.example.com/vetting/gssf/tiqr/metadata'],

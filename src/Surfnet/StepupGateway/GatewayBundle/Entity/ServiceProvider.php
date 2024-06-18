@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2014 SURFnet bv
+ * Copyright 2016 SURFnet bv
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -101,7 +101,7 @@ class ServiceProvider extends BaseServiceProvider
                     'AuthnRequest requests ACS location "%s" but it is not configured in the list of allowed ACS ' .
                     'locations, allowed locations include: [%s]',
                     $acsLocationInAuthnRequest,
-                    implode($allowedAcsLocations, ', ')
+                    is_string($allowedAcsLocations) ? $allowedAcsLocations : implode($allowedAcsLocations, ', ')
                 )
             );
         }

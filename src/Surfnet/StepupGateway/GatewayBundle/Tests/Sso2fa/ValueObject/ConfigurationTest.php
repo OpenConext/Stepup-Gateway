@@ -25,21 +25,21 @@ use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\Configuration;
 
 class ConfigurationTest extends TestCase
 {
-    public function test_persistent_cookie_requires_non_zero_lifetime()
+    public function test_persistent_cookie_requires_non_zero_lifetime(): void
     {
         self::expectException(InvalidCookieTypeException::class);
         self::expectExceptionMessage('When using a persistent cookie, you must configure a non zero cookie lifetime');
         new Configuration('name', 'persistent', 0, 'LORUM IPSUM DOLOR SIT AMOR VINCIT OMIA');
     }
 
-    public function test_encryption_key_must_be_hexadecimal()
+    public function test_encryption_key_must_be_hexadecimal(): void
     {
         self::expectException(InvalidEncryptionKeyException::class);
         self::expectExceptionMessage('The configured SSO on 2FA encryption key contains illegal characters. It should be a 64 digits long hexadecimal value. Example value: 000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f');
         new Configuration('name', 'session', 0, 'Monkey nut Mies');
     }
 
-    public function test_encryption_key_must_be_amply_strong()
+    public function test_encryption_key_must_be_amply_strong(): void
     {
         self::expectException(InvalidEncryptionKeyException::class);
         self::expectExceptionMessage('The configured SSO on 2FA encryption key must be exactly 32 bytes. This comes down to 64 hex digits value, configured in the sso_encryption_key configuration option');

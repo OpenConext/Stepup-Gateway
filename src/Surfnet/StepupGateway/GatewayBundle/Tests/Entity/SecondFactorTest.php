@@ -19,11 +19,11 @@
 namespace Surfnet\StepupGateway\GatewayBundle\Test\Entity;
 
 use Mockery;
+use PHPUnit\Framework\TestCase;
+use Surfnet\StepupBundle\Exception\DomainException;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupBundle\Value\Loa;
 use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor;
-use PHPUnit\Framework\TestCase;
-use Surfnet\StepupBundle\Exception\DomainException;
 
 /**
  * Integration test
@@ -35,7 +35,7 @@ class SecondFactorTest extends TestCase
         $secondFactor = Mockery::mock(SecondFactor::class)->makePartial();
         $secondFactor->id = 'the-id-of-the-second-factor';
         $secondFactor->identityId = 'the-id-of-the-identity';
-        $secondFactor->nameId = 'urn:collab:person:stepup.example.com:admin';
+        $secondFactor->nameId = 'urn:collab:person:dev.openconext.local:admin';
         $secondFactor->secondFactorType = $type;
         $secondFactor->identityVetted = $identityVetted;
         return $secondFactor;
@@ -62,7 +62,7 @@ class SecondFactorTest extends TestCase
         float $requiredLoa,
         bool $expectedResult,
         bool $isIdentityVetted = true
-    ) {
+    ): void {
         $token = $this->buildSecondFactor($tokenType, $isIdentityVetted);
         $vettingTypeService = $this->buildSecondFactorTypeService();
         $this->assertEquals(
@@ -77,7 +77,7 @@ class SecondFactorTest extends TestCase
     /**
      * @dataProvider provideErroneousIdentityVettedTestData
      */
-    public function test_reject_faulty_token_data(string $tokenType, float $requiredLoa, string $expectedMessage)
+    public function test_reject_faulty_token_data(string $tokenType, float $requiredLoa, string $expectedMessage): void
     {
         $raVettedYubikey = $this->buildSecondFactor($tokenType, true);
         $vettingTypeService = $this->buildSecondFactorTypeService();
@@ -92,7 +92,7 @@ class SecondFactorTest extends TestCase
     /**
      * @dataProvider provideLoaLevelExpectations
      */
-    public function test_get_loa(string $tokenType, bool $isIdentityVetted, float $expectedLoa)
+    public function test_get_loa(string $tokenType, bool $isIdentityVetted, float $expectedLoa): void
     {
         $token = $this->buildSecondFactor($tokenType, $isIdentityVetted);
         $service = $this->buildSecondFactorTypeService();

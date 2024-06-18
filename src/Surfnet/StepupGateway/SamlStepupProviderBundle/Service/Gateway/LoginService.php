@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2020 SURFnet bv
+ * Copyright 2018 SURFnet bv
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,13 +65,11 @@ class LoginService
      * The service provider in this context is SelfService (when registering
      * a token) or RA (when vetting a token).
      *
-     * @param Provider $provider
-     * @param Request $httpRequest
      * @return AuthnRequest
      */
     public function singleSignOn(Provider $provider, Request $httpRequest)
     {
-        $originalRequest = $this->redirectBinding->processSignedRequest($httpRequest);
+        $originalRequest = $this->redirectBinding->receiveSignedAuthnRequestFrom($httpRequest);
 
         $originalRequestId = $originalRequest->getRequestId();
         $logger = $this->samlLogger->forAuthentication($originalRequestId);

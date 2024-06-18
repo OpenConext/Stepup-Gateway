@@ -34,8 +34,8 @@ class SamlEntity
     /**
      * Constants denoting the type of SamlEntity. Also used in the middleware to make that distinction
      */
-    const TYPE_IDP = 'idp';
-    const TYPE_SP = 'sp';
+    public const TYPE_IDP = 'idp';
+    public const TYPE_SP = 'sp';
 
     /**
      * @var string

@@ -37,6 +37,7 @@ use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\LoaAliasLookupService;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\LoaResolutionService as SecondFactorLoaResolutionService;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\SecondFactorOnlyNameIdValidationService;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Session;
 
 final class LoginServiceTest extends GatewaySamlTestCase
@@ -80,7 +81,7 @@ final class LoginServiceTest extends GatewaySamlTestCase
     /**
      * @test
      */
-    public function it_should_return_a_valid_saml_response_and_update_state_when_starting_verification_on_sfo_login_flow()
+    public function it_should_return_a_valid_saml_response_and_update_state_when_starting_verification_on_sfo_login_flow(): void
     {
         // Create request
         $httpRequest = new Request();
@@ -141,7 +142,7 @@ final class LoginServiceTest extends GatewaySamlTestCase
             'surfnet/gateway/requestassertion_consumer_service_url' => 'https://gateway.tld/gssp/tiqr/consume-assertion',
             'surfnet/gateway/requestrelay_state' => '',
             'surfnet/gateway/requestforce_authn' => false,
-            'surfnet/gateway/requestresponse_controller' => 'SurfnetStepupGatewaySecondFactorOnlyBundle:SecondFactorOnly:respond',
+            'surfnet/gateway/requestresponse_controller' => 'Surfnet\StepupGateway\SecondFactorOnlyBundle\Controller\SecondFactorOnlyController::respond',
             'surfnet/gateway/requestresponse_context_service_id' => 'second_factor_only.response_context',
             'surfnet/gateway/auth_mode/_7179b234fc69f75724c83cab795fc87475d2f6d88e97e43368c3966e398c' => 'sfo',
             'surfnet/gateway/requestname_id' => 'oom60v-3art',
@@ -153,7 +154,7 @@ final class LoginServiceTest extends GatewaySamlTestCase
     /**
      * @test
      */
-    public function it_should_throw_a_exception_when_second_factor_is_not_allowed_when_starting_verification_on_sfo_login_flow()
+    public function it_should_throw_a_exception_when_second_factor_is_not_allowed_when_starting_verification_on_sfo_login_flow(): void
     {
         $this->expectException(RequesterFailureException::class);
         // Create request
@@ -199,7 +200,7 @@ final class LoginServiceTest extends GatewaySamlTestCase
     /**
      * @test
      */
-    public function it_should_throw_a_exception_when_the_requestd_loa_is_not_supported_when_starting_verification_on_sfo_login_flow()
+    public function it_should_throw_a_exception_when_the_requestd_loa_is_not_supported_when_starting_verification_on_sfo_login_flow(): void
     {
         $this->expectException(RequesterFailureException::class);
         // Create request
@@ -248,10 +249,13 @@ final class LoginServiceTest extends GatewaySamlTestCase
      * @param DateTime $now
      * @param array $sessionData
      */
-    private function initGatewayLoginService(array $loaLevels,  array $loaAliases)
+    private function initGatewayLoginService(array $loaLevels,  array $loaAliases): void
     {
         $session = new Session($this->sessionStorage);
-        $this->stateHandler = new ProxyStateHandler($session, 'surfnet/gateway/request');
+        $requestStackMock = $this->createMock(RequestStack::class);
+        $requestStackMock->method('getSession')->willReturn($session);
+
+        $this->stateHandler = new ProxyStateHandler($requestStackMock, 'surfnet/gateway/request');
         $samlLogger = new SamlAuthenticationLogger($this->logger);
 
         $this->loaResolutionService = $this->mockLoaResolutionService($loaLevels);

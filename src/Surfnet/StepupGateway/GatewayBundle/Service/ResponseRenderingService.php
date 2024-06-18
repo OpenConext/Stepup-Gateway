@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2014 SURFnet bv
+ * Copyright 2016 SURFnet bv
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,10 +24,10 @@ use SAML2\Response as SAMLResponse;
 use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseBuilder;
 use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\CookieService;
-use Symfony\Component\HttpFoundation\Request;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\ResponseHelper;
-use Twig\Environment;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Twig\Environment;
 
 final class ResponseRenderingService
 {
@@ -140,7 +140,7 @@ final class ResponseRenderingService
 
         $httpResponse = (new Response)->setContent(
             $this->templateEngine->render(
-                'SurfnetStepupGatewayGatewayBundle:gateway:' . $view . '.html.twig',
+                '@default/gateway/'.$view.'.html.twig',
                 $parameters
             )
         );

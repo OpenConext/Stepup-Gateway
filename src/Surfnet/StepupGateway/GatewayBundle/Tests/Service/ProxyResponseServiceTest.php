@@ -101,7 +101,7 @@ final class ProxyResponseServiceTest extends GatewaySamlTestCase
     /**
      * @test
      */
-    public function it_sets_the_proxied_identity_provider_as_authenticating_authority()
+    public function it_sets_the_proxied_identity_provider_as_authenticating_authority(): void
     {
         $factory = new ProxyResponseService(
             $this->identityProvider,
@@ -130,7 +130,7 @@ final class ProxyResponseServiceTest extends GatewaySamlTestCase
     /**
      * @test
      */
-    public function it_uses_internal_collab_person_id_when_present_and_removes_it_from_outgoing_assertion()
+    public function it_uses_internal_collab_person_id_when_present_and_removes_it_from_outgoing_assertion(): void
     {
         $this->attributeDictionary
             ->shouldReceive('translate->getAttributeValue')
@@ -187,7 +187,7 @@ final class ProxyResponseServiceTest extends GatewaySamlTestCase
     /**
      * @test
      */
-    public function it_appends_the_proxied_identity_provider_to_existing_authenticating_authorities()
+    public function it_appends_the_proxied_identity_provider_to_existing_authenticating_authorities(): void
     {
         $factory = new ProxyResponseService(
             $this->identityProvider,
@@ -215,7 +215,7 @@ final class ProxyResponseServiceTest extends GatewaySamlTestCase
         );
     }
 
-    public function testCreateProxyResponseRequiresEptiIfInternalCollabPersonIdIsNotPresent()
+    public function testCreateProxyResponseRequiresEptiIfInternalCollabPersonIdIsNotPresent(): void
     {
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Neither "urn:mace:dir:attribute-def:eduPersonTargetedID" nor "urn:mace:surf.nl:attribute-def:internal-collabPersonId" is present');
@@ -239,7 +239,7 @@ final class ProxyResponseServiceTest extends GatewaySamlTestCase
         $factory->createProxyResponse($originalAssertion,'https://acs');
     }
 
-    public function testCreateProxyResponseRequiresEptiFilled()
+    public function testCreateProxyResponseRequiresEptiFilled(): void
     {
         $this->attributeDictionary
             ->shouldReceive('translate->getAttributeValue')
@@ -279,7 +279,7 @@ final class ProxyResponseServiceTest extends GatewaySamlTestCase
      *
      * See https://www.pivotaltracker.com/story/show/157880479
      */
-    public function testSubjectConfirmationNotOnOrAfterEqualsAssertionNotOnOrAfter()
+    public function testSubjectConfirmationNotOnOrAfterEqualsAssertionNotOnOrAfter(): void
     {
         $factory = new ProxyResponseService(
             $this->identityProvider,

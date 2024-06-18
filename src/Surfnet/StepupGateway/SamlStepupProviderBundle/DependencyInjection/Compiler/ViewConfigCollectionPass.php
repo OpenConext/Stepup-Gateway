@@ -19,6 +19,7 @@
 namespace Surfnet\StepupGateway\SamlStepupProviderBundle\DependencyInjection\Compiler;
 
 use Surfnet\StepupGateway\SamlStepupProviderBundle\DependencyInjection\SurfnetStepupGatewaySamlStepupProviderExtension;
+use Surfnet\StepupGateway\SamlStepupProviderBundle\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
@@ -28,7 +29,7 @@ class ViewConfigCollectionPass implements CompilerPassInterface
     /**
      * @param ContainerBuilder $container
      */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         if (!$container->has('surfnet_stepup.provider.collection')) {
             return;

@@ -1,5 +1,0 @@
-# This file is auto-generated during the composer install
-parameters:
-    support_url:
-        en_GB: 'https://support.example.org'
-        nl_NL: 'https://support.example.org'

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2020 SURFnet bv
+ * Copyright 2017 SURFnet bv
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,12 +18,12 @@
 namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Test\Adfs;
 
 use Mockery as m;
+use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\ResponseHelper;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\StateHandler;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
-use PHPUnit\Framework\TestCase;
 
 class ResponseHelperTest extends TestCase
 {
@@ -68,7 +68,7 @@ class ResponseHelperTest extends TestCase
     /**
      * @test
      */
-    public function it_can_test_if_response_is_adfs_response()
+    public function it_can_test_if_response_is_adfs_response(): void
     {
         $this->stateHandler->shouldReceive('hasMatchingRequestId')->with('my-request-id')->andReturn(true);
         $this->assertTrue($this->helper->isAdfsResponse('my-request-id'));
@@ -77,7 +77,7 @@ class ResponseHelperTest extends TestCase
     /**
      * @test
      */
-    public function it_can_test_if_response_is_not_adfs_response()
+    public function it_can_test_if_response_is_not_adfs_response(): void
     {
         $this->stateHandler->shouldReceive('hasMatchingRequestId')->with('my-request-id')->andReturn(false);
         $this->assertFalse($this->helper->isAdfsResponse('my-request-id'));
@@ -86,7 +86,7 @@ class ResponseHelperTest extends TestCase
     /**
      * @test
      */
-    public function it_retrieves_adfs_parameters()
+    public function it_retrieves_adfs_parameters(): void
     {
         $this->stateHandler->shouldReceive('getAuthMethod')->andReturn('ADFS:SCSA');
         $this->stateHandler->shouldReceive('getContext')->andReturn('<blob></blob>');
@@ -101,7 +101,7 @@ class ResponseHelperTest extends TestCase
     /**
      * @test
      */
-    public function it_rejects_malformed_adfs_parameters()
+    public function it_rejects_malformed_adfs_parameters(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->stateHandler->shouldReceive('getAuthMethod')->andReturn(null);

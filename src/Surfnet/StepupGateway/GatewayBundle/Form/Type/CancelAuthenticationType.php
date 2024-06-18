@@ -24,7 +24,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class CancelAuthenticationType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('cancel', SubmitType::class, [
             'label' => 'gateway.form.cancel_authentication.button.cancel',
