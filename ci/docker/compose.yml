@@ -1,4 +1,3 @@
-version: '3.6'
 include: 
   - ../../devconf/stepup/docker-compose.yml
 
@@ -12,10 +11,6 @@ services:
        volumes:
             - /dev/shm:/dev/shm
        networks:
-         gateway_openconextdev:
+         openconextdev:
            aliases:
              - selenium.dev.openconext.local
-
-networks: 
-  gateway_openconextdev:
-    external: true
