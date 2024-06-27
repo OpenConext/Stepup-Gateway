@@ -1,13 +1,16 @@
 Step-up Gateway
 ===============
 
-[![Build Status](https://github.com/OpenConext/Stepup-Gateway/workflows/test-integration/badge.svg)](https://travis-ci.org/OpenConext/Stepup-Gateway) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/OpenConext/Stepup-Gateway/badges/quality-score.png?b=develop)](https://scrutinizer-ci.com/g/OpenConext/Stepup-Gateway/?branch=develop) [![SensioLabsInsight](https://insight.sensiolabs.com/projects/6204fffb-6333-4f78-9620-5a5bb09dfab2/mini.png)](https://insight.sensiolabs.com/projects/6204fffb-6333-4f78-9620-5a5bb09dfab2)
+[![Build status](https://github.com/OpenConext/Stepup-Gateway/actions/workflows/test-integration.yml/badge.svg)](https://github.com/OpenConext/Stepup-Gateway/actions/workflows/test-integration.yml)
+
+
+ [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/OpenConext/Stepup-Gateway/badges/quality-score.png?b=develop)](https://scrutinizer-ci.com/g/OpenConext/Stepup-Gateway/?branch=develop) [![SensioLabsInsight](https://insight.sensiolabs.com/projects/6204fffb-6333-4f78-9620-5a5bb09dfab2/mini.png)](https://insight.sensiolabs.com/projects/6204fffb-6333-4f78-9620-5a5bb09dfab2)
 
 This component is part of "Step-up Authentication as-a Service". See [Stepup-Deploy](https://github.com/OpenConext/Stepup-Deploy) for an overview and installation instructions for a complete Stepup system, including this component. The requirements and installation instructions below cover this component only.
 
 ## Requirements
 
- * PHP 7.2
+ * PHP 8.2
  * [Composer](https://getcomposer.org/)
  * A web server (Apache, Nginx)
  * MariaDB 5.5+ (MySQL should work as well)
