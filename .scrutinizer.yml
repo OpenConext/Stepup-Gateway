@@ -8,7 +8,6 @@ build:
             tests:
                 override:
                     - php-scrutinizer-run
-                      idle_timeout: 600        # 10 minutes
 
 filter:
     excluded_paths:
