@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.0.1
+- Bugfix: implode was called with the wrong argument sequence. Which would work in PHP<8.0 #332
+
+## 5.0.0
+- Upgrade to Symfony 6.4 with PHP 8.2
+
 ## 4.2.2
 - Simplify cookie write conditions and other improvements #302
 - Bugfix: removed unwarranted state change of the selected second factor #302
