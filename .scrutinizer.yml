@@ -2,12 +2,13 @@ build:
     image: default-jammy
     environment:
         php: 8.2
+
     nodes:
-      node-with-auto-setup:
-        tests:
-          override:
-            - command: ./run-tests.sh
-              idle_timeout: 600        # 10 minutes
+        analysis:
+            tests:
+                override:
+                    - php-scrutinizer-run
+                      idle_timeout: 600        # 10 minutes
 
 filter:
     excluded_paths:
