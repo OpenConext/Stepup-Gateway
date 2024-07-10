@@ -1,5 +1,8 @@
 # Changelog
 
+## 5.0.2
+- Bugfix: set the correct response Twig template when rendering the ADFS response #333 
+
 ## 5.0.1
 - Bugfix: implode was called with the wrong argument sequence. Which would work in PHP<8.0 #332
 
