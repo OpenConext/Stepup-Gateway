@@ -146,7 +146,7 @@ class SecondFactorOnlyController extends ContainerController
             $xmlResponse = $responseRendering->getResponseAsXML($response);
 
             $httpResponse = $this->render(
-                '@SurfnetStepupGatewaySecondFactorOnly/adfs/consume_assertion.html.twig',
+                '@default/adfs/consume_assertion.html.twig',
                 [
                     'acu' => $responseContext->getDestinationForAdfs(),
                     'samlResponse' => $xmlResponse,
