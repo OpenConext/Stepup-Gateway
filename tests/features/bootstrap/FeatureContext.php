@@ -162,6 +162,9 @@ class FeatureContext implements Context
     public function iEnterTheSmsVerificationCode(): void
     {
         $cookieValue = $this->minkContext->getSession()->getDriver()->getCookie('smoketest-sms-service');
+        if ($cookieValue === null) {
+            throw new RuntimeException('Unable to load the smoketest-sms-service cookie');
+        }
         $matches = [];
         preg_match('/^Your\ SMS\ code:\ (.*)$/', $cookieValue, $matches);
         $this->minkContext->fillField('gateway_verify_sms_challenge_challenge', $matches[1]);
