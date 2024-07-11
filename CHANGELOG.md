@@ -2,6 +2,7 @@
 
 ## 5.0.2
 - Bugfix: set the correct response Twig template when rendering the ADFS response #333 
+- Enable part of the behat test suite #333 Also see: https://www.pivotaltracker.com/story/show/187940465
 
 ## 5.0.1
 - Bugfix: implode was called with the wrong argument sequence. Which would work in PHP<8.0 #332
