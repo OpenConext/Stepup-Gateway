@@ -102,7 +102,9 @@
             "@phpstan",
             "@phpcs",
             "@phpmd",
-            "@test"
+            "@test",
+            "@behat-adfs",
+            "@behat-metadata"
         ],
         "phplint": "./ci/qa/phplint",
         "validate-lockfile": "./ci/qa/validate",
@@ -111,6 +113,8 @@
         "phpstan": "./ci/qa/phpstan",
         "phpmd": "./ci/qa/phpmd",
         "behat": "./ci/qa/behat",
+        "behat-adfs": "./ci/qa/behat tests/features/adfs.feature",
+        "behat-metadata": "./ci/qa/behat tests/features/metadata.feature",
         "behat-selenium": "./ci/qa/behat-selenium",
         "test": "./ci/qa/phpunit",
         "license-headers": "./ci/qa/docheader",
