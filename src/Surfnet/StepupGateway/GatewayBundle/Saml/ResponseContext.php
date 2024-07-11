@@ -232,9 +232,11 @@ class ResponseContext
      */
     public function getNormalizedSchacHomeOrganization(): ?string
     {
-        return strtolower(
-            $this->stateHandler->getSchacHomeOrganization()
-        );
+        $schacHomeOrganization = $this->stateHandler->getSchacHomeOrganization();
+        if ($schacHomeOrganization === null) {
+            return null;
+        }
+        return strtolower($schacHomeOrganization);
     }
 
     /**
