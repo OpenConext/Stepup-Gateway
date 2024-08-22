@@ -104,7 +104,8 @@
             "@phpmd",
             "@test",
             "@behat-adfs",
-            "@behat-metadata"
+            "@behat-metadata",
+            "@behat-selenium"
         ],
         "phplint": "./ci/qa/phplint",
         "validate-lockfile": "./ci/qa/validate",
