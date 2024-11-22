@@ -15,7 +15,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           repository: OpenConext/Stepup-Build
-          ref: master
+          ref: main
           fetch-depth: 0
       - name: Output the semver tag to the tag variable
         id: vars
