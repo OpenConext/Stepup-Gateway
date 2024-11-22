@@ -4,9 +4,9 @@ gid=$(id -g)
 
 printf "UID=${uid}\nGID=${gid}\nCOMPOSE_PROJECT_NAME=gateway" > .env
 
-docker-compose up -d --build
+docker compose up -d --build
 
-docker-compose exec -T php-fpm.stepup.example.com bash -c '
+docker compose exec -T php-fpm.stepup.example.com bash -c '
   cp ./ci/config/*.yaml ./config/legacy/ && \
   mkdir -p app/files && \
   cp ./ci/certificates/* ./app/files/ && \
