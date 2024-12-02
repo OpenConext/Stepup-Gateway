@@ -21,7 +21,7 @@ jobs:
               run: cd ci/docker && ./init.sh
             - name: Run CI tests
               run: |
-                  cd ci/docker && docker-compose exec -T php-fpm.stepup.example.com bash -c '
+                  cd ci/docker && docker compose exec -T php-fpm.stepup.example.com bash -c '
                       composer check
                   '
               env:
