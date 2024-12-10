@@ -1,4 +1,4 @@
-FROM ghcr.io/openconext/openconext-basecontainers/php72-apache2:latest
+FROM ghcr.io/openconext/openconext-basecontainers/php82-apache2:latest
 WORKDIR /var/www/html
 ARG APP_VERSION
 ENV GATEWAY_VERSION=$APP_VERSION
