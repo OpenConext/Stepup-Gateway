@@ -16,7 +16,7 @@ jobs:
         uses: actions/checkout@v3
       
       - name: Build the app
-        uses: openconext/build-and-publish-test-container/php72-node14@main
+        uses: openconext/build-and-publish-test-container/php82-node20@main
         with:
           use_yarn: true
 
