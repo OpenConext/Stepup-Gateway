@@ -10,7 +10,9 @@ COPY config/openconext/samlstepupproviders_parameters.yaml.dist config/openconex
 # Add the config files for Apache2
 RUN rm -rf /etc/apache2/sites-enabled/*
 COPY ./docker/conf/gateway-apache2.conf /etc/apache2/sites-enabled/gateway.conf
-RUN bin/console --env=test cache:clear
-RUN rm -rf /var/www/html/var/cache/test && chown -R www-data /var/www/html/var
+RUN rm -rf /var/www/html/var/cache/prod &&\
+  mkdir -p /var/www/html/var/cache &&\
+  chown -R www-data /var/www/html/var
 
+EXPOSE 80
 CMD ["apache2-foreground"]
