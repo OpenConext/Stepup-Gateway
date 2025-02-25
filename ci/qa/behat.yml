@@ -33,7 +33,7 @@ default:
                 switches:
                   - "--disable-gpu"
                   - "--window-size=1920,1080"
-                  - "--no-sandbox"
+#                  - "--no-sandbox"
         default:
           symfony: ~
     FriendsOfBehat\SymfonyExtension:
