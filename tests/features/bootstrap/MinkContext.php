@@ -18,9 +18,9 @@
 
 namespace Surfnet\StepupGateway\Behat;
 
-use Behat\Mink\Driver\Selenium2Driver;
 use Behat\Mink\Exception\ExpectationException;
 use Behat\MinkExtension\Context\MinkContext as BaseMinkContext;
+use DMore\ChromeDriver\ChromeDriver;
 use DOMDocument;
 use DOMXPath;
 use RobRichards\XMLSecLibs\XMLSecurityDSig;
@@ -53,8 +53,9 @@ class MinkContext extends BaseMinkContext
     public function theResponseShouldMatchXpath($xpath): void
     {
         $document = new DOMDocument();
-        if ($this->getSession()->getDriver() instanceof Selenium2Driver) {
+        if ($this->getSession()->getDriver() instanceof ChromeDriver) {
             // Chrome uses a user friendly viewer, get the xml from the dressed document and assert on that xml.
+            $this->getSession()->wait(1000, "document.getElementById('webkit-xml-viewer-source-xml') !== null");
             $xml = $this->getSession()->evaluateScript("document.getElementById('webkit-xml-viewer-source-xml').innerHTML");
         } else {
             $xml = $this->getSession()->getPage()->getContent();

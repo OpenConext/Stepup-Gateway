@@ -1,3 +1,4 @@
+@functional
 Feature: As an institution that uses the self-asserted tokens (SAT) registration
   In order to do second factor authentications
   I must be able to successfully authenticate with my SAT second factor tokens

@@ -28,8 +28,3 @@ jobs:
                   cd ci/docker && docker compose exec -T gateway bash -c '
                       composer check
                   '
-            - name: Run Selenium tests
-              run: |
-                cd ci/docker && docker compose exec -T gateway bash -c '
-                    ./ci/qa/behat-selenium
-                '

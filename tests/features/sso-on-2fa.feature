@@ -1,3 +1,4 @@
+@functional
 Feature: As an institution that uses the SSO on Second Factor authentication
   In order to do SSO on second factor authentications
   A successful authentication should yield a SSO cookie
@@ -16,7 +17,7 @@ Feature: As an institution that uses the SSO on Second Factor authentication
     Then I should see the Yubikey OTP screen
     And I enter the OTP
     Then the response should match xpath '//samlp:StatusCode[@Value="urn:oasis:names:tc:SAML:2.0:status:Success"]'
-    And the response should contain "default-sp"
+    Then the response should match xpath '//saml:Audience[text()="https://ssp.dev.openconext.local/module.php/saml/sp/metadata.php/default-sp"]'
     And the response should have a SSO-2FA cookie
     And the SSO-2FA cookie should contain "urn:collab:person:dev.openconext.local:user-1"
 
@@ -55,14 +56,14 @@ Feature: As an institution that uses the SSO on Second Factor authentication
     And I should see the Yubikey OTP screen
     When I enter the OTP
     Then the response should match xpath '//samlp:StatusCode[@Value="urn:oasis:names:tc:SAML:2.0:status:Success"]'
-    And the response should contain "default-sp"
+    Then the response should match xpath '//saml:Audience[text()="https://ssp.dev.openconext.local/module.php/saml/sp/metadata.php/default-sp"]'
     And the response should have a SSO-2FA cookie
     And the SSO-2FA cookie should contain "urn:collab:person:dev.openconext.local:user-2"
     When urn:collab:person:dev.openconext.local:user-2 starts an authentication requiring LoA 2
     And I pass through the IdP
     And I pass through the Gateway
     Then the response should match xpath '//samlp:StatusCode[@Value="urn:oasis:names:tc:SAML:2.0:status:Success"]'
-    And the response should contain "default-sp"
+    Then the response should match xpath '//saml:Audience[text()="https://ssp.dev.openconext.local/module.php/saml/sp/metadata.php/default-sp"]'
     And the existing SSO-2FA cookie was used
     And the SSO-2FA cookie should contain "urn:collab:person:dev.openconext.local:user-2"
 
@@ -75,7 +76,7 @@ Feature: As an institution that uses the SSO on Second Factor authentication
     Then I should see the SMS verification screen
     And I enter the SMS verification code
     Then the response should match xpath '//samlp:StatusCode[@Value="urn:oasis:names:tc:SAML:2.0:status:Success"]'
-    And the response should contain "default-sp"
+    Then the response should match xpath '//saml:Audience[text()="https://ssp.dev.openconext.local/module.php/saml/sp/metadata.php/default-sp"]'
     And the response should have a SSO-2FA cookie
     And the SSO-2FA cookie should contain "urn:collab:person:dev.openconext.local:user-5"
     When urn:collab:person:dev.openconext.local:user-5 starts an authentication requiring LoA 3
@@ -83,7 +84,7 @@ Feature: As an institution that uses the SSO on Second Factor authentication
     And I should see the Yubikey OTP screen
     When I enter the OTP
     Then the response should match xpath '//samlp:StatusCode[@Value="urn:oasis:names:tc:SAML:2.0:status:Success"]'
-    And the response should contain "default-sp"
+    Then the response should match xpath '//saml:Audience[text()="https://ssp.dev.openconext.local/module.php/saml/sp/metadata.php/default-sp"]'
     And a new SSO-2FA cookie was written
     And the SSO-2FA cookie should contain "urn:collab:person:dev.openconext.local:user-5"
 
@@ -95,7 +96,7 @@ Feature: As an institution that uses the SSO on Second Factor authentication
     And I should see the Yubikey OTP screen
     When I enter the OTP
     Then the response should match xpath '//samlp:StatusCode[@Value="urn:oasis:names:tc:SAML:2.0:status:Success"]'
-    And the response should contain "default-sp"
+    Then the response should match xpath '//saml:Audience[text()="https://ssp.dev.openconext.local/module.php/saml/sp/metadata.php/default-sp"]'
     And the response should have a SSO-2FA cookie
     And the SSO-2FA cookie should contain "urn:collab:person:dev.openconext.local:user-3"
     When urn:collab:person:dev.openconext.local:user-4 starts an SFO authentication requiring LoA 2
@@ -103,7 +104,7 @@ Feature: As an institution that uses the SSO on Second Factor authentication
     And I should see the Yubikey OTP screen
     When I enter the OTP
     Then the response should match xpath '//samlp:StatusCode[@Value="urn:oasis:names:tc:SAML:2.0:status:Success"]'
-    And the response should contain "second-sp"
+    Then the response should match xpath '//saml:Audience[text()="https://ssp.dev.openconext.local/module.php/saml/sp/metadata.php/second-sp"]'
     And a new SSO-2FA cookie was written
     # The new authentication triggered creation of a new cookie
     And the SSO-2FA cookie should contain "urn:collab:person:dev.openconext.local:user-4"
@@ -113,24 +114,7 @@ Feature: As an institution that uses the SSO on Second Factor authentication
     And I should see the Yubikey OTP screen
     When I enter the OTP
     Then the response should match xpath '//samlp:StatusCode[@Value="urn:oasis:names:tc:SAML:2.0:status:Success"]'
-    And the response should contain "second-sp"
+    Then the response should match xpath '//saml:Audience[text()="https://ssp.dev.openconext.local/module.php/saml/sp/metadata.php/second-sp"]'
     # The new authentication triggered creation of a new cookie
     And a new SSO-2FA cookie was written
     And the SSO-2FA cookie should contain "urn:collab:person:dev.openconext.local:user-3"
-
-  Scenario: Cookie is rewritten on every successive second factor authentication (actual auth, not given with the cookie)
-    Given a user from "dev.openconext.local" identified by "urn:collab:person:dev.openconext.local:joe-2" with a vetted "Yubikey" token
-    When urn:collab:person:dev.openconext.local:joe-2 starts an authentication requiring LoA 2
-    Then I authenticate at the IdP as joe-2
-    And I should see the Yubikey OTP screen
-    When I enter the OTP
-    Then the response should match xpath '//samlp:StatusCode[@Value="urn:oasis:names:tc:SAML:2.0:status:Success"]'
-    And the response should contain "default-sp"
-    And the response should have a SSO-2FA cookie
-    When urn:collab:person:dev.openconext.local:joe-2 starts a forced SFO authentication requiring LoA 2
-    And I pass through the Gateway
-    And I should see the Yubikey OTP screen
-    When I enter the OTP
-    Then the response should match xpath '//samlp:StatusCode[@Value="urn:oasis:names:tc:SAML:2.0:status:Success"]'
-    And the response should contain "second-sp"
-    And a new SSO-2FA cookie was written

@@ -57,10 +57,11 @@
     "require-dev": {
         "behat/behat": "^3.6",
         "behat/mink": "^1.9",
-        "behat/mink-browserkit-driver": "^2.1",
-        "behat/mink-selenium2-driver": "^1.7",
-        "friends-of-behat/symfony-extension": "^2.4",
+        "behat/mink-browserkit-driver": "^2.2",
+        "dmore/behat-chrome-extension": "^1.4",
+        "dmore/chrome-mink-driver": "^2.9",
         "friends-of-behat/mink-extension": "^2.7",
+        "friends-of-behat/symfony-extension": "^2.4",
         "malukenho/docheader": "^1.0.0",
         "matthiasnoback/symfony-config-test": "^4",
         "mockery/mockery": "^1.0",
@@ -103,8 +104,7 @@
             "@phpcs",
             "@phpmd",
             "@test",
-            "@behat-adfs",
-            "@behat-metadata"
+            "@behat"
         ],
         "phplint": "./ci/qa/phplint",
         "validate-lockfile": "./ci/qa/validate",
@@ -113,9 +113,7 @@
         "phpstan": "./ci/qa/phpstan",
         "phpmd": "./ci/qa/phpmd",
         "behat": "./ci/qa/behat",
-        "behat-adfs": "./ci/qa/behat tests/features/adfs.feature",
-        "behat-metadata": "./ci/qa/behat tests/features/metadata.feature",
-        "behat-selenium": "./ci/qa/behat-selenium",
+        "behat-functional": "./ci/qa/behat-functional",
         "test": "./ci/qa/phpunit",
         "license-headers": "./ci/qa/docheader",
         "frontend-install": [
