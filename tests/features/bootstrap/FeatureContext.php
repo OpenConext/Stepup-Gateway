@@ -71,7 +71,7 @@ class FeatureContext implements Context
         $this->fixtureService = $fixtureService;
         $this->sso2faCookieName = 'stepup-gateway_sso-on-second-factor-authentication';
         $this->sessCookieName = 'MOCKSESSID';
-        $this->cookieDomain = 'gateway.dev.openconext.local';
+        $this->cookieDomain = '.gateway.dev.openconext.local';
 
         // Set a test container for the SAML2 Library to work with (the compat container is broken)
         ContainerSingleton::setContainer(new TestSaml2Container($logger));

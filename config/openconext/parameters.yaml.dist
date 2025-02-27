@@ -43,6 +43,10 @@ parameters:
     mailer_user:       ~
     mailer_password:   ~
 
+    # Session domain
+    cookie_domain: .gateway.dev.openconext.local
+
+
     # Default locale
     default_locale:         en_GB
     # Available locales
