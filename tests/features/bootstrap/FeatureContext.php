@@ -22,10 +22,11 @@ use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\BeforeFeatureScope;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Mink\Exception\ExpectationException;
+use DMore\ChromeDriver\ChromeDriver;
+use FriendsOfBehat\SymfonyExtension\Driver\SymfonyDriver;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
 use SAML2\Compat\ContainerSingleton;
-use SAML2\Compat\Ssp\Container;
 use Surfnet\SamlBundle\Tests\TestSaml2Container;
 use Surfnet\StepupGateway\Behat\Service\FixtureService;
 
@@ -55,10 +56,22 @@ class FeatureContext implements Context
      */
     private $previousSsoOn2faCookieValue;
 
+    /**
+     * @var string
+     */
+    private $sessCookieName;
+
+    /**
+     * @var string
+     */
+    private $cookieDomain;
+
     public function __construct(FixtureService $fixtureService, LoggerInterface $logger)
     {
         $this->fixtureService = $fixtureService;
         $this->sso2faCookieName = 'stepup-gateway_sso-on-second-factor-authentication';
+        $this->sessCookieName = 'MOCKSESSID';
+        $this->cookieDomain = '.gateway.dev.openconext.local';
 
         // Set a test container for the SAML2 Library to work with (the compat container is broken)
         ContainerSingleton::setContainer(new TestSaml2Container($logger));
@@ -142,7 +155,7 @@ class FeatureContext implements Context
      */
     public function iShouldSeeTheTiqrAuthenticationScreen(): void
     {
-        $this->minkContext->pressButton('Submit');
+        $this->pressButtonWhenNoJavascriptSupport();
         $this->minkContext->assertPageContainsText('Log in with Tiqr');
     }
 
@@ -153,7 +166,7 @@ class FeatureContext implements Context
     {
         $this->minkContext->fillField('gateway_verify_yubikey_otp_otp', 'bogus-otp-we-use-a-mock-yubikey-service');
         $this->minkContext->pressButton('gateway_verify_yubikey_otp_submit');
-        $this->minkContext->pressButton('Submit');
+        $this->pressButtonWhenNoJavascriptSupport();
     }
 
     /**
@@ -169,7 +182,7 @@ class FeatureContext implements Context
         preg_match('/^Your\ SMS\ code:\ (.*)$/', $cookieValue, $matches);
         $this->minkContext->fillField('gateway_verify_sms_challenge_challenge', $matches[1]);
         $this->minkContext->pressButton('gateway_verify_sms_challenge_verify_challenge');
-        $this->minkContext->pressButton('Submit');
+        $this->pressButtonWhenNoJavascriptSupport();
     }
 
     /**
@@ -189,8 +202,8 @@ class FeatureContext implements Context
      */
     public function iFinishGsspAuthentication(): void
     {
-        $this->minkContext->pressButton('Submit');
-        $this->minkContext->pressButton('Submit');
+        $this->pressButtonWhenNoJavascriptSupport();
+        $this->pressButtonWhenNoJavascriptSupport();
     }
 
     /**
@@ -247,8 +260,7 @@ class FeatureContext implements Context
      */
     public function anErrorResponseIsPostedBackToTheSP(): void
     {
-        $this->minkContext->pressButton('Submit');
-
+        $this->pressButtonWhenNoJavascriptSupport();
     }
 
     /**
@@ -264,7 +276,7 @@ class FeatureContext implements Context
      */
     public function iPassThroughTheGateway(): void
     {
-        $this->minkContext->pressButton('Submit');
+        $this->pressButtonWhenNoJavascriptSupport();
     }
 
     /**
@@ -272,7 +284,9 @@ class FeatureContext implements Context
      */
     public function iPassThroughTheIdP(): void
     {
-        $this->minkContext->pressButton('Yes, continue');
+        if ($this->minkContext->getSession()->getDriver() instanceof SymfonyDriver) {
+            $this->minkContext->pressButton('Yes, continue');
+        }
     }
 
     /**
@@ -286,6 +300,52 @@ class FeatureContext implements Context
         // Store the previous cookie value
         $this->previousSsoOn2faCookieValue = $cookieValue;
         $this->validateSsoOn2faCookie($cookieValue);
+    }
+
+
+
+    /**
+     * @Then /^the response should have a valid session cookie$/
+     * @throws ExpectationException
+     */
+    public function validateSessionCookie(): void
+    {
+        $this->minkContext->visit('https://gateway.dev.openconext.local/info');
+
+        $driver = $this->minkContext->getSession()->getDriver();
+
+        $cookie = $this->minkContext->getSession()->getCookie($this->sessCookieName);
+        if ($cookie === null) {
+            throw new ExpectationException(
+                'No session cookie found',
+                $this->minkContext->getSession()->getDriver()
+            );
+        }
+
+        if (!$driver instanceof ChromeDriver) {
+            return;
+        }
+
+        $sessionCookie = null;
+        foreach ($driver->getCookies() as $cookie) {
+            if ($cookie['name'] === $this->sessCookieName) {
+                $sessionCookie = $cookie;
+                break;
+            }
+        }
+        if ($sessionCookie === null) {
+            throw new ExpectationException(
+                'No session cookie found',
+                $this->minkContext->getSession()->getDriver()
+            );
+        }
+
+        if (!array_key_exists('domain', $sessionCookie) || $sessionCookie['domain'] !== $this->cookieDomain) {
+            throw new ExpectationException(
+                'The domain of the session cookie is invalid',
+                $this->minkContext->getSession()->getDriver()
+            );
+        };
     }
 
     /**
@@ -313,6 +373,7 @@ class FeatureContext implements Context
         $this->minkContext->visit('https://gateway.dev.openconext.local/info');
         $cookieValue = $this->minkContext->getSession()->getCookie($this->sso2faCookieName);
         $this->validateSsoOn2faCookie($cookieValue);
+
         if ($this->previousSsoOn2faCookieValue === $cookieValue) {
             throw new ExpectationException(
                 'The SSO on 2FA cookie did not change since the previous response',
@@ -393,6 +454,13 @@ class FeatureContext implements Context
                 ),
                 $this->minkContext->getSession()->getDriver()
             );
+        }
+    }
+
+    private function pressButtonWhenNoJavascriptSupport()
+    {
+        if ($this->minkContext->getSession()->getDriver() instanceof SymfonyDriver) {
+            $this->minkContext->pressButton('Submit');
         }
     }
 }

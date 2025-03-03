@@ -1,3 +1,4 @@
+@functional
 Feature: As an institution that uses the second factor only feature
   In order to do second factor authentications
   I must be able to successfully authenticate with my second factor tokens
@@ -11,6 +12,7 @@ Feature: As an institution that uses the second factor only feature
     Then I should see the Yubikey OTP screen
     When I enter the OTP
     Then the response should match xpath '//samlp:StatusCode[@Value="urn:oasis:names:tc:SAML:2.0:status:Success"]'
+    And the response should have a valid session cookie
 
   Scenario: A SMS SFO authentication
     Given an SFO enabled SP with EntityID https://ssp.dev.openconext.local/module.php/saml/sp/metadata.php/second-sp
@@ -21,7 +23,7 @@ Feature: As an institution that uses the second factor only feature
     Then I should see the SMS verification screen
     When I enter the SMS verification code
     Then the response should match xpath '//samlp:StatusCode[@Value="urn:oasis:names:tc:SAML:2.0:status:Success"]'
-    Then the response should contain "second-sp"
+    Then the response should match xpath '//saml:Audience[text()="https://ssp.dev.openconext.local/module.php/saml/sp/metadata.php/second-sp"]'
 
   Scenario: A Yubikey SFO authentication with an identity with multiple tokens
     Given an SFO enabled SP with EntityID https://ssp.dev.openconext.local/module.php/saml/sp/metadata.php/second-sp

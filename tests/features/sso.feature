@@ -1,3 +1,4 @@
+@functional
 Feature: As an institution that uses the regular Step Up authentication feature
   In order to do second factor authentications
   I must be able to successfully authenticate with my second factor tokens
@@ -20,6 +21,7 @@ Feature: As an institution that uses the regular Step Up authentication feature
     And I should see the Yubikey OTP screen
     When I enter the OTP
     Then the response should match xpath '//samlp:StatusCode[@Value="urn:oasis:names:tc:SAML:2.0:status:Success"]'
+    And the response should have a valid session cookie
 
   Scenario: Cancelling out of an SSO authentication
     Given a user from "dev.openconext.local" identified by "urn:collab:person:dev.openconext.local:user-3" with a vetted "SMS" token
@@ -28,7 +30,7 @@ Feature: As an institution that uses the regular Step Up authentication feature
     And I cancel the authentication
     Then an error response is posted back to the SP
     Then the response should match xpath '//samlp:StatusCode[@Value="urn:oasis:names:tc:SAML:2.0:status:AuthnFailed"]'
-    And the response should contain "Authentication cancelled by user"
+    Then the response should match xpath '//samlp:StatusMessage[text()="Authentication cancelled by user"]'
 
   Scenario: SSO without a suitable token yields a SAML error response (LOA requirement not met)
     Given a user from "dev.openconext.local" identified by "urn:collab:person:dev.openconext.local:user-3" with a vetted "SMS" token

@@ -12,6 +12,7 @@ framework:
     name:        sess_gateway
     cookie_httponly: true
     cookie_secure: true
+    cookie_domain: "%cookie_domain%"
   fragments:       false
   http_method_override: true
 

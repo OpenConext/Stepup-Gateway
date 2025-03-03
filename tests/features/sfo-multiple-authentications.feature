@@ -1,4 +1,4 @@
-@selenium
+@functional
 Feature: As an institution that uses the second factor only feature
   In order to facilitate SFO rollover from StepUp to EngineBlock
   I must be able to run SFO and regular authentications in parallel
@@ -26,9 +26,11 @@ Feature: As an institution that uses the second factor only feature
     And I should see the Yubikey OTP screen
     And I enter the OTP
     Then the response should match xpath '//samlp:StatusCode[@Value="urn:oasis:names:tc:SAML:2.0:status:Success"]'
+    And the response should have a valid session cookie
     When I switch to "Browser tab 1"
     And I enter the OTP
     Then the response should match xpath '//samlp:StatusCode[@Value="urn:oasis:names:tc:SAML:2.0:status:Success"]'
+    And the response should have a valid session cookie
 
   Scenario: A regular and SFO authentication in parallel using SMS token
     When I switch to "Browser tab 1"
@@ -48,7 +50,7 @@ Feature: As an institution that uses the second factor only feature
     Then I enter the expired SMS verification code
     And the response should contain 'gateway.form.send_sms_challenge.challenge_expired'
 
-# Tiqr is not yet functioning in the Behat (smoketest) environment
+#  # Tiqr is not yet functioning in the Behat (smoketest) environment
 #  Scenario: A regular and SFO authentication in parallel using Tiqr token
 #    When I switch to "Browser tab 1"
 #    And urn:collab:person:dev.openconext.local:user-1 starts an authentication at Default SP

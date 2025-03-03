@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2a74bfa043fd2da9804aeeba44b962ab",
+    "content-hash": "b25fb4ab451a9bbf572c85917f617ba8",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -8407,76 +8407,6 @@
             "time": "2023-12-09T11:30:50+00:00"
         },
         {
-            "name": "behat/mink-selenium2-driver",
-            "version": "v1.7.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/minkphp/MinkSelenium2Driver.git",
-                "reference": "4ca4083f305de7dff4434ac402dc4e3f39c0866a"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/minkphp/MinkSelenium2Driver/zipball/4ca4083f305de7dff4434ac402dc4e3f39c0866a",
-                "reference": "4ca4083f305de7dff4434ac402dc4e3f39c0866a",
-                "shasum": ""
-            },
-            "require": {
-                "behat/mink": "^1.11@dev",
-                "ext-json": "*",
-                "instaclick/php-webdriver": "^1.4.14",
-                "php": ">=7.2"
-            },
-            "require-dev": {
-                "mink/driver-testsuite": "dev-master",
-                "phpstan/phpstan": "^1.10",
-                "phpstan/phpstan-phpunit": "^1.3",
-                "phpunit/phpunit": "^8.5.22 || ^9.5.11",
-                "symfony/error-handler": "^4.4 || ^5.0 || ^6.0 || ^7.0"
-            },
-            "type": "mink-driver",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Behat\\Mink\\Driver\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Pete Otaqui",
-                    "email": "pete@otaqui.com",
-                    "homepage": "https://github.com/pete-otaqui"
-                },
-                {
-                    "name": "Konstantin Kudryashov",
-                    "email": "ever.zet@gmail.com",
-                    "homepage": "http://everzet.com"
-                }
-            ],
-            "description": "Selenium2 (WebDriver) driver for Mink framework",
-            "homepage": "https://mink.behat.org/",
-            "keywords": [
-                "ajax",
-                "browser",
-                "javascript",
-                "selenium",
-                "testing",
-                "webdriver"
-            ],
-            "support": {
-                "issues": "https://github.com/minkphp/MinkSelenium2Driver/issues",
-                "source": "https://github.com/minkphp/MinkSelenium2Driver/tree/v1.7.0"
-            },
-            "time": "2023-12-09T11:58:45+00:00"
-        },
-        {
             "name": "behat/transliterator",
             "version": "v1.5.0",
             "source": {
@@ -8801,6 +8731,109 @@
             "time": "2023-01-05T11:28:13+00:00"
         },
         {
+            "name": "dmore/behat-chrome-extension",
+            "version": "1.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://gitlab.com/behat-chrome/behat-chrome-extension.git",
+                "reference": "888e91f52b3ffd19afe61cea3d5edebb0a4d43a7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://gitlab.com/api/v4/projects/behat-chrome%2Fbehat-chrome-extension/repository/archive.zip?sha=888e91f52b3ffd19afe61cea3d5edebb0a4d43a7",
+                "reference": "888e91f52b3ffd19afe61cea3d5edebb0a4d43a7",
+                "shasum": ""
+            },
+            "require": {
+                "behat/behat": "^3.0.4",
+                "dmore/chrome-mink-driver": "^2.4.1",
+                "friends-of-behat/mink-extension": "^2.0",
+                "php": ">=7.1"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^8.5 || ^9.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "DMore\\ChromeExtension\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Dorian More",
+                    "email": "doriancmore@gmail.com"
+                }
+            ],
+            "description": "Behat extension for controlling Chrome without Selenium",
+            "homepage": "https://gitlab.com/behat-chrome/chrome-mink-driver",
+            "keywords": [
+                "Behat",
+                "chrome",
+                "driver",
+                "headless"
+            ],
+            "support": {
+                "issues": "https://gitlab.com/behat-chrome/behat-chrome-extension/-/issues",
+                "source": "https://gitlab.com/behat-chrome/behat-chrome-extension/-/tree/1.4.0"
+            },
+            "time": "2022-04-10T04:25:11+00:00"
+        },
+        {
+            "name": "dmore/chrome-mink-driver",
+            "version": "2.9.3",
+            "source": {
+                "type": "git",
+                "url": "https://gitlab.com/behat-chrome/chrome-mink-driver.git",
+                "reference": "4dc18d3b4668e749ab7bef5a6796c13711c93e61"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://gitlab.com/api/v4/projects/behat-chrome%2Fchrome-mink-driver/repository/archive.zip?sha=4dc18d3b4668e749ab7bef5a6796c13711c93e61",
+                "reference": "4dc18d3b4668e749ab7bef5a6796c13711c93e61",
+                "shasum": ""
+            },
+            "require": {
+                "behat/mink": "^1.9",
+                "ext-curl": "*",
+                "ext-json": "*",
+                "ext-mbstring": "*",
+                "phrity/websocket": "^1.7.0"
+            },
+            "require-dev": {
+                "mink/driver-testsuite": "dev-master",
+                "phpunit/phpunit": "^8.5.22 || ^9.5.11",
+                "squizlabs/php_codesniffer": "^3.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "DMore\\ChromeDriver\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Dorian More",
+                    "email": "doriancmore@gmail.com"
+                }
+            ],
+            "description": "Mink driver for controlling chrome without selenium",
+            "homepage": "https://gitlab.com/behat-chrome/chrome-mink-driver",
+            "support": {
+                "issues": "https://gitlab.com/behat-chrome/chrome-mink-driver/-/issues",
+                "source": "https://gitlab.com/behat-chrome/chrome-mink-driver/-/tree/2.9.3"
+            },
+            "time": "2024-05-17T12:26:55+00:00"
+        },
+        {
             "name": "friends-of-behat/mink-extension",
             "version": "v2.7.5",
             "source": {
@@ -8984,69 +9017,6 @@
                 "source": "https://github.com/hamcrest/hamcrest-php/tree/v2.0.1"
             },
             "time": "2020-07-09T08:09:16+00:00"
-        },
-        {
-            "name": "instaclick/php-webdriver",
-            "version": "1.4.19",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/instaclick/php-webdriver.git",
-                "reference": "3b2a2ddc4e0a690cc691d7e5952964cc4b9538b1"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/instaclick/php-webdriver/zipball/3b2a2ddc4e0a690cc691d7e5952964cc4b9538b1",
-                "reference": "3b2a2ddc4e0a690cc691d7e5952964cc4b9538b1",
-                "shasum": ""
-            },
-            "require": {
-                "ext-curl": "*",
-                "php": ">=5.3.2"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^8.5 || ^9.5",
-                "satooshi/php-coveralls": "^1.0 || ^2.0"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.4.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-0": {
-                    "WebDriver": "lib/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "Apache-2.0"
-            ],
-            "authors": [
-                {
-                    "name": "Justin Bishop",
-                    "email": "jubishop@gmail.com",
-                    "role": "Developer"
-                },
-                {
-                    "name": "Anthon Pang",
-                    "email": "apang@softwaredevelopment.ca",
-                    "role": "Fork Maintainer"
-                }
-            ],
-            "description": "PHP WebDriver for Selenium 2",
-            "homepage": "http://instaclick.com/",
-            "keywords": [
-                "browser",
-                "selenium",
-                "webdriver",
-                "webtest"
-            ],
-            "support": {
-                "issues": "https://github.com/instaclick/php-webdriver/issues",
-                "source": "https://github.com/instaclick/php-webdriver/tree/1.4.19"
-            },
-            "time": "2024-03-19T01:58:53+00:00"
         },
         {
             "name": "malukenho/docheader",
@@ -10551,6 +10521,233 @@
                 }
             ],
             "time": "2024-12-05T13:48:26+00:00"
+        },
+        {
+            "name": "phrity/net-stream",
+            "version": "1.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/sirn-se/phrity-net-stream.git",
+                "reference": "9105931b65ad90c75f4885a40b268b0f65802e3e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/sirn-se/phrity-net-stream/zipball/9105931b65ad90c75f4885a40b268b0f65802e3e",
+                "reference": "9105931b65ad90c75f4885a40b268b0f65802e3e",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.4 | ^8.0",
+                "phrity/util-errorhandler": "^1.0",
+                "psr/http-factory": "^1.0",
+                "psr/http-message": "^1.0 | ^2.0"
+            },
+            "require-dev": {
+                "php-coveralls/php-coveralls": "^2.0",
+                "phpunit/phpunit": "^9.0 | ^10.0",
+                "phrity/net-uri": "^1.1",
+                "squizlabs/php_codesniffer": "^3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Phrity\\Net\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Sören Jensen",
+                    "email": "sirn@sirn.se",
+                    "homepage": "https://phrity.sirn.se"
+                }
+            ],
+            "description": "Socket stream classes implementing PSR-7 Stream and PSR-17 StreamFactory",
+            "homepage": "https://phrity.sirn.se/net-stream",
+            "keywords": [
+                "Socket",
+                "client",
+                "psr-17",
+                "psr-7",
+                "server",
+                "stream",
+                "stream factory"
+            ],
+            "support": {
+                "issues": "https://github.com/sirn-se/phrity-net-stream/issues",
+                "source": "https://github.com/sirn-se/phrity-net-stream/tree/1.3.0"
+            },
+            "time": "2023-10-22T10:47:03+00:00"
+        },
+        {
+            "name": "phrity/net-uri",
+            "version": "1.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/sirn-se/phrity-net-uri.git",
+                "reference": "3f458e0c4d1ddc0e218d7a5b9420127c63925f43"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/sirn-se/phrity-net-uri/zipball/3f458e0c4d1ddc0e218d7a5b9420127c63925f43",
+                "reference": "3f458e0c4d1ddc0e218d7a5b9420127c63925f43",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.4 | ^8.0",
+                "psr/http-factory": "^1.0",
+                "psr/http-message": "^1.0 | ^2.0"
+            },
+            "require-dev": {
+                "php-coveralls/php-coveralls": "^2.0",
+                "phpunit/phpunit": "^9.0 | ^10.0",
+                "squizlabs/php_codesniffer": "^3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Phrity\\Net\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Sören Jensen",
+                    "email": "sirn@sirn.se",
+                    "homepage": "https://phrity.sirn.se"
+                }
+            ],
+            "description": "PSR-7 Uri and PSR-17 UriFactory implementation",
+            "homepage": "https://phrity.sirn.se/net-uri",
+            "keywords": [
+                "psr-17",
+                "psr-7",
+                "uri",
+                "uri factory"
+            ],
+            "support": {
+                "issues": "https://github.com/sirn-se/phrity-net-uri/issues",
+                "source": "https://github.com/sirn-se/phrity-net-uri/tree/1.3.0"
+            },
+            "time": "2023-08-21T10:33:06+00:00"
+        },
+        {
+            "name": "phrity/util-errorhandler",
+            "version": "1.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/sirn-se/phrity-util-errorhandler.git",
+                "reference": "483228156e06673963902b1cc1e6bd9541ab4d5e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/sirn-se/phrity-util-errorhandler/zipball/483228156e06673963902b1cc1e6bd9541ab4d5e",
+                "reference": "483228156e06673963902b1cc1e6bd9541ab4d5e",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.4 | ^8.0"
+            },
+            "require-dev": {
+                "php-coveralls/php-coveralls": "^2.0",
+                "phpunit/phpunit": "^9.0 | ^10.0 | ^11.0",
+                "squizlabs/php_codesniffer": "^3.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Phrity\\Util\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Sören Jensen",
+                    "email": "sirn@sirn.se",
+                    "homepage": "https://phrity.sirn.se"
+                }
+            ],
+            "description": "Inline error handler; catch and resolve errors for code block.",
+            "homepage": "https://phrity.sirn.se/util-errorhandler",
+            "keywords": [
+                "error",
+                "warning"
+            ],
+            "support": {
+                "issues": "https://github.com/sirn-se/phrity-util-errorhandler/issues",
+                "source": "https://github.com/sirn-se/phrity-util-errorhandler/tree/1.1.1"
+            },
+            "time": "2024-09-12T06:49:16+00:00"
+        },
+        {
+            "name": "phrity/websocket",
+            "version": "1.7.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/sirn-se/websocket-php.git",
+                "reference": "8a525da4457b599ab1960f24183f25626c96ce3c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/sirn-se/websocket-php/zipball/8a525da4457b599ab1960f24183f25626c96ce3c",
+                "reference": "8a525da4457b599ab1960f24183f25626c96ce3c",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.4 | ^8.0",
+                "phrity/net-stream": "^1.2",
+                "phrity/net-uri": "^1.2",
+                "phrity/util-errorhandler": "^1.0",
+                "psr/http-message": "^1.1 | ^2.0",
+                "psr/log": "^1.0 | ^2.0 | ^3.0"
+            },
+            "require-dev": {
+                "php-coveralls/php-coveralls": "^2.0",
+                "phpunit/phpunit": "^9.0 | ^10.0",
+                "phrity/net-mock": "^1.3",
+                "squizlabs/php_codesniffer": "^3.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "WebSocket\\": "lib/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "ISC"
+            ],
+            "authors": [
+                {
+                    "name": "Fredrik Liljegren"
+                },
+                {
+                    "name": "Sören Jensen",
+                    "email": "sirn@sirn.se",
+                    "homepage": "https://phrity.sirn.se"
+                }
+            ],
+            "description": "WebSocket client and server",
+            "homepage": "https://phrity.sirn.se/websocket",
+            "keywords": [
+                "client",
+                "server",
+                "websocket"
+            ],
+            "support": {
+                "issues": "https://github.com/sirn-se/websocket-php/issues",
+                "source": "https://github.com/sirn-se/websocket-php/tree/1.7.3"
+            },
+            "time": "2024-05-31T13:43:32+00:00"
         },
         {
             "name": "ramsey/collection",

@@ -3,7 +3,7 @@ Feature: As a SP or IdP
   I must be able to read the Stepup Gateway proxy metadata
 
   Scenario: View the SP metadata of the Gateway
-    Given I am on "/authentication/metadata"
+    Given I am on "https://gateway.dev.openconext.local/authentication/metadata"
     Then the response should match xpath '//md:EntityDescriptor[@entityID="https://gateway.dev.openconext.local/authentication/metadata"]'
     And the response should match xpath '//md:SingleSignOnService[@Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"]'
     And the response should match xpath '//md:SingleSignOnService[@Location="https://gateway.dev.openconext.local/authentication/single-sign-on"]'

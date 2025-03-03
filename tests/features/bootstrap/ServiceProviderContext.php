@@ -21,8 +21,9 @@ namespace Surfnet\StepupGateway\Behat;
 use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Mink\Driver\Selenium2Driver;
-use RuntimeException;
+use FriendsOfBehat\SymfonyExtension\Driver\SymfonyDriver;
 use RobRichards\XMLSecLibs\XMLSecurityKey;
+use RuntimeException;
 use SAML2\AuthnRequest;
 use SAML2\Certificate\Key;
 use SAML2\Certificate\KeyLoader;
@@ -225,7 +226,7 @@ class ServiceProviderContext implements Context
             'entityId' => $this->currentSfoSp['entityId']
         ];
         $this->getSession()->visit(SamlEntityRepository::SP_ADFS_SSO_LOCATION . '?' . http_build_query($requestParams));
-        $this->minkContext->pressButton('Submit');
+        $this->pressButtonWhenNoJavascriptSupport();
     }
 
     /**
@@ -247,7 +248,7 @@ class ServiceProviderContext implements Context
             $this->loadPrivateKey(new PrivateKey('/config/ssp/sp.key', 'default'))
         );
         $authnRequest->setRequestedAuthnContext(
-            ['AuthnContextClassRef' => ['http://dev.openconext.local/assurance/level2']]
+            ['AuthnContextClassRef' => ['http://dev.openconext.local/assurance/loa2']]
         );
         $request = Saml2AuthnRequest::createNew($authnRequest);
         $query = $request->buildRequestQuery();
@@ -293,6 +294,7 @@ class ServiceProviderContext implements Context
 
         $request = Saml2AuthnRequest::createNew($authnRequest);
         $query = $request->buildRequestQuery();
+
         $this->getSession()->visit($request->getDestination().'?'.$query);
     }
 
@@ -305,7 +307,8 @@ class ServiceProviderContext implements Context
         $this->minkContext->fillField('password', $username);
         // Submit the form
         $this->minkContext->pressButton('Login');
-        if (!$this->getSession()->getDriver() instanceof Selenium2Driver) {
+
+        if ($this->getSession()->getDriver() instanceof SymfonyDriver) {
             // Submit the SAML Response from SimpleSamplPHP IdP
             $this->minkContext->pressButton('Yes, continue');
         }
@@ -357,5 +360,12 @@ class ServiceProviderContext implements Context
         $nameIdVo->setValue($nameId);
         $nameIdVo->setFormat(Constants::NAMEFORMAT_UNSPECIFIED);
         return $nameIdVo;
+    }
+
+    private function pressButtonWhenNoJavascriptSupport()
+    {
+        if ($this->minkContext->getSession()->getDriver() instanceof SymfonyDriver) {
+            $this->minkContext->pressButton('Submit');
+        }
     }
 }
