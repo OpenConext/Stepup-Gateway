@@ -1,5 +1,13 @@
 # Changelog
 
+## 5.0.4
+- Bump the javascript dependencies
+- Use Webauthn Devconf public key
+- Make cookie domain configurable
+- Enable Behat Selenium test
+- Bump robrichards/xmlseclibs
+- Bump PHP version of test container
+
 ## 5.0.2
 - Bugfix: set the correct response Twig template when rendering the ADFS response #333 
 - Enable part of the behat test suite #333 Also see: https://www.pivotaltracker.com/story/show/187940465
