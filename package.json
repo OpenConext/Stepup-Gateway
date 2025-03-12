@@ -1,7 +1,7 @@
 {
     "browserslist": "last 2 versions, ie 11, > 1%",
     "devDependencies": {
-        "@babel/core": "^7.26.9",
+        "@babel/core": "^7.26.10",
         "@babel/preset-env": "^7.26.9",
         "@symfony/webpack-encore": "^4",
         "@types/bootstrap": "^5.0.0",
