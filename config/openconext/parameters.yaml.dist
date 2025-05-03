@@ -179,4 +179,6 @@ parameters:
     # Please use this encryption key only for this purpose, do not re-use it for other crypto work.
     #
     # Example value: 000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f
+    #
+    # Use `cat /dev/urandom | tr -dc 'a-f0-9' | head -c 64` to generate a value for this.
     sso_encryption_key: 000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f
