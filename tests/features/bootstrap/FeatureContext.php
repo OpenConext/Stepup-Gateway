@@ -376,7 +376,7 @@ class FeatureContext implements Context
 
         if ($this->previousSsoOn2faCookieValue === $cookieValue) {
             throw new ExpectationException(
-                'The SSO on 2FA cookie did not change since the previous response',
+                sprintf('The SSO on 2FA cookie did not change since the previous response: "%s" !== "%s"', $this->previousSsoOn2faCookieValue, $cookieValue),
                 $this->minkContext->getSession()->getDriver()
             );
         }
