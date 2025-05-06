@@ -48,10 +48,11 @@ class InstitutionConfigurationRepository
             $data = [
                 'institution' => $institution,
                 'sso_on2fa_enabled' => $value,
+                'sso_registration_bypass' => $value,
             ];
             $sql = <<<SQL
-                INSERT INTO institution_configuration (institution, sso_on2fa_enabled)
-                VALUES (:institution, :sso_on2fa_enabled);
+                INSERT INTO institution_configuration (institution, sso_on2fa_enabled, sso_registration_bypass)
+                VALUES (:institution, :sso_on2fa_enabled, :sso_registration_bypass);
 SQL;
             $stmt = $this->connection->prepare($sql);
             if ($stmt->execute($data)) {
@@ -70,8 +71,8 @@ SQL;
                 'value' => $value,
             ];
             $sql = <<<SQL
-                update gateway.institution_configuration
-                set sso_on2fa_enabled = :value
+                update institution_configuration
+                set `$option` = :value
                 where institution = :institution
             ;
 SQL;

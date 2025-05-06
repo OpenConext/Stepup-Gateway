@@ -155,6 +155,18 @@ class SecondFactorController extends ContainerController
             case 0:
                 $logger->notice('No second factors can give the determined Loa');
 
+                // todo: handle sso registration bypass.
+                if ($authenticationMode === self::MODE_SFO) {
+                    // - the user does not have an active token
+                    // - a LoA1.5 (i.e. self asserted) authentication is requested
+
+                    // - a fallback GSSP is configured
+                    // - this "fallback" option is enabled for the institution that the user belongs to.
+
+                    // - the configured user attribute is present in the AuthnRequest
+                    // - handle authentication by forwarding it to a designated GSSP using the GSSP protocol instead of returning an error.
+                }
+
                 return $this->forward(
                     'Surfnet\StepupGateway\GatewayBundle\Controller\GatewayController::sendLoaCannotBeGiven',
                     ['authenticationMode' => $authenticationMode],
