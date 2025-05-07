@@ -104,7 +104,8 @@
             "@phpcs",
             "@phpmd",
             "@test",
-            "@behat"
+            "@behat",
+            "@behat-functional"
         ],
         "phplint": "./ci/qa/phplint",
         "validate-lockfile": "./ci/qa/validate",
