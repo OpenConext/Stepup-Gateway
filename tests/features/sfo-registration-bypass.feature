@@ -1,7 +1,7 @@
-#@functional
-Feature: As an institution that uses the second factor only feature
+@functional
+Feature: As an institution that uses the registration bypass feature
   In order to do second factor authentications
-  I must be able to successfully authenticate with my second factor tokens
+  I must be able to successfully authenticate with my second factor tokens without prior registration
 
   Scenario: A Yubikey SFO authentication
     Given an SFO enabled SP with EntityID https://ssp.dev.openconext.local/module.php/saml/sp/metadata.php/second-sp

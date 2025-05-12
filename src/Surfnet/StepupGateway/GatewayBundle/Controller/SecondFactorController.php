@@ -158,13 +158,19 @@ class SecondFactorController extends ContainerController
                 // todo: handle sso registration bypass.
                 if ($authenticationMode === self::MODE_SFO) {
                     // - the user does not have an active token
-                    // - a LoA1.5 (i.e. self asserted) authentication is requested
 
+                    // - a LoA1.5 (i.e. self asserted) authentication is requested
                     // - a fallback GSSP is configured
                     // - this "fallback" option is enabled for the institution that the user belongs to.
-
                     // - the configured user attribute is present in the AuthnRequest
                     // - handle authentication by forwarding it to a designated GSSP using the GSSP protocol instead of returning an error.
+
+//                    var_dump($requiredLoa);
+//                    die();
+
+                    $secondFactor = SecondFactor::create('gssp_fallback', 'azuremfa', '');
+                    return $this->selectAndRedirectTo($secondFactor, $context, $authenticationMode);
+
                 }
 
                 return $this->forward(
@@ -351,6 +357,23 @@ class SecondFactorController extends ContainerController
         /** @var SecondFactorService $secondFactorService */
         $secondFactorService = $this->get('gateway.service.second_factor_service');
         /** @var SecondFactor $secondFactor */
+
+        if ($selectedSecondFactor === 'gssp_fallback') {
+            // Also send the response context service id, as later we need to know if this is regular SSO or SFO authn.
+            $responseContextServiceId = $context->getResponseContextServiceId();
+
+            return $this->forward(
+                SamlProxyController::class . '::sendSecondFactorVerificationAuthnRequest',
+                [
+                    'provider' => 'azuremfa',
+                    'subjectNameId' => 'jane-a1@institution-a.example.com',
+                    'responseContextServiceId' => $responseContextServiceId,
+                    'relayState' => $context->getRelayState(),
+                ],
+            );
+
+        }
+
         $secondFactor = $secondFactorService->findByUuid($selectedSecondFactor);
         if (!$secondFactor) {
             throw new RuntimeException(
@@ -389,7 +412,19 @@ class SecondFactorController extends ContainerController
 
         $selectedSecondFactor = $this->getSelectedSecondFactor($context, $logger);
 
-        /** @var SecondFactor $secondFactor */
+        if ($selectedSecondFactor === 'gssp_fallback') {
+//            $this->getAuthenticationLogger()->logSecondFactorAuthentication($originalRequestId, $authenticationMode);
+            $context->markSecondFactorVerified();
+
+            $logger->info(sprintf(
+                'Marked GSSF "%s" as verified, forwarding to Gateway controller to respond',
+                $selectedSecondFactor,
+            ));
+
+            return $this->forward($context->getResponseAction());
+        }
+
+            /** @var SecondFactor $secondFactor */
         $secondFactor = $this->get('gateway.service.second_factor_service')->findByUuid($selectedSecondFactor);
         if (!$secondFactor) {
             throw new RuntimeException(

@@ -118,6 +118,15 @@ class SecondFactor
     {
     }
 
+    public static function create(string $id, string $type, string $displayLocale)
+    {
+        $sf = new self();
+        $sf->secondFactorId = $id;
+        $sf->secondFactorType = $type;
+        $sf->displayLocale = $displayLocale;
+        return $sf;
+    }
+
     public function canSatisfy(Loa $loa, SecondFactorTypeService $service): bool
     {
         $secondFactorType = new SecondFactorType($this->secondFactorType);
