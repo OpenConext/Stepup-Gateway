@@ -101,19 +101,11 @@ class RespondService
             );
         }
 
+        $secondFactor = $this->secondFactorService->findByUuid($selectedSecondFactorUuid, $responseContext);
+        $loaLevel =  $this->secondFactorService->getLoaLevel($secondFactor);
+        $this->responseValidator->validate($request, $secondFactor, $responseContext->getIdentityNameId());
 
-        $loaLevel = 1.5;
-        if ($selectedSecondFactorUuid !== 'gssp_fallback') {
-            $secondFactor = $this->secondFactorService->findByUuid($selectedSecondFactorUuid);
-            $this->responseValidator->validate($request, $secondFactor, $responseContext->getIdentityNameId());
-
-            $loaLevel = $secondFactor->getLoaLevel($this->secondFactorTypeService);
-        }
-
-        $grantedLoa = $this->loaResolutionService
-            ->getLoaByLevel($loaLevel);
-
-        $authnContextClassRef = $this->loaAliasLookupService->findAliasByLoa($grantedLoa);
+        $authnContextClassRef = $this->loaAliasLookupService->findAliasByLoa($loaLevel);
 
         $response = $this->responseFactory->createSecondFactorOnlyResponse(
             $responseContext->getIdentityNameId(),
