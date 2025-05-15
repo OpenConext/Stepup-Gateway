@@ -36,9 +36,11 @@ use Surfnet\StepupGateway\GatewayBundle\Form\Type\SendSmsChallengeType;
 use Surfnet\StepupGateway\GatewayBundle\Form\Type\VerifySmsChallengeType;
 use Surfnet\StepupGateway\GatewayBundle\Form\Type\VerifyYubikeyOtpType;
 use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
+use Surfnet\StepupGateway\GatewayBundle\Service\SecondFactor\SecondFactorInterface;
 use Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorService;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\CookieService;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Controller\SamlProxyController;
+use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\Gateway\SecondfactorGsspFallback;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -123,7 +125,7 @@ class SecondFactorController extends ContainerController
             // Now read the SSO cookie
             $ssoCookie = $this->getCookieService()->read($request);
             // Test if the SSO cookie can satisfy the second factor authentication requirements
-            if ($this->getCookieService()->maySkipAuthentication($requiredLoa->getLevel(), $identityNameId, $ssoCookie)) {
+            if ($this->getCookieService()->maySkipAuthentication($requiredLoa->getLevel(), $identityNameId, $ssoCookie, $context)) {
                 $logger->notice(
                     'Skipping second factor authentication. Required LoA was met by the LoA recorded in the cookie',
                     [
@@ -132,7 +134,7 @@ class SecondFactorController extends ContainerController
                     ],
                 );
                 // We use the SF from the cookie as the SF that was used for authenticating the second factor authentication
-                $secondFactor = $this->getSecondFactorService()->findByUuid($ssoCookie->secondFactorId());
+                $secondFactor = $this->getSecondFactorService()->findByUuid($ssoCookie->secondFactorId(), $context);
                 $this->getResponseContext($authenticationMode)->saveSelectedSecondFactor($secondFactor);
                 $this->getResponseContext($authenticationMode)->markSecondFactorVerified();
                 $this->getResponseContext($authenticationMode)->markVerifiedBySsoOn2faCookie(
@@ -168,9 +170,8 @@ class SecondFactorController extends ContainerController
 //                    var_dump($requiredLoa);
 //                    die();
 
-                    $secondFactor = SecondFactor::create('gssp_fallback', 'azuremfa', '');
+                    $secondFactor = SecondfactorGsspFallback::create('azuremfa', $request->getLocale());
                     return $this->selectAndRedirectTo($secondFactor, $context, $authenticationMode);
-
                 }
 
                 return $this->forward(
@@ -356,25 +357,7 @@ class SecondFactorController extends ContainerController
 
         /** @var SecondFactorService $secondFactorService */
         $secondFactorService = $this->get('gateway.service.second_factor_service');
-        /** @var SecondFactor $secondFactor */
-
-        if ($selectedSecondFactor === 'gssp_fallback') {
-            // Also send the response context service id, as later we need to know if this is regular SSO or SFO authn.
-            $responseContextServiceId = $context->getResponseContextServiceId();
-
-            return $this->forward(
-                SamlProxyController::class . '::sendSecondFactorVerificationAuthnRequest',
-                [
-                    'provider' => 'azuremfa',
-                    'subjectNameId' => 'jane-a1@institution-a.example.com',
-                    'responseContextServiceId' => $responseContextServiceId,
-                    'relayState' => $context->getRelayState(),
-                ],
-            );
-
-        }
-
-        $secondFactor = $secondFactorService->findByUuid($selectedSecondFactor);
+        $secondFactor = $secondFactorService->findByUuid($selectedSecondFactor, $context);
         if (!$secondFactor) {
             throw new RuntimeException(
                 sprintf(
@@ -390,8 +373,8 @@ class SecondFactorController extends ContainerController
         return $this->forward(
             SamlProxyController::class . '::sendSecondFactorVerificationAuthnRequest',
             [
-                'provider' => $secondFactor->secondFactorType,
-                'subjectNameId' => $secondFactor->secondFactorIdentifier,
+                'provider' => $secondFactor->getSecondFactorType(),
+                'subjectNameId' => $secondFactor->getSecondFactorIdentifier(),
                 'responseContextServiceId' => $responseContextServiceId,
                 'relayState' => $context->getRelayState(),
             ],
@@ -412,20 +395,13 @@ class SecondFactorController extends ContainerController
 
         $selectedSecondFactor = $this->getSelectedSecondFactor($context, $logger);
 
-        if ($selectedSecondFactor === 'gssp_fallback') {
-//            $this->getAuthenticationLogger()->logSecondFactorAuthentication($originalRequestId, $authenticationMode);
-            $context->markSecondFactorVerified();
-
-            $logger->info(sprintf(
-                'Marked GSSF "%s" as verified, forwarding to Gateway controller to respond',
-                $selectedSecondFactor,
-            ));
-
-            return $this->forward($context->getResponseAction());
+        if (!$context->isSecondFactorFallback()) {
+            /** @var SecondFactor $secondFactor */
+            $secondFactor = $this->get('gateway.service.second_factor_service')->findByUuid($selectedSecondFactor);
+        } else {
+            $secondFactor = SecondfactorGsspFallback::create('azuremfa', $context->getSelectedLocale());
         }
 
-            /** @var SecondFactor $secondFactor */
-        $secondFactor = $this->get('gateway.service.second_factor_service')->findByUuid($selectedSecondFactor);
         if (!$secondFactor) {
             throw new RuntimeException(
                 sprintf(
@@ -743,16 +719,16 @@ class SecondFactorController extends ContainerController
     }
 
     private function selectAndRedirectTo(
-        SecondFactor $secondFactor,
+        SecondFactorInterface $secondFactor,
         ResponseContext $context,
         $authenticationMode,
     ): RedirectResponse {
         $context->saveSelectedSecondFactor($secondFactor);
 
-        $this->getStepupService()->clearSmsVerificationState($secondFactor->secondFactorId);
+        $this->getStepupService()->clearSmsVerificationState($secondFactor->getSecondFactorId());
 
         $secondFactorTypeService = $this->get('surfnet_stepup.service.second_factor_type');
-        $secondFactorType = new SecondFactorType($secondFactor->secondFactorType);
+        $secondFactorType = new SecondFactorType($secondFactor->getSecondFactorType());
 
         $route = 'gateway_verify_second_factor_';
         if ($secondFactorTypeService->isGssf($secondFactorType)) {

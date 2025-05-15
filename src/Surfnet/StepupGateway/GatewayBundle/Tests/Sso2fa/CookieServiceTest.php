@@ -229,8 +229,12 @@ class CookieServiceTest extends TestCase
             ->shouldReceive('finalizeAuthentication');
         $this->secondFactorService
             ->shouldReceive('findByUuid')
-            ->with('sf-id-1234')
+            ->with('sf-id-1234', $this->responseContext)
             ->andReturn($sfMock);
+        $this->secondFactorService
+            ->shouldReceive('getLoaLevel')
+            ->with($sfMock)
+            ->andReturn(new Loa(2.0, 'example.org:loa-2.0'));
         $this->institutionService
             ->shouldReceive('ssoOn2faEnabled')
             ->with('institution-a')
@@ -286,8 +290,12 @@ class CookieServiceTest extends TestCase
             ->shouldReceive('finalizeAuthentication');
         $this->secondFactorService
             ->shouldReceive('findByUuid')
-            ->with('sf-id-1234')
+            ->with('sf-id-1234', $this->responseContext)
             ->andReturn($sfMock);
+        $this->secondFactorService
+            ->shouldReceive('getLoaLevel')
+            ->with($sfMock)
+            ->andReturn(new Loa(2.0, 'example.org:loa-2.0'));
         $this->institutionService
             ->shouldReceive('ssoOn2faEnabled')
             ->with('institution-a')
@@ -341,8 +349,12 @@ class CookieServiceTest extends TestCase
             ->shouldReceive('finalizeAuthentication');
         $this->secondFactorService
             ->shouldReceive('findByUuid')
-            ->with('sf-id-1234')
+            ->with('sf-id-1234', $this->responseContext)
             ->andReturn($sfMock);
+        $this->secondFactorService
+            ->shouldReceive('getLoaLevel')
+            ->with($sfMock)
+            ->andReturn(new Loa(2.0, 'example.org:loa-2.0'));
         $this->institutionService
             ->shouldReceive('ssoOn2faEnabled')
             ->with('institution-a')
@@ -390,7 +402,7 @@ class CookieServiceTest extends TestCase
             ->shouldReceive('finalizeAuthentication');
         $this->secondFactorService
             ->shouldReceive('findByUuid')
-            ->with('non-existant')
+            ->with('non-existant', $this->responseContext)
             ->andReturnNull();
 
         self::expectException(RuntimeException::class);
@@ -459,7 +471,7 @@ class CookieServiceTest extends TestCase
             ->andReturn(false);
         $this->secondFactorService
             ->shouldReceive('findByUuid')
-            ->with('sf-id-1234')
+            ->with('sf-id-1234', $this->responseContext)
             ->andReturn($sfMock);
         $this->institutionService
             ->shouldReceive('ssoOn2faEnabled')
@@ -491,14 +503,15 @@ class CookieServiceTest extends TestCase
 
         $this->secondFactorService
             ->shouldReceive('findByUuid')
-            ->with('abcdef-1234')
+            ->with('abcdef-1234', $this->responseContext)
             ->andReturn($yubikey);
 
         self::assertTrue(
             $this->service->maySkipAuthentication(
                 3.0,
                 'ident-1234',
-                $cookieValue
+                $cookieValue,
+                $this->responseContext
             )
         );
     }
@@ -518,7 +531,8 @@ class CookieServiceTest extends TestCase
             $this->service->maySkipAuthentication(
                 3.0,
                 'abcdef-1234',
-                Mockery::mock(NullCookieValue::class)
+                Mockery::mock(NullCookieValue::class),
+                $this->responseContext
             )
         );
     }
@@ -544,7 +558,8 @@ class CookieServiceTest extends TestCase
             $this->service->maySkipAuthentication(
                 4.0, // LoA required by SP is 4.0, the one in the cookie is 3.0
                 'abcdef-1234',
-                $cookieValue
+                $cookieValue,
+                $this->responseContext
             )
         );
     }
@@ -570,7 +585,8 @@ class CookieServiceTest extends TestCase
             $this->service->maySkipAuthentication(
                 2.0,
                 'Jane Doe', // Not issued to Jane Doe but to abcdef-1234
-                $cookieValue
+                $cookieValue,
+                $this->responseContext
             )
         );
     }
@@ -601,7 +617,8 @@ class CookieServiceTest extends TestCase
             $this->service->maySkipAuthentication(
                 3.0,
                 'ident-1234',
-                $cookieValue
+                $cookieValue,
+                $this->responseContext
             )
         );
     }
@@ -637,7 +654,8 @@ class CookieServiceTest extends TestCase
             $this->service->maySkipAuthentication(
                 3.0,
                 'ident-1234',
-                $cookieValue
+                $cookieValue,
+                $this->responseContext
             )
         );
     }

@@ -23,6 +23,7 @@ use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupBundle\Value\Loa;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupBundle\Value\VettingType;
+use Surfnet\StepupGateway\GatewayBundle\Service\SecondFactor\SecondFactorInterface;
 
 /**
  * WARNING: Any schema change made to this entity should also be applied to the Middleware SecondFactor entity!
@@ -37,7 +38,7 @@ use Surfnet\StepupBundle\Value\VettingType;
  *      }
  * )
  */
-class SecondFactor
+class SecondFactor implements SecondFactorInterface
 {
     /**
      * @var int
@@ -118,15 +119,6 @@ class SecondFactor
     {
     }
 
-    public static function create(string $id, string $type, string $displayLocale)
-    {
-        $sf = new self();
-        $sf->secondFactorId = $id;
-        $sf->secondFactorType = $type;
-        $sf->displayLocale = $displayLocale;
-        return $sf;
-    }
-
     public function canSatisfy(Loa $loa, SecondFactorTypeService $service): bool
     {
         $secondFactorType = new SecondFactorType($this->secondFactorType);
@@ -152,5 +144,30 @@ class SecondFactor
             return new VettingType(VettingType::TYPE_ON_PREMISE);
         }
         return new VettingType(VettingType::TYPE_SELF_ASSERTED_REGISTRATION);
+    }
+
+    public function getSecondFactorId(): string
+    {
+        return $this->secondFactorId;
+    }
+
+    public function getSecondFactorType(): string
+    {
+        return $this->secondFactorType;
+    }
+
+    public function getDisplayLocale(): string
+    {
+        return $this->displayLocale;
+    }
+
+    public function getSecondFactorIdentifier(): string
+    {
+        return $this->secondFactorIdentifier;
+    }
+
+    public function getInstitution(): string
+    {
+        return $this->institution;
     }
 }
