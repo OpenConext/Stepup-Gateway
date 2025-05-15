@@ -101,13 +101,11 @@ class RespondService
             );
         }
 
-        $secondFactor = $this->secondFactorService->findByUuid($selectedSecondFactorUuid);
+        $secondFactor = $this->secondFactorService->findByUuid($selectedSecondFactorUuid, $responseContext);
+        $loaLevel =  $this->secondFactorService->getLoaLevel($secondFactor);
         $this->responseValidator->validate($request, $secondFactor, $responseContext->getIdentityNameId());
 
-        $grantedLoa = $this->loaResolutionService
-            ->getLoaByLevel($secondFactor->getLoaLevel($this->secondFactorTypeService));
-
-        $authnContextClassRef = $this->loaAliasLookupService->findAliasByLoa($grantedLoa);
+        $authnContextClassRef = $this->loaAliasLookupService->findAliasByLoa($loaLevel);
 
         $response = $this->responseFactory->createSecondFactorOnlyResponse(
             $responseContext->getIdentityNameId(),

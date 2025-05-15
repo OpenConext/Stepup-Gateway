@@ -19,6 +19,7 @@
 namespace Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject;
 
 use DateTime;
+use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Exception\InvalidAuthenticationTimeException;
 use function strtolower;
 use function strtotime;
 
@@ -43,7 +44,7 @@ class CookieValue implements CookieValueInterface
         $cookieValue->identityId = $identityId;
         $cookieValue->loa = $loa;
         $dateTime = new DateTime();
-        $cookieValue->authenticationTime = $dateTime->format(DATE_ATOM);
+        $cookieValue->authenticationTime = $dateTime->format(DATE_RFC3339_EXTENDED);
         return $cookieValue;
     }
 
@@ -96,6 +97,13 @@ class CookieValue implements CookieValueInterface
 
     public function authenticationTime(): int
     {
-        return strtotime($this->authenticationTime);
+        $dateTime = DateTime::createFromFormat(DATE_RFC3339_EXTENDED, $this->authenticationTime);
+        if (!$dateTime) {
+            $dateTime = DateTime::createFromFormat(DATE_RFC3339, $this->authenticationTime);
+        }
+        if (!$dateTime) {
+            throw new InvalidAuthenticationTimeException();
+        }
+        return $dateTime->getTimestamp();
     }
 }

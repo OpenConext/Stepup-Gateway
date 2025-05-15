@@ -106,27 +106,27 @@ class CookieService implements CookieServiceInterface
 
         // We can only set an SSO on 2FA cookie if a second factor authentication is being handled.
         if ($secondFactorId) {
-            $secondFactor = $this->secondFactorService->findByUuid($secondFactorId);
+            $secondFactor = $this->secondFactorService->findByUuid($secondFactorId, $responseContext);
             if (!$secondFactor) {
                 throw new RuntimeException(sprintf('Second Factor token not found with ID: %s', $secondFactorId));
             }
             // Test if the institution of the Identity this SF belongs to has SSO on 2FA enabled
-            $isEnabled = $this->institutionConfigurationService->ssoOn2faEnabled($secondFactor->institution);
+            $isEnabled = $this->institutionConfigurationService->ssoOn2faEnabled($secondFactor->getInstitution());
             $this->logger->notice(
                 sprintf(
                     'SSO on 2FA is %senabled for %s',
                     $isEnabled ? '' : 'not ',
-                    $secondFactor->institution
+                    $secondFactor->getInstitution()
                 )
             );
 
             if ($isEnabled) {
                 $identityId = $responseContext->getIdentityNameId();
-                $loa = $secondFactor->getLoaLevel($this->secondFactorTypeService);
+                $loa = $this->secondFactorService->getLoaLevel($secondFactor);
                 $isVerifiedBySsoOn2faCookie = $responseContext->isVerifiedBySsoOn2faCookie();
                 // Did the user perform a new second factor authentication?
                 if (!$isVerifiedBySsoOn2faCookie) {
-                    $cookie = CookieValue::from($identityId, $secondFactor->secondFactorId, $loa);
+                    $cookie = CookieValue::from($identityId, $secondFactor->getSecondFactorId(), $loa->getLevel());
                     $this->store($httpResponse, $cookie);
                 }
             }
@@ -141,7 +141,8 @@ class CookieService implements CookieServiceInterface
     public function maySkipAuthentication(
         float $requiredLoa,
         string $identityNameId,
-        CookieValueInterface $ssoCookie
+        CookieValueInterface $ssoCookie,
+        ResponseContext $responseContext
     ): bool {
 
         // Perform validation on the cookie and its contents
@@ -149,7 +150,7 @@ class CookieService implements CookieServiceInterface
             return false;
         }
 
-        if (!$this->secondFactorService->findByUuid($ssoCookie->secondFactorId())) {
+        if (!$this->secondFactorService->findByUuid($ssoCookie->secondFactorId(), $responseContext)) {
             $this->logger->notice(
                 'The second factor stored in the SSO cookie was revoked or has otherwise became unknown to Gateway',
                 [

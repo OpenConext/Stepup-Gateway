@@ -314,21 +314,6 @@ class ServiceProviderContext implements Context
         }
     }
 
-    /**
-     * @return IdentityProvider
-     */
-    public function getIdentityProvider()
-    {
-        /** @var RequestStack $stack */
-
-        $stack = $this->kernel->getContainer()->get('request_stack');
-        $stack->push(Request::create('https://gateway.dev.openconext.local'));
-        $ip = $this->kernel->getContainer()->get('surfnet_saml.hosted.identity_provider');
-        $stack->pop();
-
-        return $ip;
-    }
-
     private static function loadPrivateKey(PrivateKey $key)
     {
         $keyLoader = new PrivateKeyLoader();
