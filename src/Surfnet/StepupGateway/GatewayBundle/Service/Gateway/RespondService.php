@@ -83,7 +83,7 @@ class RespondService
 
         $grantedLoa = null;
         if ($responseContext->isSecondFactorVerified()) {
-            $secondFactor = $this->secondFactorService->findByUuid($responseContext->getSelectedSecondFactor(), $responseContext);
+            $secondFactor = $this->secondFactorService->findByUuid($responseContext->getSelectedSecondFactor());
             $grantedLoa = $this->secondFactorService->getLoaLevel($secondFactor);
         }
 

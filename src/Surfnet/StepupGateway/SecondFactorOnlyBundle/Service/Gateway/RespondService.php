@@ -101,7 +101,7 @@ class RespondService
             );
         }
 
-        $secondFactor = $this->secondFactorService->findByUuid($selectedSecondFactorUuid, $responseContext);
+        $secondFactor = $this->secondFactorService->findByUuid($selectedSecondFactorUuid);
         $loaLevel =  $this->secondFactorService->getLoaLevel($secondFactor);
         $this->responseValidator->validate($request, $secondFactor, $responseContext->getIdentityNameId());
 

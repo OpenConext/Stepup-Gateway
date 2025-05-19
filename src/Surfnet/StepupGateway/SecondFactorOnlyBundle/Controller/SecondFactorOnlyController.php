@@ -24,6 +24,7 @@ use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\Exception\InvalidAdfsReque
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\Exception\InvalidAdfsResponseException;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Exception\InvalidSecondFactorMethodException;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\Gateway\AdfsService;
+use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\Gateway\GsspFallbackService;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\Gateway\LoginService;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\Gateway\RespondService;
 use Symfony\Component\HttpFoundation\Request;
@@ -87,6 +88,10 @@ class SecondFactorOnlyController extends ContainerController
 
             return $responseRendering->renderRequesterFailureResponse($this->getResponseContext(), $httpRequest);
         }
+
+        // Handle SAML GSSP user attibutes extension
+        $logger->notice('Determine if GSSP user attributes are present for processing later on');
+        $this->getGsspFallbackService()->handleSamlGsspExtension($originalRequest);
 
         $logger->notice('Forwarding to second factor controller for loa determination and handling');
 
@@ -199,5 +204,13 @@ class SecondFactorOnlyController extends ContainerController
     public function getSecondFactorAdfsService()
     {
         return $this->get('second_factor_only.adfs_service');
+    }
+
+    /**
+     * @return AdfsService
+     */
+    public function getGsspFallbackService(): GsspFallbackService
+    {
+        return $this->get('second_factor_only.gssp_fallback_service');
     }
 }

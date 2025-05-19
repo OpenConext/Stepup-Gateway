@@ -140,7 +140,7 @@ final class RespondServiceTest extends GatewaySamlTestCase
 
         // Mock second factor service
         $this->secondFactorService->shouldReceive('findByUuid')
-            ->with('mocked-second-factor-id', $this->responseContext)
+            ->with('mocked-second-factor-id')
             ->andReturn($secondFactor);
 
         $this->secondFactorService->shouldReceive('getLoaLevel')
@@ -257,7 +257,7 @@ final class RespondServiceTest extends GatewaySamlTestCase
 
         // Mock second factor service
         $this->secondFactorService->shouldReceive('findByUuid')
-            ->with('mocked-second-factor-id', $this->responseContext)
+            ->with('mocked-second-factor-id')
             ->andReturn($secondFactor);
 
         $this->secondFactorService->shouldReceive('getLoaLevel')

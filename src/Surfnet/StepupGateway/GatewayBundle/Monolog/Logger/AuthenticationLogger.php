@@ -60,7 +60,7 @@ class AuthenticationLogger
     {
         $context = $this->getResponseContext($authenticationMode);
 
-        $secondFactor = $this->secondFactorService->findByUuid($context->getSelectedSecondFactor(), $context);
+        $secondFactor = $this->secondFactorService->findByUuid($context->getSelectedSecondFactor());
         $loa = $this->secondFactorService->getLoaLevel($secondFactor);
 
         $data = [
@@ -73,7 +73,7 @@ class AuthenticationLogger
         ];
 
         if ($context->isVerifiedBySsoOn2faCookie()) {
-            $context['sso_cookie_id'] = $context->getSsoOn2faCookieFingerprint();
+            $data['sso_cookie_id'] = $context->getSsoOn2faCookieFingerprint();
         }
 
         $this->log('Second Factor Authenticated', $data, $requestId, $authenticationMode);

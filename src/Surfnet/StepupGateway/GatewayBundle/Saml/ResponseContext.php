@@ -257,11 +257,6 @@ class ResponseContext
         return $this->stateHandler->getPreferredLocale();
     }
 
-    public function isSecondFactorFallback(): bool
-    {
-        return $this->stateHandler->isSecondFactorFallback();
-    }
-
     /**
      * @return null|string
      */

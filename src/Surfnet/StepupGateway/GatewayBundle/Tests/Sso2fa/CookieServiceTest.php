@@ -229,7 +229,7 @@ class CookieServiceTest extends TestCase
             ->shouldReceive('finalizeAuthentication');
         $this->secondFactorService
             ->shouldReceive('findByUuid')
-            ->with('sf-id-1234', $this->responseContext)
+            ->with('sf-id-1234')
             ->andReturn($sfMock);
         $this->secondFactorService
             ->shouldReceive('getLoaLevel')
@@ -290,7 +290,7 @@ class CookieServiceTest extends TestCase
             ->shouldReceive('finalizeAuthentication');
         $this->secondFactorService
             ->shouldReceive('findByUuid')
-            ->with('sf-id-1234', $this->responseContext)
+            ->with('sf-id-1234')
             ->andReturn($sfMock);
         $this->secondFactorService
             ->shouldReceive('getLoaLevel')
@@ -349,7 +349,7 @@ class CookieServiceTest extends TestCase
             ->shouldReceive('finalizeAuthentication');
         $this->secondFactorService
             ->shouldReceive('findByUuid')
-            ->with('sf-id-1234', $this->responseContext)
+            ->with('sf-id-1234')
             ->andReturn($sfMock);
         $this->secondFactorService
             ->shouldReceive('getLoaLevel')
@@ -402,7 +402,7 @@ class CookieServiceTest extends TestCase
             ->shouldReceive('finalizeAuthentication');
         $this->secondFactorService
             ->shouldReceive('findByUuid')
-            ->with('non-existant', $this->responseContext)
+            ->with('non-existant')
             ->andReturnNull();
 
         self::expectException(RuntimeException::class);
@@ -471,7 +471,7 @@ class CookieServiceTest extends TestCase
             ->andReturn(false);
         $this->secondFactorService
             ->shouldReceive('findByUuid')
-            ->with('sf-id-1234', $this->responseContext)
+            ->with('sf-id-1234')
             ->andReturn($sfMock);
         $this->institutionService
             ->shouldReceive('ssoOn2faEnabled')
@@ -503,7 +503,7 @@ class CookieServiceTest extends TestCase
 
         $this->secondFactorService
             ->shouldReceive('findByUuid')
-            ->with('abcdef-1234', $this->responseContext)
+            ->with('abcdef-1234')
             ->andReturn($yubikey);
 
         self::assertTrue(

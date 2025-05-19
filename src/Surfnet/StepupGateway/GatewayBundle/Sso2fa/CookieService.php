@@ -106,7 +106,7 @@ class CookieService implements CookieServiceInterface
 
         // We can only set an SSO on 2FA cookie if a second factor authentication is being handled.
         if ($secondFactorId) {
-            $secondFactor = $this->secondFactorService->findByUuid($secondFactorId, $responseContext);
+            $secondFactor = $this->secondFactorService->findByUuid($secondFactorId);
             if (!$secondFactor) {
                 throw new RuntimeException(sprintf('Second Factor token not found with ID: %s', $secondFactorId));
             }
@@ -141,8 +141,7 @@ class CookieService implements CookieServiceInterface
     public function maySkipAuthentication(
         float $requiredLoa,
         string $identityNameId,
-        CookieValueInterface $ssoCookie,
-        ResponseContext $responseContext
+        CookieValueInterface $ssoCookie
     ): bool {
 
         // Perform validation on the cookie and its contents
@@ -150,7 +149,7 @@ class CookieService implements CookieServiceInterface
             return false;
         }
 
-        if (!$this->secondFactorService->findByUuid($ssoCookie->secondFactorId(), $responseContext)) {
+        if (!$this->secondFactorService->findByUuid($ssoCookie->secondFactorId(),)) {
             $this->logger->notice(
                 'The second factor stored in the SSO cookie was revoked or has otherwise became unknown to Gateway',
                 [

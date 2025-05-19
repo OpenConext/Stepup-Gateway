@@ -75,6 +75,7 @@ services:
             - "@gateway.repository.second_factor"
             - "@surfnet_stepup.service.loa_resolution"
             - "@surfnet_stepup.service.second_factor_type"
+            - "@second_factor_only.gssp_fallback_service"
 
     gateway.service.response_proxy:
         class: Surfnet\StepupGateway\GatewayBundle\Service\ProxyResponseService

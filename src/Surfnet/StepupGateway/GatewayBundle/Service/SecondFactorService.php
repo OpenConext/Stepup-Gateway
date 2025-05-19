@@ -24,8 +24,8 @@ use Surfnet\StepupBundle\Value\Loa;
 use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor;
 use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactorRepository;
 use Surfnet\StepupGateway\GatewayBundle\Exception\RuntimeException;
-use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
 use Surfnet\StepupGateway\GatewayBundle\Service\SecondFactor\SecondFactorInterface;
+use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\Gateway\GsspFallbackService;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\Gateway\SecondfactorGsspFallback;
 
 class SecondFactorService
@@ -33,25 +33,28 @@ class SecondFactorService
     private SecondFactorRepository $repository;
     private LoaResolutionService $loaResolutionService;
     private SecondFactorTypeService $secondFactorTypeService;
+    private GsspFallbackService $gsspFallbackService;
 
     public function __construct(
         SecondFactorRepository  $repository,
         LoaResolutionService    $loaResolutionService,
-        SecondFactorTypeService $secondFactorTypeService
+        SecondFactorTypeService $secondFactorTypeService,
+        GsspFallbackService     $gsspFallbackService
     ) {
         $this->repository = $repository;
         $this->loaResolutionService = $loaResolutionService;
         $this->secondFactorTypeService = $secondFactorTypeService;
+        $this->gsspFallbackService = $gsspFallbackService;
     }
 
     /**
      * @param $uuid
      * @return null|SecondFactorInterface
      */
-    public function findByUuid($uuid, ResponseContext $responseContext)
+    public function findByUuid($uuid)
     {
-        if ($responseContext->isSecondFactorFallback()) {
-            return SecondfactorGsspFallback::create('azuremfa', $responseContext->getSelectedLocale());
+        if ($this->gsspFallbackService->isSecondFactorFallback()) {
+            return $this->gsspFallbackService->createSecondFactor();
         }
 
         return $this->repository->findOneBySecondFactorId($uuid);
