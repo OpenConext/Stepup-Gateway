@@ -22,65 +22,133 @@ use Psr\Log\LoggerInterface;
 use Surfnet\SamlBundle\SAML2\ReceivedAuthnRequest;
 use Surfnet\StepupBundle\Value\Loa;
 use Surfnet\StepupGateway\GatewayBundle\Controller\SecondFactorController;
+use Surfnet\StepupGateway\GatewayBundle\Entity\InstitutionConfigurationRepository;
 use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactorRepository;
 use Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler;
 use Surfnet\StepupGateway\GatewayBundle\Service\SecondFactor\SecondFactorInterface;
 use Surfnet\StepupGateway\GatewayBundle\Service\WhitelistService;
+use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\Gateway\GsspFallback\GsspFallbackConfig;
 
 class GsspFallbackService
 {
 
     private SecondFactorRepository $secondFactorRepository;
+    private InstitutionConfigurationRepository $institutionConfigurationRepository;
     private ProxyStateHandler $stateHandler;
-    private LoggerInterface $logger;
+    private GsspFallbackConfig $config;
 
-    public function __construct(SecondFactorRepository $secondFactorRepository, ProxyStateHandler $stateHandler, LoggerInterface $logger)
-    {
+    public function __construct(
+        SecondFactorRepository $secondFactorRepository,
+        InstitutionConfigurationRepository $institutionConfigurationRepository,
+        ProxyStateHandler $stateHandler,
+        GsspFallbackConfig $config,
+    ) {
         $this->secondFactorRepository = $secondFactorRepository;
+        $this->institutionConfigurationRepository = $institutionConfigurationRepository;
         $this->stateHandler = $stateHandler;
-        $this->logger = $logger;
+        $this->config = $config;
     }
 
     /**
      * @param ReceivedAuthnRequest $originalRequest
      */
-    public function handleSamlGsspExtension(ReceivedAuthnRequest $originalRequest): void
+    public function handleSamlGsspExtension(LoggerInterface $logger, ReceivedAuthnRequest $originalRequest): void
     {
-        // todo: get extension data from authn request!
+        if (!$this->config->isConfigured()) {
+            return;
+        }
+
+        $logger->info('GSSP fallback configured, parsing GSSP extension from AuthnRequest');
+
+        if ($originalRequest->getExtensions()->hasGsspUserAttributesChunk()) {
+            $logger->info(
+                sprintf('GSSP extension found, setting user attributes in state')
+            );
+
+            $gsspUserAttributes = $originalRequest->getExtensions()->getGsspUserAttributesChunk();
+
+            $subject = $gsspUserAttributes->getAttributeValue($this->config->getSubjectAttribute());
+            $institution = $gsspUserAttributes->getAttributeValue($this->config->getInstitutionAttribute());
+
+            $logger->info(
+                sprintf(
+                    'GSSP extension found, setting user attributes in state: subject: %s, institution: %s',
+                    $subject,
+                    $institution
+                )
+            );
+
+            $this->stateHandler->setGsspUserAttributes($subject, $institution);
+        }
     }
 
     public function determineGsspFallbackNeeded(
         string $identityNameId,
         string $authenticationMode,
         Loa $requestedLoa,
-        WhitelistService $whitelistService
+        WhitelistService $whitelistService,
+        LoggerInterface $logger,
+        string $locale,
     ): bool {
 
-        return false;
+        // Determine if the GSSP fallback flow should be started based on the following conditions:
+        // - the authentication mode is SFO
+        // - a fallback GSSP is configured
+        // - a LoA1.5 (i.e. self asserted) authentication is requested
+        // - the GSSP user attributes are available in the AuthnRequest
+        // - the GSSP institution in the extension is whitelisted
+        // - this "fallback" option is enabled for the institution that the user belongs to.
+        // - the user has no registered tokens
 
-        if ($authenticationMode === SecondFactorController::MODE_SFO) {
-            return true;
+        if ($authenticationMode !== SecondFactorController::MODE_SFO) {
+            $this->stateHandler->setSecondFactorIsFallback(false);
+            return false;
         }
 
-        return false;
+        if (!$this->config->isConfigured()) {
+            $this->stateHandler->setSecondFactorIsFallback(false);
+            return false;
+        }
 
-        // - a LoA1.5 (i.e. self asserted) authentication is requested
-        // - a fallback GSSP is configured
-        // - this "fallback" option is enabled for the institution that the user belongs to.
-        // - the configured user attribute is present in the AuthnRequest
+        if (!$requestedLoa->levelIsLowerOrEqualTo(Loa::LOA_SELF_VETTED)) {
+            $logger->info('Gssp Fallback configured but not used, requested LoA is higher than self-vetted');
+            $this->stateHandler->setSecondFactorIsFallback(false);
+            return false;
+        }
 
-//        $this->logger->info('Determine GSSP fallback');
-//
-//        $candidateSecondFactors = $this->secondFactorRepository->getInstitutionByNameId($identityNameId);
-//        $this->logger->info(
-//            sprintf('Loaded %d matching candidate second factors', count($candidateSecondFactors))
-//        );
-//
-//        if ($candidateSecondFactors->isEmpty()) {
-//            $this->logger->alert('No suitable candidate second factors found, sending Loa cannot be given response');
-//        }
+        $subject = $this->stateHandler->getGsspUserAttributeSubject();
+        $institution = $this->stateHandler->getGsspUserAttributeInstitution();
+        if (empty($subject) || empty($institution)) {
+            $this->stateHandler->setSecondFactorIsFallback(false);
+            $logger->info('Gssp Fallback configured but not used, GSSP user attributes are not set in AuthnRequest');
+            return false;
+        }
 
-        return false;
+        if (!$whitelistService->contains($institution)) {
+            $this->stateHandler->setSecondFactorIsFallback(false);
+            $logger->info('Gssp Fallback configured but not used, GSSP institution is not whitelisted');
+            return false;
+        }
+
+        $institutionConfiguration = $this->institutionConfigurationRepository->getInstitutionConfiguration($institution);
+        if (!$institutionConfiguration->ssoRegistrationBypass) {
+            $this->stateHandler->setSecondFactorIsFallback(false);
+            $logger->info('Gssp Fallback configured but not used, GSSP fallback is not enabled for the institution');
+            return false;
+        }
+        
+        if ($this->secondFactorRepository->hasTokens($identityNameId)) {
+            $this->stateHandler->setSecondFactorIsFallback(false);
+            $logger->info('Gssp Fallback configured but not used, the identity has registered tokens');
+            return false;
+        }
+
+        $logger->info('Gssp Fallback flow started');
+
+        $this->stateHandler->setSecondFactorIsFallback(true);
+        $this->stateHandler->setPreferredLocale($locale);
+
+        return true;
     }
 
     public function isSecondFactorFallback(): bool
@@ -90,6 +158,11 @@ class GsspFallbackService
 
     public function createSecondFactor(): SecondFactorInterface
     {
-        return SecondfactorGsspFallback::create('azuremfa', $this->stateHandler->getPreferredLocale());
+        return SecondfactorGsspFallback::create(
+            $this->stateHandler->getGsspUserAttributeSubject(),
+            $this->stateHandler->getGsspUserAttributeInstitution(),
+            $this->config->getGssp(),
+            (string)$this->stateHandler->getPreferredLocale()
+        );
     }
 }

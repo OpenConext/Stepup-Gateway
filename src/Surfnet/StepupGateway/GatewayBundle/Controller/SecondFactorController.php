@@ -152,6 +152,8 @@ class SecondFactorController extends ContainerController
             $authenticationMode,
             $requiredLoa,
             $this->get('gateway.service.whitelist'),
+            $logger,
+            $request->getLocale(),
         )) {
             $secondFactor = $this->getGsspFallbackService()->createSecondFactor();
             return $this->selectAndRedirectTo($secondFactor, $context, $authenticationMode);

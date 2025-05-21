@@ -23,6 +23,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  */
 class ProxyStateHandler
 {
@@ -204,6 +205,24 @@ class ProxyStateHandler
     public function isSecondFactorFallback(): bool
     {
         return (bool)$this->get('selected_second_factor_fallback');
+    }
+
+    public function setGsspUserAttributes(string $subject, string $institution): ProxyStateHandler
+    {
+        $this->set('user_attribute_subject', $subject);
+        $this->set('user_attribute_institution', $institution);
+
+        return $this;
+    }
+
+    public function getGsspUserAttributeSubject(): string
+    {
+        return (string)$this->get('user_attribute_subject');
+    }
+
+    public function getGsspUserAttributeInstitution(): string
+    {
+        return (string)$this->get('user_attribute_institution');
     }
 
     public function setVerifiedBySsoOn2faCookie(bool $isVerifiedByCookie): ProxyStateHandler

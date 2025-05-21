@@ -217,7 +217,7 @@ final class RespondServiceTest extends GatewaySamlTestCase
             'surfnet/gateway/requestselected_second_factor_verified' => false,
             'surfnet/gateway/requestselected_second_factor_fallback' => false,
             'surfnet/gateway/requestlocale' => 'nl_NL',
-            'surfnet/gateway/requestsso_on_2fa_cookie_fingerprint' => ''
+            'surfnet/gateway/requestsso_on_2fa_cookie_fingerprint' => '',
         ], $this->getSessionData('attributes'));
     }
 

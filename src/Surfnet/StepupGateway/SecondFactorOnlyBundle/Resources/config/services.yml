@@ -172,9 +172,17 @@ services:
             - "@second_factor_only.adfs.response_helper"
 
 
+    second_factor_only.gssp_fallback_config:
+        class: Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\Gateway\GsspFallback\GsspFallbackConfig
+        arguments:
+            - "%fallback_gssp%"
+            - "%fallback_gssp_subject_attribute%"
+            - "%fallback_gssp_institution_attribute%"
+
     second_factor_only.gssp_fallback_service:
         class: Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\Gateway\GsspFallbackService
         arguments:
             - "@gateway.repository.second_factor"
+            - "@gateway.repository.institution_configuration"
             - "@gateway.proxy.sfo.state_handler"
-            - "@surfnet_saml.logger"
+            - "@second_factor_only.gssp_fallback_config"

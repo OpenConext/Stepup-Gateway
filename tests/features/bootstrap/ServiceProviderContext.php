@@ -30,6 +30,8 @@ use SAML2\Certificate\KeyLoader;
 use SAML2\Certificate\PrivateKeyLoader;
 use SAML2\Configuration\PrivateKey;
 use SAML2\Constants;
+use SAML2\DOMDocumentFactory;
+use SAML2\XML\Chunk;
 use SAML2\XML\saml\Issuer;
 use SAML2\XML\saml\NameID;
 use Surfnet\SamlBundle\Entity\IdentityProvider;
@@ -159,7 +161,7 @@ class ServiceProviderContext implements Context
     /**
      * @When /^([^\']*) starts an SFO authentication with LoA ([^\']*)$/
      */
-    public function iStartAnSFOAuthenticationWithLoa($nameId, string $loa, bool $forceAuthN = false): void
+    public function iStartAnSFOAuthenticationWithLoa($nameId, string $loa, bool $forceAuthN = false, ?string $gsspFallbackSubject = null, ?string $gsspFallbackInstitution = null): void
     {
         $authnRequest = new AuthnRequest();
         // In order to later assert if the response succeeded or failed, set our own dummy ACS location
@@ -194,6 +196,32 @@ class ServiceProviderContext implements Context
             default:
                 throw new RuntimeException(sprintf('The specified LoA-%s is not supported', $loa));
         }
+
+        if ($gsspFallbackSubject != null) {
+            $dom = DOMDocumentFactory::create();
+            $ce = $dom->createElementNS('urn:mace:surf.nl:stepup:gssp-extensions', 'gssp:UserAttributes');
+            $ce->setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance');
+            $ce->setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:xs', 'http://www.w3.org/2001/XMLSchema');
+
+            foreach ([
+                'urn:mace:dir:attribute-def:mail' => $gsspFallbackSubject,
+                'urn:mace:terena.org:attribute-def:schacHomeOrganization' => $gsspFallbackInstitution,
+
+            ] as $name => $value) {
+                $attrib = $ce->ownerDocument->createElementNS('urn:oasis:names:tc:SAML:2.0:assertion', 'saml:Attribute');
+                $attrib->setAttribute('NameFormat', 'urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified');
+                $attrib->setAttribute('Name', $name);
+                $attribValue = $ce->ownerDocument->createElementNS('urn:oasis:names:tc:SAML:2.0:assertion', 'saml:AttributeValue', $value);
+                $attribValue->setAttribute('xsi:type', 'xs:string');
+                $attrib->appendChild($attribValue);
+
+                $ce->appendChild($attrib);
+            }
+
+            $ext = $authnRequest->getExtensions();
+            $ext['saml:Extensions'] = new Chunk($ce);
+            $authnRequest->setExtensions($ext);
+        }
         $request = Saml2AuthnRequest::createNew($authnRequest);
         $query = $request->buildRequestQuery();
 
@@ -213,6 +241,14 @@ class ServiceProviderContext implements Context
     public function iStartAForcedSFOAuthenticationWithLoaRequirement($nameId, $loa): void
     {
         $this->iStartAnSFOAuthenticationWithLoa($nameId, $loa, true);
+    }
+
+    /**
+     * @When /^([^\']*) starts an SFO authentication with GSSP fallback requiring LoA ([^\']*) and Gssp extension subject ([^\']*) and institution ([^\']*)$/
+     */
+    public function iStartAForcedSFOAuthenticationWithLoaRequirementAndGsspExtension($nameId, $loa, $subject, $institution): void
+    {
+        $this->iStartAnSFOAuthenticationWithLoa($nameId, $loa, false, $subject, $institution);
     }
 
     /**
@@ -312,6 +348,50 @@ class ServiceProviderContext implements Context
             // Submit the SAML Response from SimpleSamplPHP IdP
             $this->minkContext->pressButton('Yes, continue');
         }
+    }
+
+    /**
+     * @When /^I authenticate at AzureMFA as "([^"]*)"$/
+     */
+    public function iAuthenticateAtAzureMfaAs($username): void
+    {
+        $this->minkContext->assertPageAddress('https://azuremfa.dev.openconext.local/mock/sso');
+        $attributes = sprintf('[
+            {
+                "name":"urn:mace:dir:attribute-def:mail",
+                "value": [
+                    "%s"
+                ]
+            },
+            {
+                "name": "http://schemas.microsoft.com/claims/authnmethodsreferences",
+                "value": [
+                    "http://schemas.microsoft.com/claims/multipleauthn"
+                ]
+            }
+          ]
+        ', $username);
+        $this->minkContext->fillField('attributes', $attributes);
+        $this->minkContext->pressButton('success');
+
+        $this->minkContext->assertPageAddress('https://azuremfa.dev.openconext.local/mock/sso');
+        $this->minkContext->pressButton('Submit assertion');
+
+        $this->minkContext->assertPageAddress('https://gateway.dev.openconext.local/test/authentication/consume-assertion');
+    }
+
+    /**
+     * @When /^I cancel the authentication at AzureMFA$/
+     */
+    public function iCancelTheAuthenticationAtAzureMfa(): void
+    {
+        $this->minkContext->assertPageAddress('https://azuremfa.dev.openconext.local/mock/sso');
+        $this->minkContext->pressButton('cancel');
+
+        $this->minkContext->assertPageAddress('https://azuremfa.dev.openconext.local/mock/sso');
+        $this->minkContext->pressButton('Submit assertion');
+
+        $this->minkContext->assertPageAddress('https://gateway.dev.openconext.local/test/authentication/consume-assertion');
     }
 
     private static function loadPrivateKey(PrivateKey $key)

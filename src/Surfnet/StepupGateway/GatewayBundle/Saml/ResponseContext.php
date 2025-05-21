@@ -281,6 +281,9 @@ class ResponseContext
         // a real Second Factor token. That's why this value is purged from state at this very late
         // point in time.
         $this->stateHandler->unsetVerifiedBySsoOn2faCookie();
+
+        $this->stateHandler->setSecondFactorIsFallback(false);
+        $this->stateHandler->setGsspUserAttributes('', '');
     }
 
     /**
@@ -304,7 +307,6 @@ class ResponseContext
     {
         $this->stateHandler->setSecondFactorVerified(false);
         $this->stateHandler->setSsoOn2faCookieFingerprint('');
-        $this->stateHandler->setSecondFactorIsFallback(false);
     }
 
     /**
