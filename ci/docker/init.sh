@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 cp ../../devconf/stepup/gateway/surfnet_yubikey.yaml.dist ../../devconf/stepup/gateway/surfnet_yubikey.yaml
 echo "pulling the images"
-docker compose pull gateway selenium haproxy ssp mariadb chrome
+docker compose pull gateway selenium haproxy ssp mariadb azuremfa chrome
 echo "starting the images"
-docker compose up gateway selenium haproxy ssp mariadb chrome -d
+docker compose up gateway selenium haproxy ssp mariadb azuremfa chrome -d
 echo "intialising the environment"
 docker compose exec -T gateway bash -c '
   cp /var/www/html/devconf/stepup/gateway/surfnet_yubikey.yaml.dist /var/www/html/devconf/stepup/gateway/surfnet_yubikey.yaml && \
