@@ -1,4 +1,18 @@
 services:
+    haproxy:
+      networks:
+        openconextdev:
+          aliases:
+            - ra.dev.openconext.local
+            - ssp.dev.openconext.local
+            - selfservice.dev.openconext.local
+            - middleware.dev.openconext.local
+            - gateway.dev.openconext.local
+            - demogssp.dev.openconext.local
+            - webauthn.dev.openconext.local
+            - tiqr.dev.openconext.local
+            - azuremfa.dev.openconext.local
+            - mailcatcher.dev.openconext.local
     gateway:
       image: ghcr.io/openconext/openconext-basecontainers/php82-apache2-node20-composer2:latest
       container_name: gateway
@@ -14,3 +28,9 @@ services:
     mariadb: 
        volumes:
           - ../../devconf/stepup/dbschema/:/docker-entrypoint-initdb.d/
+    azuremfa:
+      image: ghcr.io/openconext/stepup-azuremfa/stepup-azuremfa:test
+      environment:
+        APP_ENV: smoketest
+      volumes:
+        - ../../devconf/stepup/:/config
