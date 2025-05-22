@@ -36,9 +36,11 @@ use Surfnet\StepupGateway\GatewayBundle\Form\Type\SendSmsChallengeType;
 use Surfnet\StepupGateway\GatewayBundle\Form\Type\VerifySmsChallengeType;
 use Surfnet\StepupGateway\GatewayBundle\Form\Type\VerifyYubikeyOtpType;
 use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
+use Surfnet\StepupGateway\GatewayBundle\Service\SecondFactor\SecondFactorInterface;
 use Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorService;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\CookieService;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Controller\SamlProxyController;
+use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\Gateway\GsspFallbackService;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -144,6 +146,19 @@ class SecondFactorController extends ContainerController
             }
         }
 
+        // Determine if the GSSP fallback flow is allowed so we can continue without a previous registered token
+        if ($this->getGsspFallbackService()->determineGsspFallbackNeeded(
+            $identityNameId,
+            $authenticationMode,
+            $requiredLoa,
+            $this->get('gateway.service.whitelist'),
+            $logger,
+            $request->getLocale(),
+        )) {
+            $secondFactor = $this->getGsspFallbackService()->createSecondFactor();
+            return $this->selectAndRedirectTo($secondFactor, $context, $authenticationMode);
+        }
+
         $secondFactorCollection = $this
             ->getStepupService()
             ->determineViableSecondFactors(
@@ -154,7 +169,6 @@ class SecondFactorController extends ContainerController
         switch (count($secondFactorCollection)) {
             case 0:
                 $logger->notice('No second factors can give the determined Loa');
-
                 return $this->forward(
                     'Surfnet\StepupGateway\GatewayBundle\Controller\GatewayController::sendLoaCannotBeGiven',
                     ['authenticationMode' => $authenticationMode],
@@ -338,7 +352,6 @@ class SecondFactorController extends ContainerController
 
         /** @var SecondFactorService $secondFactorService */
         $secondFactorService = $this->get('gateway.service.second_factor_service');
-        /** @var SecondFactor $secondFactor */
         $secondFactor = $secondFactorService->findByUuid($selectedSecondFactor);
         if (!$secondFactor) {
             throw new RuntimeException(
@@ -355,8 +368,8 @@ class SecondFactorController extends ContainerController
         return $this->forward(
             SamlProxyController::class . '::sendSecondFactorVerificationAuthnRequest',
             [
-                'provider' => $secondFactor->secondFactorType,
-                'subjectNameId' => $secondFactor->secondFactorIdentifier,
+                'provider' => $secondFactor->getSecondFactorType(),
+                'subjectNameId' => $secondFactor->getSecondFactorIdentifier(),
                 'responseContextServiceId' => $responseContextServiceId,
                 'relayState' => $context->getRelayState(),
             ],
@@ -377,8 +390,13 @@ class SecondFactorController extends ContainerController
 
         $selectedSecondFactor = $this->getSelectedSecondFactor($context, $logger);
 
-        /** @var SecondFactor $secondFactor */
-        $secondFactor = $this->get('gateway.service.second_factor_service')->findByUuid($selectedSecondFactor);
+        if (!$this->getGsspFallbackService()->isSecondFactorFallback()) {
+            /** @var SecondFactor $secondFactor */
+            $secondFactor = $this->get('gateway.service.second_factor_service')->findByUuid($selectedSecondFactor);
+        } else {
+            $secondFactor = $this->getGsspFallbackService()->createSecondFactor();
+        }
+
         if (!$secondFactor) {
             throw new RuntimeException(
                 sprintf(
@@ -682,6 +700,11 @@ class SecondFactorController extends ContainerController
         return $this->get('gateway.service.second_factor_service');
     }
 
+    private function getGsspFallbackService(): GsspFallbackService
+    {
+        return $this->get('second_factor_only.gssp_fallback_service');
+    }
+
     private function getSelectedSecondFactor(ResponseContext $context, LoggerInterface $logger): string
     {
         $selectedSecondFactor = $context->getSelectedSecondFactor();
@@ -696,16 +719,16 @@ class SecondFactorController extends ContainerController
     }
 
     private function selectAndRedirectTo(
-        SecondFactor $secondFactor,
+        SecondFactorInterface $secondFactor,
         ResponseContext $context,
         $authenticationMode,
     ): RedirectResponse {
         $context->saveSelectedSecondFactor($secondFactor);
 
-        $this->getStepupService()->clearSmsVerificationState($secondFactor->secondFactorId);
+        $this->getStepupService()->clearSmsVerificationState($secondFactor->getSecondFactorId());
 
         $secondFactorTypeService = $this->get('surfnet_stepup.service.second_factor_type');
-        $secondFactorType = new SecondFactorType($secondFactor->secondFactorType);
+        $secondFactorType = new SecondFactorType($secondFactor->getSecondFactorType());
 
         $route = 'gateway_verify_second_factor_';
         if ($secondFactorTypeService->isGssf($secondFactorType)) {

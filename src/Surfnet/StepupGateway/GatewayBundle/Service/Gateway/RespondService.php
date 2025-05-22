@@ -83,14 +83,8 @@ class RespondService
 
         $grantedLoa = null;
         if ($responseContext->isSecondFactorVerified()) {
-            $secondFactor = $this->secondFactorService->findByUuid(
-                $responseContext->getSelectedSecondFactor()
-            );
-
-            $secondFactorTypeService = $this->secondFactorTypeService;
-            $grantedLoa = $this->loaResolutionService->getLoaByLevel(
-                $secondFactor->getLoaLevel($secondFactorTypeService)
-            );
+            $secondFactor = $this->secondFactorService->findByUuid($responseContext->getSelectedSecondFactor());
+            $grantedLoa = $this->secondFactorService->getLoaLevel($secondFactor);
         }
 
         $response = $this->responseProxy->createProxyResponse(

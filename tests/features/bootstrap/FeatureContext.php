@@ -223,6 +223,9 @@ class FeatureContext implements Context
             case $option === 'sso_on_2fa':
                 $optionColumnName = 'sso_on2fa_enabled';
                 break;
+            case $option === 'sso_registration_bypass':
+                $optionColumnName = 'sso_registration_bypass';
+                break;
             default:
                 throw new RuntimeException(sprintf('Option "%s" is not supported', $option));
         }
@@ -376,7 +379,7 @@ class FeatureContext implements Context
 
         if ($this->previousSsoOn2faCookieValue === $cookieValue) {
             throw new ExpectationException(
-                'The SSO on 2FA cookie did not change since the previous response',
+                sprintf('The SSO on 2FA cookie did not change since the previous response: "%s" !== "%s"', $this->previousSsoOn2faCookieValue, $cookieValue),
                 $this->minkContext->getSession()->getDriver()
             );
         }

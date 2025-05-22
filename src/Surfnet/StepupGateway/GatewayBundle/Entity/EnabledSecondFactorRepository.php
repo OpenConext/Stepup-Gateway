@@ -77,6 +77,11 @@ final class EnabledSecondFactorRepository implements SecondFactorRepository
         return $enabledSecondFactors;
     }
 
+    public function hasTokens($identityNameId): bool
+    {
+        return $this->secondFactorRepository->hasTokens($identityNameId);
+    }
+
     public function findOneBySecondFactorId($secondFactorId)
     {
         $secondFactor = $this->secondFactorRepository->findOneBySecondFactorId($secondFactorId);

@@ -20,24 +20,12 @@ namespace Surfnet\StepupGateway\GatewayBundle\Monolog\Logger;
 
 use DateTime;
 use Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger;
-use Surfnet\StepupBundle\Service\LoaResolutionService;
-use Surfnet\StepupBundle\Service\SecondFactorTypeService;
-use Surfnet\StepupBundle\Value\Loa;
 use Surfnet\StepupGateway\GatewayBundle\Exception\InvalidArgumentException;
-use Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler;
+use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
 use Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorService;
 
 class AuthenticationLogger
 {
-    /**
-     * @var ProxyStateHandler
-     */
-    private $ssoProxyStateHandler;
-
-    /**
-     * @var ProxyStateHandler
-     */
-    private $sfoProxyStateHandler;
 
     /**
      * @var SecondFactorService
@@ -45,50 +33,23 @@ class AuthenticationLogger
     private $secondFactorService;
 
     /**
-     * @var LoaResolutionService
-     */
-    private $loaResolutionService;
-
-    /**
      * @var SamlAuthenticationLogger
      */
     private $authenticationChannelLogger;
+    private ResponseContext $sfoResponseContext;
+    private ResponseContext $ssoResponseContext;
 
-    /**
-     * @var SecondFactorTypeService
-     */
-    private $secondFactorTypeService;
 
     public function __construct(
-        LoaResolutionService $loaResolutionService,
-        ProxyStateHandler $ssoProxyStateHandler,
-        ProxyStateHandler $sfoProxyStateHandler,
         SecondFactorService $secondFactorService,
         SamlAuthenticationLogger $authenticationChannelLogger,
-        SecondFactorTypeService $service
+        ResponseContext     $sfoResponseContext,
+        ResponseContext     $ssoResponseContext,
     ) {
-        $this->loaResolutionService = $loaResolutionService;
-        $this->ssoProxyStateHandler = $ssoProxyStateHandler;
-        $this->sfoProxyStateHandler = $sfoProxyStateHandler;
         $this->secondFactorService  = $secondFactorService;
         $this->authenticationChannelLogger = $authenticationChannelLogger;
-        $this->secondFactorTypeService = $service;
-    }
-
-    /**
-     * @param string $requestId The SAML authentication request ID of the original request (not the proxy request).
-     */
-    public function logIntrinsicLoaAuthentication($requestId): void
-    {
-        $context = [
-            'second_factor_id'      => '',
-            'second_factor_type'    => '',
-            'institution'           => '',
-            'authentication_result' => 'NONE',
-            'resulting_loa'         => (string) $this->loaResolutionService->getLoaByLevel(Loa::LOA_1),
-        ];
-
-        $this->log('Intrinsic Loa Requested', $context, $requestId);
+        $this->sfoResponseContext = $sfoResponseContext;
+        $this->ssoResponseContext = $ssoResponseContext;
     }
 
     /**
@@ -97,62 +58,53 @@ class AuthenticationLogger
      */
     public function logSecondFactorAuthentication(string $requestId, string $authenticationMode): void
     {
-        $stateHandler = $this->getStateHandler($authenticationMode);
-        $secondFactor = $this->secondFactorService->findByUuid($stateHandler->getSelectedSecondFactorId());
-        $loa = $this->loaResolutionService->getLoaByLevel($secondFactor->getLoaLevel($this->secondFactorTypeService));
+        $context = $this->getResponseContext($authenticationMode);
 
-        $context = [
-            'second_factor_id'      => $secondFactor->secondFactorId,
-            'second_factor_type'    => $secondFactor->secondFactorType,
-            'institution'           => $secondFactor->institution,
-            'authentication_result' => $stateHandler->isSecondFactorVerified() ? 'OK' : 'FAILED',
+        $secondFactor = $this->secondFactorService->findByUuid($context->getSelectedSecondFactor());
+        $loa = $this->secondFactorService->getLoaLevel($secondFactor);
+
+        $data = [
+            'second_factor_id'      => $secondFactor->getSecondFactorId(),
+            'second_factor_type'    => $secondFactor->getSecondFactorType(),
+            'institution'           => $secondFactor->getInstitution(),
+            'authentication_result' => $context->isSecondFactorVerified() ? 'OK' : 'FAILED',
             'resulting_loa'         => (string) $loa,
-            'sso' => $stateHandler->isVerifiedBySsoOn2faCookie() ? 'YES': 'NO',
+            'sso' => $context->isVerifiedBySsoOn2faCookie() ? 'YES': 'NO',
         ];
 
-        if ($stateHandler->isVerifiedBySsoOn2faCookie()) {
-            $context['sso_cookie_id'] = $stateHandler->getSsoOn2faCookieFingerprint();
+        if ($context->isVerifiedBySsoOn2faCookie()) {
+            $data['sso_cookie_id'] = $context->getSsoOn2faCookieFingerprint();
         }
 
-        $this->log('Second Factor Authenticated', $context, $requestId);
+        $this->log('Second Factor Authenticated', $data, $requestId, $authenticationMode);
     }
 
     /**
      * @param string $message
-     * @param array  $context
+     * @param array  $data
      * @param string $requestId
      */
-    private function log($message, array $context, $requestId): void
+    private function log(string $message, array $data, string $requestId, string $authenticationMode): void
     {
-        if (!is_string($requestId)) {
-            throw InvalidArgumentException::invalidType('string', 'requestId', $requestId);
-        }
-        // Regardless of authentication type, the authentication mode can be retrieved from any state handler
-        // given you provide the request id
-        $authenticationMode = $this->getStateHandler('sso')->getAuthenticationModeForRequestId($requestId);
-        $stateHandler = $this->getStateHandler($authenticationMode);
+        $context = $this->getResponseContext($authenticationMode);
 
-        $context['identity_id']        = $stateHandler->getIdentityNameId();
-        $context['authenticating_idp'] = $stateHandler->getAuthenticatingIdp();
-        $context['requesting_sp']      = $stateHandler->getRequestServiceProvider();
-        $context['datetime']           = (new DateTime())->format('Y-m-d\\TH:i:sP');
+        $data['identity_id']        = $context->getIdentityNameId();
+        $data['authenticating_idp'] = $context->getAuthenticatingIdp();
+        $data['requesting_sp']      = $context->getRequestServiceProvider();
+        $data['datetime']           = (new DateTime())->format('Y-m-d\\TH:i:sP');
 
-        $this->authenticationChannelLogger->forAuthentication($requestId)->notice($message, $context);
+        $this->authenticationChannelLogger->forAuthentication($requestId)->notice($message, $data);
     }
 
-    /**
-     * @param string $authenticationMode
-     * @return ProxyStateHandler
-     */
-    private function getStateHandler($authenticationMode)
+    private function getResponseContext(string $authenticationMode): ResponseContext
     {
         if ($authenticationMode === 'sfo') {
-            return $this->sfoProxyStateHandler;
+            return $this->sfoResponseContext;
         } elseif ($authenticationMode === 'sso') {
-            return $this->ssoProxyStateHandler;
+            return $this->ssoResponseContext;
         }
         throw new InvalidArgumentException(
-            sprintf('Retrieving a state handler for authentication type %s is not supported', $authenticationMode)
+            sprintf('Retrieving a response context for authentication type %s is not supported', $authenticationMode)
         );
     }
 }

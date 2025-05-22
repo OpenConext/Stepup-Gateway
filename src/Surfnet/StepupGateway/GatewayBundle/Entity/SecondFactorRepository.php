@@ -32,6 +32,8 @@ interface SecondFactorRepository
      */
     public function getAllMatchingFor(Loa $highestLoa, $identityNameId, SecondFactorTypeService $service);
 
+    public function hasTokens(string $identityNameId): bool;
+
     /**
      * Loads a second factor by its ID. Subsequent calls do not hit the database.
      *

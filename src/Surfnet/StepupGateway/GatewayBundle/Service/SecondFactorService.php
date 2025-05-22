@@ -18,27 +18,56 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Service;
 
+use Surfnet\StepupBundle\Service\LoaResolutionService;
+use Surfnet\StepupBundle\Service\SecondFactorTypeService;
+use Surfnet\StepupBundle\Value\Loa;
 use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor;
 use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactorRepository;
+use Surfnet\StepupGateway\GatewayBundle\Exception\RuntimeException;
+use Surfnet\StepupGateway\GatewayBundle\Service\SecondFactor\SecondFactorInterface;
+use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\Gateway\GsspFallbackService;
+use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\Gateway\SecondfactorGsspFallback;
 
 class SecondFactorService
 {
-    /**
-     * @var \Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactorRepository
-     */
-    private $repository;
+    private SecondFactorRepository $repository;
+    private LoaResolutionService $loaResolutionService;
+    private SecondFactorTypeService $secondFactorTypeService;
+    private GsspFallbackService $gsspFallbackService;
 
-    public function __construct(SecondFactorRepository $repository)
-    {
+    public function __construct(
+        SecondFactorRepository  $repository,
+        LoaResolutionService    $loaResolutionService,
+        SecondFactorTypeService $secondFactorTypeService,
+        GsspFallbackService     $gsspFallbackService
+    ) {
         $this->repository = $repository;
+        $this->loaResolutionService = $loaResolutionService;
+        $this->secondFactorTypeService = $secondFactorTypeService;
+        $this->gsspFallbackService = $gsspFallbackService;
     }
 
     /**
      * @param $uuid
-     * @return null|SecondFactor
+     * @return null|SecondFactorInterface
      */
     public function findByUuid($uuid)
     {
+        if ($this->gsspFallbackService->isSecondFactorFallback()) {
+            return $this->gsspFallbackService->createSecondFactor();
+        }
+
         return $this->repository->findOneBySecondFactorId($uuid);
+    }
+
+    public function getLoaLevel(SecondFactorInterface $secondFactor): Loa
+    {
+        if ($secondFactor instanceof SecondFactor) {
+            return $this->loaResolutionService->getLoaByLevel($secondFactor->getLoaLevel($this->secondFactorTypeService));
+        } elseif ($secondFactor instanceof SecondfactorGsspFallback) {
+            return $this->loaResolutionService->getLoaByLevel(Loa::LOA_SELF_VETTED);
+        }
+
+        throw new RuntimeException('Unknown second factor type to determine Loa level');
     }
 }

@@ -45,6 +45,12 @@ class DoctrineSecondFactorRepository extends EntityRepository implements SecondF
         return $matches;
     }
 
+    public function hasTokens(string $identityNameId): bool
+    {
+        $secondFactors = $this->findAllByIdentityNameId($identityNameId);
+        return count($secondFactors) > 0;
+    }
+
     public function findOneBySecondFactorId($secondFactorId)
     {
         if (!isset($this->secondFactorsById[$secondFactorId])) {
