@@ -176,6 +176,7 @@ services:
         class: Surfnet\StepupGateway\GatewayBundle\Monolog\Logger\AuthenticationLogger
         arguments:
             - "@gateway.service.second_factor_service"
+            - "@surfnet_stepup.service.loa_resolution"
             - "@gateway.authentication_logger.logger"
             - "@second_factor_only.response_context"
             - "@gateway.proxy.response_context"
