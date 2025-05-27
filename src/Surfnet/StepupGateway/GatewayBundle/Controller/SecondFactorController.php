@@ -114,7 +114,7 @@ class SecondFactorController extends ContainerController
 
         $logger->notice(sprintf('Determined that the required Loa is "%s"', $requiredLoa));
         if ($this->getStepupService()->isIntrinsicLoa($requiredLoa)) {
-            $this->get('gateway.authentication_logger')->logIntrinsicLoaAuthentication($originalRequestId);
+            $this->get('gateway.authentication_logger')->logIntrinsicLoaAuthentication($originalRequestId, $authenticationMode);
 
             return $this->forward($context->getResponseAction());
         }

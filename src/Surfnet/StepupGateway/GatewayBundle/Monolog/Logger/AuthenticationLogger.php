@@ -20,9 +20,11 @@ namespace Surfnet\StepupGateway\GatewayBundle\Monolog\Logger;
 
 use DateTime;
 use Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger;
+use Surfnet\StepupBundle\Value\Loa;
 use Surfnet\StepupGateway\GatewayBundle\Exception\InvalidArgumentException;
 use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
 use Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorService;
+use Surfnet\StepupBundle\Service\LoaResolutionService;
 
 class AuthenticationLogger
 {
@@ -32,6 +34,7 @@ class AuthenticationLogger
      */
     private $secondFactorService;
 
+    private LoaResolutionService $loaResolutionService;
     /**
      * @var SamlAuthenticationLogger
      */
@@ -42,14 +45,33 @@ class AuthenticationLogger
 
     public function __construct(
         SecondFactorService $secondFactorService,
+        LoaResolutionService $loaResolutionService,
         SamlAuthenticationLogger $authenticationChannelLogger,
         ResponseContext     $sfoResponseContext,
         ResponseContext     $ssoResponseContext,
     ) {
         $this->secondFactorService  = $secondFactorService;
+        $this->loaResolutionService = $loaResolutionService;
         $this->authenticationChannelLogger = $authenticationChannelLogger;
         $this->sfoResponseContext = $sfoResponseContext;
         $this->ssoResponseContext = $ssoResponseContext;
+    }
+
+
+    /**
+     * @param string $requestId The SAML authentication request ID of the original request (not the proxy request).
+     */
+    public function logIntrinsicLoaAuthentication(string $requestId, string $authenticationMode): void
+    {
+        $data = [
+            'second_factor_id'      => '',
+            'second_factor_type'    => '',
+            'institution'           => '',
+            'authentication_result' => 'NONE',
+            'resulting_loa'         => (string) $this->loaResolutionService->getLoaByLevel(Loa::LOA_1),
+        ];
+
+        $this->log('Intrinsic Loa Requested', $data, $requestId, $authenticationMode);
     }
 
     /**
