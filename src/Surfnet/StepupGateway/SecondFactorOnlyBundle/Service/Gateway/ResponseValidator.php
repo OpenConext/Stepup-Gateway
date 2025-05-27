@@ -21,7 +21,7 @@ namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\Gateway;
 use Surfnet\SamlBundle\Http\PostBinding;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupBundle\Value\SecondFactorType;
-use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor;
+use Surfnet\StepupGateway\GatewayBundle\Service\SecondFactor\SecondFactorInterface;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\ProviderRepository;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Exception\ReceivedInvalidSubjectNameIdException;
 use Symfony\Component\HttpFoundation\Request;
@@ -50,9 +50,9 @@ class ResponseValidator
     /**
      *
      */
-    public function validate(Request $request, SecondFactor $secondFactor, string $nameIdFromState): void
+    public function validate(Request $request, SecondFactorInterface $secondFactor, string $nameIdFromState): void
     {
-        $secondFactorType = new SecondFactorType($secondFactor->secondFactorType);
+        $secondFactorType = new SecondFactorType($secondFactor->getSecondFactorType());
         $hasSamlResponse = $request->request->has('SAMLResponse');
         // When dealing with a GSSP response. It is advised to receive the SAML response through POST Binding,
         // testing the preconditions.
@@ -66,13 +66,13 @@ class ResponseValidator
             );
             $subjectNameIdFromResponse = $samlResponse->getNameId()->getValue();
             // Additionally test if the name id from the GSSP matches the SF identifier that we have in state
-            if ($subjectNameIdFromResponse !== $secondFactor->secondFactorIdentifier) {
+            if ($subjectNameIdFromResponse !== $secondFactor->getSecondFactorIdentifier()) {
                 throw new ReceivedInvalidSubjectNameIdException(
                     sprintf(
                         'The nameID received from the GSSP (%s) did not match the selected second factor (%s). This '.
                         'might be an indication someone is tampering with a GSSP. The authentication was started by %s',
                         $subjectNameIdFromResponse,
-                        $secondFactor->secondFactorIdentifier,
+                        $secondFactor->getSecondFactorIdentifier(),
                         $nameIdFromState
                     )
                 );

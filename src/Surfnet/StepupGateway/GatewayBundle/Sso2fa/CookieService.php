@@ -111,22 +111,22 @@ class CookieService implements CookieServiceInterface
                 throw new RuntimeException(sprintf('Second Factor token not found with ID: %s', $secondFactorId));
             }
             // Test if the institution of the Identity this SF belongs to has SSO on 2FA enabled
-            $isEnabled = $this->institutionConfigurationService->ssoOn2faEnabled($secondFactor->institution);
+            $isEnabled = $this->institutionConfigurationService->ssoOn2faEnabled($secondFactor->getInstitution());
             $this->logger->notice(
                 sprintf(
                     'SSO on 2FA is %senabled for %s',
                     $isEnabled ? '' : 'not ',
-                    $secondFactor->institution
+                    $secondFactor->getInstitution()
                 )
             );
 
             if ($isEnabled) {
                 $identityId = $responseContext->getIdentityNameId();
-                $loa = $secondFactor->getLoaLevel($this->secondFactorTypeService);
+                $loa = $this->secondFactorService->getLoaLevel($secondFactor);
                 $isVerifiedBySsoOn2faCookie = $responseContext->isVerifiedBySsoOn2faCookie();
                 // Did the user perform a new second factor authentication?
                 if (!$isVerifiedBySsoOn2faCookie) {
-                    $cookie = CookieValue::from($identityId, $secondFactor->secondFactorId, $loa);
+                    $cookie = CookieValue::from($identityId, $secondFactor->getSecondFactorId(), $loa->getLevel());
                     $this->store($httpResponse, $cookie);
                 }
             }

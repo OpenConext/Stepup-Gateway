@@ -73,6 +73,9 @@ services:
         class: Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorService
         arguments:
             - "@gateway.repository.second_factor"
+            - "@surfnet_stepup.service.loa_resolution"
+            - "@surfnet_stepup.service.second_factor_type"
+            - "@second_factor_only.gssp_fallback_service"
 
     gateway.service.response_proxy:
         class: Surfnet\StepupGateway\GatewayBundle\Service\ProxyResponseService
@@ -172,12 +175,10 @@ services:
     gateway.authentication_logger:
         class: Surfnet\StepupGateway\GatewayBundle\Monolog\Logger\AuthenticationLogger
         arguments:
-            - "@surfnet_stepup.service.loa_resolution"
-            - "@gateway.proxy.sso.state_handler"
-            - "@gateway.proxy.sfo.state_handler"
             - "@gateway.service.second_factor_service"
             - "@gateway.authentication_logger.logger"
-            - "@surfnet_stepup.service.second_factor_type"
+            - "@second_factor_only.response_context"
+            - "@gateway.proxy.response_context"
 
     gateway.authentication_logger.logger:
         class: Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger

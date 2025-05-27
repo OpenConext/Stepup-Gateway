@@ -231,6 +231,10 @@ class CookieServiceTest extends TestCase
             ->shouldReceive('findByUuid')
             ->with('sf-id-1234')
             ->andReturn($sfMock);
+        $this->secondFactorService
+            ->shouldReceive('getLoaLevel')
+            ->with($sfMock)
+            ->andReturn(new Loa(2.0, 'example.org:loa-2.0'));
         $this->institutionService
             ->shouldReceive('ssoOn2faEnabled')
             ->with('institution-a')
@@ -288,6 +292,10 @@ class CookieServiceTest extends TestCase
             ->shouldReceive('findByUuid')
             ->with('sf-id-1234')
             ->andReturn($sfMock);
+        $this->secondFactorService
+            ->shouldReceive('getLoaLevel')
+            ->with($sfMock)
+            ->andReturn(new Loa(2.0, 'example.org:loa-2.0'));
         $this->institutionService
             ->shouldReceive('ssoOn2faEnabled')
             ->with('institution-a')
@@ -343,6 +351,10 @@ class CookieServiceTest extends TestCase
             ->shouldReceive('findByUuid')
             ->with('sf-id-1234')
             ->andReturn($sfMock);
+        $this->secondFactorService
+            ->shouldReceive('getLoaLevel')
+            ->with($sfMock)
+            ->andReturn(new Loa(2.0, 'example.org:loa-2.0'));
         $this->institutionService
             ->shouldReceive('ssoOn2faEnabled')
             ->with('institution-a')
@@ -498,7 +510,8 @@ class CookieServiceTest extends TestCase
             $this->service->maySkipAuthentication(
                 3.0,
                 'ident-1234',
-                $cookieValue
+                $cookieValue,
+                $this->responseContext
             )
         );
     }
@@ -518,7 +531,8 @@ class CookieServiceTest extends TestCase
             $this->service->maySkipAuthentication(
                 3.0,
                 'abcdef-1234',
-                Mockery::mock(NullCookieValue::class)
+                Mockery::mock(NullCookieValue::class),
+                $this->responseContext
             )
         );
     }
@@ -544,7 +558,8 @@ class CookieServiceTest extends TestCase
             $this->service->maySkipAuthentication(
                 4.0, // LoA required by SP is 4.0, the one in the cookie is 3.0
                 'abcdef-1234',
-                $cookieValue
+                $cookieValue,
+                $this->responseContext
             )
         );
     }
@@ -570,7 +585,8 @@ class CookieServiceTest extends TestCase
             $this->service->maySkipAuthentication(
                 2.0,
                 'Jane Doe', // Not issued to Jane Doe but to abcdef-1234
-                $cookieValue
+                $cookieValue,
+                $this->responseContext
             )
         );
     }
@@ -601,7 +617,8 @@ class CookieServiceTest extends TestCase
             $this->service->maySkipAuthentication(
                 3.0,
                 'ident-1234',
-                $cookieValue
+                $cookieValue,
+                $this->responseContext
             )
         );
     }
@@ -637,7 +654,8 @@ class CookieServiceTest extends TestCase
             $this->service->maySkipAuthentication(
                 3.0,
                 'ident-1234',
-                $cookieValue
+                $cookieValue,
+                $this->responseContext
             )
         );
     }

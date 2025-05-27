@@ -137,15 +137,19 @@ final class RespondServiceTest extends GatewaySamlTestCase
 
         // Mock second factor
         $secondFactor = Mockery::mock(SecondFactor::class);
-        $secondFactor->secondFactorId = 'mocked-second-factor-id';
-        $secondFactor->displayLocale = 'nl_NL';
-        $secondFactor->shouldReceive('getLoaLevel')
-            ->andReturn(2);
+        $secondFactor->shouldReceive('getSecondFactorId')
+            ->andReturn('mocked-second-factor-id');
+        $secondFactor->shouldReceive('getDisplayLocale')
+            ->andReturn('nl_NL');
 
         // Mock second factor service
         $this->secondFactorService->shouldReceive('findByUuid')
             ->with('mocked-second-factor-id')
             ->andReturn($secondFactor);
+
+        $this->secondFactorService->shouldReceive('getLoaLevel')
+            ->with($secondFactor)
+            ->andReturn(new Loa(Loa::LOA_2, 'http://stepup.example.com/assurance/loa2'));
 
         $this->mockSessionData('_sf2_attributes', [
             'surfnet/gateway/requestrequest_id' => '_123456789012345678901234567890123456789012',
@@ -212,6 +216,7 @@ final class RespondServiceTest extends GatewaySamlTestCase
 ',
             'surfnet/gateway/requestselected_second_factor' => 'mocked-second-factor-id',
             'surfnet/gateway/requestselected_second_factor_verified' => true,
+            'surfnet/gateway/requestselected_second_factor_fallback' => false,
             'surfnet/gateway/requestlocale' => 'nl_NL',
         ], $this->getSessionData('attributes'));
 
@@ -237,8 +242,9 @@ final class RespondServiceTest extends GatewaySamlTestCase
             // the second factor id is reset later, we need it to determine we should set the sso 2fa cookie
             'surfnet/gateway/requestselected_second_factor' => 'mocked-second-factor-id',
             'surfnet/gateway/requestselected_second_factor_verified' => false,
+            'surfnet/gateway/requestselected_second_factor_fallback' => false,
             'surfnet/gateway/requestlocale' => 'nl_NL',
-            'surfnet/gateway/requestsso_on_2fa_cookie_fingerprint' => ''
+            'surfnet/gateway/requestsso_on_2fa_cookie_fingerprint' => '',
         ], $this->getSessionData('attributes'));
     }
 

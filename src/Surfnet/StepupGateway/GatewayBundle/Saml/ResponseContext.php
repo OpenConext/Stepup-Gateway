@@ -31,7 +31,9 @@ use Surfnet\StepupGateway\GatewayBundle\Entity\ServiceProvider;
 use Surfnet\StepupGateway\GatewayBundle\Saml\Exception\RuntimeException;
 use Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler;
 use Surfnet\StepupGateway\GatewayBundle\Service\SamlEntityService;
+use Surfnet\StepupGateway\GatewayBundle\Service\SecondFactor\SecondFactorInterface;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\Exception\AcsLocationNotAllowedException;
+use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\Gateway\SecondfactorGsspFallback;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -242,11 +244,17 @@ class ResponseContext
     /**
      * @param SecondFactor $secondFactor
      */
-    public function saveSelectedSecondFactor(SecondFactor $secondFactor): void
+    public function saveSelectedSecondFactor(SecondFactorInterface $secondFactor): void
     {
-        $this->stateHandler->setSelectedSecondFactorId($secondFactor->secondFactorId);
+        $this->stateHandler->setSelectedSecondFactorId($secondFactor->getSecondFactorId());
         $this->stateHandler->setSecondFactorVerified(false);
-        $this->stateHandler->setPreferredLocale($secondFactor->displayLocale);
+        $this->stateHandler->setSecondFactorIsFallback($secondFactor instanceof SecondfactorGsspFallback);
+        $this->stateHandler->setPreferredLocale($secondFactor->getDisplayLocale());
+    }
+
+    public function getSelectedLocale(): string
+    {
+        return $this->stateHandler->getPreferredLocale();
     }
 
     /**
@@ -273,6 +281,9 @@ class ResponseContext
         // a real Second Factor token. That's why this value is purged from state at this very late
         // point in time.
         $this->stateHandler->unsetVerifiedBySsoOn2faCookie();
+
+        $this->stateHandler->setSecondFactorIsFallback(false);
+        $this->stateHandler->setGsspUserAttributes('', '');
     }
 
     /**
@@ -343,5 +354,19 @@ class ResponseContext
     public function isVerifiedBySsoOn2faCookie(): bool
     {
         return $this->stateHandler->isVerifiedBySsoOn2faCookie();
+    }
+    public function getSsoOn2faCookieFingerprint(): bool
+    {
+        return $this->stateHandler->getSsoOn2faCookieFingerprint();
+    }
+
+    public function getAuthenticatingIdp(): ?string
+    {
+        return $this->stateHandler->getAuthenticatingIdp();
+    }
+
+    public function getRequestServiceProvider(): ?string
+    {
+        return $this->stateHandler->getRequestServiceProvider();
     }
 }

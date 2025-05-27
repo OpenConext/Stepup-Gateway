@@ -106,7 +106,7 @@ class ExpirationHelperTest extends TestCase
             'tokenId' => 'tokenId',
             'identityId' => 'identityId',
             'loa' => 2.0,
-            'authenticationTime' => $dateTime->format(DATE_ATOM),
+            'authenticationTime' => $dateTime->format(DATE_RFC3339_EXTENDED),
         ];
         return CookieValue::deserialize(json_encode($data));
     }

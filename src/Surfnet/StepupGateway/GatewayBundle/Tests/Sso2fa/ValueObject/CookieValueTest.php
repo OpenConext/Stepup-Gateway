@@ -39,7 +39,7 @@ class CookieValueTest extends TestCase
         self::assertIsString($serialized);
     }
 
-    public function test_deserialization(): void
+    public function test_serialize_and_deserialization(): void
     {
         $secondFactor = Mockery::mock(SecondFactor::class);
         $secondFactor->secondFactorId = 'abcdef-1234';
@@ -50,6 +50,24 @@ class CookieValueTest extends TestCase
         $cookieValue = CookieValue::deserialize($serialized);
         self::assertInstanceOf(CookieValue::class, $cookieValue);
     }
+
+
+    public function test_deserialization_authentication_time_without_millis(): void
+    {
+        $serialized = '{"tokenId":"abcdef-1234","identityId":"abcdef-1234","loa":3,"authenticationTime":"2025-05-07T11:01:38+02:00"}';
+        $cookieValue = CookieValue::deserialize($serialized);
+        self::assertInstanceOf(CookieValue::class, $cookieValue);
+        self::assertSame(1746608498, $cookieValue->authenticationTime());
+    }
+
+    public function test_deserialization_authentication_time_with_millis(): void
+    {
+        $serialized = '{"tokenId":"abcdef-1234","identityId":"abcdef-1234","loa":3,"authenticationTime":"2025-05-07T11:01:38.457+02:00"}';
+        $cookieValue = CookieValue::deserialize($serialized);
+        self::assertInstanceOf(CookieValue::class, $cookieValue);
+        self::assertSame(1746608498, $cookieValue->authenticationTime());
+    }
+
 
     /**
      * @dataProvider loaProvider

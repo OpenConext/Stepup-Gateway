@@ -28,3 +28,9 @@ jobs:
                   cd ci/docker && docker compose exec -T gateway bash -c '
                       composer check
                   '
+
+            - name: Output logs on failure
+              if: failure()
+              run: |
+                cd ci/docker
+                docker compose logs
