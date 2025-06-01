@@ -69,8 +69,8 @@ The composer behat command can now also pipe the arguments to the behat call. So
 ```
 $ composer behat tests/features/self-asserted.feature
 $ composer behat tests/features/sso.feature:34
-$ compseor behat -- -vv
-$ compseor behat -- --stop-on-failure
+$ composer behat -- -vv
+$ composer behat -- --stop-on-failure
 ```
 
 From the doc-root:
