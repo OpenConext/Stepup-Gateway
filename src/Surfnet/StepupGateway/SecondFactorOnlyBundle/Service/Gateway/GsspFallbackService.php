@@ -70,6 +70,11 @@ class GsspFallbackService
             $subject = $gsspUserAttributes->getAttributeValue($this->config->getSubjectAttribute());
             $institution = $gsspUserAttributes->getAttributeValue($this->config->getInstitutionAttribute());
 
+            if (!is_string($subject) || !is_string($institution)) {
+                $logger->notice('GSSP extension found, but subject and/or institution user attribute(s) are not set');
+                return; // Only set if both attributes are present
+            }
+
             $logger->info(
                 sprintf(
                     'GSSP extension found, setting user attributes in state: subject: %s, institution: %s',
