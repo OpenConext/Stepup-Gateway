@@ -60,7 +60,7 @@ final class SecondFactorLocaleListener implements EventSubscriberInterface
 
         $secondFactor = $this->secondFactorService->findByUuid($secondFactorId);
         if ($secondFactor) {
-            return $secondFactor->displayLocale;
+            return $secondFactor->getDisplayLocale();
         }
     }
 
