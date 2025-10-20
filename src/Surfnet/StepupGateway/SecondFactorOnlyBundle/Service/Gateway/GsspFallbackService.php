@@ -24,6 +24,7 @@ use Surfnet\StepupBundle\Value\Loa;
 use Surfnet\StepupGateway\GatewayBundle\Controller\SecondFactorController;
 use Surfnet\StepupGateway\GatewayBundle\Entity\InstitutionConfigurationRepository;
 use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactorRepository;
+use Surfnet\StepupGateway\GatewayBundle\Exception\InstitutionConfigurationNotFoundException;
 use Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler;
 use Surfnet\StepupGateway\GatewayBundle\Service\SecondFactor\SecondFactorInterface;
 use Surfnet\StepupGateway\GatewayBundle\Service\WhitelistService;
@@ -87,6 +88,10 @@ class GsspFallbackService
         }
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     */
     public function determineGsspFallbackNeeded(
         string $identityNameId,
         string $authenticationMode,
@@ -135,7 +140,14 @@ class GsspFallbackService
             return false;
         }
 
-        $institutionConfiguration = $this->institutionConfigurationRepository->getInstitutionConfiguration($institution);
+        try {
+            $institutionConfiguration = $this->institutionConfigurationRepository->getInstitutionConfiguration($institution);
+        } catch (InstitutionConfigurationNotFoundException) {
+            $this->stateHandler->setSecondFactorIsFallback(false);
+            $logger->info('Gssp Fallback configured but not used, GSSP institution configuration is not found');
+            return false;
+        }
+
         if (!$institutionConfiguration->ssoRegistrationBypass) {
             $this->stateHandler->setSecondFactorIsFallback(false);
             $logger->info('Gssp Fallback configured but not used, GSSP fallback is not enabled for the institution');

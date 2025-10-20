@@ -26,6 +26,7 @@ use Surfnet\StepupGateway\GatewayBundle\Controller\SecondFactorController;
 use Surfnet\StepupGateway\GatewayBundle\Entity\InstitutionConfiguration;
 use Surfnet\StepupGateway\GatewayBundle\Entity\InstitutionConfigurationRepository;
 use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactorRepository;
+use Surfnet\StepupGateway\GatewayBundle\Exception\InstitutionConfigurationNotFoundException;
 use Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler;
 use Surfnet\StepupGateway\GatewayBundle\Service\WhitelistService;
 use Surfnet\StepupGateway\GatewayBundle\Tests\TestCase\GatewaySamlTestCase;
@@ -299,4 +300,53 @@ AUTHNREQUEST;
         $this->assertSame($locale, $token->getDisplayLocale());
     }
 
+    /**
+     * @test
+     */
+    public function it_treats_missing_institution_configuration_as_default(): void
+    {
+        $subject = 'urn:collab:person:dev.openconext.local:john_haack';
+        $gsspSubject = 'john_haack@dev.openconext.local';
+        $gsspInstitution = 'dev.openconext.local';
+        $locale = 'en_GB';
+        $preferredLoa = 1.5;
+        $authenticationMode = SecondFactorController::MODE_SFO;
+
+        $this->stateHandler->shouldReceive('getGsspUserAttributeSubject')
+            ->once()
+            ->andReturn($gsspSubject);
+
+        $this->stateHandler->shouldReceive('getGsspUserAttributeInstitution')
+            ->once()
+            ->andReturn($gsspInstitution);
+
+        $this->institutionConfiguration->shouldReceive('getInstitutionConfiguration')
+            ->with($gsspInstitution)
+            ->andThrow(new InstitutionConfigurationNotFoundException());
+
+        $whitelistService = m::mock(WhitelistService::class);
+        $whitelistService->shouldReceive('contains')
+            ->once()
+            ->with($gsspInstitution)
+            ->andReturn(true);
+
+        // When institution configuration is not found, it means default config
+        // So the fallback should not be started
+        $this->stateHandler->shouldReceive('setSecondFactorIsFallback')
+            ->with(false)
+            ->once();
+
+        $this->stateHandler->shouldNotReceive('setPreferredLocale');
+
+        $result = $this->service->determineGsspFallbackNeeded(
+            $subject,
+            $authenticationMode,
+            new Loa($preferredLoa, 'example.org:loa-level'),
+            $whitelistService,
+            $this->logger,
+            $locale,
+        );
+
+        $this->assertFalse($result);
+    }
 }
