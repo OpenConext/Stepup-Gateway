@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.1.1
+- Bugfix: LoA 1.5 SFO authentications fail for institutions with default config configuration (SSO & GSSP fallbang off)
+  when GSSP fallback attributes are present ()
+
+## 5.1.0
+- Add support for GSSP fallback authentications #447
+
 ## 5.0.4
 - Bump the javascript dependencies
 - Use Webauthn Devconf public key
