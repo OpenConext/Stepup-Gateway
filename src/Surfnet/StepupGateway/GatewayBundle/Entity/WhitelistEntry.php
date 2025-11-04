@@ -33,7 +33,7 @@ class WhitelistEntry
      */
     public $institution;
 
-    final private function __construct()
+    private function __construct()
     {
     }
 }
