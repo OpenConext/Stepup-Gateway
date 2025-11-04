@@ -27,7 +27,7 @@ class AssertionFailedException extends InvalidArgumentException implements Asser
     private $constraints;
 
     // @codingStandardsIgnoreStart Compliance with beberlei/assert's invalid argument exception
-    public function __construct($message, $code, $propertyPath = null, $value, array $constraints = [])
+    public function __construct($message, $code, $propertyPath = null, $value = null, array $constraints = [])
     {
         parent::__construct($message, $code);
         $this->propertyPath = $propertyPath;
