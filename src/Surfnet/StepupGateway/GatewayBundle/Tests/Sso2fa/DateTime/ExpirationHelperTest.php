@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupGateway\GatewayBundle\Test\Sso2fa\DateTime;
+namespace Surfnet\StepupGateway\GatewayBundle\Tests\Sso2fa\DateTime;
 
 use PHPUnit\Framework\TestCase;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\DateTime\ExpirationHelper;

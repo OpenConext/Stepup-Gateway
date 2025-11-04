@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupGateway\GatewayBundle\Test\Entity;
+namespace Surfnet\StepupGateway\GatewayBundle\Tests\Entity;
 
 use Mockery;
 use PHPUnit\Framework\TestCase;

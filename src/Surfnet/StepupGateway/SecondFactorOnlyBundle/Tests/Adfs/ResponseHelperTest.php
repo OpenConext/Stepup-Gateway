@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Test\Adfs;
+namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Tests\Adfs;
 
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
