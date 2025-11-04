@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupGateway\GatewayBundle\Test\Sso2fa\ValueObject;
+namespace Surfnet\StepupGateway\GatewayBundle\Tests\Sso2fa\ValueObject;
 
 use Generator;
 use Mockery;
