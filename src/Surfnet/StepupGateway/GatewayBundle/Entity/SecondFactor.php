@@ -41,7 +41,7 @@ use Surfnet\StepupGateway\GatewayBundle\Service\SecondFactor\SecondFactorInterfa
 class SecondFactor implements SecondFactorInterface
 {
     /**
-     * @var int
+     * @var string
      *
      * @ORM\Id
      * @ORM\Column(length=36)
@@ -115,7 +115,7 @@ class SecondFactor implements SecondFactorInterface
     /**
      * No new second factors should be created by the gateway
      */
-    final private function __construct()
+    private function __construct()
     {
     }
 
