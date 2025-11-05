@@ -450,9 +450,6 @@
     "symfony/polyfill-mbstring": {
         "version": "v1.22.1"
     },
-    "symfony/polyfill-php80": {
-        "version": "v1.22.1"
-    },
     "symfony/property-access": {
         "version": "v4.4.19"
     },
