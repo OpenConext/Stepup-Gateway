@@ -28,37 +28,29 @@ final class ConfigurationTest extends TestCase
 
     const USE_REGEXP = true;
 
-    /**
-     * @test
-     * @group configuration
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Group('configuration')]
     public function it_requires_intrinsic_loa_to_be_configured(): void
     {
         $this->assertConfigurationIsInvalid([[]], '~intrinsic_loa.+must be configured~', self::USE_REGEXP);
     }
 
-    /**
-     * @test
-     * @group configuration
-     */
+    #[\PHPUnit\Framework\Attributes\Group('configuration')]
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_requires_second_factors_to_be_configured(): void
     {
         $this->assertPartialConfigurationIsInvalid([[]], 'enabled_second_factors', '~enabled_second_factors.+must be configured~', self::USE_REGEXP);
     }
 
-    /**
-     * @test
-     * @group configuration
-     */
+    #[\PHPUnit\Framework\Attributes\Group('configuration')]
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_allows_one_enabled_second_factor(): void
     {
         $this->assertConfigurationIsValid([['enabled_second_factors' => ['sms']]], 'enabled_second_factors');
     }
 
-    /**
-     * @test
-     * @group configuration
-     */
+    #[\PHPUnit\Framework\Attributes\Group('configuration')]
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_allows_two_enabled_second_factors(): void
     {
         $this->assertConfigurationIsValid([['enabled_second_factors' => ['sms', 'yubikey']]], 'enabled_second_factors');

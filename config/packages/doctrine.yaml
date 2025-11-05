@@ -34,7 +34,7 @@ doctrine:
         mappings:
           SurfnetStepupGatewayGatewayBundle:
             mapping: true
-            type: annotation
+            type: attribute
             is_bundle: true
       deploy:
         report_fields_where_declared: true

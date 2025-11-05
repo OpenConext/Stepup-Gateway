@@ -24,9 +24,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 final class KeyHandle implements JsonConvertible
 {
     /**
-     * @Assert\Type("string", message="Key handle must be a string")
-     *
      * @var string
      */
+    #[Assert\Type('string', message: 'Key handle must be a string')]
     public $value;
 }

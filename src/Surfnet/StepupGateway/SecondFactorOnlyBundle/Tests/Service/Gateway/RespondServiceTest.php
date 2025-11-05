@@ -105,9 +105,7 @@ final class RespondServiceTest extends GatewaySamlTestCase
         $this->initGatewayLoginService($idpConfiguration, $loaLevels, $loaAliases, $now);
     }
 
-    /**
-     * @test
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_should_return_a_valid_saml_response_and_update_state_when_the_verification_is_succeeded_on_sfo_login_flow(): void {
 
         $this->mockSessionData('_sf2_attributes', [
@@ -221,9 +219,7 @@ final class RespondServiceTest extends GatewaySamlTestCase
         ], $this->getSessionData('attributes'));
     }
 
-    /**
-     * @test
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_halts_execution_when_saml_response_is_invalid(): void
     {
 
@@ -276,9 +272,7 @@ final class RespondServiceTest extends GatewaySamlTestCase
         $this->gatewayRespondService->respond($this->responseContext, $request);
     }
 
-    /**
-     * @test
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_should_throw_an_exception_when_the_second_factor_method_is_unknown_when_the_verification_is_succeeded_on_sfo_login_flow(): void
     {
         $this->expectException(InvalidSecondFactorMethodException::class);
@@ -315,9 +309,7 @@ final class RespondServiceTest extends GatewaySamlTestCase
     }
 
 
-    /**
-     * @test
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_should_throw_an_exception_when_the_second_factor_is_not_verified_when_the_verification_is_succeeded_on_sfo_login_flow(): void
     {
         $this->expectException(InvalidSecondFactorMethodException::class);

@@ -74,11 +74,10 @@
         "phpstan/phpstan-mockery": "^2.0",
         "phpstan/phpstan-phpunit": "^2.0.7",
         "phpstan/phpstan-symfony": "^2.0.8",
-        "phpunit/phpunit": "^9.6.29",
+        "phpunit/phpunit": "^10.5",
         "ramsey/uuid": "^4.9.1",
         "rector/rector": "^2.2.7",
-        "sebastian/exporter": "^4.0.8",
-        "sebastian/phpcpd": "^6.0.3",
+        "sebastian/exporter": "^5.1",
         "slevomat/coding-standard": "^8.24",
         "squizlabs/php_codesniffer": "^4.0",
         "symfony/browser-kit": "6.4.*",
@@ -119,6 +118,8 @@
         "behat-functional": "./ci/qa/behat-functional",
         "test": "./ci/qa/phpunit",
         "license-headers": "./ci/qa/docheader",
+        "rector":  "./ci/qa/rector.sh --dry-run",
+        "rector-fix":  "./ci/qa/rector.sh",
         "frontend-install": [
             "yarn install --frozen-lockfile",
             "yarn encore production"

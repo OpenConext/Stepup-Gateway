@@ -119,9 +119,7 @@ final class RespondServiceTest extends GatewaySamlTestCase
         $this->initGatewayService($idpConfiguration, $dictionaryAttributes, $loaLevels, $now);
     }
 
-    /**
-     * @test
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_should_return_a_valid_saml_response_and_update_state_when_the_verification_is_succeeded_on_login_flow(): void
     {
 

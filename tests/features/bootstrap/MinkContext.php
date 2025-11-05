@@ -39,17 +39,13 @@ class MinkContext extends BaseMinkContext
      */
     private $windows = [];
 
-    /**
-     * @Then /^the response should contain \'([^\']*)\'$/
-     */
+    #[\Behat\Step\Then('/^the response should contain \\\'([^\\\']*)\\\'$/')]
     public function theResponseShouldContain($string): void
     {
         $this->assertSession()->responseContains($string);
     }
 
-    /**
-     * @Then /^the response should match xpath \'([^\']*)\'$/
-     */
+    #[\Behat\Step\Then('/^the response should match xpath \\\'([^\\\']*)\\\'$/')]
     public function theResponseShouldMatchXpath($xpath): void
     {
         $document = new DOMDocument();
@@ -75,9 +71,7 @@ class MinkContext extends BaseMinkContext
         }
     }
 
-    /**
-     * @Then /^the ADFS response should match xpath \'([^\']*)\'$/
-     */
+    #[\Behat\Step\Then('/^the ADFS response should match xpath \\\'([^\\\']*)\\\'$/')]
     public function theAdfsResponseShouldMatchXpath($xpath): void
     {
         $document = new DOMDocument();
@@ -97,9 +91,7 @@ class MinkContext extends BaseMinkContext
         }
     }
 
-    /**
-     * @Then /^the ADFS response should carry the ADFS POST parameters$/
-     */
+    #[\Behat\Step\Then('/^the ADFS response should carry the ADFS POST parameters$/')]
     public function theAdfsResponseShouldHaveAdfsPostParams(): void
     {
         $context = $this->getSession()->getPage()->findById('Context')->getText();
@@ -112,9 +104,7 @@ class MinkContext extends BaseMinkContext
         }
     }
 
-    /**
-     * @Then /^the response should not match xpath \'([^\']*)\'$/
-     */
+    #[\Behat\Step\Then('/^the response should not match xpath \\\'([^\\\']*)\\\'$/')]
     public function theResponseShouldNotMatchXpath($xpath): void
     {
         $document = new DOMDocument();
@@ -135,25 +125,19 @@ class MinkContext extends BaseMinkContext
         }
     }
 
-    /**
-     * @Given /^I should see URL "([^"]*)"$/
-     */
+    #[\Behat\Step\Given('/^I should see URL "([^"]*)"$/')]
     public function iShouldSeeUrl($url): void
     {
         $this->assertSession()->responseContains($url);
     }
 
-    /**
-     * @Given /^I should not see URL "([^"]*)"$/
-     */
+    #[\Behat\Step\Given('/^I should not see URL "([^"]*)"$/')]
     public function iShouldNotSeeUrl($url): void
     {
         $this->assertSession()->responseNotContains($url);
     }
 
-    /**
-     * @Given /^I open (\d+) browser tabs identified by "([^"]*)"$/
-     */
+    #[\Behat\Step\Given('/^I open (\d+) browser tabs identified by "([^"]*)"$/')]
     public function iOpenTwoBrowserTabsIdentifiedBy($numberOfTabs, $tabNames): void
     {
         // On successive scenarios, reset the session to get rid of browser (session) state from previous scenarios
@@ -188,9 +172,7 @@ class MinkContext extends BaseMinkContext
 
     }
 
-    /**
-     * @Given /^I switch to "([^"]*)"$/
-     */
+    #[\Behat\Step\Given('/^I switch to "([^"]*)"$/')]
     public function iSwitchToWindow($windowName): void
     {
         // (re) set the default session to the chrome session.

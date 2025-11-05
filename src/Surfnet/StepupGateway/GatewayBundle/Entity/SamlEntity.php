@@ -24,11 +24,11 @@ use Surfnet\SamlBundle\Entity\IdentityProvider;
 use Surfnet\StepupGateway\GatewayBundle\Exception\RuntimeException;
 
 /**
- * @ORM\Entity(repositoryClass="Surfnet\StepupGateway\GatewayBundle\Entity\DoctrineSamlEntityRepository")
- * @ORM\Table()
  *
  * @SuppressWarnings(PHPMD.UnusedPrivateField)
  */
+#[ORM\Entity(repositoryClass: \Surfnet\StepupGateway\GatewayBundle\Entity\DoctrineSamlEntityRepository::class)]
+#[ORM\Table]
 class SamlEntity
 {
     /**
@@ -39,31 +39,27 @@ class SamlEntity
 
     /**
      * @var string
-     *
-     * @ORM\Id
-     * @ORM\Column(length=36)
      */
+    #[ORM\Id]
+    #[ORM\Column(length: 36)]
     private $id;
 
     /**
-     * @ORM\Column
-     *
      * @var string
      */
+    #[ORM\Column]
     private $entityId;
 
     /**
-     * @ORM\Column
-     *
      * @var string
      */
+    #[ORM\Column]
     private $type;
 
     /**
-     * @ORM\Column(type="text")
-     *
      * @var string the configuration as json string
      */
+    #[ORM\Column(type: 'text')]
     private $configuration;
 
     /**
