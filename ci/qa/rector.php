@@ -16,7 +16,7 @@ return RectorConfig::configure()
     // uncomment to reach your current PHP version
 //     ->withPhpSets()
     ->withAttributesSets(all: true)
-    ->withComposerBased(phpunit: true)
+    ->withComposerBased(phpunit: true, doctrine: true)
     ->withTypeCoverageLevel(0)
     ->withDeadCodeLevel(0)
     ->withCodeQualityLevel(0);
