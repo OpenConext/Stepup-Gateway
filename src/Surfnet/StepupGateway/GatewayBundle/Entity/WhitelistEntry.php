@@ -20,17 +20,15 @@ namespace Surfnet\StepupGateway\GatewayBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass="Surfnet\StepupGateway\GatewayBundle\Entity\WhitelistEntryRepository")
- */
+#[ORM\Entity(repositoryClass: \Surfnet\StepupGateway\GatewayBundle\Entity\WhitelistEntryRepository::class)]
 class WhitelistEntry
 {
     /**
-     * @ORM\Id
-     * @ORM\Column(type="string")
      *
      * @var string
      */
+    #[ORM\Id]
+    #[ORM\Column(type: 'string')]
     public $institution;
 
     private function __construct()

@@ -65,27 +65,21 @@ class ResponseHelperTest extends TestCase
         $this->request->request = $this->parameterBag;
     }
 
-    /**
-     * @test
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_can_test_if_response_is_adfs_response(): void
     {
         $this->stateHandler->shouldReceive('hasMatchingRequestId')->with('my-request-id')->andReturn(true);
         $this->assertTrue($this->helper->isAdfsResponse('my-request-id'));
     }
 
-    /**
-     * @test
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_can_test_if_response_is_not_adfs_response(): void
     {
         $this->stateHandler->shouldReceive('hasMatchingRequestId')->with('my-request-id')->andReturn(false);
         $this->assertFalse($this->helper->isAdfsResponse('my-request-id'));
     }
 
-    /**
-     * @test
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_retrieves_adfs_parameters(): void
     {
         $this->stateHandler->shouldReceive('getAuthMethod')->andReturn('ADFS:SCSA');
@@ -98,9 +92,7 @@ class ResponseHelperTest extends TestCase
         $this->assertEquals('<blob></blob>', $params->getContext());
     }
 
-    /**
-     * @test
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_rejects_malformed_adfs_parameters(): void
     {
         $this->expectException(\InvalidArgumentException::class);

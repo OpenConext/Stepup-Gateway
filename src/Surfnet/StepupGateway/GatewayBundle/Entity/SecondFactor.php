@@ -30,74 +30,62 @@ use Surfnet\StepupGateway\GatewayBundle\Service\SecondFactor\SecondFactorInterfa
  *          Migrations are managed by Middleware.
  *
  * @see Surfnet\StepupMiddleware\GatewayBundle\Entity\SecondFactor (in OpenConext/Stepup-Middleware project)
- *
- * @ORM\Entity(repositoryClass="Surfnet\StepupGateway\GatewayBundle\Entity\DoctrineSecondFactorRepository")
- * @ORM\Table(
- *      indexes={
- *          @ORM\Index(name="idx_secondfactor_nameid", columns={"name_id"}),
- *      }
- * )
  */
+#[ORM\Entity(repositoryClass: \Surfnet\StepupGateway\GatewayBundle\Entity\DoctrineSecondFactorRepository::class)]
+#[ORM\Table]
+#[ORM\Index(name: 'idx_secondfactor_nameid', columns: ['name_id'])]
 class SecondFactor implements SecondFactorInterface
 {
     /**
      * @var string
-     *
-     * @ORM\Id
-     * @ORM\Column(length=36)
      */
+    #[ORM\Id]
+    #[ORM\Column(length: 36)]
     public $id;
 
     /**
      * @var string
-     *
-     * @ORM\Id
-     * @ORM\Column(length=36)
      */
+    #[ORM\Id]
+    #[ORM\Column(length: 36)]
     public $identityId;
 
     /**
      * @var string
-     *
-     * @ORM\Column(length=200)
      */
+    #[ORM\Column(length: 200)]
     public $nameId;
 
     /**
      * @var string
-     *
-     * @ORM\Column(length=200)
      */
+    #[ORM\Column(length: 200)]
     public $institution;
 
     /**
      * In which language to display any second factor verification screens.
      *
      * @var string
-     *
-     * @ORM\Column
      */
+    #[ORM\Column]
     public $displayLocale;
 
     /**
      * @var string
-     *
-     * @ORM\Column(length=36)
      */
+    #[ORM\Column(length: 36)]
     public $secondFactorId;
 
     /**
      * @var string
-     *
-     * @ORM\Column(length=50)
      */
+    #[ORM\Column(length: 50)]
     public $secondFactorType;
 
     /**
      * @var string
-     *
-     * @ORM\Column(length=255)
      */
+    #[ORM\Column(length: 255)]
     public $secondFactorIdentifier;
 
     /**
@@ -107,9 +95,8 @@ class SecondFactor implements SecondFactorInterface
      * identity vetted (verified) by a RA(A) at the service desk. This trickles
      * down to the self-vet vetting type. As the token used for self vetting
      * was RA vetted.
-     *
-     * @ORM\Column(type="boolean", options={"default":"1"})
      */
+    #[ORM\Column(type: 'boolean', options: ['default' => '1'])]
     public $identityVetted;
 
     /**

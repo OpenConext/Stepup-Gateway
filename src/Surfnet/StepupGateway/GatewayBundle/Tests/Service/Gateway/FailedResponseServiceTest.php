@@ -59,9 +59,7 @@ final class FailedResponseServiceTest extends GatewaySamlTestCase
         $this->initGatewayService($idpConfiguration, $now);
     }
 
-    /**
-     * @test
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_should_handle_send_loa_could_not_be_given_based_on_the_given_state_on_login_flow(): void
     {
         // Mock service provider
@@ -113,9 +111,7 @@ final class FailedResponseServiceTest extends GatewaySamlTestCase
     }
 
 
-    /**
-     * @test
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_should_handle_authentication_cancelled_by_user_based_on_the_given_state_on_login_flow(): void
     {
         // Mock service provider

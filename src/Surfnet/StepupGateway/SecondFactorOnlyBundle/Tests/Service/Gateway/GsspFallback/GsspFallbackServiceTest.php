@@ -70,9 +70,7 @@ class GsspFallbackServiceTest extends GatewaySamlTestCase
         parent::setUp();
     }
 
-    /**
-     * @test
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_can_parse_gssp_extension_attributes(): void
     {
 
@@ -96,9 +94,7 @@ AUTHNREQUEST;
     }
 
 
-    /**
-     * @test
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_can_determine_when_the_gssp_fallback_is_needed(): void
     {
         $subject = 'urn:collab:person:dev.openconext.local:john_haack';
@@ -155,9 +151,7 @@ AUTHNREQUEST;
         $this->assertTrue($result);
     }
 
-    /**
-     * @test
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_should_only_use_the_gssp_fallback_when_configured(): void
     {
         $this->config = new GsspFallbackConfig(
@@ -197,10 +191,8 @@ AUTHNREQUEST;
         $this->assertFalse($result);
     }
 
-    /**
-     * @test
-     * @dataProvider gsspFallbackNotAllowedDataProvider
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\DataProvider('gsspFallbackNotAllowedDataProvider')]
     public function it_can_determine_when_the_gssp_fallback_is_not_needed(
         string $authenticationMode,
         float $preferredLoa,
@@ -257,7 +249,7 @@ AUTHNREQUEST;
     }
 
 
-    public function gsspFallbackNotAllowedDataProvider()
+    public static function gsspFallbackNotAllowedDataProvider()
     {
         return [
             'wrong authentication mode' =>                               [SecondFactorController::MODE_SSO, 1.5, 'john_haack@dev.openconext.local', 'dev.openconext.local', true, true, false,],
@@ -271,9 +263,7 @@ AUTHNREQUEST;
     }
 
 
-    /**
-     * @test
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_can_create_a_gssp_fallback_token(): void
     {
         $secondFactorId = 'gssp_fallback';
@@ -300,9 +290,7 @@ AUTHNREQUEST;
         $this->assertSame($locale, $token->getDisplayLocale());
     }
 
-    /**
-     * @test
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_treats_missing_institution_configuration_as_default(): void
     {
         $subject = 'urn:collab:person:dev.openconext.local:john_haack';

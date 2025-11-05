@@ -26,25 +26,19 @@ use Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject\CookieValueInterface;
 
 class ExpirationHelperTest extends TestCase
 {
-    /**
-     * @dataProvider expirationExpectations
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('expirationExpectations')]
     public function test_is_expired(bool $isExpired, ExpirationHelper $helper, CookieValue $cookieValue): void
     {
         self::assertEquals($isExpired, $helper->isExpired($cookieValue));
     }
 
-    /**
-     * @dataProvider gracePeriodExpectations
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('gracePeriodExpectations')]
     public function test_grace_period(bool $isExpired, ExpirationHelper $helper, CookieValue $cookieValue): void
     {
         self::assertEquals($isExpired, $helper->isExpired($cookieValue));
     }
 
-    /**
-     * @dataProvider invalidTimeExpectations
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('invalidTimeExpectations')]
     public function test_strange_authentication_time_values(ExpirationHelper $helper, CookieValue $cookieValue): void
     {
         self::expectException(InvalidAuthenticationTimeException::class);

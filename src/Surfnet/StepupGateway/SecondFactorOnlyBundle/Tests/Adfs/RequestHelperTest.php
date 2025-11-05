@@ -68,27 +68,21 @@ class RequestHelperTest extends TestCase
         $this->request->request = $this->parameterBag;
     }
 
-    /**
-     * @test
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_can_test_if_request_is_not_from_adfs(): void
     {
         $this->parameterBag->expects('has')->andReturn(false);
         $this->assertFalse($this->helper->isAdfsRequest($this->request));
     }
 
-    /**
-     * @test
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_can_test_if_request_is_from_adfs(): void
     {
         $this->parameterBag->expects('has')->twice()->andReturn(true);
         $this->assertTrue($this->helper->isAdfsRequest($this->request));
     }
 
-    /**
-     * @test
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_rejects_malformed_request(): void
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -97,9 +91,7 @@ class RequestHelperTest extends TestCase
         $this->helper->transformRequest($this->request, 'my-request-id');
     }
 
-    /**
-     * @test
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_transforms_adfs_request(): void
     {
         $authnRequest = <<<AUTHNREQUEST

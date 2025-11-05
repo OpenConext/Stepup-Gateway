@@ -86,33 +86,25 @@ class ServiceProviderContext implements Context
         $this->kernel = $kernel;
     }
 
-    /**
-     * @BeforeScenario
-     */
+    #[\Behat\Hook\BeforeScenario]
     public function gatherContexts(BeforeScenarioScope $scope): void
     {
         $environment = $scope->getEnvironment();
         $this->minkContext = $environment->getContext(MinkContext::class);
     }
 
-    /**
-     * @Given /^an SFO enabled SP with EntityID ([^\']*)$/
-     */
+    #[\Behat\Step\Given('/^an SFO enabled SP with EntityID ([^\\\']*)$/')]
     public function anSFOEnabledSPWithEntityID($entityId): void
     {
         $this->registerSp($entityId, true);
     }
 
-    /**
-     * @Given /^an SP with EntityID ([^\']*)$/
-     */
+    #[\Behat\Step\Given('/^an SP with EntityID ([^\\\']*)$/')]
     public function anSPWithEntityID($entityId): void
     {
         $this->registerSp($entityId, false);
     }
-    /**
-     * @Given /^an IdP with EntityID ([^\']*)$/
-     */
+    #[\Behat\Step\Given('/^an IdP with EntityID ([^\\\']*)$/')]
     public function anIdPWithEntityID($entityId): void
     {
         $this->registerIdp($entityId, false);
@@ -150,17 +142,13 @@ class ServiceProviderContext implements Context
         $this->currentIdP = $idpEntity;
     }
 
-    /**
-     * @When /^([^\']*) starts an SFO authentication$/
-     */
+    #[\Behat\Step\When('/^([^\\\']*) starts an SFO authentication$/')]
     public function iStartAnSFOAuthentication($nameId): void
     {
         $this->iStartAnSFOAuthenticationWithLoa($nameId, "self-asserted");
     }
 
-    /**
-     * @When /^([^\']*) starts an SFO authentication with LoA ([^\']*)$/
-     */
+    #[\Behat\Step\When('/^([^\\\']*) starts an SFO authentication with LoA ([^\\\']*)$/')]
     public function iStartAnSFOAuthenticationWithLoa($nameId, string $loa, bool $forceAuthN = false, ?string $gsspFallbackSubject = null, ?string $gsspFallbackInstitution = null): void
     {
         $authnRequest = new AuthnRequest();
@@ -228,32 +216,24 @@ class ServiceProviderContext implements Context
         $this->getSession()->visit($request->getDestination().'?'.$query);
     }
 
-    /**
-     * @When /^([^\']*) starts an SFO authentication requiring LoA ([^\']*)$/
-     */
+    #[\Behat\Step\When('/^([^\\\']*) starts an SFO authentication requiring LoA ([^\\\']*)$/')]
     public function iStartAnSFOAuthenticationWithLoaRequirement($nameId, $loa): void
     {
         $this->iStartAnSFOAuthenticationWithLoa($nameId, $loa);
     }
-    /**
-     * @When /^([^\']*) starts a forced SFO authentication requiring LoA ([^\']*)$/
-     */
+    #[\Behat\Step\When('/^([^\\\']*) starts a forced SFO authentication requiring LoA ([^\\\']*)$/')]
     public function iStartAForcedSFOAuthenticationWithLoaRequirement($nameId, $loa): void
     {
         $this->iStartAnSFOAuthenticationWithLoa($nameId, $loa, true);
     }
 
-    /**
-     * @When /^([^\']*) starts an SFO authentication with GSSP fallback requiring LoA ([^\']*) and Gssp extension subject ([^\']*) and institution ([^\']*)$/
-     */
+    #[\Behat\Step\When('/^([^\\\']*) starts an SFO authentication with GSSP fallback requiring LoA ([^\\\']*) and Gssp extension subject ([^\\\']*) and institution ([^\\\']*)$/')]
     public function iStartAForcedSFOAuthenticationWithLoaRequirementAndGsspExtension($nameId, $loa, $subject, $institution): void
     {
         $this->iStartAnSFOAuthenticationWithLoa($nameId, $loa, false, $subject, $institution);
     }
 
-    /**
-     * @When /^([^\']*) starts an ADFS authentication requiring ([^\']*)$/
-     */
+    #[\Behat\Step\When('/^([^\\\']*) starts an ADFS authentication requiring ([^\\\']*)$/')]
     public function iStartAnADFSAuthenticationWithLoaRequirement($nameId, $loa): void
     {
         $requestParams = [
@@ -265,9 +245,7 @@ class ServiceProviderContext implements Context
         $this->pressButtonWhenNoJavascriptSupport();
     }
 
-    /**
-     * @When /^([^\']*) starts an authentication at Default SP$/
-     */
+    #[\Behat\Step\When('/^([^\\\']*) starts an authentication at Default SP$/')]
     public function iStartAnAuthenticationAtDefaultSP($nameId): void
     {
         $authnRequest = new AuthnRequest();
@@ -291,9 +269,7 @@ class ServiceProviderContext implements Context
         $this->getSession()->visit($authnRequest->getDestination().'?'.$query);
     }
 
-    /**
-     * @When /^([^\']*) starts an authentication requiring LoA ([^\']*)$/
-     */
+    #[\Behat\Step\When('/^([^\\\']*) starts an authentication requiring LoA ([^\\\']*)$/')]
     public function iStartAnSsoAuthenticationWithLoaRequirement($nameId, $loa): void
     {
         $authnRequest = new AuthnRequest();
@@ -334,9 +310,7 @@ class ServiceProviderContext implements Context
         $this->getSession()->visit($request->getDestination().'?'.$query);
     }
 
-    /**
-     * @When /^I authenticate at the IdP as ([^\']*)$/
-     */
+    #[\Behat\Step\When('/^I authenticate at the IdP as ([^\\\']*)$/')]
     public function iAuthenticateAtTheIdp($username): void
     {
         $this->minkContext->fillField('username', $username);
@@ -350,9 +324,7 @@ class ServiceProviderContext implements Context
         }
     }
 
-    /**
-     * @When /^I authenticate at AzureMFA as "([^"]*)"$/
-     */
+    #[\Behat\Step\When('/^I authenticate at AzureMFA as "([^"]*)"$/')]
     public function iAuthenticateAtAzureMfaAs($username): void
     {
         $this->minkContext->assertPageAddress('https://azuremfa.dev.openconext.local/mock/sso');
@@ -380,9 +352,7 @@ class ServiceProviderContext implements Context
         $this->minkContext->assertPageAddress('https://gateway.dev.openconext.local/test/authentication/consume-assertion');
     }
 
-    /**
-     * @When /^I cancel the authentication at AzureMFA$/
-     */
+    #[\Behat\Step\When('/^I cancel the authentication at AzureMFA$/')]
     public function iCancelTheAuthenticationAtAzureMfa(): void
     {
         $this->minkContext->assertPageAddress('https://azuremfa.dev.openconext.local/mock/sso');
@@ -405,9 +375,7 @@ class ServiceProviderContext implements Context
         return $key;
     }
 
-    /**
-     * @Given /^I log out at the IdP$/
-     */
+    #[\Behat\Step\Given('/^I log out at the IdP$/')]
     public function iLogOutAtTheIdP(): void
     {
         $this->minkContext->visit(self::SSP_URL);

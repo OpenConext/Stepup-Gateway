@@ -278,14 +278,8 @@
     "sebastian/object-reflector": {
         "version": "1.1.2"
     },
-    "sebastian/phpcpd": {
-        "version": "2.0.1"
-    },
     "sebastian/recursion-context": {
         "version": "3.0.1"
-    },
-    "sebastian/resource-operations": {
-        "version": "2.0.2"
     },
     "sebastian/type": {
         "version": "1.1.4"

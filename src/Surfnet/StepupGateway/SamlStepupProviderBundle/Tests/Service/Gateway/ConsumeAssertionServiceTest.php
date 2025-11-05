@@ -116,9 +116,7 @@ class ConsumeAssertionServiceTest extends GatewaySamlTestCase
         $this->initSamlProxyService($idpConfiguration, $remoteIdpConfiguration, $spConfiguration, $connectedServiceProviders, $now);
     }
 
-    /**
-     * @test
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_should_update_the_state_when_receiving_a_saml_response_when_consuming_assertions_on_gssp_registration_and_gssp_verification_flows(): void {
 
         $samlResponse = '<samlp:Response
@@ -259,9 +257,7 @@ class ConsumeAssertionServiceTest extends GatewaySamlTestCase
         ], $this->getSessionData('attributes'));
     }
 
-    /**
-     * @test
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_should_throw_an_exception_when_the_post_binding_could_not_be_processed_when_receiving_a_saml_response_when_consuming_assertions_on_gssp_registration_and_gssp_verification_flows(): void
     {
         $this->expectException(ResponseFailureException::class);
@@ -368,9 +364,7 @@ class ConsumeAssertionServiceTest extends GatewaySamlTestCase
         $this->samlProxyConsumeAssertionService->consumeAssertion($this->provider, $httpRequest, $this->proxyResponseFactory);
     }
 
-    /**
-     * @test
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_should_throw_an_exception_when_in_response_to_is_invalid_when_receiving_a_saml_response_when_consuming_assertions_on_gssp_registration_and_gssp_verification_flows(): void
     {
         $this->expectException(UnknownInResponseToException::class);
@@ -476,9 +470,7 @@ class ConsumeAssertionServiceTest extends GatewaySamlTestCase
         $this->samlProxyConsumeAssertionService->consumeAssertion($this->provider, $httpRequest, $this->proxyResponseFactory);
     }
 
-    /**
-     * @test
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_should_throw_an_exception_when_to_subject_is_invalid_when_receiving_a_saml_response_when_consuming_assertions_on_gssp_registration_and_gssp_verification_flows(): void
     {
         $this->expectException(InvalidSubjectException::class);
@@ -585,9 +577,7 @@ class ConsumeAssertionServiceTest extends GatewaySamlTestCase
         $this->samlProxyConsumeAssertionService->consumeAssertion($this->provider, $httpRequest, $this->proxyResponseFactory);
     }
 
-    /**
-     * @test
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_should_throw_an_verification_exception_when_receiving_a_saml_response_when_consuming_assertions_on_gssp_registration_and_gssp_verification_flows(): void
     {
         $this->expectException(SecondfactorVerificationRequiredException::class);
