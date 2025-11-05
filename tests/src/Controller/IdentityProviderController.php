@@ -76,7 +76,7 @@ class IdentityProviderController extends AbstractController
 
         return $this->render(
                 '@test_resources/login.html.twig', [
-                'form' => $form->createView(),
+                'form' => $form,
             ]
         );
     }
