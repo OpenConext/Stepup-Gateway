@@ -15,6 +15,7 @@ framework:
     cookie_domain: "%cookie_domain%"
   fragments:       false
   http_method_override: true
+  handle_all_throwables: true
 
 when@dev:
   framework:
@@ -30,6 +31,8 @@ when@smoketest: &testOverride
     session:
       handler_id: null
       storage_factory_id: session.storage.factory.mock_file
+      cookie_samesite: none
+      cookie_secure: true
     profiler:
       only_exceptions: false
       collect: false
