@@ -38,7 +38,7 @@ class JsonBasicAuthenticationEntryPoint implements AuthenticationEntryPointInter
     /**
      * {@inheritdoc}
      */
-    public function start(Request $request, AuthenticationException $authException = null)
+    public function start(Request $request, AuthenticationException $authException = null): \Symfony\Component\HttpFoundation\Response
     {
         $authExceptionMessage = $authException ? $authException->getMessage() : '';
         $error = sprintf('You are required to authorise before accessing this API (%s).', $authExceptionMessage);

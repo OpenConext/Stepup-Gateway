@@ -40,7 +40,7 @@ class SendSmsChallengeType extends AbstractType
         ]);
     }
 
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'gateway_send_sms_challenge';
     }

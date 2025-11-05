@@ -32,7 +32,7 @@ class CancelAuthenticationType extends AbstractType
         ]);
     }
 
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'gateway_cancel_authentication';
     }
