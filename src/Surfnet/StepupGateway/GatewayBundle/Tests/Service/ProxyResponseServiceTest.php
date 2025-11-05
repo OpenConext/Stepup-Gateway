@@ -63,6 +63,8 @@ final class ProxyResponseServiceTest extends GatewaySamlTestCase
      */
     private $loa;
 
+    private Mockery\MockInterface|AttributeDefinition $attributeDefinition;
+
     public function setUp(): void
     {
         parent::setUp();

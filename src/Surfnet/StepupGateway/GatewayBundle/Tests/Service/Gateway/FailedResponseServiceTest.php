@@ -43,8 +43,6 @@ final class FailedResponseServiceTest extends GatewaySamlTestCase
     {
         parent::setUp();
 
-        $this->requestStack = new RequestStack();
-
         $now = new \DateTime('@' . static::MOCK_TIMESTAMP);
 
         // init configuration

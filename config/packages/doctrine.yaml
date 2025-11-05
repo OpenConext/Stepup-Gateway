@@ -23,8 +23,12 @@ doctrine:
   orm:
     default_entity_manager: gateway
     auto_generate_proxy_classes: "%kernel.debug%"
+    controller_resolver:
+      auto_mapping: false
+    enable_lazy_ghost_objects: true
     entity_managers:
       gateway:
+        report_fields_where_declared: true
         connection: gateway
         naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
         mappings:
@@ -33,6 +37,7 @@ doctrine:
             type: annotation
             is_bundle: true
       deploy:
+        report_fields_where_declared: true
         connection: deploy
         naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
         mappings: []

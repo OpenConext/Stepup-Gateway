@@ -662,9 +662,7 @@ final class ConsumeAssertionServiceTest extends GatewaySamlTestCase
      */
     private function mockPostBinding($samlResponseXml): void
     {
-        $previous = libxml_disable_entity_loader(true);
         $asXml = DOMDocumentFactory::fromString($samlResponseXml);
-        libxml_disable_entity_loader($previous);
 
         $response = new Response($asXml->documentElement);
         $assertion = $response->getAssertions()[0];

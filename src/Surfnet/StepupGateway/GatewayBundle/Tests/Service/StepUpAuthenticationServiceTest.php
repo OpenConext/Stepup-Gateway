@@ -175,7 +175,7 @@ final class StepUpAuthenticationServiceTest extends TestCase
 
         $this->logger
             ->shouldReceive('info')
-            ->with(\Hamcrest\Text\MatchesPattern::matchesPattern('/^Out of [3|4] candidate Loa\'s, Loa ' .
+            ->with(m::pattern('/^Out of [3|4] candidate Loa\'s, Loa ' .
                 '"https:\/\/gw-dev.stepup.coin.surf.net\/authentication\/loa2" is the highest$/')
             );
 
