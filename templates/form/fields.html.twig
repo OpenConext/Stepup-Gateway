@@ -13,7 +13,7 @@
         {% endif %}
         <a href="{{ path(route) }}" {{ block('button_attributes') }}>
             {% if icon is not empty %}
-                <span class="glyphicon glyphicon-{{ icon }}"{% if icon_inverted|default(false) %} style="color: white;"{% endif %}></span>
+                <span class="glyphicon glyphicon-{{ icon }}{% if icon_inverted|default(false) %} icon-inverted{% endif %}"></span>
             {% endif %}
             {{ label|trans({}, translation_domain) }}</a>
     {% endspaceless %}
