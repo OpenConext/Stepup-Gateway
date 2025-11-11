@@ -23,11 +23,10 @@ use Surfnet\StepupBundle\Service\SecondFactorTypeTranslationService;
 use Surfnet\StepupBundle\Value\Provider\ViewConfigCollection;
 use Surfnet\StepupGateway\GatewayBundle\Exception\InvalidArgumentException as GatewayInvalidArgumentException;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\ViewConfig;
-use Twig\Extension\AbstractExtension;
-use Twig\TwigFilter;
-use Twig\TwigFunction;
+use Twig\Attribute\AsTwigFilter;
+use Twig\Attribute\AsTwigFunction;
 
-final class SecondFactorType extends AbstractExtension
+final class SecondFactorType
 {
     private string $logoFormat = '/images/second-factor/%s.png';
 
@@ -42,23 +41,7 @@ final class SecondFactorType extends AbstractExtension
         return 'ra.twig.second_factor_type';
     }
 
-    public function getFilters(): array
-    {
-        return [
-            new TwigFilter('trans_second_factor_type', $this->translateSecondFactorType(...)),
-        ];
-    }
-
-    public function getFunctions(): array
-    {
-        return [
-            new TwigFunction(
-                'second_factor_logo',
-                $this->getSecondFactorTypeLogoByIdentifier(...)
-            ),
-        ];
-    }
-
+    #[AsTwigFilter('trans_second_factor_type')]
     public function translateSecondFactorType($secondFactorType): string
     {
         return $this->translator->translate(
@@ -73,9 +56,9 @@ final class SecondFactorType extends AbstractExtension
      * a non gssp type is encountered a source is built based on the way these
      * logos are typically stored in the /web/images/second-factor folder
      */
+    #[AsTwigFunction('second_factor_logo')]
     public function getSecondFactorTypeLogoByIdentifier($secondFactorType): string
     {
-        $logo = '';
         try {
             /** @var ViewConfig $viewConfig */
             $viewConfig = $this->collection->getByIdentifier($secondFactorType);

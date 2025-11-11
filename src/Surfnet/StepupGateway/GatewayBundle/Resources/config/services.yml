@@ -249,9 +249,8 @@ services:
             - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse }
     # Twig
     ra.twig.second_factor_type:
+        autoconfigure: true
         class: Surfnet\StepupGateway\GatewayBundle\Twig\Extensions\Extension\SecondFactorType
         arguments:
             - "@surfnet_stepup.service.second_factor_type_translator"
             - "@surfnet_stepup.provider.collection"
-        tags:
-            - { name : twig.extension }
