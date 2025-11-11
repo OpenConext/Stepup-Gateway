@@ -16,7 +16,7 @@
             "tests/features/bootstrap/ServiceProviderContext.php"
         ]
     },
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "require": {
         "php": "^8.2",
         "ext-dom": "*",
@@ -27,7 +27,7 @@
         "doctrine/common": "^3.5.0",
         "doctrine/dbal": "^3.10.3",
         "doctrine/doctrine-bundle": "^2.18",
-        "doctrine/orm": "^3.5.3",
+        "doctrine/orm": "^3.5",
         "graylog2/gelf-php": "^2.0.2",
         "incenteev/composer-parameter-handler": "^2.2",
         "jms/translation-bundle": "^2.6",
@@ -36,19 +36,19 @@
         "paragonie/halite": "^5.1.4",
         "psr/container": "^2.0.2",
         "spryng/rest-api-php": "^1.1",
-        "surfnet/stepup-bundle": "^6.0.17",
-        "surfnet/yubikey-api-client-bundle": "^5.0",
-        "symfony/config": "6.4.*",
-        "symfony/console": "6.4.*",
-        "symfony/expression-language": "6.4.*",
+        "surfnet/stepup-bundle": "dev-feature/maintenance_nov_25",
+        "surfnet/yubikey-api-client-bundle": "dev-feature/maintenance-nov-25",
+        "symfony/config": "7.1.*",
+        "symfony/console": "7.1.*",
+        "symfony/expression-language": "7.1.*",
         "symfony/flex": "^2.9.0",
-        "symfony/form": "6.4.*",
-        "symfony/http-foundation": "^6.4.26",
+        "symfony/form": "7.1.*",
+        "symfony/http-foundation": "7.1.*",
         "symfony/monolog-bundle": "^3.10",
-        "symfony/runtime": "6.4.*",
-        "symfony/security-bundle": "6.4.*",
-        "symfony/translation": "6.4.*",
-        "symfony/twig-bundle": "6.4.*",
+        "symfony/runtime": "7.1.*",
+        "symfony/security-bundle": "7.1.*",
+        "symfony/translation": "7.1.*",
+        "symfony/twig-bundle": "7.1.*",
         "symfony/webpack-encore-bundle": "^2.3",
         "twig/extra-bundle": "^3.22",
         "twig/twig": "^3.22.0",
@@ -80,9 +80,9 @@
         "sebastian/exporter": "^5.1.4",
         "slevomat/coding-standard": "^8.24",
         "squizlabs/php_codesniffer": "^4.0",
-        "symfony/browser-kit": "6.4.*",
+        "symfony/browser-kit": "7.1.*",
         "symfony/phpunit-bridge": "^7.3.4",
-        "symfony/web-profiler-bundle": "6.4.*"
+        "symfony/web-profiler-bundle": "7.1.*"
     },
     "scripts": {
         "auto-scripts": {
@@ -98,6 +98,10 @@
             "@auto-scripts"
         ],
         "check": [
+            "@check-ci",
+            "@rector"
+        ],
+        "check-ci": [
             "@phplint",
             "@validate-lockfile",
             "@license-headers",
@@ -166,7 +170,7 @@
     "extra": {
         "symfony": {
             "allow-contrib": false,
-            "require": "6.4.*"
+            "require": "7.1.*"
         },
         "symfony-assets-install": "relative",
         "incenteev-parameters": [
@@ -187,5 +191,6 @@
           ]
         }
     },
-    "type": "project"
+    "type": "project",
+    "prefer-stable": true
 }

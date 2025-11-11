@@ -22,8 +22,6 @@ use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\ResponseHelper;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\StateHandler;
-use Symfony\Component\HttpFoundation\ParameterBag;
-use Symfony\Component\HttpFoundation\Request;
 
 class ResponseHelperTest extends TestCase
 {
@@ -31,16 +29,6 @@ class ResponseHelperTest extends TestCase
      * @var ResponseHelper
      */
     private $helper;
-
-    /**
-     * @var Request
-     */
-    private $request;
-
-    /**
-     * @var ParameterBag
-     */
-    private $parameterBag;
 
     /**
      * @var LoggerInterface
@@ -60,9 +48,6 @@ class ResponseHelperTest extends TestCase
         $this->stateHandler = m::mock(StateHandler::class);
 
         $this->helper = new ResponseHelper($this->stateHandler, $this->logger);
-        $this->request = m::mock(Request::class);
-        $this->parameterBag = m::mock(ParameterBag::class);
-        $this->request->request = $this->parameterBag;
     }
 
     #[\PHPUnit\Framework\Attributes\Test]
