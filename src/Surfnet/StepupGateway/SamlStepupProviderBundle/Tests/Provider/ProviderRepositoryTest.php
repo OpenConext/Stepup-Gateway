@@ -45,18 +45,14 @@ class ProviderRepositoryTest extends TestCase
         $this->provider = new Provider('MyProvider', $idp, $serviceProvider, $remoteIdp, $stateHandler);
     }
 
-    /**
-     * @test
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function can_construct_repository(): void
     {
         $repo = new ProviderRepository();
         self::assertInstanceOf(ProviderRepository::class, $repo);
     }
 
-    /**
-     * @test
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function verify_add_provider(): void
     {
         $this->expectException(InvalidConfigurationException::class);
@@ -65,9 +61,7 @@ class ProviderRepositoryTest extends TestCase
         $repo->addProvider($this->provider);
     }
 
-    /**
-     * @test
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function verify_has_provider(): void
     {
         $repo = new ProviderRepository();
@@ -76,9 +70,7 @@ class ProviderRepositoryTest extends TestCase
         self::assertEquals(false, $repo->has('DoesNotExists'));
     }
 
-    /**
-     * @test
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function verify_get_provider(): void
     {
         $repo = new ProviderRepository();
@@ -86,9 +78,7 @@ class ProviderRepositoryTest extends TestCase
         self::assertEquals($this->provider, $repo->get('MyProvider'));
     }
 
-    /**
-     * @test
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function verify_get_unknown_provider(): void
     {
         $this->expectException(UnknownProviderException::class);

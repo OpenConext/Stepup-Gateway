@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupGateway\GatewayBundle\Test\Entity;
+namespace Surfnet\StepupGateway\GatewayBundle\Tests\Entity;
 
 use Mockery;
 use PHPUnit\Framework\TestCase;
@@ -54,9 +54,7 @@ class SecondFactorTest extends TestCase
         return new SecondFactorTypeService($mapping);
     }
 
-    /**
-     * @dataProvider provideIdentityVettedTestData
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideIdentityVettedTestData')]
     public function test_can_satisfy_identity_vetted(
         string $tokenType,
         float $requiredLoa,
@@ -74,9 +72,7 @@ class SecondFactorTest extends TestCase
         );
     }
 
-    /**
-     * @dataProvider provideErroneousIdentityVettedTestData
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideErroneousIdentityVettedTestData')]
     public function test_reject_faulty_token_data(string $tokenType, float $requiredLoa, string $expectedMessage): void
     {
         $raVettedYubikey = $this->buildSecondFactor($tokenType, true);
@@ -89,9 +85,7 @@ class SecondFactorTest extends TestCase
         );
     }
 
-    /**
-     * @dataProvider provideLoaLevelExpectations
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideLoaLevelExpectations')]
     public function test_get_loa(string $tokenType, bool $isIdentityVetted, float $expectedLoa): void
     {
         $token = $this->buildSecondFactor($tokenType, $isIdentityVetted);
@@ -99,7 +93,7 @@ class SecondFactorTest extends TestCase
         $this->assertEquals($expectedLoa, $token->getLoaLevel($service));
     }
 
-    public function provideIdentityVettedTestData()
+    public static function provideIdentityVettedTestData()
     {
         return [
             'identity vetted yubikey satisfies loa3' => ['yubikey', 3.0, true],
@@ -134,7 +128,7 @@ class SecondFactorTest extends TestCase
         ];
     }
 
-    public function provideErroneousIdentityVettedTestData()
+    public static function provideErroneousIdentityVettedTestData()
     {
         return [
             'unknown token type' => ['tjoepiekey', 3.0, "The Loa level of this type: tjoepiekey can't be retrieved."],
@@ -146,7 +140,7 @@ class SecondFactorTest extends TestCase
         ];
     }
 
-    public function provideLoaLevelExpectations()
+    public static function provideLoaLevelExpectations()
     {
         return [
             'identity vetted yubikey yields loa 3.0' => ['yubikey', true, 3.0],

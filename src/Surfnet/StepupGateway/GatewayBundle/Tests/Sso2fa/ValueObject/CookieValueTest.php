@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupGateway\GatewayBundle\Test\Sso2fa\ValueObject;
+namespace Surfnet\StepupGateway\GatewayBundle\Tests\Sso2fa\ValueObject;
 
 use Generator;
 use Mockery;
@@ -69,9 +69,7 @@ class CookieValueTest extends TestCase
     }
 
 
-    /**
-     * @dataProvider loaProvider
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('loaProvider')]
     public function test_loa_can_be_tested_against_required_loa(float $requiredLoa, bool $expectedResult): void
     {
         $secondFactor = Mockery::mock(SecondFactor::class);
@@ -83,7 +81,7 @@ class CookieValueTest extends TestCase
         self::assertEquals($expectedResult, $cookie->meetsRequiredLoa($requiredLoa));
     }
 
-    public function loaProvider(): Generator
+    public static function loaProvider(): Generator
     {
         yield [1.0, true];
         yield [1.5, true];

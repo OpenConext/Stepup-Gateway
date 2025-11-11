@@ -24,9 +24,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Otp implements JsonConvertible
 {
     /**
-     * @Assert\NotBlank(message="otp.value.must_be_set")
-     * @Assert\Type(type="string", message="otp.value.must_be_string")
      * @var string
      */
+    #[Assert\NotBlank(message: 'otp.value.must_be_set')]
+    #[Assert\Type(type: 'string', message: 'otp.value.must_be_string')]
     public $value;
 }

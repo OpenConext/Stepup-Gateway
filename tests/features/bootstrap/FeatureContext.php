@@ -77,9 +77,7 @@ class FeatureContext implements Context
         ContainerSingleton::setContainer(new TestSaml2Container($logger));
     }
 
-    /**
-     * @BeforeFeature
-     */
+    #[\Behat\Hook\BeforeFeature]
     public static function setupDatabase(BeforeFeatureScope $scope): void
     {
         // Generate test databases
@@ -88,18 +86,14 @@ class FeatureContext implements Context
         shell_exec("/var/www/html/bin/console doctrine:schema:create --env=smoketest");
     }
 
-    /**
-     * @BeforeScenario
-     */
+    #[\Behat\Hook\BeforeScenario]
     public function gatherContexts(BeforeScenarioScope $scope): void
     {
         $environment = $scope->getEnvironment();
         $this->minkContext = $environment->getContext(MinkContext::class);
     }
 
-    /**
-     * @Given /^a user from "([^"]*)" identified by "([^"]*)" with a vetted "([^"]*)" token$/
-     */
+    #[\Behat\Step\Given('/^a user from "([^"]*)" identified by "([^"]*)" with a vetted "([^"]*)" token$/')]
     public function aUserIdentifiedByWithAVettedToken($institution, $nameId, $tokenType): void
     {
         switch (strtolower($tokenType)) {
@@ -115,9 +109,7 @@ class FeatureContext implements Context
         }
     }
 
-    /**
-     * @Given /^a user from "([^"]*)" identified by "([^"]*)" with a self-asserted "([^"]*)" token$/
-     */
+    #[\Behat\Step\Given('/^a user from "([^"]*)" identified by "([^"]*)" with a self-asserted "([^"]*)" token$/')]
     public function aUserIdentifiedByWithASelfAssertedToken($institution, $nameId, $tokenType): void
     {
         switch (strtolower($tokenType)) {
@@ -133,35 +125,27 @@ class FeatureContext implements Context
         }
     }
 
-    /**
-     * @Then I should see the Yubikey OTP screen
-     */
+    #[\Behat\Step\Then('I should see the Yubikey OTP screen')]
     public function iShouldSeeTheYubikeyOtpScreen(): void
     {
         $this->minkContext->assertPageContainsText('Your YubiKey-code');
     }
 
-    /**
-     * @Then I should see the SMS verification screen
-     */
+    #[\Behat\Step\Then('I should see the SMS verification screen')]
     public function iShouldSeeTheSMSScreen(): void
     {
         $this->minkContext->assertPageContainsText('Enter the received SMS-code');
         $this->minkContext->assertPageContainsText('Send again');
     }
 
-    /**
-     * @Given /^I should see the Tiqr authentication screen$/
-     */
+    #[\Behat\Step\Given('/^I should see the Tiqr authentication screen$/')]
     public function iShouldSeeTheTiqrAuthenticationScreen(): void
     {
         $this->pressButtonWhenNoJavascriptSupport();
         $this->minkContext->assertPageContainsText('Log in with Tiqr');
     }
 
-    /**
-     * @When I enter the OTP
-     */
+    #[\Behat\Step\When('I enter the OTP')]
     public function iEnterTheOtp(): void
     {
         $this->minkContext->fillField('gateway_verify_yubikey_otp_otp', 'bogus-otp-we-use-a-mock-yubikey-service');
@@ -169,9 +153,7 @@ class FeatureContext implements Context
         $this->pressButtonWhenNoJavascriptSupport();
     }
 
-    /**
-     * @When I enter the SMS verification code
-     */
+    #[\Behat\Step\When('I enter the SMS verification code')]
     public function iEnterTheSmsVerificationCode(): void
     {
         $cookieValue = $this->minkContext->getSession()->getDriver()->getCookie('smoketest-sms-service');
@@ -185,9 +167,7 @@ class FeatureContext implements Context
         $this->pressButtonWhenNoJavascriptSupport();
     }
 
-    /**
-     * @When I enter the expired SMS verification code
-     */
+    #[\Behat\Step\When('I enter the expired SMS verification code')]
     public function iEnterTheExpiredSmsVerificationCode(): void
     {
         $cookieValue = $this->minkContext->getSession()->getDriver()->getCookie('smoketest-sms-service');
@@ -197,26 +177,20 @@ class FeatureContext implements Context
         $this->minkContext->pressButton('gateway_verify_sms_challenge_verify_challenge');
     }
 
-    /**
-     * @When I finish the Tiqr authentication
-     */
+    #[\Behat\Step\When('I finish the Tiqr authentication')]
     public function iFinishGsspAuthentication(): void
     {
         $this->pressButtonWhenNoJavascriptSupport();
         $this->pressButtonWhenNoJavascriptSupport();
     }
 
-    /**
-     * @Given /^a whitelisted institution ([^"]*)$/
-     */
+    #[\Behat\Step\Given('/^a whitelisted institution ([^"]*)$/')]
     public function aWhitelistedInstitution($institution): void
     {
         $this->whitelistedInstitutions[] = $this->fixtureService->whitelist($institution)['institution'];
     }
 
-    /**
-     * @Given /^an institution "([^"]*)" that allows "([^"]*)"$/
-     */
+    #[\Behat\Step\Given('/^an institution "([^"]*)" that allows "([^"]*)"$/')]
     public function anInstitutionThatAllows(string $institution, string $option): void
     {
         switch(true) {
@@ -232,9 +206,7 @@ class FeatureContext implements Context
         $this->fixtureService->configureBoolean($institution, $optionColumnName, true);
     }
 
-    /**
-     * @Then /^I select my ([^"]*) token on the WAYG$/
-     */
+    #[\Behat\Step\Then('/^I select my ([^"]*) token on the WAYG$/')]
     public function iShouldSelectMyTokenOnTheWAYG($tokenType): void
     {
         switch (strtolower($tokenType)) {
@@ -250,41 +222,31 @@ class FeatureContext implements Context
         }
     }
 
-    /**
-     * @Then /^I should be on the WAYG$/
-     */
+    #[\Behat\Step\Then('/^I should be on the WAYG$/')]
     public function iShouldBeOnTheWAYG(): void
     {
         $this->minkContext->assertPageContainsText('Choose a token for login');
     }
 
-    /**
-     * @Then /^an error response is posted back to the SP$/
-     */
+    #[\Behat\Step\Then('/^an error response is posted back to the SP$/')]
     public function anErrorResponseIsPostedBackToTheSP(): void
     {
         $this->pressButtonWhenNoJavascriptSupport();
     }
 
-    /**
-     * @Given /^I cancel the authentication$/
-     */
+    #[\Behat\Step\Given('/^I cancel the authentication$/')]
     public function iCancelTheAuthentication(): void
     {
         $this->minkContext->pressButton('Cancel');
     }
 
-    /**
-     * @Given /^I pass through the Gateway$/
-     */
+    #[\Behat\Step\Given('/^I pass through the Gateway$/')]
     public function iPassThroughTheGateway(): void
     {
         $this->pressButtonWhenNoJavascriptSupport();
     }
 
-    /**
-     * @Given /^I pass through the IdP/
-     */
+    #[\Behat\Step\Given('/^I pass through the IdP/')]
     public function iPassThroughTheIdP(): void
     {
         if ($this->minkContext->getSession()->getDriver() instanceof SymfonyDriver) {
@@ -293,9 +255,9 @@ class FeatureContext implements Context
     }
 
     /**
-     * @Then /^the response should have a SSO\-2FA cookie$/
      * @throws ExpectationException
      */
+    #[\Behat\Step\Then('/^the response should have a SSO\-2FA cookie$/')]
     public function theResponseShouldHaveASSO2FACookie(): void
     {
         $this->minkContext->visit('https://gateway.dev.openconext.local/info');
@@ -308,9 +270,9 @@ class FeatureContext implements Context
 
 
     /**
-     * @Then /^the response should have a valid session cookie$/
      * @throws ExpectationException
      */
+    #[\Behat\Step\Then('/^the response should have a valid session cookie$/')]
     public function validateSessionCookie(): void
     {
         $this->minkContext->visit('https://gateway.dev.openconext.local/info');
@@ -352,9 +314,9 @@ class FeatureContext implements Context
     }
 
     /**
-     * @Then /^the response should not have a SSO\-2FA cookie$/
      * @throws ExpectationException
      */
+    #[\Behat\Step\Then('/^the response should not have a SSO\-2FA cookie$/')]
     public function theResponseShouldNotHaveASSO2FACookie(): void
     {
         $this->minkContext->visit('https://gateway.dev.openconext.local/info');
@@ -368,9 +330,9 @@ class FeatureContext implements Context
     }
 
     /**
-     * @Then /^a new SSO\-2FA cookie was written$/
      * @throws ExpectationException
      */
+    #[\Behat\Step\Then('/^a new SSO\-2FA cookie was written$/')]
     public function theSSO2FACookieIsRewritten(): void
     {
         $this->minkContext->visit('https://gateway.dev.openconext.local/info');
@@ -386,9 +348,9 @@ class FeatureContext implements Context
     }
 
     /**
-     * @Then /^the existing SSO\-2FA cookie was used$/
      * @throws ExpectationException
      */
+    #[\Behat\Step\Then('/^the existing SSO\-2FA cookie was used$/')]
     public function theSSO2FACookieRemainedTheSame(): void
     {
         $this->minkContext->visit('https://gateway.dev.openconext.local/info');
@@ -406,18 +368,14 @@ class FeatureContext implements Context
         }
     }
 
-    /**
-     * @Given /^the user cleared cookies from browser$/
-     */
+    #[\Behat\Step\Given('/^the user cleared cookies from browser$/')]
     public function userClearedCookies(): void
     {
         $this->minkContext->visit('https://gateway.dev.openconext.local/info');
         $this->minkContext->getSession()->setCookie($this->sso2faCookieName, null);
     }
 
-    /**
-     * @Given /^the SSO\-2FA cookie should contain "([^"]*)"$/
-     */
+    #[\Behat\Step\Given('/^the SSO\-2FA cookie should contain "([^"]*)"$/')]
     public function theSSO2FACookieShouldContain($expectedCookieValue): void
     {
         $this->minkContext->visit('https://gateway.dev.openconext.local/info');

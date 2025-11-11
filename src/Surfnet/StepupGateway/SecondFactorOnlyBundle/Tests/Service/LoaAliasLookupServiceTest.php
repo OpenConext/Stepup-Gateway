@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Test\Service;
+namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Tests\Service;
 
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
@@ -25,10 +25,8 @@ use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\LoaAliasLookupService;
 
 class LoaAliasLookupServiceTest extends TestCase
 {
-    /**
-     * @test
-     * @group secondFactorOnly
-     */
+    #[\PHPUnit\Framework\Attributes\Group('secondFactorOnly')]
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_looksup_loa_id_by_alias(): void
     {
         $service = new LoaAliasLookupService(['a' => 'b', 'c' => 'd']);
@@ -41,10 +39,8 @@ class LoaAliasLookupServiceTest extends TestCase
         $this->assertEquals('c', $loaId);
     }
 
-    /**
-     * @test
-     * @group secondFactorOnly
-     */
+    #[\PHPUnit\Framework\Attributes\Group('secondFactorOnly')]
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_returns_false_on_no_match(): void
     {
         $service = new LoaAliasLookupService(['a' => 'b']);
@@ -53,10 +49,8 @@ class LoaAliasLookupServiceTest extends TestCase
         $this->assertFalse($loaId);
     }
 
-    /**
-     * @test
-     * @group secondFactorOnly
-     */
+    #[\PHPUnit\Framework\Attributes\Group('secondFactorOnly')]
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_looksup_loa_alias_by_loa(): void
     {
         $loaA = m::mock(Loa::class);
@@ -76,10 +70,8 @@ class LoaAliasLookupServiceTest extends TestCase
         $this->assertEquals('noot', $alias);
     }
 
-    /**
-     * @test
-     * @group secondFactorOnly
-     */
+    #[\PHPUnit\Framework\Attributes\Group('secondFactorOnly')]
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_rejects_invalid_mappings(): void
     {
         $this->expectException(InvalidArgumentException::class);

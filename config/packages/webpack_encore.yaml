@@ -5,3 +5,11 @@ webpack_encore:
 when@dev:
     webpack_encore:
         cache: false
+
+when@test:
+    webpack_encore:
+        strict_mode: false
+
+when@smoketest:
+    webpack_encore:
+        strict_mode: false

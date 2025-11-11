@@ -93,9 +93,7 @@ class SecondFactorVerificationServiceTest extends GatewaySamlTestCase
         $this->initSamlProxyService($idpConfiguration, $remoteIdpConfiguration, $spConfiguration, $now);
     }
 
-    /**
-     * @test
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_should_return_a_valid_saml_response_and_update_state_when_the_verification_is_started_on_gssp_verification_flow(): void {
 
         $subjectNameId = 'test-gssp-id';

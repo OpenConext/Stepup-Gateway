@@ -33,10 +33,10 @@ class SmsMessage implements JsonConvertible
      *
      * Example values would thus be 31612345678 and SURFnet.
      *
-     * @Assert\NotBlank(message="sms_message.originator.must_be_set")
-     * @Assert\Regex(pattern="~^(\d+|[a-z\d ]{1,11})$~i", message="sms_message.originator.must_be_alphanumerical")
      * @var string
      */
+    #[Assert\NotBlank(message: 'sms_message.originator.must_be_set')]
+    #[Assert\Regex(pattern: '~^(\d+|[a-z\d ]{1,11})$~i', message: 'sms_message.originator.must_be_alphanumerical')]
     public $originator;
 
     /**
@@ -45,16 +45,16 @@ class SmsMessage implements JsonConvertible
      *
      * An example value would thus be 31612345678.
      *
-     * @Assert\NotBlank(message="sms_message.recipient.must_be_set")
-     * @Assert\Regex(pattern="~^\d+$~", message="sms_message.recipient.must_consist_of_numbers")
      * @var string
      */
+    #[Assert\NotBlank(message: 'sms_message.recipient.must_be_set')]
+    #[Assert\Regex(pattern: '~^\d+$~', message: 'sms_message.recipient.must_consist_of_numbers')]
     public $recipient;
 
     /**
-     * @Assert\NotBlank(message="sms_message.body.must_be_set")
-     * @Assert\Type(type="string", message="sms_message.body.must_be_string")
      * @var string
      */
+    #[Assert\NotBlank(message: 'sms_message.body.must_be_set')]
+    #[Assert\Type(type: 'string', message: 'sms_message.body.must_be_string')]
     public $body;
 }

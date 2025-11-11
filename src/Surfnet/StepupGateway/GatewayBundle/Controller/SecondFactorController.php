@@ -316,8 +316,8 @@ class SecondFactorController extends ContainerController
         return $this->render(
             '@default/second_factor/choose_second_factor.html.twig',
             [
-                'form' => $form->createView(),
-                'cancelForm' => $cancelForm->createView(),
+                'form' => $form,
+                'cancelForm' => $cancelForm,
                 'secondFactors' => $secondFactors,
             ]
         );
@@ -456,7 +456,7 @@ class SecondFactorController extends ContainerController
                 // OTP field is rendered empty in the template.
                 return $this->render(
                     '@default/second_factor/verify_yubikey_second_factor.html.twig',
-                    ['form' => $form->createView(), 'cancelForm' => $cancelForm->createView()],
+                    ['form' => $form, 'cancelForm' => $cancelForm],
                 );
             } elseif (!$result->didPublicIdMatch()) {
                 $form->addError(
@@ -466,7 +466,7 @@ class SecondFactorController extends ContainerController
                 // OTP field is rendered empty in the template.
                 return $this->render(
                     '@default/second_factor/verify_yubikey_second_factor.html.twig',
-                    ['form' => $form->createView(), 'cancelForm' => $cancelForm->createView()],
+                    ['form' => $form, 'cancelForm' => $cancelForm],
                 );
             }
 
@@ -486,7 +486,7 @@ class SecondFactorController extends ContainerController
         // OTP field is rendered empty in the template.
         return $this->render(
             '@default/second_factor/verify_yubikey_second_factor.html.twig',
-            ['form' => $form->createView(), 'cancelForm' => $cancelForm->createView()],
+            ['form' => $form, 'cancelForm' => $cancelForm],
         );
     }
 
@@ -637,8 +637,8 @@ class SecondFactorController extends ContainerController
         return $this->render(
             '@default/second_factor/verify_sms_second_factor_challenge.html.twig',
             [
-                'form' => $form->createView(),
-                'cancelForm' => $cancelForm->createView(),
+                'form' => $form,
+                'cancelForm' => $cancelForm,
             ],
         );
     }

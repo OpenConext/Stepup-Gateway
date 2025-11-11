@@ -61,7 +61,7 @@ class GatewayController extends ContainerController
      *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
      */
-    #[Route(
+    #[\Symfony\Component\Routing\Attribute\Route(
         path: '/authentication/single-sign-on',
         name: 'gateway_identityprovider_sso',
         methods: ['GET', 'POST']
@@ -89,7 +89,7 @@ class GatewayController extends ContainerController
         return $redirectBinding->createResponseFor($proxyRequest);
     }
 
-    #[Route(
+    #[\Symfony\Component\Routing\Attribute\Route(
         path: '/authentication/single-sign-on/{idpKey}',
         name: 'gateway_identityprovider_sso_proxy',
         methods: ['POST']
@@ -107,7 +107,7 @@ class GatewayController extends ContainerController
      * using an internal redirect to the SecondFactorController to start the
      * actual second factor verification.
      */
-    #[Route(
+    #[\Symfony\Component\Routing\Attribute\Route(
         path: '/authentication/consume-assertion',
         name: 'gateway_serviceprovider_consume_assertion',
         methods: ['POST']

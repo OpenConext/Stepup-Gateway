@@ -63,6 +63,8 @@ final class ProxyResponseServiceTest extends GatewaySamlTestCase
      */
     private $loa;
 
+    private Mockery\MockInterface|AttributeDefinition $attributeDefinition;
+
     public function setUp(): void
     {
         parent::setUp();
@@ -98,9 +100,7 @@ final class ProxyResponseServiceTest extends GatewaySamlTestCase
             ->byDefault();
     }
 
-    /**
-     * @test
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_sets_the_proxied_identity_provider_as_authenticating_authority(): void
     {
         $factory = new ProxyResponseService(
@@ -127,9 +127,7 @@ final class ProxyResponseServiceTest extends GatewaySamlTestCase
             $assertion->getAuthenticatingAuthority()
         );
     }
-    /**
-     * @test
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_uses_internal_collab_person_id_when_present_and_removes_it_from_outgoing_assertion(): void
     {
         $this->attributeDictionary
@@ -184,9 +182,7 @@ final class ProxyResponseServiceTest extends GatewaySamlTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_appends_the_proxied_identity_provider_to_existing_authenticating_authorities(): void
     {
         $factory = new ProxyResponseService(
