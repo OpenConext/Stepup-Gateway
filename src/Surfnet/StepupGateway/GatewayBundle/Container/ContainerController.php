@@ -35,18 +35,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class ContainerController extends AbstractController
 {
     /** @var ContainerInterface */
-    protected $container;
-
-    /** @var ContainerInterface */
     protected $serviceContainer;
 
-    public function setContainer(ContainerInterface $container): ?ContainerInterface
-    {
-        $previous = $this->container ?? null;
-        $this->container = $container;
-
-        return $previous;
-    }
     public function setServiceContainer(ContainerInterface $container): void
     {
         $this->serviceContainer = $container;
@@ -66,6 +56,7 @@ class ContainerController extends AbstractController
         } catch (Exception) {
             $service = $this->serviceContainer->get($serviceName);
         }
+
         return $service;
     }
 }

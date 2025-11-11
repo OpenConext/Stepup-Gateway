@@ -23,7 +23,6 @@ use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\RequestHelper;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\StateHandler;
-use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
 
 class RequestHelperTest extends TestCase
@@ -34,16 +33,6 @@ class RequestHelperTest extends TestCase
      * @var RequestHelper
      */
     private $helper;
-
-    /**
-     * @var Request
-     */
-    private $request;
-
-    /**
-     * @var ParameterBag
-     */
-    private $parameterBag;
 
     /**
      * @var LoggerInterface
@@ -63,32 +52,34 @@ class RequestHelperTest extends TestCase
         $this->stateHandler = m::mock(StateHandler::class);
 
         $this->helper = new RequestHelper($this->stateHandler, $this->logger);
-        $this->request = m::mock(Request::class);
-        $this->parameterBag = m::mock(ParameterBag::class);
-        $this->request->request = $this->parameterBag;
     }
 
     #[\PHPUnit\Framework\Attributes\Test]
     public function it_can_test_if_request_is_not_from_adfs(): void
     {
-        $this->parameterBag->expects('has')->andReturn(false);
-        $this->assertFalse($this->helper->isAdfsRequest($this->request));
+        $request = new Request();
+        $this->assertFalse($this->helper->isAdfsRequest($request));
     }
 
     #[\PHPUnit\Framework\Attributes\Test]
     public function it_can_test_if_request_is_from_adfs(): void
     {
-        $this->parameterBag->expects('has')->twice()->andReturn(true);
-        $this->assertTrue($this->helper->isAdfsRequest($this->request));
+        $request = new Request([], [
+            RequestHelper::ADFS_PARAM_AUTH_METHOD => 'ADFS.SCSA',
+            RequestHelper::ADFS_PARAM_CONTEXT => '<EncryptedData></EncryptedData>',
+        ]);
+        $this->assertTrue($this->helper->isAdfsRequest($request));
     }
 
     #[\PHPUnit\Framework\Attributes\Test]
     public function it_rejects_malformed_request(): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->parameterBag->expects('get')->with(RequestHelper::ADFS_PARAM_AUTH_METHOD)->andReturn('');
-        $this->parameterBag->expects('get')->with(RequestHelper::ADFS_PARAM_CONTEXT)->andReturn('context');
-        $this->helper->transformRequest($this->request, 'my-request-id');
+        $request = new Request([], [
+            RequestHelper::ADFS_PARAM_AUTH_METHOD => '',
+            RequestHelper::ADFS_PARAM_CONTEXT => 'context',
+        ]);
+        $this->helper->transformRequest($request, 'my-request-id');
     }
 
     #[\PHPUnit\Framework\Attributes\Test]
@@ -104,16 +95,19 @@ AUTHNREQUEST;
 
         $authnRequest = base64_encode($authnRequest);
 
-        $this->parameterBag->expects('get')->with(RequestHelper::ADFS_PARAM_AUTH_METHOD)->andReturn('ADFS.SCSA');
-        $this->parameterBag->expects('get')->with(RequestHelper::ADFS_PARAM_CONTEXT)->andReturn('<EncryptedData></EncryptedData>');
-        $this->parameterBag->expects('remove')->with(RequestHelper::ADFS_PARAM_AUTH_METHOD);
-        $this->parameterBag->expects('remove')->with(RequestHelper::ADFS_PARAM_CONTEXT);
+        $request = new Request([], [
+            RequestHelper::ADFS_PARAM_AUTH_METHOD => 'ADFS.SCSA',
+            RequestHelper::ADFS_PARAM_CONTEXT => '<EncryptedData></EncryptedData>',
+        ]);
 
-        $this->stateHandler->expects('setRequestId')->with('my-request-id')->andReturn($this->stateHandler);
-        $this->stateHandler->expects('setAuthMethod')->with('ADFS.SCSA')->andReturn($this->stateHandler);
-        $this->stateHandler->expects('setContext')->with('<EncryptedData></EncryptedData>')->andReturn($this->stateHandler);;
+        $this->stateHandler->shouldReceive('setRequestId')->with('my-request-id')->andReturn($this->stateHandler);
+        $this->stateHandler->shouldReceive('setAuthMethod')->with('ADFS.SCSA')->andReturn($this->stateHandler);
+        $this->stateHandler->shouldReceive('setContext')->with('<EncryptedData></EncryptedData>')->andReturn($this->stateHandler);
 
-        $this->helper->transformRequest($this->request, 'my-request-id');
+        $this->helper->transformRequest($request, 'my-request-id');
 
+        // Verify that the ADFS parameters have been removed
+        $this->assertFalse($request->request->has(RequestHelper::ADFS_PARAM_AUTH_METHOD));
+        $this->assertFalse($request->request->has(RequestHelper::ADFS_PARAM_CONTEXT));
     }
 }
