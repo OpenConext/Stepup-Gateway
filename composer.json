@@ -38,17 +38,17 @@
         "spryng/rest-api-php": "^1.1",
         "surfnet/stepup-bundle": "dev-feature/maintenance_nov_25",
         "surfnet/yubikey-api-client-bundle": "dev-feature/maintenance-nov-25",
-        "symfony/config": "7.1.*",
-        "symfony/console": "7.1.*",
-        "symfony/expression-language": "7.1.*",
+        "symfony/config": "7.3.*",
+        "symfony/console": "7.3.*",
+        "symfony/expression-language": "7.3.*",
         "symfony/flex": "^2.9.0",
-        "symfony/form": "7.1.*",
-        "symfony/http-foundation": "7.1.*",
+        "symfony/form": "7.3.*",
+        "symfony/http-foundation": "7.3.*",
         "symfony/monolog-bundle": "^3.10",
-        "symfony/runtime": "7.1.*",
-        "symfony/security-bundle": "7.1.*",
-        "symfony/translation": "7.1.*",
-        "symfony/twig-bundle": "7.1.*",
+        "symfony/runtime": "7.3.*",
+        "symfony/security-bundle": "7.3.*",
+        "symfony/translation": "7.3.*",
+        "symfony/twig-bundle": "7.3.*",
         "symfony/webpack-encore-bundle": "^2.3",
         "twig/extra-bundle": "^3.22",
         "twig/twig": "^3.22.0",
@@ -63,7 +63,7 @@
         "friends-of-behat/mink-extension": "^2.7.5",
         "friends-of-behat/symfony-extension": "^2.6.2",
         "malukenho/docheader": "^1.1.0",
-        "matthiasnoback/symfony-config-test": "^5.2",
+        "matthiasnoback/symfony-config-test": "^6.1",
         "mockery/mockery": "^1.6.12",
         "overtrue/phplint": ">=9.6.2",
         "phpmd/phpmd": "^2.15",
@@ -80,9 +80,9 @@
         "sebastian/exporter": "^5.1.4",
         "slevomat/coding-standard": "^8.24",
         "squizlabs/php_codesniffer": "^4.0",
-        "symfony/browser-kit": "7.1.*",
+        "symfony/browser-kit": "7.3.*",
         "symfony/phpunit-bridge": "^7.3.4",
-        "symfony/web-profiler-bundle": "7.1.*"
+        "symfony/web-profiler-bundle": "7.3.*"
     },
     "scripts": {
         "auto-scripts": {
@@ -170,7 +170,7 @@
     "extra": {
         "symfony": {
             "allow-contrib": false,
-            "require": "7.1.*"
+            "require": "7.3.*"
         },
         "symfony-assets-install": "relative",
         "incenteev-parameters": [

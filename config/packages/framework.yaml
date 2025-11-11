@@ -21,7 +21,7 @@ when@dev:
   framework:
     router:
       strict_requirements: true
-    profiler: { only_exceptions: false }
+    profiler: { only_exceptions: false, collect_serializer_data: true }
 
 when@smoketest: &testOverride
   imports:
@@ -36,6 +36,7 @@ when@smoketest: &testOverride
     profiler:
       only_exceptions: false
       collect: false
+      collect_serializer_data: true
     php_errors:
       log: false
 
