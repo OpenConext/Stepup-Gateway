@@ -26,7 +26,7 @@ jobs:
             - name: Run CI tests
               run: |
                   cd ci/docker && docker compose exec -T gateway bash -c '
-                      composer check
+                      composer check-ci
                   '
 
             - name: Output logs on failure

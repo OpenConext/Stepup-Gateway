@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+cd $(dirname $0)/../../
+
+# https://github.com/sebastianbergmann/phpcpd
+vendor/bin/phpcpd \
+    --exclude src/Surfnet/StepupGateway/GatewayBundle/Tests/Sso2fa/CookieServiceTest.php \
+    --exclude src/Surfnet/StepupGateway/GatewayBundle/Tests/Service/Gateway/ConsumeAssertionServiceTest.php \
+    --exclude src/Surfnet/StepupGateway/SecondFactorOnlyBundle/Tests/Service/Gateway/RespondServiceTest.php \
+    ./src $1
