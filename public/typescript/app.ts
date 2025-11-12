@@ -14,5 +14,6 @@
  * limitations under the License.
  */
 import jQuery from 'jquery';
-(window as any).jQuery = jQuery;
 import 'bootstrap';
+
+(window as any).jQuery = jQuery;
