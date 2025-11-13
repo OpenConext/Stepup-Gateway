@@ -13,3 +13,7 @@ gateway_test_remote_idp_sso:
   methods:  [GET,POST]
   defaults: { _controller: Surfnet\StepupGateway\Behat\Controller\IdentityProviderController::ssoAction }
 
+template_preview_controller:
+  resource: Surfnet\StepupGateway\Behat\Controller\TemplatePreviewController
+  type: attribute
+  prefix: /

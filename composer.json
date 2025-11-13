@@ -23,6 +23,7 @@
         "ext-json": "*",
         "ext-libxml": "*",
         "beberlei/assert": "^3.3.3",
+        "doctrine/annotations": "^2.0",
         "doctrine/common": "^3.5.0",
         "doctrine/dbal": "^3.10.3",
         "doctrine/doctrine-bundle": "^2.18.1",

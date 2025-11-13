@@ -36,6 +36,15 @@ mock service was created for end to end test purposes, but could be utilized in 
 3. Update the service definition to point to this class: `class: Surfnet\StepupGateway\ApiBundle\Tests\TestDouble\Service\YubikeyService` 
 4. Do not commit/push this change!
 
+### Frontend Development
+
+#### Template Preview
+For the purpose of testing the frontend templates a preview route is available to view all templates with mock data.
+
+Available in `smoketest` environment only.  
+Visit: `https://gateway.dev.openconext.local/preview/`
+
+
 ### Running Behat tests
 #### .env settings in devconf/stepup
 
