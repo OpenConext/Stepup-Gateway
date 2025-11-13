@@ -2,12 +2,12 @@ body.authentication {
 
   .container.authentication {
     background: #fff;
-    max-width: 75rem;
-    padding: 0 2rem;
+    max-width: 50rem;
+    padding: 2rem 2rem 3rem;
   }
   .page-header {
     margin: 0;
-    padding: 2rem 0 1rem 0;
+    padding: 0 0 1rem 0;
   }
 
   .authentication-content {
@@ -31,6 +31,7 @@ body.authentication {
 
   div.form-gateway-verify-sms-challenge div.row {
     margin: 2rem 0 3rem 0;
+    align-items: center;
   }
 
   form[name="gateway_verify_sms_challenge"] {

@@ -3,10 +3,10 @@
 @import "vars";
 @import "authentication";
 @import "wayg";
-@import "~bootstrap";
+@import "~bootstrap/scss/bootstrap";
 
 body {
-  background-color: $gray-lighter;
+  background-color: $gray-200;
   font-size: 15px;
   line-height: 20px;
 
@@ -20,9 +20,9 @@ body {
   }
 
   .container {
-    max-width: 100rem;
+    max-width: 1170px;
     background: #fff;
-    padding: 0 2rem;
+    padding: 0 2rem 1rem;
 
     @media (min-width: $medium) {
       border-radius: 4px;
@@ -38,7 +38,8 @@ body {
   }
 
   .page-header {
-    margin: 0 0 2rem 0;
+    border-bottom: 1px solid #e5e5e5;
+    margin: 0 0 1rem 0;
     padding: 2rem 0 1rem 0;
   }
 
@@ -82,4 +83,9 @@ div.middle {
 
 .d-block {
   display: none;
+}
+
+.a-button {
+  padding: .5rem 1rem;
+  display: block;
 }
