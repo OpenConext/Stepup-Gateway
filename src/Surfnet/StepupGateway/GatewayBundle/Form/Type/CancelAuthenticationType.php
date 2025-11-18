@@ -28,7 +28,7 @@ class CancelAuthenticationType extends AbstractType
     {
         $builder->add('cancel', SubmitType::class, [
             'label' => 'gateway.form.cancel_authentication.button.cancel',
-            'attr'  => ['class' => 'btn-link nav-link', 'formnovalidate' => 'formnovalidate'],
+            'attr'  => ['class' => 'btn-link', 'formnovalidate' => 'formnovalidate'],
         ]);
     }
 

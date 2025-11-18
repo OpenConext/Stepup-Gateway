@@ -7,8 +7,7 @@
 
 body {
   background-color: $gray-200;
-  font-size: 15px;
-  line-height: 20px;
+  line-height: 1.5;
 
   @media (max-width: $medium) {
     background-color: white;
@@ -38,7 +37,7 @@ body {
   }
 
   .page-header {
-    border-bottom: 1px solid #e5e5e5;
+    border-bottom: 1px solid rgba(33, 37, 41, 0.25);
     margin: 0 0 1rem 0;
     padding: 2rem 0 1rem 0;
   }
@@ -85,7 +84,24 @@ div.middle {
   display: none;
 }
 
+.btn-link {
+  color: #0d6efd;
+  text-decoration: none;
+
+  &:hover {
+    color: #0a58ca;
+    text-decoration: underline;
+  }
+}
+
 .a-button {
   padding: .5rem 1rem;
   display: block;
+  color: #0d6efd;
+  text-decoration: none;
+
+  &:hover {
+    color: #0a58ca;
+    text-decoration: underline;
+  }
 }
