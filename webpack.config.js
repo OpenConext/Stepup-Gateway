@@ -9,10 +9,13 @@ Encore
     .enableTypeScriptLoader()
     .enableLessLoader()
     .enableSassLoader(options => {
+        options.api = 'modern';
         options.sassOptions = {
             outputStyle: 'expanded',
             includePaths: ['public'],
+            silenceDeprecations: ["import", "color-functions", "global-builtin"]
         };
+        options.webpackImporter = false;
     })
 
     .addStyleEntry('global', [

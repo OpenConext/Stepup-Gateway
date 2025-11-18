@@ -1,9 +1,10 @@
 @charset "utf-8";
 
-@import "vars";
-@import "authentication";
-@import "wayg";
-@import "~bootstrap/scss/bootstrap";
+@use "vars" as *;
+@use "authentication";
+@use "wayg";
+
+@import "../../node_modules/bootstrap/scss/bootstrap";
 
 body {
   background-color: $gray-200;
