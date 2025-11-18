@@ -2,6 +2,16 @@ const Encore = require('@symfony/webpack-encore');
 const ESLintPlugin = require('eslint-webpack-plugin');
 const path = require('path');
 
+if (!Encore.isRuntimeEnvironmentConfigured()) {
+    Encore.configureRuntimeEnvironment(process.env.NODE_ENV || 'development');
+}
+
+Encore.configureBabelPresetEnv(config => {
+    config.useBuiltIns = 'usage';
+    config.corejs = 3;
+    config.targets = { ie: '11' };
+});
+
 Encore
     .setOutputPath('public/build/')
     .setPublicPath('/build')
@@ -17,6 +27,7 @@ Encore
         };
         options.webpackImporter = false;
     })
+    .enablePostCssLoader()
 
     .addStyleEntry('global', [
         './public/scss/application.scss',
@@ -32,8 +43,7 @@ Encore
         files: 'public/typescript',
         emitWarning: true,
         failOnError: Encore.isProduction(),
-        context: path.resolve(__dirname),
-        overrideConfigFile: path.resolve(__dirname, 'eslint.json'),
+        context: path.resolve(__dirname)
     }))
 
     .enableSingleRuntimeChunk()

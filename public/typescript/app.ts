@@ -16,6 +16,9 @@
 import jQuery from 'jquery';
 import 'bootstrap';
 
+// Ensure module context for Babel
+export {};
+
 declare global {
     interface Window {
         jQuery: typeof jQuery;
