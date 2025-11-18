@@ -16,4 +16,10 @@
 import jQuery from 'jquery';
 import 'bootstrap';
 
-(window as any).jQuery = jQuery;
+declare global {
+    interface Window {
+        jQuery: typeof jQuery;
+    }
+}
+
+window.jQuery = jQuery;

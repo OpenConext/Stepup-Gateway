@@ -39,7 +39,6 @@
         "noFallthroughCasesInSwitch": true,    /* Report errors for fallthrough cases in switch statement. */
 
         "types": [
-            "@types/jest",
             "node"
         ],
 
