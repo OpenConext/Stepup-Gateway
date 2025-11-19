@@ -128,9 +128,16 @@
         "rector":  "./ci/qa/rector.sh --dry-run",
         "rector-fix":  "./ci/qa/rector.sh",
         "dsv": "./bin/console doctrine:schema:validate --skip-sync",
+        "eslint": "yarn eslint public/typescript",
         "frontend-install": [
-            "yarn install --frozen-lockfile",
-            "yarn encore production"
+          "yarn install --frozen-lockfile",
+          "yarn encore production",
+          "./bin/console cache:clear",
+          "@fix-dev-permissions"
+        ],
+        "fix-dev-permissions": [
+          "chown -R www-data:www-data /var/www/html/var/log",
+          "chown -R www-data:www-data /var/www/html/var/cache"
         ],
         "security-tests": [
             "composer audit",
