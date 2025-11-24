@@ -59,7 +59,7 @@
         "behat/mink": "^1.12",
         "behat/mink-browserkit-driver": "^2.2",
         "dmore/behat-chrome-extension": "^1.4",
-        "dmore/chrome-mink-driver": "2.9.*",
+        "dmore/chrome-mink-driver": "2.10.*",
         "friends-of-behat/mink-extension": "^2.7.5",
         "friends-of-behat/symfony-extension": "^2.6.2",
         "irstea/phpcpd-shim": "^6.0.3",
