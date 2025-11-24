@@ -15,15 +15,13 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Test\Adfs;
+namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Tests\Adfs;
 
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\ResponseHelper;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\StateHandler;
-use Symfony\Component\HttpFoundation\ParameterBag;
-use Symfony\Component\HttpFoundation\Request;
 
 class ResponseHelperTest extends TestCase
 {
@@ -31,16 +29,6 @@ class ResponseHelperTest extends TestCase
      * @var ResponseHelper
      */
     private $helper;
-
-    /**
-     * @var Request
-     */
-    private $request;
-
-    /**
-     * @var ParameterBag
-     */
-    private $parameterBag;
 
     /**
      * @var LoggerInterface
@@ -60,32 +48,23 @@ class ResponseHelperTest extends TestCase
         $this->stateHandler = m::mock(StateHandler::class);
 
         $this->helper = new ResponseHelper($this->stateHandler, $this->logger);
-        $this->request = m::mock(Request::class);
-        $this->parameterBag = m::mock(ParameterBag::class);
-        $this->request->request = $this->parameterBag;
     }
 
-    /**
-     * @test
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_can_test_if_response_is_adfs_response(): void
     {
         $this->stateHandler->shouldReceive('hasMatchingRequestId')->with('my-request-id')->andReturn(true);
         $this->assertTrue($this->helper->isAdfsResponse('my-request-id'));
     }
 
-    /**
-     * @test
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_can_test_if_response_is_not_adfs_response(): void
     {
         $this->stateHandler->shouldReceive('hasMatchingRequestId')->with('my-request-id')->andReturn(false);
         $this->assertFalse($this->helper->isAdfsResponse('my-request-id'));
     }
 
-    /**
-     * @test
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_retrieves_adfs_parameters(): void
     {
         $this->stateHandler->shouldReceive('getAuthMethod')->andReturn('ADFS:SCSA');
@@ -98,9 +77,7 @@ class ResponseHelperTest extends TestCase
         $this->assertEquals('<blob></blob>', $params->getContext());
     }
 
-    /**
-     * @test
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_rejects_malformed_adfs_parameters(): void
     {
         $this->expectException(\InvalidArgumentException::class);

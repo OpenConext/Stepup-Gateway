@@ -32,7 +32,7 @@ final class CancelSecondFactorVerificationType extends AbstractType
         ]);
     }
 
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'gateway_cancel_second_factor_verification';
     }

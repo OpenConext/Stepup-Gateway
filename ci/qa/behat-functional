@@ -2,4 +2,7 @@
 
 cd $(dirname $0)/../../
 
+chown -R www-data:www-data /var/www/html/var/cache
+chown -R www-data:www-data /var/www/html/var/log
+
 ./vendor/bin/behat --config=ci/qa/behat.yml --tags=functional $1

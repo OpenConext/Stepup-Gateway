@@ -1,5 +1,15 @@
 # Changelog
 
+## 6.0.0
+- Upgrade from Symfony 6.4 to Symfony 7.3
+- Maintenance release, Update tooling, packages
+
+Upgrade instructions:
+ - Ensure the `database_server_version` setting in parameters.yaml is up-to-date with the production db server version. e.g. `10.6.23-MariaDB`
+
+Attention:
+ - `jms/translation-bundle` seems EOL, it relies on `doctrine/annotations`, which is abandoned. See https://github.com/OpenConext/Stepup-Gateway/issues/471
+
 ## 5.1.1
 - Bugfix: LoA 1.5 SFO authentications fail for institutions with default config configuration (SSO & GSSP fallbang off)
   when GSSP fallback attributes are present ()

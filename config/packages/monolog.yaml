@@ -1,4 +1,5 @@
 monolog:
+  channels: ['deprecation']
   handlers:
     prod-signaler:
       type: fingers_crossed
@@ -16,6 +17,11 @@ monolog:
 when@dev: &override
   monolog:
     handlers:
+      deprecation:
+        type: stream
+        path: "%kernel.logs_dir%/deprecation.log"
+        level: debug
+        channels: [ "deprecation" ]
       main_syslog:
         type: stream
         path: php://stderr

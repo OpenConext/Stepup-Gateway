@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupGateway\GatewayBundle\Test\Sso2fa;
+namespace Surfnet\StepupGateway\GatewayBundle\Tests\Sso2fa;
 
 use Mockery;
 use PHPUnit\Framework\TestCase;

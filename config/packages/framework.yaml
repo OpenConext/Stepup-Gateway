@@ -15,12 +15,13 @@ framework:
     cookie_domain: "%cookie_domain%"
   fragments:       false
   http_method_override: true
+  handle_all_throwables: true
 
 when@dev:
   framework:
     router:
       strict_requirements: true
-    profiler: { only_exceptions: false }
+    profiler: { only_exceptions: false, collect_serializer_data: true }
 
 when@smoketest: &testOverride
   imports:
@@ -30,9 +31,12 @@ when@smoketest: &testOverride
     session:
       handler_id: null
       storage_factory_id: session.storage.factory.mock_file
+      cookie_samesite: none
+      cookie_secure: true
     profiler:
       only_exceptions: false
       collect: false
+      collect_serializer_data: true
     php_errors:
       log: false
 

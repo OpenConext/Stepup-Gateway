@@ -105,9 +105,7 @@ class LoginServiceTest extends GatewaySamlTestCase
         $this->initSamlProxyService($idpConfiguration, $remoteIdpConfiguration, $spConfiguration, $connectedServiceProviders);
     }
 
-    /**
-     * @test
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_should_return_a_valid_saml_response_and_update_state_when_the_registration_is_started_on_gssp_registration_flow(): void
     {
         // Create request
@@ -171,9 +169,7 @@ class LoginServiceTest extends GatewaySamlTestCase
     }
 
 
-    /**
-     * @test
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_should_throw_an_exception_when_a_sp_is_not_connected_when_the_registration_is_started_on_gssp_registration_flow(): void
     {
         $this->expectException(NotConnectedServiceProviderException::class);

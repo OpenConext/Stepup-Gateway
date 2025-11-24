@@ -100,9 +100,7 @@ final class LoginServiceTest extends GatewaySamlTestCase
         $this->initGatewayService($idpConfiguration, $spConfiguration, $loaLevels, $now);
     }
 
-    /**
-     * @test
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_should_return_a_valid_authn_request_and_update_state_when_starting_on_login_flow(): void
     {
         // Create request
@@ -168,9 +166,7 @@ final class LoginServiceTest extends GatewaySamlTestCase
         ], $this->getSessionData('attributes'));
     }
 
-    /**
-     * @test
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_should_throw_an_exception_when_an_invalid_loa_is_requested_when_starting_on_login_flow(): void
     {
         $this->expectException(RequesterFailureException::class);

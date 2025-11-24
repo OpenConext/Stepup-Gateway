@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Test\Service\Gateway;
+namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Tests\Service\Gateway;
 
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;

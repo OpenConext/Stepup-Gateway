@@ -148,9 +148,8 @@ final class StepUpAuthenticationServiceTest extends TestCase
 
     /**
      * The highest LOA is resolved for the authenticating user based on the SP config for it's schacHomeOrganization
-     *
-     * @dataProvider configuredLoas
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('configuredLoas')]
     public function test_resolve_highest_required_loa_special_sp_loa_configuration($loaConfiguration): void
     {
         $this->logger
@@ -175,7 +174,7 @@ final class StepUpAuthenticationServiceTest extends TestCase
 
         $this->logger
             ->shouldReceive('info')
-            ->with(\Hamcrest\Text\MatchesPattern::matchesPattern('/^Out of [3|4] candidate Loa\'s, Loa ' .
+            ->with(m::pattern('/^Out of [3|4] candidate Loa\'s, Loa ' .
                 '"https:\/\/gw-dev.stepup.coin.surf.net\/authentication\/loa2" is the highest$/')
             );
 
@@ -192,9 +191,8 @@ final class StepUpAuthenticationServiceTest extends TestCase
     /**
      * When the authenticating user has no schacHomeOrganization but the SP is configured with SP/institution specific
      * Loa configuration
-     *
-     * @dataProvider configuredLoas
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('configuredLoas')]
     public function test_resolve_highest_required_loa_no_vetted_tokens_for_user_institution($loaConfiguration): void
     {
         $this->expectException(InstitutionMismatchException::class);
@@ -288,7 +286,7 @@ final class StepUpAuthenticationServiceTest extends TestCase
      *
      * @return array
      */
-    public function configuredLoas() {
+    public static function configuredLoas() {
         return [
             [
                 [
@@ -343,7 +341,6 @@ final class StepUpAuthenticationServiceTest extends TestCase
      * expectancy configured in the data provider. This because the outcome described in XLS reflects the entire flow
      * and this test just covers the resolveHighestRequiredLoa method.
      *
-     * @dataProvider combinationProvider
      * @param $configuredLoas
      * @param $identityOrganisation
      * @param $institutionsBasedOnVettedTokens
@@ -351,6 +348,7 @@ final class StepUpAuthenticationServiceTest extends TestCase
      * @param $expectedOutcome
      * @param $index
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('combinationProvider')]
     public function test_resolve_highest_required_loa_conbinations(
         $configuredLoas,
         $identityOrganisation,
@@ -375,7 +373,7 @@ final class StepUpAuthenticationServiceTest extends TestCase
         }
     }
 
-    public function combinationProvider()
+    public static function combinationProvider()
     {
         // All possible output options
         $expectedLoa1 = 'https://gw-dev.stepup.coin.surf.net/authentication/loa1';

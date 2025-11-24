@@ -18,7 +18,9 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\Parameter;
 
 class DoctrineSamlEntityRepository extends EntityRepository implements SamlEntityRepository
 {
@@ -33,10 +35,7 @@ class DoctrineSamlEntityRepository extends EntityRepository implements SamlEntit
             ->createQueryBuilder('s')
             ->where('s.type = :entityType')
             ->andWhere('s.entityId = :entityId')
-            ->setParameters([
-                'entityType' => SamlEntity::TYPE_IDP,
-                'entityId'   => $entityId
-            ])
+            ->setParameters(new ArrayCollection([new Parameter('entityType', SamlEntity::TYPE_IDP), new Parameter('entityId', $entityId)]))
             ->getQuery()
             ->getOneOrNullResult();
     }
@@ -52,10 +51,7 @@ class DoctrineSamlEntityRepository extends EntityRepository implements SamlEntit
             ->createQueryBuilder('s')
             ->where('s.type = :entityType')
             ->andWhere('s.entityId = :entityId')
-            ->setParameters([
-                'entityType' => SamlEntity::TYPE_SP,
-                'entityId'   => $entityId
-            ])
+            ->setParameters(new ArrayCollection([new Parameter('entityType', SamlEntity::TYPE_SP), new Parameter('entityId', $entityId)]))
             ->getQuery()
             ->getOneOrNullResult();
     }

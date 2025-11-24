@@ -86,9 +86,7 @@ final class ConsumeAssertionServiceTest extends GatewaySamlTestCase
         $this->initGatewayService($idpConfiguration, $spConfiguration, $now);
     }
 
-    /**
-     * @test
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_should_update_the_state_when_receiving_a_saml_response_when_consuming_assertions_on_login_flow(): void
     {
         $samlResponseXml = '<samlp:Response
@@ -228,9 +226,7 @@ final class ConsumeAssertionServiceTest extends GatewaySamlTestCase
         ], $this->getSessionData('attributes'));
     }
 
-    /**
-     * @test
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_should_throw_an_exception_when_the_post_binding_could_not_be_processed_when_receiving_a_saml_response_when_consuming_assertions_on_login_flow(): void
     {
         $this->expectException(ResponseFailureException::class);
@@ -339,9 +335,7 @@ final class ConsumeAssertionServiceTest extends GatewaySamlTestCase
         $this->gatewayConsumeAssertionService->consumeAssertion($httpRequest, $this->responseContext);
     }
 
-    /**
-     * @test
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_should_throw_an_exception_when_the_in_respone_to_is_invalid_when_receiving_a_saml_response_when_consuming_assertions_on_login_flow(): void
     {
         $this->expectException(UnknownInResponseToException::class);
@@ -662,9 +656,7 @@ final class ConsumeAssertionServiceTest extends GatewaySamlTestCase
      */
     private function mockPostBinding($samlResponseXml): void
     {
-        $previous = libxml_disable_entity_loader(true);
         $asXml = DOMDocumentFactory::fromString($samlResponseXml);
-        libxml_disable_entity_loader($previous);
 
         $response = new Response($asXml->documentElement);
         $assertion = $response->getAssertions()[0];
