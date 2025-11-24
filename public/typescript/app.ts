@@ -14,5 +14,15 @@
  * limitations under the License.
  */
 import jQuery from 'jquery';
-(window as any).jQuery = jQuery;
 import 'bootstrap';
+
+// Ensure module context for Babel
+export {};
+
+declare global {
+    interface Window {
+        jQuery: typeof jQuery;
+    }
+}
+
+window.jQuery = jQuery;

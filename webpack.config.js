@@ -1,12 +1,34 @@
-var Encore = require('@symfony/webpack-encore');
+const Encore = require('@symfony/webpack-encore');
+const ESLintPlugin = require('eslint-webpack-plugin');
+const path = require('path');
+
+if (!Encore.isRuntimeEnvironmentConfigured()) {
+    Encore.configureRuntimeEnvironment(process.env.NODE_ENV || 'development');
+}
+
+Encore.configureBabelPresetEnv(config => {
+    config.useBuiltIns = 'usage';
+    config.corejs = 3;
+    config.targets = { ie: '11' };
+});
 
 Encore
     .setOutputPath('public/build/')
     .setPublicPath('/build')
     .cleanupOutputBeforeBuild()
-    // Convert typescript files.
     .enableTypeScriptLoader()
     .enableLessLoader()
+    .enableSassLoader(options => {
+        options.api = 'modern';
+        options.sassOptions = {
+            outputStyle: 'expanded',
+            includePaths: ['public'],
+            silenceDeprecations: ["import", "color-functions", "global-builtin"]
+        };
+        options.webpackImporter = false;
+    })
+    .enablePostCssLoader()
+
     .addStyleEntry('global', [
         './public/scss/application.scss',
         './vendor/surfnet/stepup-bundle/src/Resources/public/less/stepup.less'
@@ -14,32 +36,19 @@ Encore
     .addEntry('submitonload', './public/typescript/submitonload.ts')
     .addEntry('app', './public/typescript/app.ts')
 
-    // Convert sass files.
-    .enableSassLoader(function (options) {
-        options.sassOptions = {
-            outputStyle: 'expanded',
-            includePaths: ['public'],
-        };
-    })
-    .addLoader({test: /\.scss$/, loader: 'webpack-import-glob-loader'})
-    .addLoader({
-        test: /\.tsx?|\.js$/,
-        exclude: /node_modules|vendor/,
-        use: [{
-            loader: 'eslint-loader',
-            options: {
-                configFile: 'eslint.json',
-                emitErrors: true,
-                failOnHint: Encore.isProduction(),
-                typeCheck: true
-            }
-        }]
-    })
+    .addLoader({ test: /\.scss$/, loader: 'webpack-import-glob-loader' })
+
+    .addPlugin(new ESLintPlugin({
+        extensions: ['ts', 'js'],
+        files: 'public/typescript',
+        emitWarning: true,
+        failOnError: Encore.isProduction(),
+        context: path.resolve(__dirname)
+    }))
+
     .enableSingleRuntimeChunk()
     .enableSourceMaps(!Encore.isProduction())
-    // enables hashed filenames (e.g. app.abc123.css)
     .enableVersioning(Encore.isProduction())
 ;
-
 
 module.exports = Encore.getWebpackConfig();

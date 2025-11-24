@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block page_title %}Template Preview Index{% endblock %}
+
+{% block content %}
+    <h1>Template Preview - Frontend Development</h1>
+
+    <p class="lead">
+        This page provides easy access to all templates with mock data for frontend development and styling.
+    </p>
+
+    <div class="alert alert-info">
+        <strong>Note:</strong> These previews are only available in development/test environments.
+        They use mock data and non-functional forms.
+    </div>
+
+    {% for category, items in templates %}
+        <h2>{{ category }}</h2>
+        <div class="list-group mb-4">
+            {% for route, label in items %}
+                <a href="{{ path('preview_' ~ route) }}" class="list-group-item list-group-item-action">
+                    <strong>{{ label }}</strong>
+                    <br>
+                    <small class="text-muted">{{ path('preview_' ~ route) }}</small>
+                </a>
+            {% endfor %}
+        </div>
+    {% endfor %}
+{% endblock %}
+

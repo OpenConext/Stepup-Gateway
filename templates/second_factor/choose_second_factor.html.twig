@@ -17,9 +17,9 @@
 
     {% for secondFactor in secondFactors %}
         <div class="row middle">
-            <div class="col-lg-2 col-sm-2 logo"><img src="{{ second_factor_logo(secondFactor.secondFactorType) }}"></div>
-            <div class="col-lg-2 col-sm-2 col-xs-5 title">{{ secondFactor.secondFactorType|trans_second_factor_type }}</div>
-            <div class="col-lg-8 col-sm-8 col-xs-5">{{ form_widget(form.offsetGet('choose_' ~ secondFactor.secondFactorType)) }}</div>
+            <div class="col-3 logo"><img src="{{ second_factor_logo(secondFactor.secondFactorType) }}"></div>
+            <div class="col-5 title">{{ secondFactor.secondFactorType|trans_second_factor_type }}</div>
+            <div class="col-4">{{ form_widget(form.offsetGet('choose_' ~ secondFactor.secondFactorType)) }}</div>
         </div>
     {% endfor %}
 
@@ -30,12 +30,12 @@
 
 {% block footer %}
     <hr>
-    <div class="pull-left">
+    <div class="float-start">
         {{ form_start(cancelForm) }}
         {{ form_widget(cancelForm.cancel, {}) }}
         {{ form_end(cancelForm) }}
     </div>
-    <div class="pull-right">
-        <a href="{{ global_view_parameters.supportUrl }}" target="_blank">Help</a>
+    <div class="float-end">
+        <a class="a-button" href="{{ global_view_parameters.supportUrl }}" target="_blank">Help</a>
     </div>
 {% endblock footer %}

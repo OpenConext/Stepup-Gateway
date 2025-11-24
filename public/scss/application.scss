@@ -1,15 +1,14 @@
 @charset "utf-8";
 
-@import "vars";
-@import "authentication";
-@import "wayg";
-@import "~bootstrap";
+@use "vars" as *;
+@use "authentication";
+@use "wayg";
 
+@import "../../node_modules/bootstrap/scss/bootstrap";
 
 body {
-  background-color: $gray-lighter;
-  font-size: 15px;
-  line-height: 20px;
+  background-color: $gray-200;
+  line-height: 1.5;
 
   @media (max-width: $medium) {
     background-color: white;
@@ -21,9 +20,9 @@ body {
   }
 
   .container {
-    max-width: 100rem;
+    max-width: 1170px;
     background: #fff;
-    padding: 0 2rem;
+    padding: 0 2rem 1rem;
 
     @media (min-width: $medium) {
       border-radius: 4px;
@@ -39,7 +38,8 @@ body {
   }
 
   .page-header {
-    margin: 0 0 2rem 0;
+    border-bottom: 1px solid rgba(33, 37, 41, 0.25);
+    margin: 0 0 1rem 0;
     padding: 2rem 0 1rem 0;
   }
 
@@ -83,4 +83,26 @@ div.middle {
 
 .d-block {
   display: none;
+}
+
+.btn-link {
+  color: #0d6efd;
+  text-decoration: none;
+
+  &:hover {
+    color: #0a58ca;
+    text-decoration: underline;
+  }
+}
+
+.a-button {
+  padding: .5rem 1rem;
+  display: block;
+  color: #0d6efd;
+  text-decoration: none;
+
+  &:hover {
+    color: #0a58ca;
+    text-decoration: underline;
+  }
 }

@@ -1,6 +1,8 @@
 .wayg.container {
-  max-width: 75rem;
+  max-width: 50rem;
+  padding-bottom: 3rem;
   form.choose-second-factor-type {
+    max-width: 500px;
 
     div.row {
       margin: 2em 1em;
@@ -12,13 +14,13 @@
       }
       @media(max-width:767px){
         img {
-          max-height: 50px;
+          max-height: 40px;
         }
       }
     }
 
     div.title {
-      font-size: larger;
+      font-size: 1.125rem;
       font-weight: 600;
     }
   }

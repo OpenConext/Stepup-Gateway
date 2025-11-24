@@ -14,12 +14,12 @@
 
 {% block footer %}
     <hr>
-    <div class="pull-left">
+    <div class="float-start">
         {{ form_start(cancelForm) }}
         {{ form_widget(cancelForm.cancel, {}) }}
         {{ form_end(cancelForm) }}
     </div>
-    <div class="pull-right">
-        <a href="{{ global_view_parameters.supportUrl }}" target="_blank">Help</a>
+    <div class="float-end">
+        <a class="a-button" href="{{ global_view_parameters.supportUrl }}" target="_blank">Help</a>
     </div>
 {% endblock footer %}

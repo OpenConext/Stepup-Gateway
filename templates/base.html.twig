@@ -24,8 +24,8 @@
 
 {% block flashes %}
     {% if app.session.flashbag.peekAll|length > 0 %}
-        <div class="row-fluid">
-            <div id="flash" class="span12">
+        <div class="row">
+            <div id="flash" class="col-12">
                 {% for type, messages in app.session.flashbag.all() %}
                     {% for message in messages %}
                         <div class="alert alert-{{ type }} alert-dismissible" role="alert">
@@ -50,7 +50,7 @@
 
     {% block page_header %}
         <div class="page-header clearfix">
-            <img src="/images/header-logo.png" class="pull-right logo" alt="OpenConext Stepup">
+            <img src="/images/header-logo.png" class="float-end logo" alt="OpenConext Stepup">
         </div>
     {% endblock page_header %}
 
@@ -63,14 +63,10 @@
     </div>
 
     {% block footer %}
-        <div class="row-fluid">
-            <div class="span8 offset2">
-                <hr>
-                <ul class="nav nav-pills">
-                    <li><a href="{{ global_view_parameters.supportUrl }}" target="_blank">Help</a></li>
-                </ul>
-            </div>
-        </div>
+        <hr>
+        <ul class="nav nav-pills">
+            <li class="nav-item"><a class="nav-link" href="{{ global_view_parameters.supportUrl }}" target="_blank">Help</a></li>
+        </ul>
     {% endblock footer %}
 
     {% block javascripts %}

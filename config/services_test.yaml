@@ -44,6 +44,14 @@ services:
       - '@twig'
       - '@logger'
 
+  Surfnet\StepupGateway\Behat\Controller\TemplatePreviewController:
+    class: Surfnet\StepupGateway\Behat\Controller\TemplatePreviewController
+    calls:
+      - [setContainer, ['@Psr\Container\ContainerInterface']]
+    tags:
+      - 'controller.service_arguments'
+      - 'container.service_subscriber'
+
   ##### SSO on 2FA overrides #####
   # For end to end testing, we do not actually encrypt & decrypt the cookie value.
   # Allowing for more easily checking the cookie for correct contents without having

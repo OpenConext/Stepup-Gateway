@@ -6,7 +6,7 @@
     <p>{{ 'gateway.second_factor.sms.text.help_user_enter_phone_number'|trans({"%phone_number%": phoneNumber|slice(-4)}) }}</p>
 
     {% if otpRequestsRemaining != maximumOtpRequests %}
-        <div class="alert alert-{% if otpRequestsRemaining == 0 %}error{% elseif otpRequestsRemaining == 1 %}warning{% else %}info{% endif %}">
+        <div class="alert alert-{% if otpRequestsRemaining == 0 %}danger{% elseif otpRequestsRemaining == 1 %}warning{% else %}info{% endif %}">
             {{ 'gateway.second_factor.sms.text.otp_requests_remaining'|trans({ '%count%': otpRequestsRemaining }) }}
         </div>
     {% endif %}

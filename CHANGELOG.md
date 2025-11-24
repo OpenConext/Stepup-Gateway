@@ -3,6 +3,7 @@
 ## 6.0.0
 - Upgrade from Symfony 6.4 to Symfony 7.3
 - Maintenance release, Update tooling, packages
+- Update npm packages and frontend tooling.
 
 Upgrade instructions:
  - Ensure the `database_server_version` setting in parameters.yaml is up-to-date with the production db server version. e.g. `10.6.23-MariaDB`

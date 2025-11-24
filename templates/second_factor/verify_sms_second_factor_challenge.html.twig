@@ -16,8 +16,12 @@
         {% endif %}
 
         <div class="row">
-        {{ form_widget(form.challenge) }}
-        {{ form_widget(form.verify_challenge) }}
+            <div class="col-auto">
+                {{ form_widget(form.challenge) }}
+            </div>
+            <div class="col-auto">
+                {{ form_widget(form.verify_challenge) }}
+            </div>
         </div>
         <p>{{ 'gateway.second_factor.sms.text.resend_challenge_text'|trans }} {{ form_widget(form.resend_challenge) }}
         {{ form_end(form) }}
