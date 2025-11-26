@@ -7,6 +7,11 @@
 @import "../../node_modules/bootstrap/scss/bootstrap";
 
 body {
+  // Start Bootstrap 3-like font overrides
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 15px;
+  // End Bootstrap 3-like font overrides
+
   background-color: $gray-200;
   line-height: 1.5;
 
@@ -40,7 +45,7 @@ body {
   .page-header {
     border-bottom: 1px solid rgba(33, 37, 41, 0.25);
     margin: 0 0 1rem 0;
-    padding: 2rem 0 1rem 0;
+    padding: 1rem 0 1rem 0;
   }
 
   footer {
@@ -86,7 +91,7 @@ div.middle {
 }
 
 .btn-link {
-  color: #0d6efd;
+  color: #337ab7;
   text-decoration: none;
 
   &:hover {
@@ -98,7 +103,7 @@ div.middle {
 .a-button {
   padding: .5rem 1rem;
   display: block;
-  color: #0d6efd;
+  color: #337ab7;
   text-decoration: none;
 
   &:hover {
@@ -106,3 +111,59 @@ div.middle {
     text-decoration: underline;
   }
 }
+
+// Start Bootstrap 3-like button overrides
+a, .nav-link {
+  color: #337ab7;
+  text-decoration: none;
+}
+
+a:hover,
+.nav-link:hover,
+a:focus,
+.nav-link:focus {
+  color: #23527c;
+  text-decoration: underline;
+}
+
+.btn {
+  display: inline-block;
+  padding: 6px 12px;
+  margin-bottom: 0;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.42857143;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  cursor: pointer;
+  background-image: none;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+.btn-primary {
+  color: #fff;
+  background-color: #337ab7;
+  border-color: #2e6da4;
+}
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+  color: #fff;
+  background-color: #286090;
+  border-color: #204d74;
+}
+.btn-default {
+  color: #333;
+  background-color: #fff;
+  border-color: #ccc;
+}
+.btn-default:hover,
+.btn-default:focus,
+.btn-default:active {
+  color: #333;
+  background-color: #e6e6e6;
+  border-color: #adadad;
+}
+// End Bootstrap 3-like button overrides
