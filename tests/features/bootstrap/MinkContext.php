@@ -155,21 +155,51 @@ class MinkContext extends BaseMinkContext
         }
 
         foreach ($tabs as $tab) {
-            $this->getMink()
-                ->getSession()
-                ->executeScript("window.open('/','_blank');");
+            $tab = trim($tab);
+            $windowsBeforeOpen = $this->getSession()->getWindowNames();
 
-            $windowsNames = $this->getSession()->getWindowNames();
+            $this->getMink()->getSession()->executeScript("window.open('/','_blank');");
 
-            if (!$windowsNames) {
-                throw new RuntimeException('The windows where not opened correctly.');
+            $newWindowName = $this->waitForNewlyOpenedWindow($windowsBeforeOpen);
+
+            if ($newWindowName === null) {
+                throw new RuntimeException(
+                    sprintf('Failed to detect newly opened browser tab for "%s"', $tab)
+                );
             }
-            // Grab the window name (which is the last one added to the window list)
-            $windowName = array_pop($windowsNames);
-            // Keep track of the opened windows in order allow switching between them
-            $this->windows[trim($tab)] = $windowName;
+
+            $this->windows[$tab] = $newWindowName;
+        }
+    }
+
+    private function waitForNewlyOpenedWindow(array $windowsBeforeOpen): ?string
+    {
+        $maxAttempts = 10;
+        $sleepMicroseconds = 100000;
+
+        for ($attempt = 0; $attempt < $maxAttempts; $attempt++) {
+            usleep($sleepMicroseconds);
+
+            $currentWindows = $this->getSession()->getWindowNames();
+            $newWindowName = $this->findNewlyOpenedWindow($windowsBeforeOpen, $currentWindows);
+
+            if ($newWindowName !== null) {
+                return $newWindowName;
+            }
         }
 
+        return null;
+    }
+
+    private function findNewlyOpenedWindow(array $before, array $after): ?string
+    {
+        $newWindows = array_values(array_diff($after, $before));
+
+        if (count($newWindows) === 1) {
+            return $newWindows[0];
+        }
+
+        return null;
     }
 
     #[\Behat\Step\Given('/^I switch to "([^"]*)"$/')]
