@@ -105,11 +105,16 @@ class LoginService
         // SSO actions should not have any effect in subsequent SSO actions.
         $this->stateHandler->clear();
 
+        $relayState = $httpRequest->query->getString(AuthnRequest::PARAMETER_RELAY_STATE, '');
+        if ($relayState === '') {
+            $relayState = $httpRequest->request->getString(AuthnRequest::PARAMETER_RELAY_STATE, '');
+        }
+
         $this->stateHandler
             ->setRequestId($originalRequestId)
             ->setRequestServiceProvider($originalRequest->getServiceProvider())
             ->setRequestAssertionConsumerServiceUrl($originalRequest->getAssertionConsumerServiceURL())
-            ->setRelayState($httpRequest->get(AuthnRequest::PARAMETER_RELAY_STATE, ''))
+            ->setRelayState($relayState)
             ->setIsForceAuthn($originalRequest->isForceAuthn())
             ->setResponseAction('Surfnet\StepupGateway\GatewayBundle\Controller\GatewayController::respond')
             ->setResponseContextServiceId(static::RESPONSE_CONTEXT_SERVICE_ID);

@@ -98,12 +98,17 @@ class LoginService
         // actions.
         $stateHandler->clear();
 
+        $relayState = $httpRequest->query->getString(AuthnRequest::PARAMETER_RELAY_STATE, '');
+        if ($relayState === '') {
+            $relayState = $httpRequest->request->getString(AuthnRequest::PARAMETER_RELAY_STATE, '');
+        }
+
         $stateHandler
             ->setRequestId($originalRequestId)
             ->setRequestServiceProvider($originalRequest->getServiceProvider())
             ->setRequestAssertionConsumerServiceUrl($originalRequest->getAssertionConsumerServiceURL())
             ->setResponseContextServiceId(self::RESPONSE_CONTEXT_SERVICE_ID)
-            ->setRelayState($httpRequest->get(AuthnRequest::PARAMETER_RELAY_STATE, ''));
+            ->setRelayState($relayState);
 
         $proxyRequest = AuthnRequestFactory::createNewRequest(
             $provider->getServiceProvider(),

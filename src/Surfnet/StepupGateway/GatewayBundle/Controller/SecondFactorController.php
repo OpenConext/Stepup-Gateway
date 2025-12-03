@@ -235,7 +235,10 @@ class SecondFactorController extends ContainerController
             // Log the message of the domain exception, this contains a meaningful message.
             $logger->notice($e->getMessage());
 
-            return $this->forward('Surfnet\StepupGateway\GatewayBundle\Controller\GatewayController::sendLoaCannotBeGiven');
+            return $this->forward(
+                'Surfnet\StepupGateway\GatewayBundle\Controller\GatewayController::sendLoaCannotBeGiven',
+                ['authenticationMode' => $authenticationMode],
+            );
         }
 
         $logger->notice(sprintf('Determined that the required Loa is "%s"', $requiredLoa));
@@ -330,10 +333,10 @@ class SecondFactorController extends ContainerController
     )]
     public function verifyGssf(Request $request): Response
     {
-        if (!$request->get('authenticationMode', false)) {
+        $authenticationMode = $request->query->get('authenticationMode', '');
+        if (!$authenticationMode) {
             throw new RuntimeException('Unable to determine the authentication mode in the GSSP verification action');
         }
-        $authenticationMode = $request->get('authenticationMode');
         $this->supportsAuthenticationMode($authenticationMode);
         $context = $this->getResponseContext($authenticationMode);
 
@@ -376,9 +379,8 @@ class SecondFactorController extends ContainerController
         );
     }
 
-    public function gssfVerified(Request $request): Response
+    public function gssfVerified(Request $request, string $authenticationMode): Response
     {
-        $authenticationMode = $request->get('authenticationMode');
         $this->supportsAuthenticationMode($authenticationMode);
         $context = $this->getResponseContext($authenticationMode);
 
@@ -423,12 +425,8 @@ class SecondFactorController extends ContainerController
         requirements: ['authenticationMode' => 'sso|sfo'],
         methods: ['GET', 'POST']
     )]
-    public function verifyYubiKeySecondFactor(Request $request): Response
+    public function verifyYubiKeySecondFactor(Request $request, string $authenticationMode): Response
     {
-        if (!$request->get('authenticationMode', false)) {
-            throw new RuntimeException('Unable to determine the authentication mode in Yubikey verification action');
-        }
-        $authenticationMode = $request->get('authenticationMode');
         $this->supportsAuthenticationMode($authenticationMode);
         $context = $this->getResponseContext($authenticationMode);
         $originalRequestId = $context->getInResponseTo();
@@ -498,10 +496,14 @@ class SecondFactorController extends ContainerController
     public function verifySmsSecondFactor(
         Request $request,
     ): Response|RedirectResponse {
-        if (!$request->get('authenticationMode', false)) {
+        $authenticationMode = $request->query->get('authenticationMode');
+        if ($authenticationMode === '') {
+            $authenticationMode = $request->request->get('authenticationMode');
+        }
+        if (!$authenticationMode) {
             throw new RuntimeException('Unable to determine the authentication mode in the SMS verification action');
         }
-        $authenticationMode = $request->get('authenticationMode');
+
         $this->supportsAuthenticationMode($authenticationMode);
         $context = $this->getResponseContext($authenticationMode);
         $originalRequestId = $context->getInResponseTo();
@@ -578,10 +580,14 @@ class SecondFactorController extends ContainerController
     public function verifySmsSecondFactorChallenge(
         Request $request,
     ): Response|array {
-        if (!$request->get('authenticationMode', false)) {
+        $authenticationMode = $request->query->get('authenticationMode');
+        if ($authenticationMode === '') {
+            $authenticationMode = $request->request->get('authenticationMode');
+        }
+        if (!$authenticationMode) {
             throw new RuntimeException('Unable to determine the authentication mode in the SMS challenge action');
         }
-        $authenticationMode = $request->get('authenticationMode');
+
         $this->supportsAuthenticationMode($authenticationMode);
         $context = $this->getResponseContext($authenticationMode);
         $originalRequestId = $context->getInResponseTo();
