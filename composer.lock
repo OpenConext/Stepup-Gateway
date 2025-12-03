@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "137202079829d922027ac6dab4766bb3",
+    "content-hash": "b5ac7e92d197135f8b49e88f12eaa72d",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -8911,48 +8911,6 @@
                 "source": "https://github.com/hamcrest/hamcrest-php/tree/v2.1.1"
             },
             "time": "2025-04-30T06:54:44+00:00"
-        },
-        {
-            "name": "irstea/phpcpd-shim",
-            "version": "6.0.3",
-            "source": {
-                "type": "git",
-                "url": "https://gitlab.irstea.fr/pole-is/tools/phpcpd-shim.git",
-                "reference": "5829d11d1379fd92176b7e2105060c7f09f4fdda"
-            },
-            "require": {
-                "ext-dom": "*",
-                "php": ">=7.3"
-            },
-            "replace": {
-                "sebastian/phpcpd": "self.version"
-            },
-            "bin": [
-                "phpcpd"
-            ],
-            "type": "library",
-            "autoload": {
-                "exclude-from-classmap": [
-                    "phpcpd"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "authors": [
-                {
-                    "name": "Sebastian Bergmann",
-                    "email": "sebastian@phpunit.de",
-                    "role": "lead"
-                }
-            ],
-            "description": "Shim repository for sebastian/phpcpd",
-            "homepage": "https://github.com/sebastianbergmann/phpcpd",
-            "keywords": [
-                "shim"
-            ],
-            "time": "2020-12-08T03:20:09+00:00"
         },
         {
             "name": "malukenho/docheader",
