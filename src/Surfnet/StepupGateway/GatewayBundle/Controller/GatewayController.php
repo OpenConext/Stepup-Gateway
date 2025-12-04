@@ -167,7 +167,7 @@ class GatewayController extends ContainerController
     {
         // The authentication mode is read from the parent request, in the meantime a forward was followed, making
         // reading the auth mode from the current request impossible.
-        // @see: \Surfnet\StepupGateway\GatewayBundle\Controller\SecondFactorController::cancelAuthenticationAction
+        // @see: \Surfnet\StepupGateway\GatewayBundle\Controller\SecondFactorController::cancelAuthentication
         $requestStack = $this->get('request_stack');
         $request = $requestStack->getParentRequest();
 

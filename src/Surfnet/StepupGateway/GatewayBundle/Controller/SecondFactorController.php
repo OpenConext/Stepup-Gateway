@@ -333,8 +333,8 @@ class SecondFactorController extends ContainerController
     )]
     public function verifyGssf(Request $request): Response
     {
-        $authenticationMode = $request->query->get('authenticationMode', '');
-        if (!$authenticationMode) {
+        $authenticationMode = $request->query->get('authenticationMode', false);
+        if ($authenticationMode === false) {
             throw new RuntimeException('Unable to determine the authentication mode in the GSSP verification action');
         }
         $this->supportsAuthenticationMode($authenticationMode);
@@ -496,14 +496,7 @@ class SecondFactorController extends ContainerController
     public function verifySmsSecondFactor(
         Request $request,
     ): Response|RedirectResponse {
-        $authenticationMode = $request->query->get('authenticationMode');
-        if ($authenticationMode === '') {
-            $authenticationMode = $request->request->get('authenticationMode');
-        }
-        if (!$authenticationMode) {
-            throw new RuntimeException('Unable to determine the authentication mode in the SMS verification action');
-        }
-
+        $authenticationMode = $request->query->getString('authenticationMode', '');
         $this->supportsAuthenticationMode($authenticationMode);
         $context = $this->getResponseContext($authenticationMode);
         $originalRequestId = $context->getInResponseTo();

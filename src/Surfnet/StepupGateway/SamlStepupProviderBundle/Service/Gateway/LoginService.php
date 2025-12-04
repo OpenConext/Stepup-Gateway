@@ -98,10 +98,7 @@ class LoginService
         // actions.
         $stateHandler->clear();
 
-        $relayState = $httpRequest->query->getString(AuthnRequest::PARAMETER_RELAY_STATE, '');
-        if ($relayState === '') {
-            $relayState = $httpRequest->request->getString(AuthnRequest::PARAMETER_RELAY_STATE, '');
-        }
+        $relayState = $httpRequest->query->getString(AuthnRequest::PARAMETER_RELAY_STATE);
 
         $stateHandler
             ->setRequestId($originalRequestId)
