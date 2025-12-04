@@ -16,6 +16,8 @@ framework:
   fragments:       false
   http_method_override: true
   handle_all_throwables: true
+  property_info:
+    with_constructor_extractor: true
 
 when@dev:
   framework:

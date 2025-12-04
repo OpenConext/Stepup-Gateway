@@ -83,7 +83,7 @@ class ServiceProviderController
             throw new RuntimeException(sprintf('Unrecognized message type received: "%s"', get_class($message)));
         }
 
-        $xml = base64_decode($request->get('SAMLResponse'));
+        $xml = base64_decode($request->request->get('SAMLResponse'));
         $this->logger->notice(sprintf('Received SAMLResponse with status "%s"', implode($message->getStatus())));
         $this->logger->notice('The XML received', ['response-xml' => $xml]);
 
@@ -108,9 +108,9 @@ class ServiceProviderController
      */
     public function adfsSsoAction(Request $request)
     {
-        $nameId = $request->get('nameId');
-        $loa = $request->get('loa');
-        $entityId = $request->get('entityId');
+        $nameId = $request->query->get('nameId');
+        $loa = $request->query->get('loa');
+        $entityId = $request->query->get('entityId');
 
         $authnRequest = new AuthnRequest();
         // In order to later assert if the response succeeded or failed, set our own dummy ACS location
