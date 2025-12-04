@@ -62,7 +62,6 @@
         "dmore/chrome-mink-driver": "2.9.*",
         "friends-of-behat/mink-extension": "^2.7.5",
         "friends-of-behat/symfony-extension": "^2.6.2",
-        "irstea/phpcpd-shim": "^6.0.3",
         "malukenho/docheader": "^1.1.0",
         "matthiasnoback/symfony-config-test": "^6.1",
         "mockery/mockery": "^1.6.12",
@@ -105,7 +104,6 @@
         ],
         "check-ci": [
             "@phplint",
-            "@phpcpd",
             "@validate-lockfile",
             "@license-headers",
             "@phpstan",
@@ -119,7 +117,6 @@
         "phplint": "./ci/qa/phplint",
         "validate-lockfile": "./ci/qa/validate",
         "phpcs": "./ci/qa/phpcs",
-        "phpcpd": "./ci/qa/phpcpd",
         "phpcbf": "./ci/qa/phpcbf",
         "phpstan": "./ci/qa/phpstan",
         "phpmd": "./ci/qa/phpmd",
