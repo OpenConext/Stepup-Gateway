@@ -497,6 +497,10 @@ class SecondFactorController extends ContainerController
         Request $request,
     ): Response|RedirectResponse {
         $authenticationMode = $request->query->getString('authenticationMode', '');
+        if ($authenticationMode === '') {
+            $authenticationMode = $request->request->get('authenticationMode');
+        }
+
         $this->supportsAuthenticationMode($authenticationMode);
         $context = $this->getResponseContext($authenticationMode);
         $originalRequestId = $context->getInResponseTo();
