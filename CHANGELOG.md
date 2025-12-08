@@ -1,8 +1,11 @@
 # Changelog
 
+## 5.1.2
+- Update xmlseclibs to 3.1.4 to fix canonicalization bypass error (security)
+
 ## 5.1.1
-- Bugfix: LoA 1.5 SFO authentications fail for institutions with default config configuration (SSO & GSSP fallbang off)
-  when GSSP fallback attributes are present ()
+- Bugfix: LoA 1.5 SFO authentications fail for institutions with default config configuration (SSO & GSSP fallback off)
+  when GSSP fallback attributes are present
 
 ## 5.1.0
 - Add support for GSSP fallback authentications #447
