@@ -20,20 +20,18 @@ namespace Surfnet\StepupGateway\Behat\Repository;
 
 use Exception;
 use PDO;
+use Surfnet\StepupGateway\Behat\Factory\SmoketestPdoFactory;
 
 /**
  * A poor mans repository, a pdo connection to the test database is established in the constructor
  */
 class WhitelistRepository
 {
-    /**
-     * @var Connection
-     */
-    private $connection;
+    private readonly PDO $connection;
 
-    public function __construct(Connection $connection)
+    public function __construct(SmoketestPdoFactory $factory)
     {
-        $this->connection = $connection;
+        $this->connection = $factory->createConnection();
     }
 
     /**
