@@ -19,6 +19,8 @@
 namespace Surfnet\StepupGateway\Behat\Repository;
 
 use Exception;
+use PDO;
+use Surfnet\StepupGateway\Behat\Factory\SmoketestPdoFactory;
 use function error_get_last;
 
 /**
@@ -26,15 +28,11 @@ use function error_get_last;
  */
 class InstitutionConfigurationRepository
 {
+    private readonly PDO $connection;
 
-    /**
-     * @var Connection
-     */
-    private $connection;
-
-    public function __construct(Connection $connection)
+    public function __construct(SmoketestPdoFactory $factory)
     {
-        $this->connection = $connection;
+        $this->connection = $factory->createConnection();
     }
 
     public function configure(string $institution, string $option, bool $value)

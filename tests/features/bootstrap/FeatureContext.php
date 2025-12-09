@@ -28,6 +28,7 @@ use Psr\Log\LoggerInterface;
 use RuntimeException;
 use SAML2\Compat\ContainerSingleton;
 use Surfnet\SamlBundle\Tests\TestSaml2Container;
+use Surfnet\StepupGateway\Behat\Service\DatabaseSchemaService;
 use Surfnet\StepupGateway\Behat\Service\FixtureService;
 
 class FeatureContext implements Context
@@ -36,6 +37,11 @@ class FeatureContext implements Context
      * @var FixtureService
      */
     private $fixtureService;
+
+    /**
+     * @var DatabaseSchemaService
+     */
+    private static $databaseSchemaService;
 
     private $whitelistedInstitutions = [];
 
@@ -66,9 +72,13 @@ class FeatureContext implements Context
      */
     private $cookieDomain;
 
-    public function __construct(FixtureService $fixtureService, LoggerInterface $logger)
-    {
+    public function __construct(
+        FixtureService $fixtureService,
+        DatabaseSchemaService $databaseSchemaService,
+        LoggerInterface $logger
+    ) {
         $this->fixtureService = $fixtureService;
+        self::$databaseSchemaService = $databaseSchemaService;
         $this->sso2faCookieName = 'stepup-gateway_sso-on-second-factor-authentication';
         $this->sessCookieName = 'MOCKSESSID';
         $this->cookieDomain = '.gateway.dev.openconext.local';
@@ -80,10 +90,7 @@ class FeatureContext implements Context
     #[\Behat\Hook\BeforeFeature]
     public static function setupDatabase(BeforeFeatureScope $scope): void
     {
-        // Generate test databases
-        echo "Preparing test schemas\n";
-        shell_exec("/var/www/html/bin/console doctrine:schema:drop --env=smoketest --force");
-        shell_exec("/var/www/html/bin/console doctrine:schema:create --env=smoketest");
+        self::$databaseSchemaService->resetSchema();
     }
 
     #[\Behat\Hook\BeforeScenario]

@@ -3,6 +3,14 @@
 ## Unreleased
 - `jms/translation-bundle` is removed. See README.md for up-to-date instructions on updating the translations.
 
+- The deploy user credentials are removed. Gateway does not change the schema, and the credentials are cleaned up.
+
+These parameters can be removed from `parameters.yaml`:
+```
+database_deploy_user
+database_deploy_password
+```
+
 ## 6.0.0
 - Upgrade from Symfony 6.4 to Symfony 7.4
 - Maintenance release, Update tooling, packages
