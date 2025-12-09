@@ -55,6 +55,7 @@
         "webmozart/assert": "^1.12.1"
     },
     "require-dev": {
+        "ext-pdo": "*",
         "behat/behat": "^3.26",
         "behat/mink": "^1.12",
         "behat/mink-browserkit-driver": "^2.2",
