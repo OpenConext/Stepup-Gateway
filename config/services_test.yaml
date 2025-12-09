@@ -31,8 +31,8 @@ services:
     class: Surfnet\StepupGateway\Behat\Repository\Connection
     arguments:
       - '%env(APP_ENV)%'
-      - '%database_deploy_user%'
-      - '%database_deploy_password%'
+      - 'gw_deploy_user'
+      - 'gw_deploy_secret'
       - 'gateway_test'
       - '%database_host%'
 
