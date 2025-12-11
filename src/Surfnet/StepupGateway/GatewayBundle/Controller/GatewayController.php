@@ -152,12 +152,8 @@ class GatewayController extends ContainerController
     /**
      * This action is also used from the context of SecondFactorOnly authentications.
      */
-    public function sendLoaCannotBeGiven(Request $request): Response
+    public function sendLoaCannotBeGiven(Request $request, string $authenticationMode): Response
     {
-        if (!$request->get('authenticationMode', false)) {
-            throw new RuntimeException('Unable to determine the authentication mode in the sendLoaCannotBeGiven action');
-        }
-        $authenticationMode = $request->get('authenticationMode');
         $this->supportsAuthenticationMode($authenticationMode);
         $responseContext = $this->getResponseContext($authenticationMode);
         $gatewayLoginService = $this->getGatewayFailedResponseService();
@@ -171,13 +167,22 @@ class GatewayController extends ContainerController
     {
         // The authentication mode is read from the parent request, in the meantime a forward was followed, making
         // reading the auth mode from the current request impossible.
-        // @see: \Surfnet\StepupGateway\GatewayBundle\Controller\SecondFactorController::cancelAuthenticationAction
+        // @see: \Surfnet\StepupGateway\GatewayBundle\Controller\SecondFactorController::cancelAuthentication
         $requestStack = $this->get('request_stack');
         $request = $requestStack->getParentRequest();
-        if (!$request->get('authenticationMode', false)) {
+
+        if ($request === null) {
+            throw new RuntimeException('No request');
+        }
+
+        $authenticationMode = $request->query->getString('authenticationMode');
+        if ($authenticationMode === '') {
+            $authenticationMode = $request->request->getString('authenticationMode');
+        }
+
+        if ($authenticationMode === '') {
             throw new RuntimeException('Unable to determine the authentication mode in the sendAuthenticationCancelledByUser action');
         }
-        $authenticationMode = $request->get('authenticationMode');
 
         $this->supportsAuthenticationMode($authenticationMode);
         $responseContext = $this->getResponseContext($authenticationMode);
