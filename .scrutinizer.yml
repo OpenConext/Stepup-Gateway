@@ -2,6 +2,7 @@ build:
     image: default-jammy
     environment:
         php: 8.2
+        node: 'v20'
 
     nodes:
         analysis:
