@@ -3020,16 +3020,16 @@
         },
         {
             "name": "surfnet/stepup-bundle",
-            "version": "7.0.0",
+            "version": "7.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/OpenConext/Stepup-bundle.git",
-                "reference": "aa3203a0f39a55a71941682b34b5ae3b1defdbc6"
+                "reference": "05da7f6945da3a7b33b78555f784aa6bcc35320c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/OpenConext/Stepup-bundle/zipball/aa3203a0f39a55a71941682b34b5ae3b1defdbc6",
-                "reference": "aa3203a0f39a55a71941682b34b5ae3b1defdbc6",
+                "url": "https://api.github.com/repos/OpenConext/Stepup-bundle/zipball/05da7f6945da3a7b33b78555f784aa6bcc35320c",
+                "reference": "05da7f6945da3a7b33b78555f784aa6bcc35320c",
                 "shasum": ""
             },
             "require": {
@@ -3047,6 +3047,9 @@
                 "symfony/http-kernel": "^6.3|^7.0",
                 "symfony/twig-bridge": "^6.3|^7.0",
                 "symfony/validator": "^6.3|^7.0"
+            },
+            "conflict": {
+                "robrichards/xmlseclibs": "<3.1.4"
             },
             "require-dev": {
                 "irstea/phpcpd-shim": "^6.0",
@@ -3091,22 +3094,22 @@
             ],
             "support": {
                 "issues": "https://github.com/OpenConext/Stepup-bundle/issues",
-                "source": "https://github.com/OpenConext/Stepup-bundle/tree/7.0.0"
+                "source": "https://github.com/OpenConext/Stepup-bundle/tree/7.0.1"
             },
-            "time": "2025-11-17T12:11:21+00:00"
+            "time": "2025-12-15T09:53:01+00:00"
         },
         {
             "name": "surfnet/stepup-saml-bundle",
-            "version": "7.0.0",
+            "version": "7.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/OpenConext/Stepup-saml-bundle.git",
-                "reference": "175cd2bb64c6235285f5b5fcb561389e66d4264e"
+                "reference": "d39369136c5125f3c20daf225259e1416032bef9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/OpenConext/Stepup-saml-bundle/zipball/175cd2bb64c6235285f5b5fcb561389e66d4264e",
-                "reference": "175cd2bb64c6235285f5b5fcb561389e66d4264e",
+                "url": "https://api.github.com/repos/OpenConext/Stepup-saml-bundle/zipball/d39369136c5125f3c20daf225259e1416032bef9",
+                "reference": "d39369136c5125f3c20daf225259e1416032bef9",
                 "shasum": ""
             },
             "require": {
@@ -3114,13 +3117,16 @@
                 "ext-openssl": "*",
                 "php": "^8.1",
                 "psr/log": "^3.0",
-                "robrichards/xmlseclibs": "^3.1.1",
+                "robrichards/xmlseclibs": "^3.1.4",
                 "simplesamlphp/saml2": "^4.6",
                 "symfony/dependency-injection": "^6.3|^7.0",
                 "symfony/framework-bundle": "^6.3|^7.0",
                 "symfony/security-bundle": "^6.3|^7.0",
                 "symfony/templating": "^6.3|7.0",
                 "twig/twig": "^3"
+            },
+            "conflict": {
+                "symfony/http-foundation": ">=8.0"
             },
             "require-dev": {
                 "ext-libxml": "*",
@@ -3166,9 +3172,9 @@
             ],
             "support": {
                 "issues": "https://github.com/OpenConext/Stepup-saml-bundle/issues",
-                "source": "https://github.com/OpenConext/Stepup-saml-bundle/tree/7.0.0"
+                "source": "https://github.com/OpenConext/Stepup-saml-bundle/tree/7.0.1"
             },
-            "time": "2025-11-17T11:27:41+00:00"
+            "time": "2025-12-15T10:40:55+00:00"
         },
         {
             "name": "surfnet/yubikey-api-client",
@@ -7858,16 +7864,16 @@
         },
         {
             "name": "twig/extra-bundle",
-            "version": "v3.22.1",
+            "version": "v3.22.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twigphp/twig-extra-bundle.git",
-                "reference": "b6534bc925bec930004facca92fccebd0c809247"
+                "reference": "09de9be7f6c0d19ede7b5a1dbfcfb2e9d1e0ea9e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/twig-extra-bundle/zipball/b6534bc925bec930004facca92fccebd0c809247",
-                "reference": "b6534bc925bec930004facca92fccebd0c809247",
+                "url": "https://api.github.com/repos/twigphp/twig-extra-bundle/zipball/09de9be7f6c0d19ede7b5a1dbfcfb2e9d1e0ea9e",
+                "reference": "09de9be7f6c0d19ede7b5a1dbfcfb2e9d1e0ea9e",
                 "shasum": ""
             },
             "require": {
@@ -7916,7 +7922,7 @@
                 "twig"
             ],
             "support": {
-                "source": "https://github.com/twigphp/twig-extra-bundle/tree/v3.22.1"
+                "source": "https://github.com/twigphp/twig-extra-bundle/tree/v3.22.2"
             },
             "funding": [
                 {
@@ -7928,20 +7934,20 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-11-02T11:00:49+00:00"
+            "time": "2025-12-05T08:51:53+00:00"
         },
         {
             "name": "twig/twig",
-            "version": "v3.22.1",
+            "version": "v3.22.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twigphp/Twig.git",
-                "reference": "1de2ec1fc43ab58a4b7e80b214b96bfc895750f3"
+                "reference": "946ddeafa3c9f4ce279d1f34051af041db0e16f2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/Twig/zipball/1de2ec1fc43ab58a4b7e80b214b96bfc895750f3",
-                "reference": "1de2ec1fc43ab58a4b7e80b214b96bfc895750f3",
+                "url": "https://api.github.com/repos/twigphp/Twig/zipball/946ddeafa3c9f4ce279d1f34051af041db0e16f2",
+                "reference": "946ddeafa3c9f4ce279d1f34051af041db0e16f2",
                 "shasum": ""
             },
             "require": {
@@ -7995,7 +8001,7 @@
             ],
             "support": {
                 "issues": "https://github.com/twigphp/Twig/issues",
-                "source": "https://github.com/twigphp/Twig/tree/v3.22.1"
+                "source": "https://github.com/twigphp/Twig/tree/v3.22.2"
             },
             "funding": [
                 {
@@ -8007,7 +8013,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-11-16T16:01:12+00:00"
+            "time": "2025-12-14T11:28:47+00:00"
         },
         {
             "name": "ua-parser/uap-php",
@@ -10896,20 +10902,20 @@
         },
         {
             "name": "ramsey/uuid",
-            "version": "4.9.1",
+            "version": "4.9.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ramsey/uuid.git",
-                "reference": "81f941f6f729b1e3ceea61d9d014f8b6c6800440"
+                "reference": "8429c78ca35a09f27565311b98101e2826affde0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ramsey/uuid/zipball/81f941f6f729b1e3ceea61d9d014f8b6c6800440",
-                "reference": "81f941f6f729b1e3ceea61d9d014f8b6c6800440",
+                "url": "https://api.github.com/repos/ramsey/uuid/zipball/8429c78ca35a09f27565311b98101e2826affde0",
+                "reference": "8429c78ca35a09f27565311b98101e2826affde0",
                 "shasum": ""
             },
             "require": {
-                "brick/math": "^0.8.8 || ^0.9 || ^0.10 || ^0.11 || ^0.12 || ^0.13 || ^0.14",
+                "brick/math": "^0.8.16 || ^0.9 || ^0.10 || ^0.11 || ^0.12 || ^0.13 || ^0.14",
                 "php": "^8.0",
                 "ramsey/collection": "^1.2 || ^2.0"
             },
@@ -10968,9 +10974,9 @@
             ],
             "support": {
                 "issues": "https://github.com/ramsey/uuid/issues",
-                "source": "https://github.com/ramsey/uuid/tree/4.9.1"
+                "source": "https://github.com/ramsey/uuid/tree/4.9.2"
             },
-            "time": "2025-09-04T20:59:21+00:00"
+            "time": "2025-12-14T04:43:48+00:00"
         },
         {
             "name": "rector/rector",
