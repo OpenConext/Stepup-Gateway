@@ -1,7 +1,7 @@
 # Changelog
 
 ## 6.0.0
-- Upgrade from Symfony 6.4 to Symfony 7.3
+- Upgrade from Symfony 6.4 to Symfony 7.4
 - Maintenance release, Update tooling, packages
 - Update npm packages and frontend tooling.
 
