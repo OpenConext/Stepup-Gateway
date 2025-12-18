@@ -406,8 +406,8 @@ class SecondFactorController extends ContainerController
             );
         }
 
-        $this->getAuthenticationLogger()->logSecondFactorAuthentication($originalRequestId, $authenticationMode);
         $context->markSecondFactorVerified();
+        $this->getAuthenticationLogger()->logSecondFactorAuthentication($originalRequestId, $authenticationMode);
 
         $logger->info(sprintf(
             'Marked GSSF "%s" as verified, forwarding to Gateway controller to respond',
