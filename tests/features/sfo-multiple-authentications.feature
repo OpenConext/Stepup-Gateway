@@ -48,7 +48,7 @@ Feature: As an institution that uses the second factor only feature
     Then the response should match xpath '//samlp:StatusCode[@Value="urn:oasis:names:tc:SAML:2.0:status:Success"]'
     When I switch to "Browser tab 1"
     Then I enter the expired SMS verification code
-    And the response should contain 'gateway.form.send_sms_challenge.challenge_expired'
+    And the response should contain 'Your code has expired. Please request a new code.'
 
 #  # Tiqr is not yet functioning in the Behat (smoketest) environment
 #  Scenario: A regular and SFO authentication in parallel using Tiqr token
