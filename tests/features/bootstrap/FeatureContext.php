@@ -38,10 +38,7 @@ class FeatureContext implements Context
      */
     private $fixtureService;
 
-    /**
-     * @var DatabaseSchemaService
-     */
-    private static $databaseSchemaService;
+    private static DatabaseSchemaService $databaseSchemaService;
 
     private $whitelistedInstitutions = [];
 
