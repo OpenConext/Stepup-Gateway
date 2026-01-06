@@ -36,6 +36,11 @@ mock service was created for end to end test purposes, but could be utilized in 
 3. Update the service definition to point to this class: `class: Surfnet\StepupGateway\ApiBundle\Tests\TestDouble\Service\YubikeyService` 
 4. Do not commit/push this change!
 
+### Translations
+Gateway uses the default symfony translations bundle. To extract / update the translations, run:  
+`./bin/console trans:extract nl_NL --force ; ./bin/console trans:extract en_GB --force`  
+Then modify and commit the changes.
+
 ### Frontend Development
 
 #### Template Preview
