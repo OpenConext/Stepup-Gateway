@@ -99,7 +99,8 @@
         "check": [
             "@check-ci",
             "@eslint",
-            "@rector"
+            "@rector",
+            "@dsv"
         ],
         "check-ci": [
             "@phplint",
@@ -108,7 +109,7 @@
             "@phpstan",
             "@phpcs",
             "@phpmd",
-            "@dsv",
+            "@dsv-nosync",
             "@test",
             "@behat",
             "@behat-functional"
@@ -125,7 +126,8 @@
         "license-headers": "./ci/qa/docheader",
         "rector":  "./ci/qa/rector.sh --dry-run",
         "rector-fix":  "./ci/qa/rector.sh",
-        "dsv": "./bin/console doctrine:schema:validate --skip-sync",
+        "dsv-nosync": "./bin/console doctrine:schema:validate --skip-sync",
+        "dsv": "./bin/console doctrine:schema:validate",
         "eslint": "yarn eslint public/typescript",
         "frontend-install": [
           "yarn install --frozen-lockfile",
