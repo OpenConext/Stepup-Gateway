@@ -181,14 +181,6 @@
         <source>gateway.submit.click_to_go_back_to_sp</source>
         <target>Click to go back.</target>
       </trans-unit>
-      <trans-unit id="3MsPlCE" resname="locale.en_GB">
-        <source>locale.en_GB</source>
-        <target state="new">locale.en_GB</target>
-      </trans-unit>
-      <trans-unit id="d0_GU7F" resname="locale.nl_NL">
-        <source>locale.nl_NL</source>
-        <target state="new">locale.nl_NL</target>
-      </trans-unit>
       <trans-unit id="_8ULwsW" resname="ra.registration.yubikey.title.enter_challenge">
         <source>ra.registration.yubikey.title.enter_challenge</source>
         <target>Log in with YubiKey</target>
@@ -288,10 +280,6 @@
       <trans-unit id="za8gDWN" resname="stepup.error.user_agent">
         <source>stepup.error.user_agent</source>
         <target>User agent</target>
-      </trans-unit>
-      <trans-unit id="GbOFBBe" resname="stepup_middleware_client.form.switch_locale.switch">
-        <source>stepup_middleware_client.form.switch_locale.switch</source>
-        <target state="new">stepup_middleware_client.form.switch_locale.switch</target>
       </trans-unit>
     </body>
   </file>

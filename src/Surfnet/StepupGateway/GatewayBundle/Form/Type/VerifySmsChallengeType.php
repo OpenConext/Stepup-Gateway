@@ -23,6 +23,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class VerifySmsChallengeType extends AbstractType
 {
@@ -34,15 +35,15 @@ class VerifySmsChallengeType extends AbstractType
             'attr'     => [
                 'autofocus' => true,
                 'autocomplete' => 'one-time-code',
-                'placeholder' => 'gateway.form.verify_sms_challenge.button.challenge_placeholder'
+                'placeholder' => new TranslatableMessage('gateway.form.verify_sms_challenge.button.challenge_placeholder'),
             ]
         ]);
         $builder->add('verify_challenge', SubmitType::class, [
-            'label' => 'gateway.form.verify_sms_challenge.button.verify_challenge',
+            'label' => new TranslatableMessage('gateway.form.verify_sms_challenge.button.verify_challenge'),
             'attr'  => ['class' => 'btn btn-primary'],
         ]);
         $builder->add('resend_challenge', AnchorType::class, [
-            'label' => 'gateway.form.verify_sms_challenge.button.resend_challenge',
+            'label' => new TranslatableMessage('gateway.form.verify_sms_challenge.button.resend_challenge'),
             'attr'  => ['class' => 'btn btn-link'],
             'route' => 'gateway_verify_second_factor_sms',
         ]);
