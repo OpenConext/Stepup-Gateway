@@ -1,5 +1,10 @@
 name: test-integration
-on: [pull_request, push]
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
 jobs:
     build:
         runs-on: ubuntu-latest
@@ -19,6 +24,15 @@ jobs:
             - name: Check devconf
               run: |
                   cd devconf && ls -al && ls -al stepup/
+
+            - name: Cache Composer packages
+              id: composer-cache
+              uses: actions/cache@v4
+              with:
+                path: vendor
+                key: composer-${{ hashFiles('composer.lock') }}
+                restore-keys: |
+                  composer-
 
             - name: Init environment
               run: cd ci/docker && ./init.sh

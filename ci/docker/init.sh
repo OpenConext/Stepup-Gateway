@@ -10,8 +10,12 @@ docker compose exec -T gateway bash -c '
   cp /var/www/html/config/openconext/parameters.yaml.dist /var/www/html/config/openconext/parameters.yaml && \
   cp /var/www/html/config/openconext/samlstepupproviders_parameters.yaml.dist /var/www/html/config/openconext/samlstepupproviders_parameters.yaml && \
   cp /var/www/html/config/openconext/global_view_parameters.yaml.dist /var/www/html/config/openconext/global_view_parameters.yaml && \
-  composer install --prefer-dist -n -o --no-scripts && \
-  composer frontend-install && \global_view_parameters.yaml.dist
+  if [ ! -d /var/www/html/vendor/composer ]; then
+    composer install --prefer-dist -n -o --no-scripts
+  else
+    echo "Vendor directory exists, skipping composer install"
+  fi && \
+  composer frontend-install && \
   ./bin/console assets:install --env=smoketest --verbose && \
   ./bin/console cache:clear --env=smoketest && \
   mkdir /var/www/html/var/cache/smoketest/sessions && \
