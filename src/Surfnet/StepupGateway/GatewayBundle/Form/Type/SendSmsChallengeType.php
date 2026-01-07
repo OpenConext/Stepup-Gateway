@@ -22,13 +22,14 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class SendSmsChallengeType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('send_challenge', SubmitType::class, [
-            'label' => 'gateway.form.gateway_send_sms_challenge.button.send_challenge',
+            'label' => new TranslatableMessage('gateway.form.gateway_send_sms_challenge.button.send_challenge'),
             'attr' => [ 'class' => 'btn btn-primary' ],
         ]);
     }

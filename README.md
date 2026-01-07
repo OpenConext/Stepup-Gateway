@@ -38,7 +38,7 @@ mock service was created for end to end test purposes, but could be utilized in 
 
 ### Translations
 Gateway uses the default symfony translations bundle. To extract / update the translations, run:  
-`./bin/console trans:extract nl_NL --force ; ./bin/console trans:extract en_GB --force`  
+`./bin/extract-translations.sh`  
 Then modify and commit the changes.
 
 ### Frontend Development
