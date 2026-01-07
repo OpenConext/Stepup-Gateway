@@ -21,13 +21,14 @@ namespace Surfnet\StepupGateway\GatewayBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Translation\TranslatableMessage;
 
 final class CancelSecondFactorVerificationType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('cancel', SubmitType::class, [
-            'label' => 'gateway.form.gateway_cancel_second_factor_verification.button.cancel_verification',
+            'label' => new TranslatableMessage('gateway.form.gateway_cancel_second_factor_verification.button.cancel_verification'),
             'attr'  => ['class' => 'btn btn-danger'],
         ]);
     }
