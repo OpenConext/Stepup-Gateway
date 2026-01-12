@@ -19,7 +19,6 @@ jobs:
                 repository: OpenConext/OpenConext-devconf
                 ref: main
                 path: devconf
-                sparse-checkout: stepup
 
             - name: Check devconf
               run: |
