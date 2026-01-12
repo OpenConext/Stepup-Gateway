@@ -61,6 +61,10 @@
         <source>gateway.form.verify_sms_challenge.button.verify_challenge</source>
         <target>Verify code</target>
       </trans-unit>
+      <trans-unit id="5lpFvGL" resname="gateway.form.send_sms_challenge.sms_challenge_expired">
+        <source>gateway.form.send_sms_challenge.sms_challenge_expired</source>
+        <target>Your code has expired. Please request a new code.</target>
+      </trans-unit>
       <trans-unit id="PnHT2oo" resname="gateway.form.verify_yubikey.otp_verification_failed">
         <source>gateway.form.verify_yubikey.otp_verification_failed</source>
         <target>The Yubikey code was invalid. Please try again.</target>

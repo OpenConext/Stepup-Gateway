@@ -57,6 +57,10 @@
         <source>gateway.form.verify_sms_challenge.button.resend_challenge</source>
         <target>Stuur nogmaals.</target>
       </trans-unit>
+      <trans-unit id="5lpFvGL" resname="gateway.form.send_sms_challenge.sms_challenge_expired">
+        <source>gateway.form.send_sms_challenge.sms_challenge_expired</source>
+        <target>Deze code is verlopen. Vraag een nieuwe code aan.</target>
+      </trans-unit>
       <trans-unit id="6K2cncF" resname="gateway.form.verify_sms_challenge.button.verify_challenge">
         <source>gateway.form.verify_sms_challenge.button.verify_challenge</source>
         <target>Verifieer code</target>
