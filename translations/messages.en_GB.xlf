@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="en-GB" target-language="en-GB" datatype="plaintext" original="file.ext">
+    <header>
+      <tool tool-id="symfony" tool-name="Symfony"/>
+    </header>
+    <body>
+      <trans-unit id="17qqJkL" resname="gateway.error.acs_location_not_allowed.title">
+        <source>gateway.error.acs_location_not_allowed.title</source>
+        <target>ACS location not allowed</target>
+      </trans-unit>
+      <trans-unit id="OtglEal" resname="gateway.error.click_to_go_back_to_sp">
+        <source>gateway.error.click_to_go_back_to_sp</source>
+        <target>Click to go back to the originating website.</target>
+      </trans-unit>
+      <trans-unit id="6fcosCA" resname="gateway.error.unprocessable_response">
+        <source>gateway.error.unprocessable_response</source>
+        <target>Login response could not be processed.</target>
+      </trans-unit>
+      <trans-unit id="YgB6SSI" resname="gateway.form.cancel_authentication.button.cancel">
+        <source>gateway.form.cancel_authentication.button.cancel</source>
+        <target>Cancel</target>
+      </trans-unit>
+      <trans-unit id="eNSyIER" resname="gateway.form.gateway_cancel_second_factor_verification.button.cancel_verification">
+        <source>gateway.form.gateway_cancel_second_factor_verification.button.cancel_verification</source>
+        <target>Cancel</target>
+      </trans-unit>
+      <trans-unit id="9P9ECiZ" resname="gateway.form.gateway_choose_second_factor.unknown_second_factor_type">
+        <source>gateway.form.gateway_choose_second_factor.unknown_second_factor_type</source>
+        <target>The selected token cannot be used. Please try again.</target>
+      </trans-unit>
+      <trans-unit id="in5ND9h" resname="gateway.form.gateway_send_sms_challenge.button.send_challenge">
+        <source>gateway.form.gateway_send_sms_challenge.button.send_challenge</source>
+        <target>Send code</target>
+      </trans-unit>
+      <trans-unit id="g5D6DR8" resname="gateway.form.send_sms_challenge.challenge_expired">
+        <source>gateway.form.send_sms_challenge.challenge_expired</source>
+        <target>Your code has expired. Please request a new code.</target>
+      </trans-unit>
+      <trans-unit id="LMDPf8I" resname="gateway.form.send_sms_challenge.sms_challenge_incorrect">
+        <source>gateway.form.send_sms_challenge.sms_challenge_incorrect</source>
+        <target>This code is not correct. Please try again or request a new code.</target>
+      </trans-unit>
+      <trans-unit id="c9fvFYY" resname="gateway.form.send_sms_challenge.sms_sending_failed">
+        <source>gateway.form.send_sms_challenge.sms_sending_failed</source>
+        <target>The sending of the code via SMS failed.</target>
+      </trans-unit>
+      <trans-unit id="KTtz3A5" resname="gateway.form.send_sms_challenge.too_many_attempts">
+        <source>gateway.form.send_sms_challenge.too_many_attempts</source>
+        <target>You have exceeded the limit of ten attempts; you can no longer attempt verification of any more codes. Contact your helpdesk or try again later.</target>
+      </trans-unit>
+      <trans-unit id="2t047uJ" resname="gateway.form.verify_sms_challenge.button.challenge_placeholder">
+        <source>gateway.form.verify_sms_challenge.button.challenge_placeholder</source>
+        <target>code</target>
+      </trans-unit>
+      <trans-unit id="I5LrZGw" resname="gateway.form.verify_sms_challenge.button.resend_challenge">
+        <source>gateway.form.verify_sms_challenge.button.resend_challenge</source>
+        <target>Send again.</target>
+      </trans-unit>
+      <trans-unit id="6K2cncF" resname="gateway.form.verify_sms_challenge.button.verify_challenge">
+        <source>gateway.form.verify_sms_challenge.button.verify_challenge</source>
+        <target>Verify code</target>
+      </trans-unit>
+      <trans-unit id="5lpFvGL" resname="gateway.form.send_sms_challenge.sms_challenge_expired">
+        <source>gateway.form.send_sms_challenge.sms_challenge_expired</source>
+        <target>Your code has expired. Please request a new code.</target>
+      </trans-unit>
+      <trans-unit id="PnHT2oo" resname="gateway.form.verify_yubikey.otp_verification_failed">
+        <source>gateway.form.verify_yubikey.otp_verification_failed</source>
+        <target>The Yubikey code was invalid. Please try again.</target>
+      </trans-unit>
+      <trans-unit id="gqxOan4" resname="gateway.form.verify_yubikey.public_id_mismatch">
+        <source>gateway.form.verify_yubikey.public_id_mismatch</source>
+        <target>You used another Yubikey than you used during your registration process.</target>
+      </trans-unit>
+      <trans-unit id="RFkc34o" resname="gateway.gateway.consume_assertion.title">
+        <source>gateway.gateway.consume_assertion.title</source>
+        <target>One moment please</target>
+      </trans-unit>
+      <trans-unit id="tKmD39n" resname="gateway.gateway.unprocessable_response.title">
+        <source>gateway.gateway.unprocessable_response.title</source>
+        <target>Unprocessable login response</target>
+      </trans-unit>
+      <trans-unit id="gIyu7gw" resname="gateway.gssp.consume_assertion.no_javascript_click_button">
+        <source>gateway.gssp.consume_assertion.no_javascript_click_button</source>
+        <target>Continue sign-in</target>
+      </trans-unit>
+      <trans-unit id="He.zSZm" resname="gateway.gssp.consume_assertion.one_moment_please">
+        <source>gateway.gssp.consume_assertion.one_moment_please</source>
+        <target>One moment please...</target>
+      </trans-unit>
+      <trans-unit id="BaL1AoR" resname="gateway.gssp.consume_assertion.title">
+        <source>gateway.gssp.consume_assertion.title</source>
+        <target>Signing in...</target>
+      </trans-unit>
+      <trans-unit id="4VbULRA" resname="gateway.gssp.error.an_error_occurred">
+        <source>gateway.gssp.error.an_error_occurred</source>
+        <target>An error occurred due to an unknown cause. Go back and try again.</target>
+      </trans-unit>
+      <trans-unit id="Cw2YPY9" resname="gateway.gssp.error.click_to_go_back_to_sp">
+        <source>gateway.gssp.error.click_to_go_back_to_sp</source>
+        <target>Click to go back to the originating website.</target>
+      </trans-unit>
+      <trans-unit id="XOOksCE" resname="gateway.gssp.error.unprocessable_response">
+        <source>gateway.gssp.error.unprocessable_response</source>
+        <target>Login response could not be processed.</target>
+      </trans-unit>
+      <trans-unit id="PwzKi0A" resname="gateway.gssp.submit.click_to_go_back_to_sp">
+        <source>gateway.gssp.submit.click_to_go_back_to_sp</source>
+        <target>Click to go back.</target>
+      </trans-unit>
+      <trans-unit id="d4QlWdO" resname="gateway.gssp.unprocessable_response.title">
+        <source>gateway.gssp.unprocessable_response.title</source>
+        <target>Unprocessable login response</target>
+      </trans-unit>
+      <trans-unit id="7Y6jqSs" resname="gateway.second_factor.choose_second_factor.select">
+        <source>gateway.second_factor.choose_second_factor.select</source>
+        <target>Select</target>
+      </trans-unit>
+      <trans-unit id="ANtOufW" resname="gateway.second_factor.choose_second_factor.title">
+        <source>gateway.second_factor.choose_second_factor.title</source>
+        <target>Choose a token for login</target>
+      </trans-unit>
+      <trans-unit id="tW6H70y" resname="gateway.second_factor.search.type.sms">
+        <source>gateway.second_factor.search.type.sms</source>
+        <target>SMS</target>
+      </trans-unit>
+      <trans-unit id="l5_NOED" resname="gateway.second_factor.search.type.yubikey">
+        <source>gateway.second_factor.search.type.yubikey</source>
+        <target>Yubikey</target>
+      </trans-unit>
+      <trans-unit id="8VvKxBo" resname="gateway.second_factor.sms.challenge_body">
+        <source>gateway.second_factor.sms.challenge_body</source>
+        <target>Your SMS code: %challenge%</target>
+      </trans-unit>
+      <trans-unit id="L96quXu" resname="gateway.second_factor.sms.send_challenge.title">
+        <source>gateway.second_factor.sms.send_challenge.title</source>
+        <target>Log in with SMS</target>
+      </trans-unit>
+      <trans-unit id="OBM_Ipo" resname="gateway.second_factor.sms.text.help_user_enter_challenge">
+        <source>gateway.second_factor.sms.text.help_user_enter_challenge</source>
+        <target>Enter the received SMS-code:</target>
+      </trans-unit>
+      <trans-unit id="ROOi3WU" resname="gateway.second_factor.sms.text.help_user_enter_phone_number">
+        <source>gateway.second_factor.sms.text.help_user_enter_phone_number</source>
+        <target>Send a code to my mobile phone number ending in %phone_number%:</target>
+      </trans-unit>
+      <trans-unit id="3kqARm_" resname="gateway.second_factor.sms.text.next_step">
+        <source>gateway.second_factor.sms.text.next_step</source>
+        <target>Enter the received code on the next page.</target>
+      </trans-unit>
+      <trans-unit id="ukXrGCb" resname="gateway.second_factor.sms.text.otp_requests_remaining">
+        <source>gateway.second_factor.sms.text.otp_requests_remaining</source>
+        <target>Attempts remaining: %count%</target>
+      </trans-unit>
+      <trans-unit id="9VrwOUL" resname="gateway.second_factor.sms.text.resend_challenge_text">
+        <source>gateway.second_factor.sms.text.resend_challenge_text</source>
+        <target>No code received?</target>
+      </trans-unit>
+      <trans-unit id=".sYGwT5" resname="gateway.second_factor.sms.verify_challenge.title.page">
+        <source>gateway.second_factor.sms.verify_challenge.title.page</source>
+        <target>Log in with SMS</target>
+      </trans-unit>
+      <trans-unit id="jDCziI7" resname="gateway.second_factor.yubikey.text.connect_yubikey_to_pc">
+        <source>gateway.second_factor.yubikey.text.connect_yubikey_to_pc</source>
+        <target>Connect your YubiKey to the USB-port of your computer.</target>
+      </trans-unit>
+      <trans-unit id="jkRbsq7" resname="gateway.second_factor.yubikey.text.ensure_form_field_focus">
+        <source>gateway.second_factor.yubikey.text.ensure_form_field_focus</source>
+        <target>Make sure that the form field above has focus.</target>
+      </trans-unit>
+      <trans-unit id="SX_KFrR" resname="gateway.second_factor.yubikey.text.enter_challenge">
+        <source>gateway.second_factor.yubikey.text.enter_challenge</source>
+        <target>Your YubiKey-code:</target>
+      </trans-unit>
+      <trans-unit id="E8V8VeA" resname="gateway.second_factor.yubikey.text.help_user_enter_challenge">
+        <source>gateway.second_factor.yubikey.text.help_user_enter_challenge</source>
+        <target>How to use your YubiKey:</target>
+      </trans-unit>
+      <trans-unit id="36zpeoX" resname="gateway.second_factor.yubikey.text.press_once_form_auto_submitted">
+        <source>gateway.second_factor.yubikey.text.press_once_form_auto_submitted</source>
+        <target>Press the button on your YubiKey and hold shortly. A code is automatically generated and entered into the field above.</target>
+      </trans-unit>
+      <trans-unit id="eybJPFv" resname="gateway.submit.click_to_go_back_to_sp">
+        <source>gateway.submit.click_to_go_back_to_sp</source>
+        <target>Click to go back.</target>
+      </trans-unit>
+      <trans-unit id="_8ULwsW" resname="ra.registration.yubikey.title.enter_challenge">
+        <source>ra.registration.yubikey.title.enter_challenge</source>
+        <target>Log in with YubiKey</target>
+      </trans-unit>
+      <trans-unit id="auwz0KI" resname="stepup.error.authentication_error.description">
+        <source>stepup.error.authentication_error.description</source>
+        <target>Sign in unsuccessful. Please try again.</target>
+      </trans-unit>
+      <trans-unit id="pxeiOwH" resname="stepup.error.authentication_error.title">
+        <source>stepup.error.authentication_error.title</source>
+        <target>Sign in</target>
+      </trans-unit>
+      <trans-unit id="kw4fhNL" resname="stepup.error.authn_failed.description">
+        <source>stepup.error.authn_failed.description</source>
+        <target>Sign in unsuccessful. Please try again.</target>
+      </trans-unit>
+      <trans-unit id="RraAjfw" resname="stepup.error.authn_failed.title">
+        <source>stepup.error.authn_failed.title</source>
+        <target>Sign in</target>
+      </trans-unit>
+      <trans-unit id="ziHYKu8" resname="stepup.error.error_code">
+        <source>stepup.error.error_code</source>
+        <target>Error code</target>
+      </trans-unit>
+      <trans-unit id="juhEt6B" resname="stepup.error.generic_error.description">
+        <source>stepup.error.generic_error.description</source>
+        <target>Something went wrong. Please try again.</target>
+      </trans-unit>
+      <trans-unit id="CtLn0fD" resname="stepup.error.generic_error.title">
+        <source>stepup.error.generic_error.title</source>
+        <target>Oops!</target>
+      </trans-unit>
+      <trans-unit id="q1kcxU6" resname="stepup.error.hostname">
+        <source>stepup.error.hostname</source>
+        <target>Application</target>
+      </trans-unit>
+      <trans-unit id="AS6G5fj" resname="stepup.error.ip_address">
+        <source>stepup.error.ip_address</source>
+        <target>IP address</target>
+      </trans-unit>
+      <trans-unit id="LxPd3NV" resname="stepup.error.page_not_found.text">
+        <source>stepup.error.page_not_found.text</source>
+        <target>The page you requested was not found. Please try again or go back to Home.</target>
+      </trans-unit>
+      <trans-unit id="EdKOH_n" resname="stepup.error.page_not_found.title">
+        <source>stepup.error.page_not_found.title</source>
+        <target>Page not found</target>
+      </trans-unit>
+      <trans-unit id="XDA1ntM" resname="stepup.error.precondition_not_met.description">
+        <source>stepup.error.precondition_not_met.description</source>
+        <target>You are not authorised to sign in</target>
+      </trans-unit>
+      <trans-unit id="ChOSODg" resname="stepup.error.precondition_not_met.title">
+        <source>stepup.error.precondition_not_met.title</source>
+        <target>Not authorised to sign in</target>
+      </trans-unit>
+      <trans-unit id="suoi67Y" resname="stepup.error.request_id">
+        <source>stepup.error.request_id</source>
+        <target>Request ID</target>
+      </trans-unit>
+      <trans-unit id="aCwL7P0" resname="stepup.error.signature_validation_failed.description">
+        <source>stepup.error.signature_validation_failed.description</source>
+        <target>The SAML request has been signed but the signature could not be validated.</target>
+      </trans-unit>
+      <trans-unit id="bjDuDgU" resname="stepup.error.signature_validation_failed.title">
+        <source>stepup.error.signature_validation_failed.title</source>
+        <target>Signature validation failed</target>
+      </trans-unit>
+      <trans-unit id="ixH_uB0" resname="stepup.error.support_page.text">
+        <source>stepup.error.support_page.text</source>
+        <target><![CDATA[Please try again or visit <a href="%support_url%" target="_blank">the support page</a> if this does not fix your problem. On this page you will find more information about possible causes of the error and how to contact the support team.]]></target>
+      </trans-unit>
+      <trans-unit id="B3bDgGY" resname="stepup.error.timestamp">
+        <source>stepup.error.timestamp</source>
+        <target>Time</target>
+      </trans-unit>
+      <trans-unit id="AbikvXh" resname="stepup.error.unknown_service_provider.title">
+        <source>stepup.error.unknown_service_provider.title</source>
+        <target>Unknown service provider</target>
+      </trans-unit>
+      <trans-unit id="nb37271" resname="stepup.error.unsigned_request.description">
+        <source>stepup.error.unsigned_request.description</source>
+        <target>The SAML request is expected to be signed but it was not</target>
+      </trans-unit>
+      <trans-unit id="r4ueRd3" resname="stepup.error.unsigned_request.title">
+        <source>stepup.error.unsigned_request.title</source>
+        <target>Unsigned request</target>
+      </trans-unit>
+      <trans-unit id="tzj31rn" resname="stepup.error.unsupported_signature.description">
+        <source>stepup.error.unsupported_signature.description</source>
+        <target>The SAMLRequest has been signed, but the signature format is not supported</target>
+      </trans-unit>
+      <trans-unit id="Gav9HKk" resname="stepup.error.unsupported_signature.title">
+        <source>stepup.error.unsupported_signature.title</source>
+        <target>Unsupported signature format</target>
+      </trans-unit>
+      <trans-unit id="za8gDWN" resname="stepup.error.user_agent">
+        <source>stepup.error.user_agent</source>
+        <target>User agent</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

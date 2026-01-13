@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="en-GB" target-language="nl-NL" datatype="plaintext" original="file.ext">
+    <header>
+      <tool tool-id="symfony" tool-name="Symfony"/>
+    </header>
+    <body>
+      <trans-unit id="17qqJkL" resname="gateway.error.acs_location_not_allowed.title">
+        <source>gateway.error.acs_location_not_allowed.title</source>
+        <target>ACS location not allowed</target>
+      </trans-unit>
+      <trans-unit id="OtglEal" resname="gateway.error.click_to_go_back_to_sp">
+        <source>gateway.error.click_to_go_back_to_sp</source>
+        <target>Klik om terug te gaan naar de website.</target>
+      </trans-unit>
+      <trans-unit id="6fcosCA" resname="gateway.error.unprocessable_response">
+        <source>gateway.error.unprocessable_response</source>
+        <target>Login-response kan niet worden verwerkt.</target>
+      </trans-unit>
+      <trans-unit id="YgB6SSI" resname="gateway.form.cancel_authentication.button.cancel">
+        <source>gateway.form.cancel_authentication.button.cancel</source>
+        <target>Annuleren</target>
+      </trans-unit>
+      <trans-unit id="eNSyIER" resname="gateway.form.gateway_cancel_second_factor_verification.button.cancel_verification">
+        <source>gateway.form.gateway_cancel_second_factor_verification.button.cancel_verification</source>
+        <target>Annuleren</target>
+      </trans-unit>
+      <trans-unit id="9P9ECiZ" resname="gateway.form.gateway_choose_second_factor.unknown_second_factor_type">
+        <source>gateway.form.gateway_choose_second_factor.unknown_second_factor_type</source>
+        <target>Het gekozen token kan niet gebruikt worden. Probeer het opnieuw.</target>
+      </trans-unit>
+      <trans-unit id="in5ND9h" resname="gateway.form.gateway_send_sms_challenge.button.send_challenge">
+        <source>gateway.form.gateway_send_sms_challenge.button.send_challenge</source>
+        <target>Stuur code</target>
+      </trans-unit>
+      <trans-unit id="g5D6DR8" resname="gateway.form.send_sms_challenge.challenge_expired">
+        <source>gateway.form.send_sms_challenge.challenge_expired</source>
+        <target>Deze code is verlopen. Vraag een nieuwe code aan.</target>
+      </trans-unit>
+      <trans-unit id="LMDPf8I" resname="gateway.form.send_sms_challenge.sms_challenge_incorrect">
+        <source>gateway.form.send_sms_challenge.sms_challenge_incorrect</source>
+        <target>Deze code is niet juist. Probeer het nog eens, of vraag een nieuwe code op.</target>
+      </trans-unit>
+      <trans-unit id="c9fvFYY" resname="gateway.form.send_sms_challenge.sms_sending_failed">
+        <source>gateway.form.send_sms_challenge.sms_sending_failed</source>
+        <target>Het versturen van de sms-code is mislukt.</target>
+      </trans-unit>
+      <trans-unit id="KTtz3A5" resname="gateway.form.send_sms_challenge.too_many_attempts">
+        <source>gateway.form.send_sms_challenge.too_many_attempts</source>
+        <target>De limiet van tien pogingen is bereikt; je kunt geen codes meer verifiëren. Neem contact op met de helpdesk van je installing of probeer het later nog eens.</target>
+      </trans-unit>
+      <trans-unit id="2t047uJ" resname="gateway.form.verify_sms_challenge.button.challenge_placeholder">
+        <source>gateway.form.verify_sms_challenge.button.challenge_placeholder</source>
+        <target>code</target>
+      </trans-unit>
+      <trans-unit id="I5LrZGw" resname="gateway.form.verify_sms_challenge.button.resend_challenge">
+        <source>gateway.form.verify_sms_challenge.button.resend_challenge</source>
+        <target>Stuur nogmaals.</target>
+      </trans-unit>
+      <trans-unit id="5lpFvGL" resname="gateway.form.send_sms_challenge.sms_challenge_expired">
+        <source>gateway.form.send_sms_challenge.sms_challenge_expired</source>
+        <target>Deze code is verlopen. Vraag een nieuwe code aan.</target>
+      </trans-unit>
+      <trans-unit id="6K2cncF" resname="gateway.form.verify_sms_challenge.button.verify_challenge">
+        <source>gateway.form.verify_sms_challenge.button.verify_challenge</source>
+        <target>Verifieer code</target>
+      </trans-unit>
+      <trans-unit id="PnHT2oo" resname="gateway.form.verify_yubikey.otp_verification_failed">
+        <source>gateway.form.verify_yubikey.otp_verification_failed</source>
+        <target>De YubiKey code is ongeldig. Probeer het nog eens</target>
+      </trans-unit>
+      <trans-unit id="gqxOan4" resname="gateway.form.verify_yubikey.public_id_mismatch">
+        <source>gateway.form.verify_yubikey.public_id_mismatch</source>
+        <target>Je gebruikt nu een andere YubiKey dan tijdens het registratieproces.</target>
+      </trans-unit>
+      <trans-unit id="RFkc34o" resname="gateway.gateway.consume_assertion.title">
+        <source>gateway.gateway.consume_assertion.title</source>
+        <target>Een moment geduld alsjeblieft</target>
+      </trans-unit>
+      <trans-unit id="tKmD39n" resname="gateway.gateway.unprocessable_response.title">
+        <source>gateway.gateway.unprocessable_response.title</source>
+        <target>Onverwerkbare login-response</target>
+      </trans-unit>
+      <trans-unit id="gIyu7gw" resname="gateway.gssp.consume_assertion.no_javascript_click_button">
+        <source>gateway.gssp.consume_assertion.no_javascript_click_button</source>
+        <target>Doorgaan met inloggen</target>
+      </trans-unit>
+      <trans-unit id="He.zSZm" resname="gateway.gssp.consume_assertion.one_moment_please">
+        <source>gateway.gssp.consume_assertion.one_moment_please</source>
+        <target>Een moment geduld alsjeblieft...</target>
+      </trans-unit>
+      <trans-unit id="BaL1AoR" resname="gateway.gssp.consume_assertion.title">
+        <source>gateway.gssp.consume_assertion.title</source>
+        <target>Inloggen...</target>
+      </trans-unit>
+      <trans-unit id="4VbULRA" resname="gateway.gssp.error.an_error_occurred">
+        <source>gateway.gssp.error.an_error_occurred</source>
+        <target>Er is een fout opgetreden door onbekende oorzaak. Ga terug om het opnieuw te proberen.</target>
+      </trans-unit>
+      <trans-unit id="Cw2YPY9" resname="gateway.gssp.error.click_to_go_back_to_sp">
+        <source>gateway.gssp.error.click_to_go_back_to_sp</source>
+        <target>Klik om terug te gaan naar de originele website.</target>
+      </trans-unit>
+      <trans-unit id="XOOksCE" resname="gateway.gssp.error.unprocessable_response">
+        <source>gateway.gssp.error.unprocessable_response</source>
+        <target>Login-response kan niet worden verwerkt.</target>
+      </trans-unit>
+      <trans-unit id="PwzKi0A" resname="gateway.gssp.submit.click_to_go_back_to_sp">
+        <source>gateway.gssp.submit.click_to_go_back_to_sp</source>
+        <target>Klik om terug te gaan.</target>
+      </trans-unit>
+      <trans-unit id="d4QlWdO" resname="gateway.gssp.unprocessable_response.title">
+        <source>gateway.gssp.unprocessable_response.title</source>
+        <target>Onverwerkbare login-response</target>
+      </trans-unit>
+      <trans-unit id="7Y6jqSs" resname="gateway.second_factor.choose_second_factor.select">
+        <source>gateway.second_factor.choose_second_factor.select</source>
+        <target>Selecteer</target>
+      </trans-unit>
+      <trans-unit id="ANtOufW" resname="gateway.second_factor.choose_second_factor.title">
+        <source>gateway.second_factor.choose_second_factor.title</source>
+        <target>Selecteer token voor login</target>
+      </trans-unit>
+      <trans-unit id="tW6H70y" resname="gateway.second_factor.search.type.sms">
+        <source>gateway.second_factor.search.type.sms</source>
+        <target>sms</target>
+      </trans-unit>
+      <trans-unit id="l5_NOED" resname="gateway.second_factor.search.type.yubikey">
+        <source>gateway.second_factor.search.type.yubikey</source>
+        <target>Yubikey</target>
+      </trans-unit>
+      <trans-unit id="8VvKxBo" resname="gateway.second_factor.sms.challenge_body">
+        <source>gateway.second_factor.sms.challenge_body</source>
+        <target>Je sms-code: %challenge%</target>
+      </trans-unit>
+      <trans-unit id="L96quXu" resname="gateway.second_factor.sms.send_challenge.title">
+        <source>gateway.second_factor.sms.send_challenge.title</source>
+        <target>Login met sms</target>
+      </trans-unit>
+      <trans-unit id="OBM_Ipo" resname="gateway.second_factor.sms.text.help_user_enter_challenge">
+        <source>gateway.second_factor.sms.text.help_user_enter_challenge</source>
+        <target>Vul de ontvangen sms-code in:</target>
+      </trans-unit>
+      <trans-unit id="ROOi3WU" resname="gateway.second_factor.sms.text.help_user_enter_phone_number">
+        <source>gateway.second_factor.sms.text.help_user_enter_phone_number</source>
+        <target>Stuur een code naar mijn mobiel nummer eindigend op %phone_number%:</target>
+      </trans-unit>
+      <trans-unit id="3kqARm_" resname="gateway.second_factor.sms.text.next_step">
+        <source>gateway.second_factor.sms.text.next_step</source>
+        <target>Vul de ontvangen code in op de volgende pagina.</target>
+      </trans-unit>
+      <trans-unit id="ukXrGCb" resname="gateway.second_factor.sms.text.otp_requests_remaining">
+        <source>gateway.second_factor.sms.text.otp_requests_remaining</source>
+        <target>Aantal resterende pogingen: %count%</target>
+      </trans-unit>
+      <trans-unit id="9VrwOUL" resname="gateway.second_factor.sms.text.resend_challenge_text">
+        <source>gateway.second_factor.sms.text.resend_challenge_text</source>
+        <target>Geen code ontvangen?</target>
+      </trans-unit>
+      <trans-unit id=".sYGwT5" resname="gateway.second_factor.sms.verify_challenge.title.page">
+        <source>gateway.second_factor.sms.verify_challenge.title.page</source>
+        <target>Log in met sms</target>
+      </trans-unit>
+      <trans-unit id="jDCziI7" resname="gateway.second_factor.yubikey.text.connect_yubikey_to_pc">
+        <source>gateway.second_factor.yubikey.text.connect_yubikey_to_pc</source>
+        <target>Steek je YubiKey in een USB-poort van je computer.</target>
+      </trans-unit>
+      <trans-unit id="jkRbsq7" resname="gateway.second_factor.yubikey.text.ensure_form_field_focus">
+        <source>gateway.second_factor.yubikey.text.ensure_form_field_focus</source>
+        <target>Zorg dat het invulveld hierboven actief is.</target>
+      </trans-unit>
+      <trans-unit id="SX_KFrR" resname="gateway.second_factor.yubikey.text.enter_challenge">
+        <source>gateway.second_factor.yubikey.text.enter_challenge</source>
+        <target>Je YubiKey-code:</target>
+      </trans-unit>
+      <trans-unit id="E8V8VeA" resname="gateway.second_factor.yubikey.text.help_user_enter_challenge">
+        <source>gateway.second_factor.yubikey.text.help_user_enter_challenge</source>
+        <target>Je YubiKey gebruik je zo:</target>
+      </trans-unit>
+      <trans-unit id="36zpeoX" resname="gateway.second_factor.yubikey.text.press_once_form_auto_submitted">
+        <source>gateway.second_factor.yubikey.text.press_once_form_auto_submitted</source>
+        <target>Druk op de knop van je YubiKey en houd even vast. Er verschijnt automatisch een eenmalige code in het invulveld.</target>
+      </trans-unit>
+      <trans-unit id="eybJPFv" resname="gateway.submit.click_to_go_back_to_sp">
+        <source>gateway.submit.click_to_go_back_to_sp</source>
+        <target>Klik om terug te gaan.</target>
+      </trans-unit>
+      <trans-unit id="_8ULwsW" resname="ra.registration.yubikey.title.enter_challenge">
+        <source>ra.registration.yubikey.title.enter_challenge</source>
+        <target>Log in met YubiKey</target>
+      </trans-unit>
+      <trans-unit id="auwz0KI" resname="stepup.error.authentication_error.description">
+        <source>stepup.error.authentication_error.description</source>
+        <target>Inloggen mislukt. Probeer het nog eens.</target>
+      </trans-unit>
+      <trans-unit id="pxeiOwH" resname="stepup.error.authentication_error.title">
+        <source>stepup.error.authentication_error.title</source>
+        <target>Inloggen</target>
+      </trans-unit>
+      <trans-unit id="kw4fhNL" resname="stepup.error.authn_failed.description">
+        <source>stepup.error.authn_failed.description</source>
+        <target>Inloggen mislukt. Probeer het nog eens.</target>
+      </trans-unit>
+      <trans-unit id="RraAjfw" resname="stepup.error.authn_failed.title">
+        <source>stepup.error.authn_failed.title</source>
+        <target>Inloggen</target>
+      </trans-unit>
+      <trans-unit id="ziHYKu8" resname="stepup.error.error_code">
+        <source>stepup.error.error_code</source>
+        <target>Foutcode</target>
+      </trans-unit>
+      <trans-unit id="juhEt6B" resname="stepup.error.generic_error.description">
+        <source>stepup.error.generic_error.description</source>
+        <target>Er is iets mis gegaan. Probeer het opnieuw.</target>
+      </trans-unit>
+      <trans-unit id="CtLn0fD" resname="stepup.error.generic_error.title">
+        <source>stepup.error.generic_error.title</source>
+        <target>Oeps!</target>
+      </trans-unit>
+      <trans-unit id="q1kcxU6" resname="stepup.error.hostname">
+        <source>stepup.error.hostname</source>
+        <target>Applicatie</target>
+      </trans-unit>
+      <trans-unit id="AS6G5fj" resname="stepup.error.ip_address">
+        <source>stepup.error.ip_address</source>
+        <target>IP-adres</target>
+      </trans-unit>
+      <trans-unit id="LxPd3NV" resname="stepup.error.page_not_found.text">
+        <source>stepup.error.page_not_found.text</source>
+        <target>De pagina die je zocht kan niet gevonden worden. Probeer het nog eens, of ga terug naar Home.</target>
+      </trans-unit>
+      <trans-unit id="EdKOH_n" resname="stepup.error.page_not_found.title">
+        <source>stepup.error.page_not_found.title</source>
+        <target>Pagina niet gevonden</target>
+      </trans-unit>
+      <trans-unit id="XDA1ntM" resname="stepup.error.precondition_not_met.description">
+        <source>stepup.error.precondition_not_met.description</source>
+        <target>Je hebt niet de juiste rechten om in te mogen loggen.</target>
+      </trans-unit>
+      <trans-unit id="ChOSODg" resname="stepup.error.precondition_not_met.title">
+        <source>stepup.error.precondition_not_met.title</source>
+        <target>Onvoldoende rechten om in te loggen</target>
+      </trans-unit>
+      <trans-unit id="suoi67Y" resname="stepup.error.request_id">
+        <source>stepup.error.request_id</source>
+        <target>Request ID</target>
+      </trans-unit>
+      <trans-unit id="aCwL7P0" resname="stepup.error.signature_validation_failed.description">
+        <source>stepup.error.signature_validation_failed.description</source>
+        <target>Het SAML bericht is ondertekend maar de signature kan niet gevalideerd worden</target>
+      </trans-unit>
+      <trans-unit id="bjDuDgU" resname="stepup.error.signature_validation_failed.title">
+        <source>stepup.error.signature_validation_failed.title</source>
+        <target>Verificatie van signature mislukt</target>
+      </trans-unit>
+      <trans-unit id="ixH_uB0" resname="stepup.error.support_page.text">
+        <source>stepup.error.support_page.text</source>
+        <target><![CDATA[Bezoek <a href="%support_url%" target="_blank">de support pagina</a> als dit je probleem niet oplost. Op deze pagina vind je meer informatie over de mogelijke oorzaken en hoe je contact kan opnemen met het supportteam.]]></target>
+      </trans-unit>
+      <trans-unit id="B3bDgGY" resname="stepup.error.timestamp">
+        <source>stepup.error.timestamp</source>
+        <target>Tijd</target>
+      </trans-unit>
+      <trans-unit id="AbikvXh" resname="stepup.error.unknown_service_provider.title">
+        <source>stepup.error.unknown_service_provider.title</source>
+        <target>Onbekende serviceprovider</target>
+      </trans-unit>
+      <trans-unit id="nb37271" resname="stepup.error.unsigned_request.description">
+        <source>stepup.error.unsigned_request.description</source>
+        <target>Het SAML bericht moet ondertekend zijn maar bevat geen signature</target>
+      </trans-unit>
+      <trans-unit id="r4ueRd3" resname="stepup.error.unsigned_request.title">
+        <source>stepup.error.unsigned_request.title</source>
+        <target>Geen signature in SAML bericht</target>
+      </trans-unit>
+      <trans-unit id="tzj31rn" resname="stepup.error.unsupported_signature.description">
+        <source>stepup.error.unsupported_signature.description</source>
+        <target>Het SAML bericht is ondertekend, maar het signature formaat wordt niet ondersteund</target>
+      </trans-unit>
+      <trans-unit id="Gav9HKk" resname="stepup.error.unsupported_signature.title">
+        <source>stepup.error.unsupported_signature.title</source>
+        <target>Signature formaat wordt niet ondersteund</target>
+      </trans-unit>
+      <trans-unit id="za8gDWN" resname="stepup.error.user_agent">
+        <source>stepup.error.user_agent</source>
+        <target>User agent</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
