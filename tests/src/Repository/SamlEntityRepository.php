@@ -21,6 +21,7 @@ namespace Surfnet\StepupGateway\Behat\Repository;
 use Exception;
 use PDO;
 use Ramsey\Uuid\Uuid;
+use Surfnet\StepupGateway\Behat\Factory\SmoketestPdoFactory;
 
 /**
  * A poor mans repository, a pdo connection to the test database is established in the constructor
@@ -31,14 +32,11 @@ class SamlEntityRepository
 
     const SP_ADFS_SSO_LOCATION = 'https://gateway.dev.openconext.local/test/authentication/adfs/sso';
 
-    /**
-     * @var Connection
-     */
-    private $connection;
+    private readonly PDO $connection;
 
-    public function __construct(Connection $connection)
+    public function __construct(SmoketestPdoFactory $factory)
     {
-        $this->connection = $connection;
+        $this->connection = $factory->createConnection();
     }
 
     public function createSpIfNotExists($entityId, $certificate, $sfoEnabled = false)

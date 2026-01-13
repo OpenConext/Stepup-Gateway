@@ -233,6 +233,12 @@ services:
             - "@surfnet_stepup.locale_cookie_helper"
         tags: [{ name: kernel.event_subscriber }]
 
+    gateway.event_listener.remove_doctrine_commands:
+        class: Surfnet\StepupGateway\GatewayBundle\EventListener\RemoveDoctrineCommands
+        autoconfigure: true
+        autowire: true
+        tags: [kernel.event_listener]
+
     gateway.locale_provider:
         public: false
         class: Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorLocaleProvider

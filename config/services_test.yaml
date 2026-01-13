@@ -7,35 +7,33 @@ services:
   gateway.service.gateway_api_sms:
     class: Surfnet\StepupGateway\ApiBundle\Tests\TestDouble\Service\SmsService
 
+  Surfnet\StepupGateway\Behat\Factory\SmoketestPdoFactory:
+    class: Surfnet\StepupGateway\Behat\Factory\SmoketestPdoFactory
+    arguments:
+      - '%database_host%'
+      - 'gw_smoketest_schema_manager'
+      - 'gw_smoketest_schema_manager_secret'
+      - 'gateway_test'
+
   Surfnet\StepupGateway\Behat\Repository\SecondFactorRepository:
     class: Surfnet\StepupGateway\Behat\Repository\SecondFactorRepository
     arguments:
-      - '@Surfnet\StepupGateway\Behat\Repository\Connection'
+      - '@Surfnet\StepupGateway\Behat\Factory\SmoketestPdoFactory'
 
   Surfnet\StepupGateway\Behat\Repository\SamlEntityRepository:
     class: Surfnet\StepupGateway\Behat\Repository\SamlEntityRepository
     arguments:
-      - '@Surfnet\StepupGateway\Behat\Repository\Connection'
+      - '@Surfnet\StepupGateway\Behat\Factory\SmoketestPdoFactory'
 
   Surfnet\StepupGateway\Behat\Repository\WhitelistRepository:
     class: Surfnet\StepupGateway\Behat\Repository\WhitelistRepository
     arguments:
-      - '@Surfnet\StepupGateway\Behat\Repository\Connection'
+      - '@Surfnet\StepupGateway\Behat\Factory\SmoketestPdoFactory'
 
   Surfnet\StepupGateway\Behat\Repository\InstitutionConfigurationRepository:
     class: Surfnet\StepupGateway\Behat\Repository\InstitutionConfigurationRepository
     arguments:
-      - '@Surfnet\StepupGateway\Behat\Repository\Connection'
-
-  Surfnet\StepupGateway\Behat\Repository\Connection:
-    class: Surfnet\StepupGateway\Behat\Repository\Connection
-    arguments:
-      - '%env(APP_ENV)%'
-      - '%database_deploy_user%'
-      - '%database_deploy_password%'
-      - 'gateway_test'
-      - '%database_host%'
-
+      - '@Surfnet\StepupGateway\Behat\Factory\SmoketestPdoFactory'
 
   Surfnet\StepupGateway\Behat\Controller\ServiceProviderController:
     class: Surfnet\StepupGateway\Behat\Controller\ServiceProviderController
@@ -69,6 +67,13 @@ services:
       - "@logger"
     public: false
 
+  Surfnet\StepupGateway\Behat\Service\DatabaseSchemaService:
+    class: Surfnet\StepupGateway\Behat\Service\DatabaseSchemaService
+    public: true
+    arguments:
+      - '@doctrine.orm.gateway_entity_manager'
+      - '@Surfnet\StepupGateway\Behat\Factory\SmoketestPdoFactory'
+
   Surfnet\StepupGateway\Behat\Service\FixtureService:
     class: Surfnet\StepupGateway\Behat\Service\FixtureService
     public: true
@@ -82,6 +87,7 @@ services:
     public: true
     arguments:
       $fixtureService: '@Surfnet\StepupGateway\Behat\Service\FixtureService'
+      $databaseSchemaService: '@Surfnet\StepupGateway\Behat\Service\DatabaseSchemaService'
       $logger: '@logger'
 
   Surfnet\StepupGateway\Behat\ServiceProviderContext:
