@@ -1,10 +1,10 @@
-include: 
+include:
   - ../../devconf/stepup/docker-compose.yml
 
 services:
 
     selenium:
-       image: selenium/standalone-chrome:latest
+       image: selenium/standalone-chromium:latest
        container_name: gateway-selenium
        environment:
            START_XVFB: "false"
