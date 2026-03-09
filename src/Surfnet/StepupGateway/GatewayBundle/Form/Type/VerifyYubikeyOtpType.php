@@ -28,12 +28,11 @@ class VerifyYubikeyOtpType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder->add('otp', TextType::class, [
+        $builder->add('yubikeyInput', TextType::class, [
             'label' => /** @Ignore */ false,
             'required' => true,
             'attr' => [
                 'autofocus'    => true,
-                'autocomplete' => 'off',
             ]
         ]);
         // This button is the form's default button, so as to prevent the form being submitted as if the cancel button
@@ -52,6 +51,6 @@ class VerifyYubikeyOtpType extends AbstractType
 
     public function getBlockPrefix(): string
     {
-        return 'gateway_verify_yubikey_otp';
+        return 'gateway_verify_yubikey';
     }
 }
