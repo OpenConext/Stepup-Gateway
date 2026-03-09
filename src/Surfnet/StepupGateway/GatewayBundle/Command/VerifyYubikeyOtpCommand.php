@@ -28,7 +28,7 @@ class VerifyYubikeyOtpCommand
      */
     #[Assert\NotBlank(message: 'gateway.verify_yubikey_command.otp.may_not_be_empty')]
     #[Assert\Type(type: 'string', message: 'gateway.verify_yubikey_command.otp.must_be_string')]
-    public $otp;
+    public $yubikeyInput;
 
     /**
      * @var string

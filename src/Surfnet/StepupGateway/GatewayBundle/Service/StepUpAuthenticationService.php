@@ -328,7 +328,7 @@ class StepUpAuthenticationService
         $requester->institution = $secondFactor->institution;
 
         $otp = new ApiOtp();
-        $otp->value = $command->otp;
+        $otp->value = $command->yubikeyInput;
 
         $result = $this->yubikeyService->verifyOtp($otp, $requester);
 

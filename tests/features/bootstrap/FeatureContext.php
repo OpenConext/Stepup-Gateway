@@ -152,8 +152,8 @@ class FeatureContext implements Context
     #[\Behat\Step\When('I enter the OTP')]
     public function iEnterTheOtp(): void
     {
-        $this->minkContext->fillField('gateway_verify_yubikey_otp_otp', 'bogus-otp-we-use-a-mock-yubikey-service');
-        $this->minkContext->pressButton('gateway_verify_yubikey_otp_submit');
+        $this->minkContext->fillField('gateway_verify_yubikey_yubikeyInput', 'bogus-otp-we-use-a-mock-yubikey-service');
+        $this->minkContext->pressButton('gateway_verify_yubikey_submit');
         $this->pressButtonWhenNoJavascriptSupport();
     }
 

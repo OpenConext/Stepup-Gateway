@@ -4,13 +4,13 @@ include:
 services:
 
     selenium:
-       image: selenium/standalone-chrome:latest
+       image: zenika/alpine-chrome:latest
        container_name: gateway-selenium
-       environment:
-           START_XVFB: "false"
+       command: ["--no-sandbox", "--headless", "--disable-gpu", "--remote-debugging-address=0.0.0.0", "--remote-debugging-port=9222", "--ignore-certificate-errors", "--disable-dev-shm-usage"]
        volumes:
             - /dev/shm:/dev/shm
        networks:
          openconextdev:
            aliases:
              - selenium.dev.openconext.local
+             - chrome.dev.openconext.local

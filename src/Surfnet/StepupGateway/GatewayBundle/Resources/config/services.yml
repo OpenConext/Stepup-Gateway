@@ -206,7 +206,7 @@ services:
 
     gateway.form.verify_yubikey:
         class: Surfnet\StepupGateway\GatewayBundle\Form\Type\VerifyYubikeyOtpType
-        tags: [{ name: form.type, alias: gateway_verify_yubikey_otp }]
+        tags: [{ name: form.type, alias: gateway_verify_yubikey }]
 
     gateway.form.choose_second_factor:
         class: Surfnet\StepupGateway\GatewayBundle\Form\Type\ChooseSecondFactorType
