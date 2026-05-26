@@ -37,7 +37,7 @@
     "private": true,
     "dependencies": {
         "bootstrap": "^5.3.3",
-        "core-js": "^3.37.0",
+        "core-js": "^3.49.0",
         "jquery": "^3.7.1",
         "regenerator-runtime": "^0.14.1",
         "select2": "^4.0.3",
