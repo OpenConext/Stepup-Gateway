@@ -22,7 +22,7 @@
         "less": "^4.4.2",
         "less-loader": "^12.3.0",
         "loader-utils": "^3.3",
-        "postcss": ">=8.4.31",
+        "postcss": ">=8.5.10",
         "postcss-loader": "^8.1.1",
         "sass": "^1.94.2",
         "sass-loader": "^16.0.6",
