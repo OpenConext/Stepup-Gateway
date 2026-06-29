@@ -31,6 +31,7 @@ services:
             - "@surfnet_saml.logger"
             - "@gateway.proxy.response_context"
             - "@second_factor_only.response_context"
+            - "@gateway.feature_configuration"
 
     gssp.service.gssp.consume_assertion:
         class: Surfnet\StepupGateway\SamlStepupProviderBundle\Service\Gateway\ConsumeAssertionService

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2018 SURFnet bv
  *
@@ -20,7 +21,9 @@ namespace Surfnet\StepupGateway\SamlStepupProviderBundle\Service\Gateway;
 use Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger;
 use Surfnet\SamlBundle\SAML2\AuthnRequest;
 use Surfnet\SamlBundle\SAML2\AuthnRequestFactory;
+use Surfnet\StepupGateway\GatewayBundle\Configuration\FeatureConfiguration;
 use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
+use Surfnet\StepupGateway\GatewayBundle\Saml\UiInfoExtensionHelper;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Exception\InvalidSubjectException;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\Provider;
 
@@ -35,14 +38,12 @@ class SecondFactorVerificationService
     /** @var ResponseContext */
     private $sfoResponseContext;
 
-    /**
-     * SecondFactorVerificationService constructor.
-     * @param SamlAuthenticationLogger $samlLogger
-     * @param ResponseContext $responseContext
-     * @param ResponseContext $sfoResponseContext
-     */
-    public function __construct(SamlAuthenticationLogger $samlLogger, ResponseContext $responseContext, ResponseContext $sfoResponseContext)
-    {
+    public function __construct(
+        SamlAuthenticationLogger $samlLogger,
+        ResponseContext $responseContext,
+        ResponseContext $sfoResponseContext,
+        private readonly FeatureConfiguration $featureConfiguration = new FeatureConfiguration()
+    ) {
         $this->samlLogger = $samlLogger;
         $this->responseContext = $responseContext;
         $this->sfoResponseContext = $sfoResponseContext;
@@ -91,6 +92,18 @@ class SecondFactorVerificationService
             $provider->getRemoteIdentityProvider()
         );
         $authnRequest->setSubject($subjectNameId);
+
+        if ($this->featureConfiguration->isServiceNameFromSamlAuthnRequestEnabled()) {
+            $activeResponseContext = $responseContextServiceId === 'second_factor_only.response_context'
+                ? $this->sfoResponseContext
+                : $this->responseContext;
+            $displayNames = $activeResponseContext->resolveServiceDisplayNames();
+            if (!empty($displayNames)) {
+                $authnRequest->setExtensions(
+                    UiInfoExtensionHelper::buildExtensionsWithUiInfo($displayNames)
+                );
+            }
+        }
 
         $stateHandler
             ->setRequestId($originalRequestId)

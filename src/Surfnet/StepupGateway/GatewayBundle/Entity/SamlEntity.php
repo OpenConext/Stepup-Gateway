@@ -132,6 +132,9 @@ class SamlEntity
         if (isset($decodedConfiguration['set_sso_cookie_on_2fa'])) {
             $configuration['setSsoCookieOn2fa'] = $decodedConfiguration['set_sso_cookie_on_2fa'];
         }
+        if (isset($decodedConfiguration['service_name'])) {
+            $configuration['serviceName'] = $decodedConfiguration['service_name'];
+        }
         return new ServiceProvider($configuration);
     }
 

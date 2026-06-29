@@ -25,8 +25,10 @@ use Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger;
 use Surfnet\SamlBundle\SAML2\AuthnRequest;
 use Surfnet\SamlBundle\SAML2\AuthnRequestFactory;
 use Surfnet\StepupBundle\Service\LoaResolutionService;
+use Surfnet\StepupGateway\GatewayBundle\Configuration\FeatureConfiguration;
 use Surfnet\StepupGateway\GatewayBundle\Exception\RequesterFailureException;
 use Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler;
+use Surfnet\StepupGateway\GatewayBundle\Saml\UiInfoExtensionHelper;
 use Symfony\Component\HttpFoundation\Request;
 
 class LoginService
@@ -66,7 +68,8 @@ class LoginService
         LoaResolutionService $loaResolutionService,
         ServiceProvider $hostedServiceProvider,
         IdentityProvider $remoteIdp,
-        RedirectBinding $redirectBinding
+        RedirectBinding $redirectBinding,
+        private readonly FeatureConfiguration $featureConfiguration = new FeatureConfiguration()
     ) {
         $this->samlLogger = $samlLogger;
         $this->stateHandler = $stateHandler;
@@ -120,6 +123,10 @@ class LoginService
             ->setResponseContextServiceId(static::RESPONSE_CONTEXT_SERVICE_ID);
 
         $this->stateHandler->markAuthenticationModeForRequest($originalRequestId, 'sso');
+
+        if ($this->featureConfiguration->isServiceNameFromSamlAuthnRequestEnabled()) {
+            UiInfoExtensionHelper::parseAndStore($originalRequest, $this->stateHandler);
+        }
 
         // check if the requested Loa is supported
         $requiredLoa = $originalRequest->getAuthenticationContextClassRef();

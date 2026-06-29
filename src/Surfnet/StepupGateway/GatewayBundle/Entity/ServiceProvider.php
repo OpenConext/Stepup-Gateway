@@ -150,6 +150,11 @@ class ServiceProvider extends BaseServiceProvider
         );
     }
 
+    public function getServiceName(): ?string
+    {
+        return $this->get('serviceName');
+    }
+
     public function allowSsoOn2fa(): bool
     {
         return $this->get('allowSsoOn2fa');

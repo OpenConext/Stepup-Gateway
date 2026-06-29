@@ -26,6 +26,8 @@ use Surfnet\SamlBundle\Http\PostBinding;
 use Surfnet\SamlBundle\Http\RedirectBinding;
 use Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger;
 use Surfnet\SamlBundle\SAML2\ReceivedAuthnRequest;
+use Surfnet\StepupGateway\GatewayBundle\Configuration\FeatureConfiguration;
+use Surfnet\StepupGateway\GatewayBundle\Saml\UiInfoExtensionHelper;
 use Surfnet\StepupBundle\Service\LoaResolutionService;
 use Surfnet\StepupBundle\Value\Loa;
 use Surfnet\StepupGateway\GatewayBundle\Exception\RequesterFailureException;
@@ -236,6 +238,126 @@ final class LoginServiceTest extends GatewaySamlTestCase
         $this->gatewayLoginService->singleSignOn($httpRequest, $originalRequest);
     }
 
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function it_stores_display_names_from_ui_info_when_sfo_flag_is_enabled(): void
+    {
+        $loaLevels = [
+            [1, 'http://stepup.example.com/assurance/loa1'],
+            [2, 'http://stepup.example.com/assurance/loa2'],
+            [3, 'http://stepup.example.com/assurance/loa3'],
+        ];
+        $loaAliases = [
+            'http://stepup.example.com/assurance/loa2' => 'http://suaas.example.com/assurance/loa2',
+        ];
+        $this->initGatewayLoginService($loaLevels, $loaAliases, true);
+
+        $httpRequest = new Request();
+        $originalRequest = ReceivedAuthnRequest::from('<samlp:AuthnRequest xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"
+                    xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
+                    xmlns:mdui="urn:oasis:names:tc:SAML:metadata:ui"
+                    ID="_uiinfo_sfo_enabled"
+                    Version="2.0"
+                    IssueInstant="2017-04-18T16:35:32Z"
+                    Destination="https://tiqr.tld/saml/sso"
+                    AssertionConsumerServiceURL="https://gateway.tld/gssp/tiqr/consume-assertion"
+                    ProtocolBinding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST">
+    <saml:Issuer>https://gateway.tld/gssp/tiqr/metadata</saml:Issuer>
+    <saml:Subject>
+        <saml:NameID Format="urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified">oom60v-3art</saml:NameID>
+    </saml:Subject>
+    <samlp:Extensions>
+        <mdui:UIInfo>
+            <mdui:DisplayName xml:lang="en">My SFO Service</mdui:DisplayName>
+        </mdui:UIInfo>
+    </samlp:Extensions>
+    <samlp:Scoping ProxyCount="10">
+        <samlp:RequesterID>https://ra.tld/vetting-procedure/gssf/tiqr/metadata</samlp:RequesterID>
+    </samlp:Scoping>
+    <samlp:RequestedAuthnContext>
+        <saml:AuthnContextClassRef>http://suaas.example.com/assurance/loa2</saml:AuthnContextClassRef>
+    </samlp:RequestedAuthnContext>
+</samlp:AuthnRequest>');
+
+        $this->mockSessionData('_sf2_attributes', []);
+
+        $serviceProvider = Mockery::mock(ServiceProvider::class)
+            ->shouldReceive('isAllowedToUseSecondFactorOnlyFor')
+            ->with('oom60v-3art')
+            ->andReturn(true)
+            ->getMock();
+
+        $this->samlEntityService->shouldReceive('getServiceProvider')
+            ->with('https://gateway.tld/gssp/tiqr/metadata')
+            ->andReturn($serviceProvider);
+
+        $this->gatewayLoginService->singleSignOn($httpRequest, $originalRequest);
+
+        $sessionData = $this->getSessionData('attributes');
+        $this->assertArrayHasKey('surfnet/gateway/requestdisplay_names', $sessionData);
+        $this->assertSame(
+            [['lang' => 'en', 'value' => 'My SFO Service']],
+            $sessionData['surfnet/gateway/requestdisplay_names']
+        );
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function it_does_not_store_display_names_when_sfo_flag_is_disabled(): void
+    {
+        $loaLevels = [
+            [1, 'http://stepup.example.com/assurance/loa1'],
+            [2, 'http://stepup.example.com/assurance/loa2'],
+            [3, 'http://stepup.example.com/assurance/loa3'],
+        ];
+        $loaAliases = [
+            'http://stepup.example.com/assurance/loa2' => 'http://suaas.example.com/assurance/loa2',
+        ];
+        $this->initGatewayLoginService($loaLevels, $loaAliases, false);
+
+        $httpRequest = new Request();
+        $originalRequest = ReceivedAuthnRequest::from('<samlp:AuthnRequest xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"
+                    xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
+                    xmlns:mdui="urn:oasis:names:tc:SAML:metadata:ui"
+                    ID="_uiinfo_sfo_disabled"
+                    Version="2.0"
+                    IssueInstant="2017-04-18T16:35:32Z"
+                    Destination="https://tiqr.tld/saml/sso"
+                    AssertionConsumerServiceURL="https://gateway.tld/gssp/tiqr/consume-assertion"
+                    ProtocolBinding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST">
+    <saml:Issuer>https://gateway.tld/gssp/tiqr/metadata</saml:Issuer>
+    <saml:Subject>
+        <saml:NameID Format="urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified">oom60v-3art</saml:NameID>
+    </saml:Subject>
+    <samlp:Extensions>
+        <mdui:UIInfo>
+            <mdui:DisplayName xml:lang="en">My SFO Service</mdui:DisplayName>
+        </mdui:UIInfo>
+    </samlp:Extensions>
+    <samlp:Scoping ProxyCount="10">
+        <samlp:RequesterID>https://ra.tld/vetting-procedure/gssf/tiqr/metadata</samlp:RequesterID>
+    </samlp:Scoping>
+    <samlp:RequestedAuthnContext>
+        <saml:AuthnContextClassRef>http://suaas.example.com/assurance/loa2</saml:AuthnContextClassRef>
+    </samlp:RequestedAuthnContext>
+</samlp:AuthnRequest>');
+
+        $this->mockSessionData('_sf2_attributes', []);
+
+        $serviceProvider = Mockery::mock(ServiceProvider::class)
+            ->shouldReceive('isAllowedToUseSecondFactorOnlyFor')
+            ->with('oom60v-3art')
+            ->andReturn(true)
+            ->getMock();
+
+        $this->samlEntityService->shouldReceive('getServiceProvider')
+            ->with('https://gateway.tld/gssp/tiqr/metadata')
+            ->andReturn($serviceProvider);
+
+        $this->gatewayLoginService->singleSignOn($httpRequest, $originalRequest);
+
+        $sessionData = $this->getSessionData('attributes');
+        $this->assertArrayNotHasKey('surfnet/gateway/requestdisplay_names', $sessionData);
+    }
+
     /**
      * @param array $idpConfiguration
      * @param array $loaAliases
@@ -243,7 +365,7 @@ final class LoginServiceTest extends GatewaySamlTestCase
      * @param DateTime $now
      * @param array $sessionData
      */
-    private function initGatewayLoginService(array $loaLevels,  array $loaAliases): void
+    private function initGatewayLoginService(array $loaLevels, array $loaAliases, bool $enableServiceNameFromSamlAuthnRequest = false): void
     {
         $session = new Session($this->sessionStorage);
         $requestStackMock = $this->createMock(RequestStack::class);
@@ -268,7 +390,8 @@ final class LoginServiceTest extends GatewaySamlTestCase
             $this->stateHandler,
             $httpBindingFactory,
             $secondFactorOnlyNameValidatorService,
-            $loaResolutionService
+            $loaResolutionService,
+            new FeatureConfiguration($enableServiceNameFromSamlAuthnRequest)
         );
     }
 
