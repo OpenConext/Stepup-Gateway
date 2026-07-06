@@ -30,19 +30,23 @@ class UiInfoExtensionHelper
     private const MDUI_NAMESPACE = 'urn:oasis:names:tc:SAML:metadata:ui';
     private const MDUI_PREFIX = 'mdui';
 
+    private const MAX_DISPLAY_NAMES = 10;
+    private const MAX_LANG_LENGTH = 35;
+    private const MAX_VALUE_LENGTH = 1024;
+
     /**
-     * Parse UIInfo display names from an AuthnRequest and store them in state if present.
+     * Parse UIInfo display names from an AuthnRequest and store them in state.
+     *
+     * Always overwrites the stored display names, so a request without UIInfo
+     * clears any display names left over from a previous request in the same session.
      */
     public static function parseAndStore(ReceivedAuthnRequest $request, ProxyStateHandler $stateHandler): void
     {
         $chunks = $request->getExtensions()->getChunks();
-        if (!isset($chunks['UIInfo'])) {
-            return;
-        }
-        $displayNames = self::parseDisplayNamesFromChunk($chunks['UIInfo']);
-        if (!empty($displayNames)) {
-            $stateHandler->setDisplayNamesFromRequest(...$displayNames);
-        }
+        $displayNames = isset($chunks['UIInfo'])
+            ? self::parseDisplayNamesFromChunk($chunks['UIInfo'])
+            : [];
+        $stateHandler->setDisplayNamesFromRequest(...$displayNames);
     }
 
     /**
@@ -64,8 +68,15 @@ class UiInfoExtensionHelper
             }
             $lang = $child->getAttribute('xml:lang');
             $value = $child->textContent;
-            if ($lang !== '' && $value !== '') {
-                $displayNames[] = new DisplayName($lang, $value);
+            if ($lang === '' || $value === ''
+                || strlen($lang) > self::MAX_LANG_LENGTH
+                || strlen($value) > self::MAX_VALUE_LENGTH
+            ) {
+                continue;
+            }
+            $displayNames[] = new DisplayName($lang, $value);
+            if (count($displayNames) >= self::MAX_DISPLAY_NAMES) {
+                break;
             }
         }
 

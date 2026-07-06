@@ -176,6 +176,66 @@ class UiInfoExtensionHelperTest extends GatewaySamlTestCase
         $this->assertSame([], $stateHandler->getDisplayNamesFromRequest());
     }
 
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function parse_and_store_clears_display_names_from_a_previous_request(): void
+    {
+        $stateHandler = $this->buildStateHandler();
+        $stateHandler->setDisplayNamesFromRequest(new DisplayName('en', 'Previous Service'));
+
+        $request = \Surfnet\SamlBundle\SAML2\ReceivedAuthnRequest::from('<samlp:AuthnRequest xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol" xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" ID="_test3" Version="2.0" IssueInstant="2017-04-18T16:35:32Z" Destination="https://example.com" AssertionConsumerServiceURL="https://example.com/acs" ProtocolBinding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"><saml:Issuer>https://example.com</saml:Issuer></samlp:AuthnRequest>');
+
+        UiInfoExtensionHelper::parseAndStore($request, $stateHandler);
+
+        $this->assertSame([], $stateHandler->getDisplayNamesFromRequest());
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function it_limits_the_number_of_parsed_display_names(): void
+    {
+        $langToValue = [];
+        for ($i = 0; $i < 25; $i++) {
+            $langToValue['x-l' . $i] = 'Service ' . $i;
+        }
+        $chunk = $this->buildUiInfoChunk($langToValue);
+
+        $displayNames = UiInfoExtensionHelper::parseDisplayNamesFromChunk($chunk);
+
+        $this->assertCount(10, $displayNames);
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function it_skips_display_names_exceeding_length_limits(): void
+    {
+        $chunk = $this->buildUiInfoChunk([
+            'en' => str_repeat('a', 1025),
+            str_repeat('l', 36) => 'Too long lang',
+            'nl' => 'Acceptable Service',
+        ]);
+
+        $displayNames = UiInfoExtensionHelper::parseDisplayNamesFromChunk($chunk);
+
+        $this->assertCount(1, $displayNames);
+        $this->assertSame('nl', $displayNames[0]->lang);
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function display_name_from_array_tolerates_missing_keys(): void
+    {
+        $displayName = DisplayName::fromArray([]);
+
+        $this->assertSame('', $displayName->lang);
+        $this->assertSame('', $displayName->value);
+    }
+
+    private function buildStateHandler(): \Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler
+    {
+        $storage = new \Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage();
+        $session = new \Symfony\Component\HttpFoundation\Session\Session($storage);
+        $requestStack = \Mockery::mock(\Symfony\Component\HttpFoundation\RequestStack::class);
+        $requestStack->shouldReceive('getSession')->andReturn($session);
+        return new \Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler($requestStack, 'surfnet/gateway/request');
+    }
+
     private function buildUiInfoChunk(array $langToValue): Chunk
     {
         $doc = new DOMDocument('1.0', 'UTF-8');

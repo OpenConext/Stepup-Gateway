@@ -33,6 +33,6 @@ class DisplayName
 
     public static function fromArray(array $data): self
     {
-        return new self($data['lang'], $data['value']);
+        return new self($data['lang'] ?? '', $data['value'] ?? '');
     }
 }
