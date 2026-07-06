@@ -68,10 +68,7 @@ class UiInfoExtensionHelper
             }
             $lang = $child->getAttribute('xml:lang');
             $value = $child->textContent;
-            if ($lang === '' || $value === ''
-                || strlen($lang) > self::MAX_LANG_LENGTH
-                || strlen($value) > self::MAX_VALUE_LENGTH
-            ) {
+            if (!self::isAcceptableDisplayName($lang, $value)) {
                 continue;
             }
             $displayNames[] = new DisplayName($lang, $value);
@@ -81,6 +78,13 @@ class UiInfoExtensionHelper
         }
 
         return $displayNames;
+    }
+
+    private static function isAcceptableDisplayName(string $lang, string $value): bool
+    {
+        return $lang !== '' && $value !== ''
+            && strlen($lang) <= self::MAX_LANG_LENGTH
+            && strlen($value) <= self::MAX_VALUE_LENGTH;
     }
 
     /**
