@@ -93,16 +93,18 @@ class SecondFactorVerificationService
         );
         $authnRequest->setSubject($subjectNameId);
 
-        if ($this->featureConfiguration->isServiceNameFromSamlAuthnRequestEnabled()) {
-            $activeResponseContext = $responseContextServiceId === 'second_factor_only.response_context'
-                ? $this->sfoResponseContext
-                : $this->responseContext;
-            $displayNames = $activeResponseContext->resolveServiceDisplayNames();
-            if (!empty($displayNames)) {
-                $authnRequest->setExtensions(
-                    UiInfoExtensionHelper::buildExtensionsWithUiInfo($displayNames)
-                );
-            }
+        $activeResponseContext = $responseContextServiceId === 'second_factor_only.response_context'
+            ? $this->sfoResponseContext
+            : $this->responseContext;
+        // The middleware service_name override must always be honored. Only the AuthnRequest
+        // mdui:DisplayName-derived fallback is gated behind the feature flag.
+        $displayNames = $activeResponseContext->resolveServiceDisplayNames(
+            $this->featureConfiguration->isServiceNameFromSamlAuthnRequestEnabled()
+        );
+        if (!empty($displayNames)) {
+            $authnRequest->setExtensions(
+                UiInfoExtensionHelper::buildExtensionsWithUiInfo($displayNames)
+            );
         }
 
         $stateHandler

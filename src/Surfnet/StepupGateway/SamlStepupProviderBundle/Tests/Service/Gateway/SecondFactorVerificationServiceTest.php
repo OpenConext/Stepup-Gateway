@@ -159,6 +159,7 @@ class SecondFactorVerificationServiceTest extends GatewaySamlTestCase
 
         $this->mockSessionData('_sf2_attributes', [
             'surfnet/gateway/gssp/test_provider/request_id' => '_1b8f282a9c194b264ef68761171539380de78b45038f65b8609df868f55e',
+            'surfnet/gateway/gssp/test_provider/service_provider' => 'https://gateway.tld/authentication/metadata',
         ]);
 
         $authnRequest = $this->samlProxySecondFactorService->sendSecondFactorVerificationAuthnRequest(
@@ -168,6 +169,39 @@ class SecondFactorVerificationServiceTest extends GatewaySamlTestCase
         );
 
         $this->assertEmpty($authnRequest->getExtensions()->getChunks());
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function it_still_sets_ui_info_extension_from_middleware_override_when_feature_flag_disabled(): void
+    {
+        $responseContext = m::mock(ResponseContext::class);
+        $responseContext->shouldReceive('getInResponseTo')->andReturn('_1b8f282a9c194b264ef68761171539380de78b45038f65b8609df868f55e');
+        $responseContext->shouldReceive('resolveServiceDisplayNames')
+            ->with(false)
+            ->andReturn([new DisplayName('en', 'Middleware Service Name')]);
+
+        $sfoResponseContext = m::mock(ResponseContext::class);
+        $sfoResponseContext->shouldNotReceive('resolveServiceDisplayNames');
+
+        $samlLogger = new SamlAuthenticationLogger($this->logger);
+        // FeatureConfiguration defaults to disabled (false) here.
+        $service = new SecondFactorVerificationService($samlLogger, $responseContext, $sfoResponseContext);
+
+        $this->mockSessionData('_sf2_attributes', [
+            'surfnet/gateway/gssp/test_provider/request_id' => '_1b8f282a9c194b264ef68761171539380de78b45038f65b8609df868f55e',
+        ]);
+
+        $authnRequest = $service->sendSecondFactorVerificationAuthnRequest(
+            $this->provider,
+            'test-gssp-id',
+            'service_id'
+        );
+
+        $chunks = $authnRequest->getExtensions()->getChunks();
+        $this->assertArrayHasKey('UIInfo', $chunks);
+        $uiInfo = $chunks['UIInfo']->getValue();
+        $displayName = $uiInfo->childNodes->item(0);
+        $this->assertSame('Middleware Service Name', $displayName->textContent);
     }
 
     #[\PHPUnit\Framework\Attributes\Test]
@@ -346,6 +380,16 @@ class SecondFactorVerificationServiceTest extends GatewaySamlTestCase
         $this->idp = new IdentityProvider($idpConfiguration);
         $serviceProvider = new ServiceProvider($spConfiguration);
         $this->samlEntityService = m::mock(SamlEntityService::class);
+        // resolveServiceDisplayNames() is now always invoked (regardless of the feature flag), so it
+        // always resolves a middleware ServiceProvider entity. None of these tests configure a
+        // middleware service_name, so return a plain SP without one (no middleware override present).
+        $this->samlEntityService->shouldReceive('getServiceProvider')->andReturn(
+            new GatewayServiceProvider([
+                'entityId' => 'https://gateway.tld/authentication/metadata',
+                'assertionConsumerUrl' => 'https://gateway.tld/authentication/consume-assertion',
+                'privateKeys' => [],
+            ])
+        );
 
         $this->provider = new Provider(
             'testProvider',

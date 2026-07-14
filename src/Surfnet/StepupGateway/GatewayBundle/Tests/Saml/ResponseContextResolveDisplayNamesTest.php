@@ -159,4 +159,55 @@ class ResponseContextResolveDisplayNamesTest extends TestCase
         $this->assertCount(1, $result);
         $this->assertSame('Fallback Name', $result[0]->value);
     }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function it_returns_middleware_service_name_even_when_authn_request_fallback_is_disabled(): void
+    {
+        $sp = new GatewayServiceProvider([
+            'entityId' => 'sp.example.com',
+            'assertionConsumerUrl' => 'sp.example.com/acs',
+            'privateKeys' => [],
+            'serviceName' => 'Middleware Service Name',
+        ]);
+
+        $this->stateHandler->setRequestServiceProvider('sp.example.com');
+        $this->samlEntityService->shouldReceive('getServiceProvider')
+            ->with('sp.example.com')
+            ->andReturn($sp);
+
+        $this->stateHandler->setDisplayNamesFromRequest(
+            new DisplayName('en', 'AuthnRequest Name'),
+            new DisplayName('nl', 'AuthnRequest Naam')
+        );
+
+        $result = $this->responseContext->resolveServiceDisplayNames(includeAuthnRequestFallback: false);
+
+        $this->assertCount(1, $result);
+        $this->assertSame('en', $result[0]->lang);
+        $this->assertSame('Middleware Service Name', $result[0]->value);
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function it_returns_empty_when_authn_request_fallback_is_disabled_and_sp_has_no_service_name(): void
+    {
+        $sp = new GatewayServiceProvider([
+            'entityId' => 'sp.example.com',
+            'assertionConsumerUrl' => 'sp.example.com/acs',
+            'privateKeys' => [],
+        ]);
+
+        $this->stateHandler->setRequestServiceProvider('sp.example.com');
+        $this->samlEntityService->shouldReceive('getServiceProvider')
+            ->with('sp.example.com')
+            ->andReturn($sp);
+
+        $this->stateHandler->setDisplayNamesFromRequest(
+            new DisplayName('en', 'AuthnRequest Name'),
+            new DisplayName('nl', 'AuthnRequest Naam')
+        );
+
+        $result = $this->responseContext->resolveServiceDisplayNames(includeAuthnRequestFallback: false);
+
+        $this->assertSame([], $result);
+    }
 }

@@ -382,9 +382,14 @@ class ResponseContext
     /**
      * Resolve display names applying priority: middleware service_name overrides AuthnRequest mdui:DisplayName.
      *
+     * The middleware service_name override is always considered, regardless of the AuthnRequest
+     * mdui:DisplayName feature flag. Only the AuthnRequest-derived fallback is gated by
+     * $includeAuthnRequestFallback, so callers can suppress it when the feature is disabled without
+     * also losing the (unrelated) middleware override.
+     *
      * @return DisplayName[]
      */
-    public function resolveServiceDisplayNames(): array
+    public function resolveServiceDisplayNames(bool $includeAuthnRequestFallback = true): array
     {
         $sp = $this->getServiceProvider();
         if ($sp !== null) {
@@ -392,6 +397,9 @@ class ResponseContext
             if ($serviceName !== null && $serviceName !== '') {
                 return [new DisplayName('en', $serviceName)];
             }
+        }
+        if (!$includeAuthnRequestFallback) {
+            return [];
         }
         return $this->getDisplayNamesFromRequest();
     }
