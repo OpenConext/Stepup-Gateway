@@ -36,8 +36,14 @@ class SecondFactorRepository
         $this->connection = $factory->createConnection();
     }
 
-    public function create($nameId, $tokenType, $institution, bool $selfAsserted = false, $identifier = null)
-    {
+    public function create(
+        $nameId,
+        $tokenType,
+        $institution,
+        bool $selfAsserted = false,
+        $identifier = null,
+        string $displayLocale = 'en_GB',
+    ) {
         $uuid = Uuid::uuid4()->toString();
 
         // If an identifier is not important, simply use the UUID, otherwise use the provide one
@@ -53,7 +59,7 @@ class SecondFactorRepository
             'secondFactorType' => $tokenType,
             'secondFactorIdentifier' => $identifier,
             'id' => $uuid,
-            'displayLocale' => 'en_GB',
+            'displayLocale' => $displayLocale,
             'identityVetted' => $selfAsserted ? 0 : 1,
         ];
         $sql = <<<SQL

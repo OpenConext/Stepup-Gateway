@@ -39,7 +39,7 @@ class SamlEntityRepository
         $this->connection = $factory->createConnection();
     }
 
-    public function createSpIfNotExists($entityId, $certificate, $sfoEnabled = false)
+    public function createSpIfNotExists($entityId, $certificate, $sfoEnabled = false, array $serviceNames = [])
     {
         // Does the SP exist?
         $stmt = $this->connection->prepare('SELECT * FROM saml_entity WHERE entity_id=:entityId LIMIT 1');
@@ -59,6 +59,11 @@ class SamlEntityRepository
                 'urn:collab:person:stepup.example.com:admin',
                 'urn:collab:person:dev.openconext.local:*',
             ];
+            if (!empty($serviceNames)) {
+                // Mirrors Middleware's per-locale service_name override, consumed by
+                // SamlEntity::toServiceProvider() as a locale => name map.
+                $configuration['service_name'] = $serviceNames;
+            }
 
             $data = [
                 'entityId' => $entityId,
@@ -95,6 +100,26 @@ SQL;
             // Return the SP data
             $results = $stmt->fetchAll();
             $result = $results[0];
+
+            // A few EntityIDs are fixed here (e.g. GSSP registration only accepts a small
+            // allowed-list), so scenarios in the same feature file may re-register the same
+            // EntityID with a different Middleware map. Update the key in place instead of
+            // keeping the first write, so scenario order doesn't matter - other callers pass
+            // an empty $serviceNames and are unaffected.
+            if (!empty($serviceNames)) {
+                $configuration = json_decode($result['configuration'], true);
+                $configuration['service_name'] = $serviceNames;
+                $result['configuration'] = json_encode($configuration);
+
+                $updateStmt = $this->connection->prepare(
+                    'UPDATE saml_entity SET configuration=:configuration WHERE id=:id'
+                );
+                $updateStmt->execute([
+                    'configuration' => $result['configuration'],
+                    'id' => $result['id'],
+                ]);
+            }
+
             $data = [
                 'entityId' => $result['entity_id'],
                 'type' => $result['type'],

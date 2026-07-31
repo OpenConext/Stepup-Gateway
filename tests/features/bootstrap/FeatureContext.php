@@ -113,6 +113,20 @@ class FeatureContext implements Context
         }
     }
 
+    #[\Behat\Step\Given('/^a user from "([^"]*)" identified by "([^"]*)" with a vetted "([^"]*)" token and display locale "([^"]*)"$/')]
+    public function aUserIdentifiedByWithAVettedTokenAndDisplayLocale($institution, $nameId, $tokenType, $displayLocale): void
+    {
+        switch (strtolower($tokenType)) {
+            case "tiqr":
+                $this->currentToken = $this->fixtureService->registerTiqrToken($nameId, $institution, false, $displayLocale);
+                break;
+            default:
+                throw new RuntimeException(
+                    sprintf('Setting a display locale for token type "%s" is not (yet) supported', $tokenType)
+                );
+        }
+    }
+
     #[\Behat\Step\Given('/^a user from "([^"]*)" identified by "([^"]*)" with a self-asserted "([^"]*)" token$/')]
     public function aUserIdentifiedByWithASelfAssertedToken($institution, $nameId, $tokenType): void
     {
@@ -186,6 +200,18 @@ class FeatureContext implements Context
     {
         $this->pressButtonWhenNoJavascriptSupport();
         $this->pressButtonWhenNoJavascriptSupport();
+    }
+
+    #[\Behat\Step\Given('/^the user\'s interface language is "([^"]*)"$/')]
+    public function theUsersInterfaceLanguageIs(string $locale): void
+    {
+        // Setting a cookie on the browser's session requires a host to already be known: visit a
+        // URL first if this is the very first interaction of the scenario, so the cookie jar has
+        // somewhere to attach the cookie to.
+        if (!$this->minkContext->getSession()->isStarted()) {
+            $this->minkContext->visit('https://gateway.dev.openconext.local/info');
+        }
+        $this->minkContext->getSession()->setCookie('stepup_locale', $locale);
     }
 
     #[\Behat\Step\Given('/^a whitelisted institution ([^"]*)$/')]

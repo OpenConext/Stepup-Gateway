@@ -26,6 +26,10 @@ use Surfnet\SamlBundle\Http\RedirectBinding;
 use Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger;
 use Surfnet\SamlBundle\SAML2\AuthnRequest;
 use Surfnet\SamlBundle\SAML2\ReceivedAuthnRequest;
+use Surfnet\StepupGateway\GatewayBundle\Configuration\FeatureConfiguration;
+use Surfnet\StepupGateway\GatewayBundle\Entity\ServiceProvider as GatewayServiceProvider;
+use Surfnet\StepupGateway\GatewayBundle\Saml\ServiceDisplayNameResolver;
+use Surfnet\StepupGateway\GatewayBundle\Saml\UiInfoExtensionMapper;
 use Surfnet\StepupGateway\GatewayBundle\Service\SamlEntityService;
 use Surfnet\StepupGateway\GatewayBundle\Tests\TestCase\GatewaySamlTestCase;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Exception\NotConnectedServiceProviderException;
@@ -55,6 +59,9 @@ class LoginServiceTest extends GatewaySamlTestCase
 
     /** @var Mockery\Mock|SamlEntityService */
     private $samlEntityService;
+
+    /** @var FeatureConfiguration */
+    private $featureConfiguration;
 
     /** @var IdentityProvider */
     private $remoteIdp;
@@ -170,6 +177,326 @@ class LoginServiceTest extends GatewaySamlTestCase
 
 
     #[\PHPUnit\Framework\Attributes\Test]
+    public function it_forwards_the_middleware_service_name_as_mdui_uiinfo_when_the_flag_is_enabled(): void
+    {
+        $this->featureConfiguration = new FeatureConfiguration(true);
+        $this->samlProxyLoginService = new LoginService(
+            new SamlAuthenticationLogger($this->logger),
+            $this->redirectBinding,
+            new ConnectedServiceProviders(
+                $this->samlEntityService,
+                new AllowedServiceProviders(['https://gateway.tld/authentication/metadata'], '/^https:\/\/$/')
+            ),
+            new ServiceDisplayNameResolver($this->featureConfiguration, $this->samlEntityService),
+            new UiInfoExtensionMapper()
+        );
+
+        $httpRequest = new Request();
+        $authnRequest = '<samlp:AuthnRequest xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"
+                    xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
+                    ID="_1b8f282a9c194b264ef68761171539380de78b45038f65b8609df868f55e"
+                    Version="2.0"
+                    IssueInstant="2015-04-17T13:57:52Z"
+                    Destination="https://remote-idp.tld.nl/authentication/idp/single-sign-on"
+                    AssertionConsumerServiceURL="https://gateway.tld/authentication/consume-assertion"
+                    ProtocolBinding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST">
+    <saml:Issuer>https://gateway.tld/authentication/metadata</saml:Issuer>
+    <samlp:Scoping ProxyCount="10">
+        <samlp:RequesterID>https://service-provider.example.org/authentication/metadata</samlp:RequesterID>
+    </samlp:Scoping>
+</samlp:AuthnRequest>';
+
+        $this->mockRedirectBinding($authnRequest);
+        $this->mockSessionData('_sf2_attributes', []);
+
+        $sp = new GatewayServiceProvider([
+            'entityId' => 'https://gateway.tld/authentication/metadata',
+            'assertionConsumerUrl' => 'https://gateway.tld/authentication/consume-assertion',
+            'privateKeys' => [],
+            'serviceNames' => ['en_GB' => 'Test Service Name'],
+        ]);
+        $this->samlEntityService->shouldReceive('hasServiceProvider')
+            ->with('https://gateway.tld/authentication/metadata')
+            ->andReturn(true);
+        $this->samlEntityService->shouldReceive('getServiceProvider')
+            ->with('https://gateway.tld/authentication/metadata')
+            ->andReturn($sp);
+
+        $proxyRequest = $this->samlProxyLoginService->singleSignOn($this->provider, $httpRequest);
+
+        $xml = $proxyRequest->getUnsignedXML();
+        $this->assertStringContainsString('<mdui:UIInfo', $xml);
+        $this->assertStringContainsString('xml:lang="en"', $xml);
+        $this->assertStringContainsString('Test Service Name', $xml);
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function it_forwards_only_the_mdui_display_name_matching_the_request_locale(): void
+    {
+        $this->featureConfiguration = new FeatureConfiguration(true);
+        $this->samlProxyLoginService = new LoginService(
+            new SamlAuthenticationLogger($this->logger),
+            $this->redirectBinding,
+            new ConnectedServiceProviders(
+                $this->samlEntityService,
+                new AllowedServiceProviders(['https://gateway.tld/authentication/metadata'], '/^https:\/\/$/')
+            ),
+            new ServiceDisplayNameResolver($this->featureConfiguration, $this->samlEntityService),
+            new UiInfoExtensionMapper()
+        );
+
+        $httpRequest = new Request();
+        $httpRequest->setLocale('nl');
+        $authnRequest = '<samlp:AuthnRequest xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"
+                    xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
+                    ID="_1b8f282a9c194b264ef68761171539380de78b45038f65b8609df868f55e"
+                    Version="2.0"
+                    IssueInstant="2015-04-17T13:57:52Z"
+                    Destination="https://remote-idp.tld.nl/authentication/idp/single-sign-on"
+                    AssertionConsumerServiceURL="https://gateway.tld/authentication/consume-assertion"
+                    ProtocolBinding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST">
+    <saml:Issuer>https://gateway.tld/authentication/metadata</saml:Issuer>
+    <samlp:Scoping ProxyCount="10">
+        <samlp:RequesterID>https://service-provider.example.org/authentication/metadata</samlp:RequesterID>
+    </samlp:Scoping>
+</samlp:AuthnRequest>';
+
+        $this->mockRedirectBinding($authnRequest);
+        $this->mockSessionData('_sf2_attributes', []);
+
+        $sp = new GatewayServiceProvider([
+            'entityId' => 'https://gateway.tld/authentication/metadata',
+            'assertionConsumerUrl' => 'https://gateway.tld/authentication/consume-assertion',
+            'privateKeys' => [],
+            'serviceNames' => ['en_GB' => 'English Name', 'nl_NL' => 'Dutch Name'],
+        ]);
+        $this->samlEntityService->shouldReceive('hasServiceProvider')
+            ->with('https://gateway.tld/authentication/metadata')
+            ->andReturn(true);
+        $this->samlEntityService->shouldReceive('getServiceProvider')
+            ->with('https://gateway.tld/authentication/metadata')
+            ->andReturn($sp);
+
+        $proxyRequest = $this->samlProxyLoginService->singleSignOn($this->provider, $httpRequest);
+
+        $xml = $proxyRequest->getUnsignedXML();
+        $this->assertStringContainsString('<mdui:UIInfo', $xml);
+        $this->assertStringContainsString('xml:lang="nl"', $xml);
+        $this->assertStringContainsString('Dutch Name', $xml);
+        $this->assertStringNotContainsString('xml:lang="en"', $xml);
+        $this->assertStringNotContainsString('English Name', $xml);
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function it_does_not_forward_service_name_when_the_flag_is_disabled_even_if_middleware_has_one(): void
+    {
+        $this->featureConfiguration = new FeatureConfiguration(false);
+        $this->samlProxyLoginService = new LoginService(
+            new SamlAuthenticationLogger($this->logger),
+            $this->redirectBinding,
+            new ConnectedServiceProviders(
+                $this->samlEntityService,
+                new AllowedServiceProviders(['https://gateway.tld/authentication/metadata'], '/^https:\/\/$/')
+            ),
+            new ServiceDisplayNameResolver($this->featureConfiguration, $this->samlEntityService),
+            new UiInfoExtensionMapper()
+        );
+
+        $httpRequest = new Request();
+        $authnRequest = '<samlp:AuthnRequest xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"
+                    xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
+                    ID="_1b8f282a9c194b264ef68761171539380de78b45038f65b8609df868f55e"
+                    Version="2.0"
+                    IssueInstant="2015-04-17T13:57:52Z"
+                    Destination="https://remote-idp.tld.nl/authentication/idp/single-sign-on"
+                    AssertionConsumerServiceURL="https://gateway.tld/authentication/consume-assertion"
+                    ProtocolBinding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST">
+    <saml:Issuer>https://gateway.tld/authentication/metadata</saml:Issuer>
+    <samlp:Scoping ProxyCount="10">
+        <samlp:RequesterID>https://service-provider.example.org/authentication/metadata</samlp:RequesterID>
+    </samlp:Scoping>
+</samlp:AuthnRequest>';
+
+        $this->mockRedirectBinding($authnRequest);
+        $this->mockSessionData('_sf2_attributes', []);
+
+        $sp = new GatewayServiceProvider([
+            'entityId' => 'https://gateway.tld/authentication/metadata',
+            'assertionConsumerUrl' => 'https://gateway.tld/authentication/consume-assertion',
+            'privateKeys' => [],
+            'serviceNames' => ['en_GB' => 'Test Service Name'],
+        ]);
+        $this->samlEntityService->shouldReceive('getServiceProvider')
+            ->with('https://gateway.tld/authentication/metadata')
+            ->andReturn($sp);
+
+        $proxyRequest = $this->samlProxyLoginService->singleSignOn($this->provider, $httpRequest);
+
+        $this->assertStringNotContainsString('mdui:UIInfo', $proxyRequest->getUnsignedXML());
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function it_strips_an_original_mdui_uiinfo_extension_when_the_flag_is_disabled(): void
+    {
+        $this->featureConfiguration = new FeatureConfiguration(false);
+        $this->samlProxyLoginService = new LoginService(
+            new SamlAuthenticationLogger($this->logger),
+            $this->redirectBinding,
+            new ConnectedServiceProviders(
+                $this->samlEntityService,
+                new AllowedServiceProviders(['https://gateway.tld/authentication/metadata'], '/^https:\/\/$/')
+            ),
+            new ServiceDisplayNameResolver($this->featureConfiguration, $this->samlEntityService),
+            new UiInfoExtensionMapper()
+        );
+
+        $httpRequest = new Request();
+        $authnRequest = '<samlp:AuthnRequest xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"
+                    xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
+                    ID="_1b8f282a9c194b264ef68761171539380de78b45038f65b8609df868f55e"
+                    Version="2.0"
+                    IssueInstant="2015-04-17T13:57:52Z"
+                    Destination="https://remote-idp.tld.nl/authentication/idp/single-sign-on"
+                    AssertionConsumerServiceURL="https://gateway.tld/authentication/consume-assertion"
+                    ProtocolBinding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST">
+    <saml:Issuer>https://gateway.tld/authentication/metadata</saml:Issuer>
+    <samlp:Extensions>
+        <mdui:UIInfo xmlns:mdui="urn:oasis:names:tc:SAML:metadata:ui">
+            <mdui:DisplayName xml:lang="en">Should not reach the GSSP</mdui:DisplayName>
+        </mdui:UIInfo>
+    </samlp:Extensions>
+    <samlp:Scoping ProxyCount="10">
+        <samlp:RequesterID>https://service-provider.example.org/authentication/metadata</samlp:RequesterID>
+    </samlp:Scoping>
+</samlp:AuthnRequest>';
+
+        $this->mockRedirectBinding($authnRequest);
+        $this->mockSessionData('_sf2_attributes', []);
+
+        $sp = new GatewayServiceProvider([
+            'entityId' => 'https://gateway.tld/authentication/metadata',
+            'assertionConsumerUrl' => 'https://gateway.tld/authentication/consume-assertion',
+            'privateKeys' => [],
+        ]);
+        $this->samlEntityService->shouldReceive('getServiceProvider')
+            ->with('https://gateway.tld/authentication/metadata')
+            ->andReturn($sp);
+
+        $proxyRequest = $this->samlProxyLoginService->singleSignOn($this->provider, $httpRequest);
+
+        $this->assertStringNotContainsString('mdui:UIInfo', $proxyRequest->getUnsignedXML());
+        $this->assertStringNotContainsString('Should not reach the GSSP', $proxyRequest->getUnsignedXML());
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function it_preserves_the_original_gssp_user_attributes_extension_when_merging_in_mdui_uiinfo(): void
+    {
+        $this->featureConfiguration = new FeatureConfiguration(true);
+        $this->samlProxyLoginService = new LoginService(
+            new SamlAuthenticationLogger($this->logger),
+            $this->redirectBinding,
+            new ConnectedServiceProviders(
+                $this->samlEntityService,
+                new AllowedServiceProviders(['https://gateway.tld/authentication/metadata'], '/^https:\/\/$/')
+            ),
+            new ServiceDisplayNameResolver($this->featureConfiguration, $this->samlEntityService),
+            new UiInfoExtensionMapper()
+        );
+
+        $httpRequest = new Request();
+        $authnRequest = '<samlp:AuthnRequest xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"
+                    xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
+                    ID="_1b8f282a9c194b264ef68761171539380de78b45038f65b8609df868f55e"
+                    Version="2.0"
+                    IssueInstant="2015-04-17T13:57:52Z"
+                    Destination="https://remote-idp.tld.nl/authentication/idp/single-sign-on"
+                    AssertionConsumerServiceURL="https://gateway.tld/authentication/consume-assertion"
+                    ProtocolBinding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST">
+    <saml:Issuer>https://gateway.tld/authentication/metadata</saml:Issuer>
+    <samlp:Extensions>
+        <gssp:UserAttributes xmlns:gssp="urn:mace:surf.nl:stepup:gssp-extensions" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+    </samlp:Extensions>
+    <samlp:Scoping ProxyCount="10">
+        <samlp:RequesterID>https://service-provider.example.org/authentication/metadata</samlp:RequesterID>
+    </samlp:Scoping>
+</samlp:AuthnRequest>';
+
+        $this->mockRedirectBinding($authnRequest);
+        $this->mockSessionData('_sf2_attributes', []);
+
+        $sp = new GatewayServiceProvider([
+            'entityId' => 'https://gateway.tld/authentication/metadata',
+            'assertionConsumerUrl' => 'https://gateway.tld/authentication/consume-assertion',
+            'privateKeys' => [],
+            'serviceNames' => ['en_GB' => 'Test Service Name'],
+        ]);
+        $this->samlEntityService->shouldReceive('hasServiceProvider')
+            ->with('https://gateway.tld/authentication/metadata')
+            ->andReturn(true);
+        $this->samlEntityService->shouldReceive('getServiceProvider')
+            ->with('https://gateway.tld/authentication/metadata')
+            ->andReturn($sp);
+
+        $proxyRequest = $this->samlProxyLoginService->singleSignOn($this->provider, $httpRequest);
+
+        $xml = $proxyRequest->getUnsignedXML();
+        $this->assertStringContainsString('gssp:UserAttributes', $xml);
+        $this->assertStringContainsString('mdui:UIInfo', $xml);
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function it_falls_back_to_the_original_request_mdui_when_the_sp_is_not_registered_in_middleware(): void
+    {
+        $this->featureConfiguration = new FeatureConfiguration(true);
+        $this->samlProxyLoginService = new LoginService(
+            new SamlAuthenticationLogger($this->logger),
+            $this->redirectBinding,
+            new ConnectedServiceProviders(
+                $this->samlEntityService,
+                new AllowedServiceProviders(['https://gateway.tld/authentication/metadata'], '/^https:\/\/$/')
+            ),
+            new ServiceDisplayNameResolver($this->featureConfiguration, $this->samlEntityService),
+            new UiInfoExtensionMapper()
+        );
+
+        $httpRequest = new Request();
+        $authnRequest = '<samlp:AuthnRequest xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"
+                    xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
+                    ID="_1b8f282a9c194b264ef68761171539380de78b45038f65b8609df868f55e"
+                    Version="2.0"
+                    IssueInstant="2015-04-17T13:57:52Z"
+                    Destination="https://remote-idp.tld.nl/authentication/idp/single-sign-on"
+                    AssertionConsumerServiceURL="https://gateway.tld/authentication/consume-assertion"
+                    ProtocolBinding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST">
+    <saml:Issuer>https://gateway.tld/authentication/metadata</saml:Issuer>
+    <samlp:Extensions>
+        <mdui:UIInfo xmlns:mdui="urn:oasis:names:tc:SAML:metadata:ui">
+            <mdui:DisplayName xml:lang="en">Fallback Name</mdui:DisplayName>
+        </mdui:UIInfo>
+    </samlp:Extensions>
+    <samlp:Scoping ProxyCount="10">
+        <samlp:RequesterID>https://service-provider.example.org/authentication/metadata</samlp:RequesterID>
+    </samlp:Scoping>
+</samlp:AuthnRequest>';
+
+        $this->mockRedirectBinding($authnRequest);
+        $this->mockSessionData('_sf2_attributes', []);
+
+        // The SP is allowed to use SSO (isConnected() only checks the local YAML
+        // allow-list) but has no entry in Middleware's SP config database.
+        $this->samlEntityService->shouldReceive('hasServiceProvider')
+            ->with('https://gateway.tld/authentication/metadata')
+            ->andReturn(false);
+        $this->samlEntityService->shouldNotReceive('getServiceProvider');
+
+        $proxyRequest = $this->samlProxyLoginService->singleSignOn($this->provider, $httpRequest);
+
+        $xml = $proxyRequest->getUnsignedXML();
+        $this->assertStringContainsString('mdui:UIInfo', $xml);
+        $this->assertStringContainsString('Fallback Name', $xml);
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_should_throw_an_exception_when_a_sp_is_not_connected_when_the_registration_is_started_on_gssp_registration_flow(): void
     {
         $this->expectException(NotConnectedServiceProviderException::class);
@@ -197,6 +524,7 @@ class LoginServiceTest extends GatewaySamlTestCase
         // Init request
         $this->samlProxyLoginService->singleSignOn($this->provider, $httpRequest);
     }
+
 
     /**
      * @param array $remoteIdpConfiguration
@@ -230,10 +558,13 @@ class LoginServiceTest extends GatewaySamlTestCase
             $this->stateHandler
         );
 
+        $this->featureConfiguration = new FeatureConfiguration(false);
         $this->samlProxyLoginService = new LoginService(
             $samlLogger,
             $this->redirectBinding,
-            $connectedServiceProviders
+            $connectedServiceProviders,
+            new ServiceDisplayNameResolver($this->featureConfiguration, $this->samlEntityService),
+            new UiInfoExtensionMapper()
         );
     }
 

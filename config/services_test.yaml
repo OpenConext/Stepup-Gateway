@@ -35,6 +35,15 @@ services:
     arguments:
       - '@Surfnet\StepupGateway\Behat\Factory\SmoketestPdoFactory'
 
+  # Force the mdui service-name feature on for the Behat kernel, regardless of what
+  # append_service_name_to_authnrequest resolves to from parameters.yaml(.dist). Overriding the
+  # service (rather than the %append_service_name_to_authnrequest% parameter) sidesteps parameter
+  # bag load-order between this file and the parameters files that CI copies into place.
+  gateway.feature_configuration:
+    class: Surfnet\StepupGateway\GatewayBundle\Configuration\FeatureConfiguration
+    public: true
+    factory: ['Surfnet\StepupGateway\Behat\Service\FeatureToggle', 'createFeatureConfiguration']
+
   Surfnet\StepupGateway\Behat\Controller\ServiceProviderController:
     class: Surfnet\StepupGateway\Behat\Controller\ServiceProviderController
     tags: ['controller.service_arguments']

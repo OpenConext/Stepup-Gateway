@@ -19,16 +19,23 @@ namespace Surfnet\StepupGateway\SamlStepupProviderBundle\Tests\Service\Gateway;
 
 use DateTime;
 use Mockery as m;
+use PHPUnit\Framework\Attributes\Test;
 use Surfnet\SamlBundle\Entity\IdentityProvider;
 use Surfnet\SamlBundle\Entity\ServiceProvider;
 use Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger;
 use Surfnet\SamlBundle\SAML2\AuthnRequest;
+use Surfnet\StepupGateway\GatewayBundle\Configuration\FeatureConfiguration;
+use Surfnet\StepupGateway\GatewayBundle\Entity\ServiceProvider as GatewayServiceProvider;
+use Surfnet\StepupGateway\GatewayBundle\Saml\DisplayName;
 use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
+use Surfnet\StepupGateway\GatewayBundle\Saml\ServiceDisplayNameResolver;
+use Surfnet\StepupGateway\GatewayBundle\Saml\UiInfoExtensionMapper;
 use Surfnet\StepupGateway\GatewayBundle\Service\SamlEntityService;
 use Surfnet\StepupGateway\GatewayBundle\Tests\TestCase\GatewaySamlTestCase;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\Provider;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Saml\StateHandler;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Service\Gateway\SecondFactorVerificationService;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBag;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -93,7 +100,7 @@ class SecondFactorVerificationServiceTest extends GatewaySamlTestCase
         $this->initSamlProxyService($idpConfiguration, $remoteIdpConfiguration, $spConfiguration, $now);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_should_return_a_valid_saml_response_and_update_state_when_the_verification_is_started_on_gssp_verification_flow(): void {
 
         $subjectNameId = 'test-gssp-id';
@@ -149,11 +156,152 @@ class SecondFactorVerificationServiceTest extends GatewaySamlTestCase
     }
 
 
+    #[Test]
+    public function it_does_not_set_extensions_when_feature_flag_disabled(): void
+    {
+        $subjectNameId = 'test-gssp-id';
+
+        $this->mockSessionData('_sf2_attributes', [
+            'surfnet/gateway/gssp/test_provider/request_id' => '_1b8f282a9c194b264ef68761171539380de78b45038f65b8609df868f55e',
+            'surfnet/gateway/gssp/test_provider/service_provider' => 'https://gateway.tld/authentication/metadata',
+        ]);
+
+        $authnRequest = $this->samlProxySecondFactorService->sendSecondFactorVerificationAuthnRequest(
+            $this->provider,
+            $subjectNameId,
+            'service_id'
+        );
+
+        $this->assertEmpty($authnRequest->getExtensions()->getChunks());
+    }
+
+    #[Test]
+    public function it_sets_ui_info_extension_from_whatever_the_resolver_returns(): void
+    {
+        $responseContext = m::mock(ResponseContext::class);
+        $responseContext->shouldReceive('getInResponseTo')->andReturn('_1b8f282a9c194b264ef68761171539380de78b45038f65b8609df868f55e');
+        $responseContext->shouldReceive('getRequestServiceProvider')->andReturn('https://gateway.tld/authentication/metadata');
+        $responseContext->shouldReceive('getDisplayNamesFromRequest')->andReturn([]);
+
+        $sfoResponseContext = m::mock(ResponseContext::class);
+        $sfoResponseContext->shouldNotReceive('getInResponseTo');
+
+        $displayNameResolver = m::mock(ServiceDisplayNameResolver::class);
+        $displayNameResolver->shouldReceive('resolve')
+            ->with('https://gateway.tld/authentication/metadata', [], 'en')
+            ->andReturn(new DisplayName('en', 'Middleware Service Name'));
+
+        $samlLogger = new SamlAuthenticationLogger($this->logger);
+        $service = new SecondFactorVerificationService(
+            $samlLogger,
+            $responseContext,
+            $sfoResponseContext,
+            $displayNameResolver,
+            new UiInfoExtensionMapper(),
+            $this->mockRequestStack()
+        );
+
+        $this->mockSessionData('_sf2_attributes', [
+            'surfnet/gateway/gssp/test_provider/request_id' => '_1b8f282a9c194b264ef68761171539380de78b45038f65b8609df868f55e',
+        ]);
+
+        $authnRequest = $service->sendSecondFactorVerificationAuthnRequest(
+            $this->provider,
+            'test-gssp-id',
+            'service_id'
+        );
+
+        $chunks = $authnRequest->getExtensions()->getChunks();
+        $this->assertArrayHasKey('UIInfo', $chunks);
+        $uiInfo = $chunks['UIInfo']->getValue();
+        $displayName = $uiInfo->childNodes->item(0);
+        $this->assertSame('Middleware Service Name', $displayName->textContent);
+    }
+
+    #[Test]
+    public function it_sets_no_extensions_when_the_resolver_returns_nothing(): void
+    {
+        $responseContext = m::mock(ResponseContext::class);
+        $responseContext->shouldReceive('getInResponseTo')->andReturn('_1b8f282a9c194b264ef68761171539380de78b45038f65b8609df868f55e');
+        $responseContext->shouldReceive('getRequestServiceProvider')->andReturn('https://gateway.tld/authentication/metadata');
+        $responseContext->shouldReceive('getDisplayNamesFromRequest')->andReturn([]);
+
+        $sfoResponseContext = m::mock(ResponseContext::class);
+        $sfoResponseContext->shouldNotReceive('getInResponseTo');
+
+        $displayNameResolver = m::mock(ServiceDisplayNameResolver::class);
+        $displayNameResolver->shouldReceive('resolve')->andReturn(null);
+
+        $samlLogger = new SamlAuthenticationLogger($this->logger);
+        $service = new SecondFactorVerificationService(
+            $samlLogger,
+            $responseContext,
+            $sfoResponseContext,
+            $displayNameResolver,
+            new UiInfoExtensionMapper(),
+            $this->mockRequestStack()
+        );
+
+        $this->mockSessionData('_sf2_attributes', [
+            'surfnet/gateway/gssp/test_provider/request_id' => '_1b8f282a9c194b264ef68761171539380de78b45038f65b8609df868f55e',
+        ]);
+
+        $authnRequest = $service->sendSecondFactorVerificationAuthnRequest(
+            $this->provider,
+            'test-gssp-id',
+            'service_id'
+        );
+
+        $this->assertEmpty($authnRequest->getExtensions()->getChunks());
+    }
+
+    #[Test]
+    public function it_uses_sfo_response_context_when_response_context_service_id_is_sfo(): void
+    {
+        $ssoResponseContext = m::mock(ResponseContext::class);
+        $ssoResponseContext->shouldNotReceive('getInResponseTo');
+        $ssoResponseContext->shouldNotReceive('getRequestServiceProvider');
+        $ssoResponseContext->shouldNotReceive('getDisplayNamesFromRequest');
+
+        $sfoResponseContext = m::mock(ResponseContext::class);
+        $sfoResponseContext->shouldReceive('getInResponseTo')->andReturn('_1b8f282a9c194b264ef68761171539380de78b45038f65b8609df868f55e');
+        $sfoResponseContext->shouldReceive('getRequestServiceProvider')->andReturn('https://gateway.tld/authentication/metadata');
+        $sfoResponseContext->shouldReceive('getDisplayNamesFromRequest')->andReturn([]);
+
+        $displayNameResolver = m::mock(ServiceDisplayNameResolver::class);
+        $displayNameResolver->shouldReceive('resolve')->andReturn(new DisplayName('en', 'SFO Service'));
+
+        $samlLogger = new SamlAuthenticationLogger($this->logger);
+        $service = new SecondFactorVerificationService(
+            $samlLogger,
+            $ssoResponseContext,
+            $sfoResponseContext,
+            $displayNameResolver,
+            new UiInfoExtensionMapper(),
+            $this->mockRequestStack()
+        );
+
+        $this->mockSessionData('_sf2_attributes', [
+            'surfnet/gateway/gssp/test_provider/request_id' => '_1b8f282a9c194b264ef68761171539380de78b45038f65b8609df868f55e',
+        ]);
+
+        $authnRequest = $service->sendSecondFactorVerificationAuthnRequest(
+            $this->provider,
+            'test-gssp-id',
+            'second_factor_only.response_context'
+        );
+
+        $chunks = $authnRequest->getExtensions()->getChunks();
+        $this->assertArrayHasKey('UIInfo', $chunks);
+        $uiInfo = $chunks['UIInfo']->getValue();
+        $displayName = $uiInfo->childNodes->item(0);
+        $this->assertSame('SFO Service', $displayName->textContent);
+    }
+
     /**
      * @param array $remoteIdpConfiguration
      * @param array $idpConfiguration
      * @param array $spConfiguration
-     * @param array $connectedServiceProviders
      * @param DateTime $now
      */
     private function initSamlProxyService(array $remoteIdpConfiguration, array $idpConfiguration, array $spConfiguration, DateTime $now): void
@@ -168,6 +316,14 @@ class SecondFactorVerificationServiceTest extends GatewaySamlTestCase
         $this->idp = new IdentityProvider($idpConfiguration);
         $serviceProvider = new ServiceProvider($spConfiguration);
         $this->samlEntityService = m::mock(SamlEntityService::class);
+        // No middleware service_name configured, so the SP resolves without an override.
+        $this->samlEntityService->shouldReceive('getServiceProvider')->andReturn(
+            new GatewayServiceProvider([
+                'entityId' => 'https://gateway.tld/authentication/metadata',
+                'assertionConsumerUrl' => 'https://gateway.tld/authentication/consume-assertion',
+                'privateKeys' => [],
+            ])
+        );
 
         $this->provider = new Provider(
             'testProvider',
@@ -188,7 +344,19 @@ class SecondFactorVerificationServiceTest extends GatewaySamlTestCase
         $this->samlProxySecondFactorService = new SecondFactorVerificationService(
             $samlLogger,
             $this->responseContext,
-            $this->responseContext
+            $this->responseContext,
+            new ServiceDisplayNameResolver(new FeatureConfiguration(false), $this->samlEntityService),
+            new UiInfoExtensionMapper(),
+            $this->mockRequestStack()
         );
+    }
+
+    private function mockRequestStack(string $locale = 'en'): RequestStack
+    {
+        $requestStack = new RequestStack();
+        $request = new Request();
+        $request->setLocale($locale);
+        $requestStack->push($request);
+        return $requestStack;
     }
 }

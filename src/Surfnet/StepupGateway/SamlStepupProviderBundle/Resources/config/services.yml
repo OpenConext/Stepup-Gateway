@@ -24,6 +24,8 @@ services:
             - "@surfnet_saml.logger"
             - "@surfnet_saml.http.redirect_binding"
             - "@gssp.connected_service_providers"
+            - "@gateway.saml.service_display_name_resolver"
+            - "@gateway.saml.ui_info_extension_mapper"
 
     gssp.service.gssp.second_factor_verification:
         class: Surfnet\StepupGateway\SamlStepupProviderBundle\Service\Gateway\SecondFactorVerificationService
@@ -31,6 +33,9 @@ services:
             - "@surfnet_saml.logger"
             - "@gateway.proxy.response_context"
             - "@second_factor_only.response_context"
+            - "@gateway.saml.service_display_name_resolver"
+            - "@gateway.saml.ui_info_extension_mapper"
+            - "@request_stack"
 
     gssp.service.gssp.consume_assertion:
         class: Surfnet\StepupGateway\SamlStepupProviderBundle\Service\Gateway\ConsumeAssertionService
