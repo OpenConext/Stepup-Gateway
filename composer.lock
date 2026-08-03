@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "68b64184ce2865f091da5f49e0c5804f",
+    "content-hash": "ce644064c8cc16e641fcaba8172fbe44",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -2881,10 +2881,10 @@
         },
         {
             "name": "surfnet/stepup-saml-bundle",
-            "version": "dev-feature/issue-48-mdui-chunk",
+            "version": "7.1.0-beta1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/OpenConext/Stepup-saml-bundle.git",
+                "url": "git@github.com:OpenConext/Stepup-saml-bundle.git",
                 "reference": "7f67d77102dba170f2d8fe7f7e9a826d7d2aa329"
             },
             "dist": {
@@ -2998,10 +2998,6 @@
                 "simplesamlphp",
                 "surfnet"
             ],
-            "support": {
-                "source": "https://github.com/OpenConext/Stepup-saml-bundle/tree/feature/issue-48-mdui-chunk",
-                "issues": "https://github.com/OpenConext/Stepup-saml-bundle/issues"
-            },
             "time": "2026-07-30T12:37:17+00:00"
         },
         {
@@ -12555,17 +12551,10 @@
             "time": "2025-11-17T20:03:58+00:00"
         }
     ],
-    "aliases": [
-        {
-            "package": "surfnet/stepup-saml-bundle",
-            "version": "dev-feature/issue-48-mdui-chunk",
-            "alias": "7.0.99",
-            "alias_normalized": "7.0.99.0"
-        }
-    ],
+    "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "surfnet/stepup-saml-bundle": 20
+        "surfnet/stepup-saml-bundle": 10
     },
     "prefer-stable": true,
     "prefer-lowest": false,
@@ -12581,5 +12570,5 @@
     "platform-overrides": {
         "php": "8.2"
     },
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.9.0"
 }
