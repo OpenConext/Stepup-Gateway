@@ -65,26 +65,35 @@ class UiInfoExtensionMapper
             if (!($child instanceof DOMElement)) {
                 continue;
             }
-            if ($child->localName !== 'DisplayName' || $child->namespaceURI !== self::MDUI_NAMESPACE) {
+            $displayName = $this->sanitizedDisplayNameFrom($child);
+            if ($displayName === null) {
                 continue;
             }
-            $lang = $child->getAttribute('xml:lang');
-            $value = $child->textContent;
-            if (!$this->isSamlValid($lang, $value)) {
-                continue;
-            }
-            $sanitizedLang = ServiceNameFormatter::sanitizeLang($lang);
-            $sanitizedValue = ServiceNameFormatter::format($value);
-            if ($sanitizedLang === '' || $sanitizedValue === '') {
-                continue;
-            }
-            $displayNames[] = new DisplayName($sanitizedLang, $sanitizedValue);
+            $displayNames[] = $displayName;
             if (count($displayNames) >= self::MAX_DISPLAY_NAMES) {
                 break;
             }
         }
 
         return $displayNames;
+    }
+
+    private function sanitizedDisplayNameFrom(DOMElement $child): ?DisplayName
+    {
+        if ($child->localName !== 'DisplayName' || $child->namespaceURI !== self::MDUI_NAMESPACE) {
+            return null;
+        }
+        $lang = $child->getAttribute('xml:lang');
+        $value = $child->textContent;
+        if (!$this->isSamlValid($lang, $value)) {
+            return null;
+        }
+        $sanitizedLang = ServiceNameFormatter::sanitizeLang($lang);
+        $sanitizedValue = ServiceNameFormatter::format($value);
+        if ($sanitizedLang === '' || $sanitizedValue === '') {
+            return null;
+        }
+        return new DisplayName($sanitizedLang, $sanitizedValue);
     }
 
     // Structural sanity only (non-empty, within length bounds) — independent of whether
