@@ -43,6 +43,12 @@ class UiInfoExtensionMapper
      * The RFC (OpenConext/Stepup-Gateway#587) expects senders to already resolve to one
      * locale-matched name before sending, but this parser stays defensive and doesn't assume that.
      *
+     * Sanitized here, at parse time, via the same ServiceNameFormatter used when writing —
+     * not only on write. Between AuthnRequest arrival and any eventual write, these values can
+     * sit in session state (e.g. for SMS/Yubikey screens that read the session directly rather
+     * than going through applyTo()); sanitizing only on write would leave raw, attacker-supplied
+     * text reachable from any such read path.
+     *
      * @return DisplayName[]
      */
     public function read(Extensions $extensions): array
@@ -67,7 +73,12 @@ class UiInfoExtensionMapper
             if (!$this->isSamlValid($lang, $value)) {
                 continue;
             }
-            $displayNames[] = new DisplayName($lang, $value);
+            $sanitizedLang = ServiceNameFormatter::sanitizeLang($lang);
+            $sanitizedValue = ServiceNameFormatter::format($value);
+            if ($sanitizedLang === '' || $sanitizedValue === '') {
+                continue;
+            }
+            $displayNames[] = new DisplayName($sanitizedLang, $sanitizedValue);
             if (count($displayNames) >= self::MAX_DISPLAY_NAMES) {
                 break;
             }
@@ -111,6 +122,8 @@ class UiInfoExtensionMapper
         return $result;
     }
 
+    // read() already sanitizes; re-sanitizing here is defense in depth for DisplayName
+    // instances built from other sources (e.g. Middleware's locale map), not redundant work.
     private function buildUiInfoChunk(DisplayName $displayName): Chunk
     {
         $doc = new DOMDocument('1.0', 'UTF-8');
