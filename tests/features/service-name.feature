@@ -54,14 +54,14 @@ Feature: As an SP or Middleware operator using the mdui service-name feature
     When https://selfservice.dev.openconext.local/registration/gssf/tiqr/metadata starts a "tiqr" GSSP registration
     Then the AuthnRequest sent to the GSSP should match xpath '//mdui:UIInfo/mdui:DisplayName[@xml:lang="en" and text()="English"]'
 
-  Scenario: A GSSP registration sends no mdui:UIInfo when neither an exact nor an English Middleware match exists
+  Scenario: A GSSP registration falls back to the first configured Middleware name when neither an exact nor an English match exists
     Given a GSSP registration SP with EntityID https://selfservice.dev.openconext.local/registration/gssf/tiqr/metadata and Middleware service names:
       | locale | name       |
       | nl     | Nederlands |
       | fr     | Francais   |
     And the user's interface language is "de_DE"
     When https://selfservice.dev.openconext.local/registration/gssf/tiqr/metadata starts a "tiqr" GSSP registration
-    Then the AuthnRequest sent to the GSSP should not match xpath '//mdui:UIInfo'
+    Then the AuthnRequest sent to the GSSP should match xpath '//mdui:UIInfo/mdui:DisplayName[@xml:lang="nl" and text()="Nederlands"]'
 
   Scenario: A GSSP registration truncates a long display name from the AuthnRequest to 40 characters
     Given a GSSP registration SP with EntityID https://ra.dev.openconext.local/vetting-procedure/gssf/tiqr/metadata
@@ -119,7 +119,7 @@ Feature: As an SP or Middleware operator using the mdui service-name feature
     When urn:collab:person:dev.openconext.local:zydrunas_savickas starts an SFO authentication
     Then the AuthnRequest sent to the GSSP should match xpath '//mdui:UIInfo/mdui:DisplayName[@xml:lang="en" and text()="English"]'
 
-  Scenario: An SFO authentication sends no mdui:UIInfo when neither the requested locale nor English is configured
+  Scenario: An SFO authentication falls back to the first configured Middleware name when neither the requested locale nor English is configured
     Given an SFO enabled SP with EntityID https://ssp.dev.openconext.local/module.php/saml/sp/metadata.php/second-sp-no-match and Middleware service names:
       | locale | name       |
       | nl     | Nederlands |
@@ -128,7 +128,7 @@ Feature: As an SP or Middleware operator using the mdui service-name feature
     And a whitelisted institution dev.openconext.local
     And a user from "dev.openconext.local" identified by "urn:collab:person:dev.openconext.local:georgi_uzunov" with a vetted "tiqr" token and display locale "de_DE"
     When urn:collab:person:dev.openconext.local:georgi_uzunov starts an SFO authentication
-    Then the AuthnRequest sent to the GSSP should not match xpath '//mdui:UIInfo'
+    Then the AuthnRequest sent to the GSSP should match xpath '//mdui:UIInfo/mdui:DisplayName[@xml:lang="nl" and text()="Nederlands"]'
 
   Scenario: An SFO authentication sends no mdui:UIInfo when the service name feature is disabled
     Given the service name feature is disabled

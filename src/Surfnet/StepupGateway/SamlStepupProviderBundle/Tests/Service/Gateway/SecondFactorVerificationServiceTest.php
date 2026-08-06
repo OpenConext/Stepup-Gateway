@@ -317,6 +317,7 @@ class SecondFactorVerificationServiceTest extends GatewaySamlTestCase
         $serviceProvider = new ServiceProvider($spConfiguration);
         $this->samlEntityService = m::mock(SamlEntityService::class);
         // No middleware service_name configured, so the SP resolves without an override.
+        $this->samlEntityService->shouldReceive('hasServiceProvider')->andReturn(true);
         $this->samlEntityService->shouldReceive('getServiceProvider')->andReturn(
             new GatewayServiceProvider([
                 'entityId' => 'https://gateway.tld/authentication/metadata',

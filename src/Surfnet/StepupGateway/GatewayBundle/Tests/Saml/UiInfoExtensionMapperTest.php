@@ -139,6 +139,54 @@ class UiInfoExtensionMapperTest extends GatewaySamlTestCase
     }
 
     #[\PHPUnit\Framework\Attributes\Test]
+    public function it_strips_control_characters_from_the_lang_attribute_at_read_time(): void
+    {
+        $doc = new DOMDocument('1.0', 'UTF-8');
+        $uiInfo = $doc->createElementNS(self::MDUI_NAMESPACE, 'mdui:UIInfo');
+        $doc->appendChild($uiInfo);
+
+        $element = $doc->createElementNS(self::MDUI_NAMESPACE, 'mdui:DisplayName');
+        $element->setAttribute('xml:lang', "en\x01-GB");
+        $element->textContent = 'My Service';
+        $uiInfo->appendChild($element);
+
+        $extensions = new Extensions();
+        $extensions->addChunk(new Chunk('UIInfo', self::MDUI_NAMESPACE, $doc->documentElement));
+
+        $displayNames = $this->mapper->read($extensions);
+
+        $this->assertCount(1, $displayNames);
+        $this->assertSame('en-GB', $displayNames[0]->lang);
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function it_sanitizes_whitespace_and_control_characters_in_display_names_at_read_time(): void
+    {
+        $extensions = $this->extensionsWithUiInfoChunk([
+            'en' => "  My   \tService\x01 ",
+        ]);
+
+        $displayNames = $this->mapper->read($extensions);
+
+        $this->assertCount(1, $displayNames);
+        $this->assertSame('My Service', $displayNames[0]->value);
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function it_truncates_display_names_longer_than_max_characters_at_read_time(): void
+    {
+        $extensions = $this->extensionsWithUiInfoChunk([
+            'en' => str_repeat('a', 45),
+        ]);
+
+        $displayNames = $this->mapper->read($extensions);
+
+        $this->assertCount(1, $displayNames);
+        $this->assertSame(str_repeat('a', 39) . "\u{2026}", $displayNames[0]->value);
+        $this->assertSame(40, mb_strlen($displayNames[0]->value));
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_builds_a_ui_info_chunk_for_the_given_display_name(): void
     {
         $result = $this->mapper->applyTo(new Extensions(), new DisplayName('en', 'My Service'));

@@ -136,6 +136,10 @@ class LoginServiceTest extends GatewaySamlTestCase
 
         $this->mockSessionData('_sf2_attributes', []);
 
+        $this->samlEntityService->shouldReceive('hasServiceProvider')
+            ->with('https://gateway.tld/authentication/metadata')
+            ->andReturn(false);
+
         // Init request
         $proxyRequest = $this->samlProxyLoginService->singleSignOn($this->provider, $httpRequest);
 
@@ -226,7 +230,7 @@ class LoginServiceTest extends GatewaySamlTestCase
 
         $xml = $proxyRequest->getUnsignedXML();
         $this->assertStringContainsString('<mdui:UIInfo', $xml);
-        $this->assertStringContainsString('xml:lang="en"', $xml);
+        $this->assertStringContainsString('xml:lang="en_GB"', $xml);
         $this->assertStringContainsString('Test Service Name', $xml);
     }
 
@@ -281,14 +285,14 @@ class LoginServiceTest extends GatewaySamlTestCase
 
         $xml = $proxyRequest->getUnsignedXML();
         $this->assertStringContainsString('<mdui:UIInfo', $xml);
-        $this->assertStringContainsString('xml:lang="nl"', $xml);
+        $this->assertStringContainsString('xml:lang="nl_NL"', $xml);
         $this->assertStringContainsString('Dutch Name', $xml);
-        $this->assertStringNotContainsString('xml:lang="en"', $xml);
+        $this->assertStringNotContainsString('xml:lang="en_GB"', $xml);
         $this->assertStringNotContainsString('English Name', $xml);
     }
 
     #[\PHPUnit\Framework\Attributes\Test]
-    public function it_does_not_forward_service_name_when_the_flag_is_disabled_even_if_middleware_has_one(): void
+    public function it_forwards_the_middleware_service_name_even_when_the_flag_is_disabled(): void
     {
         $this->featureConfiguration = new FeatureConfiguration(false);
         $this->samlProxyLoginService = new LoginService(
@@ -326,13 +330,19 @@ class LoginServiceTest extends GatewaySamlTestCase
             'privateKeys' => [],
             'serviceNames' => ['en_GB' => 'Test Service Name'],
         ]);
+        $this->samlEntityService->shouldReceive('hasServiceProvider')
+            ->with('https://gateway.tld/authentication/metadata')
+            ->andReturn(true);
         $this->samlEntityService->shouldReceive('getServiceProvider')
             ->with('https://gateway.tld/authentication/metadata')
             ->andReturn($sp);
 
         $proxyRequest = $this->samlProxyLoginService->singleSignOn($this->provider, $httpRequest);
 
-        $this->assertStringNotContainsString('mdui:UIInfo', $proxyRequest->getUnsignedXML());
+        $xml = $proxyRequest->getUnsignedXML();
+        $this->assertStringContainsString('<mdui:UIInfo', $xml);
+        $this->assertStringContainsString('xml:lang="en_GB"', $xml);
+        $this->assertStringContainsString('Test Service Name', $xml);
     }
 
     #[\PHPUnit\Framework\Attributes\Test]
@@ -378,6 +388,9 @@ class LoginServiceTest extends GatewaySamlTestCase
             'assertionConsumerUrl' => 'https://gateway.tld/authentication/consume-assertion',
             'privateKeys' => [],
         ]);
+        $this->samlEntityService->shouldReceive('hasServiceProvider')
+            ->with('https://gateway.tld/authentication/metadata')
+            ->andReturn(true);
         $this->samlEntityService->shouldReceive('getServiceProvider')
             ->with('https://gateway.tld/authentication/metadata')
             ->andReturn($sp);
