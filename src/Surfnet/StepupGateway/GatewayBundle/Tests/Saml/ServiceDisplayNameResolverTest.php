@@ -41,9 +41,21 @@ class ServiceDisplayNameResolverTest extends TestCase
     }
 
     #[Test]
-    public function it_returns_null_when_the_feature_is_disabled_even_if_middleware_has_a_service_name(): void
+    public function it_returns_middleware_service_name_even_when_the_feature_is_disabled(): void
     {
-        $this->samlEntityService->shouldNotReceive('hasServiceProvider');
+        $this->givenServiceProvider('sp.example.com', ['en' => 'Middleware Service Name']);
+
+        $resolver = $this->resolver(enabled: false);
+
+        $result = $resolver->resolve('sp.example.com', [new DisplayName('en', 'AuthnRequest Name')], 'en');
+
+        $this->assertEquals(new DisplayName('en', 'Middleware Service Name'), $result);
+    }
+
+    #[Test]
+    public function it_returns_null_from_authn_request_when_the_feature_is_disabled_and_middleware_has_no_service_name(): void
+    {
+        $this->givenServiceProvider('sp.example.com', []);
 
         $resolver = $this->resolver(enabled: false);
 
@@ -63,7 +75,7 @@ class ServiceDisplayNameResolverTest extends TestCase
             'en'
         );
 
-        $this->assertEquals(new DisplayName('en', 'Middleware Service Name'), $result);
+        $this->assertEquals(new DisplayName('en_GB', 'Middleware Service Name'), $result);
     }
 
     #[Test]
@@ -163,17 +175,17 @@ class ServiceDisplayNameResolverTest extends TestCase
     }
 
     #[Test]
-    public function it_returns_null_when_neither_the_requested_locale_nor_english_is_configured(): void
+    public function it_falls_back_to_the_only_configured_name_when_neither_the_requested_locale_nor_english_matches(): void
     {
         $this->givenServiceProvider('sp.example.com', ['fr_FR' => 'Nom Français']);
 
         $result = $this->resolver()->resolve('sp.example.com', [], 'de_DE');
 
-        $this->assertNull($result);
+        $this->assertSame('Nom Français', $result->value);
     }
 
     #[Test]
-    public function it_returns_null_when_no_authn_request_display_name_matches_the_locale_or_english(): void
+    public function it_falls_back_to_the_only_authn_request_display_name_when_no_locale_or_english_matches(): void
     {
         $this->samlEntityService->shouldReceive('hasServiceProvider')
             ->with('sp.example.com')
@@ -185,7 +197,7 @@ class ServiceDisplayNameResolverTest extends TestCase
             'de_DE'
         );
 
-        $this->assertNull($result);
+        $this->assertEquals(new DisplayName('fr', 'Nom Français'), $result);
     }
 
     #[Test]
@@ -196,6 +208,16 @@ class ServiceDisplayNameResolverTest extends TestCase
         $result = $this->resolver()->resolve(null, [], 'en');
 
         $this->assertNull($result);
+    }
+
+    #[Test]
+    public function it_falls_back_to_the_first_available_name_when_multiple_candidates_match_neither_locale_nor_english(): void
+    {
+        $this->givenServiceProvider('sp.example.com', ['fr_FR' => 'Nom Français', 'de_DE' => 'Deutscher Name']);
+
+        $result = $this->resolver()->resolve('sp.example.com', [], 'nl_NL');
+
+        $this->assertSame('Nom Français', $result->value);
     }
 
     private function resolver(bool $enabled = true): ServiceDisplayNameResolver

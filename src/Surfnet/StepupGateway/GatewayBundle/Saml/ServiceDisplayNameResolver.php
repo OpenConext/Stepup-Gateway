@@ -36,15 +36,15 @@ class ServiceDisplayNameResolver
      */
     public function resolve(?string $spEntityId, array $fromRequest, string $locale): ?DisplayName
     {
-        if (!$this->featureConfiguration->isServiceNameFromSamlAuthnRequestEnabled()) {
-            return null;
-        }
-
         if ($spEntityId !== null && $this->samlEntityService->hasServiceProvider($spEntityId)) {
             $serviceNames = $this->samlEntityService->getServiceProvider($spEntityId)->getServiceNames();
             if (!empty($serviceNames)) {
                 return $this->selectByLocale($this->displayNamesFromLocaleMap($serviceNames), $locale);
             }
+        }
+
+        if (!$this->featureConfiguration->isServiceNameFromSamlAuthnRequestEnabled()) {
+            return null;
         }
 
         return $this->selectByLocale($fromRequest, $locale);
@@ -55,7 +55,9 @@ class ServiceDisplayNameResolver
      * AuthnRequest source already comes in, so both sources can be reduced to one name by the
      * same selectByLocale() below — Middleware's map and the AuthnRequest's own DisplayName
      * list should be selected from with identical rules, not two separately maintained copies
-     * of the same logic.
+     * of the same logic. The configured locale key is kept as-is (not normalized here):
+     * selectByLocale() normalizes both sides when comparing, so pre-stripping the region here
+     * would only lose information from the outgoing xml:lang without gaining anything.
      *
      * @param array<string, string> $serviceNames
      * @return DisplayName[]
@@ -64,16 +66,17 @@ class ServiceDisplayNameResolver
     {
         $displayNames = [];
         foreach ($serviceNames as $configuredLocale => $serviceName) {
-            $displayNames[] = new DisplayName(DisplayName::normalizeLocale($configuredLocale), $serviceName);
+            $displayNames[] = new DisplayName($configuredLocale, $serviceName);
         }
         return $displayNames;
     }
 
     /**
      * Reduces a DisplayName[] to at most one, matching $locale. Priority: exact primary-subtag
-     * match, then 'en', then nothing — no "first available" fallback, since showing a name in a
-     * language the user didn't ask for and may not understand defeats the point of a
-     * locale-matched name.
+     * match, then 'en', then the first available entry. Sources only ever emit a single,
+     * already-locale-resolved DisplayName, so there is no "wrong language" candidate to
+     * mistakenly fall through to — the last-resort entry is the correct one, just tagged with
+     * a locale that didn't happen to match our (possibly stale/default) request locale.
      *
      * @param DisplayName[] $displayNames
      */
@@ -95,6 +98,6 @@ class ServiceDisplayNameResolver
             }
         }
 
-        return null;
+        return $displayNames[0];
     }
 }
