@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 cp ../../devconf/stepup/gateway/surfnet_yubikey.yaml.dist ../../devconf/stepup/gateway/surfnet_yubikey.yaml
+if [ ! -f ../../devconf/core/haproxy/haproxy.pem ]; then
+  echo "generating the HAProxy dev CA and server certificate"
+  ../../devconf/core/scripts/create_dev_ca.sh
+fi
 echo "pulling the images"
 docker compose pull gateway selenium haproxy ssp mariadb azuremfa
 echo "starting the images"
