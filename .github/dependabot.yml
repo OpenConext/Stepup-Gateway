@@ -1,80 +1,58 @@
 ---
 version: 2
 updates:
-  # Enable version updates for Docker
+  # Docker — only patch updates, no bundling
   - package-ecosystem: "docker"
-    # Look for a `Dockerfile` in the `root` directory
     directories:
       - "/docker/"
     schedule:
       interval: "daily"
-    groups:
-      docker:
-        applies-to: version-updates
-        patterns:
-          - "*"
-  # Maintain dependencies for GitHub Actions
+    cooldown:
+      default-days: 7
+
+  # GitHub Actions — all updates (patch, minor, major), bundled
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "daily"
     cooldown:
-      default-days: 14
+      default-days: 7
     groups:
       github-actions:
         applies-to: version-updates
         patterns:
           - "*"
-  # Maintain dependencies for npm
+
+  # npm — only patch updates, no bundling
   - package-ecosystem: "npm"
     directories:
       - "/"
     schedule:
       interval: "daily"
     cooldown:
-      default-days: 14
-    open-pull-requests-limit: 25
+      default-days: 7
+    open-pull-requests-limit: 0
     ignore:
       - dependency-name: "*"
-        update-types: ["version-update:semver-major"]
-    groups:
-      javascript-prod:
-        applies-to: version-updates
-        dependency-type: production
         update-types:
-          - "minor"
-          - "patch"
-      javascript-dev:
-        applies-to: version-updates
-        dependency-type: development
-        update-types:
-          - "minor"
-          - "patch"
-  # Maintain dependencies for composer
+          - "version-update:semver-major"
+          - "version-update:semver-minor"
+
+  # Composer — only patch updates, no bundling
   - package-ecosystem: "composer"
     directories:
       - "/"
     schedule:
       interval: "daily"
     cooldown:
-      default-days: 14
-    open-pull-requests-limit: 25
+      default-days: 7
+    open-pull-requests-limit: 0
     ignore:
       - dependency-name: "*"
-        update-types: ["version-update:semver-major"]
+        update-types:
+          - "version-update:semver-major"
+          - "version-update:semver-minor"
       - dependency-name: "symfony/*"
-        update-types: ["version-update:semver-major"]
-    groups:
-      php-prod:
-        applies-to: version-updates
-        dependency-type: production
         update-types:
-          - "minor"
-          - "patch"
-      php-dev:
-        applies-to: version-updates
-        dependency-type: development
-        update-types:
-          - "minor"
-          - "patch"
-          
+          - "version-update:semver-major"
+          - "version-update:semver-minor"
