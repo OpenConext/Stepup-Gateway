@@ -17,6 +17,12 @@
         ]
     },
     "minimum-stability": "stable",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/OpenConext/Stepup-saml-bundle"
+        }
+    ],
     "require": {
         "php": "^8.2",
         "ext-dom": "*",
@@ -35,6 +41,7 @@
         "psr/container": "^2.0.2",
         "spryng/rest-api-php": "^1.1",
         "surfnet/stepup-bundle": "^7.0.1",
+        "surfnet/stepup-saml-bundle": "7.1.0-beta1",
         "surfnet/yubikey-api-client-bundle": "^6.0",
         "symfony/config": "7.4.*",
         "symfony/console": "7.4.*",

@@ -132,6 +132,12 @@ class SamlEntity
         if (isset($decodedConfiguration['set_sso_cookie_on_2fa'])) {
             $configuration['setSsoCookieOn2fa'] = $decodedConfiguration['set_sso_cookie_on_2fa'];
         }
+        // service_name is expected to be a locale => name map. Middleware's own validator
+        // (Stepup-Middleware#606) currently only enforces "nullable string", so a plain
+        // string can arrive here — guard against that instead of letting getServiceNames()
+        // crash the entire authentication for this SP with a TypeError.
+        $serviceName = $decodedConfiguration['service_name'] ?? [];
+        $configuration['serviceNames'] = is_array($serviceName) ? $serviceName : [];
         return new ServiceProvider($configuration);
     }
 

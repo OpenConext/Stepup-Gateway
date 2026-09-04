@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1b227db61a360c5974fe9705cf5d5441",
+    "content-hash": "ce644064c8cc16e641fcaba8172fbe44",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -2884,16 +2884,16 @@
         },
         {
             "name": "surfnet/stepup-saml-bundle",
-            "version": "7.0.1",
+            "version": "7.1.0-beta1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/OpenConext/Stepup-saml-bundle.git",
-                "reference": "d39369136c5125f3c20daf225259e1416032bef9"
+                "url": "git@github.com:OpenConext/Stepup-saml-bundle.git",
+                "reference": "7f67d77102dba170f2d8fe7f7e9a826d7d2aa329"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/OpenConext/Stepup-saml-bundle/zipball/d39369136c5125f3c20daf225259e1416032bef9",
-                "reference": "d39369136c5125f3c20daf225259e1416032bef9",
+                "url": "https://api.github.com/repos/OpenConext/Stepup-saml-bundle/zipball/7f67d77102dba170f2d8fe7f7e9a826d7d2aa329",
+                "reference": "7f67d77102dba170f2d8fe7f7e9a826d7d2aa329",
                 "shasum": ""
             },
             "require": {
@@ -2902,11 +2902,11 @@
                 "php": "^8.1",
                 "psr/log": "^3.0",
                 "robrichards/xmlseclibs": "^3.1.4",
-                "simplesamlphp/saml2": "^4.6",
+                "simplesamlphp/saml2": ">=4.16.16 <4.20",
                 "symfony/dependency-injection": "^6.3|^7.0",
-                "symfony/framework-bundle": "^6.3|^7.0",
-                "symfony/security-bundle": "^6.3|^7.0",
-                "symfony/templating": "^6.3|7.0",
+                "symfony/framework-bundle": "^6.4|^7.4",
+                "symfony/security-bundle": "^6.4|^7.4",
+                "symfony/templating": "^6.3|^7.0",
                 "twig/twig": "^3"
             },
             "conflict": {
@@ -2915,7 +2915,6 @@
             "require-dev": {
                 "ext-libxml": "*",
                 "ext-zlib": "*",
-                "irstea/phpcpd-shim": "^6.0",
                 "malukenho/docheader": "^1.1",
                 "mockery/mockery": "^1.5",
                 "overtrue/phplint": "*",
@@ -2942,23 +2941,67 @@
                     "Surfnet\\SamlBundle\\": "src"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "scripts": {
+                "check": [
+                    "@check-ci",
+                    "@rector"
+                ],
+                "check-ci": [
+                    "@composer-validate",
+                    "@license-headers",
+                    "@phplint",
+                    "@phpcs",
+                    "@phpmd",
+                    "@test",
+                    "@phpstan",
+                    "@composer audit"
+                ],
+                "composer-validate": [
+                    "./ci/qa/validate"
+                ],
+                "phplint": [
+                    "./ci/qa/phplint"
+                ],
+                "phpcs": [
+                    "./ci/qa/phpcs"
+                ],
+                "phpmd": [
+                    "./ci/qa/phpmd"
+                ],
+                "phpstan": [
+                    "./ci/qa/phpstan"
+                ],
+                "phpstan-baseline": [
+                    "./ci/qa/phpstan-update-baseline"
+                ],
+                "test": [
+                    "./ci/qa/phpunit"
+                ],
+                "license-headers": [
+                    "./ci/qa/docheader"
+                ],
+                "phpcbf": [
+                    "./ci/qa/phpcbf"
+                ],
+                "rector": [
+                    "./ci/qa/rector.sh --dry-run"
+                ],
+                "rector-fix": [
+                    "./ci/qa/rector.sh"
+                ]
+            },
             "license": [
                 "Apache-2.0"
             ],
             "description": "A Symfony 7 bundle that integrates the simplesamlphp\\saml2 library with Symfony.",
             "keywords": [
+                "SAML",
                 "SAML2",
-                "saml",
+                "StepUp",
                 "simplesamlphp",
-                "stepup",
                 "surfnet"
             ],
-            "support": {
-                "issues": "https://github.com/OpenConext/Stepup-saml-bundle/issues",
-                "source": "https://github.com/OpenConext/Stepup-saml-bundle/tree/7.0.1"
-            },
-            "time": "2025-12-15T10:40:55+00:00"
+            "time": "2026-07-30T12:37:17+00:00"
         },
         {
             "name": "surfnet/yubikey-api-client",
@@ -12604,7 +12647,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {},
+    "stability-flags": {
+        "surfnet/stepup-saml-bundle": 10
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

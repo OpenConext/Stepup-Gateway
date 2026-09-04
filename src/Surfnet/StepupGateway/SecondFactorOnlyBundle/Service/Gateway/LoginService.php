@@ -23,8 +23,10 @@ use Surfnet\SamlBundle\Http\HttpBindingFactory;
 use Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger;
 use Surfnet\SamlBundle\SAML2\AuthnRequest;
 use Surfnet\SamlBundle\SAML2\ReceivedAuthnRequest;
+use Surfnet\StepupGateway\GatewayBundle\Configuration\FeatureConfiguration;
 use Surfnet\StepupGateway\GatewayBundle\Exception\RequesterFailureException;
 use Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler;
+use Surfnet\StepupGateway\GatewayBundle\Saml\UiInfoExtensionMapper;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\LoaResolutionService;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\SecondFactorOnlyNameIdValidationService;
 use Symfony\Component\HttpFoundation\Request;
@@ -64,7 +66,9 @@ class LoginService
         ProxyStateHandler $stateHandler,
         HttpBindingFactory $httpBindingFactory,
         SecondFactorOnlyNameIdValidationService $secondFactorOnlyNameValidatorService,
-        LoaResolutionService $loaResolutionService
+        LoaResolutionService $loaResolutionService,
+        private readonly FeatureConfiguration $featureConfiguration,
+        private readonly UiInfoExtensionMapper $uiInfoMapper
     ) {
         $this->logger = $logger;
         $this->samlLogger = $samlLogger;
@@ -131,6 +135,12 @@ class LoginService
             ->setResponseContextServiceId('second_factor_only.response_context');
 
         $this->stateHandler->markAuthenticationModeForRequest($originalRequestId, 'sfo');
+
+        if ($this->featureConfiguration->isServiceNameFromSamlAuthnRequestEnabled()) {
+            $this->stateHandler->setDisplayNamesFromRequest(
+                ...$this->uiInfoMapper->read($originalRequest->getExtensions())
+            );
+        }
 
         // Check if the NameID is provided and we may use it.
         $nameId = $originalRequest->getNameId();

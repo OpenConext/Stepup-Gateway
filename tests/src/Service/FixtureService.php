@@ -73,12 +73,13 @@ class FixtureService
      * @param string $entityId
      * @param string $certificate
      * @param bool $sfoEnabled
+     * @param array<string, string> $serviceNames Middleware-style locale => name map
      * @return array
      * @throws Exception
      */
-    public function registerSP($entityId, $certificate, $sfoEnabled = false)
+    public function registerSP($entityId, $certificate, $sfoEnabled = false, array $serviceNames = [])
     {
-        return $this->samlEntityRepository->createSpIfNotExists($entityId, $certificate, $sfoEnabled);
+        return $this->samlEntityRepository->createSpIfNotExists($entityId, $certificate, $sfoEnabled, $serviceNames);
     }
 
     /**
@@ -102,10 +103,14 @@ class FixtureService
         return $this->whitelistRepository->whitelist($institution);
     }
 
-    public function registerTiqrToken(string $nameId, string $institution, bool $selfAsserted = false): array
-    {
+    public function registerTiqrToken(
+        string $nameId,
+        string $institution,
+        bool $selfAsserted = false,
+        string $displayLocale = 'en_GB',
+    ): array {
         if (!$this->secondFactorRepository->has($nameId, 'tiqr')) {
-            return $this->secondFactorRepository->create($nameId, 'tiqr', $institution, $selfAsserted, 'foobar');
+            return $this->secondFactorRepository->create($nameId, 'tiqr', $institution, $selfAsserted, 'foobar', $displayLocale);
         }
         return $this->secondFactorRepository->findBy($nameId, 'tiqr');
     }
