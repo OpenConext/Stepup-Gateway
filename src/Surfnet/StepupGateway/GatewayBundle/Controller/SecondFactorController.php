@@ -273,7 +273,7 @@ class SecondFactorController extends ContainerController
             $formResults = $request->request->filter(
                 'gateway_choose_second_factor',
                 false,
-                FILTER_DEFAULT,
+                FILTER_UNSAFE_RAW,
                 ['flags' => FILTER_FORCE_ARRAY]
             );
             if (!isset($formResults[$buttonName])) {

@@ -39,6 +39,8 @@ jobs:
             - name: Run CI tests
               run: |
                   cd ci/docker && docker compose exec -T gateway bash -c '
+                      git config --global --add safe.directory /var/www/html
+                      composer install
                       composer check-ci
                   '
 
