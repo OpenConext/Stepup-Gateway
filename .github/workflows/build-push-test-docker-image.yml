@@ -2,8 +2,8 @@ name: build-push-test-docker-image
 
 on:
   push:
-    branches: 
-      - feature/create_docker_publish_action
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
