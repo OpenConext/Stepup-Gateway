@@ -261,7 +261,7 @@ class GatewayController extends ContainerController
         if (!is_string($responseContextServiceId) || $responseContextServiceId === '') {
             throw new SessionLostException(
                 sprintf(
-                    'Unable to retrieve the response context for "%s" authentication: no response context service ID was found in the session',
+                    'Unable to retrieve the response context for "%s" authentication: the Gateway session cookie was not received or the session has expired',
                     $authenticationMode,
                 ),
             );

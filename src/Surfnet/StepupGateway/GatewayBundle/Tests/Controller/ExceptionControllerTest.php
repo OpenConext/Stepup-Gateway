@@ -68,7 +68,7 @@ final class ExceptionControllerTest extends TestCase
 
         $request = Request::create('/authentication/consume-assertion');
         $exception = new SessionLostException(
-            'Unable to retrieve the response context for "sso" authentication: no response context service ID was found in the session',
+            'Unable to retrieve the response context for "sso" authentication: the Gateway session cookie was not received or the session has expired',
         );
 
         $response = $controller->show($request, $exception);
