@@ -24,6 +24,7 @@ use Surfnet\StepupGateway\GatewayBundle\Exception\InvalidArgumentException;
 use Surfnet\StepupGateway\GatewayBundle\Exception\RequesterFailureException;
 use Surfnet\StepupGateway\GatewayBundle\Exception\ResponseFailureException;
 use Surfnet\StepupGateway\GatewayBundle\Exception\RuntimeException;
+use Surfnet\StepupGateway\GatewayBundle\Exception\SessionLostException;
 use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
 use Surfnet\StepupGateway\GatewayBundle\Service\Gateway\ConsumeAssertionService;
 use Surfnet\StepupGateway\GatewayBundle\Service\Gateway\FailedResponseService;
@@ -249,11 +250,24 @@ class GatewayController extends ContainerController
 
     public function getResponseContext($authenticationMode): ResponseContext
     {
-        return match ($authenticationMode) {
-            self::MODE_SFO => $this->get($this->get('gateway.proxy.sfo.state_handler')->getResponseContextServiceId()),
-            self::MODE_SSO => $this->get($this->get('gateway.proxy.sso.state_handler')->getResponseContextServiceId()),
+        $stateHandler = match ($authenticationMode) {
+            self::MODE_SFO => $this->get('gateway.proxy.sfo.state_handler'),
+            self::MODE_SSO => $this->get('gateway.proxy.sso.state_handler'),
             default => throw new RuntimeException('Invalid authentication mode requested'),
         };
+
+        $responseContextServiceId = $stateHandler->getResponseContextServiceId();
+
+        if (!is_string($responseContextServiceId) || $responseContextServiceId === '') {
+            throw new SessionLostException(
+                sprintf(
+                    'Unable to retrieve the response context for "%s" authentication: no response context service ID was found in the session',
+                    $authenticationMode,
+                ),
+            );
+        }
+
+        return $this->get($responseContextServiceId);
     }
 
     private function getResponseAsXML(SAMLResponse $response): string
