@@ -23,6 +23,7 @@ use DateTimeInterface;
 use Surfnet\StepupBundle\Controller\ExceptionController as BaseExceptionController;
 use Surfnet\StepupBundle\Exception\Art;
 use Surfnet\StepupBundle\Request\RequestId;
+use Surfnet\StepupGateway\GatewayBundle\Exception\SessionLostException;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\Exception\AcsLocationNotAllowedException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -51,6 +52,13 @@ final class ExceptionController extends BaseExceptionController
             return [
                 'title' => $translator->trans('gateway.error.acs_location_not_allowed.title'),
                 'description' => $exception->getMessage(),
+            ];
+        }
+
+        if ($exception instanceof SessionLostException) {
+            return [
+                'title' => $translator->trans('gateway.error.session_lost.title'),
+                'description' => $translator->trans('gateway.error.session_lost.description'),
             ];
         }
 
