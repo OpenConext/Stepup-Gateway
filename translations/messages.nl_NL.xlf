@@ -13,6 +13,14 @@
         <source>gateway.error.click_to_go_back_to_sp</source>
         <target>Klik om terug te gaan naar de website.</target>
       </trans-unit>
+      <trans-unit id="5z8Xjua" resname="gateway.error.session_lost.title">
+        <source>gateway.error.session_lost.title</source>
+        <target>Fout - Gateway-sessie niet beschikbaar</target>
+      </trans-unit>
+      <trans-unit id="MGLufyU" resname="gateway.error.session_lost.description">
+        <source>gateway.error.session_lost.description</source>
+        <target>Om verder te gaan naar de dienst heb je een actieve Gateway-sessie nodig, maar de cookie voor de Gateway-sessie is niet ontvangen of je sessie is verlopen. Controleer of cookies zijn ingeschakeld, ga terug naar de dienst en probeer het nog een keer. Als dat niet werkt, sluit je browser af en probeer nogmaals opnieuw in te loggen.</target>
+      </trans-unit>
       <trans-unit id="6fcosCA" resname="gateway.error.unprocessable_response">
         <source>gateway.error.unprocessable_response</source>
         <target>Login-response kan niet worden verwerkt.</target>
