@@ -202,7 +202,7 @@ final class ConsumeAssertionServiceTest extends GatewaySamlTestCase
             'notice' => [
                 'Received SAMLResponse, attempting to process for Proxy Response',
                 'Successfully processed SAMLResponse',
-                'Forwarding to second factor controller for loa determination and handling',
+                'Forwarding to second factor controller for loa determination and handling for user 724cca6778a1d3db16b65c40d4c378d011f220be',
             ],
             'info' => [],
             'debug' => [],
@@ -525,7 +525,7 @@ final class ConsumeAssertionServiceTest extends GatewaySamlTestCase
             'notice' => [
                 'Received SAMLResponse, attempting to process for Proxy Response',
                 'Successfully processed SAMLResponse',
-                'Forwarding to second factor controller for loa determination and handling',
+                'Forwarding to second factor controller for loa determination and handling for user urn:collab:person:example.edu:jdoe',
             ],
             'info' => [],
             'debug' => [],

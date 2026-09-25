@@ -173,8 +173,8 @@ final class RespondServiceTest extends GatewaySamlTestCase
             'error' => [],
             'warning' => [],
             'notice' => [
-                'Creating second-factor-only Response',
-                'Responding to request "_7179b234fc69f75724c83cab795fc87475d2f6d88e97e43368c3966e398c" with newly created response "_mocked_generated_id"',
+                'Creating second-factor-only Response for user oom60v-3art',
+                'Responding to request "_7179b234fc69f75724c83cab795fc87475d2f6d88e97e43368c3966e398c" with newly created response "_mocked_generated_id" for user oom60v-3art',
             ],
             'info' => [],
             'debug' => [],

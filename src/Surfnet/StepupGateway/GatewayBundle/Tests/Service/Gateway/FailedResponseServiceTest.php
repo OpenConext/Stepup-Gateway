@@ -76,6 +76,7 @@ final class FailedResponseServiceTest extends GatewaySamlTestCase
             'surfnet/gateway/requestrequest_id' => '_123456789012345678901234567890123456789012',
             'surfnet/gateway/requestservice_provider' => 'https://sp.com/metadata',
             'surfnet/gateway/requestassertion_consumer_service_url' => 'https://sp.com/acs',
+            'surfnet/gateway/requestname_id' => '724cca6778a1d3db16b65c40d4c378d011f220be',
         ]);
 
         // Handle respond
@@ -95,8 +96,8 @@ final class FailedResponseServiceTest extends GatewaySamlTestCase
             'error' => [],
             'warning' => [],
             'notice' => [
-                'Loa cannot be given, creating Response with NoAuthnContext status',
-                'Responding to request "_123456789012345678901234567890123456789012" with response based on response from the remote IdP with response "_mocked_generated_id"',
+                'Loa cannot be given, creating Response with NoAuthnContext status for user 724cca6778a1d3db16b65c40d4c378d011f220be',
+                'Responding to request "_123456789012345678901234567890123456789012" with response based on response from the remote IdP with response "_mocked_generated_id" for user 724cca6778a1d3db16b65c40d4c378d011f220be',
             ],
             'info' => [],
             'debug' => [],
@@ -107,6 +108,7 @@ final class FailedResponseServiceTest extends GatewaySamlTestCase
             'surfnet/gateway/requestrequest_id' => '_123456789012345678901234567890123456789012',
             'surfnet/gateway/requestservice_provider' => 'https://sp.com/metadata',
             'surfnet/gateway/requestassertion_consumer_service_url' => 'https://sp.com/acs',
+            'surfnet/gateway/requestname_id' => '724cca6778a1d3db16b65c40d4c378d011f220be',
         ], $this->getSessionData('attributes'));
     }
 
@@ -128,6 +130,7 @@ final class FailedResponseServiceTest extends GatewaySamlTestCase
             'surfnet/gateway/requestrequest_id' => '_123456789012345678901234567890123456789012',
             'surfnet/gateway/requestservice_provider' => 'https://sp.com/metadata',
             'surfnet/gateway/requestassertion_consumer_service_url' => 'https://sp.com/acs',
+            'surfnet/gateway/requestname_id' => '724cca6778a1d3db16b65c40d4c378d011f220be',
         ]);
 
         // Handle respond
@@ -147,8 +150,8 @@ final class FailedResponseServiceTest extends GatewaySamlTestCase
             'error' => [],
             'warning' => [],
             'notice' => [
-                'Authentication was cancelled by the user, creating Response with AuthnFailed status',
-                'Responding to request "_123456789012345678901234567890123456789012" with response based on response from the remote IdP with response "_mocked_generated_id"',
+                'Authentication was cancelled by the user, creating Response with AuthnFailed status for user 724cca6778a1d3db16b65c40d4c378d011f220be',
+                'Responding to request "_123456789012345678901234567890123456789012" with response based on response from the remote IdP with response "_mocked_generated_id" for user 724cca6778a1d3db16b65c40d4c378d011f220be',
             ],
             'info' => [],
             'debug' => [],
@@ -159,6 +162,7 @@ final class FailedResponseServiceTest extends GatewaySamlTestCase
             'surfnet/gateway/requestrequest_id' => '_123456789012345678901234567890123456789012',
             'surfnet/gateway/requestservice_provider' => 'https://sp.com/metadata',
             'surfnet/gateway/requestassertion_consumer_service_url' => 'https://sp.com/acs',
+            'surfnet/gateway/requestname_id' => '724cca6778a1d3db16b65c40d4c378d011f220be',
         ], $this->getSessionData('attributes'));
     }
 

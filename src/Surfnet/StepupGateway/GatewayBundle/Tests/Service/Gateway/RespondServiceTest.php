@@ -190,8 +190,8 @@ final class RespondServiceTest extends GatewaySamlTestCase
             'error' => [],
             'warning' => [],
             'notice' => [
-                'Creating Response',
-                'Responding to request "_123456789012345678901234567890123456789012" with response based on response from the remote IdP with response "_mocked_generated_id"',
+                'Creating Response for user 724cca6778a1d3db16b65c40d4c378d011f220be',
+                'Responding to request "_123456789012345678901234567890123456789012" with response based on response from the remote IdP with response "_mocked_generated_id" for user 724cca6778a1d3db16b65c40d4c378d011f220be',
             ],
             'info' => [],
             'debug' => [],
