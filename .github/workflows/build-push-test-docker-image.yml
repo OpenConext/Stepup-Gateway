@@ -48,7 +48,7 @@ jobs:
             type=raw,suffix=,value=test
 
       - name: Build and push the TEST image
-        uses: docker/build-push-action@v7.3.0
+        uses: docker/build-push-action@v7.4.0
         with:
           context: .
           file: docker/Dockerfile.test
