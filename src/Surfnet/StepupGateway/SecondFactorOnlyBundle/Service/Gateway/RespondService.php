@@ -84,9 +84,10 @@ class RespondService
     public function respond(ResponseContext $responseContext, Request $request)
     {
         $originalRequestId = $responseContext->getInResponseTo();
+        $identityNameId = $responseContext->getIdentityNameId();
         $logger = $this->samlLogger->forAuthentication($originalRequestId);
 
-        $logger->notice('Creating second-factor-only Response');
+        $logger->notice(sprintf('Creating second-factor-only Response for user %s', $identityNameId));
 
         $selectedSecondFactorUuid = $responseContext->getSelectedSecondFactor();
         if (!$selectedSecondFactorUuid) {
@@ -114,9 +115,10 @@ class RespondService
         );
 
         $logger->notice(sprintf(
-            'Responding to request "%s" with newly created response "%s"',
+            'Responding to request "%s" with newly created response "%s" for user %s',
             $responseContext->getInResponseTo(),
-            $response->getId()
+            $response->getId(),
+            $identityNameId,
         ));
 
         return $response;

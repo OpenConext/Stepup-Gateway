@@ -121,16 +121,17 @@ class StepUpAuthenticationService
             $this->secondFactorTypeService
         );
         $this->logger->info(
-            sprintf('Loaded %d matching candidate second factors', count($candidateSecondFactors))
+            sprintf('Loaded %d matching candidate second factors for user %s', count($candidateSecondFactors), $identityNameId)
         );
 
         foreach ($candidateSecondFactors as $key => $secondFactor) {
             if (!$whitelistService->contains($secondFactor->institution)) {
                 $this->logger->notice(
                     sprintf(
-                        'Second factor "%s" is listed for institution "%s" which is not on the whitelist',
+                        'Second factor "%s" is listed for institution "%s" which is not on the whitelist for user %s',
                         $secondFactor->secondFactorId,
-                        $secondFactor->institution
+                        $secondFactor->institution,
+                        $identityNameId,
                     )
                 );
 
@@ -139,7 +140,10 @@ class StepUpAuthenticationService
         }
 
         if ($candidateSecondFactors->isEmpty()) {
-            $this->logger->alert('No suitable candidate second factors found, sending Loa cannot be given response');
+            $this->logger->alert(sprintf(
+                'No suitable candidate second factors found, sending Loa cannot be given response for user %s',
+                $identityNameId,
+            ));
         }
 
         return $candidateSecondFactors;

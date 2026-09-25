@@ -77,9 +77,10 @@ class RespondService
     public function respond(ResponseContext $responseContext)
     {
         $originalRequestId = $responseContext->getInResponseTo();
+        $identityNameId = $responseContext->getIdentityNameId();
 
         $logger = $this->samlLogger->forAuthentication($originalRequestId);
-        $logger->notice('Creating Response');
+        $logger->notice(sprintf('Creating Response for user %s', $identityNameId));
 
         $grantedLoa = null;
         if ($responseContext->isSecondFactorVerified()) {
@@ -94,9 +95,10 @@ class RespondService
         );
 
         $logger->notice(sprintf(
-            'Responding to request "%s" with response based on response from the remote IdP with response "%s"',
+            'Responding to request "%s" with response based on response from the remote IdP with response "%s" for user %s',
             $responseContext->getInResponseTo(),
-            $response->getId()
+            $response->getId(),
+            $identityNameId,
         ));
 
         return $response;

@@ -90,10 +90,11 @@ class SecondFactorOnlyController extends ContainerController
         }
 
         // Handle SAML GSSP user attibutes extension
-        $logger->notice('Determine if GSSP user attributes are present for processing later on');
+        $identityNameId = $originalRequest->getNameId();
+        $logger->notice(sprintf('Determine if GSSP user attributes are present for processing later on for user %s', $identityNameId));
         $this->getGsspFallbackService()->handleSamlGsspExtension($logger, $originalRequest);
 
-        $logger->notice('Forwarding to second factor controller for loa determination and handling');
+        $logger->notice(sprintf('Forwarding to second factor controller for loa determination and handling for user %s', $identityNameId));
 
         // Forward to the selectSecondFactorForVerificationSsoAction,
         // this in turn will forward to the correct
