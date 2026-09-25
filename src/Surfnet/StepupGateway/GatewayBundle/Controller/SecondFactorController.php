@@ -84,14 +84,14 @@ class SecondFactorController extends ContainerController
         $this->supportsAuthenticationMode($authenticationMode);
         $context = $this->getResponseContext($authenticationMode);
         $originalRequestId = $context->getInResponseTo();
+        $identityNameId = $context->getIdentityNameId();
         /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
         $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
-        $logger->notice('Determining which second factor to use...');
+        $logger->notice(sprintf('Determining which second factor to use for user %s...', $identityNameId));
         try {
             // Retrieve all requirements to determine the required LoA
             $requestedLoa = $context->getRequiredLoa();
             $spConfiguredLoas = $context->getServiceProvider()->get('configuredLoas');
-            $identityNameId = $context->getIdentityNameId();
             $normalizedIdpSho = $context->getNormalizedSchacHomeOrganization();
             $normalizedUserSho = $this->getStepupService()->getNormalizedUserShoByIdentityNameId($identityNameId);
             $requiredLoa = $this
@@ -104,7 +104,7 @@ class SecondFactorController extends ContainerController
                 );
         } catch (LoaCannotBeGivenException $e) {
             // Log the message of the domain exception, this contains a meaningful message.
-            $logger->notice($e->getMessage());
+            $logger->notice(sprintf('%s for user %s', $e->getMessage(), $identityNameId));
 
             return $this->forward(
                 'Surfnet\StepupGateway\GatewayBundle\Controller\GatewayController::sendLoaCannotBeGiven',
@@ -112,7 +112,7 @@ class SecondFactorController extends ContainerController
             );
         }
 
-        $logger->notice(sprintf('Determined that the required Loa is "%s"', $requiredLoa));
+        $logger->notice(sprintf('Determined that the required Loa is "%s" for user %s', $requiredLoa, $identityNameId));
         if ($this->getStepupService()->isIntrinsicLoa($requiredLoa)) {
             $this->get('gateway.authentication_logger')->logIntrinsicLoaAuthentication($originalRequestId, $authenticationMode);
 
@@ -127,7 +127,10 @@ class SecondFactorController extends ContainerController
             // Test if the SSO cookie can satisfy the second factor authentication requirements
             if ($this->getCookieService()->maySkipAuthentication($requiredLoa->getLevel(), $identityNameId, $ssoCookie)) {
                 $logger->notice(
-                    'Skipping second factor authentication. Required LoA was met by the LoA recorded in the cookie',
+                    sprintf(
+                        'Skipping second factor authentication for user %s. Required LoA was met by the LoA recorded in the cookie',
+                        $identityNameId,
+                    ),
                     [
                         'required-loa' => $requiredLoa->getLevel(),
                         'cookie-loa' => $ssoCookie->getLoa(),
@@ -162,13 +165,13 @@ class SecondFactorController extends ContainerController
         $secondFactorCollection = $this
             ->getStepupService()
             ->determineViableSecondFactors(
-                $context->getIdentityNameId(),
+                $identityNameId,
                 $requiredLoa,
                 $this->get('gateway.service.whitelist'),
             );
         switch (count($secondFactorCollection)) {
             case 0:
-                $logger->notice('No second factors can give the determined Loa');
+                $logger->notice(sprintf('No second factors can give the determined Loa for user %s', $identityNameId));
                 return $this->forward(
                     'Surfnet\StepupGateway\GatewayBundle\Controller\GatewayController::sendLoaCannotBeGiven',
                     ['authenticationMode' => $authenticationMode],
@@ -176,8 +179,9 @@ class SecondFactorController extends ContainerController
             case 1:
                 $secondFactor = $secondFactorCollection->first();
                 $logger->notice(sprintf(
-                    'Found "%d" second factors, using second factor of type "%s"',
+                    'Found "%d" second factors for user %s, using second factor of type "%s"',
                     count($secondFactorCollection),
+                    $identityNameId,
                     $secondFactor->secondFactorType,
                 ));
 
@@ -210,10 +214,11 @@ class SecondFactorController extends ContainerController
         $this->supportsAuthenticationMode($authenticationMode);
         $context = $this->getResponseContext($authenticationMode);
         $originalRequestId = $context->getInResponseTo();
+        $identityNameId = $context->getIdentityNameId();
 
         /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
         $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
-        $logger->notice('Ask the user which one of his suitable second factor tokens to use...');
+        $logger->notice(sprintf('Ask the user which one of his suitable second factor tokens to use for user %s...', $identityNameId));
 
         try {
             // Retrieve all requirements to determine the required LoA
@@ -221,7 +226,7 @@ class SecondFactorController extends ContainerController
             $spConfiguredLoas = $context->getServiceProvider()->get('configuredLoas');
 
             $normalizedIdpSho = $context->getNormalizedSchacHomeOrganization();
-            $normalizedUserSho = $this->getStepupService()->getNormalizedUserShoByIdentityNameId($context->getIdentityNameId());
+            $normalizedUserSho = $this->getStepupService()->getNormalizedUserShoByIdentityNameId($identityNameId);
 
             $requiredLoa = $this
                 ->getStepupService()
@@ -233,7 +238,7 @@ class SecondFactorController extends ContainerController
                 );
         } catch (LoaCannotBeGivenException $e) {
             // Log the message of the domain exception, this contains a meaningful message.
-            $logger->notice($e->getMessage());
+            $logger->notice(sprintf('%s for user %s', $e->getMessage(), $identityNameId));
 
             return $this->forward(
                 'Surfnet\StepupGateway\GatewayBundle\Controller\GatewayController::sendLoaCannotBeGiven',
@@ -241,12 +246,12 @@ class SecondFactorController extends ContainerController
             );
         }
 
-        $logger->notice(sprintf('Determined that the required Loa is "%s"', $requiredLoa));
+        $logger->notice(sprintf('Determined that the required Loa is "%s" for user %s', $requiredLoa, $identityNameId));
 
         $secondFactors = $this
             ->getStepupService()
             ->determineViableSecondFactors(
-                $context->getIdentityNameId(),
+                $identityNameId,
                 $requiredLoa,
                 $this->get('gateway.service.whitelist'),
             );
@@ -303,7 +308,7 @@ class SecondFactorController extends ContainerController
 
             $secondFactor = $secondFactorFiltered->first();
 
-            $logger->notice(sprintf('User chose "%s" to use as second factor', $secondFactorType));
+            $logger->notice(sprintf('User chose "%s" to use as second factor for user %s', $secondFactorType, $identityNameId));
 
             // Forward to action to verify possession of second factor
             return $this->selectAndRedirectTo($secondFactor, $context, $authenticationMode);
@@ -339,18 +344,20 @@ class SecondFactorController extends ContainerController
         }
         $this->supportsAuthenticationMode($authenticationMode);
         $context = $this->getResponseContext($authenticationMode);
+        $identityNameId = $context->getIdentityNameId();
 
         $originalRequestId = $context->getInResponseTo();
 
         /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
         $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
-        $logger->info('Received request to verify GSSF');
+        $logger->info(sprintf('Received request to verify GSSF for user %s', $identityNameId));
 
         $selectedSecondFactor = $this->getSelectedSecondFactor($context, $logger);
 
         $logger->info(sprintf(
-            'Selected GSSF "%s" for verfication, forwarding to Saml handling',
+            'Selected GSSF "%s" for verfication, forwarding to Saml handling for user %s',
             $selectedSecondFactor,
+            $identityNameId,
         ));
 
         /** @var SecondFactorService $secondFactorService */
@@ -383,12 +390,13 @@ class SecondFactorController extends ContainerController
     {
         $this->supportsAuthenticationMode($authenticationMode);
         $context = $this->getResponseContext($authenticationMode);
+        $identityNameId = $context->getIdentityNameId();
 
         $originalRequestId = $context->getInResponseTo();
 
         /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
         $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
-        $logger->info('Attempting to mark GSSF as verified');
+        $logger->info(sprintf('Attempting to mark GSSF as verified for user %s', $identityNameId));
 
         $selectedSecondFactor = $this->getSelectedSecondFactor($context, $logger);
 
@@ -412,8 +420,9 @@ class SecondFactorController extends ContainerController
         $this->getAuthenticationLogger()->logSecondFactorAuthentication($originalRequestId, $authenticationMode);
 
         $logger->info(sprintf(
-            'Marked GSSF "%s" as verified, forwarding to Gateway controller to respond',
+            'Marked GSSF "%s" as verified, forwarding to Gateway controller to respond for user %s',
             $selectedSecondFactor,
+            $identityNameId,
         ));
 
         return $this->forward($context->getResponseAction());
@@ -430,13 +439,14 @@ class SecondFactorController extends ContainerController
         $this->supportsAuthenticationMode($authenticationMode);
         $context = $this->getResponseContext($authenticationMode);
         $originalRequestId = $context->getInResponseTo();
+        $identityNameId = $context->getIdentityNameId();
 
         /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
         $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
 
         $selectedSecondFactor = $this->getSelectedSecondFactor($context, $logger);
 
-        $logger->notice('Verifying possession of Yubikey second factor');
+        $logger->notice(sprintf('Verifying possession of Yubikey second factor for user %s', $identityNameId));
 
         $command = new VerifyYubikeyOtpCommand();
         $command->secondFactorId = $selectedSecondFactor;
@@ -473,8 +483,9 @@ class SecondFactorController extends ContainerController
 
             $logger->info(
                 sprintf(
-                    'Marked Yubikey Second Factor "%s" as verified, forwarding to Saml Proxy to respond',
+                    'Marked Yubikey Second Factor "%s" as verified, forwarding to Saml Proxy to respond for user %s',
                     $selectedSecondFactor,
+                    $identityNameId,
                 ),
             );
 
@@ -504,13 +515,14 @@ class SecondFactorController extends ContainerController
         $this->supportsAuthenticationMode($authenticationMode);
         $context = $this->getResponseContext($authenticationMode);
         $originalRequestId = $context->getInResponseTo();
+        $identityNameId = $context->getIdentityNameId();
 
         /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
         $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
 
         $selectedSecondFactor = $this->getSelectedSecondFactor($context, $logger);
 
-        $logger->notice('Verifying possession of SMS second factor, preparing to send');
+        $logger->notice(sprintf('Verifying possession of SMS second factor, preparing to send for user %s', $identityNameId));
 
         $command = new SendSmsChallengeCommand();
         $command->secondFactorId = $selectedSecondFactor;
@@ -541,7 +553,7 @@ class SecondFactorController extends ContainerController
             );
         }
 
-        $logger->notice('Verifying possession of SMS second factor, sending challenge per SMS');
+        $logger->notice(sprintf('Verifying possession of SMS second factor, sending challenge per SMS for user %s', $identityNameId));
 
         if (!$stepupService->sendSmsChallenge($command)) {
             $form->addError(
@@ -588,6 +600,7 @@ class SecondFactorController extends ContainerController
         $this->supportsAuthenticationMode($authenticationMode);
         $context = $this->getResponseContext($authenticationMode);
         $originalRequestId = $context->getInResponseTo();
+        $identityNameId = $context->getIdentityNameId();
 
         /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
         $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
@@ -599,7 +612,7 @@ class SecondFactorController extends ContainerController
         $cancelForm = $this->buildCancelAuthenticationForm($authenticationMode)->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $logger->notice('Verifying input SMS challenge matches');
+            $logger->notice(sprintf('Verifying input SMS challenge matches for user %s', $identityNameId));
             $command->secondFactorId = $selectedSecondFactor;
             $verification = $this->getStepupService()->verifySmsChallenge($command);
 
@@ -611,24 +624,25 @@ class SecondFactorController extends ContainerController
 
                 $logger->info(
                     sprintf(
-                        'Marked Sms Second Factor "%s" as verified, forwarding to Saml Proxy to respond',
+                        'Marked Sms Second Factor "%s" as verified, forwarding to Saml Proxy to respond for user %s',
                         $selectedSecondFactor,
+                        $identityNameId,
                     ),
                 );
 
                 return $this->forward($context->getResponseAction());
             } elseif ($verification->didOtpExpire()) {
-                $logger->notice('SMS challenge expired');
+                $logger->notice(sprintf('SMS challenge expired for user %s', $identityNameId));
                 $form->addError(
                     new FormError($this->get('translator')->trans('gateway.form.send_sms_challenge.challenge_expired')),
                 );
             } elseif ($verification->wasAttemptedTooManyTimes()) {
-                $logger->notice('SMS challenge verification was attempted too many times');
+                $logger->notice(sprintf('SMS challenge verification was attempted too many times for user %s', $identityNameId));
                 $form->addError(
                     new FormError($this->get('translator')->trans('gateway.form.send_sms_challenge.too_many_attempts')),
                 );
             } else {
-                $logger->notice('SMS challenge did not match');
+                $logger->notice(sprintf('SMS challenge did not match for user %s', $identityNameId));
                 $form->addError(
                     new FormError(
                         $this->get('translator')->trans('gateway.form.send_sms_challenge.sms_challenge_incorrect'),

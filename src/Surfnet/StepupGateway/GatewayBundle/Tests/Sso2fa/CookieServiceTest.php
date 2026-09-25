@@ -469,6 +469,9 @@ class CookieServiceTest extends TestCase
         $this->responseContext
             ->shouldReceive('isForceAuthn')
             ->andReturn(false);
+        $this->responseContext
+            ->shouldReceive('getIdentityNameId')
+            ->andReturn('james-hoffman');
         $this->secondFactorService
             ->shouldReceive('findByUuid')
             ->with('sf-id-1234')
@@ -552,7 +555,7 @@ class CookieServiceTest extends TestCase
 
         $this->logger
             ->shouldReceive('notice')
-            ->with('The required LoA 4 did not match the LoA of the SSO cookie LoA 3');
+            ->with('The required LoA 4 did not match the LoA of the SSO cookie LoA 3 for user abcdef-1234');
 
         self::assertFalse(
             $this->service->maySkipAuthentication(
@@ -611,7 +614,7 @@ class CookieServiceTest extends TestCase
 
         $this->logger
             ->shouldReceive('notice')
-            ->with('The SSO on 2FA cookie has expired. Meaning [authentication time] + [cookie lifetime] is in the past');
+            ->with('The SSO on 2FA cookie has expired. Meaning [authentication time] + [cookie lifetime] is in the past for user ident-1234');
 
         self::assertFalse(
             $this->service->maySkipAuthentication(
@@ -647,7 +650,7 @@ class CookieServiceTest extends TestCase
             ->andReturnNull();
 
         $this->logger->shouldReceive('notice')->with(
-            'The second factor stored in the SSO cookie was revoked or has otherwise became unknown to Gateway',
+            'The second factor stored in the SSO cookie was revoked or has otherwise became unknown to Gateway for user ident-1234',
             ['secondFactorIdFromCookie' => 'abcdef-1234']
         );
         self::assertFalse(
