@@ -79,7 +79,7 @@ final class ExceptionController extends BaseExceptionController
         $requestId = $this->requestId;
         $errorCode = Art::forException($exception);
         $userAgent = $request->headers->get('User-Agent');
-        $ipAddress = $request->getClientIp();
+        $ipAddress = $this->resolveClientIp($request);
 
         return new Response(
             $this->twig->render(
@@ -95,5 +95,19 @@ final class ExceptionController extends BaseExceptionController
             ),
             $statusCode
         );
+    }
+
+    private function resolveClientIp(Request $request): ?string
+    {
+        if ($request->headers->has('X-Forwarded-For')) {
+            $forwardedFor = (string) $request->headers->get('X-Forwarded-For');
+            $ips = explode(',', $forwardedFor);
+            $firstIp = trim($ips[0]);
+            if ($firstIp !== '') {
+                return $firstIp;
+            }
+        }
+
+        return $request->getClientIp();
     }
 }

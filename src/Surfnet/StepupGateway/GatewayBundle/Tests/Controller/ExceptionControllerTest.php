@@ -76,4 +76,45 @@ final class ExceptionControllerTest extends TestCase
         $this->assertSame(500, $response->getStatusCode());
         $this->assertSame('rendered error page', $response->getContent());
     }
+
+    public function test_404_not_found_renders_404_template_and_resolves_x_forwarded_for(): void
+    {
+        $translator = Mockery::mock(TranslatorInterface::class);
+        $translator->shouldReceive('trans')->andReturn('text');
+
+        $generator = Mockery::mock(RequestIdGenerator::class);
+        $requestId = new RequestId($generator);
+        $requestId->set('request-id');
+
+        $twig = Mockery::mock(Environment::class);
+        $twig->shouldReceive('render')
+            ->with(
+                '@default/bundles/TwigBundle/Exception/error404.html.twig',
+                Mockery::on(static function (array $parameters): bool {
+                    return $parameters['ip_address'] === '203.0.113.195'
+                        && $parameters['request_id'] === 'request-id';
+                }),
+            )
+            ->andReturn('rendered 404 page');
+
+        $controller = new ExceptionController($translator, $requestId, $twig);
+
+        $request = Request::create(
+            '/unknown-url',
+            'GET',
+            [],
+            [],
+            [],
+            [
+                'REMOTE_ADDR' => '10.0.0.1',
+                'HTTP_X_FORWARDED_FOR' => '203.0.113.195, 10.0.0.1',
+            ]
+        );
+        $exception = new \Symfony\Component\HttpKernel\Exception\NotFoundHttpException('Page not found');
+
+        $response = $controller->show($request, $exception);
+
+        $this->assertSame(404, $response->getStatusCode());
+        $this->assertSame('rendered 404 page', $response->getContent());
+    }
 }
