@@ -225,6 +225,19 @@ services:
         tags: [{ name: form.type, alias: gateway_cancel_second_factor_verification }]
 
     # Listeners
+    gateway.monolog.remote_ip_processor:
+        class: Surfnet\StepupGateway\GatewayBundle\Monolog\Processor\RemoteIpProcessor
+        arguments:
+            - "@request_stack"
+        tags: [{ name: monolog.processor }]
+
+    gateway.event_listener.not_found_exception:
+        class: Surfnet\StepupGateway\GatewayBundle\EventListener\NotFoundHttpExceptionListener
+        arguments:
+            - "@Surfnet\\StepupGateway\\GatewayBundle\\Controller\\ExceptionController"
+            - "@logger"
+        tags: [{ name: kernel.event_subscriber }]
+
     gateway.event_listener.locale:
         class: Surfnet\StepupGateway\GatewayBundle\EventListener\SecondFactorLocaleListener
         arguments:
