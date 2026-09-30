@@ -42,7 +42,7 @@ final class NotFoundHttpExceptionListener implements EventSubscriberInterface
         }
 
         $request = $event->getRequest();
-        $ip = $this->resolveClientIp($request);
+        $ip = $request->getClientIp();
 
         $this->logger->warning(
             sprintf(
@@ -70,19 +70,5 @@ final class NotFoundHttpExceptionListener implements EventSubscriberInterface
         return [
             KernelEvents::EXCEPTION => ['onKernelException', 10],
         ];
-    }
-
-    private function resolveClientIp(Request $request): ?string
-    {
-        if ($request->headers->has('X-Forwarded-For')) {
-            $forwardedFor = (string) $request->headers->get('X-Forwarded-For');
-            $ips = explode(',', $forwardedFor);
-            $firstIp = trim($ips[0]);
-            if ($firstIp !== '') {
-                return $firstIp;
-            }
-        }
-
-        return $request->getClientIp();
     }
 }

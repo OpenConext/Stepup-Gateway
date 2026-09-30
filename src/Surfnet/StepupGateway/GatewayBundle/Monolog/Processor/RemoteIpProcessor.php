@@ -36,7 +36,7 @@ final class RemoteIpProcessor
             return $record;
         }
 
-        $ip = $this->resolveClientIp($request);
+        $ip = $request->getClientIp();
 
         if ($ip === null || $ip === '') {
             return $record;
@@ -45,19 +45,5 @@ final class RemoteIpProcessor
         $record->extra['remote_ip'] = $ip;
 
         return $record;
-    }
-
-    private function resolveClientIp(Request $request): ?string
-    {
-        if ($request->headers->has('X-Forwarded-For')) {
-            $forwardedFor = (string) $request->headers->get('X-Forwarded-For');
-            $ips = explode(',', $forwardedFor);
-            $firstIp = trim($ips[0]);
-            if ($firstIp !== '') {
-                return $firstIp;
-            }
-        }
-
-        return $request->getClientIp();
     }
 }

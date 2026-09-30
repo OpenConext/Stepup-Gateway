@@ -68,19 +68,9 @@ final class RemoteIpProcessorTest extends TestCase
         $this->assertSame('12345', $processed->extra['request_id']);
     }
 
-    public function test_adds_remote_ip_honoring_x_forwarded_for(): void
+    public function test_does_not_add_remote_ip_when_client_ip_is_null(): void
     {
-        $request = Request::create(
-            '/',
-            'GET',
-            [],
-            [],
-            [],
-            [
-                'REMOTE_ADDR' => '10.0.0.1',
-                'HTTP_X_FORWARDED_FOR' => '203.0.113.195, 10.0.0.1',
-            ]
-        );
+        $request = new Request();
         $requestStack = new RequestStack();
         $requestStack->push($request);
 
@@ -89,32 +79,6 @@ final class RemoteIpProcessorTest extends TestCase
         $record = $this->createLogRecord();
         $processed = $processor($record);
 
-        $this->assertArrayHasKey('remote_ip', $processed->extra);
-        $this->assertSame('203.0.113.195', $processed->extra['remote_ip']);
-    }
-
-    public function test_falls_back_to_client_ip_when_x_forwarded_for_is_empty(): void
-    {
-        $request = Request::create(
-            '/',
-            'GET',
-            [],
-            [],
-            [],
-            [
-                'REMOTE_ADDR' => '198.51.100.42',
-                'HTTP_X_FORWARDED_FOR' => '',
-            ]
-        );
-        $requestStack = new RequestStack();
-        $requestStack->push($request);
-
-        $processor = new RemoteIpProcessor($requestStack);
-
-        $record = $this->createLogRecord();
-        $processed = $processor($record);
-
-        $this->assertArrayHasKey('remote_ip', $processed->extra);
-        $this->assertSame('198.51.100.42', $processed->extra['remote_ip']);
+        $this->assertArrayNotHasKey('remote_ip', $processed->extra);
     }
 }
