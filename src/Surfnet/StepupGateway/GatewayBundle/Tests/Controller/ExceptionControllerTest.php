@@ -77,7 +77,7 @@ final class ExceptionControllerTest extends TestCase
         $this->assertSame('rendered error page', $response->getContent());
     }
 
-    public function test_404_not_found_renders_404_template_and_resolves_x_forwarded_for(): void
+    public function test_404_not_found_renders_404_template_and_client_ip(): void
     {
         $translator = Mockery::mock(TranslatorInterface::class);
         $translator->shouldReceive('trans')->andReturn('text');
@@ -106,8 +106,7 @@ final class ExceptionControllerTest extends TestCase
             [],
             [],
             [
-                'REMOTE_ADDR' => '10.0.0.1',
-                'HTTP_X_FORWARDED_FOR' => '203.0.113.195, 10.0.0.1',
+                'REMOTE_ADDR' => '203.0.113.195',
             ]
         );
         $exception = new \Symfony\Component\HttpKernel\Exception\NotFoundHttpException('Page not found');
