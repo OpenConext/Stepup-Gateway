@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Disable browser autocompletion on YubiKey input field #673
+
 ## 6.1.0
 
 ### Changes
