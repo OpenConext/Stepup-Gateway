@@ -15,7 +15,7 @@
         {% endfor %}
     {% endif %}
 
-    {{ form_row(form.yubikeyInput, { value: '' }) }}
+    {{ form_row(form.yubikeyInput, { attr: { autocomplete: 'off' }, value: '' }) }}
 
     {{ form_end(form) }}
 
