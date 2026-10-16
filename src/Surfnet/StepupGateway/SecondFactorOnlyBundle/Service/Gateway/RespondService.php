@@ -31,43 +31,15 @@ use Symfony\Component\HttpFoundation\Request;
 
 class RespondService
 {
-    /** @var SamlAuthenticationLogger */
-    private $samlLogger;
-
-    /** @var LoaResolutionService */
-    private $loaResolutionService;
-
-    /** @var LoaAliasLookupService */
-    private $loaAliasLookupService;
-
-    /** @var ResponseFactory */
-    private $responseFactory;
-
-    /** @var SecondFactorService */
-    private $secondFactorService;
-
-    /** @var SecondFactorTypeService */
-    private $secondFactorTypeService;
-
-    /** @var ResponseValidator */
-    private $responseValidator;
-
     public function __construct(
-        SamlAuthenticationLogger $samlLogger,
-        LoaResolutionService $loaResolutionService,
-        LoaAliasLookupService $loaAliasLookupService,
-        ResponseFactory $responseFactory,
-        SecondFactorService $secondFactorService,
-        SecondFactorTypeService $secondFactorTypeService,
-        ResponseValidator $responseValidator
+        private readonly SamlAuthenticationLogger $samlLogger,
+        private readonly LoaResolutionService $loaResolutionService,
+        private readonly LoaAliasLookupService $loaAliasLookupService,
+        private readonly ResponseFactory $responseFactory,
+        private readonly SecondFactorService $secondFactorService,
+        private readonly SecondFactorTypeService $secondFactorTypeService,
+        private readonly ResponseValidator $responseValidator,
     ) {
-        $this->samlLogger = $samlLogger;
-        $this->loaResolutionService = $loaResolutionService;
-        $this->loaAliasLookupService = $loaAliasLookupService;
-        $this->responseFactory = $responseFactory;
-        $this->secondFactorService = $secondFactorService;
-        $this->secondFactorTypeService = $secondFactorTypeService;
-        $this->responseValidator = $responseValidator;
     }
 
 

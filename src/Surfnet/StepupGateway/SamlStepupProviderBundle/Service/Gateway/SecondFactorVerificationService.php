@@ -32,26 +32,14 @@ class SecondFactorVerificationService
 {
     private const SFO_RESPONSE_CONTEXT_SERVICE_ID = 'second_factor_only.response_context';
 
-    /** @var SamlAuthenticationLogger */
-    private $samlLogger;
-
-    /** @var ResponseContext */
-    private $responseContext;
-
-    /** @var ResponseContext */
-    private $sfoResponseContext;
-
     public function __construct(
-        SamlAuthenticationLogger $samlLogger,
-        ResponseContext $responseContext,
-        ResponseContext $sfoResponseContext,
+        private readonly SamlAuthenticationLogger $samlLogger,
+        private readonly ResponseContext $responseContext,
+        private readonly ResponseContext $sfoResponseContext,
         private readonly ServiceDisplayNameResolver $displayNameResolver,
         private readonly UiInfoExtensionMapper $uiInfoMapper,
         private readonly RequestStack $requestStack
     ) {
-        $this->samlLogger = $samlLogger;
-        $this->responseContext = $responseContext;
-        $this->sfoResponseContext = $sfoResponseContext;
     }
 
     /**

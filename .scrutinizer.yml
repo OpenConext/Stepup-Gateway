@@ -1,8 +1,8 @@
 build:
     image: default-jammy
     environment:
-        php: 8.2
-        node: 'v20'
+        php: 8.5
+        node: 'v24'
 
     nodes:
         analysis:

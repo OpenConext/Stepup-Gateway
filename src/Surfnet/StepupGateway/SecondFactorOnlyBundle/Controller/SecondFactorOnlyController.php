@@ -82,7 +82,7 @@ class SecondFactorOnlyController extends ContainerController
 
         try {
             $secondFactorLoginService->singleSignOn($httpRequest, $originalRequest);
-        } catch (RequesterFailureException $e) {
+        } catch (RequesterFailureException) {
             /** @var \Surfnet\StepupGateway\GatewayBundle\Service\ResponseRenderingService $responseRendering */
             $responseRendering = $this->get('second_factor_only.response_rendering');
 

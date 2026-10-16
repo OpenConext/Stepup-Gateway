@@ -25,9 +25,9 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class StateHandler extends ProxyStateHandler
 {
-    private const SESSION_PATH = 'surfnet/gateway/gssp';
+    private const string SESSION_PATH = 'surfnet/gateway/gssp';
     public function __construct(
-        private RequestStack $requestStack,
+        private readonly RequestStack $requestStack,
         private readonly string $provider,
     ) {
     }

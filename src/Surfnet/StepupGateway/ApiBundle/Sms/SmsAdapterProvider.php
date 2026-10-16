@@ -27,7 +27,7 @@ use function sprintf;
 
 class SmsAdapterProvider
 {
-    private const SPRYNG = 'spryng';
+    private const string SPRYNG = 'spryng';
     /**
      * @var SmsAdapterInterface[]
      */
@@ -58,7 +58,7 @@ class SmsAdapterProvider
 
     public function addSmsAdapter(SmsAdapterInterface $adapter): void
     {
-        $adapterName = get_class($adapter);
+        $adapterName = $adapter::class;
         if (!array_key_exists($adapterName, self::$allowedServices)) {
             throw new InvalidArgumentException(
                 sprintf(

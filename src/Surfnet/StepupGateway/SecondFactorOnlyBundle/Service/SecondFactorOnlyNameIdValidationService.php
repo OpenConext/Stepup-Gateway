@@ -22,20 +22,8 @@ use Surfnet\StepupGateway\GatewayBundle\Service\SamlEntityService;
 
 final class SecondFactorOnlyNameIdValidationService
 {
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
-     * @var SamlEntityService
-     */
-    private $entityService;
-
-    public function __construct(LoggerInterface $logger, SamlEntityService $entityService)
+    public function __construct(private LoggerInterface $logger, private readonly SamlEntityService $entityService)
     {
-        $this->logger = $logger;
-        $this->entityService = $entityService;
     }
 
     /**

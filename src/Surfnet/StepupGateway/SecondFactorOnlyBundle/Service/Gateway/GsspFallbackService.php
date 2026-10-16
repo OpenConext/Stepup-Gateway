@@ -33,21 +33,12 @@ use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\Gateway\GsspFallback\Gs
 class GsspFallbackService
 {
 
-    private SecondFactorRepository $secondFactorRepository;
-    private InstitutionConfigurationRepository $institutionConfigurationRepository;
-    private ProxyStateHandler $stateHandler;
-    private GsspFallbackConfig $config;
-
     public function __construct(
-        SecondFactorRepository $secondFactorRepository,
-        InstitutionConfigurationRepository $institutionConfigurationRepository,
-        ProxyStateHandler $stateHandler,
-        GsspFallbackConfig $config,
+        private readonly SecondFactorRepository $secondFactorRepository,
+        private readonly InstitutionConfigurationRepository $institutionConfigurationRepository,
+        private readonly ProxyStateHandler $stateHandler,
+        private readonly GsspFallbackConfig $config,
     ) {
-        $this->secondFactorRepository = $secondFactorRepository;
-        $this->institutionConfigurationRepository = $institutionConfigurationRepository;
-        $this->stateHandler = $stateHandler;
-        $this->config = $config;
     }
 
     /**

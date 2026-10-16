@@ -30,24 +30,16 @@ use Webmozart\Assert\Assert;
 final class RequestHelper
 {
 
-    /** @var LoggerInterface */
-    private $logger;
-
-    /** @var StateHandler */
-    private $stateHandler;
-
-    public const ADFS_PARAM_AUTH_METHOD = 'AuthMethod';
-    public const ADFS_PARAM_CONTEXT = 'Context';
+    public const string ADFS_PARAM_AUTH_METHOD = 'AuthMethod';
+    public const string ADFS_PARAM_CONTEXT = 'Context';
 
     private static $requiredParams = [
         self::ADFS_PARAM_AUTH_METHOD,
         self::ADFS_PARAM_CONTEXT,
     ];
 
-    public function __construct(StateHandler $stateHandler, LoggerInterface $logger)
+    public function __construct(private readonly StateHandler $stateHandler, private readonly LoggerInterface $logger)
     {
-        $this->stateHandler = $stateHandler;
-        $this->logger = $logger;
     }
 
     /**

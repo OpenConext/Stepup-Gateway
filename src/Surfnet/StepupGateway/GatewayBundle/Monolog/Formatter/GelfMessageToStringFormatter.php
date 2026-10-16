@@ -25,16 +25,10 @@ use Monolog\LogRecord;
 class GelfMessageToStringFormatter implements FormatterInterface
 {
     /**
-     * @var GelfMessageFormatter
-     */
-    private $formatter;
-
-    /**
      * @param GelfMessageFormatter $formatter
      */
-    public function __construct(GelfMessageFormatter $formatter)
+    public function __construct(private readonly GelfMessageFormatter $formatter)
     {
-        $this->formatter = $formatter;
     }
 
     /**
@@ -59,6 +53,6 @@ class GelfMessageToStringFormatter implements FormatterInterface
      */
     public function formatBatch(array $records)
     {
-        return array_map([$this, 'format'], $records);
+        return array_map($this->format(...), $records);
     }
 }

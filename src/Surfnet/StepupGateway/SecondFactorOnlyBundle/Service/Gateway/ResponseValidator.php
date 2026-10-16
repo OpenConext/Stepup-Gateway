@@ -28,23 +28,11 @@ use Symfony\Component\HttpFoundation\Request;
 
 class ResponseValidator
 {
-    /** @var SecondFactorTypeService */
-    private $secondFactorTypeService;
-
-    /** @var ProviderRepository */
-    private $providerRepository;
-
-    /** @var PostBinding  */
-    private $postBinding;
-
     public function __construct(
-        SecondFactorTypeService $secondFactorTypeService,
-        ProviderRepository $providerRepository,
-        PostBinding $postBinding
+        private readonly SecondFactorTypeService $secondFactorTypeService,
+        private readonly ProviderRepository $providerRepository,
+        private readonly PostBinding $postBinding,
     ) {
-        $this->secondFactorTypeService = $secondFactorTypeService;
-        $this->providerRepository = $providerRepository;
-        $this->postBinding = $postBinding;
     }
 
     /**

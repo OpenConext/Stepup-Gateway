@@ -26,23 +26,13 @@ use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
 
 class FailedResponseService
 {
-    /** @var SamlAuthenticationLogger */
-    private $samlLogger;
-
-    /** @var ResponseBuilder */
-    private $responseBuilder;
-
     /**
      * GatewayServiceProviderService constructor.
      * @param SamlAuthenticationLogger $samlLogger
      * @param ResponseBuilder $responseBuilder
      */
-    public function __construct(
-        SamlAuthenticationLogger $samlLogger,
-        ResponseBuilder $responseBuilder
-    ) {
-        $this->samlLogger = $samlLogger;
-        $this->responseBuilder = $responseBuilder;
+    public function __construct(private readonly SamlAuthenticationLogger $samlLogger, private readonly ResponseBuilder $responseBuilder)
+    {
     }
 
     /**

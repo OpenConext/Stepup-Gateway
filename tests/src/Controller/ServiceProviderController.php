@@ -41,14 +41,8 @@ use Twig\Environment;
 
 class ServiceProviderController
 {
-    private $twig;
-
-    private $logger;
-
-    public function __construct(Environment $twig, LoggerInterface $logger)
+    public function __construct(private readonly Environment $twig, private readonly LoggerInterface $logger)
     {
-        $this->logger = $logger;
-        $this->twig = $twig;
     }
 
     /**
@@ -80,11 +74,11 @@ class ServiceProviderController
         }
 
         if (!$message instanceof SAMLResponse) {
-            throw new RuntimeException(sprintf('Unrecognized message type received: "%s"', get_class($message)));
+            throw new RuntimeException(sprintf('Unrecognized message type received: "%s"', $message::class));
         }
 
         $xml = base64_decode($request->request->get('SAMLResponse'));
-        $this->logger->notice(sprintf('Received SAMLResponse with status "%s"', implode($message->getStatus())));
+        $this->logger->notice(sprintf('Received SAMLResponse with status "%s"', implode('', $message->getStatus())));
         $this->logger->notice('The XML received', ['response-xml' => $xml]);
 
         if ($isAdfs) {

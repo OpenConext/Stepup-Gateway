@@ -29,32 +29,13 @@ use Surfnet\StepupBundle\Service\LoaResolutionService;
 class AuthenticationLogger
 {
 
-    /**
-     * @var SecondFactorService
-     */
-    private $secondFactorService;
-
-    private LoaResolutionService $loaResolutionService;
-    /**
-     * @var SamlAuthenticationLogger
-     */
-    private $authenticationChannelLogger;
-    private ResponseContext $sfoResponseContext;
-    private ResponseContext $ssoResponseContext;
-
-
     public function __construct(
-        SecondFactorService $secondFactorService,
-        LoaResolutionService $loaResolutionService,
-        SamlAuthenticationLogger $authenticationChannelLogger,
-        ResponseContext     $sfoResponseContext,
-        ResponseContext     $ssoResponseContext,
+        private readonly SecondFactorService $secondFactorService,
+        private readonly LoaResolutionService $loaResolutionService,
+        private readonly SamlAuthenticationLogger $authenticationChannelLogger,
+        private readonly ResponseContext $sfoResponseContext,
+        private readonly ResponseContext $ssoResponseContext,
     ) {
-        $this->secondFactorService  = $secondFactorService;
-        $this->loaResolutionService = $loaResolutionService;
-        $this->authenticationChannelLogger = $authenticationChannelLogger;
-        $this->sfoResponseContext = $sfoResponseContext;
-        $this->ssoResponseContext = $ssoResponseContext;
     }
 
 

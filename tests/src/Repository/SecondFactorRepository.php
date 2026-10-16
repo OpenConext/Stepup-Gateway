@@ -118,7 +118,7 @@ SQL;
         try {
             $this->findBy($nameId, $secondFactorType);
             return true;
-        } catch (Exception $e) {
+        } catch (Exception) {
             return false;
         }
     }

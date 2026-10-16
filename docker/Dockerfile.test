@@ -3,7 +3,7 @@ WORKDIR /unpack
 COPY output.zip /unpack
 RUN unzip /unpack/output.zip
 
-FROM ghcr.io/openconext/openconext-basecontainers/php82-apache2:latest
+FROM ghcr.io/openconext/openconext-basecontainers/php85-apache2-node24:latest
 # Set the default workdir
 WORKDIR /var/www/html
 COPY --from=unpack /unpack/ /var/www/html/

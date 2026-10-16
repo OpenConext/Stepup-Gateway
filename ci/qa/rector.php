@@ -6,6 +6,7 @@ use Rector\Config\RectorConfig;
 
 return RectorConfig::configure()
     ->withPaths([
+         __DIR__ . '/../../bin',
          __DIR__ . '/../../ci',
          __DIR__ . '/../../config',
          __DIR__ . '/../../public',
@@ -13,10 +14,16 @@ return RectorConfig::configure()
          __DIR__ . '/../../tests',
          __DIR__ . '/../../templates',
     ])
-    // uncomment to reach your current PHP version
-//     ->withPhpSets()
+    ->withPhpSets()
     ->withAttributesSets(all: true)
     ->withComposerBased(twig: true, doctrine: true, phpunit: true, symfony: true)
     ->withTypeCoverageLevel(0)
     ->withDeadCodeLevel(0)
-    ->withCodeQualityLevel(0);
+    ->withCodeQualityLevel(0)
+    ->withSkip([
+        \Rector\Php84\Rector\MethodCall\NewMethodCallWithoutParenthesesRector::class,
+        // This codebase relies on container-aware controllers resolving
+        // dependencies via $this->get() and a service locator, not constructor
+        // autowiring. This rule assumes autowiring and breaks the DI container.
+        \Rector\Symfony\Symfony28\Rector\MethodCall\GetToConstructorInjectionRector::class,
+    ]);
