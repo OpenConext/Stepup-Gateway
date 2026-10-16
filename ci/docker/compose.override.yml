@@ -14,7 +14,7 @@ services:
             - azuremfa.dev.openconext.local
             - mailcatcher.dev.openconext.local
     gateway:
-      image: ghcr.io/openconext/openconext-basecontainers/php82-apache2-node20-composer2:latest
+      image: ghcr.io/openconext/openconext-basecontainers/php85-apache2-node24:latest
       container_name: gateway
       environment:
          APP_ENV: smoketest

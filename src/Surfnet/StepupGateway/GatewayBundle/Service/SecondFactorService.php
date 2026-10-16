@@ -30,21 +30,12 @@ use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\Gateway\SecondfactorGss
 
 class SecondFactorService
 {
-    private SecondFactorRepository $repository;
-    private LoaResolutionService $loaResolutionService;
-    private SecondFactorTypeService $secondFactorTypeService;
-    private GsspFallbackService $gsspFallbackService;
-
     public function __construct(
-        SecondFactorRepository  $repository,
-        LoaResolutionService    $loaResolutionService,
-        SecondFactorTypeService $secondFactorTypeService,
-        GsspFallbackService     $gsspFallbackService
+        private readonly SecondFactorRepository $repository,
+        private readonly LoaResolutionService $loaResolutionService,
+        private readonly SecondFactorTypeService $secondFactorTypeService,
+        private readonly GsspFallbackService $gsspFallbackService,
     ) {
-        $this->repository = $repository;
-        $this->loaResolutionService = $loaResolutionService;
-        $this->secondFactorTypeService = $secondFactorTypeService;
-        $this->gsspFallbackService = $gsspFallbackService;
     }
 
     /**

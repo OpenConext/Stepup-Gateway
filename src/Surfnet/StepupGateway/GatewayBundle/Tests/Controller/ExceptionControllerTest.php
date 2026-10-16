@@ -56,11 +56,9 @@ final class ExceptionControllerTest extends TestCase
         $twig->shouldReceive('render')
             ->with(
                 '@default/bundles/TwigBundle/Exception/error.html.twig',
-                Mockery::on(static function (array $parameters) use ($title, $description): bool {
-                    return $parameters['title'] === $title
-                        && $parameters['description'] === $description
-                        && $parameters['request_id'] === 'request-id';
-                }),
+                Mockery::on(static fn(array $parameters): bool => $parameters['title'] === $title
+                    && $parameters['description'] === $description
+                    && $parameters['request_id'] === 'request-id'),
             )
             ->andReturn('rendered error page');
 
@@ -90,10 +88,8 @@ final class ExceptionControllerTest extends TestCase
         $twig->shouldReceive('render')
             ->with(
                 '@default/bundles/TwigBundle/Exception/error404.html.twig',
-                Mockery::on(static function (array $parameters): bool {
-                    return $parameters['ip_address'] === '203.0.113.195'
-                        && $parameters['request_id'] === 'request-id';
-                }),
+                Mockery::on(static fn(array $parameters): bool => $parameters['ip_address'] === '203.0.113.195'
+                    && $parameters['request_id'] === 'request-id'),
             )
             ->andReturn('rendered 404 page');
 

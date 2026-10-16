@@ -26,7 +26,7 @@ final class ConfigurationTest extends TestCase
 {
     use ConfigurationTestCaseTrait;
 
-    const USE_REGEXP = true;
+    const bool USE_REGEXP = true;
 
     #[\PHPUnit\Framework\Attributes\Test]
     #[\PHPUnit\Framework\Attributes\Group('configuration')]

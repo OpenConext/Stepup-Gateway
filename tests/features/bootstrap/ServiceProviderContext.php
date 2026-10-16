@@ -64,26 +64,12 @@ class ServiceProviderContext implements Context
     private $currentIdP;
 
     /**
-     * @var FixtureService
-     */
-    private $fixtureService;
-
-    /**
-     * @var KernelInterface
-     */
-    private $kernel;
-
-    /**
      * @var MinkContext
      */
     private $minkContext;
 
-    public function __construct(
-        FixtureService $fixtureService,
-        KernelInterface $kernel
-    ) {
-        $this->fixtureService = $fixtureService;
-        $this->kernel = $kernel;
+    public function __construct(private readonly FixtureService $fixtureService, private readonly KernelInterface $kernel)
+    {
     }
 
     #[\Behat\Hook\BeforeScenario]
@@ -107,7 +93,7 @@ class ServiceProviderContext implements Context
     #[\Behat\Step\Given('/^an IdP with EntityID ([^\\\']*)$/')]
     public function anIdPWithEntityID($entityId): void
     {
-        $this->registerIdp($entityId, false);
+        $this->registerIdp($entityId);
     }
 
     private function registerSp($entityId, $sfoEnabled): void
@@ -165,25 +151,17 @@ class ServiceProviderContext implements Context
         }
         // Sign with random key, does not mather for now.
         $authnRequest->setSignatureKey(
-            $this->loadPrivateKey(new PrivateKey('/config/ssp/sp.key', 'default'))
+            self::loadPrivateKey(new PrivateKey('/config/ssp/sp.key', 'default'))
         );
-        switch ($loa) {
-            case "1":
-            case "1.5":
-            case "2":
-            case "3":
-                $authnRequest->setRequestedAuthnContext(
-                    ['AuthnContextClassRef' => ['http://dev.openconext.local/assurance/sfo-level' . $loa]]
-                );
-            break;
-            case "self-asserted":
-                $authnRequest->setRequestedAuthnContext(
-                    ['AuthnContextClassRef' => ['http://dev.openconext.local/assurance/sfo-level1.5']]
-                );
-            break;
-            default:
-                throw new RuntimeException(sprintf('The specified LoA-%s is not supported', $loa));
-        }
+        match ($loa) {
+            "1", "1.5", "2", "3" => $authnRequest->setRequestedAuthnContext(
+                ['AuthnContextClassRef' => ['http://dev.openconext.local/assurance/sfo-level' . $loa]]
+            ),
+            "self-asserted" => $authnRequest->setRequestedAuthnContext(
+                ['AuthnContextClassRef' => ['http://dev.openconext.local/assurance/sfo-level1.5']]
+            ),
+            default => throw new RuntimeException(sprintf('The specified LoA-%s is not supported', $loa)),
+        };
 
         if ($gsspFallbackSubject != null) {
             $dom = DOMDocumentFactory::create();
@@ -259,7 +237,7 @@ class ServiceProviderContext implements Context
         $authnRequest->setNameId($this->buildNameId($nameId));
         // Sign with random key, does not mather for now.
         $authnRequest->setSignatureKey(
-            $this->loadPrivateKey(new PrivateKey('/config/ssp/sp.key', 'default'))
+            self::loadPrivateKey(new PrivateKey('/config/ssp/sp.key', 'default'))
         );
         $authnRequest->setRequestedAuthnContext(
             ['AuthnContextClassRef' => ['http://dev.openconext.local/assurance/loa2']]
@@ -283,26 +261,18 @@ class ServiceProviderContext implements Context
         $authnRequest->setNameId($this->buildNameId($nameId));
         // Sign with random key, does not mather for now.
         $authnRequest->setSignatureKey(
-            $this->loadPrivateKey(new PrivateKey('/config/ssp/sp.key', 'default'))
+            self::loadPrivateKey(new PrivateKey('/config/ssp/sp.key', 'default'))
         );
 
-        switch ($loa) {
-            case "1":
-            case "1.5":
-            case "2":
-            case "3":
-                $authnRequest->setRequestedAuthnContext(
-                    ['AuthnContextClassRef' => ['http://dev.openconext.local/assurance/loa' . $loa]]
-                );
-                break;
-            case "self-asserted":
-                $authnRequest->setRequestedAuthnContext(
-                    ['AuthnContextClassRef' => ['http://dev.openconext.local/assurance/loa1.5']]
-                );
-                break;
-            default:
-                throw new RuntimeException(sprintf('The specified LoA-%s is not supported', $loa));
-        }
+        match ($loa) {
+            "1", "1.5", "2", "3" => $authnRequest->setRequestedAuthnContext(
+                ['AuthnContextClassRef' => ['http://dev.openconext.local/assurance/loa' . $loa]]
+            ),
+            "self-asserted" => $authnRequest->setRequestedAuthnContext(
+                ['AuthnContextClassRef' => ['http://dev.openconext.local/assurance/loa1.5']]
+            ),
+            default => throw new RuntimeException(sprintf('The specified LoA-%s is not supported', $loa)),
+        };
 
         $request = Saml2AuthnRequest::createNew($authnRequest);
         $query = $request->buildRequestQuery();

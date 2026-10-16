@@ -29,39 +29,15 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;
 
-final class ResponseRenderingService
+final readonly class ResponseRenderingService
 {
-    /**
-     * @var ResponseBuilder
-     */
-    private $responseBuilder;
-
-    /**
-     * @var Environment
-     */
-    private $templateEngine;
-
-    private $responseHelper;
-
-    private $logger;
-
-    /**
-     * @var CookieService
-     */
-    private $ssoCookieService;
-
     public function __construct(
-        ResponseBuilder $responseBuilder,
-        ResponseHelper $responseHelper,
-        Environment $templateEngine,
-        CookieService $cookieService,
-        LoggerInterface $logger
+        private ResponseBuilder $responseBuilder,
+        private ResponseHelper $responseHelper,
+        private Environment $templateEngine,
+        private CookieService $ssoCookieService,
+        private LoggerInterface $logger,
     ) {
-        $this->responseBuilder = $responseBuilder;
-        $this->responseHelper = $responseHelper;
-        $this->templateEngine = $templateEngine;
-        $this->logger = $logger;
-        $this->ssoCookieService = $cookieService;
     }
 
     /**

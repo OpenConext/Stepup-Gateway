@@ -37,18 +37,6 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class ConsumeAssertionService
 {
-    /** @var LoggerInterface */
-    private $logger;
-
-    /** @var SamlAuthenticationLogger */
-    private $samlLogger;
-
-    /** @var PostBinding */
-    private $postBinding;
-
-    /** @var ConnectedServiceProviders */
-    private $connectedServiceProviders;
-
     private $handledRequestId = null;
 
     /**
@@ -59,15 +47,11 @@ class ConsumeAssertionService
      * @param ConnectedServiceProviders $connectedServiceProviders
      */
     public function __construct(
-        LoggerInterface $logger,
-        SamlAuthenticationLogger $samlLogger,
-        PostBinding $postBinding,
-        ConnectedServiceProviders $connectedServiceProviders
+        private readonly LoggerInterface $logger,
+        private readonly SamlAuthenticationLogger $samlLogger,
+        private readonly PostBinding $postBinding,
+        private readonly ConnectedServiceProviders $connectedServiceProviders,
     ) {
-        $this->logger = $logger;
-        $this->samlLogger = $samlLogger;
-        $this->postBinding = $postBinding;
-        $this->connectedServiceProviders = $connectedServiceProviders;
     }
 
     /**

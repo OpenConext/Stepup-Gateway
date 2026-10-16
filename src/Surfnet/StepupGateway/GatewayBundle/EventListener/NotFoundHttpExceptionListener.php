@@ -26,11 +26,11 @@ use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-final class NotFoundHttpExceptionListener implements EventSubscriberInterface
+final readonly class NotFoundHttpExceptionListener implements EventSubscriberInterface
 {
     public function __construct(
-        private readonly ExceptionController $exceptionController,
-        private readonly LoggerInterface $logger,
+        private ExceptionController $exceptionController,
+        private LoggerInterface $logger,
     ) {
     }
 

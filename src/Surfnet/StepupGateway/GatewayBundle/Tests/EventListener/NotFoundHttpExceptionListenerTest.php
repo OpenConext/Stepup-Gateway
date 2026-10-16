@@ -49,7 +49,7 @@ final class NotFoundHttpExceptionListenerTest extends TestCase
         $requestId = new RequestId($generator);
         $requestId->set('test-request-id');
 
-        $twig = $twig ?? Mockery::mock(Environment::class);
+        $twig ??= Mockery::mock(Environment::class);
 
         return new ExceptionController($translator, $requestId, $twig);
     }
@@ -95,9 +95,7 @@ final class NotFoundHttpExceptionListenerTest extends TestCase
             ->once()
             ->with(
                 '@default/bundles/TwigBundle/Exception/error404.html.twig',
-                Mockery::on(function (array $context): bool {
-                    return $context['ip_address'] === '192.0.2.1';
-                })
+                Mockery::on(fn(array $context): bool => $context['ip_address'] === '192.0.2.1')
             )
             ->andReturn('rendered 404 page');
 
@@ -107,15 +105,11 @@ final class NotFoundHttpExceptionListenerTest extends TestCase
         $logger->shouldReceive('warning')
             ->once()
             ->with(
-                Mockery::on(function (string $message): bool {
-                    return str_contains($message, 'Page not found')
-                        && str_contains($message, '192.0.2.1');
-                }),
-                Mockery::on(function (array $context) use ($exception): bool {
-                    return isset($context['remote_ip'])
-                        && $context['remote_ip'] === '192.0.2.1'
-                        && $context['exception'] === $exception;
-                })
+                Mockery::on(fn(string $message): bool => str_contains($message, 'Page not found')
+                    && str_contains($message, '192.0.2.1')),
+                Mockery::on(fn(array $context): bool => isset($context['remote_ip'])
+                    && $context['remote_ip'] === '192.0.2.1'
+                    && $context['exception'] === $exception)
             );
 
         $listener = new NotFoundHttpExceptionListener($exceptionController, $logger);

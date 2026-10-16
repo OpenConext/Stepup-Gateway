@@ -33,24 +33,6 @@ class LoginService
 {
     public const RESPONSE_CONTEXT_SERVICE_ID = 'gateway.proxy.response_context';
 
-    /** @var SamlAuthenticationLogger */
-    private $samlLogger;
-
-    /** @var ProxyStateHandler */
-    private $stateHandler;
-
-    /** @var LoaResolutionService */
-    private $loaResolutionService;
-
-    /** @var ServiceProvider */
-    private $hostedServiceProvider;
-
-    /** @var IdentityProvider */
-    private $remoteIdp;
-
-    /** @var RedirectBinding */
-    private $redirectBinding;
-
     /**
      * GatewayServiceProviderService constructor.
      * @param SamlAuthenticationLogger $samlLogger
@@ -61,19 +43,13 @@ class LoginService
      * @param RedirectBinding $redirectBinding
      */
     public function __construct(
-        SamlAuthenticationLogger $samlLogger,
-        ProxyStateHandler $stateHandler,
-        LoaResolutionService $loaResolutionService,
-        ServiceProvider $hostedServiceProvider,
-        IdentityProvider $remoteIdp,
-        RedirectBinding $redirectBinding
+        private readonly SamlAuthenticationLogger $samlLogger,
+        private readonly ProxyStateHandler $stateHandler,
+        private readonly LoaResolutionService $loaResolutionService,
+        private readonly ServiceProvider $hostedServiceProvider,
+        private readonly IdentityProvider $remoteIdp,
+        private readonly RedirectBinding $redirectBinding,
     ) {
-        $this->samlLogger = $samlLogger;
-        $this->stateHandler = $stateHandler;
-        $this->loaResolutionService = $loaResolutionService;
-        $this->hostedServiceProvider = $hostedServiceProvider;
-        $this->remoteIdp = $remoteIdp;
-        $this->redirectBinding = $redirectBinding;
     }
 
     /**

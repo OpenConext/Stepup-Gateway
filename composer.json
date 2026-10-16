@@ -18,7 +18,7 @@
     },
     "minimum-stability": "stable",
     "require": {
-        "php": "^8.2",
+        "php": "^8.5",
         "ext-dom": "*",
         "ext-json": "*",
         "ext-libxml": "*",
@@ -58,7 +58,7 @@
         "behat/mink": "^1.13",
         "behat/mink-browserkit-driver": "^2.3",
         "dmore/behat-chrome-extension": "^1.4.1",
-        "dmore/chrome-mink-driver": "2.9.*",
+        "dmore/chrome-mink-driver": "^2.11.1",
         "friends-of-behat/mink-extension": "^2.7.5",
         "friends-of-behat/symfony-extension": "^2.6.2",
         "malukenho/docheader": "^1.1.0",
@@ -75,7 +75,7 @@
         "phpstan/phpstan-symfony": "^2.0.9",
         "phpunit/phpunit": "^10.5.60",
         "ramsey/uuid": "^4.9.2",
-        "rector/rector": "^2.3.0",
+        "rector/rector": "^2.4",
         "sebastian/exporter": "^5.1.4",
         "slevomat/coding-standard": "^8.26.0",
         "squizlabs/php_codesniffer": "^4.0.1",
@@ -155,7 +155,7 @@
         "optimize-autoloader": true,
         "sort-packages": true,
         "platform": {
-            "php": "8.2"
+            "php": "8.5"
         }
     },
     "archive": {

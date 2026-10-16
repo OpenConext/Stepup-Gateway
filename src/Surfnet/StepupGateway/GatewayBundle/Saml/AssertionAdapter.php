@@ -22,11 +22,8 @@ use SAML2\Assertion;
 
 class AssertionAdapter
 {
-    private $assertion;
-
-    public function __construct(Assertion $assertion)
+    public function __construct(private readonly Assertion $assertion)
     {
-        $this->assertion = $assertion;
     }
 
     /**

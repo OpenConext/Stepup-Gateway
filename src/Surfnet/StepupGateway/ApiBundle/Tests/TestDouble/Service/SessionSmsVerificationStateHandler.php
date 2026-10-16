@@ -22,10 +22,10 @@ use Surfnet\StepupBundle\Service\SmsSecondFactor\OtpVerification;
 use Surfnet\StepupBundle\Service\SmsSecondFactor\SmsVerificationStateHandler;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-final class SessionSmsVerificationStateHandler implements SmsVerificationStateHandler
+final readonly class SessionSmsVerificationStateHandler implements SmsVerificationStateHandler
 {
     public function __construct(
-        private readonly RequestStack $requestStack,
+        private RequestStack $requestStack,
     ) {
     }
 

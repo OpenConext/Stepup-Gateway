@@ -20,18 +20,11 @@ namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\Gateway\GsspFallb
 
 class GsspFallbackConfig
 {
-    private string $gssp;
-    private string $subjectAttribute;
-    private string $institutionAttribute;
-
     public function __construct(
-        string $gssp,
-        string $subjectAttribute,
-        string $institutionAttribute,
+        private readonly string $gssp,
+        private readonly string $subjectAttribute,
+        private readonly string $institutionAttribute,
     ) {
-        $this->gssp = $gssp;
-        $this->subjectAttribute = $subjectAttribute;
-        $this->institutionAttribute = $institutionAttribute;
     }
 
     public function getInstitutionAttribute(): string
