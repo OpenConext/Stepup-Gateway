@@ -26,11 +26,6 @@ use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Exception\InvalidEncryptionKeyExc
 class Configuration
 {
     /**
-     * @var string
-     */
-    private $name;
-
-    /**
      * @var CookieType
      */
     private $type;
@@ -45,9 +40,8 @@ class Configuration
      */
     private $encryptionKey;
 
-    public function __construct(string $name, string $type, int $lifetime, string $encryptionKey)
+    public function __construct(private readonly string $name, string $type, int $lifetime, string $encryptionKey)
     {
-        $this->name = $name;
         $this->type = CookieType::fromConfiguration($type);
         if ($lifetime === 0 && $this->type->isPersistent()) {
             throw new InvalidCookieTypeException(

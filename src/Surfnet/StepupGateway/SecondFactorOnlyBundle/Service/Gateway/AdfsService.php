@@ -30,21 +30,13 @@ use Symfony\Component\HttpFoundation\Request;
 
 class AdfsService
 {
-    /** @var RequestHelper */
-    private $adfsRequestHelper;
-
-    /** @var ResponseHelper */
-    private $adfsResponseHelper;
-
     /**
      * SecondFactorAdfsService constructor.
      * @param RequestHelper $adfsRequestHelper
      * @param ResponseHelper $adfsResponseHelper
      */
-    public function __construct(RequestHelper $adfsRequestHelper, ResponseHelper $adfsResponseHelper)
+    public function __construct(private readonly RequestHelper $adfsRequestHelper, private readonly ResponseHelper $adfsResponseHelper)
     {
-        $this->adfsRequestHelper = $adfsRequestHelper;
-        $this->adfsResponseHelper = $adfsResponseHelper;
     }
 
     /**

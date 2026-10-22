@@ -573,12 +573,7 @@ class SecondFactorController extends ContainerController
             );
         }
 
-        return $this->redirect(
-            $this->generateUrl(
-                'gateway_verify_second_factor_sms_verify_challenge',
-                ['authenticationMode' => $authenticationMode],
-            ),
-        );
+        return $this->redirectToRoute('gateway_verify_second_factor_sms_verify_challenge', ['authenticationMode' => $authenticationMode]);
     }
 
     #[Route(
@@ -754,7 +749,7 @@ class SecondFactorController extends ContainerController
             $route .= strtolower($secondFactor->secondFactorType);
         }
 
-        return $this->redirect($this->generateUrl($route, ['authenticationMode' => $authenticationMode]));
+        return $this->redirectToRoute($route, ['authenticationMode' => $authenticationMode]);
     }
 
     /**

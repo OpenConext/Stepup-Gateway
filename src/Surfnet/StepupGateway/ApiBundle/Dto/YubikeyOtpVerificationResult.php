@@ -28,11 +28,6 @@ class YubikeyOtpVerificationResult
     public const RESULT_OTP_VERIFICATION_FAILED = 2;
 
     /**
-     * @var \Surfnet\StepupBundle\Value\YubikeyPublicId|null
-     */
-    private $publicId;
-
-    /**
      * @var int One of the RESULT constants.
      */
     private $result;
@@ -42,7 +37,7 @@ class YubikeyOtpVerificationResult
      * @param YubikeyPublicId|null $publicId
      * @throws DomainException When $result is not one of the RESULT constants.
      */
-    public function __construct($result, YubikeyPublicId $publicId = null)
+    public function __construct($result, private readonly ?\Surfnet\StepupBundle\Value\YubikeyPublicId $publicId = null)
     {
         $acceptableResults = [
             self::RESULT_PUBLIC_ID_MATCHED,
@@ -55,7 +50,6 @@ class YubikeyOtpVerificationResult
         }
 
         $this->result = $result;
-        $this->publicId = $publicId;
     }
 
     public function didPublicIdMatch()

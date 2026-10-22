@@ -20,16 +20,10 @@ namespace Surfnet\StepupGateway\GatewayBundle\Service;
 use Surfnet\StepupBundle\Service\LocaleProviderService;
 use Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler;
 
-final class SecondFactorLocaleProvider implements LocaleProviderService
+final readonly class SecondFactorLocaleProvider implements LocaleProviderService
 {
-    /**
-     * @var ProxyStateHandler
-     */
-    private $stateHandler;
-
-    public function __construct(ProxyStateHandler $stateHandler)
+    public function __construct(private ProxyStateHandler $stateHandler)
     {
-        $this->stateHandler = $stateHandler;
     }
 
     /**

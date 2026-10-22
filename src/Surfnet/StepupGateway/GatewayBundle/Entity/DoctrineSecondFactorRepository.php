@@ -53,9 +53,7 @@ class DoctrineSecondFactorRepository extends EntityRepository implements SecondF
 
     public function findOneBySecondFactorId($secondFactorId)
     {
-        if (!isset($this->secondFactorsById[$secondFactorId])) {
-            $this->secondFactorsById[$secondFactorId] = $this->findOneBy(['secondFactorId' => $secondFactorId]);
-        }
+        $this->secondFactorsById[$secondFactorId] ??= $this->findOneBy(['secondFactorId' => $secondFactorId]);
 
         return $this->secondFactorsById[$secondFactorId];
     }

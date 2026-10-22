@@ -23,14 +23,8 @@ use Surfnet\StepupGateway\GatewayBundle\Exception\InvalidArgumentException;
 
 class WhitelistService
 {
-    /**
-     * @var WhitelistEntryRepository
-     */
-    private $whitelistEntryRepository;
-
-    public function __construct(WhitelistEntryRepository $whitelistEntryRepository)
+    public function __construct(private readonly WhitelistEntryRepository $whitelistEntryRepository)
     {
-        $this->whitelistEntryRepository = $whitelistEntryRepository;
     }
 
     /**

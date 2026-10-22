@@ -63,7 +63,7 @@ final class SecondFactorType
             /** @var ViewConfig $viewConfig */
             $viewConfig = $this->collection->getByIdentifier($secondFactorType);
             $logo = $viewConfig->getLogo();
-        } catch (InvalidArgumentException $e) {
+        } catch (InvalidArgumentException) {
             // There is no view config for this second factor type,
             // indicating we are dealing with a hard coded second
             // factor provider (like sms or yubikey)

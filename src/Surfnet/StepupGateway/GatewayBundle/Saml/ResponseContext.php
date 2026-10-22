@@ -41,26 +41,6 @@ use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\Gateway\SecondfactorGss
 class ResponseContext
 {
     /**
-     * @var IdentityProvider
-     */
-    private $hostedIdentityProvider;
-
-    /**
-     * @var SamlEntityService
-     */
-    private $samlEntityService;
-
-    /**
-     * @var ProxyStateHandler
-     */
-    private $stateHandler;
-
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
      * @var DateTime
      */
     private $generationTime;
@@ -74,17 +54,13 @@ class ResponseContext
      * @throws Exception
      */
     public function __construct(
-        IdentityProvider $identityProvider,
-        SamlEntityService $samlEntityService,
-        ProxyStateHandler $stateHandler,
-        LoggerInterface $logger,
-        DateTime $now = null
+        private readonly IdentityProvider $hostedIdentityProvider,
+        private readonly SamlEntityService $samlEntityService,
+        private readonly ProxyStateHandler $stateHandler,
+        private readonly LoggerInterface $logger,
+        ?DateTime $now = null
     ) {
-        $this->hostedIdentityProvider = $identityProvider;
-        $this->samlEntityService      = $samlEntityService;
-        $this->stateHandler           = $stateHandler;
-        $this->logger                 = $logger;
-        $this->generationTime         = is_null($now) ? new DateTime('now', new DateTimeZone('UTC')): $now;
+        $this->generationTime         = $now ?? new DateTime('now', new DateTimeZone('UTC'));
     }
 
     /**

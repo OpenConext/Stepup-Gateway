@@ -33,11 +33,6 @@ use Surfnet\StepupGateway\Behat\Service\FixtureService;
 
 class FeatureContext implements Context
 {
-    /**
-     * @var FixtureService
-     */
-    private $fixtureService;
-
     private static DatabaseSchemaService $databaseSchemaService;
 
     private $whitelistedInstitutions = [];
@@ -70,11 +65,10 @@ class FeatureContext implements Context
     private $cookieDomain;
 
     public function __construct(
-        FixtureService $fixtureService,
+        private readonly FixtureService $fixtureService,
         DatabaseSchemaService $databaseSchemaService,
         LoggerInterface $logger
     ) {
-        $this->fixtureService = $fixtureService;
         self::$databaseSchemaService = $databaseSchemaService;
         $this->sso2faCookieName = 'stepup-gateway_sso-on-second-factor-authentication';
         $this->sessCookieName = 'MOCKSESSID';
@@ -197,16 +191,11 @@ class FeatureContext implements Context
     #[\Behat\Step\Given('/^an institution "([^"]*)" that allows "([^"]*)"$/')]
     public function anInstitutionThatAllows(string $institution, string $option): void
     {
-        switch(true) {
-            case $option === 'sso_on_2fa':
-                $optionColumnName = 'sso_on2fa_enabled';
-                break;
-            case $option === 'sso_registration_bypass':
-                $optionColumnName = 'sso_registration_bypass';
-                break;
-            default:
-                throw new RuntimeException(sprintf('Option "%s" is not supported', $option));
-        }
+        $optionColumnName = match (true) {
+            $option === 'sso_on_2fa' => 'sso_on2fa_enabled',
+            $option === 'sso_registration_bypass' => 'sso_registration_bypass',
+            default => throw new RuntimeException(sprintf('Option "%s" is not supported', $option)),
+        };
         $this->fixtureService->configureBoolean($institution, $optionColumnName, true);
     }
 
@@ -384,7 +373,7 @@ class FeatureContext implements Context
     {
         $this->minkContext->visit('https://gateway.dev.openconext.local/info');
         $cookieValue = $this->minkContext->getSession()->getCookie($this->sso2faCookieName);
-        if (strstr($cookieValue, $expectedCookieValue) === false) {
+        if (!str_contains($cookieValue, $expectedCookieValue)) {
             throw new ExpectationException(
                 sprintf(
                     'The SSO on 2FA cookie did not contain the expected value: "%s", actual contents: "%s"',

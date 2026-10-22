@@ -28,17 +28,14 @@ use Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface
  */
 class JsonBasicAuthenticationEntryPoint implements AuthenticationEntryPointInterface
 {
-    private $realmName;
-
-    public function __construct($realmName)
+    public function __construct(private $realmName)
     {
-        $this->realmName = $realmName;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function start(Request $request, AuthenticationException $authException = null): \Symfony\Component\HttpFoundation\Response
+    public function start(Request $request, ?AuthenticationException $authException = null): \Symfony\Component\HttpFoundation\Response
     {
         $authExceptionMessage = $authException ? $authException->getMessage() : '';
         $error = sprintf('You are required to authorise before accessing this API (%s).', $authExceptionMessage);

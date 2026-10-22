@@ -158,7 +158,7 @@ class IdentityProviderController extends AbstractController
         }
 
         $requestUri = $request->getRequestUri();
-        if (strpos($requestUri, '?') === false) {
+        if (!str_contains($requestUri, '?')) {
             throw new BadRequestHttpException(
                 'Could not receive AuthnRequest from HTTP Request: expected query parameters, none found'
             );

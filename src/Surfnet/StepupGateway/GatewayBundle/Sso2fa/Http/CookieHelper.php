@@ -35,31 +35,13 @@ class CookieHelper implements CookieHelperInterface
      * SameSite: NONE ensures the browser sends the cookie on cross domain requests. Which are typically performed
      * when doing SAML authentications. Using STRICT or LAX will cause the cookie not being sent in several scenarios.
      */
-    private const SAME_SITE = Cookie::SAMESITE_NONE;
-
-    /**
-     * @var Configuration
-     */
-    private $configuration;
-
-    /**
-     * @var CryptoHelperInterface
-     */
-    private $encryptionHelper;
-
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private const string SAME_SITE = Cookie::SAMESITE_NONE;
 
     public function __construct(
-        Configuration $configuration,
-        CryptoHelperInterface $encryptionHelper,
-        LoggerInterface $logger
+        private readonly Configuration $configuration,
+        private readonly CryptoHelperInterface $encryptionHelper,
+        private readonly LoggerInterface $logger,
     ) {
-        $this->configuration = $configuration;
-        $this->encryptionHelper = $encryptionHelper;
-        $this->logger = $logger;
     }
 
     public function write(Response $response, CookieValueInterface $value): void
