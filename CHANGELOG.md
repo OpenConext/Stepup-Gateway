@@ -1,8 +1,12 @@
 # Changelog
 
-## Unreleased
+## 6.1.1
 
+- Bugfix: handle lost Gateway sessions at the ACS #668 Also see: #646
+- Bugfix: set cookie_samesite=none on the session cookie for cross-domain
+SAML POSTs #669 Also see: #652
 - Disable browser autocompletion on YubiKey input field #673
+- Add the remote IP address and identityNameId to request log lines
 
 ## 6.1.0
 
