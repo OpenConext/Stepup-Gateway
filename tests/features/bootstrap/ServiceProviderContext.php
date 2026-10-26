@@ -93,9 +93,7 @@ class ServiceProviderContext implements Context
     {
         $environment = $scope->getEnvironment();
         $this->minkContext = $environment->getContext(MinkContext::class);
-        // Undo any "the service name feature is disabled" step from a previous scenario: that
-        // step flips a static flag (see FeatureToggle) which, unlike a container override, survives
-        // the kernel reboots FriendsOfBehat\SymfonyExtension does between requests.
+        // The feature flag is static, so reset it to not leak between scenarios.
         FeatureToggle::reset();
     }
 
@@ -143,7 +141,6 @@ class ServiceProviderContext implements Context
         $this->registerIdp($entityId, false);
     }
 
-    // See FeatureToggle for why this flips a static flag instead of overriding the container service.
     #[\Behat\Step\Given('/^the service name feature is disabled$/')]
     public function theServiceNameFeatureIsDisabled(): void
     {
@@ -193,7 +190,6 @@ class ServiceProviderContext implements Context
         return $displayNames;
     }
 
-    // Modeled directly on the gssp:UserAttributes injection in iStartAnSFOAuthenticationWithLoa() below.
     /**
      * @param array<int, array{lang: string, value: string}> $displayNames
      */
@@ -382,8 +378,7 @@ class ServiceProviderContext implements Context
         $query = $request->buildRequestQuery();
 
         $driver = $this->getSession()->getDriver();
-        // The GSSP host isn't resolvable in this environment - disable redirect-following so the
-        // Location header of the single response is all we need to observe the outgoing AuthnRequest.
+        // The GSSP host is not resolvable here, so read the outgoing AuthnRequest from the Location header.
         if ($driver instanceof SymfonyDriver) {
             $driver->getClient()->followRedirects(false);
         }

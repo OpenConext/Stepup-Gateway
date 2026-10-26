@@ -43,9 +43,7 @@ class DisplayName
         return new self($data['lang'] ?? '', $data['value'] ?? '');
     }
 
-    // Reduces to the primary language subtag (e.g. "en_GB" -> "en"): the result is used both
-    // as an outgoing xml:lang value and to compare locales against each other, and region
-    // would make otherwise-matching locales compare unequal. Falls back to 'en' if empty.
+    // Primary language subtag, e.g. "en_GB" -> "en". Defaults to 'en'.
     public static function normalizeLocale(string $locale): string
     {
         $locale = $locale ?: 'en';

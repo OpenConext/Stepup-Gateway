@@ -29,25 +29,13 @@ class UiInfoExtensionMapper
     private const MDUI_NAMESPACE = 'urn:oasis:names:tc:SAML:metadata:ui';
     private const MDUI_PREFIX = 'mdui';
 
-    // Defensive parsing bounds, not derived from any spec — cap how much an incoming
-    // AuthnRequest's UIInfo extension can make this parser do.
     private const MAX_DISPLAY_NAMES = 10;
     private const MAX_LANG_LENGTH = 35;
 
-    // MAX_VALUE_LENGTH is SAML 2.0's own maximum string length for this element type, not
-    // specific to this feature.
     private const MAX_VALUE_LENGTH = 1024;
 
     /**
-     * Extracts DisplayName entries from an Extensions object's mdui:UIInfo chunk, if present.
-     * The RFC (OpenConext/Stepup-Gateway#587) expects senders to already resolve to one
-     * locale-matched name before sending, but this parser stays defensive and doesn't assume that.
-     *
-     * Sanitized here, at parse time, via the same ServiceNameFormatter used when writing —
-     * not only on write. Between AuthnRequest arrival and any eventual write, these values can
-     * sit in session state (e.g. for SMS/Yubikey screens that read the session directly rather
-     * than going through applyTo()); sanitizing only on write would leave raw, attacker-supplied
-     * text reachable from any such read path.
+     * Values are sanitized at parse time because they can reach session state before any write.
      *
      * @return DisplayName[]
      */
@@ -96,8 +84,6 @@ class UiInfoExtensionMapper
         return new DisplayName($sanitizedLang, $sanitizedValue);
     }
 
-    // Structural sanity only (non-empty, within length bounds) — independent of whether
-    // Gateway will actually choose to display this particular name.
     private function isSamlValid(string $lang, string $value): bool
     {
         return $lang !== '' && $value !== ''
@@ -106,12 +92,8 @@ class UiInfoExtensionMapper
     }
 
     /**
-     * $displayName null strips any existing mdui:UIInfo; given, it's sanitized into a fresh
-     * one. Every other chunk (e.g. gssp:UserAttributes) is preserved either way.
-     *
-     * $original may be owned by another object (e.g. an inbound AuthnRequest), so it's never
-     * mutated in place — that would leave the owner's Extensions wrapper out of sync with its
-     * underlying SAML2 XML.
+     * Replaces mdui:UIInfo with $displayName (or strips it when null) and keeps all other chunks.
+     * $original is never mutated, because the inbound AuthnRequest owns it.
      */
     public function applyTo(Extensions $original, ?DisplayName $displayName): Extensions
     {
@@ -131,8 +113,6 @@ class UiInfoExtensionMapper
         return $result;
     }
 
-    // read() already sanitizes; re-sanitizing here is defense in depth for DisplayName
-    // instances built from other sources (e.g. Middleware's locale map), not redundant work.
     private function buildUiInfoChunk(DisplayName $displayName): Chunk
     {
         $doc = new DOMDocument('1.0', 'UTF-8');

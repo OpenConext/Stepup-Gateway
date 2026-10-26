@@ -20,9 +20,7 @@ namespace Surfnet\StepupGateway\Behat\Service;
 
 use Surfnet\StepupGateway\GatewayBundle\Configuration\FeatureConfiguration;
 
-// FriendsOfBehat\SymfonyExtension reboots the kernel/container before every request, which
-// discards a container->set() override - this static flag survives reboots instead, and
-// config/services_test.yaml wires gateway.feature_configuration to read it via a factory.
+// Static, because the Behat kernel reboots before every request and drops container overrides.
 class FeatureToggle
 {
     private static bool $serviceNameDisabled = false;

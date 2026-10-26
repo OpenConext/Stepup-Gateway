@@ -31,8 +31,7 @@ class ServiceDisplayNameResolver
     }
 
     /**
-     * @param DisplayName[] $fromRequest Fallback candidates already parsed from the
-     *     AuthnRequest's own mdui:UIInfo (or from what was stored for it in session).
+     * @param DisplayName[] $fromRequest
      */
     public function resolve(?string $spEntityId, array $fromRequest, string $locale): ?DisplayName
     {
@@ -51,14 +50,6 @@ class ServiceDisplayNameResolver
     }
 
     /**
-     * Converts Middleware's locale => name map into the same DisplayName[] shape the
-     * AuthnRequest source already comes in, so both sources can be reduced to one name by the
-     * same selectByLocale() below — Middleware's map and the AuthnRequest's own DisplayName
-     * list should be selected from with identical rules, not two separately maintained copies
-     * of the same logic. The configured locale key is kept as-is (not normalized here):
-     * selectByLocale() normalizes both sides when comparing, so pre-stripping the region here
-     * would only lose information from the outgoing xml:lang without gaining anything.
-     *
      * @param array<string, string> $serviceNames
      * @return DisplayName[]
      */
@@ -72,11 +63,7 @@ class ServiceDisplayNameResolver
     }
 
     /**
-     * Reduces a DisplayName[] to at most one, matching $locale. Priority: exact primary-subtag
-     * match, then 'en', then the first available entry. Sources only ever emit a single,
-     * already-locale-resolved DisplayName, so there is no "wrong language" candidate to
-     * mistakenly fall through to — the last-resort entry is the correct one, just tagged with
-     * a locale that didn't happen to match our (possibly stale/default) request locale.
+     * Picks the name matching $locale, else 'en', else the first one.
      *
      * @param DisplayName[] $displayNames
      */
