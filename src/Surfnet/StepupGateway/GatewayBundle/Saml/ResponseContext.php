@@ -28,6 +28,7 @@ use SAML2\XML\saml\Issuer;
 use Surfnet\SamlBundle\Entity\IdentityProvider;
 use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor;
 use Surfnet\StepupGateway\GatewayBundle\Entity\ServiceProvider;
+use Surfnet\StepupGateway\GatewayBundle\Saml\DisplayName;
 use Surfnet\StepupGateway\GatewayBundle\Saml\Exception\RuntimeException;
 use Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler;
 use Surfnet\StepupGateway\GatewayBundle\Service\SamlEntityService;
@@ -368,5 +369,13 @@ class ResponseContext
     public function getRequestServiceProvider(): ?string
     {
         return $this->stateHandler->getRequestServiceProvider();
+    }
+
+    /**
+     * @return DisplayName[]
+     */
+    public function getDisplayNamesFromRequest(): array
+    {
+        return $this->stateHandler->getDisplayNamesFromRequest();
     }
 }

@@ -35,6 +35,12 @@ services:
     arguments:
       - '@Surfnet\StepupGateway\Behat\Factory\SmoketestPdoFactory'
 
+  # Forces the service-name feature on for Behat, independent of the parameters files.
+  gateway.feature_configuration:
+    class: Surfnet\StepupGateway\GatewayBundle\Configuration\FeatureConfiguration
+    public: true
+    factory: ['Surfnet\StepupGateway\Behat\Service\FeatureToggle', 'createFeatureConfiguration']
+
   Surfnet\StepupGateway\Behat\Controller\ServiceProviderController:
     class: Surfnet\StepupGateway\Behat\Controller\ServiceProviderController
     tags: ['controller.service_arguments']

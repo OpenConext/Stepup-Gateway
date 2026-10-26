@@ -150,6 +150,14 @@ class ServiceProvider extends BaseServiceProvider
         );
     }
 
+    /**
+     * @return array<string, string> locale code (e.g. "en_GB") => display name
+     */
+    public function getServiceNames(): array
+    {
+        return $this->get('serviceNames') ?? [];
+    }
+
     public function allowSsoOn2fa(): bool
     {
         return $this->get('allowSsoOn2fa');

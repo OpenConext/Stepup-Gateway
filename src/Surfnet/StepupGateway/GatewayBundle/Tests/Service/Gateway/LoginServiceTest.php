@@ -29,9 +29,11 @@ use Surfnet\SamlBundle\SAML2\AuthnRequest;
 use Surfnet\SamlBundle\SAML2\ReceivedAuthnRequest;
 use Surfnet\StepupBundle\Service\LoaResolutionService;
 use Surfnet\StepupBundle\Value\Loa;
+use Surfnet\StepupGateway\GatewayBundle\Configuration\FeatureConfiguration;
 use Surfnet\StepupGateway\GatewayBundle\Exception\RequesterFailureException;
 use Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler;
 use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
+use Surfnet\StepupGateway\GatewayBundle\Saml\UiInfoExtensionMapper;
 use Surfnet\StepupGateway\GatewayBundle\Service\Gateway\LoginService;
 use Surfnet\StepupGateway\GatewayBundle\Service\SamlEntityService;
 use Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorService;
@@ -167,6 +169,90 @@ final class LoginServiceTest extends GatewaySamlTestCase
     }
 
     #[\PHPUnit\Framework\Attributes\Test]
+    public function it_stores_display_names_from_ui_info_when_flag_is_enabled(): void
+    {
+        $this->initGatewayService(
+            ['ssoUrl' => 'idp.nl/sso-url', 'entityId' => 'idp.nl/entity-id', 'privateKeys' => [$this->mockConfigurationPrivateKey('default', 'key.key')], 'certificateFile' => $this->getKeyPath('/key.crt')],
+            ['assertionConsumerUrl' => 'sp.nl/consumer-url', 'entityId' => 'sp.nl/consumer-url', 'privateKeys' => [$this->mockConfigurationPrivateKey('default', 'key2.key')]],
+            [[1, 'http://stepup.example.com/assurance/loa1'], [2, 'http://stepup.example.com/assurance/loa2'], [3, 'http://stepup.example.com/assurance/loa3']],
+            new \DateTime('@' . static::MOCK_TIMESTAMP),
+            true
+        );
+
+        $httpRequest = new Request([AuthnRequest::PARAMETER_RELAY_STATE => 'relay_state']);
+
+        $originalRequest = '<samlp:AuthnRequest
+    xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"
+    xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
+    xmlns:mdui="urn:oasis:names:tc:SAML:metadata:ui"
+    ID="_123456789012345678901234567890123456789012"
+    Version="2.0"
+    IssueInstant="2014-10-22T11:06:59Z"
+    Destination="https://gateway.org/sso"
+    AssertionConsumerServiceURL="https://sp.com/acs"
+    ProtocolBinding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST">
+  <saml:Issuer>https://sp.com/metadata</saml:Issuer>
+  <samlp:Extensions>
+    <mdui:UIInfo>
+      <mdui:DisplayName xml:lang="en">Online learning</mdui:DisplayName>
+      <mdui:DisplayName xml:lang="nl">Online leren</mdui:DisplayName>
+    </mdui:UIInfo>
+  </samlp:Extensions>
+  <samlp:RequestedAuthnContext>
+    <saml:AuthnContextClassRef>http://stepup.example.com/assurance/loa2</saml:AuthnContextClassRef>
+  </samlp:RequestedAuthnContext>
+</samlp:AuthnRequest>';
+
+        $this->mockSessionData('_sf2_attributes', []);
+        $this->mockRedirectBinding($originalRequest);
+
+        $this->gatewayLoginService->singleSignOn($httpRequest);
+
+        $sessionData = $this->getSessionData('attributes');
+        $this->assertArrayHasKey('surfnet/gateway/requestdisplay_names', $sessionData);
+        $displayNames = $sessionData['surfnet/gateway/requestdisplay_names'];
+        $this->assertCount(2, $displayNames);
+        $this->assertContains(['lang' => 'en', 'value' => 'Online learning'], $displayNames);
+        $this->assertContains(['lang' => 'nl', 'value' => 'Online leren'], $displayNames);
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function it_does_not_store_display_names_when_flag_is_disabled(): void
+    {
+        $httpRequest = new Request([AuthnRequest::PARAMETER_RELAY_STATE => 'relay_state']);
+
+        $originalRequest = '<samlp:AuthnRequest
+    xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"
+    xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
+    xmlns:mdui="urn:oasis:names:tc:SAML:metadata:ui"
+    ID="_123456789012345678901234567890123456789012"
+    Version="2.0"
+    IssueInstant="2014-10-22T11:06:59Z"
+    Destination="https://gateway.org/sso"
+    AssertionConsumerServiceURL="https://sp.com/acs"
+    ProtocolBinding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST">
+  <saml:Issuer>https://sp.com/metadata</saml:Issuer>
+  <samlp:Extensions>
+    <mdui:UIInfo>
+      <mdui:DisplayName xml:lang="en">Online learning</mdui:DisplayName>
+    </mdui:UIInfo>
+  </samlp:Extensions>
+  <samlp:RequestedAuthnContext>
+    <saml:AuthnContextClassRef>http://stepup.example.com/assurance/loa2</saml:AuthnContextClassRef>
+  </samlp:RequestedAuthnContext>
+</samlp:AuthnRequest>';
+
+        $this->mockSessionData('_sf2_attributes', []);
+        $this->mockRedirectBinding($originalRequest);
+
+        // flag is false (default setUp uses initGatewayService without flag=true)
+        $this->gatewayLoginService->singleSignOn($httpRequest);
+
+        $sessionData = $this->getSessionData('attributes');
+        $this->assertArrayNotHasKey('surfnet/gateway/requestdisplay_names', $sessionData);
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_should_throw_an_exception_when_an_invalid_loa_is_requested_when_starting_on_login_flow(): void
     {
         $this->expectException(RequesterFailureException::class);
@@ -205,7 +291,7 @@ final class LoginServiceTest extends GatewaySamlTestCase
      * @param int $now
      * @param array $sessionData
      */
-    private function initGatewayService(array $idpConfiguration, array $spConfiguration, array $loaLevels, DateTime $now): void
+    private function initGatewayService(array $idpConfiguration, array $spConfiguration, array $loaLevels, DateTime $now, bool $enableServiceNameFromSamlAuthnRequest = false): void
     {
         $session = new Session($this->sessionStorage);
         $requestStackMock = $this->createMock(RequestStack::class);
@@ -235,7 +321,9 @@ final class LoginServiceTest extends GatewaySamlTestCase
             $this->loaResolutionService,
             $hostedServiceProvider,
             $this->remoteIdp,
-            $this->redirectBinding
+            $this->redirectBinding,
+            new FeatureConfiguration($enableServiceNameFromSamlAuthnRequest),
+            new UiInfoExtensionMapper()
         );
     }
 

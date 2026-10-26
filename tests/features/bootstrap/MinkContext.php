@@ -25,6 +25,7 @@ use DOMDocument;
 use DOMXPath;
 use RobRichards\XMLSecLibs\XMLSecurityDSig;
 use RuntimeException;
+use SAML2\Constants;
 use SAML2\XML\mdui\Common;
 use SAML2\XML\shibmd\Scope;
 
@@ -58,17 +59,7 @@ class MinkContext extends BaseMinkContext
         }
         $document->loadXML($xml);
 
-        $xpathObj = new DOMXPath($document);
-        $xpathObj->registerNamespace('ds', XMLSecurityDSig::XMLDSIGNS);
-        $xpathObj->registerNamespace('mdui', Common::NS);
-        $xpathObj->registerNamespace('mdash', Common::NS);
-        $xpathObj->registerNamespace('shibmd', Scope::NS);
-        $nodeList = $xpathObj->query($xpath);
-
-        if (!$nodeList || $nodeList->length === 0) {
-            $message = sprintf('The xpath "%s" did not result in at least one match.', $xpath);
-            throw new ExpectationException($message, $this->getSession());
-        }
+        $this->assertXpath($this->buildXPath($document), $xpath, true);
     }
 
     #[\Behat\Step\Then('/^the ADFS response should match xpath \\\'([^\\\']*)\\\'$/')]
@@ -78,17 +69,7 @@ class MinkContext extends BaseMinkContext
         $xml = $this->getSession()->getPage()->findById('saml-response-xml')->getText();
         $document->loadXML($xml);
 
-        $xpathObj = new DOMXPath($document);
-        $xpathObj->registerNamespace('ds', XMLSecurityDSig::XMLDSIGNS);
-        $xpathObj->registerNamespace('mdui', Common::NS);
-        $xpathObj->registerNamespace('mdash', Common::NS);
-        $xpathObj->registerNamespace('shibmd', Scope::NS);
-        $nodeList = $xpathObj->query($xpath);
-
-        if (!$nodeList || $nodeList->length === 0) {
-            $message = sprintf('The xpath "%s" did not result in at least one match.', $xpath);
-            throw new ExpectationException($message, $this->getSession());
-        }
+        $this->assertXpath($this->buildXPath($document), $xpath, true);
     }
 
     #[\Behat\Step\Then('/^the ADFS response should carry the ADFS POST parameters$/')]
@@ -110,10 +91,124 @@ class MinkContext extends BaseMinkContext
         $document = new DOMDocument();
         $document->loadXML($this->getSession()->getPage()->getContent());
 
+        $this->assertXpath($this->buildXPath($document), $xpath, false);
+    }
+
+    #[\Behat\Step\Then('/^the AuthnRequest sent to the GSSP should be addressed to "([^"]*)"$/')]
+    public function theAuthnRequestSentToTheGsspShouldBeAddressedTo(string $url): void
+    {
+        $actualUrl = $this->getGsspAuthnRequestUrl();
+        $actualUrlWithoutQuery = strtok($actualUrl, '?');
+
+        if ($actualUrlWithoutQuery !== $url) {
+            throw new ExpectationException(
+                sprintf(
+                    'Expected the AuthnRequest sent to the GSSP to be addressed to "%s", but it was addressed to "%s"',
+                    $url,
+                    $actualUrlWithoutQuery
+                ),
+                $this->getSession()
+            );
+        }
+    }
+
+    #[\Behat\Step\Then('/^the AuthnRequest sent to the GSSP should match xpath \\\'([^\\\']*)\\\'$/')]
+    public function theAuthnRequestSentToTheGsspShouldMatchXpath($xpath): void
+    {
+        $this->assertXpath($this->buildXPath($this->getGsspAuthnRequestDocument()), $xpath, true);
+    }
+
+    #[\Behat\Step\Then('/^the AuthnRequest sent to the GSSP should not match xpath \\\'([^\\\']*)\\\'$/')]
+    public function theAuthnRequestSentToTheGsspShouldNotMatchXpath($xpath): void
+    {
+        $this->assertXpath($this->buildXPath($this->getGsspAuthnRequestDocument()), $xpath, false);
+    }
+
+    // SymfonyDriver's client follows redirects in-kernel and has no DNS, so it "visits" the
+    // unresolvable GSSP host anyway (404s on Gateway's own router) - the Location header or the
+    // resulting current URL still carry the full external URL, SAMLRequest param included. This
+    // is the only place mdui:UIInfo is ever observable: it's never in the final SP-facing Response.
+    private function getGsspAuthnRequestUrl(): string
+    {
+        $candidates = [];
+
+        $locationHeader = $this->getSession()->getResponseHeader('Location');
+        if ($locationHeader) {
+            $candidates[] = $locationHeader;
+        }
+
+        $currentUrl = $this->getSession()->getCurrentUrl();
+        if ($currentUrl) {
+            $candidates[] = $currentUrl;
+        }
+
+        foreach ($candidates as $candidate) {
+            if (str_contains($candidate, 'SAMLRequest=')
+                && !str_contains($candidate, 'gateway.dev.openconext.local')
+            ) {
+                return $candidate;
+            }
+        }
+
+        throw new ExpectationException(
+            'Could not find a redirect towards a GSSP carrying a SAMLRequest. ' .
+            'Candidates seen: ' . implode(', ', $candidates),
+            $this->getSession()
+        );
+    }
+
+    private function getGsspAuthnRequestDocument(): DOMDocument
+    {
+        $url = $this->getGsspAuthnRequestUrl();
+        $query = (string) parse_url($url, PHP_URL_QUERY);
+        parse_str($query, $params);
+
+        if (!isset($params['SAMLRequest'])) {
+            throw new ExpectationException(
+                sprintf('The URL "%s" did not carry a SAMLRequest parameter', $url),
+                $this->getSession()
+            );
+        }
+
+        $xml = gzinflate(base64_decode($params['SAMLRequest']));
+        if ($xml === false) {
+            throw new ExpectationException(
+                'Unable to decode the SAMLRequest parameter into XML',
+                $this->getSession()
+            );
+        }
+
+        $document = new DOMDocument();
+        $document->loadXML($xml);
+
+        return $document;
+    }
+
+    private function buildXPath(DOMDocument $document): DOMXPath
+    {
         $xpathObj = new DOMXPath($document);
         $xpathObj->registerNamespace('ds', XMLSecurityDSig::XMLDSIGNS);
         $xpathObj->registerNamespace('mdui', Common::NS);
+        $xpathObj->registerNamespace('mdash', Common::NS);
+        $xpathObj->registerNamespace('shibmd', Scope::NS);
+        $xpathObj->registerNamespace('samlp', Constants::NS_SAMLP);
+        $xpathObj->registerNamespace('saml', Constants::NS_SAML);
+        $xpathObj->registerNamespace('gssp', 'urn:mace:surf.nl:stepup:gssp-extensions');
+
+        return $xpathObj;
+    }
+
+    private function assertXpath(DOMXPath $xpathObj, string $xpath, bool $shouldMatch): void
+    {
         $nodeList = $xpathObj->query($xpath);
+
+        if ($shouldMatch) {
+            if (!$nodeList || $nodeList->length === 0) {
+                $message = sprintf('The xpath "%s" did not result in at least one match.', $xpath);
+                throw new ExpectationException($message, $this->getSession());
+            }
+            return;
+        }
 
         if ($nodeList && $nodeList->length > 0) {
             $message = sprintf(
