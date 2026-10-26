@@ -54,9 +54,10 @@ class FailedResponseService
     public function sendLoaCannotBeGiven(ResponseContext $responseContext)
     {
         $originalRequestId = $responseContext->getInResponseTo();
+        $identityNameId = $responseContext->getIdentityNameId();
 
         $logger = $this->samlLogger->forAuthentication($originalRequestId);
-        $logger->notice('Loa cannot be given, creating Response with NoAuthnContext status');
+        $logger->notice(sprintf('Loa cannot be given, creating Response with NoAuthnContext status for user %s', $identityNameId));
 
         $response = $this->responseBuilder
             ->createNewResponse($responseContext)
@@ -64,9 +65,10 @@ class FailedResponseService
             ->get();
 
         $logger->notice(sprintf(
-            'Responding to request "%s" with response based on response from the remote IdP with response "%s"',
+            'Responding to request "%s" with response based on response from the remote IdP with response "%s" for user %s',
             $responseContext->getInResponseTo(),
-            $response->getId()
+            $response->getId(),
+            $identityNameId,
         ));
 
         return $response;
@@ -81,9 +83,10 @@ class FailedResponseService
     public function sendAuthenticationCancelledByUser(ResponseContext $responseContext)
     {
         $originalRequestId = $responseContext->getInResponseTo();
+        $identityNameId = $responseContext->getIdentityNameId();
 
         $logger = $this->samlLogger->forAuthentication($originalRequestId);
-        $logger->notice('Authentication was cancelled by the user, creating Response with AuthnFailed status');
+        $logger->notice(sprintf('Authentication was cancelled by the user, creating Response with AuthnFailed status for user %s', $identityNameId));
 
         $response = $this->responseBuilder
             ->createNewResponse($responseContext)
@@ -95,9 +98,10 @@ class FailedResponseService
             ->get();
 
         $logger->notice(sprintf(
-            'Responding to request "%s" with response based on response from the remote IdP with response "%s"',
+            'Responding to request "%s" with response based on response from the remote IdP with response "%s" for user %s',
             $responseContext->getInResponseTo(),
-            $response->getId()
+            $response->getId(),
+            $identityNameId,
         ));
 
         return $response;

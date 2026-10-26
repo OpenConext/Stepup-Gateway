@@ -108,6 +108,9 @@ class ConsumeAssertionService
 
         $responseContext->saveAssertion($assertion);
 
-        $logger->notice(sprintf('Forwarding to second factor controller for loa determination and handling'));
+        $logger->notice(sprintf(
+            'Forwarding to second factor controller for loa determination and handling for user %s',
+            $responseContext->getIdentityNameId(),
+        ));
     }
 }

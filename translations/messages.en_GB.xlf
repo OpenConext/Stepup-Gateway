@@ -13,6 +13,14 @@
         <source>gateway.error.click_to_go_back_to_sp</source>
         <target>Click to go back to the originating website.</target>
       </trans-unit>
+      <trans-unit id="5z8Xjua" resname="gateway.error.session_lost.title">
+        <source>gateway.error.session_lost.title</source>
+        <target>Error - Gateway session unavailable</target>
+      </trans-unit>
+      <trans-unit id="MGLufyU" resname="gateway.error.session_lost.description">
+        <source>gateway.error.session_lost.description</source>
+        <target>To continue to the service an active Gateway session is required. However, the Gateway session cookie was not received or your session has expired. Please make sure cookies are enabled, go back to the service, and try again. If that doesn't work, close your browser first and then try again.</target>
+      </trans-unit>
       <trans-unit id="6fcosCA" resname="gateway.error.unprocessable_response">
         <source>gateway.error.unprocessable_response</source>
         <target>Login response could not be processed.</target>

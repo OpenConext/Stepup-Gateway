@@ -121,7 +121,10 @@ class GsspFallbackService
         }
 
         if (!$requestedLoa->levelIsLowerOrEqualTo(Loa::LOA_SELF_VETTED)) {
-            $logger->info('Gssp Fallback configured but not used, requested LoA is higher than self-vetted');
+            $logger->info(sprintf(
+                'Gssp Fallback configured but not used, requested LoA is higher than self-vetted for user %s',
+                $identityNameId,
+            ));
             $this->stateHandler->setSecondFactorIsFallback(false);
             return false;
         }
@@ -130,13 +133,19 @@ class GsspFallbackService
         $institution = $this->stateHandler->getGsspUserAttributeInstitution();
         if (empty($subject) || empty($institution)) {
             $this->stateHandler->setSecondFactorIsFallback(false);
-            $logger->info('Gssp Fallback configured but not used, GSSP user attributes are not set in AuthnRequest');
+            $logger->info(sprintf(
+                'Gssp Fallback configured but not used, GSSP user attributes are not set in AuthnRequest for user %s',
+                $identityNameId,
+            ));
             return false;
         }
 
         if (!$whitelistService->contains($institution)) {
             $this->stateHandler->setSecondFactorIsFallback(false);
-            $logger->info('Gssp Fallback configured but not used, GSSP institution is not whitelisted');
+            $logger->info(sprintf(
+                'Gssp Fallback configured but not used, GSSP institution is not whitelisted for user %s',
+                $identityNameId,
+            ));
             return false;
         }
 
@@ -144,23 +153,32 @@ class GsspFallbackService
             $institutionConfiguration = $this->institutionConfigurationRepository->getInstitutionConfiguration($institution);
         } catch (InstitutionConfigurationNotFoundException) {
             $this->stateHandler->setSecondFactorIsFallback(false);
-            $logger->info('Gssp Fallback configured but not used, GSSP institution configuration is not found');
+            $logger->info(sprintf(
+                'Gssp Fallback configured but not used, GSSP institution configuration is not found for user %s',
+                $identityNameId,
+            ));
             return false;
         }
 
         if (!$institutionConfiguration->ssoRegistrationBypass) {
             $this->stateHandler->setSecondFactorIsFallback(false);
-            $logger->info('Gssp Fallback configured but not used, GSSP fallback is not enabled for the institution');
+            $logger->info(sprintf(
+                'Gssp Fallback configured but not used, GSSP fallback is not enabled for the institution for user %s',
+                $identityNameId,
+            ));
             return false;
         }
         
         if ($this->secondFactorRepository->hasTokens($identityNameId)) {
             $this->stateHandler->setSecondFactorIsFallback(false);
-            $logger->info('Gssp Fallback configured but not used, the identity has registered tokens');
+            $logger->info(sprintf(
+                'Gssp Fallback configured but not used, the identity has registered tokens for user %s',
+                $identityNameId,
+            ));
             return false;
         }
 
-        $logger->info('Gssp Fallback flow started');
+        $logger->info(sprintf('Gssp Fallback flow started for user %s', $identityNameId));
 
         $this->stateHandler->setSecondFactorIsFallback(true);
         $this->stateHandler->setPreferredLocale($locale);

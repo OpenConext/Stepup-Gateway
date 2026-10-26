@@ -98,7 +98,7 @@ class AdfsService
                 );
             }
 
-            $logger->notice('Sending ACS Response to ADFS plugin');
+            $logger->notice(sprintf('Sending ACS Response to ADFS plugin for user %s', $responseContext->getIdentityNameId()));
 
             return $adfsParameters;
         }

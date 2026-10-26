@@ -240,8 +240,8 @@ class ConsumeAssertionServiceTest extends GatewaySamlTestCase
             'warning' => [],
             'notice' => [
                 'Received SAMLResponse, attempting to process for Proxy Response',
-                'Successfully processed SAMLResponse',
-                'Responding to request "_1b8f282a9c194b264ef68761171539380de78b45038f65b8609df868f55e" with response based on response from the remote IdP with response "_mocked_generated_id"',
+                'Successfully processed SAMLResponse for user 724cca6778a1d3db16b65c40d4c378d011f220be',
+                'Responding to request "_1b8f282a9c194b264ef68761171539380de78b45038f65b8609df868f55e" with response based on response from the remote IdP with response "_mocked_generated_id" for user 724cca6778a1d3db16b65c40d4c378d011f220be',
             ],
             'info' => [],
             'debug' => [],

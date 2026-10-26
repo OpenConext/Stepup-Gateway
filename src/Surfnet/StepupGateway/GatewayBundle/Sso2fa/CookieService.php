@@ -110,18 +110,19 @@ class CookieService implements CookieServiceInterface
             if (!$secondFactor) {
                 throw new RuntimeException(sprintf('Second Factor token not found with ID: %s', $secondFactorId));
             }
+            $identityId = $responseContext->getIdentityNameId();
             // Test if the institution of the Identity this SF belongs to has SSO on 2FA enabled
             $isEnabled = $this->institutionConfigurationService->ssoOn2faEnabled($secondFactor->getInstitution());
             $this->logger->notice(
                 sprintf(
-                    'SSO on 2FA is %senabled for %s',
+                    'SSO on 2FA is %senabled for %s for user %s',
                     $isEnabled ? '' : 'not ',
-                    $secondFactor->getInstitution()
+                    $secondFactor->getInstitution(),
+                    $identityId,
                 )
             );
 
             if ($isEnabled) {
-                $identityId = $responseContext->getIdentityNameId();
                 $loa = $this->secondFactorService->getLoaLevel($secondFactor);
                 $isVerifiedBySsoOn2faCookie = $responseContext->isVerifiedBySsoOn2faCookie();
                 // Did the user perform a new second factor authentication?
@@ -151,7 +152,10 @@ class CookieService implements CookieServiceInterface
 
         if (!$this->secondFactorService->findByUuid($ssoCookie->secondFactorId())) {
             $this->logger->notice(
-                'The second factor stored in the SSO cookie was revoked or has otherwise became unknown to Gateway',
+                sprintf(
+                    'The second factor stored in the SSO cookie was revoked or has otherwise became unknown to Gateway for user %s',
+                    $identityNameId,
+                ),
                 [
                     'secondFactorIdFromCookie' => $ssoCookie->secondFactorId()
                 ]
@@ -159,7 +163,9 @@ class CookieService implements CookieServiceInterface
             return false;
         }
 
-        $this->logger->notice('Verified the current 2FA authentication can be given with the SSO on 2FA cookie');
+        $this->logger->notice(
+            sprintf('Verified the current 2FA authentication can be given with the SSO on 2FA cookie for user %s', $identityNameId)
+        );
         return true;
     }
 
@@ -229,9 +235,10 @@ class CookieService implements CookieServiceInterface
         if ($ssoCookie instanceof CookieValue && !$ssoCookie->meetsRequiredLoa($requiredLoa)) {
             $this->logger->notice(
                 sprintf(
-                    'The required LoA %d did not match the LoA of the SSO cookie LoA %d',
+                    'The required LoA %d did not match the LoA of the SSO cookie LoA %d for user %s',
                     $requiredLoa,
-                    $ssoCookie->getLoa()
+                    $ssoCookie->getLoa(),
+                    $identityNameId,
                 )
             );
             return false;
@@ -250,12 +257,18 @@ class CookieService implements CookieServiceInterface
             $isExpired = $this->expirationHelper->isExpired($ssoCookie);
             if ($isExpired) {
                 $this->logger->notice(
-                    'The SSO on 2FA cookie has expired. Meaning [authentication time] + [cookie lifetime] is in the past'
+                    sprintf(
+                        'The SSO on 2FA cookie has expired. Meaning [authentication time] + [cookie lifetime] is in the past for user %s',
+                        $identityNameId,
+                    )
                 );
                 return false;
             }
         } catch (InvalidAuthenticationTimeException $e) {
-            $this->logger->notice('The SSO on 2FA cookie contained an invalid authentication time', [$e->getMessage()]);
+            $this->logger->notice(
+                sprintf('The SSO on 2FA cookie contained an invalid authentication time for user %s', $identityNameId),
+                [$e->getMessage()]
+            );
             return false;
         }
         return true;

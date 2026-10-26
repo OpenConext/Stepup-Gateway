@@ -133,10 +133,13 @@ class ConsumeAssertionService
             throw new InvalidSubjectException($message);
         }
 
-        $logger->notice('Successfully processed SAMLResponse');
+        $logger->notice(sprintf('Successfully processed SAMLResponse for user %s', $authenticatedNameId->getValue()));
 
         if ($stateHandler->secondFactorVerificationRequested()) {
-            $message = 'Second Factor verification was requested and was successful, forwarding to SecondFactor handling';
+            $message = sprintf(
+                'Second Factor verification was requested and was successful, forwarding to SecondFactor handling for user %s',
+                $authenticatedNameId->getValue(),
+            );
             $logger->notice($message);
 
             throw new SecondfactorVerificationRequiredException($message);
@@ -153,9 +156,10 @@ class ConsumeAssertionService
         );
 
         $logger->notice(sprintf(
-            'Responding to request "%s" with response based on response from the remote IdP with response "%s"',
+            'Responding to request "%s" with response based on response from the remote IdP with response "%s" for user %s',
             $stateHandler->getRequestId(),
-            $response->getId()
+            $response->getId(),
+            $authenticatedNameId->getValue(),
         ));
 
         return $response;
