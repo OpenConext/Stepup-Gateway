@@ -18,41 +18,42 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Tests\Entity;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Surfnet\StepupGateway\GatewayBundle\Entity\ServiceProvider;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\Exception\AcsLocationNotAllowedException;
 
 class ServiceProviderTest extends TestCase
 {
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_allows_second_factor_only_sps(): void
     {
         $sp = new ServiceProvider(['secondFactorOnly' => true]);
         $this->assertTrue($sp->mayUseSecondFactorOnly());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_disallows_second_factor_only_sps_for_gateway(): void
     {
         $sp = new ServiceProvider(['secondFactorOnly' => true]);
         $this->assertFalse($sp->mayUseGateway());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_allows_gateway_sps(): void
     {
         $sp = new ServiceProvider(['secondFactorOnly' => false]);
         $this->assertTrue($sp->mayUseGateway());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_disallows_second_factor_only_sps(): void
     {
         $sp = new ServiceProvider(['secondFactorOnly' => false]);
         $this->assertFalse($sp->mayUseSecondFactorOnly());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_blocks_disallowed_nameids(): void
     {
         $sp = new ServiceProvider([
@@ -64,7 +65,7 @@ class ServiceProviderTest extends TestCase
         $this->assertFalse($sp->isAllowedToUseSecondFactorOnlyFor('urn:collab:person:surfnet.nl:pieter'));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_allows_whitelisted_nameids(): void
     {
         $sp = new ServiceProvider([
@@ -99,7 +100,7 @@ class ServiceProviderTest extends TestCase
         $this->assertTrue($sp->isAllowedToUseSecondFactorOnlyFor('urn:collab:person:surfnet.nl:pieter'));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_allows_request_acs_url_if_configured(): void
     {
         $sp = new ServiceProvider([
@@ -113,7 +114,7 @@ class ServiceProviderTest extends TestCase
         $this->assertEquals('https://example.com/acs', $url);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_falls_back_to_configured_acs_url_if_request_acs_url_is_not_allowed(): void
     {
         $sp = new ServiceProvider([
@@ -127,7 +128,7 @@ class ServiceProviderTest extends TestCase
         $this->assertEquals('https://example.org/acs', $url);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_allows_adfs_request_acs_url_if_configured(): void
     {
         $sp = new ServiceProvider([
@@ -147,7 +148,7 @@ class ServiceProviderTest extends TestCase
         $this->assertEquals('https://example.com/acs?this=is&ignored', $url);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_throws_exception_if_adfs_request_acs_url_is_not_allowed(): void
     {
         $this->expectException(AcsLocationNotAllowedException::class);

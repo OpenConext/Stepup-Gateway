@@ -18,10 +18,12 @@
 
 namespace Surfnet\StepupGateway\Behat;
 
+use Behat\Hook\BeforeScenario;
+use Behat\Step\Given;
+use Behat\Step\When;
 use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
-use Behat\Mink\Driver\Selenium2Driver;
 use FriendsOfBehat\SymfonyExtension\Driver\SymfonyDriver;
 use RobRichards\XMLSecLibs\XMLSecurityKey;
 use RuntimeException;
@@ -35,13 +37,10 @@ use SAML2\DOMDocumentFactory;
 use SAML2\XML\Chunk;
 use SAML2\XML\saml\Issuer;
 use SAML2\XML\saml\NameID;
-use Surfnet\SamlBundle\Entity\IdentityProvider;
 use Surfnet\SamlBundle\SAML2\AuthnRequest as Saml2AuthnRequest;
 use Surfnet\StepupGateway\Behat\Repository\SamlEntityRepository;
 use Surfnet\StepupGateway\Behat\Service\FeatureToggle;
 use Surfnet\StepupGateway\Behat\Service\FixtureService;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\KernelInterface;
 
 class ServiceProviderContext implements Context
@@ -74,7 +73,7 @@ class ServiceProviderContext implements Context
     {
     }
 
-    #[\Behat\Hook\BeforeScenario]
+    #[BeforeScenario]
     public function gatherContexts(BeforeScenarioScope $scope): void
     {
         $environment = $scope->getEnvironment();
@@ -83,25 +82,25 @@ class ServiceProviderContext implements Context
         FeatureToggle::reset();
     }
 
-    #[\Behat\Step\Given('/^an SFO enabled SP with EntityID (?!.*and Middleware service names:)([^\\\']*)$/')]
+    #[Given('/^an SFO enabled SP with EntityID (?!.*and Middleware service names:)([^\\\']*)$/')]
     public function anSFOEnabledSPWithEntityID($entityId): void
     {
         $this->registerSp($entityId, true);
     }
 
-    #[\Behat\Step\Given('/^an SFO enabled SP with EntityID ([^\\\']*) and Middleware service names:$/')]
+    #[Given('/^an SFO enabled SP with EntityID ([^\\\']*) and Middleware service names:$/')]
     public function anSFOEnabledSPWithEntityIDAndServiceNames($entityId, TableNode $table): void
     {
         $this->registerSp($entityId, true, $this->serviceNamesFromTable($table));
     }
 
-    #[\Behat\Step\Given('/^an SP with EntityID (?!.*and Middleware service names:)([^\\\']*)$/')]
+    #[Given('/^an SP with EntityID (?!.*and Middleware service names:)([^\\\']*)$/')]
     public function anSPWithEntityID($entityId): void
     {
         $this->registerSp($entityId, false);
     }
 
-    #[\Behat\Step\Given('/^an SP with EntityID ([^\\\']*) and Middleware service names:$/')]
+    #[Given('/^an SP with EntityID ([^\\\']*) and Middleware service names:$/')]
     public function anSPWithEntityIDAndServiceNames($entityId, TableNode $table): void
     {
         $this->registerSp($entityId, false, $this->serviceNamesFromTable($table));
@@ -109,25 +108,25 @@ class ServiceProviderContext implements Context
 
     // EntityID must appear in gssp_allowed_sps (samlstepupproviders_parameters.yaml.dist) or the
     // registration entry point below will reject it.
-    #[\Behat\Step\Given('/^a GSSP registration SP with EntityID (?!.*and Middleware service names:)([^\\\']*)$/')]
+    #[Given('/^a GSSP registration SP with EntityID (?!.*and Middleware service names:)([^\\\']*)$/')]
     public function aGsspRegistrationSPWithEntityID($entityId): void
     {
         $this->registerSp($entityId, false);
     }
 
-    #[\Behat\Step\Given('/^a GSSP registration SP with EntityID ([^\\\']*) and Middleware service names:$/')]
+    #[Given('/^a GSSP registration SP with EntityID ([^\\\']*) and Middleware service names:$/')]
     public function aGsspRegistrationSPWithEntityIDAndServiceNames($entityId, TableNode $table): void
     {
         $this->registerSp($entityId, false, $this->serviceNamesFromTable($table));
     }
 
-    #[\Behat\Step\Given('/^an IdP with EntityID ([^\\\']*)$/')]
+    #[Given('/^an IdP with EntityID ([^\\\']*)$/')]
     public function anIdPWithEntityID($entityId): void
     {
         $this->registerIdp($entityId);
     }
 
-    #[\Behat\Step\Given('/^the service name feature is disabled$/')]
+    #[Given('/^the service name feature is disabled$/')]
     public function theServiceNameFeatureIsDisabled(): void
     {
         FeatureToggle::disableServiceName();
@@ -211,13 +210,13 @@ class ServiceProviderContext implements Context
         $this->currentIdP = $idpEntity;
     }
 
-    #[\Behat\Step\When('/^([^\\\']*) starts an SFO authentication$/')]
+    #[When('/^([^\\\']*) starts an SFO authentication$/')]
     public function iStartAnSFOAuthentication($nameId): void
     {
         $this->iStartAnSFOAuthenticationWithLoa($nameId, "self-asserted");
     }
 
-    #[\Behat\Step\When('/^([^\\\']*) starts an SFO authentication with LoA ([^\\\']*)$/')]
+    #[When('/^([^\\\']*) starts an SFO authentication with LoA ([^\\\']*)$/')]
     public function iStartAnSFOAuthenticationWithLoa(
         $nameId,
         string $loa,
@@ -290,36 +289,36 @@ class ServiceProviderContext implements Context
         $this->getSession()->visit($request->getDestination().'?'.$query);
     }
 
-    #[\Behat\Step\When('/^([^\\\']*) starts an SFO authentication requiring LoA (?!.*with mdui DisplayNames:)([^\\\']*)$/')]
+    #[When('/^([^\\\']*) starts an SFO authentication requiring LoA (?!.*with mdui DisplayNames:)([^\\\']*)$/')]
     public function iStartAnSFOAuthenticationWithLoaRequirement($nameId, $loa): void
     {
         $this->iStartAnSFOAuthenticationWithLoa($nameId, $loa);
     }
-    #[\Behat\Step\When('/^([^\\\']*) starts a forced SFO authentication requiring LoA ([^\\\']*)$/')]
+    #[When('/^([^\\\']*) starts a forced SFO authentication requiring LoA ([^\\\']*)$/')]
     public function iStartAForcedSFOAuthenticationWithLoaRequirement($nameId, $loa): void
     {
         $this->iStartAnSFOAuthenticationWithLoa($nameId, $loa, true);
     }
 
-    #[\Behat\Step\When('/^([^\\\']*) starts an SFO authentication requiring LoA ([^\\\']*) with mdui DisplayNames:$/')]
+    #[When('/^([^\\\']*) starts an SFO authentication requiring LoA ([^\\\']*) with mdui DisplayNames:$/')]
     public function iStartAnSFOAuthenticationWithLoaRequirementAndUiInfo($nameId, $loa, TableNode $table): void
     {
         $this->iStartAnSFOAuthenticationWithLoa($nameId, $loa, false, null, null, $this->displayNamesFromTable($table));
     }
 
-    #[\Behat\Step\When('/^([^\\\']*) starts an SFO authentication with GSSP fallback requiring LoA ([^\\\']*) and Gssp extension subject ([^\\\']*) and institution ([^\\\']*)$/')]
+    #[When('/^([^\\\']*) starts an SFO authentication with GSSP fallback requiring LoA ([^\\\']*) and Gssp extension subject ([^\\\']*) and institution ([^\\\']*)$/')]
     public function iStartAForcedSFOAuthenticationWithLoaRequirementAndGsspExtension($nameId, $loa, $subject, $institution): void
     {
         $this->iStartAnSFOAuthenticationWithLoa($nameId, $loa, false, $subject, $institution);
     }
 
-    #[\Behat\Step\When('/^([^\\\']*) starts a "([^"]*)" GSSP registration$/')]
+    #[When('/^([^\\\']*) starts a "([^"]*)" GSSP registration$/')]
     public function anSpStartsAGsspRegistration($entityId, $provider): void
     {
         $this->startGsspRegistration($entityId, $provider, []);
     }
 
-    #[\Behat\Step\When('/^([^\\\']*) starts a "([^"]*)" GSSP registration with mdui DisplayNames:$/')]
+    #[When('/^([^\\\']*) starts a "([^"]*)" GSSP registration with mdui DisplayNames:$/')]
     public function anSpStartsAGsspRegistrationWithUiInfo($entityId, $provider, TableNode $table): void
     {
         $this->startGsspRegistration($entityId, $provider, $this->displayNamesFromTable($table));
@@ -364,7 +363,7 @@ class ServiceProviderContext implements Context
         $this->getSession()->visit($request->getDestination().'?'.$query);
     }
 
-    #[\Behat\Step\When('/^([^\\\']*) starts an ADFS authentication requiring ([^\\\']*)$/')]
+    #[When('/^([^\\\']*) starts an ADFS authentication requiring ([^\\\']*)$/')]
     public function iStartAnADFSAuthenticationWithLoaRequirement($nameId, $loa): void
     {
         $requestParams = [
@@ -376,7 +375,7 @@ class ServiceProviderContext implements Context
         $this->pressButtonWhenNoJavascriptSupport();
     }
 
-    #[\Behat\Step\When('/^([^\\\']*) starts an authentication at Default SP$/')]
+    #[When('/^([^\\\']*) starts an authentication at Default SP$/')]
     public function iStartAnAuthenticationAtDefaultSP($nameId): void
     {
         $authnRequest = new AuthnRequest();
@@ -400,14 +399,14 @@ class ServiceProviderContext implements Context
         $this->getSession()->visit($authnRequest->getDestination().'?'.$query);
     }
 
-    #[\Behat\Step\When('/^([^\\\']*) starts an authentication requiring LoA (?!.*with mdui DisplayNames:)([^\\\']*)$/')]
+    #[When('/^([^\\\']*) starts an authentication requiring LoA (?!.*with mdui DisplayNames:)([^\\\']*)$/')]
     public function iStartAnSsoAuthenticationWithLoaRequirement($nameId, $loa): void
     {
         $this->startSsoAuthentication($nameId, $loa, []);
     }
 
     // Smoke-test only - see tests/features/service-name-sso.feature for why.
-    #[\Behat\Step\When('/^([^\\\']*) starts an authentication requiring LoA ([^\\\']*) with mdui DisplayNames:$/')]
+    #[When('/^([^\\\']*) starts an authentication requiring LoA ([^\\\']*) with mdui DisplayNames:$/')]
     public function iStartAnSsoAuthenticationWithLoaRequirementAndUiInfo($nameId, $loa, TableNode $table): void
     {
         $this->startSsoAuthentication($nameId, $loa, $this->displayNamesFromTable($table));
@@ -454,7 +453,7 @@ class ServiceProviderContext implements Context
         $this->getSession()->visit($request->getDestination().'?'.$query);
     }
 
-    #[\Behat\Step\When('/^I authenticate at the IdP as ([^\\\']*)$/')]
+    #[When('/^I authenticate at the IdP as ([^\\\']*)$/')]
     public function iAuthenticateAtTheIdp($username): void
     {
         $this->minkContext->fillField('username', $username);
@@ -468,7 +467,7 @@ class ServiceProviderContext implements Context
         }
     }
 
-    #[\Behat\Step\When('/^I authenticate at AzureMFA as "([^"]*)"$/')]
+    #[When('/^I authenticate at AzureMFA as "([^"]*)"$/')]
     public function iAuthenticateAtAzureMfaAs($username): void
     {
         $this->minkContext->assertPageAddress('https://azuremfa.dev.openconext.local/mock/sso');
@@ -496,7 +495,7 @@ class ServiceProviderContext implements Context
         $this->minkContext->assertPageAddress('https://gateway.dev.openconext.local/test/authentication/consume-assertion');
     }
 
-    #[\Behat\Step\When('/^I cancel the authentication at AzureMFA$/')]
+    #[When('/^I cancel the authentication at AzureMFA$/')]
     public function iCancelTheAuthenticationAtAzureMfa(): void
     {
         $this->minkContext->assertPageAddress('https://azuremfa.dev.openconext.local/mock/sso');
@@ -519,7 +518,7 @@ class ServiceProviderContext implements Context
         return $key;
     }
 
-    #[\Behat\Step\Given('/^I log out at the IdP$/')]
+    #[Given('/^I log out at the IdP$/')]
     public function iLogOutAtTheIdP(): void
     {
         $this->minkContext->visit(self::SSP_URL);

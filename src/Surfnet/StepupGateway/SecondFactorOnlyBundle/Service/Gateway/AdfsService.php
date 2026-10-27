@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\Gateway;
 
+use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\ValueObject\Response;
 use Exception;
 use Psr\Log\LoggerInterface;
 use Surfnet\SamlBundle\SAML2\ReceivedAuthnRequest;
@@ -76,7 +77,7 @@ class AdfsService
      * redirect. This method sends a AuthnResponse back to the service
      * provider in response to the AuthnRequest received in ssoAction().
      *
-     * @return null|\Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\ValueObject\Response
+     * @return null|Response
      * @throws InvalidAdfsResponseException
      */
     public function handleAdfsResponse(LoggerInterface $logger, ResponseContext $responseContext)

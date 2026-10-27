@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Tests\Saml;
 
+use PHPUnit\Framework\Attributes\Test;
 use DOMDocument;
 use Surfnet\SamlBundle\SAML2\Extensions\Chunk;
 use Surfnet\SamlBundle\SAML2\Extensions\Extensions;
@@ -37,7 +38,7 @@ class UiInfoExtensionMapperTest extends GatewaySamlTestCase
         $this->mapper = new UiInfoExtensionMapper();
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_reads_display_names_from_a_ui_info_extension(): void
     {
         $extensions = $this->extensionsWithUiInfoChunk([
@@ -52,13 +53,13 @@ class UiInfoExtensionMapperTest extends GatewaySamlTestCase
         $this->assertContainsEquals(new DisplayName('nl', 'Elektronische leeromgeving'), $displayNames);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_returns_empty_array_when_extensions_have_no_ui_info_chunk(): void
     {
         $this->assertSame([], $this->mapper->read(new Extensions()));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_returns_empty_array_when_ui_info_has_no_display_names(): void
     {
         $displayNames = $this->mapper->read($this->extensionsWithUiInfoChunk([]));
@@ -66,7 +67,7 @@ class UiInfoExtensionMapperTest extends GatewaySamlTestCase
         $this->assertSame([], $displayNames);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_skips_display_names_with_empty_lang_attribute(): void
     {
         $doc = new DOMDocument('1.0', 'UTF-8');
@@ -92,7 +93,7 @@ class UiInfoExtensionMapperTest extends GatewaySamlTestCase
         $this->assertSame('en', $result[0]->lang);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_skips_elements_from_other_namespaces(): void
     {
         $doc = new DOMDocument('1.0', 'UTF-8');
@@ -110,7 +111,7 @@ class UiInfoExtensionMapperTest extends GatewaySamlTestCase
         $this->assertSame([], $this->mapper->read($extensions));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_limits_the_number_of_parsed_display_names(): void
     {
         $langToValue = [];
@@ -123,7 +124,7 @@ class UiInfoExtensionMapperTest extends GatewaySamlTestCase
         $this->assertCount(10, $displayNames);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_skips_display_names_exceeding_length_limits(): void
     {
         $extensions = $this->extensionsWithUiInfoChunk([
@@ -138,7 +139,7 @@ class UiInfoExtensionMapperTest extends GatewaySamlTestCase
         $this->assertSame('nl', $displayNames[0]->lang);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_strips_control_characters_from_the_lang_attribute_at_read_time(): void
     {
         $doc = new DOMDocument('1.0', 'UTF-8');
@@ -159,7 +160,7 @@ class UiInfoExtensionMapperTest extends GatewaySamlTestCase
         $this->assertSame('en-GB', $displayNames[0]->lang);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_sanitizes_whitespace_and_control_characters_in_display_names_at_read_time(): void
     {
         $extensions = $this->extensionsWithUiInfoChunk([
@@ -172,7 +173,7 @@ class UiInfoExtensionMapperTest extends GatewaySamlTestCase
         $this->assertSame('My Service', $displayNames[0]->value);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_truncates_display_names_longer_than_max_characters_at_read_time(): void
     {
         $extensions = $this->extensionsWithUiInfoChunk([
@@ -186,7 +187,7 @@ class UiInfoExtensionMapperTest extends GatewaySamlTestCase
         $this->assertSame(40, mb_strlen($displayNames[0]->value));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_builds_a_ui_info_chunk_for_the_given_display_name(): void
     {
         $result = $this->mapper->applyTo(new Extensions(), new DisplayName('en', 'My Service'));
@@ -204,7 +205,7 @@ class UiInfoExtensionMapperTest extends GatewaySamlTestCase
         $this->assertSame('My Service', $displayNameNode->textContent);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_roundtrips_a_display_name(): void
     {
         $input = new DisplayName('en', 'Round Trip Service');
@@ -215,7 +216,7 @@ class UiInfoExtensionMapperTest extends GatewaySamlTestCase
         $this->assertEquals([$input], $parsed);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_strips_ui_info_when_given_no_display_name(): void
     {
         $withUiInfo = $this->mapper->applyTo(new Extensions(), new DisplayName('en', 'Should be stripped'));
@@ -225,7 +226,7 @@ class UiInfoExtensionMapperTest extends GatewaySamlTestCase
         $this->assertArrayNotHasKey('UIInfo', $stripped->getChunks());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_preserves_other_chunks_when_applying_a_display_name(): void
     {
         $extensions = $this->extensionsWithUserAttributesChunk();
@@ -236,7 +237,7 @@ class UiInfoExtensionMapperTest extends GatewaySamlTestCase
         $this->assertArrayHasKey('UserAttributes', $result->getChunks());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_preserves_other_chunks_when_stripping_ui_info(): void
     {
         $extensions = $this->extensionsWithUserAttributesChunk();
@@ -248,7 +249,7 @@ class UiInfoExtensionMapperTest extends GatewaySamlTestCase
         $this->assertArrayHasKey('UserAttributes', $stripped->getChunks());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_replaces_an_existing_ui_info_chunk_rather_than_appending_to_it(): void
     {
         $withOldName = $this->mapper->applyTo(new Extensions(), new DisplayName('en', 'Old name'));
@@ -260,7 +261,7 @@ class UiInfoExtensionMapperTest extends GatewaySamlTestCase
         $this->assertSame('New name', $uiInfoElement->childNodes->item(0)->textContent);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_strips_control_characters_from_the_xml_lang_attribute(): void
     {
         $extensions = $this->mapper->applyTo(new Extensions(), new DisplayName("en\x01-GB", 'My Service'));
@@ -269,7 +270,7 @@ class UiInfoExtensionMapperTest extends GatewaySamlTestCase
         $this->assertSame('en-GB', $uiInfoElement->childNodes->item(0)->getAttribute('xml:lang'));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_returns_an_equivalent_extensions_object_when_there_is_nothing_to_strip(): void
     {
         $stripped = $this->mapper->applyTo(new Extensions(), null);
@@ -277,7 +278,7 @@ class UiInfoExtensionMapperTest extends GatewaySamlTestCase
         $this->assertSame([], $stripped->getChunks());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_truncates_display_names_longer_than_max_characters(): void
     {
         $extensions = $this->mapper->applyTo(new Extensions(), new DisplayName('en', str_repeat('a', 45)));
@@ -288,7 +289,7 @@ class UiInfoExtensionMapperTest extends GatewaySamlTestCase
         $this->assertSame(40, mb_strlen($uiInfoElement->childNodes->item(0)->textContent));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_sanitizes_whitespace_and_control_characters_in_display_names(): void
     {
         $extensions = $this->mapper->applyTo(new Extensions(), new DisplayName('en', "  My   \tService\x01 "));

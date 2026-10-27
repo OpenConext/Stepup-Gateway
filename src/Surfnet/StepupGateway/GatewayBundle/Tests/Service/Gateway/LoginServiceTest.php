@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Tests\Service\Gateway;
 
+use PHPUnit\Framework\Attributes\Test;
 use DateTime;
 use Mockery;
 use Surfnet\SamlBundle\Entity\IdentityProvider;
@@ -102,7 +103,7 @@ final class LoginServiceTest extends GatewaySamlTestCase
         $this->initGatewayService($idpConfiguration, $spConfiguration, $loaLevels, $now);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_should_return_a_valid_authn_request_and_update_state_when_starting_on_login_flow(): void
     {
         // Create request
@@ -168,7 +169,7 @@ final class LoginServiceTest extends GatewaySamlTestCase
         ], $this->getSessionData('attributes'));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_stores_display_names_from_ui_info_when_flag_is_enabled(): void
     {
         $this->initGatewayService(
@@ -216,7 +217,7 @@ final class LoginServiceTest extends GatewaySamlTestCase
         $this->assertContains(['lang' => 'nl', 'value' => 'Online leren'], $displayNames);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_does_not_store_display_names_when_flag_is_disabled(): void
     {
         $httpRequest = new Request([AuthnRequest::PARAMETER_RELAY_STATE => 'relay_state']);
@@ -252,7 +253,7 @@ final class LoginServiceTest extends GatewaySamlTestCase
         $this->assertArrayNotHasKey('surfnet/gateway/requestdisplay_names', $sessionData);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_should_throw_an_exception_when_an_invalid_loa_is_requested_when_starting_on_login_flow(): void
     {
         $this->expectException(RequesterFailureException::class);

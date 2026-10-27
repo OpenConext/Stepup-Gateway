@@ -18,6 +18,8 @@
 
 namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Tests\Service\Gateway\GsspFallback;
 
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Mockery as m;
 use Psr\Log\LoggerInterface;
 use Surfnet\SamlBundle\SAML2\ReceivedAuthnRequest;
@@ -70,7 +72,7 @@ class GsspFallbackServiceTest extends GatewaySamlTestCase
         parent::setUp();
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_can_parse_gssp_extension_attributes(): void
     {
 
@@ -94,7 +96,7 @@ AUTHNREQUEST;
     }
 
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_can_determine_when_the_gssp_fallback_is_needed(): void
     {
         $subject = 'urn:collab:person:dev.openconext.local:john_haack';
@@ -151,7 +153,7 @@ AUTHNREQUEST;
         $this->assertTrue($result);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_should_only_use_the_gssp_fallback_when_configured(): void
     {
         $this->config = new GsspFallbackConfig(
@@ -191,8 +193,8 @@ AUTHNREQUEST;
         $this->assertFalse($result);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\DataProvider('gsspFallbackNotAllowedDataProvider')]
+    #[Test]
+    #[DataProvider('gsspFallbackNotAllowedDataProvider')]
     public function it_can_determine_when_the_gssp_fallback_is_not_needed(
         string $authenticationMode,
         float $preferredLoa,
@@ -263,7 +265,7 @@ AUTHNREQUEST;
     }
 
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_can_create_a_gssp_fallback_token(): void
     {
         $secondFactorId = 'gssp_fallback';
@@ -290,7 +292,7 @@ AUTHNREQUEST;
         $this->assertSame($locale, $token->getDisplayLocale());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_treats_missing_institution_configuration_as_default(): void
     {
         $subject = 'urn:collab:person:dev.openconext.local:john_haack';

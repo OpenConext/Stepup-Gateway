@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
+use Rector\Php84\Rector\MethodCall\NewMethodCallWithoutParenthesesRector;
+use Rector\Symfony\Symfony28\Rector\MethodCall\GetToConstructorInjectionRector;
 
 return RectorConfig::configure()
     ->withPaths([
@@ -14,6 +16,7 @@ return RectorConfig::configure()
          __DIR__ . '/../../tests',
          __DIR__ . '/../../templates',
     ])
+    ->withImportNames(importShortClasses: false, removeUnusedImports: true)
     ->withPhpSets()
     ->withAttributesSets(all: true)
     ->withComposerBased(twig: true, doctrine: true, phpunit: true, symfony: true)
@@ -21,9 +24,11 @@ return RectorConfig::configure()
     ->withDeadCodeLevel(0)
     ->withCodeQualityLevel(0)
     ->withSkip([
-        \Rector\Php84\Rector\MethodCall\NewMethodCallWithoutParenthesesRector::class,
+        __DIR__ . '/../../config/bundles.php',
+        __DIR__ . '/../../config/reference.php',
+        NewMethodCallWithoutParenthesesRector::class,
         // This codebase relies on container-aware controllers resolving
         // dependencies via $this->get() and a service locator, not constructor
         // autowiring. This rule assumes autowiring and breaks the DI container.
-        \Rector\Symfony\Symfony28\Rector\MethodCall\GetToConstructorInjectionRector::class,
+        GetToConstructorInjectionRector::class,
     ]);

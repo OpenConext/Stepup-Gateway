@@ -20,7 +20,7 @@ namespace Surfnet\StepupGateway\GatewayBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: \Surfnet\StepupGateway\GatewayBundle\Entity\WhitelistEntryRepository::class)]
+#[ORM\Entity(repositoryClass: WhitelistEntryRepository::class)]
 class WhitelistEntry
 {
     /**

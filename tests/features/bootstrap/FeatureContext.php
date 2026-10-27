@@ -18,6 +18,11 @@
 
 namespace Surfnet\StepupGateway\Behat;
 
+use Behat\Hook\BeforeFeature;
+use Behat\Hook\BeforeScenario;
+use Behat\Step\Given;
+use Behat\Step\Then;
+use Behat\Step\When;
 use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\BeforeFeatureScope;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
@@ -78,20 +83,20 @@ class FeatureContext implements Context
         ContainerSingleton::setContainer(new TestSaml2Container($logger));
     }
 
-    #[\Behat\Hook\BeforeFeature]
+    #[BeforeFeature]
     public static function setupDatabase(BeforeFeatureScope $scope): void
     {
         self::$databaseSchemaService->resetSchema();
     }
 
-    #[\Behat\Hook\BeforeScenario]
+    #[BeforeScenario]
     public function gatherContexts(BeforeScenarioScope $scope): void
     {
         $environment = $scope->getEnvironment();
         $this->minkContext = $environment->getContext(MinkContext::class);
     }
 
-    #[\Behat\Step\Given('/^a user from "([^"]*)" identified by "([^"]*)" with a vetted "([^"]*)" token$/')]
+    #[Given('/^a user from "([^"]*)" identified by "([^"]*)" with a vetted "([^"]*)" token$/')]
     public function aUserIdentifiedByWithAVettedToken($institution, $nameId, $tokenType): void
     {
         switch (strtolower((string) $tokenType)) {
@@ -107,7 +112,7 @@ class FeatureContext implements Context
         }
     }
 
-    #[\Behat\Step\Given('/^a user from "([^"]*)" identified by "([^"]*)" with a vetted "([^"]*)" token and display locale "([^"]*)"$/')]
+    #[Given('/^a user from "([^"]*)" identified by "([^"]*)" with a vetted "([^"]*)" token and display locale "([^"]*)"$/')]
     public function aUserIdentifiedByWithAVettedTokenAndDisplayLocale($institution, $nameId, $tokenType, $displayLocale): void
     {
         $this->currentToken = match (strtolower((string) $tokenType)) {
@@ -118,7 +123,7 @@ class FeatureContext implements Context
         };
     }
 
-    #[\Behat\Step\Given('/^a user from "([^"]*)" identified by "([^"]*)" with a self-asserted "([^"]*)" token$/')]
+    #[Given('/^a user from "([^"]*)" identified by "([^"]*)" with a self-asserted "([^"]*)" token$/')]
     public function aUserIdentifiedByWithASelfAssertedToken($institution, $nameId, $tokenType): void
     {
         switch (strtolower((string) $tokenType)) {
@@ -134,27 +139,27 @@ class FeatureContext implements Context
         }
     }
 
-    #[\Behat\Step\Then('I should see the Yubikey OTP screen')]
+    #[Then('I should see the Yubikey OTP screen')]
     public function iShouldSeeTheYubikeyOtpScreen(): void
     {
         $this->minkContext->assertPageContainsText('Your YubiKey-code');
     }
 
-    #[\Behat\Step\Then('I should see the SMS verification screen')]
+    #[Then('I should see the SMS verification screen')]
     public function iShouldSeeTheSMSScreen(): void
     {
         $this->minkContext->assertPageContainsText('Enter the received SMS-code');
         $this->minkContext->assertPageContainsText('Send again');
     }
 
-    #[\Behat\Step\Given('/^I should see the Tiqr authentication screen$/')]
+    #[Given('/^I should see the Tiqr authentication screen$/')]
     public function iShouldSeeTheTiqrAuthenticationScreen(): void
     {
         $this->pressButtonWhenNoJavascriptSupport();
         $this->minkContext->assertPageContainsText('Log in with Tiqr');
     }
 
-    #[\Behat\Step\When('I enter the OTP')]
+    #[When('I enter the OTP')]
     public function iEnterTheOtp(): void
     {
         $this->minkContext->fillField('gateway_verify_yubikey_yubikeyInput', 'bogus-otp-we-use-a-mock-yubikey-service');
@@ -162,7 +167,7 @@ class FeatureContext implements Context
         $this->pressButtonWhenNoJavascriptSupport();
     }
 
-    #[\Behat\Step\When('I enter the SMS verification code')]
+    #[When('I enter the SMS verification code')]
     public function iEnterTheSmsVerificationCode(): void
     {
         $cookieValue = $this->minkContext->getSession()->getDriver()->getCookie('smoketest-sms-service');
@@ -176,7 +181,7 @@ class FeatureContext implements Context
         $this->pressButtonWhenNoJavascriptSupport();
     }
 
-    #[\Behat\Step\When('I enter the expired SMS verification code')]
+    #[When('I enter the expired SMS verification code')]
     public function iEnterTheExpiredSmsVerificationCode(): void
     {
         $cookieValue = $this->minkContext->getSession()->getDriver()->getCookie('smoketest-sms-service');
@@ -186,14 +191,14 @@ class FeatureContext implements Context
         $this->minkContext->pressButton('gateway_verify_sms_challenge_verify_challenge');
     }
 
-    #[\Behat\Step\When('I finish the Tiqr authentication')]
+    #[When('I finish the Tiqr authentication')]
     public function iFinishGsspAuthentication(): void
     {
         $this->pressButtonWhenNoJavascriptSupport();
         $this->pressButtonWhenNoJavascriptSupport();
     }
 
-    #[\Behat\Step\Given('/^the user\'s interface language is "([^"]*)"$/')]
+    #[Given('/^the user\'s interface language is "([^"]*)"$/')]
     public function theUsersInterfaceLanguageIs(string $locale): void
     {
         // Setting a cookie on the browser's session requires a host to already be known: visit a
@@ -205,13 +210,13 @@ class FeatureContext implements Context
         $this->minkContext->getSession()->setCookie('stepup_locale', $locale);
     }
 
-    #[\Behat\Step\Given('/^a whitelisted institution ([^"]*)$/')]
+    #[Given('/^a whitelisted institution ([^"]*)$/')]
     public function aWhitelistedInstitution($institution): void
     {
         $this->whitelistedInstitutions[] = $this->fixtureService->whitelist($institution)['institution'];
     }
 
-    #[\Behat\Step\Given('/^an institution "([^"]*)" that allows "([^"]*)"$/')]
+    #[Given('/^an institution "([^"]*)" that allows "([^"]*)"$/')]
     public function anInstitutionThatAllows(string $institution, string $option): void
     {
         $optionColumnName = match (true) {
@@ -222,7 +227,7 @@ class FeatureContext implements Context
         $this->fixtureService->configureBoolean($institution, $optionColumnName, true);
     }
 
-    #[\Behat\Step\Then('/^I select my ([^"]*) token on the WAYG$/')]
+    #[Then('/^I select my ([^"]*) token on the WAYG$/')]
     public function iShouldSelectMyTokenOnTheWAYG($tokenType): void
     {
         switch (strtolower((string) $tokenType)) {
@@ -238,31 +243,31 @@ class FeatureContext implements Context
         }
     }
 
-    #[\Behat\Step\Then('/^I should be on the WAYG$/')]
+    #[Then('/^I should be on the WAYG$/')]
     public function iShouldBeOnTheWAYG(): void
     {
         $this->minkContext->assertPageContainsText('Choose a token for login');
     }
 
-    #[\Behat\Step\Then('/^an error response is posted back to the SP$/')]
+    #[Then('/^an error response is posted back to the SP$/')]
     public function anErrorResponseIsPostedBackToTheSP(): void
     {
         $this->pressButtonWhenNoJavascriptSupport();
     }
 
-    #[\Behat\Step\Given('/^I cancel the authentication$/')]
+    #[Given('/^I cancel the authentication$/')]
     public function iCancelTheAuthentication(): void
     {
         $this->minkContext->pressButton('Cancel');
     }
 
-    #[\Behat\Step\Given('/^I pass through the Gateway$/')]
+    #[Given('/^I pass through the Gateway$/')]
     public function iPassThroughTheGateway(): void
     {
         $this->pressButtonWhenNoJavascriptSupport();
     }
 
-    #[\Behat\Step\Given('/^I pass through the IdP/')]
+    #[Given('/^I pass through the IdP/')]
     public function iPassThroughTheIdP(): void
     {
         if ($this->minkContext->getSession()->getDriver() instanceof SymfonyDriver) {
@@ -273,7 +278,7 @@ class FeatureContext implements Context
     /**
      * @throws ExpectationException
      */
-    #[\Behat\Step\Then('/^the response should have a SSO\-2FA cookie$/')]
+    #[Then('/^the response should have a SSO\-2FA cookie$/')]
     public function theResponseShouldHaveASSO2FACookie(): void
     {
         $this->minkContext->visit('https://gateway.dev.openconext.local/info');
@@ -288,7 +293,7 @@ class FeatureContext implements Context
     /**
      * @throws ExpectationException
      */
-    #[\Behat\Step\Then('/^the response should have a valid session cookie$/')]
+    #[Then('/^the response should have a valid session cookie$/')]
     public function validateSessionCookie(): void
     {
         $this->minkContext->visit('https://gateway.dev.openconext.local/info');
@@ -332,7 +337,7 @@ class FeatureContext implements Context
     /**
      * @throws ExpectationException
      */
-    #[\Behat\Step\Then('/^the response should not have a SSO\-2FA cookie$/')]
+    #[Then('/^the response should not have a SSO\-2FA cookie$/')]
     public function theResponseShouldNotHaveASSO2FACookie(): void
     {
         $this->minkContext->visit('https://gateway.dev.openconext.local/info');
@@ -348,7 +353,7 @@ class FeatureContext implements Context
     /**
      * @throws ExpectationException
      */
-    #[\Behat\Step\Then('/^a new SSO\-2FA cookie was written$/')]
+    #[Then('/^a new SSO\-2FA cookie was written$/')]
     public function theSSO2FACookieIsRewritten(): void
     {
         $this->minkContext->visit('https://gateway.dev.openconext.local/info');
@@ -366,7 +371,7 @@ class FeatureContext implements Context
     /**
      * @throws ExpectationException
      */
-    #[\Behat\Step\Then('/^the existing SSO\-2FA cookie was used$/')]
+    #[Then('/^the existing SSO\-2FA cookie was used$/')]
     public function theSSO2FACookieRemainedTheSame(): void
     {
         $this->minkContext->visit('https://gateway.dev.openconext.local/info');
@@ -384,14 +389,14 @@ class FeatureContext implements Context
         }
     }
 
-    #[\Behat\Step\Given('/^the user cleared cookies from browser$/')]
+    #[Given('/^the user cleared cookies from browser$/')]
     public function userClearedCookies(): void
     {
         $this->minkContext->visit('https://gateway.dev.openconext.local/info');
         $this->minkContext->getSession()->setCookie($this->sso2faCookieName, null);
     }
 
-    #[\Behat\Step\Given('/^the SSO\-2FA cookie should contain "([^"]*)"$/')]
+    #[Given('/^the SSO\-2FA cookie should contain "([^"]*)"$/')]
     public function theSSO2FACookieShouldContain($expectedCookieValue): void
     {
         $this->minkContext->visit('https://gateway.dev.openconext.local/info');

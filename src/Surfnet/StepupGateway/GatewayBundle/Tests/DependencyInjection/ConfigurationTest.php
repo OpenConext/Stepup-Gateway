@@ -18,6 +18,8 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Tests\DependencyInjection;
 
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\Group;
 use Matthias\SymfonyConfigTest\PhpUnit\ConfigurationTestCaseTrait;
 use PHPUnit\Framework\TestCase;
 use Surfnet\StepupGateway\GatewayBundle\DependencyInjection\Configuration;
@@ -28,29 +30,29 @@ final class ConfigurationTest extends TestCase
 
     const bool USE_REGEXP = true;
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    #[\PHPUnit\Framework\Attributes\Group('configuration')]
+    #[Test]
+    #[Group('configuration')]
     public function it_requires_intrinsic_loa_to_be_configured(): void
     {
         $this->assertConfigurationIsInvalid([[]], '~intrinsic_loa.+must be configured~', self::USE_REGEXP);
     }
 
-    #[\PHPUnit\Framework\Attributes\Group('configuration')]
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Group('configuration')]
+    #[Test]
     public function it_requires_second_factors_to_be_configured(): void
     {
         $this->assertPartialConfigurationIsInvalid([[]], 'enabled_second_factors', '~enabled_second_factors.+must be configured~', self::USE_REGEXP);
     }
 
-    #[\PHPUnit\Framework\Attributes\Group('configuration')]
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Group('configuration')]
+    #[Test]
     public function it_allows_one_enabled_second_factor(): void
     {
         $this->assertConfigurationIsValid([['enabled_second_factors' => ['sms']]], 'enabled_second_factors');
     }
 
-    #[\PHPUnit\Framework\Attributes\Group('configuration')]
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Group('configuration')]
+    #[Test]
     public function it_allows_two_enabled_second_factors(): void
     {
         $this->assertConfigurationIsValid([['enabled_second_factors' => ['sms', 'yubikey']]], 'enabled_second_factors');

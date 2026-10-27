@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupGateway\SamlStepupProviderBundle\Controller;
 
+use Surfnet\SamlBundle\Http\RedirectBinding;
 use DateTime;
 use Exception;
 use SAML2\Constants;
@@ -82,7 +83,7 @@ class SamlProxyController extends ContainerController
     ): RedirectResponse {
         $provider = $this->getProvider($provider);
 
-        /** @var \Surfnet\SamlBundle\Http\RedirectBinding $redirectBinding */
+        /** @var RedirectBinding $redirectBinding */
         $redirectBinding = $this->get('surfnet_saml.http.redirect_binding');
         $gsspLoginService = $this->getGsspLoginService();
 
@@ -405,7 +406,7 @@ class SamlProxyController extends ContainerController
     }
 
     /**
-     * @return \Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext
+     * @return ResponseContext
      */
     public function getResponseContext($mode = 'gateway.proxy.sso.state_handler')
     {

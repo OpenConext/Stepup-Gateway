@@ -31,7 +31,7 @@ use Surfnet\StepupGateway\GatewayBundle\Service\SecondFactor\SecondFactorInterfa
  *
  * @see Surfnet\StepupMiddleware\GatewayBundle\Entity\SecondFactor (in OpenConext/Stepup-Middleware project)
  */
-#[ORM\Entity(repositoryClass: \Surfnet\StepupGateway\GatewayBundle\Entity\DoctrineSecondFactorRepository::class)]
+#[ORM\Entity(repositoryClass: DoctrineSecondFactorRepository::class)]
 #[ORM\Table]
 #[ORM\Index(name: 'idx_secondfactor_nameid', columns: ['name_id'])]
 class SecondFactor implements SecondFactorInterface

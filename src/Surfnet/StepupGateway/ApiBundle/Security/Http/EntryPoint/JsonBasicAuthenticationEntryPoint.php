@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupGateway\ApiBundle\Security\Http\EntryPoint;
 
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
@@ -35,7 +36,7 @@ class JsonBasicAuthenticationEntryPoint implements AuthenticationEntryPointInter
     /**
      * {@inheritdoc}
      */
-    public function start(Request $request, ?AuthenticationException $authException = null): \Symfony\Component\HttpFoundation\Response
+    public function start(Request $request, ?AuthenticationException $authException = null): Response
     {
         $authExceptionMessage = $authException ? $authException->getMessage() : '';
         $error = sprintf('You are required to authorise before accessing this API (%s).', $authExceptionMessage);

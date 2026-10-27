@@ -17,6 +17,7 @@
 
 namespace Surfnet\StepupGateway\SamlStepupProviderBundle\Tests\Provider;
 
+use PHPUnit\Framework\Attributes\Test;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Surfnet\SamlBundle\Entity\IdentityProvider;
@@ -31,7 +32,7 @@ class ProviderRepositoryTest extends TestCase
 {
 
     /**
-     * @var \Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\Provider
+     * @var Provider
      */
     private $provider;
 
@@ -45,14 +46,14 @@ class ProviderRepositoryTest extends TestCase
         $this->provider = new Provider('MyProvider', $idp, $serviceProvider, $remoteIdp, $stateHandler);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function can_construct_repository(): void
     {
         $repo = new ProviderRepository();
         self::assertInstanceOf(ProviderRepository::class, $repo);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function verify_add_provider(): void
     {
         $this->expectException(InvalidConfigurationException::class);
@@ -61,7 +62,7 @@ class ProviderRepositoryTest extends TestCase
         $repo->addProvider($this->provider);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function verify_has_provider(): void
     {
         $repo = new ProviderRepository();
@@ -70,7 +71,7 @@ class ProviderRepositoryTest extends TestCase
         self::assertEquals(false, $repo->has('DoesNotExists'));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function verify_get_provider(): void
     {
         $repo = new ProviderRepository();
@@ -78,7 +79,7 @@ class ProviderRepositoryTest extends TestCase
         self::assertEquals($this->provider, $repo->get('MyProvider'));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function verify_get_unknown_provider(): void
     {
         $this->expectException(UnknownProviderException::class);

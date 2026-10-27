@@ -112,7 +112,7 @@ class SecondFactorVerificationService
             ->setResponseContextServiceId($responseContextServiceId)
             ->markRequestAsSecondFactorVerification();
 
-        /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
+        /** @var SamlAuthenticationLogger $logger */
         $logger = $this->samlLogger->forAuthentication($originalRequestId);
         $logger->notice(sprintf(
             'Sending AuthnRequest to verify Second Factor with request ID: "%s" to GSSP "%s" at "%s" for subject "%s"',

@@ -18,24 +18,6 @@
 
 namespace Surfnet\StepupGateway\Behat\Command;
 
-use RobRichards\XMLSecLibs\XMLSecurityKey;
-use SAML2\Assertion;
-use SAML2\Certificate\KeyLoader;
-use SAML2\Certificate\PrivateKeyLoader;
-use SAML2\Configuration\PrivateKey;
-use SAML2\Constants;
-use SAML2\Response;
-use SAML2\Response as SAMLResponse;
-use SAML2\XML\saml\NameID;
-use SAML2\XML\saml\SubjectConfirmation;
-use SAML2\XML\saml\SubjectConfirmationData;
-use Surfnet\SamlBundle\Http\Exception\UnsignedRequestException;
-use Surfnet\SamlBundle\Http\ReceivedAuthnRequestQueryString;
-use Surfnet\SamlBundle\SAML2\ReceivedAuthnRequest;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-
 class LoginCommand
 {
     private $username;
