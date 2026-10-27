@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Tests\Entity;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Surfnet\StepupBundle\Exception\DomainException;
@@ -54,7 +55,7 @@ class SecondFactorTest extends TestCase
         return new SecondFactorTypeService($mapping);
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideIdentityVettedTestData')]
+    #[DataProvider('provideIdentityVettedTestData')]
     public function test_can_satisfy_identity_vetted(
         string $tokenType,
         float $requiredLoa,
@@ -72,7 +73,7 @@ class SecondFactorTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideErroneousIdentityVettedTestData')]
+    #[DataProvider('provideErroneousIdentityVettedTestData')]
     public function test_reject_faulty_token_data(string $tokenType, float $requiredLoa, string $expectedMessage): void
     {
         $raVettedYubikey = $this->buildSecondFactor($tokenType, true);
@@ -85,7 +86,7 @@ class SecondFactorTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideLoaLevelExpectations')]
+    #[DataProvider('provideLoaLevelExpectations')]
     public function test_get_loa(string $tokenType, bool $isIdentityVetted, float $expectedLoa): void
     {
         $token = $this->buildSecondFactor($tokenType, $isIdentityVetted);

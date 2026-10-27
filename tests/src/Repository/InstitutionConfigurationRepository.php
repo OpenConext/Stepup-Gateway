@@ -21,7 +21,6 @@ namespace Surfnet\StepupGateway\Behat\Repository;
 use Exception;
 use PDO;
 use Surfnet\StepupGateway\Behat\Factory\SmoketestPdoFactory;
-use function error_get_last;
 
 /**
  * A poor-mans repository, a pdo connection to the test database is established in the constructor

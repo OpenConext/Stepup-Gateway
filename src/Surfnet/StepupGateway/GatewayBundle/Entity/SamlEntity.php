@@ -26,7 +26,7 @@ use Surfnet\StepupGateway\GatewayBundle\Exception\RuntimeException;
  *
  * @SuppressWarnings(PHPMD.UnusedPrivateField)
  */
-#[ORM\Entity(repositoryClass: \Surfnet\StepupGateway\GatewayBundle\Entity\DoctrineSamlEntityRepository::class)]
+#[ORM\Entity(repositoryClass: DoctrineSamlEntityRepository::class)]
 #[ORM\Table]
 class SamlEntity
 {

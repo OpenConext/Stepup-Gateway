@@ -18,19 +18,21 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Entity;
 
+use Doctrine\ORM\NonUniqueResultException;
+
 interface SamlEntityRepository
 {
     /**
      * @param $entityId
      * @return null|SamlEntity
-     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws NonUniqueResultException
      */
     public function getIdentityProvider($entityId);
 
     /**
      * @param $entityId
      * @return null|SamlEntity
-     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws NonUniqueResultException
      */
     public function getServiceProvider($entityId);
 }

@@ -18,6 +18,9 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Controller;
 
+use Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger;
+use Surfnet\StepupGateway\GatewayBundle\Service\StepUpAuthenticationService;
+use Surfnet\StepupGateway\GatewayBundle\Monolog\Logger\AuthenticationLogger;
 use Psr\Log\LoggerInterface;
 use Surfnet\StepupBundle\Command\VerifyPossessionOfPhoneCommand;
 use Surfnet\StepupBundle\Value\PhoneNumber\InternationalPhoneNumber;
@@ -85,7 +88,7 @@ class SecondFactorController extends ContainerController
         $context = $this->getResponseContext($authenticationMode);
         $originalRequestId = $context->getInResponseTo();
         $identityNameId = $context->getIdentityNameId();
-        /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
+        /** @var SamlAuthenticationLogger $logger */
         $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
         $logger->notice(sprintf('Determining which second factor to use for user %s...', $identityNameId));
         try {
@@ -216,7 +219,7 @@ class SecondFactorController extends ContainerController
         $originalRequestId = $context->getInResponseTo();
         $identityNameId = $context->getIdentityNameId();
 
-        /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
+        /** @var SamlAuthenticationLogger $logger */
         $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
         $logger->notice(sprintf('Ask the user which one of his suitable second factor tokens to use for user %s...', $identityNameId));
 
@@ -348,7 +351,7 @@ class SecondFactorController extends ContainerController
 
         $originalRequestId = $context->getInResponseTo();
 
-        /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
+        /** @var SamlAuthenticationLogger $logger */
         $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
         $logger->info(sprintf('Received request to verify GSSF for user %s', $identityNameId));
 
@@ -394,7 +397,7 @@ class SecondFactorController extends ContainerController
 
         $originalRequestId = $context->getInResponseTo();
 
-        /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
+        /** @var SamlAuthenticationLogger $logger */
         $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
         $logger->info(sprintf('Attempting to mark GSSF as verified for user %s', $identityNameId));
 
@@ -441,7 +444,7 @@ class SecondFactorController extends ContainerController
         $originalRequestId = $context->getInResponseTo();
         $identityNameId = $context->getIdentityNameId();
 
-        /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
+        /** @var SamlAuthenticationLogger $logger */
         $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
 
         $selectedSecondFactor = $this->getSelectedSecondFactor($context, $logger);
@@ -517,7 +520,7 @@ class SecondFactorController extends ContainerController
         $originalRequestId = $context->getInResponseTo();
         $identityNameId = $context->getIdentityNameId();
 
-        /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
+        /** @var SamlAuthenticationLogger $logger */
         $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
 
         $selectedSecondFactor = $this->getSelectedSecondFactor($context, $logger);
@@ -597,7 +600,7 @@ class SecondFactorController extends ContainerController
         $originalRequestId = $context->getInResponseTo();
         $identityNameId = $context->getIdentityNameId();
 
-        /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
+        /** @var SamlAuthenticationLogger $logger */
         $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
 
         $selectedSecondFactor = $this->getSelectedSecondFactor($context, $logger);
@@ -666,7 +669,7 @@ class SecondFactorController extends ContainerController
     }
 
     /**
-     * @return \Surfnet\StepupGateway\GatewayBundle\Service\StepupAuthenticationService
+     * @return StepUpAuthenticationService
      */
     private function getStepupService()
     {
@@ -695,7 +698,7 @@ class SecondFactorController extends ContainerController
     }
 
     /**
-     * @return \Surfnet\StepupGateway\GatewayBundle\Monolog\Logger\AuthenticationLogger
+     * @return AuthenticationLogger
      */
     private function getAuthenticationLogger()
     {

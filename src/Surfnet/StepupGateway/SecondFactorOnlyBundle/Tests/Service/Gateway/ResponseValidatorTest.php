@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Tests\Service\Gateway;
 
+use Mockery\LegacyMockInterface;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\MockInterface;
@@ -42,11 +43,11 @@ final class ResponseValidatorTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    private (MockInterface&Mockery\LegacyMockInterface)|SecondFactorTypeService $secondFactorTypeService;
+    private (MockInterface&LegacyMockInterface)|SecondFactorTypeService $secondFactorTypeService;
 
     private ProviderRepository $providerRepository;
 
-    private (MockInterface&Mockery\LegacyMockInterface)|PostBinding $postBinding;
+    private (MockInterface&LegacyMockInterface)|PostBinding $postBinding;
 
     private MockInterface|IdentityProvider $remoteIdp;
 

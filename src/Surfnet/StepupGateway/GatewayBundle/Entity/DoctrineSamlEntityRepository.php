@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Entity;
 
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Parameter;
@@ -27,7 +28,7 @@ class DoctrineSamlEntityRepository extends EntityRepository implements SamlEntit
     /**
      * @param $entityId
      * @return null|SamlEntity
-     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws NonUniqueResultException
      */
     public function getIdentityProvider($entityId)
     {
@@ -43,7 +44,7 @@ class DoctrineSamlEntityRepository extends EntityRepository implements SamlEntit
     /**
      * @param $entityId
      * @return null|SamlEntity
-     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws NonUniqueResultException
      */
     public function getServiceProvider($entityId)
     {

@@ -18,6 +18,9 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Tests\Service;
 
+use Mockery\MockInterface;
+use PHPUnit\Framework\Attributes\Test;
+use SAML2\XML\saml\SubjectConfirmation;
 use Mockery;
 use Psr\Log\NullLogger;
 use SAML2\Assertion;
@@ -63,7 +66,7 @@ final class ProxyResponseServiceTest extends GatewaySamlTestCase
      */
     private $loa;
 
-    private Mockery\MockInterface|AttributeDefinition $attributeDefinition;
+    private MockInterface|AttributeDefinition $attributeDefinition;
 
     public function setUp(): void
     {
@@ -100,7 +103,7 @@ final class ProxyResponseServiceTest extends GatewaySamlTestCase
             ->byDefault();
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_sets_the_proxied_identity_provider_as_authenticating_authority(): void
     {
         $factory = new ProxyResponseService(
@@ -127,7 +130,7 @@ final class ProxyResponseServiceTest extends GatewaySamlTestCase
             $assertion->getAuthenticatingAuthority()
         );
     }
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_uses_internal_collab_person_id_when_present_and_removes_it_from_outgoing_assertion(): void
     {
         $this->attributeDictionary
@@ -182,7 +185,7 @@ final class ProxyResponseServiceTest extends GatewaySamlTestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_appends_the_proxied_identity_provider_to_existing_authenticating_authorities(): void
     {
         $factory = new ProxyResponseService(
@@ -292,12 +295,12 @@ final class ProxyResponseServiceTest extends GatewaySamlTestCase
 
         $assertions = $response->getAssertions();
 
-        /** @var \SAML2\Assertion $assertion */
+        /** @var Assertion $assertion */
         $assertion = reset($assertions);
 
         $subjects = $assertion->getSubjectConfirmation();
 
-        /** @var \SAML2\XML\saml\SubjectConfirmation $subjectConfirmation */
+        /** @var SubjectConfirmation $subjectConfirmation */
         $subjectConfirmation = reset($subjects);
 
         $this->assertEquals($assertion->getNotOnOrAfter(), $subjectConfirmation->getSubjectConfirmationData()->getNotOnOrAfter());

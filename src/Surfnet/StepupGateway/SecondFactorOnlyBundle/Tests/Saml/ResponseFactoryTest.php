@@ -17,6 +17,8 @@
 
 namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Tests\Saml;
 
+use SAML2\Assertion;
+use SAML2\XML\saml\SubjectConfirmation;
 use Mockery as m;
 use Mockery\Mock;
 use SAML2\Response;
@@ -88,7 +90,7 @@ class ResponseFactoryTest extends GatewaySamlTestCase
 
         $assertions = $response->getAssertions();
 
-        /** @var \SAML2\Assertion $assertion */
+        /** @var Assertion $assertion */
         $assertion = reset($assertions);
 
         $this->assertInstanceOf(Response::class, $response);
@@ -99,7 +101,7 @@ class ResponseFactoryTest extends GatewaySamlTestCase
 
         $subjects = $assertion->getSubjectConfirmation();
 
-        /** @var \SAML2\XML\saml\SubjectConfirmation $subjectConfirmation */
+        /** @var SubjectConfirmation $subjectConfirmation */
         $subjectConfirmation = reset($subjects);
 
         $this->assertEquals($assertion->getNotOnOrAfter(), $subjectConfirmation->getSubjectConfirmationData()->getNotOnOrAfter());

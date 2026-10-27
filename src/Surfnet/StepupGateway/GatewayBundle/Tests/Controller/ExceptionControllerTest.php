@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Tests\Controller;
 
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Surfnet\StepupBundle\Request\RequestId;
@@ -105,7 +106,7 @@ final class ExceptionControllerTest extends TestCase
                 'REMOTE_ADDR' => '203.0.113.195',
             ]
         );
-        $exception = new \Symfony\Component\HttpKernel\Exception\NotFoundHttpException('Page not found');
+        $exception = new NotFoundHttpException('Page not found');
 
         $response = $controller->show($request, $exception);
 

@@ -17,6 +17,7 @@
 
 namespace Surfnet\StepupGateway\SamlStepupProviderBundle\Tests\Service\Gateway;
 
+use PHPUnit\Framework\Attributes\Test;
 use DateTime;
 use Mockery;
 use Surfnet\SamlBundle\Entity\IdentityProvider;
@@ -40,7 +41,6 @@ use Surfnet\StepupGateway\SamlStepupProviderBundle\Saml\StateHandler;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Service\Gateway\LoginService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBag;
 use Symfony\Component\HttpFoundation\Session\Session;
 
 class LoginServiceTest extends GatewaySamlTestCase
@@ -112,7 +112,7 @@ class LoginServiceTest extends GatewaySamlTestCase
         $this->initSamlProxyService($idpConfiguration, $remoteIdpConfiguration, $spConfiguration, $connectedServiceProviders);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_should_return_a_valid_saml_response_and_update_state_when_the_registration_is_started_on_gssp_registration_flow(): void
     {
         // Create request
@@ -180,7 +180,7 @@ class LoginServiceTest extends GatewaySamlTestCase
     }
 
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_forwards_the_middleware_service_name_as_mdui_uiinfo_when_the_flag_is_enabled(): void
     {
         $this->featureConfiguration = new FeatureConfiguration(true);
@@ -234,7 +234,7 @@ class LoginServiceTest extends GatewaySamlTestCase
         $this->assertStringContainsString('Test Service Name', $xml);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_forwards_only_the_mdui_display_name_matching_the_request_locale(): void
     {
         $this->featureConfiguration = new FeatureConfiguration(true);
@@ -291,7 +291,7 @@ class LoginServiceTest extends GatewaySamlTestCase
         $this->assertStringNotContainsString('English Name', $xml);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_forwards_the_middleware_service_name_even_when_the_flag_is_disabled(): void
     {
         $this->featureConfiguration = new FeatureConfiguration(false);
@@ -345,7 +345,7 @@ class LoginServiceTest extends GatewaySamlTestCase
         $this->assertStringContainsString('Test Service Name', $xml);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_strips_an_original_mdui_uiinfo_extension_when_the_flag_is_disabled(): void
     {
         $this->featureConfiguration = new FeatureConfiguration(false);
@@ -401,7 +401,7 @@ class LoginServiceTest extends GatewaySamlTestCase
         $this->assertStringNotContainsString('Should not reach the GSSP', $proxyRequest->getUnsignedXML());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_preserves_the_original_gssp_user_attributes_extension_when_merging_in_mdui_uiinfo(): void
     {
         $this->featureConfiguration = new FeatureConfiguration(true);
@@ -457,7 +457,7 @@ class LoginServiceTest extends GatewaySamlTestCase
         $this->assertStringContainsString('mdui:UIInfo', $xml);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_falls_back_to_the_original_request_mdui_when_the_sp_is_not_registered_in_middleware(): void
     {
         $this->featureConfiguration = new FeatureConfiguration(true);
@@ -509,7 +509,7 @@ class LoginServiceTest extends GatewaySamlTestCase
         $this->assertStringContainsString('Fallback Name', $xml);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_should_throw_an_exception_when_a_sp_is_not_connected_when_the_registration_is_started_on_gssp_registration_flow(): void
     {
         $this->expectException(NotConnectedServiceProviderException::class);

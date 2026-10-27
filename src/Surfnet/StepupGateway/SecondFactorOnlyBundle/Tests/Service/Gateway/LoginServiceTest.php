@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Tests\Service\Gateway;
 
+use PHPUnit\Framework\Attributes\Test;
 use DateTime;
 use Mockery;
 use Surfnet\SamlBundle\Entity\ServiceProvider;
@@ -80,7 +81,7 @@ final class LoginServiceTest extends GatewaySamlTestCase
         $this->initGatewayLoginService($loaLevels, $loaAliases);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_should_return_a_valid_saml_response_and_update_state_when_starting_verification_on_sfo_login_flow(): void
     {
         // Create request
@@ -151,7 +152,7 @@ final class LoginServiceTest extends GatewaySamlTestCase
     }
 
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_should_throw_a_exception_when_second_factor_is_not_allowed_when_starting_verification_on_sfo_login_flow(): void
     {
         $this->expectException(RequesterFailureException::class);
@@ -195,7 +196,7 @@ final class LoginServiceTest extends GatewaySamlTestCase
     }
 
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_should_throw_a_exception_when_the_requestd_loa_is_not_supported_when_starting_verification_on_sfo_login_flow(): void
     {
         $this->expectException(RequesterFailureException::class);
@@ -238,7 +239,7 @@ final class LoginServiceTest extends GatewaySamlTestCase
         $this->gatewayLoginService->singleSignOn($httpRequest, $originalRequest);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_stores_display_names_from_ui_info_when_sfo_flag_is_enabled(): void
     {
         $loaLevels = [
@@ -300,7 +301,7 @@ final class LoginServiceTest extends GatewaySamlTestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_does_not_store_display_names_when_sfo_flag_is_disabled(): void
     {
         $loaLevels = [
