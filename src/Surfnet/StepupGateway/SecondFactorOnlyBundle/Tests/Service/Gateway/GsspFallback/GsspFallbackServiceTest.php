@@ -18,9 +18,9 @@
 
 namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Tests\Service\Gateway\GsspFallback;
 
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\Attributes\DataProvider;
 use Mockery as m;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Psr\Log\LoggerInterface;
 use Surfnet\SamlBundle\SAML2\ReceivedAuthnRequest;
 use Surfnet\StepupBundle\Value\Loa;

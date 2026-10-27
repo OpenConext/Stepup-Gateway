@@ -18,21 +18,21 @@
 
 namespace Surfnet\StepupGateway\SamlStepupProviderBundle\DependencyInjection;
 
-use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
-use Surfnet\StepupGateway\SamlStepupProviderBundle\Saml\ProxyResponseFactory;
-use Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\ViewConfig;
-use Surfnet\SamlBundle\Entity\ServiceProvider;
-use Surfnet\SamlBundle\Entity\IdentityProvider;
 use Surfnet\SamlBundle\Entity\HostedEntities;
+use Surfnet\SamlBundle\Entity\IdentityProvider;
+use Surfnet\SamlBundle\Entity\ServiceProvider;
 use Surfnet\SamlBundle\Metadata\MetadataConfiguration;
 use Surfnet\SamlBundle\Metadata\MetadataFactory;
 use Surfnet\StepupGateway\GatewayBundle\Saml\AssertionSigningService;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\Provider;
+use Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\ViewConfig;
+use Surfnet\StepupGateway\SamlStepupProviderBundle\Saml\ProxyResponseFactory;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Saml\StateHandler;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 

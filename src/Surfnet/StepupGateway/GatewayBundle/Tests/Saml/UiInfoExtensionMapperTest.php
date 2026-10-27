@@ -18,8 +18,8 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Tests\Saml;
 
-use PHPUnit\Framework\Attributes\Test;
 use DOMDocument;
+use PHPUnit\Framework\Attributes\Test;
 use Surfnet\SamlBundle\SAML2\Extensions\Chunk;
 use Surfnet\SamlBundle\SAML2\Extensions\Extensions;
 use Surfnet\StepupGateway\GatewayBundle\Saml\DisplayName;

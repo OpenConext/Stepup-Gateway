@@ -17,9 +17,9 @@
 
 namespace Surfnet\StepupGateway\SamlStepupProviderBundle\Service\Gateway;
 
-use SAML2\Response;
 use Exception;
 use Psr\Log\LoggerInterface;
+use SAML2\Response;
 use Surfnet\SamlBundle\Http\PostBinding;
 use Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger;
 use Surfnet\StepupGateway\GatewayBundle\Entity\ServiceProvider;

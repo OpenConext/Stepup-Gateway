@@ -18,8 +18,8 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Tests\Sso2fa;
 
-use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;

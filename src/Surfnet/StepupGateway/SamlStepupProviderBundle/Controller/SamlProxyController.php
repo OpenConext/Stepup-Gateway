@@ -18,12 +18,12 @@
 
 namespace Surfnet\StepupGateway\SamlStepupProviderBundle\Controller;
 
-use Surfnet\SamlBundle\Http\RedirectBinding;
 use DateTime;
 use Exception;
 use SAML2\Constants;
 use SAML2\Response as SAMLResponse;
 use SAML2\XML\saml\Issuer;
+use Surfnet\SamlBundle\Http\RedirectBinding;
 use Surfnet\SamlBundle\Http\XMLResponse;
 use Surfnet\SamlBundle\Metadata\MetadataFactory;
 use Surfnet\StepupGateway\GatewayBundle\Container\ContainerController;

@@ -17,9 +17,9 @@
 
 namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Tests\Adfs;
 
-use PHPUnit\Framework\Attributes\Test;
 use Mockery as m;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\RequestHelper;

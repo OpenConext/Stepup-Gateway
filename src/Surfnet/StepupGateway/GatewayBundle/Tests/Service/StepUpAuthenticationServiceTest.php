@@ -18,8 +18,8 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Tests\Service;
 
-use PHPUnit\Framework\Attributes\DataProvider;
 use Mockery as m;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Surfnet\SamlBundle\Entity\ServiceProvider;

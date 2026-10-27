@@ -18,9 +18,9 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Tests\Sso2fa\ValueObject;
 
-use PHPUnit\Framework\Attributes\DataProvider;
 use Generator;
 use Mockery;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Surfnet\StepupBundle\Value\Loa;
 use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor;

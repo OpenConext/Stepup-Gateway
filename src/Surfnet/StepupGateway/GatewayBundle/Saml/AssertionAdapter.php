@@ -18,8 +18,8 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Saml;
 
-use SAML2\XML\saml\SubjectConfirmation;
 use SAML2\Assertion;
+use SAML2\XML\saml\SubjectConfirmation;
 
 class AssertionAdapter
 {

@@ -18,10 +18,10 @@
 
 namespace Surfnet\StepupGateway\Behat;
 
-use Behat\Step\Then;
-use Behat\Step\Given;
 use Behat\Mink\Exception\ExpectationException;
 use Behat\MinkExtension\Context\MinkContext as BaseMinkContext;
+use Behat\Step\Given;
+use Behat\Step\Then;
 use DMore\ChromeDriver\ChromeDriver;
 use DOMDocument;
 use DOMXPath;

@@ -18,9 +18,9 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Tests\Service\Gateway;
 
-use PHPUnit\Framework\Attributes\Test;
 use DateTime;
 use Mockery;
+use PHPUnit\Framework\Attributes\Test;
 use Surfnet\SamlBundle\Entity\IdentityProvider;
 use Surfnet\SamlBundle\Entity\ServiceProvider;
 use Surfnet\SamlBundle\Http\PostBinding;

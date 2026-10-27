@@ -18,10 +18,8 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Controller;
 
-use Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger;
-use Surfnet\StepupGateway\GatewayBundle\Service\StepUpAuthenticationService;
-use Surfnet\StepupGateway\GatewayBundle\Monolog\Logger\AuthenticationLogger;
 use Psr\Log\LoggerInterface;
+use Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger;
 use Surfnet\StepupBundle\Command\VerifyPossessionOfPhoneCommand;
 use Surfnet\StepupBundle\Value\PhoneNumber\InternationalPhoneNumber;
 use Surfnet\StepupBundle\Value\SecondFactorType;
@@ -38,9 +36,11 @@ use Surfnet\StepupGateway\GatewayBundle\Form\Type\ChooseSecondFactorType;
 use Surfnet\StepupGateway\GatewayBundle\Form\Type\SendSmsChallengeType;
 use Surfnet\StepupGateway\GatewayBundle\Form\Type\VerifySmsChallengeType;
 use Surfnet\StepupGateway\GatewayBundle\Form\Type\VerifyYubikeyOtpType;
+use Surfnet\StepupGateway\GatewayBundle\Monolog\Logger\AuthenticationLogger;
 use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
 use Surfnet\StepupGateway\GatewayBundle\Service\SecondFactor\SecondFactorInterface;
 use Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorService;
+use Surfnet\StepupGateway\GatewayBundle\Service\StepUpAuthenticationService;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\CookieService;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Controller\SamlProxyController;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\Gateway\GsspFallbackService;
