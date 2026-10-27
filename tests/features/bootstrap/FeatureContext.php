@@ -94,7 +94,7 @@ class FeatureContext implements Context
     #[\Behat\Step\Given('/^a user from "([^"]*)" identified by "([^"]*)" with a vetted "([^"]*)" token$/')]
     public function aUserIdentifiedByWithAVettedToken($institution, $nameId, $tokenType): void
     {
-        switch (strtolower($tokenType)) {
+        switch (strtolower((string) $tokenType)) {
             case "yubikey":
                 $this->currentToken = $this->fixtureService->registerYubikeyToken($nameId, $institution);
                 break;
@@ -110,21 +110,18 @@ class FeatureContext implements Context
     #[\Behat\Step\Given('/^a user from "([^"]*)" identified by "([^"]*)" with a vetted "([^"]*)" token and display locale "([^"]*)"$/')]
     public function aUserIdentifiedByWithAVettedTokenAndDisplayLocale($institution, $nameId, $tokenType, $displayLocale): void
     {
-        switch (strtolower($tokenType)) {
-            case "tiqr":
-                $this->currentToken = $this->fixtureService->registerTiqrToken($nameId, $institution, false, $displayLocale);
-                break;
-            default:
-                throw new RuntimeException(
-                    sprintf('Setting a display locale for token type "%s" is not (yet) supported', $tokenType)
-                );
-        }
+        $this->currentToken = match (strtolower((string) $tokenType)) {
+            "tiqr" => $this->fixtureService->registerTiqrToken($nameId, $institution, false, $displayLocale),
+            default => throw new RuntimeException(
+                sprintf('Setting a display locale for token type "%s" is not (yet) supported', $tokenType)
+            ),
+        };
     }
 
     #[\Behat\Step\Given('/^a user from "([^"]*)" identified by "([^"]*)" with a self-asserted "([^"]*)" token$/')]
     public function aUserIdentifiedByWithASelfAssertedToken($institution, $nameId, $tokenType): void
     {
-        switch (strtolower($tokenType)) {
+        switch (strtolower((string) $tokenType)) {
             case "yubikey":
                 $this->currentToken = $this->fixtureService->registerYubikeyToken($nameId, $institution, true);
                 break;
@@ -188,7 +185,7 @@ class FeatureContext implements Context
     {
         $cookieValue = $this->minkContext->getSession()->getDriver()->getCookie('smoketest-sms-service');
         $matches = [];
-        preg_match('/^Your\ SMS\ code:\ (.*)$/', $cookieValue, $matches);
+        preg_match('/^Your\ SMS\ code:\ (.*)$/', (string) $cookieValue, $matches);
         $this->minkContext->fillFieldsAndSubmitForm(
             ['gateway_verify_sms_challenge_challenge' => $matches[1]],
             'gateway_verify_sms_challenge_verify_challenge'
@@ -234,7 +231,7 @@ class FeatureContext implements Context
     #[\Behat\Step\Then('/^I select my ([^"]*) token on the WAYG$/')]
     public function iShouldSelectMyTokenOnTheWAYG($tokenType): void
     {
-        switch (strtolower($tokenType)) {
+        switch (strtolower((string) $tokenType)) {
             case "yubikey":
                 $this->minkContext->pressButtonAndWaitForNavigation('gateway_choose_second_factor_choose_yubikey');
                 break;
@@ -405,7 +402,7 @@ class FeatureContext implements Context
     {
         $this->minkContext->visit('https://gateway.dev.openconext.local/info');
         $cookieValue = $this->minkContext->getSession()->getCookie($this->sso2faCookieName);
-        if (!str_contains($cookieValue, $expectedCookieValue)) {
+        if (!str_contains((string) $cookieValue, (string) $expectedCookieValue)) {
             throw new ExpectationException(
                 sprintf(
                     'The SSO on 2FA cookie did not contain the expected value: "%s", actual contents: "%s"',
@@ -421,7 +418,7 @@ class FeatureContext implements Context
     {
         $response = [];
         foreach($responseCookieHeaders as $cookie) {
-            $parts = explode('=', $cookie);
+            $parts = explode('=', (string) $cookie);
             $response[] = array_shift($parts);
         }
         return $response;
