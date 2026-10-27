@@ -143,7 +143,7 @@ class ServiceProviderContext implements Context
 
         $spEntity = $this->fixtureService->registerSP($entityId, $cert['X509Certificate'], $sfoEnabled, $serviceNames);
 
-        $spEntity['configuration'] = json_decode($spEntity['configuration'], true);
+        $spEntity['configuration'] = json_decode((string) $spEntity['configuration'], true);
         if ($sfoEnabled) {
             $this->currentSfoSp = $spEntity;
         } else {
@@ -207,7 +207,7 @@ class ServiceProviderContext implements Context
 
         $idpEntity = $this->fixtureService->registerIdP($entityId, $cert['X509Certificate']);
 
-        $idpEntity['configuration'] = json_decode($idpEntity['configuration'], true);
+        $idpEntity['configuration'] = json_decode((string) $idpEntity['configuration'], true);
         $this->currentIdP = $idpEntity;
     }
 
@@ -343,7 +343,7 @@ class ServiceProviderContext implements Context
         $authnRequest->setProtocolBinding(Constants::BINDING_HTTP_REDIRECT);
         // Sign with random key, does not mather for now.
         $authnRequest->setSignatureKey(
-            $this->loadPrivateKey(new PrivateKey('/config/ssp/sp.key', 'default'))
+            self::loadPrivateKey(new PrivateKey('/config/ssp/sp.key', 'default'))
         );
 
         if (!empty($displayNames)) {
