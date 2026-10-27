@@ -36,16 +36,16 @@ class InstitutionConfiguration
     #[ORM\Column(type: 'boolean')]
     public $ssoOn2faEnabled;
 
-    private function __construct(
-        string $institution,
-        bool $ssoOn2faEnabled,
-        /**
-         * @var bool is the SSO registration bypass feature enabled?
-         */
-        #[ORM\Column(type: 'boolean')]
-        public bool $ssoRegistrationBypass
-    ) {
+    /**
+     * @var bool is the SSO registration bypass feature enabled?
+     */
+    #[ORM\Column(type: 'boolean')]
+    public bool $ssoRegistrationBypass;
+
+    private function __construct(string $institution, bool $ssoOn2faEnabled, bool $ssoRegistrationBypass)
+    {
         $this->institution = $institution;
         $this->ssoOn2faEnabled = $ssoOn2faEnabled;
+        $this->ssoRegistrationBypass = $ssoRegistrationBypass;
     }
 }
