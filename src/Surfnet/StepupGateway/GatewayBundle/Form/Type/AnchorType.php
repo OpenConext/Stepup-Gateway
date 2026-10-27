@@ -27,11 +27,13 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class AnchorType extends AbstractType implements ButtonTypeInterface
 {
+    #[\Override]
     public function getParent(): ?string
     {
         return ButtonType::class;
     }
 
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return 'anchor';

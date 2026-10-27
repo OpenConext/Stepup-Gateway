@@ -20,6 +20,7 @@ namespace Surfnet\StepupGateway\Behat;
 
 use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
+use Behat\Gherkin\Node\TableNode;
 use Behat\Mink\Driver\Selenium2Driver;
 use FriendsOfBehat\SymfonyExtension\Driver\SymfonyDriver;
 use RobRichards\XMLSecLibs\XMLSecurityKey;
@@ -37,6 +38,7 @@ use SAML2\XML\saml\NameID;
 use Surfnet\SamlBundle\Entity\IdentityProvider;
 use Surfnet\SamlBundle\SAML2\AuthnRequest as Saml2AuthnRequest;
 use Surfnet\StepupGateway\Behat\Repository\SamlEntityRepository;
+use Surfnet\StepupGateway\Behat\Service\FeatureToggle;
 use Surfnet\StepupGateway\Behat\Service\FixtureService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -77,26 +79,61 @@ class ServiceProviderContext implements Context
     {
         $environment = $scope->getEnvironment();
         $this->minkContext = $environment->getContext(MinkContext::class);
+        // The feature flag is static, so reset it to not leak between scenarios.
+        FeatureToggle::reset();
     }
 
-    #[\Behat\Step\Given('/^an SFO enabled SP with EntityID ([^\\\']*)$/')]
+    #[\Behat\Step\Given('/^an SFO enabled SP with EntityID (?!.*and Middleware service names:)([^\\\']*)$/')]
     public function anSFOEnabledSPWithEntityID($entityId): void
     {
         $this->registerSp($entityId, true);
     }
 
-    #[\Behat\Step\Given('/^an SP with EntityID ([^\\\']*)$/')]
+    #[\Behat\Step\Given('/^an SFO enabled SP with EntityID ([^\\\']*) and Middleware service names:$/')]
+    public function anSFOEnabledSPWithEntityIDAndServiceNames($entityId, TableNode $table): void
+    {
+        $this->registerSp($entityId, true, $this->serviceNamesFromTable($table));
+    }
+
+    #[\Behat\Step\Given('/^an SP with EntityID (?!.*and Middleware service names:)([^\\\']*)$/')]
     public function anSPWithEntityID($entityId): void
     {
         $this->registerSp($entityId, false);
     }
+
+    #[\Behat\Step\Given('/^an SP with EntityID ([^\\\']*) and Middleware service names:$/')]
+    public function anSPWithEntityIDAndServiceNames($entityId, TableNode $table): void
+    {
+        $this->registerSp($entityId, false, $this->serviceNamesFromTable($table));
+    }
+
+    // EntityID must appear in gssp_allowed_sps (samlstepupproviders_parameters.yaml.dist) or the
+    // registration entry point below will reject it.
+    #[\Behat\Step\Given('/^a GSSP registration SP with EntityID (?!.*and Middleware service names:)([^\\\']*)$/')]
+    public function aGsspRegistrationSPWithEntityID($entityId): void
+    {
+        $this->registerSp($entityId, false);
+    }
+
+    #[\Behat\Step\Given('/^a GSSP registration SP with EntityID ([^\\\']*) and Middleware service names:$/')]
+    public function aGsspRegistrationSPWithEntityIDAndServiceNames($entityId, TableNode $table): void
+    {
+        $this->registerSp($entityId, false, $this->serviceNamesFromTable($table));
+    }
+
     #[\Behat\Step\Given('/^an IdP with EntityID ([^\\\']*)$/')]
     public function anIdPWithEntityID($entityId): void
     {
         $this->registerIdp($entityId);
     }
 
-    private function registerSp($entityId, $sfoEnabled): void
+    #[\Behat\Step\Given('/^the service name feature is disabled$/')]
+    public function theServiceNameFeatureIsDisabled(): void
+    {
+        FeatureToggle::disableServiceName();
+    }
+
+    private function registerSp($entityId, $sfoEnabled, array $serviceNames = []): void
     {
         $publicKeyLoader = new KeyLoader();
         $publicKeyLoader->loadCertificateFile('/config/ssp/sp.crt');
@@ -104,7 +141,7 @@ class ServiceProviderContext implements Context
         /** @var Key $cert */
         $cert = $keys->first();
 
-        $spEntity = $this->fixtureService->registerSP($entityId, $cert['X509Certificate'], $sfoEnabled);
+        $spEntity = $this->fixtureService->registerSP($entityId, $cert['X509Certificate'], $sfoEnabled, $serviceNames);
 
         $spEntity['configuration'] = json_decode($spEntity['configuration'], true);
         if ($sfoEnabled) {
@@ -112,6 +149,52 @@ class ServiceProviderContext implements Context
         } else {
             $this->currentSp = $spEntity;
         }
+    }
+
+    /**
+     * @return array<string, string> locale => name, as Middleware's service_name configuration
+     *     is shaped
+     */
+    private function serviceNamesFromTable(TableNode $table): array
+    {
+        $serviceNames = [];
+        foreach ($table->getHash() as $row) {
+            $serviceNames[$row['locale']] = $row['name'];
+        }
+        return $serviceNames;
+    }
+
+    /**
+     * @return array<int, array{lang: string, value: string}>
+     */
+    private function displayNamesFromTable(TableNode $table): array
+    {
+        $displayNames = [];
+        foreach ($table->getHash() as $row) {
+            $displayNames[] = ['lang' => $row['locale'], 'value' => $row['name']];
+        }
+        return $displayNames;
+    }
+
+    /**
+     * @param array<int, array{lang: string, value: string}> $displayNames
+     */
+    private function buildUiInfoChunk(array $displayNames): Chunk
+    {
+        $dom = DOMDocumentFactory::create();
+        $uiInfo = $dom->createElementNS('urn:oasis:names:tc:SAML:metadata:ui', 'mdui:UIInfo');
+
+        foreach ($displayNames as $displayName) {
+            $element = $uiInfo->ownerDocument->createElementNS(
+                'urn:oasis:names:tc:SAML:metadata:ui',
+                'mdui:DisplayName',
+                $displayName['value']
+            );
+            $element->setAttribute('xml:lang', $displayName['lang']);
+            $uiInfo->appendChild($element);
+        }
+
+        return new Chunk($uiInfo);
     }
 
     private function registerIdP($entityId): void
@@ -135,8 +218,14 @@ class ServiceProviderContext implements Context
     }
 
     #[\Behat\Step\When('/^([^\\\']*) starts an SFO authentication with LoA ([^\\\']*)$/')]
-    public function iStartAnSFOAuthenticationWithLoa($nameId, string $loa, bool $forceAuthN = false, ?string $gsspFallbackSubject = null, ?string $gsspFallbackInstitution = null): void
-    {
+    public function iStartAnSFOAuthenticationWithLoa(
+        $nameId,
+        string $loa,
+        bool $forceAuthN = false,
+        ?string $gsspFallbackSubject = null,
+        ?string $gsspFallbackInstitution = null,
+        array $displayNames = []
+    ): void {
         $authnRequest = new AuthnRequest();
         // In order to later assert if the response succeeded or failed, set our own dummy ACS location
         $authnRequest->setAssertionConsumerServiceURL(SamlEntityRepository::SP_ACS_LOCATION);
@@ -188,13 +277,20 @@ class ServiceProviderContext implements Context
             $ext['saml:Extensions'] = new Chunk($ce);
             $authnRequest->setExtensions($ext);
         }
+
+        if (!empty($displayNames)) {
+            $ext = $authnRequest->getExtensions();
+            $ext['mdui:UIInfo'] = $this->buildUiInfoChunk($displayNames);
+            $authnRequest->setExtensions($ext);
+        }
+
         $request = Saml2AuthnRequest::createNew($authnRequest);
         $query = $request->buildRequestQuery();
 
         $this->getSession()->visit($request->getDestination().'?'.$query);
     }
 
-    #[\Behat\Step\When('/^([^\\\']*) starts an SFO authentication requiring LoA ([^\\\']*)$/')]
+    #[\Behat\Step\When('/^([^\\\']*) starts an SFO authentication requiring LoA (?!.*with mdui DisplayNames:)([^\\\']*)$/')]
     public function iStartAnSFOAuthenticationWithLoaRequirement($nameId, $loa): void
     {
         $this->iStartAnSFOAuthenticationWithLoa($nameId, $loa);
@@ -205,10 +301,67 @@ class ServiceProviderContext implements Context
         $this->iStartAnSFOAuthenticationWithLoa($nameId, $loa, true);
     }
 
+    #[\Behat\Step\When('/^([^\\\']*) starts an SFO authentication requiring LoA ([^\\\']*) with mdui DisplayNames:$/')]
+    public function iStartAnSFOAuthenticationWithLoaRequirementAndUiInfo($nameId, $loa, TableNode $table): void
+    {
+        $this->iStartAnSFOAuthenticationWithLoa($nameId, $loa, false, null, null, $this->displayNamesFromTable($table));
+    }
+
     #[\Behat\Step\When('/^([^\\\']*) starts an SFO authentication with GSSP fallback requiring LoA ([^\\\']*) and Gssp extension subject ([^\\\']*) and institution ([^\\\']*)$/')]
     public function iStartAForcedSFOAuthenticationWithLoaRequirementAndGsspExtension($nameId, $loa, $subject, $institution): void
     {
         $this->iStartAnSFOAuthenticationWithLoa($nameId, $loa, false, $subject, $institution);
+    }
+
+    #[\Behat\Step\When('/^([^\\\']*) starts a "([^"]*)" GSSP registration$/')]
+    public function anSpStartsAGsspRegistration($entityId, $provider): void
+    {
+        $this->startGsspRegistration($entityId, $provider, []);
+    }
+
+    #[\Behat\Step\When('/^([^\\\']*) starts a "([^"]*)" GSSP registration with mdui DisplayNames:$/')]
+    public function anSpStartsAGsspRegistrationWithUiInfo($entityId, $provider, TableNode $table): void
+    {
+        $this->startGsspRegistration($entityId, $provider, $this->displayNamesFromTable($table));
+    }
+
+    /**
+     * @param array<int, array{lang: string, value: string}> $displayNames
+     */
+    private function startGsspRegistration(string $entityId, string $provider, array $displayNames): void
+    {
+        $authnRequest = new AuthnRequest();
+        // In order to later assert if the response succeeded or failed, set our own dummy ACS location
+        $authnRequest->setAssertionConsumerServiceURL(SamlEntityRepository::SP_ACS_LOCATION);
+        $issuerVo = new Issuer();
+        $issuerVo->setValue($entityId);
+        $authnRequest->setIssuer($issuerVo);
+        $authnRequest->setDestination(sprintf(
+            'https://gateway.dev.openconext.local/gssp/%s/single-sign-on',
+            $provider
+        ));
+        $authnRequest->setProtocolBinding(Constants::BINDING_HTTP_REDIRECT);
+        // Sign with random key, does not mather for now.
+        $authnRequest->setSignatureKey(
+            $this->loadPrivateKey(new PrivateKey('/config/ssp/sp.key', 'default'))
+        );
+
+        if (!empty($displayNames)) {
+            $ext = $authnRequest->getExtensions();
+            $ext['mdui:UIInfo'] = $this->buildUiInfoChunk($displayNames);
+            $authnRequest->setExtensions($ext);
+        }
+
+        $request = Saml2AuthnRequest::createNew($authnRequest);
+        $query = $request->buildRequestQuery();
+
+        $driver = $this->getSession()->getDriver();
+        // The GSSP host is not resolvable here, so read the outgoing AuthnRequest from the Location header.
+        if ($driver instanceof SymfonyDriver) {
+            $driver->getClient()->followRedirects(false);
+        }
+
+        $this->getSession()->visit($request->getDestination().'?'.$query);
     }
 
     #[\Behat\Step\When('/^([^\\\']*) starts an ADFS authentication requiring ([^\\\']*)$/')]
@@ -247,8 +400,23 @@ class ServiceProviderContext implements Context
         $this->getSession()->visit($authnRequest->getDestination().'?'.$query);
     }
 
-    #[\Behat\Step\When('/^([^\\\']*) starts an authentication requiring LoA ([^\\\']*)$/')]
+    #[\Behat\Step\When('/^([^\\\']*) starts an authentication requiring LoA (?!.*with mdui DisplayNames:)([^\\\']*)$/')]
     public function iStartAnSsoAuthenticationWithLoaRequirement($nameId, $loa): void
+    {
+        $this->startSsoAuthentication($nameId, $loa, []);
+    }
+
+    // Smoke-test only - see tests/features/service-name-sso.feature for why.
+    #[\Behat\Step\When('/^([^\\\']*) starts an authentication requiring LoA ([^\\\']*) with mdui DisplayNames:$/')]
+    public function iStartAnSsoAuthenticationWithLoaRequirementAndUiInfo($nameId, $loa, TableNode $table): void
+    {
+        $this->startSsoAuthentication($nameId, $loa, $this->displayNamesFromTable($table));
+    }
+
+    /**
+     * @param array<int, array{lang: string, value: string}> $displayNames
+     */
+    private function startSsoAuthentication(string $nameId, string $loa, array $displayNames): void
     {
         $authnRequest = new AuthnRequest();
         // In order to later assert if the response succeeded or failed, set our own dummy ACS location
@@ -273,6 +441,12 @@ class ServiceProviderContext implements Context
             ),
             default => throw new RuntimeException(sprintf('The specified LoA-%s is not supported', $loa)),
         };
+
+        if (!empty($displayNames)) {
+            $ext = $authnRequest->getExtensions();
+            $ext['mdui:UIInfo'] = $this->buildUiInfoChunk($displayNames);
+            $authnRequest->setExtensions($ext);
+        }
 
         $request = Saml2AuthnRequest::createNew($authnRequest);
         $query = $request->buildRequestQuery();

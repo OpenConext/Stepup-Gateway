@@ -47,7 +47,7 @@ class SpryngMessageResult implements SmsMessageResultInterface
         if (!$this->message) {
             return [];
         }
-        $error = json_decode($this->message->getRawBody(), 1);
+        $error = json_decode((string) $this->message->getRawBody(), 1);
         return [
             'description' => $error['message'],
             'code' => $this->message->getResponseCode(),

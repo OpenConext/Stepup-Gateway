@@ -36,6 +36,20 @@ services:
             - "@gateway.proxy.sso.state_handler"
             - "@logger"
 
+    gateway.feature_configuration:
+        class: Surfnet\StepupGateway\GatewayBundle\Configuration\FeatureConfiguration
+        arguments:
+            - "%append_service_name_to_authnrequest%"
+
+    gateway.saml.ui_info_extension_mapper:
+        class: Surfnet\StepupGateway\GatewayBundle\Saml\UiInfoExtensionMapper
+
+    gateway.saml.service_display_name_resolver:
+        class: Surfnet\StepupGateway\GatewayBundle\Saml\ServiceDisplayNameResolver
+        arguments:
+            - "@gateway.feature_configuration"
+            - "@saml.entity_repository"
+
     gateway.service.gateway.login:
         class: Surfnet\StepupGateway\GatewayBundle\Service\Gateway\LoginService
         arguments:
@@ -45,6 +59,8 @@ services:
             - "@surfnet_saml.hosted.service_provider"
             - "@surfnet_saml.remote.idp"
             - "@surfnet_saml.http.redirect_binding"
+            - "@gateway.feature_configuration"
+            - "@gateway.saml.ui_info_extension_mapper"
 
     gateway.service.gateway.consume_assertion:
         class: Surfnet\StepupGateway\GatewayBundle\Service\Gateway\ConsumeAssertionService

@@ -49,8 +49,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use function is_null;
-use const FILTER_DEFAULT;
 use const FILTER_FORCE_ARRAY;
+use const FILTER_UNSAFE_RAW;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)

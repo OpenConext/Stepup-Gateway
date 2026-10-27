@@ -147,6 +147,8 @@ services:
             - "@second_factor_only.http.binding_factory"
             - "@second_factor_only.validate_nameid"
             - "@second_factor_only.loa_resolution"
+            - "@gateway.feature_configuration"
+            - "@gateway.saml.ui_info_extension_mapper"
 
     second_factor_only.respond_service:
         class: Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\Gateway\RespondService

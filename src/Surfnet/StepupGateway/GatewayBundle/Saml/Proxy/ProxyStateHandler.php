@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Saml\Proxy;
 
+use Surfnet\StepupGateway\GatewayBundle\Saml\DisplayName;
 use Surfnet\StepupGateway\GatewayBundle\Saml\Exception\RuntimeException;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -41,7 +42,7 @@ class ProxyStateHandler
         $all = $this->requestStack->getSession()->all();
 
         foreach (array_keys($all) as $key) {
-            if (str_starts_with($key, $this->sessionPath)) {
+            if (str_starts_with((string) $key, (string) $this->sessionPath)) {
                 $this->requestStack->getSession()->remove($key);
             }
         }
@@ -205,6 +206,21 @@ class ProxyStateHandler
     public function isSecondFactorFallback(): bool
     {
         return (bool)$this->get('selected_second_factor_fallback');
+    }
+
+    public function setDisplayNamesFromRequest(DisplayName ...$displayNames): self
+    {
+        $this->set('display_names', array_map(fn(DisplayName $d) => $d->toArray(), $displayNames));
+        return $this;
+    }
+
+    /**
+     * @return DisplayName[]
+     */
+    public function getDisplayNamesFromRequest(): array
+    {
+        $raw = $this->get('display_names') ?? [];
+        return array_map(DisplayName::fromArray(...), $raw);
     }
 
     public function setGsspUserAttributes(string $subject, string $institution): ProxyStateHandler

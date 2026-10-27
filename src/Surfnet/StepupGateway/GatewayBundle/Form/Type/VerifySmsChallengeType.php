@@ -56,6 +56,7 @@ class VerifySmsChallengeType extends AbstractType
         ]);
     }
 
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return 'gateway_verify_sms_challenge';

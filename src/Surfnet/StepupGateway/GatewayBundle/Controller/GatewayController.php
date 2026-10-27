@@ -239,6 +239,7 @@ class GatewayController extends ContainerController
     /**
      * @param string $view
      */
+    #[\Override]
     public function render($view, array $parameters = [], ?Response $response = null): Response
     {
         return parent::render(

@@ -131,6 +131,9 @@ class SamlEntity
         if (isset($decodedConfiguration['set_sso_cookie_on_2fa'])) {
             $configuration['setSsoCookieOn2fa'] = $decodedConfiguration['set_sso_cookie_on_2fa'];
         }
+        // Middleware only validates service_name as a nullable string, so a plain string can arrive.
+        $serviceName = $decodedConfiguration['service_name'] ?? [];
+        $configuration['serviceNames'] = is_array($serviceName) ? $serviceName : [];
         return new ServiceProvider($configuration);
     }
 

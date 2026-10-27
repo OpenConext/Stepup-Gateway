@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2018 SURFnet bv
  *
@@ -21,11 +22,16 @@ use Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger;
 use Surfnet\SamlBundle\SAML2\AuthnRequest;
 use Surfnet\SamlBundle\SAML2\AuthnRequestFactory;
 use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
+use Surfnet\StepupGateway\GatewayBundle\Saml\ServiceDisplayNameResolver;
+use Surfnet\StepupGateway\GatewayBundle\Saml\UiInfoExtensionMapper;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Exception\InvalidSubjectException;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\Provider;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class SecondFactorVerificationService
 {
+    private const string SFO_RESPONSE_CONTEXT_SERVICE_ID = 'second_factor_only.response_context';
+
     /**
      * SecondFactorVerificationService constructor.
      * @param SamlAuthenticationLogger $samlLogger
@@ -36,6 +42,9 @@ class SecondFactorVerificationService
         private readonly SamlAuthenticationLogger $samlLogger,
         private readonly ResponseContext $responseContext,
         private readonly ResponseContext $sfoResponseContext,
+        private readonly ServiceDisplayNameResolver $displayNameResolver,
+        private readonly UiInfoExtensionMapper $uiInfoMapper,
+        private readonly RequestStack $requestStack
     ) {
     }
 
@@ -60,7 +69,7 @@ class SecondFactorVerificationService
     ) {
         $stateHandler = $provider->getStateHandler();
 
-        if ($responseContextServiceId === 'second_factor_only.response_context') {
+        if ($responseContextServiceId === self::SFO_RESPONSE_CONTEXT_SERVICE_ID) {
             $originalRequestId = $this->sfoResponseContext->getInResponseTo();
         } else {
             $originalRequestId = $this->responseContext->getInResponseTo();
@@ -82,6 +91,19 @@ class SecondFactorVerificationService
             $provider->getRemoteIdentityProvider()
         );
         $authnRequest->setSubject($subjectNameId);
+
+        $activeResponseContext = $responseContextServiceId === self::SFO_RESPONSE_CONTEXT_SERVICE_ID
+            ? $this->sfoResponseContext
+            : $this->responseContext;
+        $locale = $this->requestStack->getCurrentRequest()?->getLocale() ?? 'en';
+        $displayName = $this->displayNameResolver->resolve(
+            $activeResponseContext->getRequestServiceProvider(),
+            $activeResponseContext->getDisplayNamesFromRequest(),
+            $locale
+        );
+        $authnRequest->setExtensions(
+            $this->uiInfoMapper->applyTo($authnRequest->getExtensions(), $displayName)
+        );
 
         $stateHandler
             ->setRequestId($originalRequestId)

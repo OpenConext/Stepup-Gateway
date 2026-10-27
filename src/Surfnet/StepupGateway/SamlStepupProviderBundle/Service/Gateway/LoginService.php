@@ -21,6 +21,8 @@ use Surfnet\SamlBundle\Http\RedirectBinding;
 use Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger;
 use Surfnet\SamlBundle\SAML2\AuthnRequest;
 use Surfnet\SamlBundle\SAML2\AuthnRequestFactory;
+use Surfnet\StepupGateway\GatewayBundle\Saml\ServiceDisplayNameResolver;
+use Surfnet\StepupGateway\GatewayBundle\Saml\UiInfoExtensionMapper;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Exception\NotConnectedServiceProviderException;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\ConnectedServiceProviders;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Provider\Provider;
@@ -41,6 +43,8 @@ class LoginService
         private readonly SamlAuthenticationLogger $samlLogger,
         private readonly RedirectBinding $redirectBinding,
         private readonly ConnectedServiceProviders $connectedServiceProviders,
+        private readonly ServiceDisplayNameResolver $displayNameResolver,
+        private readonly UiInfoExtensionMapper $uiInfoMapper
     ) {
     }
 
@@ -53,7 +57,7 @@ class LoginService
      * The service provider in this context is SelfService (when registering
      * a token) or RA (when vetting a token).
      *
-     * @return AuthnRequest
+     * @return object the proxy AuthnRequest built by AuthnRequestFactory, to be sent to the GSSP
      */
     public function singleSignOn(Provider $provider, Request $httpRequest)
     {
@@ -100,9 +104,14 @@ class LoginService
             $provider->getRemoteIdentityProvider()
         );
 
-        if ($originalRequest->getExtensions()) {
-            $proxyRequest->setExtensions($originalRequest->getExtensions());
-        }
+        $displayName = $this->displayNameResolver->resolve(
+            $originalRequest->getServiceProvider(),
+            $this->uiInfoMapper->read($originalRequest->getExtensions()),
+            $httpRequest->getLocale()
+        );
+        $proxyRequest->setExtensions(
+            $this->uiInfoMapper->applyTo($originalRequest->getExtensions(), $displayName)
+        );
 
         // if a Specific subject is given to authenticate we should proxy that and verify in the response
         // that that subject indeed was authenticated

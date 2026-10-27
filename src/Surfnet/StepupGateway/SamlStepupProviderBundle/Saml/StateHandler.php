@@ -35,7 +35,7 @@ class StateHandler extends ProxyStateHandler
     public function setSubject(string $subject): self
     {
         $currentSubject = $this->get('subject');
-        if (!empty($currentSubject) && strtolower($currentSubject) !== strtolower($subject)) {
+        if (!empty($currentSubject) && strtolower((string) $currentSubject) !== strtolower($subject)) {
             throw new InvalidSubjectException(
                 sprintf(
                     'The subject should not be rewritten with another value. Old: "%s", new "%s"',
@@ -80,22 +80,25 @@ class StateHandler extends ProxyStateHandler
     /**
      * Clear the complete state of this provider, leaving other provider (GSSP) states intact.
      */
+    #[\Override]
     public function clear(): void
     {
         $all = $this->getSession()->all();
         $prefix = $this->getPrefix();
         foreach (array_keys($all) as $key) {
-            if (str_starts_with($key, $prefix)) {
+            if (str_starts_with((string) $key, $prefix)) {
                 $this->getSession()->remove($key);
             }
         }
     }
 
+    #[\Override]
     protected function set($key, $value): void
     {
         $this->getSession()->set($this->getPrefix() . $key, $value);
     }
 
+    #[\Override]
     protected function get($key): mixed
     {
         return $this->getSession()->get($this->getPrefix() . $key);
