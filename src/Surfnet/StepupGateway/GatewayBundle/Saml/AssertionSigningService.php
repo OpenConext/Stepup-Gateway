@@ -18,11 +18,11 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Saml;
 
-use SAML2\Certificate\X509;
 use RobRichards\XMLSecLibs\XMLSecurityKey;
 use SAML2\Assertion;
 use SAML2\Certificate\KeyLoader;
 use SAML2\Certificate\PrivateKeyLoader;
+use SAML2\Certificate\X509;
 use SAML2\Configuration\PrivateKey;
 use Surfnet\SamlBundle\Entity\IdentityProvider;
 

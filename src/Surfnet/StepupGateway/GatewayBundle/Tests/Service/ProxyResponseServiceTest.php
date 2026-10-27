@@ -18,15 +18,15 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Tests\Service;
 
+use Mockery;
 use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\Test;
-use SAML2\XML\saml\SubjectConfirmation;
-use Mockery;
 use Psr\Log\NullLogger;
 use SAML2\Assertion;
 use SAML2\Compat\ContainerSingleton;
 use SAML2\XML\saml\Issuer;
 use SAML2\XML\saml\NameID;
+use SAML2\XML\saml\SubjectConfirmation;
 use Surfnet\SamlBundle\Entity\IdentityProvider;
 use Surfnet\SamlBundle\SAML2\Attribute\AttributeDefinition;
 use Surfnet\SamlBundle\SAML2\Attribute\AttributeDictionary;

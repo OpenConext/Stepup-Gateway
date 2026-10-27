@@ -17,8 +17,8 @@
 
 namespace Surfnet\StepupGateway\SamlStepupProviderBundle\Tests\Provider;
 
-use PHPUnit\Framework\Attributes\Test;
 use Mockery;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Surfnet\SamlBundle\Entity\IdentityProvider;
 use Surfnet\SamlBundle\Entity\ServiceProvider;

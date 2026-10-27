@@ -18,7 +18,6 @@
 
 namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\Gateway;
 
-use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\ValueObject\Response;
 use Exception;
 use Psr\Log\LoggerInterface;
 use Surfnet\SamlBundle\SAML2\ReceivedAuthnRequest;
@@ -27,6 +26,7 @@ use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\Exception\InvalidAdfsReque
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\Exception\InvalidAdfsResponseException;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\RequestHelper;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\ResponseHelper;
+use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\ValueObject\Response;
 use Symfony\Component\HttpFoundation\Request;
 
 class AdfsService

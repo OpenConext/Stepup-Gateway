@@ -18,8 +18,8 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Tests\Entity;
 
-use PHPUnit\Framework\Attributes\DataProvider;
 use Mockery;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Surfnet\StepupBundle\Exception\DomainException;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;

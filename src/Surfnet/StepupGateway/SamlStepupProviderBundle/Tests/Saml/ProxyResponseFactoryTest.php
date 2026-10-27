@@ -17,7 +17,6 @@
 
 namespace Surfnet\StepupGateway\SamlStepupProviderBundle\Tests\Saml;
 
-use SAML2\XML\saml\SubjectConfirmation;
 use Mockery as m;
 use Mockery\Mock;
 use Psr\Log\NullLogger;
@@ -25,6 +24,7 @@ use SAML2\Assertion;
 use SAML2\Constants;
 use SAML2\Response;
 use SAML2\XML\saml\NameID;
+use SAML2\XML\saml\SubjectConfirmation;
 use Surfnet\SamlBundle\Entity\IdentityProvider;
 use Surfnet\StepupGateway\GatewayBundle\Saml\AssertionSigningService;
 use Surfnet\StepupGateway\GatewayBundle\Tests\TestCase\GatewaySamlTestCase;

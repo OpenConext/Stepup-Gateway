@@ -17,9 +17,9 @@
 
 namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Tests\Service;
 
+use Mockery as m;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
-use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use Surfnet\StepupBundle\Value\Loa;
 use Surfnet\StepupGateway\GatewayBundle\Exception\InvalidArgumentException;

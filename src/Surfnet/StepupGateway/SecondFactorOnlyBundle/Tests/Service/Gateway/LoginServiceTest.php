@@ -18,21 +18,21 @@
 
 namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Tests\Service\Gateway;
 
-use PHPUnit\Framework\Attributes\Test;
 use DateTime;
 use Mockery;
+use PHPUnit\Framework\Attributes\Test;
 use Surfnet\SamlBundle\Entity\ServiceProvider;
 use Surfnet\SamlBundle\Http\HttpBindingFactory;
 use Surfnet\SamlBundle\Http\PostBinding;
 use Surfnet\SamlBundle\Http\RedirectBinding;
 use Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger;
 use Surfnet\SamlBundle\SAML2\ReceivedAuthnRequest;
-use Surfnet\StepupGateway\GatewayBundle\Configuration\FeatureConfiguration;
-use Surfnet\StepupGateway\GatewayBundle\Saml\UiInfoExtensionMapper;
 use Surfnet\StepupBundle\Service\LoaResolutionService;
 use Surfnet\StepupBundle\Value\Loa;
+use Surfnet\StepupGateway\GatewayBundle\Configuration\FeatureConfiguration;
 use Surfnet\StepupGateway\GatewayBundle\Exception\RequesterFailureException;
 use Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler;
+use Surfnet\StepupGateway\GatewayBundle\Saml\UiInfoExtensionMapper;
 use Surfnet\StepupGateway\GatewayBundle\Service\SamlEntityService;
 use Surfnet\StepupGateway\GatewayBundle\Tests\TestCase\GatewaySamlTestCase;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\Gateway\LoginService;

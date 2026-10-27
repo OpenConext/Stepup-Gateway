@@ -18,12 +18,12 @@
 
 namespace Surfnet\StepupGateway\Behat;
 
-use Behat\Hook\BeforeScenario;
-use Behat\Step\Given;
-use Behat\Step\When;
 use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
+use Behat\Hook\BeforeScenario;
+use Behat\Step\Given;
+use Behat\Step\When;
 use FriendsOfBehat\SymfonyExtension\Driver\SymfonyDriver;
 use RobRichards\XMLSecLibs\XMLSecurityKey;
 use RuntimeException;

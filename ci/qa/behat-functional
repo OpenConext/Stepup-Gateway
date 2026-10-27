@@ -5,17 +5,4 @@ cd $(dirname $0)/../../
 chown -R www-data:www-data /var/www/html/var/cache
 chown -R www-data:www-data /var/www/html/var/log
 
-# The functional suite drives a real browser over a websocket (Chrome DevTools
-# Protocol) connection, which occasionally drops the connection for reasons
-# unrelated to the application under test. Retry the full suite a couple of
-# times before giving up, so a transient driver disconnect does not fail the
-# build.
-max_attempts=3
-attempt=1
-until ./vendor/bin/behat --config=ci/qa/behat.yml --tags=functional $1; do
-    if [ "$attempt" -ge "$max_attempts" ]; then
-        exit 1
-    fi
-    echo "behat-functional attempt ${attempt} failed, retrying..."
-    attempt=$((attempt + 1))
-done
+./vendor/bin/behat --config=ci/qa/behat.yml --tags=functional $1

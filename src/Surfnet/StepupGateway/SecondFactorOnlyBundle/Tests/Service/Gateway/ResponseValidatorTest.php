@@ -18,9 +18,9 @@
 
 namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Tests\Service\Gateway;
 
-use Mockery\LegacyMockInterface;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use Mockery\LegacyMockInterface;
 use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase;
 use SAML2\Assertion;

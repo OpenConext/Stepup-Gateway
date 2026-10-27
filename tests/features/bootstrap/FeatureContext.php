@@ -18,15 +18,15 @@
 
 namespace Surfnet\StepupGateway\Behat;
 
-use Behat\Hook\BeforeFeature;
-use Behat\Hook\BeforeScenario;
-use Behat\Step\Given;
-use Behat\Step\Then;
-use Behat\Step\When;
 use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\BeforeFeatureScope;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
+use Behat\Hook\BeforeFeature;
+use Behat\Hook\BeforeScenario;
 use Behat\Mink\Exception\ExpectationException;
+use Behat\Step\Given;
+use Behat\Step\Then;
+use Behat\Step\When;
 use DMore\ChromeDriver\ChromeDriver;
 use FriendsOfBehat\SymfonyExtension\Driver\SymfonyDriver;
 use Psr\Log\LoggerInterface;

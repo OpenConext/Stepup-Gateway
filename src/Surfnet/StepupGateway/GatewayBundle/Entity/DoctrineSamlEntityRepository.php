@@ -18,9 +18,9 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Entity;
 
-use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Parameter;
 
 class DoctrineSamlEntityRepository extends EntityRepository implements SamlEntityRepository

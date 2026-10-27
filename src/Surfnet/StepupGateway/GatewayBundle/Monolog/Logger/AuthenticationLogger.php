@@ -20,11 +20,11 @@ namespace Surfnet\StepupGateway\GatewayBundle\Monolog\Logger;
 
 use DateTime;
 use Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger;
+use Surfnet\StepupBundle\Service\LoaResolutionService;
 use Surfnet\StepupBundle\Value\Loa;
 use Surfnet\StepupGateway\GatewayBundle\Exception\InvalidArgumentException;
 use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
 use Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorService;
-use Surfnet\StepupBundle\Service\LoaResolutionService;
 
 class AuthenticationLogger
 {

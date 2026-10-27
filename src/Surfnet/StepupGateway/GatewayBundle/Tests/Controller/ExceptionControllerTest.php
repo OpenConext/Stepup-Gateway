@@ -18,7 +18,6 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Tests\Controller;
 
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Surfnet\StepupBundle\Request\RequestId;
@@ -26,6 +25,7 @@ use Surfnet\StepupBundle\Request\RequestIdGenerator;
 use Surfnet\StepupGateway\GatewayBundle\Controller\ExceptionController;
 use Surfnet\StepupGateway\GatewayBundle\Exception\SessionLostException;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 

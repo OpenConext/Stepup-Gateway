@@ -18,10 +18,10 @@
 
 namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Tests\Service\Gateway;
 
-use PHPUnit\Framework\Attributes\Test;
 use DateTime;
 use Mockery;
 use Mockery\Mock;
+use PHPUnit\Framework\Attributes\Test;
 use SAML2\Response;
 use Surfnet\SamlBundle\Entity\IdentityProvider;
 use Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger;
