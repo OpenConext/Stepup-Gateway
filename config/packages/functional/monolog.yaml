@@ -1,0 +1,12 @@
+when@functional:
+  monolog:
+    handlers:
+      # Replace the base handlers (stderr JSON) so test output stays readable; see var/log/functional.log
+      prod-signaler:
+        type: stream
+        path: '%kernel.logs_dir%/%kernel.environment%.log'
+        level: debug
+      main_syslog:
+        type: stream
+        path: '%kernel.logs_dir%/%kernel.environment%.log'
+        level: debug

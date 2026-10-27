@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+cd $(dirname $0)/../../
+
+# Clear cache for functional environment
+php ./bin/console cache:clear --env=functional
+
+# Run functional tests
+./vendor/bin/phpunit -c ci/qa/phpunit-functional.xml

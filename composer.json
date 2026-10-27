@@ -7,6 +7,9 @@
             "Surfnet\\": "src\\Surfnet",
             "Surfnet\\StepupGateway\\Behat\\": [
                 "tests/src"
+            ],
+            "Surfnet\\StepupGateway\\Tests\\Functional\\": [
+                "tests/Functional"
             ]
         },
         "classmap": [
@@ -116,6 +119,7 @@
         "behat": "./ci/qa/behat",
         "behat-functional": "./ci/qa/behat-functional",
         "test": "./ci/qa/phpunit",
+        "test-functional": "./ci/qa/phpunit-functional",
         "license-headers": "./ci/qa/docheader",
         "frontend-install": [
             "yarn install --frozen-lockfile",

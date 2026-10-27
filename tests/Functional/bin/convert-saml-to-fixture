@@ -1,0 +1,391 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Convert captured SAML messages to PHP fixture files.
+ *
+ * Usage:
+ *   # HTTP-Redirect AuthnRequest (query string from browser address bar)
+ *   php tests/Functional/bin/convert-saml-to-fixture "SAMLRequest=nVLB...&SigAlg=...&Signature=..." sfo-redirect-loa2
+ *
+ *   # HTTP-POST AuthnRequest or Response (base64-encoded XML from SAML Tracer)
+ *   php tests/Functional/bin/convert-saml-to-fixture "PHNhbWxwOkF1dGhuUmVxdWVzdC..." sfo-post-loa2
+ *   php tests/Functional/bin/convert-saml-to-fixture "PHNhbWxwOlJlc3BvbnNl..." idp-success-response
+ *
+ *   # Read from file
+ *   php tests/Functional/bin/convert-saml-to-fixture --file captured-query.txt sfo-redirect-loa2
+ *
+ *   # Auto-detect type and location
+ *   php tests/Functional/bin/convert-saml-to-fixture --auto "SAMLRequest=..."
+ */
+
+require __DIR__ . '/../../../vendor/autoload.php';
+
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\SingleCommandApplication;
+
+(new SingleCommandApplication())
+    ->setName('Convert SAML message to PHP fixture')
+    ->setDescription('Convert captured SAML messages (from SAML Tracer or browser DevTools) to PHP fixture files')
+    ->addArgument('message', InputArgument::REQUIRED, 'The SAML message (query string or base64-encoded XML)')
+    ->addArgument('name', InputArgument::REQUIRED, 'Fixture name (e.g., sfo-redirect-loa2)')
+    ->addOption('file', 'f', InputOption::VALUE_NONE, 'Read message from file instead of argument')
+    ->addOption('type', 't', InputOption::VALUE_OPTIONAL, 'Fixture type: authn-request-redirect, authn-request-post, response-post', null)
+    ->addOption('auto', 'a', InputOption::VALUE_NONE, 'Auto-detect type and location')
+    ->setCode(function (InputInterface $input, OutputInterface $output): int {
+        $message = $input->getArgument('message');
+        $name = $input->getArgument('name');
+        $fixturesDir = __DIR__ . '/../Fixtures/devconf/saml';
+
+        // Read from file if --file option
+        if ($input->getOption('file')) {
+            if (!file_exists($message)) {
+                $output->writeln("<error>File not found: {$message}</error>");
+                return 1;
+            }
+            $message = trim(file_get_contents($message));
+        }
+
+        // Clean up the message: strip HTTP method, URL, and HTTP version if present
+        // E.g., "GET https://example.com/path?SAMLRequest=... HTTP/1.1" -> "SAMLRequest=..."
+        $message = cleanCapturedMessage($message);
+
+        // Determine fixture type and location
+        $type = $input->getOption('type');
+        if ($input->getOption('auto') || !$type) {
+            $type = detectType($message);
+            $output->writeln("<info>Auto-detected type: {$type}</info>");
+        }
+
+        $locations = [
+            'authn-request-redirect' => ['authn-requests', 'HTTP-Redirect'],
+            'authn-request-post' => ['authn-requests', 'HTTP-POST'],
+            'response-post' => ['responses', 'HTTP-POST'],
+        ];
+
+        if (!isset($locations[$type])) {
+            $output->writeln("<error>Unknown type: {$type}. Use: authn-request-redirect, authn-request-post, response-post</error>");
+            return 1;
+        }
+
+        [$category, $binding] = $locations[$type];
+        $dir = $fixturesDir . '/' . $category;
+        if (!is_dir($dir)) {
+            mkdir($dir, 0755, true);
+        }
+
+        $file = $dir . '/' . $name . '.php';
+
+        // Analyze the message for the summary
+        $analysis = analyzeMessage($message, $type);
+
+        // Generate PHP fixture file with summary
+        $content = generateFixtureFile($message, $name, $type, $binding, $analysis);
+        file_put_contents($file, $content);
+
+        $output->writeln("<info>Created fixture: {$file}</info>");
+        $output->writeln("  Type: {$type} ({$binding})");
+        $output->writeln("  Name: {$name}");
+        $output->writeln("  Size: " . strlen($message) . " bytes");
+        $output->writeln("");
+        $output->writeln("<info>Message Summary:</info>");
+        foreach ($analysis['summary'] as $line) {
+            $output->writeln("  " . $line);
+        }
+
+        return 0;
+    })
+    ->run();
+
+/**
+ * Clean up a captured SAML message.
+ *
+ * Strips HTTP method (GET/POST), URL, and HTTP version (HTTP/1.1) if present,
+ * leaving only the query string or base64-encoded message.
+ *
+ * Examples:
+ *   "GET https://example.com/path?SAMLRequest=... HTTP/1.1" -> "SAMLRequest=..."
+ *   "GET https://example.com/path?SAMLRequest=..." -> "SAMLRequest=..."
+ *   "SAMLRequest=...&SigAlg=..." -> "SAMLRequest=...&SigAlg=..." (unchanged)
+ */
+function cleanCapturedMessage(string $message): string
+{
+    $message = trim($message);
+
+    // Strip trailing HTTP version (HTTP/1.0, HTTP/1.1, HTTP/2, etc.)
+    $message = preg_replace('/\s+HTTP\/[\d.]+$/i', '', $message);
+
+    // Strip HTTP method prefix (GET, POST, etc.)
+    $message = preg_replace('/^(GET|POST|PUT|DELETE|HEAD|OPTIONS|PATCH)\s+/i', '', $message);
+
+    // If there's a URL with a query string, extract just the query string
+    // E.g., "https://example.com/path?SAMLRequest=..." -> "SAMLRequest=..."
+    if (preg_match('/^[a-z]+:\/\/[^?]+\?(.+)$/i', $message, $matches)) {
+        $message = $matches[1];
+    }
+
+    return $message;
+}
+
+/**
+ * Auto-detect the SAML message type.
+ */
+function detectType(string $message): string
+{
+    // HTTP-Redirect AuthnRequest: starts with SAMLRequest= and contains SigAlg
+    if (str_starts_with($message, 'SAMLRequest=') && str_contains($message, 'SigAlg=')) {
+        return 'authn-request-redirect';
+    }
+
+    // HTTP-POST: base64-encoded XML
+    if (preg_match('/^[A-Za-z0-9+\/=]+$/', $message) && strlen($message) > 100) {
+        $xml = base64_decode($message, true);
+        if ($xml !== false) {
+            // Check if it's an AuthnRequest or Response
+            if (str_contains($xml, 'AuthnRequest')) {
+                return 'authn-request-post';
+            }
+            if (str_contains($xml, 'Response')) {
+                return 'response-post';
+            }
+        }
+    }
+
+    // Default to redirect if it looks like a query string
+    if (str_contains($message, 'SAMLRequest=')) {
+        return 'authn-request-redirect';
+    }
+
+    throw new \RuntimeException('Could not auto-detect SAML message type. Use --type option.');
+}
+
+/**
+ * Analyze a SAML message and extract summary information.
+ *
+ * Returns an array with:
+ * - summary: Array of human-readable summary lines
+ * - decodedXml: The decoded and formatted XML (if available)
+ * - isSigned: Whether the message is signed
+ * - signatureAlgorithm: The signature algorithm (if signed)
+ */
+function analyzeMessage(string $message, string $type): array
+{
+    $summary = [];
+    $decodedXml = null;
+    $isSigned = false;
+    $signatureAlgorithm = null;
+    $parameters = [];
+
+    if ($type === 'authn-request-redirect') {
+        // Parse query string parameters
+        parse_str($message, $parameters);
+
+        $summary[] = "Binding: HTTP-Redirect (query string)";
+        $summary[] = "Parameters: " . implode(', ', array_keys($parameters));
+
+        // Check for signature
+        if (isset($parameters['Signature'])) {
+            $isSigned = true;
+            $summary[] = "Signed: Yes";
+        } else {
+            $summary[] = "Signed: No";
+        }
+
+        if (isset($parameters['SigAlg'])) {
+            $signatureAlgorithm = $parameters['SigAlg'];
+            $summary[] = "Signature Algorithm: " . $signatureAlgorithm;
+        }
+
+        // Decode the SAMLRequest
+        if (isset($parameters['SAMLRequest'])) {
+            $decoded = base64_decode($parameters['SAMLRequest']);
+            $inflated = @gzinflate($decoded);
+            if ($inflated !== false) {
+                $decodedXml = formatXml($inflated);
+                $summary[] = "SAMLRequest: Decoded (" . strlen($inflated) . " bytes XML)";
+
+                // Extract key information from XML
+                $xmlInfo = extractXmlInfo($inflated);
+                foreach ($xmlInfo as $key => $value) {
+                    $summary[] = "$key: $value";
+                }
+            } else {
+                $summary[] = "SAMLRequest: Could not decode (not deflated?)";
+            }
+        }
+
+        if (isset($parameters['RelayState'])) {
+            $summary[] = "RelayState: " . $parameters['RelayState'];
+        }
+
+    } elseif ($type === 'authn-request-post' || $type === 'response-post') {
+        // Base64-encoded XML
+        $decoded = base64_decode($message, true);
+        if ($decoded !== false) {
+            $decodedXml = formatXml($decoded);
+            $summary[] = "Binding: HTTP-POST (base64-encoded XML)";
+            $summary[] = "XML size: " . strlen($decoded) . " bytes";
+
+            // Check for XML signature
+            if (str_contains($decoded, '<ds:Signature') || str_contains($decoded, '<Signature')) {
+                $isSigned = true;
+                $summary[] = "Signed: Yes (XML signature)";
+
+                // Try to extract signature algorithm
+                if (preg_match('/SignatureMethod Algorithm="([^"]+)"/', $decoded, $matches)) {
+                    $signatureAlgorithm = $matches[1];
+                    $summary[] = "Signature Algorithm: " . $signatureAlgorithm;
+                }
+            } else {
+                $summary[] = "Signed: No";
+            }
+
+            // Extract key information from XML
+            $xmlInfo = extractXmlInfo($decoded);
+            foreach ($xmlInfo as $key => $value) {
+                $summary[] = "$key: $value";
+            }
+        } else {
+            $summary[] = "Could not decode base64 message";
+        }
+    }
+
+    return [
+        'summary' => $summary,
+        'decodedXml' => $decodedXml,
+        'isSigned' => $isSigned,
+        'signatureAlgorithm' => $signatureAlgorithm,
+        'parameters' => $parameters,
+    ];
+}
+
+/**
+ * Format XML with indentation.
+ */
+function formatXml(string $xml): string
+{
+    $dom = new DOMDocument();
+    $dom->preserveWhiteSpace = false;
+    $dom->formatOutput = true;
+
+    // Suppress warnings for malformed XML
+    $prevUseErrors = libxml_use_internal_errors(true);
+    $loaded = $dom->loadXML($xml);
+    libxml_use_internal_errors($prevUseErrors);
+
+    if (!$loaded) {
+        return $xml; // Return original if parsing fails
+    }
+
+    return $dom->saveXML();
+}
+
+/**
+ * Extract key information from SAML XML.
+ */
+function extractXmlInfo(string $xml): array
+{
+    $info = [];
+    $dom = new DOMDocument();
+    $prevUseErrors = libxml_use_internal_errors(true);
+    $loaded = $dom->loadXML($xml);
+    libxml_use_internal_errors($prevUseErrors);
+
+    if (!$loaded) {
+        return $info;
+    }
+
+    $xpath = new DOMXPath($dom);
+    $xpath->registerNamespace('samlp', 'urn:oasis:names:tc:SAML:2.0:protocol');
+    $xpath->registerNamespace('saml', 'urn:oasis:names:tc:SAML:2.0:assertion');
+
+    // Extract common SAML attributes
+    $queries = [
+        'Issuer' => '//*[local-name()="Issuer"]',
+        'Destination' => '//*[local-name()="AuthnRequest"]/@Destination',
+        'ID' => '//*[local-name()="AuthnRequest"]/@ID',
+        'IssueInstant' => '//*[local-name()="AuthnRequest"]/@IssueInstant',
+        'NameID' => '//saml:NameID',
+        'AuthnContextClassRef' => '//saml:AuthnContextClassRef',
+        'AssertionConsumerServiceURL' => '//*[local-name()="AuthnRequest"]/@AssertionConsumerServiceURL',
+        'StatusCode' => '//samlp:StatusCode/@Value',
+        'Audience' => '//saml:Audience',
+    ];
+
+    foreach ($queries as $label => $query) {
+        $nodes = $xpath->query($query);
+        if ($nodes && $nodes->length > 0) {
+            $node = $nodes->item(0);
+            $value = $node instanceof DOMAttr ? $node->value : $node->textContent;
+            if (!empty($value)) {
+                $info[$label] = $value;
+            }
+        }
+    }
+
+    return $info;
+}
+
+/**
+ * Generate the PHP fixture file content.
+ */
+function generateFixtureFile(string $message, string $name, string $type, string $binding, array $analysis): string
+{
+    $header = "<?php\n";
+    $header .= "/**\n";
+    $header .= " * WARNING: Generated using `tests/Functional/bin/convert-saml-to-fixture` do not edit manually\n";
+    $header .= " *\n";
+    $header .= " * Captured SAML message from devconf environment.\n";
+    $header .= " *\n";
+    $header .= " * Type: {$type}\n";
+    $header .= " * Binding: {$binding}\n";
+    $header .= " * Fixture name: {$name}\n";
+    $header .= " * Generated: " . date('c') . "\n";
+    $header .= " *\n";
+
+    // Add type-specific documentation
+    switch ($type) {
+        case 'authn-request-redirect':
+            $header .= " * This is an HTTP-Redirect AuthnRequest (query string format).\n";
+            $header .= " * Captured from: browser address bar or SAML Tracer\n";
+            $header .= " * Format: SAMLRequest=...&SigAlg=...&Signature=...\n";
+            break;
+        case 'authn-request-post':
+            $header .= " * This is an HTTP-POST AuthnRequest (base64-encoded XML).\n";
+            $header .= " * Captured from: SAML Tracer or browser DevTools form data\n";
+            $header .= " * Format: Base64-encoded XML value of SAMLRequest parameter\n";
+            break;
+        case 'response-post':
+            $header .= " * This is an HTTP-POST Response (base64-encoded XML).\n";
+            $header .= " * Captured from: SAML Tracer or browser DevTools form data\n";
+            $header .= " * Format: Base64-encoded XML value of SAMLResponse parameter\n";
+            $header .= " * Note: HTTP-Redirect Response does not exist - responses always use HTTP-POST\n";
+            break;
+    }
+
+    $header .= " *\n";
+    $header .= " * Message Summary:\n";
+    foreach ($analysis['summary'] as $line) {
+        $header .= " *   - {$line}\n";
+    }
+
+    $header .= " */\n\n";
+
+    // Add decoded XML as a plain block comment, without " * " line prefixes
+    if ($analysis['decodedXml'] !== null) {
+        $header .= "/*\n";
+        $header .= "Decoded XML:\n\n";
+        // Prevent the XML from terminating the comment early
+        $header .= str_replace('*/', '*\/', trim($analysis['decodedXml'])) . "\n";
+        $header .= "*/\n\n";
+    }
+
+    // Escape the message for PHP single-quoted string
+    $escaped = str_replace(['\\', "'"], ['\\\\', "\\'"], $message);
+
+    $header .= "return '{$escaped}';\n";
+
+    return $header;
+}

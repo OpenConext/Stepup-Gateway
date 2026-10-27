@@ -34,6 +34,33 @@ mock service was created for end to end test purposes, but could be utilized in 
 3. Update the service definition to point to this class: `class: Surfnet\StepupGateway\ApiBundle\Tests\TestDouble\Service\YubikeyService` 
 4. Do not commit/push this change!
 
+### Running the functional tests
+
+The functional tests are PHPUnit tests that send SAML messages to the Gateway at the HTTP level, in-process. They need no
+web server, database server or devconf, only PHP with the `pdo_sqlite` extension (they use an in-memory SQLite database
+filled from `tests/Functional/Fixtures/devconf/database.sql`).
+
+```
+$ composer test-functional
+# or, without composer:
+$ ./ci/qa/phpunit-functional
+```
+
+This clears the cache of the `functional` environment and runs the tests in `tests/Functional` using
+`ci/qa/phpunit-functional.xml`. To run a single test class or method, call PHPUnit directly:
+
+```
+$ php vendor/bin/phpunit -c ci/qa/phpunit-functional.xml tests/Functional/Gateway/SfoFlowTest.php
+$ php vendor/bin/phpunit -c ci/qa/phpunit-functional.xml --filter testSuccessfulSsoWithYubikey
+```
+
+The container of the `functional` environment is cached: after changing the configuration in
+`config/packages/functional/` or `config/services_functional.yaml`, remove `var/cache/functional` (the
+`ci/qa/phpunit-functional` script does this). Gateway logs of the tests are written to `var/log/functional.log`.
+
+See [docs/FUNCTIONAL_TESTING.md](./docs/FUNCTIONAL_TESTING.md) for how the tests work and how to write tests and capture
+fixtures from devconf.
+
 ### Running Behat tests
 #### .env settings in devconf/stepup
 
@@ -99,6 +126,7 @@ Documentation specific to this component is located in the [docs](./docs) direct
   - [GSSP](./docs/GSSP.md)
   - [SFO](./docs/SFO.md)
 - [SAML Example messages](./docs/ExampleSAMLMessages.md)
+- [Functional testing](./docs/FUNCTIONAL_TESTING.md) (HTTP-level PHPUnit tests, capturing fixtures from devconf)
 
 Documentation for the Stepup system can be found in the
 - [Stepup-Deploy](https://github.com/OpenConext/Stepup-Deploy) repository;

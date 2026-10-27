@@ -1,0 +1,16 @@
+# Inherit test environment settings, add HTTP testing support
+when@functional:
+  imports:
+    - { resource: ../../services_test.yaml }
+  framework:
+    test: ~
+    session:
+      handler_id: null
+      storage_factory_id: session.storage.factory.mock_file
+    profiler:
+      only_exceptions: false
+      collect: false
+    php_errors:
+      log: false
+    validation:
+      not_compromised_password: false

@@ -1,0 +1,11 @@
+# SQLite in-memory database for functional tests
+doctrine:
+  dbal:
+    default_connection: gateway
+    connections:
+      gateway:
+        driver: pdo_sqlite
+        memory: true
+      deploy:
+        driver: pdo_sqlite
+        memory: true

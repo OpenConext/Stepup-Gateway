@@ -1,0 +1,291 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Capture test fixtures from the devconf environment.
+ *
+ * Usage:
+ *   php tests/Functional/bin/capture-devconf-fixture /path/to/OpenConext-devconf database   # Capture the database
+ *   php tests/Functional/bin/capture-devconf-fixture /path/to/OpenConext-devconf keys       # Capture the keys
+ *
+ * Arguments:
+ *   devconf-path   Path to the OpenConext-devconf directory (required)
+ *   what           What to capture: database or keys (required)
+ *
+ * SAML messages are not captured by this script, use tests/Functional/bin/convert-saml-to-fixture for these.
+ *
+ * Prerequisites:
+ *   - database: devconf must be running (the mariadb container is used to run mysqldump)
+ *   - keys: access to the devconf configuration files
+ *
+ * See docs/FUNCTIONAL_TESTING.md.
+ */
+
+require __DIR__ . '/../../../vendor/autoload.php';
+
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\SingleCommandApplication;
+
+// Configuration
+const FIXTURES_DIR = __DIR__ . '/../Fixtures/devconf';
+const GATEWAY_DB_NAME = 'gateway';
+const GATEWAY_DB_USER = 'root';
+const GATEWAY_DB_PASS = 'secret';
+
+(new SingleCommandApplication())
+    ->setName('Capture devconf fixtures')
+    ->setDescription('Capture database or keys from the specified devconf environment. For capturing the database the mysql container in the specified devconf directory must be running.')
+    ->addArgument('devconf-path', InputArgument::REQUIRED, 'Path to the OpenConext-devconf directory')
+    ->addArgument('what', InputArgument::OPTIONAL, 'What to capture: database or keys')
+    ->setCode(function (InputInterface $input, OutputInterface $output): int {
+        $devconfPath = $input->getArgument('devconf-path');
+        $what = strtolower($input->getArgument('what'));
+
+        // Validate what argument
+        $validOptions = ['database', 'keys'];
+        if (!in_array($what, $validOptions, true)) {
+            $output->writeln(sprintf('<error>Invalid option "%s". Valid options: %s</error>', $what, implode(', ', $validOptions)));
+            return 1;
+        }
+
+        if (!is_dir($devconfPath)) {
+            $output->writeln(sprintf('<error>Devconf path does not exist: %s</error>', $devconfPath));
+            return 1;
+        }
+
+        $devconfPath = rtrim($devconfPath, '/');
+        $output->writeln(sprintf('<info>Using devconf path: %s</info>', $devconfPath));
+
+        if ($what === 'database') {
+            captureDatabase($output, $devconfPath);
+        }
+
+        if ($what === 'keys') {
+            captureKeys($output, $devconfPath);
+        }
+
+        return 0;
+    })
+    ->run();
+
+/**
+ * Capture database dump from devconf and convert to SQLite-compatible SQL.
+ */
+function captureDatabase(OutputInterface $output, string $devconfPath): void
+{
+    $devconfPath .= "/stepup";
+    $output->writeln("<info>Capturing database from devconf docker running in '$devconfPath'...</info>");
+
+    // Run mysqldump in the mariadb container
+    $dumpCommand = sprintf(
+        'docker compose --project-directory "%s" exec mariadb mysqldump -u%s -p%s %s --no-create-info --complete-insert --skip-triggers --compact',
+        $devconfPath,
+        GATEWAY_DB_USER,
+        GATEWAY_DB_PASS,
+        GATEWAY_DB_NAME
+    );
+
+    $output->writeln("$dumpCommand");
+
+    $dump = shell_exec($dumpCommand);
+    if (!$dump) {
+        throw new \RuntimeException('Failed to capture database dump. Is the devconf environment running?');
+    }
+
+    // Convert MySQL dump to SQLite-compatible SQL
+    $sqliteDump = convertMysqlToSqlite($dump);
+
+    // Save to fixtures
+    $dbFile = FIXTURES_DIR . '/database.sql';
+    if (!is_dir(dirname($dbFile))) {
+        mkdir(dirname($dbFile), 0755, true);
+    }
+    file_put_contents($dbFile, $sqliteDump);
+
+    $output->writeln(sprintf('<info>Saved database fixture: %s</info>', $dbFile));
+}
+
+/**
+ * Rewrite backslash escapes in MySQL single-quoted string literals to their SQLite equivalent.
+ */
+function convertMysqlStringEscapes(string $sql): string
+{
+    $map = ['n' => "\n", 'r' => "\r", 't' => "\t", '0' => "\0", 'Z' => "\x1a"];
+
+    return preg_replace_callback(
+        "/'((?:[^'\\\\]|\\\\.|'')*)'/s",
+        static function (array $m) use ($map): string {
+            $inner = preg_replace_callback(
+                '/\\\\(.)/s',
+                static fn(array $e): string => $e[1] === "'" ? "''" : ($map[$e[1]] ?? $e[1]),
+                $m[1]
+            );
+
+            return "'" . $inner . "'";
+        },
+        $sql
+    );
+}
+
+/**
+ * Convert MySQL dump to SQLite-compatible SQL.
+ */
+function convertMysqlToSqlite(string $mysqlDump): string
+{
+    // Remove MySQL-specific syntax
+    $sql = $mysqlDump;
+
+    // Remove LOCK/UNLOCK TABLES
+    $sql = preg_replace('/LOCK TABLES.*?WRITE;/s', '', $sql);
+    $sql = preg_replace('/UNLOCK TABLES;/s', '', $sql);
+
+    // Remove MySQL comments and directives
+    $sql = preg_replace('/\/\*!\d+.*?\*\//s', '', $sql);
+
+    // Convert ENGINE/CHARSET clauses
+    $sql = preg_replace('/\) ENGINE=\w+ DEFAULT CHARSET=\w+ COLLATE=\w+;/', ');', $sql);
+
+    // Convert tinyint(1) to INTEGER (SQLite boolean)
+    $sql = preg_replace('/tinyint\(1\)/', 'INTEGER', $sql);
+
+    // Convert longtext to TEXT
+    $sql = preg_replace('/longtext/', 'TEXT', $sql);
+
+    // Remove backticks (SQLite uses double quotes or nothing)
+    $sql = str_replace('`', '', $sql);
+
+    // MySQL escapes quotes and backslashes in string literals with a backslash, SQLite does not
+    $sql = convertMysqlStringEscapes($sql);
+
+    // Anonymize yubikey identifiers in the second_factor table
+    $sql = anonymizeYubikeyIdentifiers($sql);
+
+    // Add header
+    $header = "-- SQLite database fixture captured from devconf\n";
+    $header .= "-- Generated: " . date('c') . "\n";
+    $header .= "-- Source: devconf gateway database\n";
+    $header .= "-- Note: Yubikey identifiers have been anonymized\n\n";
+    $header .= "PRAGMA foreign_keys=OFF;\n\n";
+
+    return $header . $sql;
+}
+
+/**
+ * Anonymize yubikey identifiers in the second_factor table.
+ *
+ * Replaces each unique yubikey identifier with a sequential anonymized value:
+ * 12345678 -> 00000001, 87654321 -> 00000002, etc.
+ *
+ * The second_factor table structure is:
+ * (identity_id, name_id, institution, second_factor_id, second_factor_type, second_factor_identifier, id, display_locale, identity_vetted)
+ *
+ * Yubikey identifiers are in the 6th column (second_factor_identifier) and only
+ * for rows where second_factor_type = 'yubikey' (5th column).
+ *
+ * Uses a regex-based approach to find rows with 'yubikey' as the 5th value
+ * and replace the 6th value (the identifier) with an anonymized sequential ID.
+ */
+function anonymizeYubikeyIdentifiers(string $sql): string
+{
+    $nextAnonymizedId = 1;
+
+    // Match rows in second_factor INSERT statements where the 5th value is 'yubikey'
+    // Pattern: ('...','...','...','...','yubikey','IDENTIFIER','...','...',...)
+    // We capture the identifier (6th value) to replace it
+    $pattern = '/(\'[^\']*\',\s*\'[^\']*\',\s*\'[^\']*\',\s*\'[^\']*\',\s*\'yubikey\',\s*)\'([^\']*)\'/s';
+
+    $sql = preg_replace_callback($pattern, function ($matches) use (&$nextAnonymizedId) {
+        $prefix = $matches[1]; // Everything up to and including 'yubikey',
+
+        // Every token gets its own unique identifier, even if the original identifiers are equal
+        $anonymizedIdentifier = sprintf('%08d', $nextAnonymizedId++);
+
+        return $prefix . "'" . $anonymizedIdentifier . "'";
+    }, $sql);
+
+    return $sql;
+}
+
+/**
+ * Capture key material from devconf.
+ *
+ * Key locations based on actual devconf structure:
+ * https://github.com/OpenConext/OpenConext-devconf/tree/main/stepup
+ */
+function captureKeys(OutputInterface $output, string $devconfPath): void
+{
+    $output->writeln('<info>Capturing keys from devconf...</info>');
+
+    $keysDir = FIXTURES_DIR . '/keys';
+    if (!is_dir($keysDir)) {
+        mkdir($keysDir, 0755, true);
+    }
+
+    // Key locations in devconf (verified from external/OpenConext-devconf)
+    // Target filenames match devconf naming (underscores) for consistency with config
+    $keySources = [
+        // SimpleSAMLphp SP keys (used for SSO/SFO authn-requests)
+        'sp.key' => $devconfPath . '/stepup/ssp/sp.key',
+        'sp.crt' => $devconfPath . '/stepup/ssp/sp.crt',
+        'sp2.key' => $devconfPath . '/stepup/ssp/sp2.key',
+        'sp2.crt' => $devconfPath . '/stepup/ssp/sp2.crt',
+
+        // SimpleSAMLphp IdP keys (used for first factor authentication responses)
+        'idp.key' => $devconfPath . '/stepup/ssp/idp.key',
+        'idp.crt' => $devconfPath . '/stepup/ssp/idp.crt',
+
+        // Gateway SP keys (Gateway signs authn-requests to remote IdP)
+        'gateway_sp.key' => $devconfPath . '/stepup/gateway/gateway_sp.key',
+        'gateway_sp.crt' => $devconfPath . '/stepup/gateway/gateway_sp.crt',
+
+        // Gateway IdP keys (Gateway signs responses/Assertions)
+        'gateway_idp.key' => $devconfPath . '/stepup/gateway/gateway_idp.key',
+        'gateway_idp.crt' => $devconfPath . '/stepup/gateway/gateway_idp.crt',
+
+        // Gateway SAML keys (alternative naming)
+        'gateway_saml_sp.key' => $devconfPath . '/stepup/gateway/gateway_saml_sp.key',
+        'gateway_saml_idp.key' => $devconfPath . '/stepup/gateway/gateway_saml_idp.key',
+
+        // Gateway GSSP keys
+        'gateway_gssp_sp.key' => $devconfPath . '/stepup/gateway/gateway_gssp_sp.key',
+        'gateway_gssp_sp.crt' => $devconfPath . '/stepup/gateway/gateway_gssp_sp.crt',
+        'gateway_gssp_idp.key' => $devconfPath . '/stepup/gateway/gateway_gssp_idp.key',
+        'gateway_gssp_idp.crt' => $devconfPath . '/stepup/gateway/gateway_gssp_idp.crt',
+
+        // SelfService keys
+        'selfservice_saml_sp.key' => $devconfPath . '/stepup/selfservice/selfservice_saml_sp.key',
+        'selfservice_saml_sp.crt' => $devconfPath . '/stepup/selfservice/selfservice_saml_sp.crt',
+        'selfservice_gssp_sp.key' => $devconfPath . '/stepup/selfservice/selfservice_gssp_sp.key',
+        'selfservice_gssp_sp.crt' => $devconfPath . '/stepup/selfservice/selfservice_gssp_sp.crt',
+
+        // RA keys
+        'ra_saml_sp.key' => $devconfPath . '/stepup/ra/ra_saml_sp.key',
+        'ra_saml_sp.crt' => $devconfPath . '/stepup/ra/ra_saml_sp.crt',
+        'ra_gssp_sp.key' => $devconfPath . '/stepup/ra/ra_gssp_sp.key',
+        'ra_gssp_sp.crt' => $devconfPath . '/stepup/ra/ra_gssp_sp.crt',
+
+        // GSSP provider keys (Tiqr, AzureMFA, WebAuthn, DemoGSSP)
+        'tiqr_idp.key' => $devconfPath . '/stepup/tiqr/tiqr_idp.key',
+        'tiqr_idp.crt' => $devconfPath . '/stepup/tiqr/tiqr_idp.crt',
+        'azuremfa_idp.key' => $devconfPath . '/stepup/azuremfa/azuremfa_idp.key',
+        'azuremfa_idp.crt' => $devconfPath . '/stepup/azuremfa/azuremfa_idp.crt',
+        'webauthn_idp.key' => $devconfPath . '/stepup/webauthn/webauthn_idp.key',
+        'webauthn_idp.crt' => $devconfPath . '/stepup/webauthn/webauthn_idp.crt',
+        'demo_gssp_idp.key' => $devconfPath . '/stepup/demogssp/demo_gssp_idp.key',
+        'demo_gssp_idp.crt' => $devconfPath . '/stepup/demogssp/demo_gssp_idp.crt',
+    ];
+
+    $captured = 0;
+    foreach ($keySources as $destName => $sourcePath) {
+        if (file_exists($sourcePath)) {
+            copy($sourcePath, $keysDir . '/' . $destName);
+            $output->writeln(sprintf('  <info>✓</info> %s', $destName));
+            $captured++;
+        } else {
+            $output->writeln(sprintf('  <comment>✗</comment> %s (not found: %s)', $destName, $sourcePath));
+        }
+    }
+
+    $output->writeln(sprintf('<info>Captured %d keys to %s</info>', $captured, $keysDir));
+}
