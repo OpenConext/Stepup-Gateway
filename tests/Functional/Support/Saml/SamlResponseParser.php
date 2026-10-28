@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Surfnet\StepupGateway\Tests\Functional\Support\Saml;
 
+use DateTimeImmutable;
 use DOMDocument;
 use DOMXPath;
 
@@ -14,7 +15,7 @@ class SamlResponseParser
     private DOMDocument $document;
     private DOMXPath $xpath;
 
-    public function __construct(string $base64Response)
+    public function __construct(private readonly string $base64Response)
     {
         $xml = base64_decode($base64Response);
         $this->document = new DOMDocument();
@@ -24,6 +25,14 @@ class SamlResponseParser
         $this->xpath->registerNamespace('samlp', 'urn:oasis:names:tc:SAML:2.0:protocol');
         $this->xpath->registerNamespace('saml', 'urn:oasis:names:tc:SAML:2.0:assertion');
         $this->xpath->registerNamespace('ds', 'http://www.w3.org/2000/09/xmldsig#');
+    }
+
+    /**
+     * The response exactly as received (the value of the SAMLResponse parameter)
+     */
+    public function getBase64Response(): string
+    {
+        return $this->base64Response;
     }
 
     public function getStatusCode(): string
@@ -60,6 +69,63 @@ class SamlResponseParser
     {
         $node = $this->xpath->query('//saml:AuthnContextClassRef')->item(0);
         return $node?->textContent;
+    }
+
+    public function hasAssertion(): bool
+    {
+        return $this->xpath->query('/samlp:Response/saml:Assertion')->length > 0;
+    }
+
+    public function getSubjectConfirmationInResponseTo(): ?string
+    {
+        return $this->getAttribute('//saml:SubjectConfirmationData/@InResponseTo');
+    }
+
+    public function getResponseIssueInstant(): ?DateTimeImmutable
+    {
+        return $this->getTime('/samlp:Response/@IssueInstant');
+    }
+
+    public function getAssertionIssueInstant(): ?DateTimeImmutable
+    {
+        return $this->getTime('/samlp:Response/saml:Assertion/@IssueInstant');
+    }
+
+    public function getAuthnInstant(): ?DateTimeImmutable
+    {
+        return $this->getTime('//saml:AuthnStatement/@AuthnInstant');
+    }
+
+    public function getSessionNotOnOrAfter(): ?DateTimeImmutable
+    {
+        return $this->getTime('//saml:AuthnStatement/@SessionNotOnOrAfter');
+    }
+
+    public function getConditionsNotBefore(): ?DateTimeImmutable
+    {
+        return $this->getTime('//saml:Conditions/@NotBefore');
+    }
+
+    public function getConditionsNotOnOrAfter(): ?DateTimeImmutable
+    {
+        return $this->getTime('//saml:Conditions/@NotOnOrAfter');
+    }
+
+    public function getSubjectConfirmationNotOnOrAfter(): ?DateTimeImmutable
+    {
+        return $this->getTime('//saml:SubjectConfirmationData/@NotOnOrAfter');
+    }
+
+    private function getAttribute(string $query): ?string
+    {
+        return $this->xpath->query($query)->item(0)?->nodeValue;
+    }
+
+    private function getTime(string $query): ?DateTimeImmutable
+    {
+        $value = $this->getAttribute($query);
+
+        return $value === null ? null : new DateTimeImmutable($value);
     }
 
     public function isSigned(): bool

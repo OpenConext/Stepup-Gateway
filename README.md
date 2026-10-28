@@ -37,7 +37,7 @@ mock service was created for end to end test purposes, but could be utilized in 
 ### Running the functional tests
 
 The functional tests are PHPUnit tests that send SAML messages to the Gateway at the HTTP level, in-process. They need no
-web server, database server or devconf, only PHP with the `pdo_sqlite` extension (they use an in-memory SQLite database
+web server, no database server and no devconf Docker running. The functional tests run standalone in PHP cli with the `pdo_sqlite` extension (they use an in-memory SQLite database
 filled from `tests/Functional/Fixtures/devconf/database.sql`).
 
 ```

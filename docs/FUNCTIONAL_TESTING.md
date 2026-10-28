@@ -18,6 +18,8 @@ This document is for developers who want to add or change functional tests. For 
 - [Fixtures](#fixtures)
 - [Capturing fixtures from devconf](#capturing-fixtures-from-devconf)
 - [Re-signing captured responses](#re-signing-captured-responses)
+- [Verifying the Gateway's responses](#verifying-the-gateways-responses)
+- [Baseline responses](#baseline-responses)
 - [Gotchas and limitations](#gotchas-and-limitations)
 
 ## How it works
@@ -71,7 +73,7 @@ service in the application. Add it when a test needs it.
 
 ```
 tests/Functional/
-├── Gateway/                  Test classes (SfoFlowTest, SsoFlowTest, GsspFlowTest)
+├── Gateway/                  Test classes (SfoFlowTest, SsoFlowTest, GsspFlowTest, AdfsSfoFlowTest)
 ├── Support/
 │   ├── GatewayWebTestCase.php        Base test case (client, database, fixtures)
 │   ├── Database/DevconfFixtureLoader.php   Creates the schema and loads database.sql
@@ -80,16 +82,19 @@ tests/Functional/
 │       ├── SamlFixtureLoader.php     Loads SAML fixture files
 │       ├── SamlRequestParser.php     Reads the AuthnRequest the Gateway sends (e.g. from a redirect Location)
 │       ├── SamlResponseParser.php    Reads the SAML Response the Gateway returns
-│       └── SamlResponseResigner.php  Makes a captured Response valid for a new request
-├── Fixtures/devconf/         Everything captured from devconf
+│       ├── SamlResponseResigner.php  Makes a captured Response valid for a new request
+│       ├── SamlResponseNormalizer.php  Replaces IDs, timestamps and signature values, for baseline comparison
+│       └── SamlSignatureVerifier.php Verifies the XML signatures of a SAML message against a certificate
+├── Fixtures/devconf/         Everything captured from devconf (by hand)
 │   ├── database.sql
 │   ├── keys/                 Certificates and private keys (<name>.crt / <name>.key)
 │   └── saml/
 │       ├── authn-requests/   *.php fixtures
 │       └── responses/        *.php fixtures
+├── Fixtures/saml/baselines/  Baselines of the Gateway's responses, generated with UPDATE_SAML_BASELINES=1
 └── bin/
     ├── capture-devconf-fixture   Capture database and keys
-    └── convert-saml-to-fixture   Convert a captured SAML message to a fixture file
+    └── convert-saml-to-fixture   Convert a SAML message to a fixture file (also writes the baselines)
 ci/qa/phpunit-functional(.xml)    Test runner and PHPUnit configuration
 ```
 
@@ -100,6 +105,9 @@ Extend `GatewayWebTestCase`. It provides:
 - `$this->client`: the `KernelBrowser`
 - `$this->samlFixtures`: `loadRedirectAuthnRequest()`, `loadPostResponse()`, ...
 - `$this->samlResigner`: re-signs captured responses
+- `assertSamlResponseSignatureIsValid()`, `assertSamlResponseAnswersRequest()`, `assertSamlResponseTimestampsAreValid()` and
+  `assertSamlResponseMatchesBaseline()`: see [Verifying the Gateway's responses](#verifying-the-gateways-responses) and
+  [Baseline responses](#baseline-responses)
 - `getSamlResponseFromCurrentPage()`: parses the `SAMLResponse` of the auto-submit form the Gateway renders (returns a
   `SamlResponseParser` with status, audience, NameID, signed, ...) and `getFormAction()`: the ACS URL of that form.
 
@@ -124,9 +132,13 @@ $this->client->request('POST', 'https://gateway.dev.openconext.local/gssp/demo_g
 
 // 4. Assert on the SAML response the Gateway sends to the SP
 $samlResponse = $this->getSamlResponseFromCurrentPage();
+$this->assertSamlResponseSignatureIsValid($samlResponse);
+$this->assertSamlResponseAnswersRequest($samlResponse, $sfoRequestId);
+$this->assertSamlResponseTimestampsAreValid($samlResponse);
+$this->assertSamlResponseMatchesBaseline($samlResponse, 'gateway-sfo-response-jane-a1-loa3-redirect');
 ```
 
-See `SfoFlowTest`, `GsspFlowTest` and `SsoFlowTest` for complete examples, including negative tests (a replayed
+See `SfoFlowTest`, `GsspFlowTest`, `SsoFlowTest` and `AdfsSfoFlowTest` for complete examples, including negative tests (a replayed
 response, and a response to another request).
 
 Tips:
@@ -156,6 +168,10 @@ the generated header and a block comment with the decoded XML make it easy to se
 
 `SamlFixtureLoader` loads them by name, without extension (`loadRedirectAuthnRequest('sso-redirect-loa2')`).
 Name fixtures after what they contain, e.g. `sfo-redirect-jane-a1-loa2`, `ssp-response-joe-a-yk`.
+
+The responses the Gateway sends to an SP are not captured by hand: these are [baselines](#baseline-responses), generated
+by the tests and kept in a separate directory, `Fixtures/saml/baselines/<name>.php` (loaded with
+`loadBaselineResponse()`).
 
 Do not edit generated fixtures by hand (a signed request would not validate anymore). Capture a new one instead.
 
@@ -246,6 +262,100 @@ To test the Gateway's rejection of a bad response, pass the original captured re
 answers an unknown request), or resign it for a different request: `new SamlRequestParser('<samlp:AuthnRequest
 xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol" ID="_other"/>')`.
 
+## Verifying the Gateway's responses
+
+The SAML Responses the Gateway sends to the SP (`SsoFlowTest`, `SfoFlowTest`, `GsspFlowTest`, `AdfsSfoFlowTest`) are
+checked in four ways.
+
+### Signature
+
+`assertSamlResponseSignatureIsValid($samlResponse)` verifies the XML signature with `SamlSignatureVerifier`, against the
+Gateway IdP certificate (`Fixtures/devconf/keys/gateway_idp.crt`). The certificate is never taken from the message's
+`ds:KeyInfo`, so a response signed with another key fails. The verifier requires at least one signature, and checks that
+each signature:
+
+- is valid (digest and signature value);
+- is an enveloped signature over exactly its parent element (this guards against signature wrapping);
+- uses RSA-SHA256 and a SHA-256 digest.
+
+### InResponseTo
+
+`assertSamlResponseAnswersRequest($samlResponse, $requestId)` asserts that `InResponseTo` of the Response, and of the
+`SubjectConfirmationData` of the assertion, is the ID of the SP's AuthnRequest. The tests keep that ID when they send the
+request (`SamlRequestParser::fromRedirectUrl()` for HTTP-Redirect, `SamlRequestParser::fromPostBinding()` for HTTP-POST).
+Error responses are checked as well.
+
+### Timestamps
+
+`assertSamlResponseTimestampsAreValid($samlResponse)` asserts that the response is correct for a response that was just
+issued. Time is not mocked, so the checks are relative to the start of the test (set in `setUp()`) and to the current time:
+
+- `IssueInstant` of the Response and the Assertion, and `AuthnInstant`, are between the start of the test and now;
+- the assertion is valid now: `Conditions/@NotBefore` <= now < `Conditions/@NotOnOrAfter`, and
+  `SubjectConfirmationData/@NotOnOrAfter` has not passed;
+- the assertion is valid for at most 5 minutes (`MAX_ASSERTION_VALIDITY_SECONDS` in `GatewayWebTestCase`), and the
+  `SubjectConfirmationData` does not outlive the `Conditions`;
+- `SessionNotOnOrAfter` has not passed, when present.
+
+For an error response (no assertion) only the `IssueInstant` is checked. SAML timestamps have a precision of a second, the
+comparison is done on whole seconds.
+
+### Structure
+
+`assertSamlResponseMatchesBaseline()` compares the whole response with a baseline, see below.
+
+## Baseline responses
+
+A baseline is a captured SAML Response of the Gateway to an SP. The tests compare the Response with it, so a structural
+change is noticed: an added or removed attribute, a different `AuthnContext`, `Conditions` or `SubjectConfirmation`, a
+changed certificate, namespace or element order.
+
+```php
+$this->assertSamlResponseMatchesBaseline($samlResponse, 'gateway-sso-response-joe-a-yk-loa3');
+```
+
+Baselines are response fixtures in `Fixtures/saml/baselines/` (kept apart from the messages captured by hand in
+`Fixtures/devconf/saml/`), generated by `convert-saml-to-fixture`, with the decoded XML in the header. Before comparing, both XML documents are normalized by
+`SamlResponseNormalizer`. Everything that differs between two runs is replaced by a placeholder; the rest must be
+identical:
+
+| Replaced | By |
+|----------|----|
+| `ID` of the Response / Assertion (and the `ds:Reference` URI pointing at it) | `__RESPONSE_ID__` / `__ASSERTION_ID__` |
+| `InResponseTo` | `__IN_RESPONSE_TO__` |
+| `SessionIndex` | `__SESSION_INDEX__` |
+| `IssueInstant`, `NotBefore`, `NotOnOrAfter`, `AuthnInstant`, `SessionNotOnOrAfter` | `__TIME__` |
+| `ds:DigestValue`, `ds:SignatureValue` | `__DIGEST__`, `__SIGNATURE__` |
+
+Because the values that are replaced are not compared, they are asserted separately: use
+`assertSamlResponseSignatureIsValid()`, `assertSamlResponseAnswersRequest()` and `assertSamlResponseTimestampsAreValid()`
+as well. A failing comparison
+shows the differing lines of the normalized XML.
+
+### Updating baselines (`UPDATE_SAML_BASELINES=1`)
+
+When the Response legitimately changes (or for a new test), run the tests with `UPDATE_SAML_BASELINES=1`:
+
+```
+UPDATE_SAML_BASELINES=1 ci/qa/phpunit-functional
+```
+
+- A baseline is written only if it does not exist, or if its normalized XML differs from the actual Response. Unchanged
+  baselines are not touched, so the diff only contains real changes.
+- The fixture is written with `bin/convert-saml-to-fixture --type=response-baseline`, so it has the usual header and the
+  decoded XML. The test does not fail in this mode.
+- **Review the git diff** of the updated fixtures: the normal run (without the variable) passes afterwards, so an
+  unintended change is only visible in the diff. The baselines contain a fresh ID, timestamps and signature on every
+  update, ignore these.
+
+To add a baseline for a new test, call `assertSamlResponseMatchesBaseline($samlResponse, '<name>')` with a new name
+(`gateway-<sso|sfo>-response-<user>-<loa>[-<variant>]`) and run the tests once with `UPDATE_SAML_BASELINES=1`. Without
+the variable a missing baseline fails the test.
+
+Baselines are generated from the functional tests, not captured from devconf: the tests use a fixed database and fixed
+AuthnRequests, which makes the responses reproducible. Regenerate them after recapturing the database, keys or
+AuthnRequests.
+
 ## Gotchas and limitations
 
 - Requires the PHP `pdo_sqlite` extension.
@@ -255,5 +365,10 @@ xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol" ID="_other"/>')`.
 - Fixtures reference the devconf host names and certificates. When devconf changes keys or host names, recapture the
   fixtures (database, keys and SAML messages).
 - Time is not mocked, see [Time](#time).
-- Only HTTP-Redirect AuthnRequests and HTTP-POST Responses have been used so far; HTTP-POST AuthnRequests
-  (`loadPostAuthnRequest`) are supported by the loader but not yet exercised by tests.
+- The ADFS MFA extension (`AdfsSfoFlowTest`) uses a non-standard variation of the HTTP-POST binding. The AuthnRequest
+  is POSTed with the extra parameters `AuthMethod` (always `ADFS.SCSA`) and `Context`; these are not part of the
+  captured fixture (`sfo-adfs-*`), the test adds them. The Gateway answers with `_SAMLResponse` (instead of
+  `SAMLResponse`), `AuthMethod` and `Context`, POSTed to exactly the `AssertionConsumerServiceURL` of the AuthnRequest,
+  including its query string. ADFS checks the raw value of this URL, so the test compares the raw (not entity decoded)
+  `action` attribute in the HTML with the raw attribute in the AuthnRequest XML. The SAML Response itself is only seen
+  by the ADFS MFA extension (not by ADFS), and is the same as for a normal SFO request, including its `Destination`.

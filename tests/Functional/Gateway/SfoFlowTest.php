@@ -5,6 +5,7 @@ namespace Surfnet\StepupGateway\Tests\Functional\Gateway;
 
 use SAML2\Constants;
 use Surfnet\StepupGateway\Tests\Functional\Support\GatewayWebTestCase;
+use Surfnet\StepupGateway\Tests\Functional\Support\Saml\SamlRequestParser;
 
 /**
  * Functional tests for the Second Factor Only (SFO) authentication flow.
@@ -58,11 +59,14 @@ class SfoFlowTest extends GatewayWebTestCase
      * 3. Submit OTP (mocked Yubikey service always succeeds)
      * 4. Gateway returns a signed SAML Response via auto-submit form
      */
+    private string $spRequestId = '';
+
     public function testSuccessfulSfoWithYubikeyViaHttpRedirect(): void
     {
         // Step 1: Send signed AuthnRequest via HTTP-Redirect binding
         // The fixture contains the full query string: SAMLRequest=...&SigAlg=...&Signature=...
         $authnRequestQuery = $this->samlFixtures->loadRedirectAuthnRequest('sfo-redirect-joe-a-yk-loa2');
+        $this->spRequestId = SamlRequestParser::fromRedirectUrl($authnRequestQuery)->getId();
 
         // The AuthnRequest signature and Destination are bound to the devconf hostname
         $this->client->request(
@@ -75,20 +79,46 @@ class SfoFlowTest extends GatewayWebTestCase
         $this->assertResponseRedirects();
         $this->client->followRedirect();
 
-        // Step 3: Should show Yubikey OTP form
+        $this->assertYubikeyOtpSubmissionYieldsSuccessfulResponse('gateway-sfo-response-joe-a-yk-loa3-redirect');
+    }
+
+    /**
+     * Test a successful SFO authentication with Yubikey via HTTP-POST binding.
+     *
+     * Same flow as the HTTP-Redirect test, but the signed AuthnRequest is POSTed as a form
+     * parameter (base64-encoded XML with an enveloped XML signature).
+     */
+    public function testSuccessfulSfoWithYubikeyViaHttpPost(): void
+    {
+        $samlRequest = $this->samlFixtures->loadPostAuthnRequest('sfo-post-joe-a-yk-loa2');
+        $this->spRequestId = SamlRequestParser::fromPostBinding($samlRequest)->getId();
+
+        $this->client->request(
+            'POST',
+            self::GATEWAY_SFO_URL,
+            ['SAMLRequest' => $samlRequest],
+            server: ['HTTPS' => 'on']
+        );
+
+        // Should redirect to Yubikey verification
+        $this->assertResponseRedirects();
+        $this->client->followRedirect();
+
+        $this->assertYubikeyOtpSubmissionYieldsSuccessfulResponse('gateway-sfo-response-joe-a-yk-loa3-post');
+    }
+
+    /**
+     * Shared by the binding tests: expects the Yubikey OTP form, submits it and asserts the SAML response.
+     */
+    private function assertYubikeyOtpSubmissionYieldsSuccessfulResponse(string $baselineName): void
+    {
+        // Step 1 and 2: Should show Yubikey OTP form, submit OTP (mocked Yubikey service always succeeds)
+        $this->submitYubikeyOtp();
+
+        // Step 3: Should render SAML response (auto-submit form)
         $this->assertResponseIsSuccessful();
-        $this->assertSelectorTextContains('body', 'YubiKey');
 
-        // Step 4: Submit OTP (mocked Yubikey service always succeeds)
-        $crawler = $this->client->getCrawler();
-        $form = $crawler->selectButton('gateway_verify_yubikey_otp_submit')->form();
-        $form['gateway_verify_yubikey_otp[otp]'] = 'bogus-otp-we-use-a-mock-yubikey-service';
-        $this->client->submit($form);
-
-        // Step 5: Should render SAML response (auto-submit form)
-        $this->assertResponseIsSuccessful();
-
-        // Step 6: Parse and assert SAML response
+        // Step 4: Parse and assert SAML response
         $samlResponse = $this->getSamlResponseFromCurrentPage();
 
         $this->assertSame(
@@ -113,8 +143,12 @@ class SfoFlowTest extends GatewayWebTestCase
             $samlResponse->isSigned(),
             'SAML response should be signed'
         );
+        $this->assertSamlResponseSignatureIsValid($samlResponse);
+        $this->assertSamlResponseAnswersRequest($samlResponse, $this->spRequestId);
+        $this->assertSamlResponseTimestampsAreValid($samlResponse);
+        $this->assertSamlResponseMatchesBaseline($samlResponse, $baselineName);
 
-        // Step 7: Verify form action points to SP ACS
+        // Step 5: Verify form action points to SP ACS
         $formAction = $this->getFormAction();
         $this->assertSame(
             self::SP_ACS_URL,

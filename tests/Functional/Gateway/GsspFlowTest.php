@@ -28,10 +28,26 @@ class GsspFlowTest extends GatewayWebTestCase
     private const SP_ACS_URL = 'https://ssp.dev.openconext.local/simplesaml/module.php/debugsp/acs/second-sp';
     private const NAME_ID = 'urn:collab:person:institution-a.example.com:jane-a1';
 
-    public function testSuccessfulSfoWithDemoGssp(): void
-    {
-        $gatewayRequest = $this->startSfoAuthenticationUntilGsspRedirect();
+    private string $spRequestId = '';
 
+    public function testSuccessfulSfoWithDemoGsspViaHttpRedirect(): void
+    {
+        $this->assertSuccessfulSfoWithDemoGssp(
+            $this->startSfoAuthenticationUntilGsspRedirect(),
+            'gateway-sfo-response-jane-a1-loa3-redirect'
+        );
+    }
+
+    public function testSuccessfulSfoWithDemoGsspViaHttpPost(): void
+    {
+        $this->assertSuccessfulSfoWithDemoGssp(
+            $this->startSfoAuthenticationUntilGsspRedirect(true),
+            'gateway-sfo-response-jane-a1-loa3-post'
+        );
+    }
+
+    private function assertSuccessfulSfoWithDemoGssp(SamlRequestParser $gatewayRequest, string $baselineName): void
+    {
         // The Demo GSSP answers the AuthnRequest of the gateway
         $gsspResponse = $this->samlResigner->resign(
             $this->samlFixtures->loadPostResponse('demo-gssp-response-jane-a1'),
@@ -49,6 +65,10 @@ class GsspFlowTest extends GatewayWebTestCase
         $this->assertSame(self::SP_ENTITY_ID, $samlResponse->getAudience());
         $this->assertSame(self::NAME_ID, $samlResponse->getNameId());
         $this->assertTrue($samlResponse->isSigned(), 'SAML response should be signed');
+        $this->assertSamlResponseSignatureIsValid($samlResponse);
+        $this->assertSamlResponseAnswersRequest($samlResponse, $this->spRequestId);
+        $this->assertSamlResponseTimestampsAreValid($samlResponse);
+        $this->assertSamlResponseMatchesBaseline($samlResponse, $baselineName);
         $this->assertSame(self::SP_ACS_URL, $this->getFormAction());
     }
 
@@ -66,6 +86,9 @@ class GsspFlowTest extends GatewayWebTestCase
         $samlResponse = $this->getSamlResponseFromCurrentPage();
         $this->assertSame(Constants::STATUS_RESPONDER, $samlResponse->getStatusCode());
         $this->assertNull($samlResponse->getNameId());
+        $this->assertSamlResponseAnswersRequest($samlResponse, $this->spRequestId);
+        $this->assertSamlResponseTimestampsAreValid($samlResponse);
+        $this->assertSamlResponseMatchesBaseline($samlResponse, 'gateway-sfo-response-error-replayed-gssp-response');
     }
 
     public function testDemoGsspResponseToOtherRequestIsRejected(): void
@@ -88,25 +111,30 @@ class GsspFlowTest extends GatewayWebTestCase
     }
 
     /**
-     * Send the SFO AuthnRequest, and follow the gateway until it redirects to the Demo GSSP.
+     * Send the SFO AuthnRequest (HTTP-Redirect, or HTTP-POST when $viaPost), and follow the gateway until it redirects to the Demo GSSP.
      *
      * @return SamlRequestParser the AuthnRequest the gateway sent to the Demo GSSP
      */
-    private function startSfoAuthenticationUntilGsspRedirect(): SamlRequestParser
+    private function startSfoAuthenticationUntilGsspRedirect(bool $viaPost = false): SamlRequestParser
     {
-        $query = $this->samlFixtures->loadRedirectAuthnRequest('sfo-redirect-jane-a1-loa2');
-        $this->client->request('GET', self::GATEWAY_SFO_URL . '?' . $query, server: ['HTTPS' => 'on']);
-
-        for ($i = 0; $i < 5; $i++) {
-            $this->assertResponseRedirects();
-            $location = $this->client->getResponse()->headers->get('Location');
-            if (str_starts_with($location, self::DEMO_GSSP_SSO_URL)) {
-                return SamlRequestParser::fromRedirectUrl($location);
-            }
-            $this->client->followRedirect();
+        if ($viaPost) {
+            $samlRequest = $this->samlFixtures->loadPostAuthnRequest('sfo-post-jane-a1-loa2');
+            $this->spRequestId = SamlRequestParser::fromPostBinding($samlRequest)->getId();
+            $this->client->request(
+                'POST',
+                self::GATEWAY_SFO_URL,
+                ['SAMLRequest' => $samlRequest],
+                server: ['HTTPS' => 'on']
+            );
+        } else {
+            $query = $this->samlFixtures->loadRedirectAuthnRequest('sfo-redirect-jane-a1-loa2');
+            $this->spRequestId = SamlRequestParser::fromRedirectUrl($query)->getId();
+            $this->client->request('GET', self::GATEWAY_SFO_URL . '?' . $query, server: ['HTTPS' => 'on']);
         }
 
-        $this->fail('The gateway did not redirect to the Demo GSSP');
+        return SamlRequestParser::fromRedirectUrl(
+            $this->followRedirectsUntilLocationStartsWith(self::DEMO_GSSP_SSO_URL)
+        );
     }
 
     private function postGsspResponse(string $base64Response): void
@@ -117,12 +145,5 @@ class GsspFlowTest extends GatewayWebTestCase
             ['SAMLResponse' => $base64Response],
             server: ['HTTPS' => 'on']
         );
-    }
-
-    private function followRedirects(int $max = 5): void
-    {
-        for ($i = 0; $i < $max && $this->client->getResponse()->isRedirect(); $i++) {
-            $this->client->followRedirect();
-        }
     }
 }

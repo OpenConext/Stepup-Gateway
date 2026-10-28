@@ -1,0 +1,66 @@
+<?php
+/**
+ * WARNING: Generated using `tests/Functional/bin/convert-saml-to-fixture` do not edit manually
+ *
+ * Captured SAML message from devconf environment.
+ *
+ * Type: authn-request-post
+ * Binding: HTTP-POST
+ * Fixture name: sfo-post-joe-a-yk-loa2
+ * Generated: 2026-10-28T17:19:07+00:00
+ *
+ * This is an HTTP-POST AuthnRequest (base64-encoded XML).
+ * Captured from: SAML Tracer or browser DevTools form data
+ * Format: Base64-encoded XML value of SAMLRequest parameter
+ *
+ * Message Summary:
+ *   - Binding: HTTP-POST (base64-encoded XML)
+ *   - XML size: 3770 bytes
+ *   - Signed: Yes (XML signature)
+ *   - Signature Algorithm: http://www.w3.org/2001/04/xmldsig-more#rsa-sha256
+ *   - Issuer: https://ssp.dev.openconext.local/simplesaml/module.php/saml/sp/metadata.php/second-sp
+ *   - Destination: https://gateway.dev.openconext.local/second-factor-only/single-sign-on
+ *   - ID: _0033da6006b124243579c6d3584776621ff99d61b2
+ *   - IssueInstant: 2026-10-28T17:17:32Z
+ *   - NameID: urn:collab:person:institution-a.example.com:joe-a-yk
+ *   - AuthnContextClassRef: http://dev.openconext.local/assurance/sfo-level2
+ *   - AssertionConsumerServiceURL: https://ssp.dev.openconext.local/simplesaml/module.php/saml/sp/saml2-acs.php/second-sp
+ */
+
+/*
+Decoded XML:
+
+<?xml version="1.0"?>
+<samlp:AuthnRequest xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol" xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" ID="_0033da6006b124243579c6d3584776621ff99d61b2" Version="2.0" IssueInstant="2026-10-28T17:17:32Z" Destination="https://gateway.dev.openconext.local/second-factor-only/single-sign-on" AssertionConsumerServiceURL="https://ssp.dev.openconext.local/simplesaml/module.php/saml/sp/saml2-acs.php/second-sp" ProtocolBinding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST">
+  <saml:Issuer>https://ssp.dev.openconext.local/simplesaml/module.php/saml/sp/metadata.php/second-sp</saml:Issuer>
+  <ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+    <ds:SignedInfo>
+      <ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+      <ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/>
+      <ds:Reference URI="#_0033da6006b124243579c6d3584776621ff99d61b2">
+        <ds:Transforms>
+          <ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
+          <ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+        </ds:Transforms>
+        <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+        <ds:DigestValue>qHksBMnnTDu8PqMer78uAMDJHLwkNdWDrs6JmoLMNR8=</ds:DigestValue>
+      </ds:Reference>
+    </ds:SignedInfo>
+    <ds:SignatureValue>e4rhpJP4rGbhZdmMdJBuqTb0RMa/8cd7v1vvnbtV99ocQW/bvwH3HwgU/Jolb2AM6GRpQ5HJUcGGVHMWDTVxNI+sH1/laHVZz7kTCuMngWdl2hdgmnUXgAY7tHAkFcmjCrYRYqDiTYtvNlcrVBKRQrXnK2rumXtmxAoSlaPkw/xXnT028km6fOj4hMpIzUXzVuWXRyCgEjdkA5PqAKQFz+i2/q3d2XjlqgNBQenZ7iMMuGhdVy04XhB3Ozq1iByO5a8LJgpYSLiH6VUrD9FDfR10YDvEV1oOhVyP4D7fRMNie6YIp+XQL6UEdev6kHuuWRMAVi/YaNW8XCkIVgG0nmNMkuHqp+YaMdapVNJyO62SQEokj+vFFwqnPSlf7gggIA4xRMmL2dX0/si5oXfDW0fSNnb6ycsSngtA/dMwDNTemoWD1jVxM7y78tPRzKuPyGgnRAZ+YYO4ZySYhmVlIOF/ga0OuR/rVyxIVff0QVu/mP3y5u9OwugJtWothMHD</ds:SignatureValue>
+    <ds:KeyInfo>
+      <ds:X509Data>
+        <ds:X509Certificate>MIIECTCCAnECFCUUC/wBq6SyLyGi8sMZl2bB0cFmMA0GCSqGSIb3DQEBCwUAMEExFjAUBgNVBAMMDXNpbXBsZXNhbWwgU1AxJzAlBgNVBAoMHkRldmVsb3BtZW50IERvY2tlciBlbnZpcm9ubWVudDAeFw0yMzA1MjUwOTMzMTZaFw0yODA1MjMwOTMzMTZaMEExFjAUBgNVBAMMDXNpbXBsZXNhbWwgU1AxJzAlBgNVBAoMHkRldmVsb3BtZW50IERvY2tlciBlbnZpcm9ubWVudDCCAaIwDQYJKoZIhvcNAQEBBQADggGPADCCAYoCggGBAKY41F7F6YJrqUTHJw45X1Y3gsN0ZgryOZfPXGSOq2xEttVU8RIzWNJmtVZc6j3NlffKp8HOTgko5JAjSN3sK36K8a0yY4aOrPfwv67/8XkHbaQCH/CiCOigSyE2BJIskMToaamPXjWRl3K+ma/kShw7lMGmvmQxnHsc79zmJDPrT9chC4Ypkq828/DiEkRNXThvfe+61tI0rvXY4HQZ4BPlag7/oMUng4AehPe4r5GEpdh5b4872fIiTxOMUSjIt2zl8OFAazhigmZwk48MiYyCUbUvaAAqZ7ewX4/DmMdfqdSW7gscwIWV02k27lJzhNSqt1iR92e58tf377Ufl46JCvAzrtol4lwmMgoDIqe9WCMDrraEZ1jvDrHuX+sJjEe0qIbzSjQBa+jZc1AN6Gdrzf1HYCBr+wj75NtwP0La2o6p8yJbNsTcs8nE4GBrdVJF87BxI1OdoWjNLwhhDJsVsY1BUJtQGmyEWffVI1qPBPuv4H99cUNwlCS/I1TEgQIDAQABMA0GCSqGSIb3DQEBCwUAA4IBgQAdCxhHPfexwQwQXMhliZ1G3nxEedQ6rnvi2wA9yHxHBeKqX5TnIZUh2OYIdNon0x4XveLYUdAhoG6mBxk2QeQ3xNanwAuWnCRB5ssYqf7Jyu1EXMycZDkhVl9r01ApCFNFkF1p6wEgmXDG5A3KRsIWK4eU6ZLsywXksgCi0Hl63Rdz9+wVCqOBdufxgG0dxNA3GtE37Yz0pKuNJYch7onsfX5OCnI/lwbJc+A/500Rp01leYOx58KJGCyrVS5fuQmwuG7FC9ok8uSnS0gODCxQw26K+/uVK0X9HBJDn5DkXI2fsXChUV7rT12ZUukrn9CYZ2i71VMIopJI6DBQ7g4n7tljz5DcXbdHkHrrjHz2owXKKSFMOvEQ/216oxKaT8dF8BW2/EmXYd6Rnchyf4vmTFR/WaY2cg3k0leIXwPMI2sCBfgLoJHUBWh/RqaACMGdqhq93kzjy/FIzJvId3gcrUbK3NsFCVf5bXc32TkalocvEyZ4Id81IUcTi6RepEA=</ds:X509Certificate>
+      </ds:X509Data>
+    </ds:KeyInfo>
+  </ds:Signature>
+  <saml:Subject>
+    <saml:NameID Format="urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified">urn:collab:person:institution-a.example.com:joe-a-yk</saml:NameID>
+  </saml:Subject>
+  <samlp:NameIDPolicy Format="urn:oasis:names:tc:SAML:2.0:nameid-format:transient" AllowCreate="true"/>
+  <samlp:RequestedAuthnContext>
+    <saml:AuthnContextClassRef>http://dev.openconext.local/assurance/sfo-level2</saml:AuthnContextClassRef>
+  </samlp:RequestedAuthnContext>
+</samlp:AuthnRequest>
+*/
+
+return 'PHNhbWxwOkF1dGhuUmVxdWVzdCB4bWxuczpzYW1scD0idXJuOm9hc2lzOm5hbWVzOnRjOlNBTUw6Mi4wOnByb3RvY29sIiB4bWxuczpzYW1sPSJ1cm46b2FzaXM6bmFtZXM6dGM6U0FNTDoyLjA6YXNzZXJ0aW9uIiBJRD0iXzAwMzNkYTYwMDZiMTI0MjQzNTc5YzZkMzU4NDc3NjYyMWZmOTlkNjFiMiIgVmVyc2lvbj0iMi4wIiBJc3N1ZUluc3RhbnQ9IjIwMjYtMTAtMjhUMTc6MTc6MzJaIiBEZXN0aW5hdGlvbj0iaHR0cHM6Ly9nYXRld2F5LmRldi5vcGVuY29uZXh0LmxvY2FsL3NlY29uZC1mYWN0b3Itb25seS9zaW5nbGUtc2lnbi1vbiIgQXNzZXJ0aW9uQ29uc3VtZXJTZXJ2aWNlVVJMPSJodHRwczovL3NzcC5kZXYub3BlbmNvbmV4dC5sb2NhbC9zaW1wbGVzYW1sL21vZHVsZS5waHAvc2FtbC9zcC9zYW1sMi1hY3MucGhwL3NlY29uZC1zcCIgUHJvdG9jb2xCaW5kaW5nPSJ1cm46b2FzaXM6bmFtZXM6dGM6U0FNTDoyLjA6YmluZGluZ3M6SFRUUC1QT1NUIj48c2FtbDpJc3N1ZXI+aHR0cHM6Ly9zc3AuZGV2Lm9wZW5jb25leHQubG9jYWwvc2ltcGxlc2FtbC9tb2R1bGUucGhwL3NhbWwvc3AvbWV0YWRhdGEucGhwL3NlY29uZC1zcDwvc2FtbDpJc3N1ZXI+PGRzOlNpZ25hdHVyZSB4bWxuczpkcz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC8wOS94bWxkc2lnIyI+CiAgPGRzOlNpZ25lZEluZm8+PGRzOkNhbm9uaWNhbGl6YXRpb25NZXRob2QgQWxnb3JpdGhtPSJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzEwL3htbC1leGMtYzE0biMiLz4KICAgIDxkczpTaWduYXR1cmVNZXRob2QgQWxnb3JpdGhtPSJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNyc2Etc2hhMjU2Ii8+CiAgPGRzOlJlZmVyZW5jZSBVUkk9IiNfMDAzM2RhNjAwNmIxMjQyNDM1NzljNmQzNTg0Nzc2NjIxZmY5OWQ2MWIyIj48ZHM6VHJhbnNmb3Jtcz48ZHM6VHJhbnNmb3JtIEFsZ29yaXRobT0iaHR0cDovL3d3dy53My5vcmcvMjAwMC8wOS94bWxkc2lnI2VudmVsb3BlZC1zaWduYXR1cmUiLz48ZHM6VHJhbnNmb3JtIEFsZ29yaXRobT0iaHR0cDovL3d3dy53My5vcmcvMjAwMS8xMC94bWwtZXhjLWMxNG4jIi8+PC9kczpUcmFuc2Zvcm1zPjxkczpEaWdlc3RNZXRob2QgQWxnb3JpdGhtPSJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGVuYyNzaGEyNTYiLz48ZHM6RGlnZXN0VmFsdWU+cUhrc0JNbm5URHU4UHFNZXI3OHVBTURKSEx3a05kV0RyczZKbW9MTU5SOD08L2RzOkRpZ2VzdFZhbHVlPjwvZHM6UmVmZXJlbmNlPjwvZHM6U2lnbmVkSW5mbz48ZHM6U2lnbmF0dXJlVmFsdWU+ZTRyaHBKUDRyR2JoWmRtTWRKQnVxVGIwUk1hLzhjZDd2MXZ2bmJ0Vjk5b2NRVy9idndIM0h3Z1UvSm9sYjJBTTZHUnBRNUhKVWNHR1ZITVdEVFZ4Tkkrc0gxL2xhSFZaejdrVEN1TW5nV2RsMmhkZ21uVVhnQVk3dEhBa0ZjbWpDcllSWXFEaVRZdHZObGNyVkJLUlFyWG5LMnJ1bVh0bXhBb1NsYVBrdy94WG5UMDI4a202Zk9qNGhNcEl6VVh6VnVXWFJ5Q2dFamRrQTVQcUFLUUZ6K2kyL3EzZDJYamxxZ05CUWVuWjdpTU11R2hkVnkwNFhoQjNPenExaUJ5TzVhOExKZ3BZU0xpSDZWVXJEOUZEZlIxMFlEdkVWMW9PaFZ5UDREN2ZSTU5pZTZZSXArWFFMNlVFZGV2NmtIdXVXUk1BVmkvWWFOVzhYQ2tJVmdHMG5tTk1rdUhxcCtZYU1kYXBWTkp5TzYyU1FFb2tqK3ZGRndxblBTbGY3Z2dnSUE0eFJNbUwyZFgwL3NpNW9YZkRXMGZTTm5iNnljc1NuZ3RBL2RNd0ROVGVtb1dEMWpWeE03eTc4dFBSekt1UHlHZ25SQVorWVlPNFp5U1lobVZsSU9GL2dhME91Ui9yVnl4SVZmZjBRVnUvbVAzeTV1OU93dWdKdFdvdGhNSEQ8L2RzOlNpZ25hdHVyZVZhbHVlPgo8ZHM6S2V5SW5mbz48ZHM6WDUwOURhdGE+PGRzOlg1MDlDZXJ0aWZpY2F0ZT5NSUlFQ1RDQ0FuRUNGQ1VVQy93QnE2U3lMeUdpOHNNWmwyYkIwY0ZtTUEwR0NTcUdTSWIzRFFFQkN3VUFNRUV4RmpBVUJnTlZCQU1NRFhOcGJYQnNaWE5oYld3Z1UxQXhKekFsQmdOVkJBb01Ia1JsZG1Wc2IzQnRaVzUwSUVSdlkydGxjaUJsYm5acGNtOXViV1Z1ZERBZUZ3MHlNekExTWpVd09UTXpNVFphRncweU9EQTFNak13T1RNek1UWmFNRUV4RmpBVUJnTlZCQU1NRFhOcGJYQnNaWE5oYld3Z1UxQXhKekFsQmdOVkJBb01Ia1JsZG1Wc2IzQnRaVzUwSUVSdlkydGxjaUJsYm5acGNtOXViV1Z1ZERDQ0FhSXdEUVlKS29aSWh2Y05BUUVCQlFBRGdnR1BBRENDQVlvQ2dnR0JBS1k0MUY3RjZZSnJxVVRISnc0NVgxWTNnc04wWmdyeU9aZlBYR1NPcTJ4RXR0VlU4Ukl6V05KbXRWWmM2ajNObGZmS3A4SE9UZ2tvNUpBalNOM3NLMzZLOGEweVk0YU9yUGZ3djY3LzhYa0hiYVFDSC9DaUNPaWdTeUUyQkpJc2tNVG9hYW1QWGpXUmwzSyttYS9rU2h3N2xNR212bVF4bkhzYzc5em1KRFByVDljaEM0WXBrcTgyOC9EaUVrUk5YVGh2ZmUrNjF0STBydlhZNEhRWjRCUGxhZzcvb01Vbmc0QWVoUGU0cjVHRXBkaDViNDg3MmZJaVR4T01VU2pJdDJ6bDhPRkFhemhpZ21ad2s0OE1pWXlDVWJVdmFBQXFaN2V3WDQvRG1NZGZxZFNXN2dzY3dJV1YwMmsyN2xKemhOU3F0MWlSOTJlNTh0ZjM3N1VmbDQ2SkN2QXpydG9sNGx3bU1nb0RJcWU5V0NNRHJyYUVaMWp2RHJIdVgrc0pqRWUwcUlielNqUUJhK2paYzFBTjZHZHJ6ZjFIWUNCcit3ajc1TnR3UDBMYTJvNnA4eUpiTnNUY3M4bkU0R0JyZFZKRjg3QnhJMU9kb1dqTkx3aGhESnNWc1kxQlVKdFFHbXlFV2ZmVkkxcVBCUHV2NEg5OWNVTndsQ1MvSTFURWdRSURBUUFCTUEwR0NTcUdTSWIzRFFFQkN3VUFBNElCZ1FBZEN4aEhQZmV4d1F3UVhNaGxpWjFHM254RWVkUTZybnZpMndBOXlIeEhCZUtxWDVUbklaVWgyT1lJZE5vbjB4NFh2ZUxZVWRBaG9HNm1CeGsyUWVRM3hOYW53QXVXbkNSQjVzc1lxZjdKeXUxRVhNeWNaRGtoVmw5cjAxQXBDRk5Ga0YxcDZ3RWdtWERHNUEzS1JzSVdLNGVVNlpMc3l3WGtzZ0NpMEhsNjNSZHo5K3dWQ3FPQmR1ZnhnRzBkeE5BM0d0RTM3WXowcEt1TkpZY2g3b25zZlg1T0NuSS9sd2JKYytBLzUwMFJwMDFsZVlPeDU4S0pHQ3lyVlM1ZnVRbXd1RzdGQzlvazh1U25TMGdPREN4UXcyNksrL3VWSzBYOUhCSkRuNURrWEkyZnNYQ2hVVjdyVDEyWlV1a3JuOUNZWjJpNzFWTUlvcEpJNkRCUTdnNG43dGxqejVEY1hiZEhrSHJyakh6Mm93WEtLU0ZNT3ZFUS8yMTZveEthVDhkRjhCVzIvRW1YWWQ2Um5jaHlmNHZtVEZSL1dhWTJjZzNrMGxlSVh3UE1JMnNDQmZnTG9KSFVCV2gvUnFhQUNNR2RxaHE5M2t6ankvRkl6SnZJZDNnY3JVYkszTnNGQ1ZmNWJYYzMyVGthbG9jdkV5WjRJZDgxSVVjVGk2UmVwRUE9PC9kczpYNTA5Q2VydGlmaWNhdGU+PC9kczpYNTA5RGF0YT48L2RzOktleUluZm8+PC9kczpTaWduYXR1cmU+PHNhbWw6U3ViamVjdD48c2FtbDpOYW1lSUQgRm9ybWF0PSJ1cm46b2FzaXM6bmFtZXM6dGM6U0FNTDoxLjE6bmFtZWlkLWZvcm1hdDp1bnNwZWNpZmllZCI+dXJuOmNvbGxhYjpwZXJzb246aW5zdGl0dXRpb24tYS5leGFtcGxlLmNvbTpqb2UtYS15azwvc2FtbDpOYW1lSUQ+PC9zYW1sOlN1YmplY3Q+PHNhbWxwOk5hbWVJRFBvbGljeSBGb3JtYXQ9InVybjpvYXNpczpuYW1lczp0YzpTQU1MOjIuMDpuYW1laWQtZm9ybWF0OnRyYW5zaWVudCIgQWxsb3dDcmVhdGU9InRydWUiLz48c2FtbHA6UmVxdWVzdGVkQXV0aG5Db250ZXh0PjxzYW1sOkF1dGhuQ29udGV4dENsYXNzUmVmPmh0dHA6Ly9kZXYub3BlbmNvbmV4dC5sb2NhbC9hc3N1cmFuY2Uvc2ZvLWxldmVsMjwvc2FtbDpBdXRobkNvbnRleHRDbGFzc1JlZj48L3NhbWxwOlJlcXVlc3RlZEF1dGhuQ29udGV4dD48L3NhbWxwOkF1dGhuUmVxdWVzdD4=';

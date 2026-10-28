@@ -45,6 +45,19 @@ class SamlRequestParser
         return new self($xml);
     }
 
+    /**
+     * Create a parser from the SAMLRequest parameter of a request using the HTTP-POST binding (base64 encoded XML).
+     */
+    public static function fromPostBinding(string $base64Request): self
+    {
+        $xml = base64_decode($base64Request, true);
+        if ($xml === false) {
+            throw new RuntimeException('Unable to decode the SAMLRequest');
+        }
+
+        return new self($xml);
+    }
+
     public function getId(): string
     {
         return $this->document->documentElement->getAttribute('ID');

@@ -9,7 +9,7 @@ namespace Surfnet\StepupGateway\Tests\Functional\Support\Saml;
  *
  * Searches in order:
  * 1. Devconf captured fixtures (Fixtures/devconf/saml/)
- * 2. Generated fixtures (Fixtures/saml/)
+ * 2. Generated fixtures (Fixtures/saml/), e.g. the baselines of the responses of the Gateway
  */
 class SamlFixtureLoader
 {
@@ -47,6 +47,14 @@ class SamlFixtureLoader
     public function loadPostResponse(string $name): string
     {
         return $this->loadFixture('responses/' . $name);
+    }
+
+    /**
+     * Load the baseline of a Response of the Gateway (base64-encoded XML), generated with UPDATE_SAML_BASELINES=1.
+     */
+    public function loadBaselineResponse(string $name): string
+    {
+        return $this->loadFixture('baselines/' . $name);
     }
 
     /**

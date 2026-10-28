@@ -28,22 +28,21 @@ class SsoFlowTest extends GatewayWebTestCase
     private const SP_ENTITY_ID = 'https://ssp.dev.openconext.local/simplesaml/module.php/saml/sp/metadata.php/default-sp';
     private const SP_ACS_URL = 'https://ssp.dev.openconext.local/simplesaml/module.php/saml/sp/saml2-acs.php/default-sp';
 
+    private string $spRequestId = '';
+
     public function testSuccessfulSsoWithYubikey(): void
     {
         $this->authenticateAtIdp('ssp-response-joe-a-yk');
 
         // The gateway asks for the second factor: the Yubikey of joe-a-yk
         $this->followRedirects();
-        $this->assertResponseIsSuccessful();
-        $this->assertSelectorTextContains('body', 'YubiKey');
-
-        // Submit OTP (mocked Yubikey service always succeeds)
-        $form = $this->client->getCrawler()->selectButton('gateway_verify_yubikey_otp_submit')->form();
-        $form['gateway_verify_yubikey_otp[otp]'] = 'bogus-otp-we-use-a-mock-yubikey-service';
-        $this->client->submit($form);
+        $this->submitYubikeyOtp();
         $this->followRedirects();
 
-        $this->assertSuccessfulResponseForSp('urn:collab:person:institution-a.example.com:joe-a-yk');
+        $this->assertSuccessfulResponseForSp(
+            'urn:collab:person:institution-a.example.com:joe-a-yk',
+            'gateway-sso-response-joe-a-yk-loa3'
+        );
     }
 
     public function testSuccessfulSsoWithDemoGssp(): void
@@ -51,7 +50,9 @@ class SsoFlowTest extends GatewayWebTestCase
         $this->authenticateAtIdp('ssp-response-jane-a1');
 
         // The gateway sends jane-a1 to the Demo GSSP
-        $gsspRequest = $this->followRedirectsUntilLocationStartsWith(self::DEMO_GSSP_SSO_URL);
+        $gsspRequest = SamlRequestParser::fromRedirectUrl(
+            $this->followRedirectsUntilLocationStartsWith(self::DEMO_GSSP_SSO_URL)
+        );
 
         $this->client->request(
             'POST',
@@ -64,7 +65,10 @@ class SsoFlowTest extends GatewayWebTestCase
         );
         $this->followRedirects();
 
-        $this->assertSuccessfulResponseForSp('urn:collab:person:institution-a.example.com:jane-a1');
+        $this->assertSuccessfulResponseForSp(
+            'urn:collab:person:institution-a.example.com:jane-a1',
+            'gateway-sso-response-jane-a1-loa3'
+        );
     }
 
     public function testCapturedIdpResponseCanNotBeReplayed(): void
@@ -74,7 +78,7 @@ class SsoFlowTest extends GatewayWebTestCase
         // Unmodified response: InResponseTo does not match and the response has expired
         $this->postIdpResponse($this->samlFixtures->loadPostResponse('ssp-response-joe-a-yk'));
 
-        $this->assertErrorResponseForSp();
+        $this->assertErrorResponseForSp('gateway-sso-response-error-replayed-idp-response');
     }
 
     public function testIdpResponseToOtherRequestIsRejected(): void
@@ -115,9 +119,10 @@ class SsoFlowTest extends GatewayWebTestCase
     private function startSsoUntilIdpRedirect(): SamlRequestParser
     {
         $query = $this->samlFixtures->loadRedirectAuthnRequest('sso-redirect-loa2');
+        $this->spRequestId = SamlRequestParser::fromRedirectUrl($query)->getId();
         $this->client->request('GET', self::GATEWAY_SSO_URL . '?' . $query, server: ['HTTPS' => 'on']);
 
-        return $this->followRedirectsUntilLocationStartsWith(self::IDP_SSO_URL);
+        return SamlRequestParser::fromRedirectUrl($this->followRedirectsUntilLocationStartsWith(self::IDP_SSO_URL));
     }
 
     private function postIdpResponse(string $base64Response): void
@@ -130,33 +135,7 @@ class SsoFlowTest extends GatewayWebTestCase
         );
     }
 
-    /**
-     * Follow redirects until the gateway redirects to the given URL (the redirect is not followed).
-     *
-     * @return SamlRequestParser the AuthnRequest in the redirect
-     */
-    private function followRedirectsUntilLocationStartsWith(string $url): SamlRequestParser
-    {
-        for ($i = 0; $i < 6; $i++) {
-            $this->assertResponseRedirects();
-            $location = $this->client->getResponse()->headers->get('Location');
-            if (str_starts_with($location, $url)) {
-                return SamlRequestParser::fromRedirectUrl($location);
-            }
-            $this->client->followRedirect();
-        }
-
-        $this->fail(sprintf('The gateway did not redirect to %s', $url));
-    }
-
-    private function followRedirects(int $max = 6): void
-    {
-        for ($i = 0; $i < $max && $this->client->getResponse()->isRedirect(); $i++) {
-            $this->client->followRedirect();
-        }
-    }
-
-    private function assertSuccessfulResponseForSp(string $nameId): void
+    private function assertSuccessfulResponseForSp(string $nameId, string $baselineName): void
     {
         $this->assertResponseIsSuccessful();
 
@@ -165,13 +144,17 @@ class SsoFlowTest extends GatewayWebTestCase
         $this->assertSame(self::SP_ENTITY_ID, $samlResponse->getAudience());
         $this->assertSame($nameId, $samlResponse->getNameId());
         $this->assertTrue($samlResponse->isSigned(), 'SAML response should be signed');
+        $this->assertSamlResponseSignatureIsValid($samlResponse);
+        $this->assertSamlResponseAnswersRequest($samlResponse, $this->spRequestId);
+        $this->assertSamlResponseTimestampsAreValid($samlResponse);
+        $this->assertSamlResponseMatchesBaseline($samlResponse, $baselineName);
         $this->assertSame(self::SP_ACS_URL, $this->getFormAction());
     }
 
     /**
      * The gateway does not authenticate the user, and sends an error response to the SP.
      */
-    private function assertErrorResponseForSp(): void
+    private function assertErrorResponseForSp(string $baselineName): void
     {
         $this->followRedirects();
         $this->assertResponseIsSuccessful();
@@ -179,5 +162,8 @@ class SsoFlowTest extends GatewayWebTestCase
         $samlResponse = $this->getSamlResponseFromCurrentPage();
         $this->assertSame(Constants::STATUS_RESPONDER, $samlResponse->getStatusCode());
         $this->assertNull($samlResponse->getNameId());
+        $this->assertSamlResponseAnswersRequest($samlResponse, $this->spRequestId);
+        $this->assertSamlResponseTimestampsAreValid($samlResponse);
+        $this->assertSamlResponseMatchesBaseline($samlResponse, $baselineName);
     }
 }
