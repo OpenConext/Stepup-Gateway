@@ -1,5 +1,8 @@
 # Changelog
 
+## 5.1.5
+- Fix second factor bypass vulnerability (security)
+
 ## 5.1.2
 - Update xmlseclibs to 3.1.4 to fix canonicalization bypass error (security)
 
