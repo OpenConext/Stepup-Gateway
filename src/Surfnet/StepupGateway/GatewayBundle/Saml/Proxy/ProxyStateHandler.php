@@ -42,7 +42,7 @@ class ProxyStateHandler
         $all = $this->requestStack->getSession()->all();
 
         foreach (array_keys($all) as $key) {
-            if (str_starts_with((string) $key, (string) $this->sessionPath)) {
+            if (str_starts_with($key, $this->sessionPath)) {
                 $this->requestStack->getSession()->remove($key);
             }
         }

@@ -35,7 +35,7 @@ class StateHandler extends ProxyStateHandler
     public function setSubject(string $subject): self
     {
         $currentSubject = $this->get('subject');
-        if (!empty($currentSubject) && strtolower((string) $currentSubject) !== strtolower($subject)) {
+        if (!empty($currentSubject) && strtolower($currentSubject) !== strtolower($subject)) {
             throw new InvalidSubjectException(
                 sprintf(
                     'The subject should not be rewritten with another value. Old: "%s", new "%s"',
@@ -86,7 +86,7 @@ class StateHandler extends ProxyStateHandler
         $all = $this->getSession()->all();
         $prefix = $this->getPrefix();
         foreach (array_keys($all) as $key) {
-            if (str_starts_with((string) $key, $prefix)) {
+            if (str_starts_with($key, $prefix)) {
                 $this->getSession()->remove($key);
             }
         }

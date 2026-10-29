@@ -61,7 +61,7 @@ class ServiceProvider extends BaseServiceProvider
 
         $nameIdPatterns = $this->get('secondFactorOnlyNameIdPatterns');
         foreach ($nameIdPatterns as $nameIdPattern) {
-            if ((bool) preg_match('#^' . strtr(preg_quote((string) $nameIdPattern, '#'), ['\*' => '.*']) . '$#', $nameId)) {
+            if ((bool) preg_match('#^' . strtr(preg_quote($nameIdPattern, '#'), ['\*' => '.*']) . '$#', $nameId)) {
                 return true;
             }
         }
@@ -138,7 +138,7 @@ class ServiceProvider extends BaseServiceProvider
         $allowedAcsLocations = $this->get('allowedAcsLocations');
 
         foreach ($allowedAcsLocations as $allowedAcsLocation) {
-            if (str_starts_with((string) $acsLocationInAuthnRequest, (string) $allowedAcsLocation)) {
+            if (str_starts_with($acsLocationInAuthnRequest, $allowedAcsLocation)) {
                 return $acsLocationInAuthnRequest;
             }
         }

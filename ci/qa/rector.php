@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
 use Rector\Php80\Rector\Class_\ClassPropertyAssignToConstructorPromotionRector;
+use Rector\Php81\Rector\FuncCall\NullToStrictStringFuncCallArgRector;
 use Rector\Php84\Rector\MethodCall\NewMethodCallWithoutParenthesesRector;
 use Rector\Symfony\Symfony28\Rector\MethodCall\GetToConstructorInjectionRector;
 
@@ -32,6 +33,8 @@ return RectorConfig::configure()
         // dependencies via $this->get() and a service locator, not constructor
         // autowiring. This rule assumes autowiring and breaks the DI container.
         GetToConstructorInjectionRector::class,
+        // Casts added by this rule hide null handling that phpstan already checks.
+        NullToStrictStringFuncCallArgRector::class,
         // Doctrine entities keep their mapped properties declared explicitly.
         ClassPropertyAssignToConstructorPromotionRector::class => [
             __DIR__ . '/../../src/Surfnet/StepupGateway/GatewayBundle/Entity',
