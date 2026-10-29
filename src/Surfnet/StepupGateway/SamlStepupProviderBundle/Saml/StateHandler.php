@@ -25,9 +25,9 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class StateHandler extends ProxyStateHandler
 {
-    private const SESSION_PATH = 'surfnet/gateway/gssp';
+    private const string SESSION_PATH = 'surfnet/gateway/gssp';
     public function __construct(
-        private RequestStack $requestStack,
+        private readonly RequestStack $requestStack,
         private readonly string $provider,
     ) {
     }
@@ -80,6 +80,7 @@ class StateHandler extends ProxyStateHandler
     /**
      * Clear the complete state of this provider, leaving other provider (GSSP) states intact.
      */
+    #[\Override]
     public function clear(): void
     {
         $all = $this->getSession()->all();
@@ -91,11 +92,13 @@ class StateHandler extends ProxyStateHandler
         }
     }
 
+    #[\Override]
     protected function set($key, $value): void
     {
         $this->getSession()->set($this->getPrefix() . $key, $value);
     }
 
+    #[\Override]
     protected function get($key): mixed
     {
         return $this->getSession()->get($this->getPrefix() . $key);

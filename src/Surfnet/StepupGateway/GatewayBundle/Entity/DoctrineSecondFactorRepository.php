@@ -32,7 +32,7 @@ class DoctrineSecondFactorRepository extends EntityRepository implements SecondF
 
     public function getAllMatchingFor(Loa $highestLoa, $identityNameId, SecondFactorTypeService $service)
     {
-        /** @var \Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor[] $secondFactors */
+        /** @var SecondFactor[] $secondFactors */
         $secondFactors = $this->findAllByIdentityNameId($identityNameId);
 
         $matches = new ArrayCollection();
@@ -53,9 +53,7 @@ class DoctrineSecondFactorRepository extends EntityRepository implements SecondF
 
     public function findOneBySecondFactorId($secondFactorId)
     {
-        if (!isset($this->secondFactorsById[$secondFactorId])) {
-            $this->secondFactorsById[$secondFactorId] = $this->findOneBy(['secondFactorId' => $secondFactorId]);
-        }
+        $this->secondFactorsById[$secondFactorId] ??= $this->findOneBy(['secondFactorId' => $secondFactorId]);
 
         return $this->secondFactorsById[$secondFactorId];
     }
@@ -66,7 +64,7 @@ class DoctrineSecondFactorRepository extends EntityRepository implements SecondF
      */
     public function getInstitutionByNameId($identityNameId)
     {
-        /** @var \Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor $secondFactor **/
+        /** @var SecondFactor $secondFactor **/
         $secondFactor = $this->createQueryBuilder('sf')
             ->where('sf.nameId = :nameId')
             ->setParameter('nameId', $identityNameId)
@@ -82,11 +80,11 @@ class DoctrineSecondFactorRepository extends EntityRepository implements SecondF
 
     /**
      * @param $identityNameId
-     * @return \Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor[]
+     * @return SecondFactor[]
      */
     private function findAllByIdentityNameId($identityNameId)
     {
-        /** @var \Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor[] $secondFactors */
+        /** @var SecondFactor[] $secondFactors */
         return $this->createQueryBuilder('sf')
             ->where('sf.nameId = :nameId')
             ->setParameter('nameId', $identityNameId)

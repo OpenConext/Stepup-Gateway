@@ -20,6 +20,8 @@ namespace Surfnet\StepupGateway\Behat;
 
 use Behat\Mink\Exception\ExpectationException;
 use Behat\MinkExtension\Context\MinkContext as BaseMinkContext;
+use Behat\Step\Given;
+use Behat\Step\Then;
 use DMore\ChromeDriver\ChromeDriver;
 use DOMDocument;
 use DOMXPath;
@@ -40,13 +42,13 @@ class MinkContext extends BaseMinkContext
      */
     private $windows = [];
 
-    #[\Behat\Step\Then('/^the response should contain \\\'([^\\\']*)\\\'$/')]
+    #[Then('/^the response should contain \\\'([^\\\']*)\\\'$/')]
     public function theResponseShouldContain($string): void
     {
         $this->assertSession()->responseContains($string);
     }
 
-    #[\Behat\Step\Then('/^the response should match xpath \\\'([^\\\']*)\\\'$/')]
+    #[Then('/^the response should match xpath \\\'([^\\\']*)\\\'$/')]
     public function theResponseShouldMatchXpath($xpath): void
     {
         $document = new DOMDocument();
@@ -62,7 +64,7 @@ class MinkContext extends BaseMinkContext
         $this->assertXpath($this->buildXPath($document), $xpath, true);
     }
 
-    #[\Behat\Step\Then('/^the ADFS response should match xpath \\\'([^\\\']*)\\\'$/')]
+    #[Then('/^the ADFS response should match xpath \\\'([^\\\']*)\\\'$/')]
     public function theAdfsResponseShouldMatchXpath($xpath): void
     {
         $document = new DOMDocument();
@@ -72,7 +74,7 @@ class MinkContext extends BaseMinkContext
         $this->assertXpath($this->buildXPath($document), $xpath, true);
     }
 
-    #[\Behat\Step\Then('/^the ADFS response should carry the ADFS POST parameters$/')]
+    #[Then('/^the ADFS response should carry the ADFS POST parameters$/')]
     public function theAdfsResponseShouldHaveAdfsPostParams(): void
     {
         $context = $this->getSession()->getPage()->findById('Context')->getText();
@@ -85,7 +87,7 @@ class MinkContext extends BaseMinkContext
         }
     }
 
-    #[\Behat\Step\Then('/^the response should not match xpath \\\'([^\\\']*)\\\'$/')]
+    #[Then('/^the response should not match xpath \\\'([^\\\']*)\\\'$/')]
     public function theResponseShouldNotMatchXpath($xpath): void
     {
         $document = new DOMDocument();
@@ -94,7 +96,7 @@ class MinkContext extends BaseMinkContext
         $this->assertXpath($this->buildXPath($document), $xpath, false);
     }
 
-    #[\Behat\Step\Then('/^the AuthnRequest sent to the GSSP should be addressed to "([^"]*)"$/')]
+    #[Then('/^the AuthnRequest sent to the GSSP should be addressed to "([^"]*)"$/')]
     public function theAuthnRequestSentToTheGsspShouldBeAddressedTo(string $url): void
     {
         $actualUrl = $this->getGsspAuthnRequestUrl();
@@ -112,13 +114,13 @@ class MinkContext extends BaseMinkContext
         }
     }
 
-    #[\Behat\Step\Then('/^the AuthnRequest sent to the GSSP should match xpath \\\'([^\\\']*)\\\'$/')]
+    #[Then('/^the AuthnRequest sent to the GSSP should match xpath \\\'([^\\\']*)\\\'$/')]
     public function theAuthnRequestSentToTheGsspShouldMatchXpath($xpath): void
     {
         $this->assertXpath($this->buildXPath($this->getGsspAuthnRequestDocument()), $xpath, true);
     }
 
-    #[\Behat\Step\Then('/^the AuthnRequest sent to the GSSP should not match xpath \\\'([^\\\']*)\\\'$/')]
+    #[Then('/^the AuthnRequest sent to the GSSP should not match xpath \\\'([^\\\']*)\\\'$/')]
     public function theAuthnRequestSentToTheGsspShouldNotMatchXpath($xpath): void
     {
         $this->assertXpath($this->buildXPath($this->getGsspAuthnRequestDocument()), $xpath, false);
@@ -220,19 +222,19 @@ class MinkContext extends BaseMinkContext
         }
     }
 
-    #[\Behat\Step\Given('/^I should see URL "([^"]*)"$/')]
+    #[Given('/^I should see URL "([^"]*)"$/')]
     public function iShouldSeeUrl($url): void
     {
         $this->assertSession()->responseContains($url);
     }
 
-    #[\Behat\Step\Given('/^I should not see URL "([^"]*)"$/')]
+    #[Given('/^I should not see URL "([^"]*)"$/')]
     public function iShouldNotSeeUrl($url): void
     {
         $this->assertSession()->responseNotContains($url);
     }
 
-    #[\Behat\Step\Given('/^I open (\d+) browser tabs identified by "([^"]*)"$/')]
+    #[Given('/^I open (\d+) browser tabs identified by "([^"]*)"$/')]
     public function iOpenTwoBrowserTabsIdentifiedBy($numberOfTabs, $tabNames): void
     {
         // On successive scenarios, reset the session to get rid of browser (session) state from previous scenarios
@@ -297,7 +299,7 @@ class MinkContext extends BaseMinkContext
         return null;
     }
 
-    #[\Behat\Step\Given('/^I switch to "([^"]*)"$/')]
+    #[Given('/^I switch to "([^"]*)"$/')]
     public function iSwitchToWindow($windowName): void
     {
         // (re) set the default session to the chrome session.

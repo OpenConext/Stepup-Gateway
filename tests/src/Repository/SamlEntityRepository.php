@@ -107,7 +107,7 @@ SQL;
             // keeping the first write, so scenario order doesn't matter - other callers pass
             // an empty $serviceNames and are unaffected.
             if (!empty($serviceNames)) {
-                $configuration = json_decode($result['configuration'], true);
+                $configuration = json_decode((string) $result['configuration'], true);
                 $configuration['service_name'] = $serviceNames;
                 $result['configuration'] = json_encode($configuration);
 

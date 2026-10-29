@@ -37,7 +37,6 @@ use Surfnet\StepupGateway\SamlStepupProviderBundle\Saml\StateHandler;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Service\Gateway\SecondFactorVerificationService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBag;
 use Symfony\Component\HttpFoundation\Session\Session;
 
 class SecondFactorVerificationServiceTest extends GatewaySamlTestCase
@@ -354,10 +353,8 @@ class SecondFactorVerificationServiceTest extends GatewaySamlTestCase
 
     private function mockRequestStack(string $locale = 'en'): RequestStack
     {
-        $requestStack = new RequestStack();
         $request = new Request();
         $request->setLocale($locale);
-        $requestStack->push($request);
-        return $requestStack;
+        return new RequestStack([$request]);
     }
 }

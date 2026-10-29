@@ -44,6 +44,7 @@ final class ExceptionController extends BaseExceptionController
     /**
      * @return array View parameters 'title' and 'description'
      */
+    #[\Override]
     protected function getPageTitleAndDescription(\Exception|Throwable $exception): array
     {
         $translator = $this->getTranslator();
@@ -65,6 +66,7 @@ final class ExceptionController extends BaseExceptionController
         return parent::getPageTitleAndDescription($exception);
     }
 
+    #[\Override]
     public function show(Request $request, Throwable $exception): Response
     {
         $statusCode = $this->getStatusCode($exception);

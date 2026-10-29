@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Form\Type;
 
+use Surfnet\StepupBundle\Command\VerifyPossessionOfPhoneCommand;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -52,10 +53,11 @@ class VerifySmsChallengeType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => \Surfnet\StepupBundle\Command\VerifyPossessionOfPhoneCommand::class,
+            'data_class' => VerifyPossessionOfPhoneCommand::class,
         ]);
     }
 
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return 'gateway_verify_sms_challenge';

@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Controller;
 
+use Psr\Log\LoggerInterface;
 use SAML2\Response as SAMLResponse;
 use Surfnet\StepupGateway\GatewayBundle\Container\ContainerController;
 use Surfnet\StepupGateway\GatewayBundle\Exception\InvalidArgumentException;
@@ -31,10 +32,11 @@ use Surfnet\StepupGateway\GatewayBundle\Service\Gateway\FailedResponseService;
 use Surfnet\StepupGateway\GatewayBundle\Service\Gateway\LoginService;
 use Surfnet\StepupGateway\GatewayBundle\Service\Gateway\RespondService;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\ResponseHelper;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 /**
  * Entry point for the Stepup login flow.
@@ -60,16 +62,16 @@ class GatewayController extends ContainerController
      * IDP configured in Stepup (most likely to be an instance of OpenConext
      * EngineBlock).
      *
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
+     * @return RedirectResponse|Response
      */
-    #[\Symfony\Component\Routing\Attribute\Route(
+    #[Route(
         path: '/authentication/single-sign-on',
         name: 'gateway_identityprovider_sso',
         methods: ['GET', 'POST']
     )]
     public function sso(Request $httpRequest)
     {
-        /** @var \Psr\Log\LoggerInterface $logger */
+        /** @var LoggerInterface $logger */
         $logger = $this->get('logger');
 
         $redirectBinding = $this->get('surfnet_saml.http.redirect_binding');
@@ -90,7 +92,7 @@ class GatewayController extends ContainerController
         return $redirectBinding->createResponseFor($proxyRequest);
     }
 
-    #[\Symfony\Component\Routing\Attribute\Route(
+    #[Route(
         path: '/authentication/single-sign-on/{idpKey}',
         name: 'gateway_identityprovider_sso_proxy',
         methods: ['POST']
@@ -108,7 +110,7 @@ class GatewayController extends ContainerController
      * using an internal redirect to the SecondFactorController to start the
      * actual second factor verification.
      */
-    #[\Symfony\Component\Routing\Attribute\Route(
+    #[Route(
         path: '/authentication/consume-assertion',
         name: 'gateway_serviceprovider_consume_assertion',
         methods: ['POST']
@@ -239,6 +241,7 @@ class GatewayController extends ContainerController
     /**
      * @param string $view
      */
+    #[\Override]
     public function render($view, array $parameters = [], ?Response $response = null): Response
     {
         return parent::render(

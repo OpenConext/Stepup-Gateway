@@ -19,6 +19,7 @@
 namespace Surfnet\StepupGateway\GatewayBundle\Tests\Sso2fa;
 
 use Mockery;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
@@ -30,7 +31,6 @@ use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
 use Surfnet\StepupGateway\GatewayBundle\Service\InstitutionConfigurationService;
 use Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorService;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\CookieService;
-use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Crypto\CryptoHelper;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Crypto\HaliteCryptoHelper;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\DateTime\ExpirationHelperInterface;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Http\CookieHelper;
@@ -46,7 +46,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class CookieServiceTest extends TestCase
 {
-    use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+    use MockeryPHPUnitIntegration;
 
     /**
      * @var CookieService
@@ -513,8 +513,7 @@ class CookieServiceTest extends TestCase
             $this->service->maySkipAuthentication(
                 3.0,
                 'ident-1234',
-                $cookieValue,
-                $this->responseContext
+                $cookieValue
             )
         );
     }
@@ -534,8 +533,7 @@ class CookieServiceTest extends TestCase
             $this->service->maySkipAuthentication(
                 3.0,
                 'abcdef-1234',
-                Mockery::mock(NullCookieValue::class),
-                $this->responseContext
+                Mockery::mock(NullCookieValue::class)
             )
         );
     }
@@ -561,8 +559,7 @@ class CookieServiceTest extends TestCase
             $this->service->maySkipAuthentication(
                 4.0, // LoA required by SP is 4.0, the one in the cookie is 3.0
                 'abcdef-1234',
-                $cookieValue,
-                $this->responseContext
+                $cookieValue
             )
         );
     }
@@ -588,8 +585,7 @@ class CookieServiceTest extends TestCase
             $this->service->maySkipAuthentication(
                 2.0,
                 'Jane Doe', // Not issued to Jane Doe but to abcdef-1234
-                $cookieValue,
-                $this->responseContext
+                $cookieValue
             )
         );
     }
@@ -620,8 +616,7 @@ class CookieServiceTest extends TestCase
             $this->service->maySkipAuthentication(
                 3.0,
                 'ident-1234',
-                $cookieValue,
-                $this->responseContext
+                $cookieValue
             )
         );
     }
@@ -657,8 +652,7 @@ class CookieServiceTest extends TestCase
             $this->service->maySkipAuthentication(
                 3.0,
                 'ident-1234',
-                $cookieValue,
-                $this->responseContext
+                $cookieValue
             )
         );
     }

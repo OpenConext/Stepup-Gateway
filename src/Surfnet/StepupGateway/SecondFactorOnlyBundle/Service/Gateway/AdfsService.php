@@ -26,25 +26,18 @@ use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\Exception\InvalidAdfsReque
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\Exception\InvalidAdfsResponseException;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\RequestHelper;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\ResponseHelper;
+use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\ValueObject\Response;
 use Symfony\Component\HttpFoundation\Request;
 
 class AdfsService
 {
-    /** @var RequestHelper */
-    private $adfsRequestHelper;
-
-    /** @var ResponseHelper */
-    private $adfsResponseHelper;
-
     /**
      * SecondFactorAdfsService constructor.
      * @param RequestHelper $adfsRequestHelper
      * @param ResponseHelper $adfsResponseHelper
      */
-    public function __construct(RequestHelper $adfsRequestHelper, ResponseHelper $adfsResponseHelper)
+    public function __construct(private readonly RequestHelper $adfsRequestHelper, private readonly ResponseHelper $adfsResponseHelper)
     {
-        $this->adfsRequestHelper = $adfsRequestHelper;
-        $this->adfsResponseHelper = $adfsResponseHelper;
     }
 
     /**
@@ -84,7 +77,7 @@ class AdfsService
      * redirect. This method sends a AuthnResponse back to the service
      * provider in response to the AuthnRequest received in ssoAction().
      *
-     * @return null|\Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\ValueObject\Response
+     * @return null|Response
      * @throws InvalidAdfsResponseException
      */
     public function handleAdfsResponse(LoggerInterface $logger, ResponseContext $responseContext)

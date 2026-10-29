@@ -19,6 +19,7 @@
 namespace Surfnet\StepupGateway\GatewayBundle\Tests\Saml\Proxy;
 
 use Mockery;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Surfnet\StepupGateway\GatewayBundle\Saml\DisplayName;
 use Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler;
@@ -48,7 +49,7 @@ class ProxyStateHandlerDisplayNameTest extends TestCase
         Mockery::close();
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_roundtrips_display_names_through_session(): void
     {
         $input = [
@@ -64,7 +65,7 @@ class ProxyStateHandlerDisplayNameTest extends TestCase
         $this->assertEquals(new DisplayName('nl', 'Mijn Dienst'), $result[1]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_returns_empty_array_when_no_display_names_stored(): void
     {
         $result = $this->stateHandler->getDisplayNamesFromRequest();
@@ -72,7 +73,7 @@ class ProxyStateHandlerDisplayNameTest extends TestCase
         $this->assertSame([], $result);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_stores_as_plain_arrays_in_session_for_safe_serialization(): void
     {
         $this->stateHandler->setDisplayNamesFromRequest(new DisplayName('en', 'Test'));
@@ -83,7 +84,7 @@ class ProxyStateHandlerDisplayNameTest extends TestCase
         $this->assertContainsOnlyInstancesOf(DisplayName::class, $session);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_overwrites_previously_stored_display_names(): void
     {
         $this->stateHandler->setDisplayNamesFromRequest(new DisplayName('en', 'First'));

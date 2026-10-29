@@ -22,19 +22,14 @@ use RobRichards\XMLSecLibs\XMLSecurityKey;
 use SAML2\Assertion;
 use SAML2\Certificate\KeyLoader;
 use SAML2\Certificate\PrivateKeyLoader;
+use SAML2\Certificate\X509;
 use SAML2\Configuration\PrivateKey;
 use Surfnet\SamlBundle\Entity\IdentityProvider;
 
 class AssertionSigningService
 {
-    /**
-     * @var IdentityProvider
-     */
-    private $identityProvider;
-
-    public function __construct(IdentityProvider $identityProvider)
+    public function __construct(private readonly IdentityProvider $identityProvider)
     {
-        $this->identityProvider = $identityProvider;
     }
 
     /**
@@ -71,7 +66,7 @@ class AssertionSigningService
     {
         $keyLoader = new KeyLoader();
         $keyLoader->loadCertificateFile($this->identityProvider->getCertificateFile());
-        /** @var \SAML2\Certificate\X509 $publicKey */
+        /** @var X509 $publicKey */
         $publicKey = $keyLoader->getKeys()->getOnlyElement();
 
         return $publicKey->getCertificate();

@@ -220,7 +220,7 @@ class ProxyStateHandler
     public function getDisplayNamesFromRequest(): array
     {
         $raw = $this->get('display_names') ?? [];
-        return array_map(fn(array $d) => DisplayName::fromArray($d), $raw);
+        return array_map(DisplayName::fromArray(...), $raw);
     }
 
     public function setGsspUserAttributes(string $subject, string $institution): ProxyStateHandler

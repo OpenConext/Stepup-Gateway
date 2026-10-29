@@ -26,24 +26,8 @@ use Surfnet\StepupGateway\Behat\Repository\WhitelistRepository;
 
 class FixtureService
 {
-    private $secondFactorRepository;
-
-    private $samlEntityRepository;
-
-    private $whitelistRepository;
-
-    private $institutionConfigurationRepository;
-
-    public function __construct(
-        SecondFactorRepository $secondFactorRepository,
-        SamlEntityRepository $samlRepository,
-        WhitelistRepository $whitelistRepository,
-        InstitutionConfigurationRepository $institutionConfigurationRepository
-    ) {
-        $this->secondFactorRepository = $secondFactorRepository;
-        $this->samlEntityRepository = $samlRepository;
-        $this->whitelistRepository = $whitelistRepository;
-        $this->institutionConfigurationRepository = $institutionConfigurationRepository;
+    public function __construct(private readonly SecondFactorRepository $secondFactorRepository, private readonly SamlEntityRepository $samlEntityRepository, private readonly WhitelistRepository $whitelistRepository, private readonly InstitutionConfigurationRepository $institutionConfigurationRepository)
+    {
     }
 
     public function registerYubikeyToken(string $nameId, string $institution, bool $selfAsserted = false): array

@@ -19,6 +19,7 @@ namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Tests\Adfs;
 
 use Mockery as m;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\RequestHelper;
@@ -54,14 +55,14 @@ class RequestHelperTest extends TestCase
         $this->helper = new RequestHelper($this->stateHandler, $this->logger);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_can_test_if_request_is_not_from_adfs(): void
     {
         $request = new Request();
         $this->assertFalse($this->helper->isAdfsRequest($request));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_can_test_if_request_is_from_adfs(): void
     {
         $request = new Request([], [
@@ -71,7 +72,7 @@ class RequestHelperTest extends TestCase
         $this->assertTrue($this->helper->isAdfsRequest($request));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_rejects_malformed_request(): void
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -82,7 +83,7 @@ class RequestHelperTest extends TestCase
         $this->helper->transformRequest($request, 'my-request-id');
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_transforms_adfs_request(): void
     {
         $authnRequest = <<<AUTHNREQUEST

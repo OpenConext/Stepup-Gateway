@@ -19,6 +19,7 @@ namespace Surfnet\StepupGateway\SamlStepupProviderBundle\Service\Gateway;
 
 use Exception;
 use Psr\Log\LoggerInterface;
+use SAML2\Response;
 use Surfnet\SamlBundle\Http\PostBinding;
 use Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger;
 use Surfnet\StepupGateway\GatewayBundle\Entity\ServiceProvider;
@@ -37,18 +38,6 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class ConsumeAssertionService
 {
-    /** @var LoggerInterface */
-    private $logger;
-
-    /** @var SamlAuthenticationLogger */
-    private $samlLogger;
-
-    /** @var PostBinding */
-    private $postBinding;
-
-    /** @var ConnectedServiceProviders */
-    private $connectedServiceProviders;
-
     private $handledRequestId = null;
 
     /**
@@ -59,15 +48,11 @@ class ConsumeAssertionService
      * @param ConnectedServiceProviders $connectedServiceProviders
      */
     public function __construct(
-        LoggerInterface $logger,
-        SamlAuthenticationLogger $samlLogger,
-        PostBinding $postBinding,
-        ConnectedServiceProviders $connectedServiceProviders
+        private readonly LoggerInterface $logger,
+        private readonly SamlAuthenticationLogger $samlLogger,
+        private readonly PostBinding $postBinding,
+        private readonly ConnectedServiceProviders $connectedServiceProviders,
     ) {
-        $this->logger = $logger;
-        $this->samlLogger = $samlLogger;
-        $this->postBinding = $postBinding;
-        $this->connectedServiceProviders = $connectedServiceProviders;
     }
 
     /**
@@ -81,7 +66,7 @@ class ConsumeAssertionService
      * @param Provider $provider
      * @param Request $httpRequest
      * @param ProxyResponseFactory $proxyResponseFactory
-     * @return \SAML2\Response
+     * @return Response
      * @throws Exception
      */
     public function consumeAssertion(Provider $provider, Request $httpRequest, ProxyResponseFactory $proxyResponseFactory)

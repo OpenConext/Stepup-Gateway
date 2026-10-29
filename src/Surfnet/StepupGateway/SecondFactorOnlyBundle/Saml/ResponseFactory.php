@@ -38,35 +38,17 @@ use Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler;
 final class ResponseFactory
 {
     /**
-     * @var \Surfnet\SamlBundle\Entity\IdentityProvider
-     */
-    private $hostedIdentityProvider;
-
-    /**
-     * @var \Surfnet\StepupGateway\GatewayBundle\Saml\Proxy\ProxyStateHandler
-     */
-    private $proxyStateHandler;
-
-    /**
      * @var \DateTime
      */
     private $currentTime;
 
-    /**
-     * @var \Surfnet\StepupGateway\GatewayBundle\Saml\AssertionSigningService
-     */
-    private $assertionSigningService;
-
     public function __construct(
-        IdentityProvider $hostedIdentityProvider,
-        ProxyStateHandler $proxyStateHandler,
-        AssertionSigningService $assertionSigningService,
-        DateTime $now = null
+        private readonly IdentityProvider $hostedIdentityProvider,
+        private readonly ProxyStateHandler $proxyStateHandler,
+        private readonly AssertionSigningService $assertionSigningService,
+        ?DateTime $now = null
     ) {
-        $this->hostedIdentityProvider    = $hostedIdentityProvider;
-        $this->proxyStateHandler         = $proxyStateHandler;
-        $this->assertionSigningService   = $assertionSigningService;
-        $this->currentTime = is_null($now) ? new DateTime('now', new DateTimeZone('UTC')): $now;
+        $this->currentTime = $now ?? new DateTime('now', new DateTimeZone('UTC'));
     }
 
     /**

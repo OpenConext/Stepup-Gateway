@@ -26,13 +26,13 @@ use Surfnet\SamlBundle\SAML2\Extensions\ServiceNameFormatter;
 
 class UiInfoExtensionMapper
 {
-    private const MDUI_NAMESPACE = 'urn:oasis:names:tc:SAML:metadata:ui';
-    private const MDUI_PREFIX = 'mdui';
+    private const string MDUI_NAMESPACE = 'urn:oasis:names:tc:SAML:metadata:ui';
+    private const string MDUI_PREFIX = 'mdui';
 
-    private const MAX_DISPLAY_NAMES = 10;
-    private const MAX_LANG_LENGTH = 35;
+    private const int MAX_DISPLAY_NAMES = 10;
+    private const int MAX_LANG_LENGTH = 35;
 
-    private const MAX_VALUE_LENGTH = 1024;
+    private const int MAX_VALUE_LENGTH = 1024;
 
     /**
      * Values are sanitized at parse time because they can reach session state before any write.

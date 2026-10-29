@@ -30,28 +30,22 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class SecondFactorVerificationService
 {
-    private const SFO_RESPONSE_CONTEXT_SERVICE_ID = 'second_factor_only.response_context';
+    private const string SFO_RESPONSE_CONTEXT_SERVICE_ID = 'second_factor_only.response_context';
 
-    /** @var SamlAuthenticationLogger */
-    private $samlLogger;
-
-    /** @var ResponseContext */
-    private $responseContext;
-
-    /** @var ResponseContext */
-    private $sfoResponseContext;
-
+    /**
+     * SecondFactorVerificationService constructor.
+     * @param SamlAuthenticationLogger $samlLogger
+     * @param ResponseContext $responseContext
+     * @param ResponseContext $sfoResponseContext
+     */
     public function __construct(
-        SamlAuthenticationLogger $samlLogger,
-        ResponseContext $responseContext,
-        ResponseContext $sfoResponseContext,
+        private readonly SamlAuthenticationLogger $samlLogger,
+        private readonly ResponseContext $responseContext,
+        private readonly ResponseContext $sfoResponseContext,
         private readonly ServiceDisplayNameResolver $displayNameResolver,
         private readonly UiInfoExtensionMapper $uiInfoMapper,
         private readonly RequestStack $requestStack
     ) {
-        $this->samlLogger = $samlLogger;
-        $this->responseContext = $responseContext;
-        $this->sfoResponseContext = $sfoResponseContext;
     }
 
     /**
@@ -118,7 +112,7 @@ class SecondFactorVerificationService
             ->setResponseContextServiceId($responseContextServiceId)
             ->markRequestAsSecondFactorVerification();
 
-        /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
+        /** @var SamlAuthenticationLogger $logger */
         $logger = $this->samlLogger->forAuthentication($originalRequestId);
         $logger->notice(sprintf(
             'Sending AuthnRequest to verify Second Factor with request ID: "%s" to GSSP "%s" at "%s" for subject "%s"',

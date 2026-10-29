@@ -21,6 +21,7 @@ namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Tests\Service\Gateway;
 use DateTime;
 use Mockery;
 use Mockery\Mock;
+use PHPUnit\Framework\Attributes\Test;
 use SAML2\Response;
 use Surfnet\SamlBundle\Entity\IdentityProvider;
 use Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger;
@@ -105,7 +106,7 @@ final class RespondServiceTest extends GatewaySamlTestCase
         $this->initGatewayLoginService($idpConfiguration, $loaLevels, $loaAliases, $now);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_should_return_a_valid_saml_response_and_update_state_when_the_verification_is_succeeded_on_sfo_login_flow(): void {
 
         $this->mockSessionData('_sf2_attributes', [
@@ -219,7 +220,7 @@ final class RespondServiceTest extends GatewaySamlTestCase
         ], $this->getSessionData('attributes'));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_halts_execution_when_saml_response_is_invalid(): void
     {
 
@@ -272,7 +273,7 @@ final class RespondServiceTest extends GatewaySamlTestCase
         $this->gatewayRespondService->respond($this->responseContext, $request);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_should_throw_an_exception_when_the_second_factor_method_is_unknown_when_the_verification_is_succeeded_on_sfo_login_flow(): void
     {
         $this->expectException(InvalidSecondFactorMethodException::class);
@@ -309,7 +310,7 @@ final class RespondServiceTest extends GatewaySamlTestCase
     }
 
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_should_throw_an_exception_when_the_second_factor_is_not_verified_when_the_verification_is_succeeded_on_sfo_login_flow(): void
     {
         $this->expectException(InvalidSecondFactorMethodException::class);

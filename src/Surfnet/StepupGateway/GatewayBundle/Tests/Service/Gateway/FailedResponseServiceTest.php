@@ -20,6 +20,8 @@ namespace Surfnet\StepupGateway\GatewayBundle\Tests\Service\Gateway;
 
 use DateTime;
 use Mockery;
+use Mockery\Mock;
+use PHPUnit\Framework\Attributes\Test;
 use SAML2\Response;
 use Surfnet\SamlBundle\Entity\IdentityProvider;
 use Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger;
@@ -35,9 +37,9 @@ use Symfony\Component\HttpFoundation\Session\Session;
 
 final class FailedResponseServiceTest extends GatewaySamlTestCase
 {
-    private Mockery\Mock|FailedResponseService $gatewayFailedResponseService;
+    private Mock|FailedResponseService $gatewayFailedResponseService;
     private ResponseContext $responseContext;
-    private Mockery\Mock|SamlEntityService $samlEntityService;
+    private Mock|SamlEntityService $samlEntityService;
 
     public function setUp(): void
     {
@@ -59,7 +61,7 @@ final class FailedResponseServiceTest extends GatewaySamlTestCase
         $this->initGatewayService($idpConfiguration, $now);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_should_handle_send_loa_could_not_be_given_based_on_the_given_state_on_login_flow(): void
     {
         // Mock service provider
@@ -113,7 +115,7 @@ final class FailedResponseServiceTest extends GatewaySamlTestCase
     }
 
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_should_handle_authentication_cancelled_by_user_based_on_the_given_state_on_login_flow(): void
     {
         // Mock service provider

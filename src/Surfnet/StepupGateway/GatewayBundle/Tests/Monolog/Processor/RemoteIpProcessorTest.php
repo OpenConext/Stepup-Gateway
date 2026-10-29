@@ -55,8 +55,7 @@ final class RemoteIpProcessorTest extends TestCase
     public function test_adds_remote_ip_from_client_ip(): void
     {
         $request = Request::create('/', 'GET', [], [], [], ['REMOTE_ADDR' => '192.0.2.1']);
-        $requestStack = new RequestStack();
-        $requestStack->push($request);
+        $requestStack = new RequestStack([$request]);
 
         $processor = new RemoteIpProcessor($requestStack);
 
@@ -71,8 +70,7 @@ final class RemoteIpProcessorTest extends TestCase
     public function test_does_not_add_remote_ip_when_client_ip_is_null(): void
     {
         $request = new Request();
-        $requestStack = new RequestStack();
-        $requestStack->push($request);
+        $requestStack = new RequestStack([$request]);
 
         $processor = new RemoteIpProcessor($requestStack);
 

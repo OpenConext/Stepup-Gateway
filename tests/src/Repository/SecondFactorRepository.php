@@ -21,7 +21,6 @@ namespace Surfnet\StepupGateway\Behat\Repository;
 use Exception;
 use PDO;
 use Ramsey\Uuid\Uuid;
-use Surfnet\StepupBundle\Value\VettingType;
 use Surfnet\StepupGateway\Behat\Factory\SmoketestPdoFactory;
 
 /**
@@ -118,7 +117,7 @@ SQL;
         try {
             $this->findBy($nameId, $secondFactorType);
             return true;
-        } catch (Exception $e) {
+        } catch (Exception) {
             return false;
         }
     }

@@ -19,7 +19,7 @@ namespace Surfnet\StepupGateway\SamlStepupProviderBundle\Tests\Service\Gateway;
 
 use DateTime;
 use Mockery;
-use Mockery\MockInterface;
+use PHPUnit\Framework\Attributes\Test;
 use SAML2\DOMDocumentFactory;
 use SAML2\Response;
 use Surfnet\SamlBundle\Entity\IdentityProvider;
@@ -42,7 +42,6 @@ use Surfnet\StepupGateway\SamlStepupProviderBundle\Saml\StateHandler;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Service\Gateway\ConsumeAssertionService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBag;
 use Symfony\Component\HttpFoundation\Session\Session;
 
 class ConsumeAssertionServiceTest extends GatewaySamlTestCase
@@ -116,7 +115,7 @@ class ConsumeAssertionServiceTest extends GatewaySamlTestCase
         $this->initSamlProxyService($idpConfiguration, $remoteIdpConfiguration, $spConfiguration, $connectedServiceProviders, $now);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_should_update_the_state_when_receiving_a_saml_response_when_consuming_assertions_on_gssp_registration_and_gssp_verification_flows(): void {
 
         $samlResponse = '<samlp:Response
@@ -257,7 +256,7 @@ class ConsumeAssertionServiceTest extends GatewaySamlTestCase
         ], $this->getSessionData('attributes'));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_should_throw_an_exception_when_the_post_binding_could_not_be_processed_when_receiving_a_saml_response_when_consuming_assertions_on_gssp_registration_and_gssp_verification_flows(): void
     {
         $this->expectException(ResponseFailureException::class);
@@ -364,7 +363,7 @@ class ConsumeAssertionServiceTest extends GatewaySamlTestCase
         $this->samlProxyConsumeAssertionService->consumeAssertion($this->provider, $httpRequest, $this->proxyResponseFactory);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_should_throw_an_exception_when_in_response_to_is_invalid_when_receiving_a_saml_response_when_consuming_assertions_on_gssp_registration_and_gssp_verification_flows(): void
     {
         $this->expectException(UnknownInResponseToException::class);
@@ -470,7 +469,7 @@ class ConsumeAssertionServiceTest extends GatewaySamlTestCase
         $this->samlProxyConsumeAssertionService->consumeAssertion($this->provider, $httpRequest, $this->proxyResponseFactory);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_should_throw_an_exception_when_to_subject_is_invalid_when_receiving_a_saml_response_when_consuming_assertions_on_gssp_registration_and_gssp_verification_flows(): void
     {
         $this->expectException(InvalidSubjectException::class);
@@ -577,7 +576,7 @@ class ConsumeAssertionServiceTest extends GatewaySamlTestCase
         $this->samlProxyConsumeAssertionService->consumeAssertion($this->provider, $httpRequest, $this->proxyResponseFactory);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_should_throw_an_verification_exception_when_receiving_a_saml_response_when_consuming_assertions_on_gssp_registration_and_gssp_verification_flows(): void
     {
         $this->expectException(SecondfactorVerificationRequiredException::class);

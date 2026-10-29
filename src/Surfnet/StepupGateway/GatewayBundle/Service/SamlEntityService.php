@@ -19,6 +19,7 @@
 namespace Surfnet\StepupGateway\GatewayBundle\Service;
 
 use Surfnet\SamlBundle\Entity\IdentityProvider;
+use Surfnet\SamlBundle\Entity\ServiceProvider as SamlServiceProvider;
 use Surfnet\SamlBundle\Entity\ServiceProviderRepository;
 use Surfnet\StepupGateway\GatewayBundle\Entity\SamlEntityRepository;
 use Surfnet\StepupGateway\GatewayBundle\Entity\ServiceProvider;
@@ -27,23 +28,17 @@ use Surfnet\StepupGateway\GatewayBundle\Exception\RuntimeException;
 class SamlEntityService implements ServiceProviderRepository
 {
     /**
-     * @var SamlEntityRepository
-     */
-    private $samlEntityRepository;
-
-    /**
-     * @var \Surfnet\SamlBundle\Entity\IdentityProvider[]
+     * @var IdentityProvider[]
      */
     private $loadedIdentityProviders;
 
     /**
-     * @var \Surfnet\SamlBundle\Entity\ServiceProvider[]
+     * @var SamlServiceProvider[]
      */
     private $loadedServiceProviders;
 
-    public function __construct(SamlEntityRepository $samlEntityRepository)
+    public function __construct(private readonly SamlEntityRepository $samlEntityRepository)
     {
-        $this->samlEntityRepository = $samlEntityRepository;
         $this->loadedIdentityProviders = [];
         $this->loadedServiceProviders = [];
     }
@@ -86,7 +81,7 @@ class SamlEntityService implements ServiceProviderRepository
      * @param string $entityId
      * @return ServiceProvider
      */
-    public function getServiceProvider(string $entityId): \Surfnet\SamlBundle\Entity\ServiceProvider
+    public function getServiceProvider(string $entityId): SamlServiceProvider
     {
         if (!array_key_exists($entityId, $this->loadedServiceProviders) && !$this->hasServiceProvider($entityId)) {
             throw new RuntimeException(sprintf(

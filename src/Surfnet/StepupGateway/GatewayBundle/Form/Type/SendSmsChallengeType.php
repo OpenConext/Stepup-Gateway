@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Form\Type;
 
+use Surfnet\StepupGateway\GatewayBundle\Command\SendSmsChallengeCommand;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -37,10 +38,11 @@ class SendSmsChallengeType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => \Surfnet\StepupGateway\GatewayBundle\Command\SendSmsChallengeCommand::class,
+            'data_class' => SendSmsChallengeCommand::class,
         ]);
     }
 
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return 'gateway_send_sms_challenge';
