@@ -3,6 +3,7 @@ imports:
   - { resource: 'openconext/global_view_parameters.yaml' }
   - { resource: 'openconext/parameters.yaml' }
   - { resource: 'openconext/samlstepupproviders.yaml' }
+  - { resource: 'openconext/parameters.local.yaml', ignore_errors: not_found }
 
 services:
   _defaults:

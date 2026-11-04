@@ -1,0 +1,9 @@
+# Environment-specific parameter overrides, following the Symfony ".local" convention (like .env.local).
+#
+# The file is imported after parameters.yaml (see config/services.yaml), so the parameters set here take precedence over
+# the component defaults from parameters.yaml.dist. Because parameters.local.yaml is not tracked in git, it survives
+# component upgrades and is not overwritten by them.
+#
+# Route outgoing SMS messages to the SMS catcher for the OpenConext-devconf environment instead of using the Spryng API
+# parameters:
+#     spryng_base_url: 'https://smscatcher.dev.openconext.local/v1'

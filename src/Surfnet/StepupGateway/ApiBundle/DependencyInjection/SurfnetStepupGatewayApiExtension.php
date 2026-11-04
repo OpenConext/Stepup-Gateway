@@ -39,5 +39,11 @@ class SurfnetStepupGatewayApiExtension extends Extension
 
         $entryPoint = $container->getDefinition('surfnet_gateway_api.security.json_basic_auth_entry_point');
         $entryPoint->replaceArgument(0, $config['http_basic_realm']);
+
+        // Default the Spryng base URL to null (meaning: use the hardcoded Spryng API URL) when it is not configured,
+        // so existing parameters.yaml files without this key keep working.
+        if (!$container->hasParameter('spryng_base_url')) {
+            $container->setParameter('spryng_base_url', null);
+        }
     }
 }
