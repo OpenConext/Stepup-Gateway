@@ -471,6 +471,118 @@ class ConsumeAssertionServiceTest extends GatewaySamlTestCase
     }
 
     #[\PHPUnit\Framework\Attributes\Test]
+    public function it_should_throw_an_unknown_in_response_to_exception_when_no_outstanding_authentication_is_on_record(): void
+    {
+        $samlResponse = '<samlp:Response
+    xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"
+    xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
+    ID="CORTO1111111111222222222233333333334444444444"
+    Version="2.0"
+    IssueInstant="2014-10-22T11:07:08Z"
+    Destination="https://gateway.org/acs"
+    InResponseTo="_000000aabbccddeeffaabbccddeeffaabbccddeeff">
+  <saml:Issuer>https://idp.edu/metadata</saml:Issuer>
+  <samlp:Status>
+    <samlp:StatusCode Value="urn:oasis:names:tc:SAML:2.0:status:Success"/>
+  </samlp:Status>
+  <saml:Assertion
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:xs="http://www.w3.org/001/XMLSchema"
+        ID="CORTOaabbccddeeaabbccddeeaabbccddeeaabbccddee"
+        Version="2.0"
+        IssueInstant="2014-10-22T11:07:08Z">
+    <saml:Issuer>https://idp.edu/metadata</saml:Issuer>
+    <ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+      <ds:SignedInfo>
+        <ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+        <ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/>
+        <ds:Reference URI="#CORTOaabbccddeeaabbccddeeaabbccddeeaabbccddee">
+          <ds:Transforms>
+            <ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
+            <ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+          </ds:Transforms>
+          <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+          <ds:DigestValue>UPnYtWy9KFV43qcT82Sd5iIUFH3f1Bv9NJSqaLF82Rw=</ds:DigestValue>
+        </ds:Reference>
+      </ds:SignedInfo>
+      <ds:SignatureValue>QZr...==</ds:SignatureValue>
+      <ds:KeyInfo>
+        <ds:X509Data>
+          <ds:X509Certificate>MII...=</ds:X509Certificate>
+        </ds:X509Data>
+      </ds:KeyInfo>
+    </ds:Signature>
+    <saml:Subject>
+      <saml:NameID Format="urn:oasis:names:tc:SAML:2.0:nameid-format:persistent">724cca6778a1d3db16b65c40d4c378d011f220be</saml:NameID>
+      <saml:SubjectConfirmation Method="urn:oasis:names:tc:SAML:2.0:cm:bearer">
+        <saml:SubjectConfirmationData
+            NotOnOrAfter="2014-10-22T11:12:08Z"
+            Recipient="https://gateway.org/acs"
+            InResponseTo="_mocked_generated_id"/>
+      </saml:SubjectConfirmation>
+    </saml:Subject>
+    <saml:Conditions NotBefore="2014-10-22T11:07:07Z" NotOnOrAfter="2014-10-22T11:12:08Z">
+      <saml:AudienceRestriction>
+        <saml:Audience>https://gateway.org/metadata</saml:Audience>
+      </saml:AudienceRestriction>
+    </saml:Conditions>
+    <saml:AuthnStatement
+            AuthnInstant="2014-10-22T11:07:07Z"
+            SessionNotOnOrAfter="2014-10-22T19:07:07Z"
+            SessionIndex="_1dad5d4bf289a5761a62fedf91143816d323a0604b">
+      <saml:AuthnContext>
+        <saml:AuthnContextClassRef>urn:oasis:names:tc:SAML:2.0:ac:classes:Password</saml:AuthnContextClassRef>
+        <saml:AuthenticatingAuthority>https://proxied-idp.edu/</saml:AuthenticatingAuthority>
+      </saml:AuthnContext>
+    </saml:AuthnStatement>
+    <saml:AttributeStatement>
+      <saml:Attribute Name="urn:oid:0.9.2342.19200300.100.1.3" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+        <saml:AttributeValue xsi:type="xs:string">john.doe@example.edu</saml:AttributeValue>
+      </saml:Attribute>
+      <saml:Attribute Name="urn:oid:1.3.6.1.4.1.5923.1.1.1.10" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+        <saml:AttributeValue>
+          <saml:NameID Format="urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified">urn:collab:person:example.edu:jdoe</saml:NameID>
+        </saml:AttributeValue>
+      </saml:Attribute>
+    </saml:AttributeStatement>
+  </saml:Assertion>
+</samlp:Response>';
+
+        // The GSSP state was cleared (e.g. when a new authentication was started),
+        // so there is no record of an outstanding authentication request.
+        $this->mockSessionData('_sf2_attributes', []);
+
+        $httpRequest = Request::create('idp.nl/sso-url');
+        $httpRequest->request->set('SAMLResponse', $samlResponse);
+
+        $this->mockPostBinding($samlResponse);
+
+        // Handle assertion
+        try {
+            $this->samlProxyConsumeAssertionService->consumeAssertion($this->provider, $httpRequest, $this->proxyResponseFactory);
+            $this->fail('An UnknownInResponseToException should have been thrown');
+        } catch (UnknownInResponseToException $exception) {
+            $this->assertStringContainsString('no response expected', $exception->getMessage());
+        }
+
+        // Assert log
+        $this->assertSame([
+            'emergency' => [],
+            'alert' => [],
+            'critical' => [],
+            'error' => [
+                'Received a SAMLResponse from GSSP "testProvider", but no response is expected in the current session',
+            ],
+            'warning' => [],
+            'notice' => [
+                'Received SAMLResponse, attempting to process for Proxy Response',
+            ],
+            'info' => [],
+            'debug' => [],
+        ], $this->logger->getLogs());
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_should_throw_an_exception_when_to_subject_is_invalid_when_receiving_a_saml_response_when_consuming_assertions_on_gssp_registration_and_gssp_verification_flows(): void
     {
         $this->expectException(InvalidSubjectException::class);

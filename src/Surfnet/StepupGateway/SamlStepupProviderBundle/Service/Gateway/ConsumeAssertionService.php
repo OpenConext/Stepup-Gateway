@@ -91,7 +91,11 @@ class ConsumeAssertionService
 
         $this->handledRequestId = $originalRequestId;
 
-        $logger = $this->samlLogger->forAuthentication($originalRequestId);
+        // $originalRequestId can be null when there is no requestID state in the session (e.g. no session, no active authentication)
+        // In this case, the SAML authentication logger requires a generic logger because forAuthentication(null) throws.
+        $logger = $originalRequestId !== null
+            ? $this->samlLogger->forAuthentication($originalRequestId)
+            : $this->logger;
 
         $action = $stateHandler->hasSubject() ? 'Second Factor Verification' : 'Proxy Response';
         $logger->notice(
@@ -113,7 +117,14 @@ class ConsumeAssertionService
 
         $adaptedAssertion = new AssertionAdapter($assertion);
         $expectedResponse = $stateHandler->getGatewayRequestId();
-        if (!$adaptedAssertion->inResponseToMatches($expectedResponse)) {
+        if ($originalRequestId === null || !$adaptedAssertion->inResponseToMatches($expectedResponse)) {
+            if ($originalRequestId === null) {
+                $logger->error(sprintf(
+                    'Received a SAMLResponse from GSSP "%s", but no response is expected in the current session',
+                    $provider->getName()
+                ));
+            }
+
             throw new UnknownInResponseToException(
                 $adaptedAssertion->getInResponseTo(),
                 $expectedResponse
