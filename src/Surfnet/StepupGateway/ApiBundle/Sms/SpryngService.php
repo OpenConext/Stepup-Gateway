@@ -21,7 +21,6 @@ namespace Surfnet\StepupGateway\ApiBundle\Sms;
 use Psr\Log\LoggerInterface;
 use Spryng\SpryngRestApi\Objects\Message;
 use Spryng\SpryngRestApi\Resources\MessageClient;
-use Spryng\SpryngRestApi\Spryng;
 use Surfnet\StepupGateway\ApiBundle\Dto\SmsMessage;
 
 class SpryngService implements SmsAdapterInterface
@@ -41,9 +40,10 @@ class SpryngService implements SmsAdapterInterface
      */
     private $route = null;
 
-    public function __construct(string $apiKey, ?string $route, LoggerInterface $logger)
+    public function __construct(string $apiKey, ?string $route, LoggerInterface $logger, ?string $baseUrl = null)
     {
-        $this->client = new MessageClient(new Spryng($apiKey));
+        $spryng = new SpryngClient($apiKey, $baseUrl);
+        $this->client = new MessageClient($spryng);
         $this->route = $route;
         $this->logger = $logger;
     }

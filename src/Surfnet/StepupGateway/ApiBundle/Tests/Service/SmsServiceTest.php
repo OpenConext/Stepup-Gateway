@@ -53,6 +53,17 @@ final class SmsServiceTest extends TestCase
         self::assertFalse($result->isSuccess());
     }
 
+    public function test_spryng_service_can_be_constructed_with_a_custom_base_url(): void
+    {
+        $logger = $this->createMock(LoggerInterface::class);
+        $spryng = new SpryngService('apikey', '', $logger, 'https://smscatcher.dev.openconext.local/v1');
+
+        $clientProperty = new \ReflectionProperty(SpryngService::class, 'client');
+        $client = $clientProperty->getValue($spryng);
+
+        self::assertSame('https://smscatcher.dev.openconext.local/v1', $client->getApi()->getBaseUrl());
+    }
+
     private function getMessage(): SmsMessage
     {
         $smsMessage = new SmsMessage();
