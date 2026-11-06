@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Fix second factor bypass vulnerability (security)
+
 ## 6.1.1
 
 - Bugfix: handle lost Gateway sessions at the ACS #668 Also see: #646

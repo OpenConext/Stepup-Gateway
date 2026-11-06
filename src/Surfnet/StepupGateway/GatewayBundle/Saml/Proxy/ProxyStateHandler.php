@@ -48,6 +48,20 @@ class ProxyStateHandler
         }
     }
 
+    /**
+     * Clear every outstanding authentication state currently held in the session.
+     */
+    public function clearOutstandingAuthentications(): void
+    {
+        $session = $this->requestStack->getSession();
+
+        foreach (array_keys($session->all()) as $key) {
+            if (str_starts_with($key, 'surfnet/gateway/')) {
+                $session->remove($key);
+            }
+        }
+    }
+
     public function setRequestId(string $originalRequestId): ProxyStateHandler
     {
         $this->set('request_id', $originalRequestId);

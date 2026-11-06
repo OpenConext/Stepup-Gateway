@@ -97,6 +97,9 @@ class LoginService
             $originalRequest->getRequestId()
         ));
 
+        // Must run before handleAdfsRequest()
+        $this->stateHandler->clearOutstandingAuthentications();
+
         return  $originalRequest;
     }
 
