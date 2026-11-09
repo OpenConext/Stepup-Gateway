@@ -18,6 +18,7 @@ services:
             - "%spryng_api_key%"
             - "%spryng_route%"
             - "@logger"
+            - "%spryng_base_url%"
         tags: ['sms_provider']
 
     surfnet_gateway_api.service.yubikey:

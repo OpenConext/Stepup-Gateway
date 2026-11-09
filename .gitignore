@@ -8,6 +8,7 @@
 /config/openconext/parameters.yaml
 /config/openconext/samlstepupproviders_parameters.yaml
 /config/openconext/global_view_parameters.yaml
+/config/openconext/parameters.local.yaml
 /vendor/
 /composer.phar
 /cache.properties
