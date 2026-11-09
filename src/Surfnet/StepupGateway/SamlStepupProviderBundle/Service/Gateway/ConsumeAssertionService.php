@@ -91,11 +91,18 @@ class ConsumeAssertionService
 
         $this->handledRequestId = $originalRequestId;
 
-        // $originalRequestId can be null when there is no requestID state in the session (e.g. no session, no active authentication)
-        // In this case, the SAML authentication logger requires a generic logger because forAuthentication(null) throws.
-        $logger = $originalRequestId !== null
-            ? $this->samlLogger->forAuthentication($originalRequestId)
-            : $this->logger;
+        // When $originalRequestId === null, no Response is expected in the current session.
+        // The session may have been cleared, or the session's state in the backend may have been lost
+        if ($originalRequestId === null) {
+            $this->logger->error(sprintf(
+                'Received a SAMLResponse from GSSP "%s", but no response is expected in the current session',
+                $provider->getName()
+            ));
+
+            throw new UnknownInResponseToException(null, $stateHandler->getGatewayRequestId());
+        }
+
+        $logger = $this->samlLogger->forAuthentication($originalRequestId);
 
         $action = $stateHandler->hasSubject() ? 'Second Factor Verification' : 'Proxy Response';
         $logger->notice(
@@ -117,14 +124,7 @@ class ConsumeAssertionService
 
         $adaptedAssertion = new AssertionAdapter($assertion);
         $expectedResponse = $stateHandler->getGatewayRequestId();
-        if ($originalRequestId === null || !$adaptedAssertion->inResponseToMatches($expectedResponse)) {
-            if ($originalRequestId === null) {
-                $logger->error(sprintf(
-                    'Received a SAMLResponse from GSSP "%s", but no response is expected in the current session',
-                    $provider->getName()
-                ));
-            }
-
+        if (!$adaptedAssertion->inResponseToMatches($expectedResponse)) {
             throw new UnknownInResponseToException(
                 $adaptedAssertion->getInResponseTo(),
                 $expectedResponse

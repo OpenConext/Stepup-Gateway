@@ -555,7 +555,8 @@ class ConsumeAssertionServiceTest extends GatewaySamlTestCase
         $httpRequest = Request::create('idp.nl/sso-url');
         $httpRequest->request->set('SAMLResponse', $samlResponse);
 
-        $this->mockPostBinding($samlResponse);
+        // The response must be rejected before it is processed
+        $this->postBinding->shouldReceive('processResponse')->never();
 
         // Handle assertion
         try {
@@ -574,9 +575,76 @@ class ConsumeAssertionServiceTest extends GatewaySamlTestCase
                 'Received a SAMLResponse from GSSP "testProvider", but no response is expected in the current session',
             ],
             'warning' => [],
-            'notice' => [
-                'Received SAMLResponse, attempting to process for Proxy Response',
+            'notice' => [],
+            'info' => [],
+            'debug' => [],
+        ], $this->logger->getLogs());
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function it_should_throw_an_unknown_in_response_to_exception_when_no_outstanding_authentication_is_on_record_even_if_response_processing_would_fail(): void
+    {
+        $samlResponse = '<samlp:Response
+    xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"
+    xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
+    ID="CORTO1111111111222222222233333333334444444444"
+    Version="2.0"
+    IssueInstant="2014-10-22T11:07:08Z"
+    Destination="https://gateway.org/acs"
+    InResponseTo="_000000aabbccddeeffaabbccddeeffaabbccddeeff">
+  <saml:Issuer>https://idp.edu/metadata</saml:Issuer>
+  <samlp:Status>
+    <samlp:StatusCode Value="urn:oasis:names:tc:SAML:2.0:status:Success"/>
+  </samlp:Status>
+  <saml:Assertion
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:xs="http://www.w3.org/001/XMLSchema"
+        ID="CORTOaabbccddeeaabbccddeeaabbccddeeaabbccddee"
+        Version="2.0"
+        IssueInstant="2014-10-22T11:07:08Z">
+    <saml:Issuer>https://idp.edu/metadata</saml:Issuer>
+    <saml:Subject>
+      <saml:NameID Format="urn:oasis:names:tc:SAML:2.0:nameid-format:persistent">724cca6778a1d3db16b65c40d4c378d011f220be</saml:NameID>
+      <saml:SubjectConfirmation Method="urn:oasis:names:tc:SAML:2.0:cm:bearer">
+        <saml:SubjectConfirmationData
+            NotOnOrAfter="2014-10-22T11:12:08Z"
+            Recipient="https://gateway.org/acs"
+            InResponseTo="_mocked_generated_id"/>
+      </saml:SubjectConfirmation>
+    </saml:Subject>
+  </saml:Assertion>
+</samlp:Response>';
+
+        // The GSSP state was cleared (e.g. when a new authentication was started),
+        // so there is no record of an outstanding authentication request.
+        $this->mockSessionData('_sf2_attributes', []);
+
+        $httpRequest = Request::create('idp.nl/sso-url');
+        $httpRequest->request->set('SAMLResponse', $samlResponse);
+
+        // Even if processing the response would fail, the missing state must be rejected first,
+        // so a ResponseFailureException (which relies on the missing state downstream) is never thrown.
+        $this->postBinding->shouldReceive('processResponse')
+            ->andThrow(\Exception::class, 'Unable to process response');
+
+        // Handle assertion
+        try {
+            $this->samlProxyConsumeAssertionService->consumeAssertion($this->provider, $httpRequest, $this->proxyResponseFactory);
+            $this->fail('An UnknownInResponseToException should have been thrown');
+        } catch (UnknownInResponseToException $exception) {
+            $this->assertStringContainsString('no response expected', $exception->getMessage());
+        }
+
+        // Assert log
+        $this->assertSame([
+            'emergency' => [],
+            'alert' => [],
+            'critical' => [],
+            'error' => [
+                'Received a SAMLResponse from GSSP "testProvider", but no response is expected in the current session',
             ],
+            'warning' => [],
+            'notice' => [],
             'info' => [],
             'debug' => [],
         ], $this->logger->getLogs());
