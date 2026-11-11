@@ -137,6 +137,17 @@ class MinkContext extends BaseMinkContext
         $this->assertSession()->responseContains($string);
     }
 
+    /**
+     * The gateway renders a generic error page (HTTP 500, "Error - Oops!") e.g. when the second
+     * factor response of an authentication that is no longer the most recent authentication in
+     * the browser session is submitted.
+     */
+    #[\Behat\Step\Then('I should see an error page')]
+    public function iShouldSeeAnErrorPage(): void
+    {
+        $this->waitForPageText('Something went wrong. Please try again.');
+    }
+
     #[\Behat\Step\Then('/^the response should match xpath \\\'([^\\\']*)\\\'$/')]
     public function theResponseShouldMatchXpath($xpath): void
     {
