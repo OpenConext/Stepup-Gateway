@@ -487,10 +487,8 @@ class ServiceProviderContext implements Context
     #[\Behat\Step\When('/^I authenticate at the IdP as ([^\\\']*)$/')]
     public function iAuthenticateAtTheIdp($username): void
     {
-        $this->minkContext->fillField('username', $username);
-        $this->minkContext->fillField('password', $username);
-        // Submit the form
-        $this->minkContext->pressButton('Login');
+        // Fill the credentials and submit the form
+        $this->minkContext->fillFieldsAndSubmitForm(['username' => $username, 'password' => $username], 'Login');
 
         if ($this->getSession()->getDriver() instanceof SymfonyDriver) {
             // Submit the SAML Response from SimpleSamplPHP IdP
@@ -517,11 +515,10 @@ class ServiceProviderContext implements Context
             }
           ]
         ', $username);
-        $this->minkContext->fillField('attributes', $attributes);
-        $this->minkContext->pressButton('success');
+        $this->minkContext->fillFieldsAndSubmitForm(['attributes' => $attributes], 'success');
 
         $this->minkContext->assertPageAddress('https://azuremfa.dev.openconext.local/mock/sso');
-        $this->minkContext->pressButton('Submit assertion');
+        $this->minkContext->pressButtonAndWaitForNavigation('Submit assertion');
 
         $this->minkContext->assertPageAddress('https://gateway.dev.openconext.local/test/authentication/consume-assertion');
     }
@@ -530,10 +527,10 @@ class ServiceProviderContext implements Context
     public function iCancelTheAuthenticationAtAzureMfa(): void
     {
         $this->minkContext->assertPageAddress('https://azuremfa.dev.openconext.local/mock/sso');
-        $this->minkContext->pressButton('cancel');
+        $this->minkContext->pressButtonAndWaitForNavigation('cancel');
 
         $this->minkContext->assertPageAddress('https://azuremfa.dev.openconext.local/mock/sso');
-        $this->minkContext->pressButton('Submit assertion');
+        $this->minkContext->pressButtonAndWaitForNavigation('Submit assertion');
 
         $this->minkContext->assertPageAddress('https://gateway.dev.openconext.local/test/authentication/consume-assertion');
     }
@@ -553,7 +550,7 @@ class ServiceProviderContext implements Context
     public function iLogOutAtTheIdP(): void
     {
         $this->minkContext->visit(self::SSP_URL);
-        $this->minkContext->pressButton('Logout');
+        $this->minkContext->pressButtonAndWaitForNavigation('Logout');
     }
 
     private function getSession()
