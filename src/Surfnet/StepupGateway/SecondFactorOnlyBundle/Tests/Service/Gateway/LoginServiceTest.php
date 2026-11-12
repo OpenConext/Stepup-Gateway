@@ -358,6 +358,35 @@ final class LoginServiceTest extends GatewaySamlTestCase
         $this->assertArrayNotHasKey('surfnet/gateway/requestdisplay_names', $sessionData);
     }
 
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function it_clears_the_state_of_outstanding_authentications_when_handling_an_sfo_request(): void
+    {
+        $authnRequest = ReceivedAuthnRequest::from('<samlp:AuthnRequest xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"
+                    xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
+                    ID="_new_sfo_request"
+                    Version="2.0"
+                    IssueInstant="2017-04-18T16:35:32Z"
+                    Destination="https://gateway.tld/second-factor-only/single-sign-on"
+                    AssertionConsumerServiceURL="https://sp.tld/acs"
+                    ProtocolBinding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST">
+    <saml:Issuer>https://sp.tld/metadata</saml:Issuer>
+</samlp:AuthnRequest>');
+        $this->redirectBinding->shouldReceive('receiveSignedAuthnRequestFrom')->andReturn($authnRequest);
+
+        $this->mockSessionData('_sf2_attributes', [
+            'surfnet/gateway/requestname_id' => 'stale-name-id',
+            'surfnet/gateway/gsspstale_request_id' => '_stale_gssp_request',
+            'surfnet/gateway/adfsstale_state' => 'stale-adfs-state',
+            'surfnet/gateway/auth_mode/_stale_request' => 'sso',
+            'unrelated/key' => 'kept',
+        ]);
+
+        $httpRequest = new Request(['SAMLRequest' => 'x'], [], [], [], [], ['REQUEST_METHOD' => Request::METHOD_GET]);
+        $this->gatewayLoginService->handleBinding($httpRequest);
+
+        $this->assertSame(['unrelated/key' => 'kept'], $this->getSessionData('attributes'));
+    }
+
     /**
      * @param array $idpConfiguration
      * @param array $loaAliases

@@ -253,6 +253,47 @@ final class LoginServiceTest extends GatewaySamlTestCase
     }
 
     #[\PHPUnit\Framework\Attributes\Test]
+    public function it_clears_the_state_of_outstanding_authentications_when_starting_on_login_flow(): void
+    {
+        $originalRequest = '<samlp:AuthnRequest
+    xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"
+    xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
+    ID="_123456789012345678901234567890123456789012"
+    Version="2.0"
+    IssueInstant="2014-10-22T11:06:59Z"
+    Destination="https://gateway.org/sso"
+    AssertionConsumerServiceURL="https://sp.com/acs"
+    ProtocolBinding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST">
+  <saml:Issuer>https://sp.com/metadata</saml:Issuer>
+  <samlp:RequestedAuthnContext>
+    <saml:AuthnContextClassRef>http://stepup.example.com/assurance/loa2</saml:AuthnContextClassRef>
+  </samlp:RequestedAuthnContext>
+</samlp:AuthnRequest>';
+
+        $this->mockSessionData('_sf2_attributes', [
+            'surfnet/gateway/requestname_id' => 'stale-name-id',
+            'surfnet/gateway/gsspstale_request_id' => '_stale_gssp_request',
+            'surfnet/gateway/adfsstale_state' => 'stale-adfs-state',
+            'surfnet/gateway/auth_mode/_stale_request' => 'sfo',
+            'unrelated/key' => 'kept',
+        ]);
+        $this->mockRedirectBinding($originalRequest);
+
+        $this->gatewayLoginService->singleSignOn(new Request([AuthnRequest::PARAMETER_RELAY_STATE => 'relay_state']));
+
+        $sessionData = $this->getSessionData('attributes');
+        $this->assertArrayNotHasKey('surfnet/gateway/requestname_id', $sessionData);
+        $this->assertArrayNotHasKey('surfnet/gateway/gsspstale_request_id', $sessionData);
+        $this->assertArrayNotHasKey('surfnet/gateway/adfsstale_state', $sessionData);
+        $this->assertArrayNotHasKey('surfnet/gateway/auth_mode/_stale_request', $sessionData);
+        $this->assertSame('kept', $sessionData['unrelated/key']);
+        $this->assertSame(
+            '_123456789012345678901234567890123456789012',
+            $sessionData['surfnet/gateway/requestrequest_id'],
+        );
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_should_throw_an_exception_when_an_invalid_loa_is_requested_when_starting_on_login_flow(): void
     {
         $this->expectException(RequesterFailureException::class);
