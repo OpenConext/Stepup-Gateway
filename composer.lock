@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "eec365ca47c783bebea84a040347a837",
+    "content-hash": "14ce899517819c345b7edd430509a9ac",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -2887,16 +2887,16 @@
         },
         {
             "name": "surfnet/stepup-saml-bundle",
-            "version": "7.1.0-beta3",
+            "version": "7.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/OpenConext/Stepup-saml-bundle.git",
-                "reference": "eb9625777fed525bde86561cbeb430b07631b468"
+                "reference": "91460547d91763847f57272ae676bf4e8739df5b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/OpenConext/Stepup-saml-bundle/zipball/eb9625777fed525bde86561cbeb430b07631b468",
-                "reference": "eb9625777fed525bde86561cbeb430b07631b468",
+                "url": "https://api.github.com/repos/OpenConext/Stepup-saml-bundle/zipball/91460547d91763847f57272ae676bf4e8739df5b",
+                "reference": "91460547d91763847f57272ae676bf4e8739df5b",
                 "shasum": ""
             },
             "require": {
@@ -3004,11 +3004,7 @@
                 "simplesamlphp",
                 "surfnet"
             ],
-            "support": {
-                "source": "https://github.com/OpenConext/Stepup-saml-bundle/tree/7.1.0-beta3",
-                "issues": "https://github.com/OpenConext/Stepup-saml-bundle/issues"
-            },
-            "time": "2026-08-06T10:53:12+00:00"
+            "time": "2026-08-06T11:20:25+00:00"
         },
         {
             "name": "surfnet/yubikey-api-client",
@@ -13027,9 +13023,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "surfnet/stepup-saml-bundle": 10
-    },
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

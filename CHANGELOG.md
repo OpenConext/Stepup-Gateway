@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Update surfnet/stepup-saml-bundle to 7.1.0 #683
 - Fix second factor bypass vulnerability (security)
 - Limit the number of concurrent authentications to one per browser session
 
