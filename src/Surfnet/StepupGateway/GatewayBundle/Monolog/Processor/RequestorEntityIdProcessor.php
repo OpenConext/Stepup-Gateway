@@ -77,8 +77,8 @@ final class RequestorEntityIdProcessor
             }
 
             // Redirect binding messages are deflated, POST binding messages are not
-            $inflated = @gzinflate($decoded);
-            $xml = $inflated !== false ? $inflated : $decoded;
+            $inflated = $this->inflate($decoded);
+            $xml = $inflated ?? $decoded;
 
             $document = DOMDocumentFactory::fromString($xml);
 
@@ -96,5 +96,21 @@ final class RequestorEntityIdProcessor
         } catch (Throwable) {
             return null;
         }
+    }
+
+    private function inflate(string $data): ?string
+    {
+        // Catch any errors gzinflate triggers
+        set_error_handler(static function (): bool {
+            return true;
+        });
+
+        try {
+            $inflated = gzinflate($data);
+        } finally {
+            restore_error_handler();
+        }
+
+        return $inflated === false ? null : $inflated;
     }
 }
