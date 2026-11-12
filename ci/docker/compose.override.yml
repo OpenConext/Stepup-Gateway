@@ -22,6 +22,7 @@ services:
          - ../../:/var/www/html
          - ../../devconf/stepup/:/config
          - ../../devconf/stepup/gateway/surfnet_yubikey.yaml:/var/www/html/config/packages/surfnet_yubikey.yaml
+         - ../../config/openconext/parameters.local.yaml.dist:/var/www/html/config/openconext/parameters.local.yaml:ro
     ssp:
       volumes:
          - ../../devconf/stepup/ssp:/var/www/simplesaml/config/cert

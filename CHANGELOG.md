@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Fix second factor bypass vulnerability (security)
+- Limit the number of concurrent authentications to one per browser session
+
 ## 6.1.1
 
 - Bugfix: handle lost Gateway sessions at the ACS #668 Also see: #646

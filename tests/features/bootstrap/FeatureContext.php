@@ -146,28 +146,30 @@ class FeatureContext implements Context
     #[\Behat\Step\Then('I should see the Yubikey OTP screen')]
     public function iShouldSeeTheYubikeyOtpScreen(): void
     {
-        $this->minkContext->assertPageContainsText('Your YubiKey-code');
+        $this->minkContext->waitForPageText('Your YubiKey-code');
     }
 
     #[\Behat\Step\Then('I should see the SMS verification screen')]
     public function iShouldSeeTheSMSScreen(): void
     {
-        $this->minkContext->assertPageContainsText('Enter the received SMS-code');
-        $this->minkContext->assertPageContainsText('Send again');
+        $this->minkContext->waitForPageText('Enter the received SMS-code');
+        $this->minkContext->waitForPageText('Send again');
     }
 
     #[\Behat\Step\Given('/^I should see the Tiqr authentication screen$/')]
     public function iShouldSeeTheTiqrAuthenticationScreen(): void
     {
         $this->pressButtonWhenNoJavascriptSupport();
-        $this->minkContext->assertPageContainsText('Log in with Tiqr');
+        $this->minkContext->waitForPageText('Log in with Tiqr');
     }
 
     #[\Behat\Step\When('I enter the OTP')]
     public function iEnterTheOtp(): void
     {
-        $this->minkContext->fillField('gateway_verify_yubikey_yubikeyInput', 'bogus-otp-we-use-a-mock-yubikey-service');
-        $this->minkContext->pressButton('gateway_verify_yubikey_submit');
+        $this->minkContext->fillFieldsAndSubmitForm(
+            ['gateway_verify_yubikey_yubikeyInput' => 'bogus-otp-we-use-a-mock-yubikey-service'],
+            'gateway_verify_yubikey_submit'
+        );
         $this->pressButtonWhenNoJavascriptSupport();
     }
 
@@ -180,8 +182,10 @@ class FeatureContext implements Context
         }
         $matches = [];
         preg_match('/^Your\ SMS\ code:\ (.*)$/', $cookieValue, $matches);
-        $this->minkContext->fillField('gateway_verify_sms_challenge_challenge', $matches[1]);
-        $this->minkContext->pressButton('gateway_verify_sms_challenge_verify_challenge');
+        $this->minkContext->fillFieldsAndSubmitForm(
+            ['gateway_verify_sms_challenge_challenge' => $matches[1]],
+            'gateway_verify_sms_challenge_verify_challenge'
+        );
         $this->pressButtonWhenNoJavascriptSupport();
     }
 
@@ -191,8 +195,10 @@ class FeatureContext implements Context
         $cookieValue = $this->minkContext->getSession()->getDriver()->getCookie('smoketest-sms-service');
         $matches = [];
         preg_match('/^Your\ SMS\ code:\ (.*)$/', $cookieValue, $matches);
-        $this->minkContext->fillField('gateway_verify_sms_challenge_challenge', $matches[1]);
-        $this->minkContext->pressButton('gateway_verify_sms_challenge_verify_challenge');
+        $this->minkContext->fillFieldsAndSubmitForm(
+            ['gateway_verify_sms_challenge_challenge' => $matches[1]],
+            'gateway_verify_sms_challenge_verify_challenge'
+        );
     }
 
     #[\Behat\Step\When('I finish the Tiqr authentication')]
@@ -241,13 +247,13 @@ class FeatureContext implements Context
     {
         switch (strtolower($tokenType)) {
             case "yubikey":
-                $this->minkContext->pressButton('gateway_choose_second_factor_choose_yubikey');
+                $this->minkContext->pressButtonAndWaitForNavigation('gateway_choose_second_factor_choose_yubikey');
                 break;
             case "sms":
-                $this->minkContext->pressButton('gateway_choose_second_factor_choose_sms');
+                $this->minkContext->pressButtonAndWaitForNavigation('gateway_choose_second_factor_choose_sms');
                 break;
             case "tiqr":
-                $this->minkContext->pressButton('gateway_choose_second_factor_choose_tiqr');
+                $this->minkContext->pressButtonAndWaitForNavigation('gateway_choose_second_factor_choose_tiqr');
                 break;
         }
     }
@@ -255,7 +261,7 @@ class FeatureContext implements Context
     #[\Behat\Step\Then('/^I should be on the WAYG$/')]
     public function iShouldBeOnTheWAYG(): void
     {
-        $this->minkContext->assertPageContainsText('Choose a token for login');
+        $this->minkContext->waitForPageText('Choose a token for login');
     }
 
     #[\Behat\Step\Then('/^an error response is posted back to the SP$/')]
@@ -267,7 +273,7 @@ class FeatureContext implements Context
     #[\Behat\Step\Given('/^I cancel the authentication$/')]
     public function iCancelTheAuthentication(): void
     {
-        $this->minkContext->pressButton('Cancel');
+        $this->minkContext->pressButtonAndWaitForNavigation('Cancel');
     }
 
     #[\Behat\Step\Given('/^I pass through the Gateway$/')]

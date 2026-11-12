@@ -91,6 +91,17 @@ class ConsumeAssertionService
 
         $this->handledRequestId = $originalRequestId;
 
+        // When $originalRequestId === null, no Response is expected in the current session.
+        // The session may have been cleared, or the session's state in the backend may have been lost
+        if ($originalRequestId === null) {
+            $this->logger->error(sprintf(
+                'Received a SAMLResponse from GSSP "%s", but no response is expected in the current session',
+                $provider->getName()
+            ));
+
+            throw new UnknownInResponseToException(null, $stateHandler->getGatewayRequestId());
+        }
+
         $logger = $this->samlLogger->forAuthentication($originalRequestId);
 
         $action = $stateHandler->hasSubject() ? 'Second Factor Verification' : 'Proxy Response';

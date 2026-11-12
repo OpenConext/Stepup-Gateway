@@ -65,7 +65,7 @@
         "behat/mink": "^1.13",
         "behat/mink-browserkit-driver": "^2.3",
         "dmore/behat-chrome-extension": "^1.4.1",
-        "dmore/chrome-mink-driver": "2.9.*",
+        "dmore/chrome-mink-driver": "^2.11",
         "friends-of-behat/mink-extension": "^2.7.5",
         "friends-of-behat/symfony-extension": "^2.6.2",
         "malukenho/docheader": "^1.1.0",
