@@ -4,6 +4,9 @@ framework:
   secret:          "%secret%"
   form:            ~
   error_controller: Surfnet\StepupGateway\GatewayBundle\Controller\ExceptionController::show
+  exceptions:
+    Symfony\Component\HttpKernel\Exception\NotFoundHttpException:
+      log_level: info
   csrf_protection: ~
   trusted_hosts:   ~
   session:
