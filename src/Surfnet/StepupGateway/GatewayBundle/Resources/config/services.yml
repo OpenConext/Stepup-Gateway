@@ -254,6 +254,13 @@ services:
             - "@logger"
         tags: [{ name: kernel.event_subscriber }]
 
+    gateway.event_listener.unexpected_head_request:
+        class: Surfnet\StepupGateway\GatewayBundle\EventListener\UnexpectedHeadRequestListener
+        arguments:
+            - "@Surfnet\\StepupGateway\\GatewayBundle\\Controller\\ExceptionController"
+            - "@logger"
+        tags: [{ name: kernel.event_subscriber }]
+
     gateway.event_listener.locale:
         class: Surfnet\StepupGateway\GatewayBundle\EventListener\SecondFactorLocaleListener
         arguments:
