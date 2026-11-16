@@ -1,0 +1,35 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Reads a string from stdin and writes it to stdout, replacing every A-Z, a-z
+ * and 0-9 character with a random character of the same class. All other
+ * characters are kept as is, so the length and structure are preserved.
+ */
+
+if (PHP_SAPI !== 'cli') {
+    exit(1);
+}
+
+$classes = [
+    ['A', 'Z'],
+    ['a', 'z'],
+    ['0', '9'],
+];
+
+$replace = static function (string $char) use ($classes): string {
+    foreach ($classes as [$from, $to]) {
+        if ($char >= $from && $char <= $to) {
+            return chr(random_int(ord($from), ord($to)));
+        }
+    }
+
+    return $char;
+};
+
+$input = stream_get_contents(STDIN);
+if ($input === false) {
+    fwrite(STDERR, "Unable to read from stdin\n");
+    exit(1);
+}
+
+echo preg_replace_callback('/[A-Za-z0-9]/', static fn (array $m): string => $replace($m[0]), $input);
