@@ -49,47 +49,134 @@ For the purpose of testing the frontend templates a preview route is available t
 Available in `smoketest` environment only.  
 Visit: `https://gateway.dev.openconext.local/preview/`
 
+## Testing
 
-### Running Behat tests
-#### .env settings in devconf/stepup
+There are three test suites:
+1. PHPUnit unit tests. Uses the Symfony "test" environment.
+2. PHPUnit Functional tests. Uses the Symfony "functional" environment.
+3. Behat Functional tests. These require a running Stepup OpenConext-devconf in test (smoketest) environment 
+
+### PHPUnit unit and functional tests
+
+The PHPUnit tests are tests that run in-process. They need no web server, no database server and no OpenConext-devconf docker composer environment running.
+
+#### PHPUnit unit tests
+
+First install the dependencies:
+```
+$ composer install
+```
+
+Then run the unit tests using:
+```
+$ composer test
+```
+
+#### PHPUnit Functional tests
+
+The functional tests are PHPUnit tests that send SAML messages to the Gateway at the HTTP level, in-process. They need 
+no web server, no database server and no devconf Docker running. 
+
+The functional tests run standalone in PHP cli with the `pdo_sqlite` extension as the only extra requirement, used for
+creating the gateway database fixture (`tests/Functional/Fixtures/devconf/database.sql`) instead of mariadb.
+
+First install the dependencies:
+```
+$ composer install
+```
+
+and 
 
 ```
-APP_ENV=smoketest
-STEPUP_VERSION:test
-
-AZUREMFA_PHP_IMAGE=php82-apache2-node20-composer2:latest
-DEMOGSSP_PHP_IMAGE=php82-apache2-node20-composer2:latest
-#GATEWAY_PHP_IMAGE=php72-apache2-node14-composer2:latest
-MIDDLEWARE_PHP_IMAGE=php82-apache2-node20-composer2:latest
-RA_PHP_IMAGE=php82-apache2-node20-composer2:latest
-SELFSERVICE_PHP_IMAGE=php82-apache2-node20-composer2:latest
-TIQR_PHP_IMAGE=php82-apache2-node20-composer2:latest
-WEBAUTHN_PHP_IMAGE=php82-apache2-node20-composer2:latest
+$ composer frontend-install
 ```
 
-#### Start devconf
+because the tests do need the compiled web assets.
 
-`./start-dev-env.sh gateway:../../OpenConext-stepup/Stepup-Gateway`
-
-#### Run the Gateway Behat tests
+Run the tests:
+```
+$ composer test-functional
+```
+or, without composer:
 
 ```
-$ docker exec -it stepup-gateway-1 bash
-$ composer behat
-```            
+$ ./ci/qa/phpunit-functional
+```
 
-#### New addition: run a specific test
+Gateway logs of the tests are written to `var/log/functional.log`.
+
+See [docs/FUNCTIONAL_TESTING.md](./docs/FUNCTIONAL_TESTING.md) for details.
+
+### Behat functional tests
+
+These tests need [OpenConext-devonf/stepup](https://github.com/OpenConext/OpenConext-devonf/tree/main/stepup) to be running in TEST mode.
+
+First install the Stepup-Gateway dependencies:
+```
+$ composer install
+```
+
+and
+
+```
+$ composer frontend-install
+```
+ 
+Checkout `OpenConext-devonf` somewhere or use an existing checkout:
+
+```
+$ cd .../OpenConext-devonf/stepup
+```
+
+Copy `stepup/.env.test` to `stepup/.env` to put the devconf environment in test (smoketest) mode. This adds additional containers (behat, chrome) for running tests and uses a different set of images for the Stepup services. A different database is also used, so existing data in your devconf is retained when switching to test. 
+
+```
+$ cp .env.test .env
+```
+
+Stop all running containers before switching to test mode.
+
+```
+$ ./stop-dev-env.sh
+```
+
+Then start the devconf environment, pointing to the directory with your Stepup-Gateway checkout. This creates a container with your code mounted in the container.
+
+```
+$ ./start-dev-env.sh gateway:~/.../OpenConext-stepup/Stepup-Gateway`
+```
+
+The gateway behat tests are run from the *gateway* container:
+
+```
+docker exec -it stepup-gateway-1 ./vendor/bin/behat --config=ci/qa/behat.yml
+```
+
+#### Run a specific test
 
 The composer behat command can now also pipe the arguments to the behat call. So now, for example you can do:
 
 ```
+$ docker exec -it stepup-gateway-1
+
 $ composer behat tests/features/self-asserted.feature
 $ composer behat tests/features/sso.feature:34
 $ composer behat -- -vv
 $ composer behat -- --stop-on-failure
 ```
 
-From the doc-root:
+### CI Behat functional tests
+
+The CI on github runs the Behat functional tests. This reuses configuration from OpenConext-devconf, but uses its own compose.yml (`ci/docker/compose.yml`). it also has its own parameters.yaml (`ci/config/parameters.yaml`).
+
+Before you start the CI version, make sure you have: 
+1. stopped any containers you started from OpenConext-devconf (`./stop-dev-env.sh`)
+2. parameter changes have been applied to `ci/config/parameters.yaml`.
+
+
+To run the tests like the CI does locally:
+
+From the Stepup-Gateway doc-root:
 ```bash
 $ cd ci/docker
 $ ./init.sh
@@ -97,11 +184,10 @@ $ ./init.sh
 $ docker-compose exec -T php-fpm.stepup.example.com bash -c 'composer behat'
 ```
 
-Be aware! Make sure any parameter changes are also applied in the `ci/config/parameters.yaml`.
-
-When finished working on behat tests, stop the containers (`docker-compose down`), and restart your stepup-vm.
-
-Having them running simultaneous might cause hostname issues, but your mileage may vary.
+Stop the CI docker containers before starting devconf again:
+```
+$ docker compose down
+```
 
 ## Release strategy
 Please read: https://github.com/OpenConext/Stepup-Deploy/wiki/Release-Management fro more information on the release strategy used in Stepup projects.
@@ -115,6 +201,7 @@ Documentation specific to this component is located in the [docs](./docs) direct
   - [GSSP](./docs/GSSP.md)
   - [SFO](./docs/SFO.md)
 - [SAML Example messages](./docs/ExampleSAMLMessages.md)
+- [Functional testing](./docs/FUNCTIONAL_TESTING.md) (HTTP-level PHPUnit tests, capturing fixtures from devconf)
 
 Documentation for the Stepup system can be found in the
 - [Stepup-Deploy](https://github.com/OpenConext/Stepup-Deploy) repository;
