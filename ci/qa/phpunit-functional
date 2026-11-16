@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+cd $(dirname $0)/../../
+
+# Clear cache for functional environment
+php ./bin/console cache:clear --env=functional
+
+# Remove logs
+echo "Removing logs in /var/cache/functional"
+rm -r ./var/cache/functional/*
+
+# Only request code coverage when a coverage driver is active (e.g. XDEBUG_MODE=coverage).
+# Requesting a coverage report without a driver makes PHPUnit warn and exit non-zero
+# with "XDEBUG_MODE=coverage ... has to be set"
+
+coverage_args=()
+if [[ "${XDEBUG_MODE:-}" == *coverage* ]]; then
+  echo "Generating code coverage in var/coverage/functional"
+  mkdir -p var/coverage/functional
+  coverage_args=(
+    --coverage-php var/coverage/functional/phpunit.cov
+    --coverage-clover var/coverage/functional/clover.xml
+    --coverage-text
+    --only-summary-for-coverage-text
+  )
+else
+  echo "Note: Run with 'XDEBUG_MODE=coverage' to generate code coverage"
+fi
+
+# Run functional tests
+./vendor/bin/phpunit -c ci/qa/phpunit-functional.xml "${coverage_args[@]}"
