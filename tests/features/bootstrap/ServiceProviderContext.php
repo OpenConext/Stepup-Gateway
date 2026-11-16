@@ -487,8 +487,13 @@ class ServiceProviderContext implements Context
     #[\Behat\Step\When('/^I authenticate at the IdP as ([^\\\']*)$/')]
     public function iAuthenticateAtTheIdp($username): void
     {
-        // Fill the credentials and submit the form
-        $this->minkContext->fillFieldsAndSubmitForm(['username' => $username, 'password' => $username], 'Login');
+        // Fill the credentials and submit the form.
+        // The password field was removed in the devssp
+        $fields = ['username' => $username];
+        if ($this->getSession()->getPage()->findField('password') !== null) {
+            $fields['password'] = $username;
+        }
+        $this->minkContext->fillFieldsAndSubmitForm($fields, 'Login');
 
         if ($this->getSession()->getDriver() instanceof SymfonyDriver) {
             // Submit the SAML Response from SimpleSamplPHP IdP
