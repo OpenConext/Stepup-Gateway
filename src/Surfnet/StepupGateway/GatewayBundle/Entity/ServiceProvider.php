@@ -86,7 +86,7 @@ class ServiceProvider extends BaseServiceProvider
      * @param LoggerInterface $logger Optional
      * @return string
      */
-    public function determineAcsLocation($acsLocationInAuthnRequest, LoggerInterface $logger = null)
+    public function determineAcsLocation($acsLocationInAuthnRequest, ?LoggerInterface $logger = null)
     {
         // List of allowed ACS locations configured in middleware.
         $allowedAcsLocations = $this->get('allowedAcsLocations');

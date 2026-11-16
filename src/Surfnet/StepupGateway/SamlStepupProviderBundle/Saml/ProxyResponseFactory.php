@@ -67,7 +67,7 @@ class ProxyResponseFactory
         IdentityProvider $hostedIdentityProvider,
         StateHandler $stateHandler,
         AssertionSigningService $assertionSigningService,
-        DateTime $now = null
+        ?DateTime $now = null
     ) {
         $this->logger                  = $logger;
         $this->hostedIdentityProvider  = $hostedIdentityProvider;

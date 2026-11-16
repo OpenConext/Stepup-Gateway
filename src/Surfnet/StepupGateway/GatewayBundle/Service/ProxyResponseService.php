@@ -82,7 +82,7 @@ class ProxyResponseService
         AttributeDictionary     $attributeDictionary,
         AttributeDefinition     $internalCollabPersonIdAttribute,
         Loa                     $intrinsicLoa,
-        DateTime                $now = null
+        ?DateTime               $now = null
     ) {
         $this->hostedIdentityProvider = $hostedIdentityProvider;
         $this->proxyStateHandler = $proxyStateHandler;

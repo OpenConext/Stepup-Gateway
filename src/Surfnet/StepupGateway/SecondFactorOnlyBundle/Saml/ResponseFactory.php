@@ -61,7 +61,7 @@ final class ResponseFactory
         IdentityProvider $hostedIdentityProvider,
         ProxyStateHandler $proxyStateHandler,
         AssertionSigningService $assertionSigningService,
-        DateTime $now = null
+        ?DateTime $now = null
     ) {
         $this->hostedIdentityProvider    = $hostedIdentityProvider;
         $this->proxyStateHandler         = $proxyStateHandler;
