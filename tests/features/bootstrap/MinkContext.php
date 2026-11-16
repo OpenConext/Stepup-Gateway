@@ -84,7 +84,6 @@ class MinkContext extends BaseMinkContext
         $errno = curl_errno($curl);
         $error = curl_error($curl);
         $status = (int) curl_getinfo($curl, CURLINFO_HTTP_CODE);
-        curl_close($curl);
 
         if ($errno !== 0) {
             throw new RuntimeException(sprintf(
@@ -635,9 +634,7 @@ class MinkContext extends BaseMinkContext
 
         if (curl_errno($curl)) {
             $error = curl_error($curl);
-            curl_close($curl);
             throw new RuntimeException(sprintf('Failed to activate browser tab "%s": %s', $targetId, $error));
         }
-        curl_close($curl);
     }
 }
