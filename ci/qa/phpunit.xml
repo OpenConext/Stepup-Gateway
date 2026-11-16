@@ -18,13 +18,10 @@
     </testsuite>
   </testsuites>
   <!--
-    Code coverage configuration for the unit tests.
-    Writes the coverage data into var/coverage/unit:
-      - "phpunit.cov" for PHPUnit
-      - "clover.xml" for CI tools
-    Prints a summary to stdout
-    Run phpunit with XDEBUG_MODE=coverage to record coverage (requires the PHP XDebug extension).
-    Without XDEBUG_MODE set no coverage data is recorded and the tests run normally.
+    Source files used for code coverage.
+    Coverage is deliberately not configured here but switched on by XDEBUG_MODE:
+    Use:
+      XDEBUG_MODE=coverage ./ci/qa/phpunit
   -->
   <source>
     <include>
@@ -34,11 +31,4 @@
       <directory suffix=".php">../../src/Surfnet/StepupGateway/*/Tests</directory>
     </exclude>
   </source>
-  <coverage cacheDirectory="../../var/qa/phpunit-coverage.cache">
-    <report>
-      <php outputFile="../../var/coverage/unit/phpunit.cov"/>
-      <clover outputFile="../../var/coverage/unit/clover.xml"/>
-      <text outputFile="php://stdout" showOnlySummary="true"/>
-    </report>
-  </coverage>
 </phpunit>
