@@ -121,6 +121,7 @@
             "@phpmd",
             "@dsv-nosync",
             "@test",
+            "@test-functional",
             "@behat",
             "@behat-functional"
         ],
