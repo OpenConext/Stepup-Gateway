@@ -109,7 +109,7 @@ See [docs/FUNCTIONAL_TESTING.md](./docs/FUNCTIONAL_TESTING.md) for details.
 
 ### Behat functional tests
 
-These tests need [OpenConext-devonf/stepup](https://github.com/OpenConext/OpenConext-devonf/tree/main/stepup) to be running in TEST mode.
+These tests need [OpenConext-devconf/stepup](https://github.com/OpenConext/OpenConext-devconf/tree/main/stepup) to be running in TEST mode.
 
 First install the Stepup-Gateway dependencies:
 ```
