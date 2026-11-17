@@ -82,7 +82,7 @@ class Saml2ContainerMock extends AbstractContainer
         ));
     }
 
-    public function writeFile(string $filename, string $data, int $mode = null): void
+    public function writeFile(string $filename, string $data, ?int $mode = null): void
     {
         throw new BadMethodCallException(sprintf(
             "%s:%s may not be called in the Surfnet\\SamlBundle as it doesn't work with Symfony2",

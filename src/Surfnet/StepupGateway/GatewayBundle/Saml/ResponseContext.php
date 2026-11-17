@@ -79,7 +79,7 @@ class ResponseContext
         SamlEntityService $samlEntityService,
         ProxyStateHandler $stateHandler,
         LoggerInterface $logger,
-        DateTime $now = null
+        ?DateTime $now = null
     ) {
         $this->hostedIdentityProvider = $identityProvider;
         $this->samlEntityService      = $samlEntityService;
