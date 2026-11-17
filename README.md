@@ -157,8 +157,6 @@ docker exec -it stepup-gateway-1 ./vendor/bin/behat --config=ci/qa/behat.yml
 The composer behat command can now also pipe the arguments to the behat call. So now, for example you can do:
 
 ```
-$ docker exec -it stepup-gateway-1
-
 $ composer behat tests/features/self-asserted.feature
 $ composer behat tests/features/sso.feature:34
 $ composer behat -- -vv

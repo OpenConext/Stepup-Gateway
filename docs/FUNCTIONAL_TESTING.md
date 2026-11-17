@@ -1,6 +1,6 @@
 # Functional testing using PHPUnit
 
-The PHPUnit functional tests in `test/Functional` exercise the Gateway at the HTTP level, in-process. 
+The PHPUnit functional tests in `tests/Functional` exercise the Gateway at the HTTP level, in-process. 
 PHPUnit and Symfony's `WebTestCase` are used to send real HTTP requests (SAML AuthnRequests, SAML Responses) to the 
 Symfony kernel and the tests assert on the HTTP responses it receives back. There are no external dependencies: 
 no browser, web server, MariaDB or other devconf container. This makes these test fast and simple to run, easy to debug 
@@ -13,7 +13,7 @@ simpler. Scrips are included to create and update the test fixtures from a live 
 These test complement (for now) the Behat tests in `tests/features`, which run against a full devconf or CI Docker setup. 
 
 This document is aimed at developers who want to add or change PHPUnit functional tests. For running the tests, see the
-[README](../README.md#running-the-functional-tests).
+[README](../README.md#phpunit-functional-tests).
 
 ## Contents
 
@@ -42,7 +42,7 @@ The tests run in a dedicated Symfony environment, `functional` (selected with `A
 | File | Purpose |
 |------|---------|
 | `config/packages/functional/framework.yaml` | Enables `framework.test`, mock file sessions, and imports `config/services_test.yaml` (Yubikey/SMS test doubles, dummy SSO cookie crypto) |
-| `config/packages/functional/doctrine.yaml` | In-memory SQLite for the `gateway` database connection |
+| `config/packages/functional/doctrine.yaml` | File-backed SQLite for the `gateway` database connection |
 | `config/packages/functional/monolog.yaml` | Logs to `var/log/functional.log` instead of stderr |
 | `config/packages/functional/{twig,nelmio_security}.yaml` | Strict Twig variables, CSP disabled |
 | `config/services_functional.yaml` | Points all SAML key parameters (`saml_*`, `gssp_*`) at `tests/Functional/Fixtures/devconf/keys/`, instead of `/config/gateway/...` in the container, replaces the Yubikey and SMS test doubles of `services_test.yaml` by the ones in `Support/TestDouble/` (see [Writing a test](#writing-a-test)), and wires `gateway.service.sso_2fa_cookie_helper` to the real Halite crypto helper instead of the dummy, so the SSO-on-2FA tests (`SsoOn2faFlowTest`) can decrypt and forge cookie values |
@@ -93,7 +93,6 @@ tests/Functional/
 ├── Support/
 │   ├── GatewayWebTestCase.php             Base test case (client, database, fixtures)
 │   ├── Database/DevconfFixtureLoader.php  Creates the schema and loads database.sql
-│   ├── Database/FixtureBuilder.php        Helpers for inserting extra data (not needed for devconf data)
 │   ├── TestDouble/YubikeyService.php      Accepts well-formed Yubikey OTPs without Yubico, keeps the public ID check
 │   ├── TestDouble/SmsService.php          Keeps the SMS messages instead of sending them, so a test can read the OTP
 │   └── Saml/
