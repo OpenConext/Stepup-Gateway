@@ -247,6 +247,12 @@ services:
             - "@request_stack"
         tags: [{ name: monolog.processor }]
 
+    gateway.monolog.requestor_entity_id_processor:
+        class: Surfnet\StepupGateway\GatewayBundle\Monolog\Processor\RequestorEntityIdProcessor
+        arguments:
+            - "@request_stack"
+        tags: [{ name: monolog.processor }]
+
     gateway.event_listener.not_found_exception:
         class: Surfnet\StepupGateway\GatewayBundle\EventListener\NotFoundHttpExceptionListener
         arguments:
