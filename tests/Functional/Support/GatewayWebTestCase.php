@@ -8,7 +8,6 @@ use DateTimeZone;
 use SAML2\Compat\ContainerSingleton;
 use Surfnet\SamlBundle\Tests\TestSaml2Container;
 use Surfnet\StepupGateway\Tests\Functional\Support\Database\DevconfFixtureLoader;
-use Surfnet\StepupGateway\Tests\Functional\Support\Database\FixtureBuilder;
 use Surfnet\StepupGateway\Tests\Functional\Support\Saml\SamlFixtureLoader;
 use Surfnet\StepupGateway\Tests\Functional\Support\Saml\SamlResponseParser;
 use Surfnet\StepupGateway\Tests\Functional\Support\Saml\SamlResponseNormalizer;
@@ -23,7 +22,6 @@ use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 abstract class GatewayWebTestCase extends WebTestCase
 {
     protected KernelBrowser $client;
-    protected FixtureBuilder $fixtures;
     protected SamlFixtureLoader $samlFixtures;
     protected SamlResponseResigner $samlResigner;
 
@@ -82,21 +80,14 @@ abstract class GatewayWebTestCase extends WebTestCase
         $this->setupDatabase();
 
         // Initialize helpers
-        $this->fixtures = new FixtureBuilder(static::getContainer());
         $this->samlFixtures = new SamlFixtureLoader(__DIR__ . '/../Fixtures');
         $this->samlResigner = new SamlResponseResigner(__DIR__ . '/../Fixtures');
-    }
-
-    protected function tearDown(): void
-    {
-        parent::tearDown();
     }
 
     /**
      * Set up the database. The functional environment uses a file-backed SQLite database (it survives the kernel
      * reboot before every request), which is recreated here for every test: the schema is dropped and created, and
-     * the devconf fixture is loaded. So a test that modifies rows (e.g. with FixtureBuilder) cannot leak into
-     * other tests.
+     * the devconf fixture is loaded. So a test that modifies rows cannot leak into other tests.
      */
     private function setupDatabase(): void
     {
@@ -393,45 +384,5 @@ abstract class GatewayWebTestCase extends WebTestCase
     protected function getFormAction(): string
     {
         return $this->client->getCrawler()->filter('form')->attr('action');
-    }
-
-    /**
-     * Load a certificate from the devconf keys directory.
-     */
-    protected function loadDevconfCertificate(string $name): string
-    {
-        $path = __DIR__ . '/../Fixtures/devconf/keys/' . $name . '.crt';
-        if (!file_exists($path)) {
-            // Fallback to generated keys
-            $path = __DIR__ . '/../Fixtures/keys/' . $name . '.crt';
-        }
-        $cert = file_get_contents($path);
-        return str_replace(
-            ['-----BEGIN CERTIFICATE-----', '-----END CERTIFICATE-----', "\n", "\r"],
-            '',
-            $cert
-        );
-    }
-
-    /**
-     * Load a certificate from the Keys directory and return the base64 content.
-     */
-    protected function loadCertificate(string $name): string
-    {
-        $path = __DIR__ . '/../Fixtures/keys/' . $name . '.crt';
-        $cert = file_get_contents($path);
-        return str_replace(
-            ['-----BEGIN CERTIFICATE-----', '-----END CERTIFICATE-----', "\n", "\r"],
-            '',
-            $cert
-        );
-    }
-
-    /**
-     * Load a private key path from the Keys directory.
-     */
-    protected function getPrivateKeyPath(string $name): string
-    {
-        return __DIR__ . '/../Fixtures/keys/' . $name . '.key';
     }
 }
