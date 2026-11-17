@@ -1,7 +1,7 @@
-# Inherit test environment settings, add HTTP testing support
+# The "functional" environment is used by the PHPUnit functional tests.
+# Unlike the test/smoketest environments, this environment does not import services_test.yaml:
+# everything it needs is defined in the base config, services_functional.yaml and packages/functional/.
 when@functional:
-  imports:
-    - { resource: ../../services_test.yaml }
   framework:
     test: ~
     session:

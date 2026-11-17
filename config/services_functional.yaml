@@ -57,32 +57,7 @@ services:
     class: Surfnet\StepupGateway\Tests\Functional\Support\TestDouble\SmsService
     public: true
 
-  # Use the real Halite crypto helper for the SSO on 2FA cookie, not the dummy of services_test.yaml (imported via
-  # packages/functional/framework.yaml, which is loaded before this file, so this definition wins). The functional
-  # tests decrypt the Set-Cookie header of the Gateway's responses and forge cookie values with the real helper.
-  # The dummy stays in place for the smoketest/Behat environment.
-  gateway.service.sso_2fa_cookie_helper:
-    class: Surfnet\StepupGateway\GatewayBundle\Sso2fa\Http\CookieHelper
-    arguments:
-      - "@gateway.service.sso_2fa_cookie_config"
-      - "@gateway.service.sso_2fa_cookie_crypto_helper"
-      - "@logger"
-    public: false
-
-  # The real crypto helper is also fetched by the tests (to decrypt and forge cookie values); in the test
-  # environment private services are reachable through the test container (test.private_services_locator),
-  # so it stays private.
-  gateway.service.sso_2fa_cookie_crypto_helper:
-    class: Surfnet\StepupGateway\GatewayBundle\Sso2fa\Crypto\HaliteCryptoHelper
-    arguments:
-      - "@gateway.service.sso_2fa_cookie_config"
-
   # Make functional test support classes available
-  Surfnet\StepupGateway\Tests\Functional\Support\Database\FixtureBuilder:
-    public: true
-    arguments:
-      - '@service_container'
-
   Surfnet\StepupGateway\Tests\Functional\Support\Database\DevconfFixtureLoader:
     public: true
     arguments:
