@@ -1,13 +1,19 @@
 #!/usr/bin/env bash
 
+# Exit on error
+set -e
+
+# Change directory to the root dir
 cd $(dirname $0)/../../
 
 # Clear cache for functional environment
 php ./bin/console cache:clear --env=functional
 
-# Remove logs
-echo "Removing logs in /var/cache/functional"
-rm -r ./var/cache/functional/*
+# Remove log
+if [[ -f ./var/log/functional.log  ]]; then
+  echo "Removing ./var/log/functional.log"
+  rm ./var/log/functional.log
+fi
 
 # Only request code coverage when a coverage driver is active (e.g. XDEBUG_MODE=coverage).
 # Requesting a coverage report without a driver makes PHPUnit warn and exit non-zero
