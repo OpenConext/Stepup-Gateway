@@ -37,7 +37,7 @@ const GATEWAY_DB_PASS = 'secret';
     ->setName('Capture devconf fixtures')
     ->setDescription('Capture database or keys from the specified devconf environment. For capturing the database the mysql container in the specified devconf directory must be running.')
     ->addArgument('devconf-path', InputArgument::REQUIRED, 'Path to the OpenConext-devconf directory')
-    ->addArgument('what', InputArgument::OPTIONAL, 'What to capture: database or keys')
+    ->addArgument('what', InputArgument::REQUIRED, 'What to capture: database or keys')
     ->setCode(function (InputInterface $input, OutputInterface $output): int {
         $devconfPath = $input->getArgument('devconf-path');
         $what = strtolower($input->getArgument('what'));
@@ -133,24 +133,8 @@ function convertMysqlStringEscapes(string $sql): string
  */
 function convertMysqlToSqlite(string $mysqlDump): string
 {
-    // Remove MySQL-specific syntax
-    $sql = $mysqlDump;
-
-    // Remove LOCK/UNLOCK TABLES
-    $sql = preg_replace('/LOCK TABLES.*?WRITE;/s', '', $sql);
-    $sql = preg_replace('/UNLOCK TABLES;/s', '', $sql);
-
     // Remove MySQL comments and directives
-    $sql = preg_replace('/\/\*!\d+.*?\*\//s', '', $sql);
-
-    // Convert ENGINE/CHARSET clauses
-    $sql = preg_replace('/\) ENGINE=\w+ DEFAULT CHARSET=\w+ COLLATE=\w+;/', ');', $sql);
-
-    // Convert tinyint(1) to INTEGER (SQLite boolean)
-    $sql = preg_replace('/tinyint\(1\)/', 'INTEGER', $sql);
-
-    // Convert longtext to TEXT
-    $sql = preg_replace('/longtext/', 'TEXT', $sql);
+    $sql = preg_replace('/\/\*!\d+.*?\*\//s', '', $mysqlDump);
 
     // Remove backticks (SQLite uses double quotes or nothing)
     $sql = str_replace('`', '', $sql);
@@ -222,7 +206,6 @@ function captureKeys(OutputInterface $output, string $devconfPath): void
         mkdir($keysDir, 0755, true);
     }
 
-    // Key locations in devconf (verified from external/OpenConext-devconf)
     // Target filenames match devconf naming (underscores) for consistency with config
     $keySources = [
         // SimpleSAMLphp SP keys (used for SSO/SFO authn-requests)
@@ -242,10 +225,6 @@ function captureKeys(OutputInterface $output, string $devconfPath): void
         // Gateway IdP keys (Gateway signs responses/Assertions)
         'gateway_idp.key' => $devconfPath . '/stepup/gateway/gateway_idp.key',
         'gateway_idp.crt' => $devconfPath . '/stepup/gateway/gateway_idp.crt',
-
-        // Gateway SAML keys (alternative naming)
-        'gateway_saml_sp.key' => $devconfPath . '/stepup/gateway/gateway_saml_sp.key',
-        'gateway_saml_idp.key' => $devconfPath . '/stepup/gateway/gateway_saml_idp.key',
 
         // Gateway GSSP keys
         'gateway_gssp_sp.key' => $devconfPath . '/stepup/gateway/gateway_gssp_sp.key',

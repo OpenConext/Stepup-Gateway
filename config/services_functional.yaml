@@ -56,15 +56,3 @@ services:
   gateway.service.gateway_api_sms:
     class: Surfnet\StepupGateway\Tests\Functional\Support\TestDouble\SmsService
     public: true
-
-  # Make functional test support classes available
-  Surfnet\StepupGateway\Tests\Functional\Support\Database\DevconfFixtureLoader:
-    public: true
-    arguments:
-      - '@service_container'
-      - '%kernel.project_dir%/tests/Functional/Fixtures'
-
-  Surfnet\StepupGateway\Tests\Functional\Support\Saml\SamlFixtureLoader:
-    public: true
-    arguments:
-      - '%kernel.project_dir%/tests/Functional/Fixtures'

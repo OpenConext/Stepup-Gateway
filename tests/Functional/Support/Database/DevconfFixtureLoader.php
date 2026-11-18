@@ -52,19 +52,7 @@ class DevconfFixtureLoader
         $statements = $this->splitSqlStatements($sql);
 
         foreach ($statements as $statement) {
-            $statement = trim($statement);
-            if (empty($statement) || str_starts_with($statement, '--')) {
-                continue;
-            }
-
-            try {
-                $this->connection->executeStatement($statement);
-            } catch (\Exception $e) {
-                // Ignore "table already exists" errors for idempotency
-                if (!str_contains($e->getMessage(), 'already exists')) {
-                    throw $e;
-                }
-            }
+            $this->connection->executeStatement($statement);
         }
     }
 
