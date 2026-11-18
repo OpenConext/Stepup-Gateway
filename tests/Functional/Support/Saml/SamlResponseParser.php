@@ -8,7 +8,7 @@ use DOMDocument;
 use DOMXPath;
 
 /**
- * Parses and provides assertions for SAML responses.
+ * Parses a SAML Response and gives access to the values the tests assert on.
  */
 class SamlResponseParser
 {

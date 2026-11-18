@@ -11,7 +11,7 @@ use Surfnet\StepupGateway\Tests\Functional\Support\Saml\SamlRequestParser;
 use Surfnet\StepupGateway\Tests\Functional\Support\TestDouble\YubikeyService;
 
 /**
- * Test that various way in which an attack can manipulate the authentication process do not succeed
+ * Test that various ways in which an attacker can manipulate the authentication process do not succeed
  *
  * Premise: There is an attacker that is in possession of a victim's first factor credential and in possession of a
  *          valid second factor that is linked to another account that the attacker controls (i.e. not linked to the
@@ -23,7 +23,7 @@ use Surfnet\StepupGateway\Tests\Functional\Support\TestDouble\YubikeyService;
  * The attacker must not be able to authenticate at a LoA > 1 as the victim. (controlling the user's first factor means
  * authentication at LoA 1 is possible)
  *
- * testSecondFactorOfAttackerCanNotCompleteAuthenticationOfVictim() runs a "switchroo" attack for each combination of
+ * testSecondFactorOfAttackerCanNotCompleteAuthenticationOfVictim() runs a "switcheroo" attack for each combination of
  * users and authentication flows in its data providers, it tests that a valid second factor of the attacker can not
  * complete the authentication of the victim:
  *
@@ -209,8 +209,8 @@ class SecondFactorBypassTest extends GatewayWebTestCase
      * use a different flow, one an SFO entry point and the other SSO.
      *
      * Each row is [attacker, attacker flow, attacker AuthnRequest fixture, victim, victim flow, victim AuthnRequest
-     * fixture], like in gsspSameFlowAttacks(). Each SFO entry point is combined with SSO, with the attacker in either
-     * flow.
+     * fixture], like in gsspSameFlowAttacks(). For victim joe-a-yk each SFO entry point is combined with SSO, with the
+     * attacker in either flow. For victim joe-a-sms only sfo-post to SSO, and SSO to sfo-post and sfo-adfs.
      *
      * @return array<string, array{string, string, string, string, string, string}>
      */

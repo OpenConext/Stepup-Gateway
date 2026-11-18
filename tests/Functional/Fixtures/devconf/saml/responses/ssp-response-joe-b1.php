@@ -12,7 +12,6 @@
  * This is an HTTP-POST Response (base64-encoded XML).
  * Captured from: SAML Tracer or browser DevTools form data
  * Format: Base64-encoded XML value of SAMLResponse parameter
- * Note: HTTP-Redirect Response does not exist - responses always use HTTP-POST
  *
  * Message Summary:
  *   - Binding: HTTP-POST (base64-encoded XML)

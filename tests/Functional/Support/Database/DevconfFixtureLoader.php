@@ -9,8 +9,9 @@ use Doctrine\ORM\Tools\SchemaTool;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Loads database fixtures captured from the devconf environment.
- * Replaces the schema creation with loading a pre-captured SQLite dump.
+ * Recreates the gateway database:
+ * - creates the schema from the Doctrine entity metadata
+ * - loads the data captured from the devconf environment (database.sql).
  */
 class DevconfFixtureLoader
 {
@@ -26,8 +27,7 @@ class DevconfFixtureLoader
     }
 
     /**
-     * Load the database fixture captured from devconf.
-     * This replaces the SchemaTool-based schema creation.
+     * Drop and create the schema, and load the database fixture captured from devconf.
      */
     public function load(): void
     {
@@ -35,7 +35,7 @@ class DevconfFixtureLoader
 
         if (!file_exists($sqlFile)) {
             throw new \RuntimeException(sprintf(
-                'Devconf database fixture not found: %s. Run: php tests/Functional/bin/capture-devconf-fixture --devconf-path=/path/to/OpenConext-devconf',
+                'Devconf database fixture not found: %s. Run: php tests/Functional/bin/capture-devconf-fixture /path/to/OpenConext-devconf database',
                 $sqlFile
             ));
         }

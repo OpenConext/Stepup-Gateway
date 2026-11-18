@@ -20,8 +20,8 @@ use Symfony\Component\HttpFoundation\Cookie as HttpCookie;
  * It replaces second factor on later requests when the SP allows it (allow_sso_on_2fa), unless
  * ForceAuthn is requested or the cookie is invalid.
  *
- * The functional environment uses the real Halite cookie crypto (see config/services_functional.yaml, which
- * overrides the dummy of services_test.yaml), so these tests decrypt the Set-Cookie header of the Gateway's
+ * The functional environment uses the real Halite cookie crypto (it does not import the dummy of services_test.yaml),
+ * so these tests decrypt the Set-Cookie header of the Gateway's
  * responses with the same helper, and forge cookie values with it. The KernelBrowser cookie jar carries the
  * cookie between the requests of a test.
  *
@@ -69,10 +69,6 @@ class SsoOn2faFlowTest extends GatewayWebTestCase
      * account joe-d-yk has schacHomeOrganization Institution-D.EXAMPLE.COM; the middleware normalizes that to
      * institution-d.example.com, which is whitelisted and has no sso_on_2fa in the middleware institution
      * configuration (so sso_on2fa_enabled = 0 in the captured database.sql).
-     *
-     * The test is skipped until the devconf captures for this user exist: the second_factor row in database.sql
-     * (recaptured with tests/Functional/bin/capture-devconf-fixture ... database) and the IdP response fixture
-     * ssp-response-joe-d-yk (captured with SAML Tracer + convert-saml-to-fixture).
      */
     private const INSTITUTION_WITHOUT_SSO_ON_2FA_NAME_ID = 'urn:collab:person:Institution-D.EXAMPLE.COM:joe-d-yk';
     private const INSTITUTION_WITHOUT_SSO_ON_2FA_IDP_RESPONSE = 'ssp-response-joe-d-yk';
@@ -468,7 +464,7 @@ class SsoOn2faFlowTest extends GatewayWebTestCase
 
         if (!file_exists($fixturePath) || !str_contains($databaseSql, $userSlug)) {
             $this->markTestSkipped(sprintf(
-                'The devconf captures for %s do not exist yet (missing the second_factor row in database.sql and/or the fixture ssp-response fixture "%s"). '
+                'The devconf captures for %s do not exist yet (missing the second_factor row in database.sql and/or the IdP response fixture "%s"). '
                 . 'Register a vetted token for the user in devconf, recapture database.sql and capture the IdP response, see docs/FUNCTIONAL_TESTING.md.',
                 $nameId,
                 $idpResponseFixture

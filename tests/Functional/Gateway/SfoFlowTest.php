@@ -12,7 +12,7 @@ use Surfnet\StepupGateway\Tests\Functional\Support\Saml\SamlRequestParser;
  *
  * Test data comes from tests/Functional/Fixtures/devconf/database.sql (captured from devconf):
  * - SP: second-sp (SFO-enabled) from devssp
- * - User: joe-a-yk from institution-a.example.com (has a vetted Yubikey token)
+ * - Users: joe-a-yk (vetted Yubikey token) and joe-a-sms (vetted SMS token) from institution-a.example.com
  * - Institution: institution-a.example.com (whitelisted, SFO-allowed)
  */
 class SfoFlowTest extends GatewayWebTestCase

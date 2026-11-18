@@ -41,10 +41,6 @@ abstract class GatewayWebTestCase extends WebTestCase
     /** The longest validity (NotBefore to NotOnOrAfter) of an assertion the Gateway issues */
     private const MAX_ASSERTION_VALIDITY_SECONDS = 300;
 
-    /**
-     * The Symfony environment for functional tests.
-     * Set via APP_ENV=functional in ci/qa/phpunit-functional.xml
-     */
     protected static function getKernelClass(): string
     {
         return 'App\Kernel';
@@ -56,16 +52,12 @@ abstract class GatewayWebTestCase extends WebTestCase
 
         $this->testStartedAt = new DateTimeImmutable('now', new DateTimeZone('UTC'));
 
-        // Create client with functional environment
-        // APP_ENV is set in ci/qa/phpunit-functional.xml
+        // The client reboots the kernel before every request, so each request runs on a fresh kernel and
+        // Symfony container, like in production
         $this->client = static::createClient([
             'environment' => 'functional',
             'debug' => false,
         ]);
-
-        // The client reboots the kernel before every request, so each request runs on a fresh kernel and
-        // container, like in production. The SQLite database of the functional environment is file-backed
-        // (see config/packages/functional/doctrine.yaml), so it survives those reboots.
 
         // Set up SAML2 container for the test
         ContainerSingleton::setContainer(
@@ -91,7 +83,6 @@ abstract class GatewayWebTestCase extends WebTestCase
      */
     private function setupDatabase(): void
     {
-        // Load the database fixture captured from devconf (schema and data)
         $loader = new DevconfFixtureLoader(
             static::getContainer(),
             __DIR__ . '/../Fixtures'
@@ -162,7 +153,7 @@ abstract class GatewayWebTestCase extends WebTestCase
      * Assert the timestamps in the SAML response are correct for a response the Gateway just issued:
      *  - IssueInstant of the Response and Assertion, and AuthnInstant, are between the start of the test and now
      *  - The assertion is valid now (NotBefore <= now < NotOnOrAfter), for at most MAX_ASSERTION_VALIDITY_SECONDS
-     *  - The SubjectConfirmation and session do not expire before the assertion does
+     *  - The SubjectConfirmationData does not outlive the assertion Conditions, and the session has not expired
      */
     protected function assertSamlResponseTimestampsAreValid(SamlResponseParser $samlResponse): void
     {

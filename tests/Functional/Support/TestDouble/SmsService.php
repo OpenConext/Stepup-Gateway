@@ -12,12 +12,14 @@ use Surfnet\StepupBundle\Service\SmsService as SmsServiceInterface;
  * Gateway sent with getOtpSentTo().
  *
  * Only the sending is replaced: the Gateway generates the OTP, stores it in the session (per second factor) and
- * verifies it as usual. The test client reboots the kernel before every request, so every request gets a new
- * instance of this service: the messages are kept in a static property, and GatewayWebTestCase::setUp() calls
- * reset() so a new test starts without messages.
+ * verifies it as usual.
+ * Because the Symfony kernel is rebooted before every request, every request gets a new instance of this service.
+ * By storing the messages in a static property in this class, the messages survive a kernel reboot.
+ * GatewayWebTestCase::setUp() calls reset() so a new test starts clean, without previous messages.
  *
- * Unlike the Behat test double (ApiBundle\Tests\TestDouble\Service\SmsService), that writes the message to a cookie
- * with setcookie(), which the test client does not see.
+ * ApiBundle\Tests\TestDouble\Service\SmsService used in the Behat tests is not suitable because it uses a cookie
+ * to persist the SMS message between requests.
+
  */
 final class SmsService implements SmsServiceInterface
 {

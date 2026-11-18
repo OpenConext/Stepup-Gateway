@@ -12,7 +12,8 @@ use Surfnet\StepupGateway\Tests\Functional\Support\Saml\SamlRequestParser;
  *
  * Test data comes from tests/Functional/Fixtures/devconf/database.sql (captured from devconf):
  * - SP: default-sp (not SFO)
- * - Users: joe-a-yk (vetted Yubikey) and jane-a1 (vetted Demo GSSP token), institution-a.example.com
+ * - Users: joe-a-yk (vetted Yubikey), joe-a-sms (vetted SMS) and jane-a1 (vetted Demo GSSP token),
+ *   institution-a.example.com
  *
  * The first factor is the SimpleSAMLphp IdP of devconf. Its response is captured from devconf, and
  * made valid for the AuthnRequest sent by the gateway by the SamlResponseResigner.

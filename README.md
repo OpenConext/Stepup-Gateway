@@ -77,8 +77,10 @@ $ composer test
 The functional tests are PHPUnit tests that send SAML messages to the Gateway at the HTTP level, in-process. They need 
 no web server, no database server and no devconf Docker running. 
 
-The functional tests run standalone in PHP cli with the `pdo_sqlite` extension as the only extra requirement, used for
-creating the gateway database fixture (`tests/Functional/Fixtures/devconf/database.sql`) instead of mariadb.
+The functional tests run standalone in PHP cli. They need two extra PHP extensions that are not in composer.json:
+* `pdo_sqlite`: For a SQLite database created from `tests/Functional/Fixtures/devconf/database.sql`) to replace the 
+  mariadb used in production.
+* `gmp`: used to generate Yubikey OTPs.
 
 First install the dependencies:
 ```
@@ -122,10 +124,10 @@ and
 $ composer frontend-install
 ```
  
-Checkout `OpenConext-devonf` somewhere or use an existing checkout:
+Checkout `OpenConext-devconf` somewhere or use an existing checkout:
 
 ```
-$ cd .../OpenConext-devonf/stepup
+$ cd .../OpenConext-devconf/stepup
 ```
 
 Copy `stepup/.env.test` to `stepup/.env` to put the devconf environment in test (smoketest) mode. This adds additional containers (behat, chrome) for running tests and uses a different set of images for the Stepup services. A different database is also used, so existing data in your devconf is retained when switching to test. 
@@ -143,7 +145,7 @@ $ ./stop-dev-env.sh
 Then start the devconf environment, pointing to the directory with your Stepup-Gateway checkout. This creates a container with your code mounted in the container.
 
 ```
-$ ./start-dev-env.sh gateway:~/.../OpenConext-stepup/Stepup-Gateway`
+$ ./start-dev-env.sh gateway:~/.../OpenConext-stepup/Stepup-Gateway
 ```
 
 The gateway behat tests are run from the *gateway* container:
