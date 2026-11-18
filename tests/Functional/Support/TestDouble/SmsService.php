@@ -40,14 +40,6 @@ final class SmsService implements SmsServiceInterface
     }
 
     /**
-     * @return SendSmsCommand[]
-     */
-    public function getSentMessages(): array
-    {
-        return self::$sent;
-    }
-
-    /**
      * Get the OTP of the last SMS sent to $msisdn (the phone number without "+" and the "(0)", e.g. "31612345678").
      * The OTP is the last word of the message ("Your SMS code: %challenge%").
      */
