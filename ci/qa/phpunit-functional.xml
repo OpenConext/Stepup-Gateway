@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd"
+         backupGlobals="false"
+         colors="true"
+         bootstrap="../../vendor/autoload.php"
+         cacheDirectory="../../var/qa/phpunit-functional.cache"
+>
+    <php>
+        <ini name="error_reporting" value="-1"/>
+        <server name="APP_ENV" value="functional" force="true"/>
+        <server name="KERNEL_CLASS" value="App\Kernel"/>
+        <server name="SHELL_VERBOSITY" value="-1"/>
+        <env name="SYMFONY_DEPRECATIONS_HELPER" value="weak"/>
+    </php>
+
+    <testsuites>
+        <testsuite name="Functional Tests">
+            <directory suffix="Test.php">../../tests/Functional</directory>
+        </testsuite>
+    </testsuites>
+    <!--
+        Source files used for code coverage.
+        Coverage is deliberately not configured here but switched on by XDEBUG_MODE:
+        Use:
+          XDEBUG_MODE=coverage ./ci/qa/phpunit-functional
+    -->
+    <source>
+        <include>
+            <directory suffix=".php">../../src</directory>
+        </include>
+        <exclude>
+            <directory suffix=".php">../../src/Surfnet/StepupGateway/*/Tests</directory>
+        </exclude>
+    </source>
+</phpunit>
