@@ -1,0 +1,4 @@
+when@functional:
+  nelmio_security:
+    csp:
+      enabled: false
