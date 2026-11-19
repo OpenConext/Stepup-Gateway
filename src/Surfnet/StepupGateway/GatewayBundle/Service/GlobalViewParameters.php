@@ -24,11 +24,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 final class GlobalViewParameters
 {
     /**
-     * @var TranslatorInterface
-     */
-    private $translator;
-
-    /**
      * @var string[]
      */
     private $locales;
@@ -43,11 +38,9 @@ final class GlobalViewParameters
      * @param string[] $locales
      * @param string[] $supportUrl
      */
-    public function __construct(TranslatorInterface $translator, array $locales, array $supportUrl)
+    public function __construct(private readonly TranslatorInterface $translator, array $locales, array $supportUrl)
     {
         Assert::keysAre($supportUrl, $locales);
-
-        $this->translator = $translator;
         $this->locales = $locales;
         $this->supportUrl = $supportUrl;
     }

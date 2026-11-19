@@ -20,6 +20,8 @@ namespace Surfnet\StepupGateway\SecondFactorOnlyBundle\Controller;
 
 use Surfnet\StepupGateway\GatewayBundle\Container\ContainerController;
 use Surfnet\StepupGateway\GatewayBundle\Exception\RequesterFailureException;
+use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
+use Surfnet\StepupGateway\GatewayBundle\Service\ResponseRenderingService;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\Exception\InvalidAdfsRequestException;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Adfs\Exception\InvalidAdfsResponseException;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Exception\InvalidSecondFactorMethodException;
@@ -82,8 +84,8 @@ class SecondFactorOnlyController extends ContainerController
 
         try {
             $secondFactorLoginService->singleSignOn($httpRequest, $originalRequest);
-        } catch (RequesterFailureException $e) {
-            /** @var \Surfnet\StepupGateway\GatewayBundle\Service\ResponseRenderingService $responseRendering */
+        } catch (RequesterFailureException) {
+            /** @var ResponseRenderingService $responseRendering */
             $responseRendering = $this->get('second_factor_only.response_rendering');
 
             return $responseRendering->renderRequesterFailureResponse($this->getResponseContext(), $httpRequest);
@@ -176,7 +178,7 @@ class SecondFactorOnlyController extends ContainerController
     }
 
     /**
-     * @return \Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext
+     * @return ResponseContext
      */
     public function getResponseContext()
     {

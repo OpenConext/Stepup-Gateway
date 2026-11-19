@@ -42,46 +42,14 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class CookieService implements CookieServiceInterface
 {
-    /**
-     * @var CookieHelperInterface
-     */
-    private $cookieHelper;
-    /**
-     * @var InstitutionConfigurationService
-     */
-    private $institutionConfigurationService;
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-    /**
-     * @var SecondFactorService
-     */
-    private $secondFactorService;
-
-    /**
-     * @var SecondFactorTypeService
-     */
-    private $secondFactorTypeService;
-    /**
-     * @var ExpirationHelperInterface
-     */
-    private $expirationHelper;
-
     public function __construct(
-        CookieHelperInterface $cookieHelper,
-        InstitutionConfigurationService $institutionConfigurationService,
-        SecondFactorService $secondFactorService,
-        SecondFactorTypeService $secondFactorTypeService,
-        ExpirationHelperInterface $expirationHelper,
-        LoggerInterface $logger
+        private readonly CookieHelperInterface $cookieHelper,
+        private readonly InstitutionConfigurationService $institutionConfigurationService,
+        private readonly SecondFactorService $secondFactorService,
+        private readonly SecondFactorTypeService $secondFactorTypeService,
+        private readonly ExpirationHelperInterface $expirationHelper,
+        private readonly LoggerInterface $logger,
     ) {
-        $this->cookieHelper = $cookieHelper;
-        $this->institutionConfigurationService = $institutionConfigurationService;
-        $this->secondFactorService = $secondFactorService;
-        $this->secondFactorTypeService = $secondFactorTypeService;
-        $this->expirationHelper = $expirationHelper;
-        $this->logger = $logger;
     }
 
     public function handleSsoOn2faCookieStorage(
@@ -203,10 +171,10 @@ class CookieService implements CookieServiceInterface
     {
         try {
             return $this->cookieHelper->read($request);
-        } catch (CookieNotFoundException $e) {
+        } catch (CookieNotFoundException) {
             $this->logger->notice('The SSO on 2FA cookie is not found in the request header');
             return new NullCookieValue();
-        } catch (DecryptionFailedException $e) {
+        } catch (DecryptionFailedException) {
             $this->logger->notice('Decryption of the SSO on 2FA cookie failed');
             return new NullCookieValue();
         } catch (Exception $e) {

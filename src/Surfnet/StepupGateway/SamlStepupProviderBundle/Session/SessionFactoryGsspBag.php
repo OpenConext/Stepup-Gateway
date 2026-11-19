@@ -22,7 +22,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class SessionFactoryGsspBag implements SessionFactoryInterface
 {
-    public function __construct(private SessionFactoryInterface $delegate)
+    public function __construct(private readonly SessionFactoryInterface $delegate)
     {
     }
 

@@ -20,7 +20,7 @@ namespace Surfnet\StepupGateway\GatewayBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: \Surfnet\StepupGateway\GatewayBundle\Entity\InstitutionConfigurationRepository::class)]
+#[ORM\Entity(repositoryClass: InstitutionConfigurationRepository::class)]
 class InstitutionConfiguration
 {
     /**

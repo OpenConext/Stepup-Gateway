@@ -20,6 +20,7 @@ namespace Surfnet\StepupGateway\GatewayBundle\Tests\Service\Gateway;
 
 use DateTime;
 use Mockery;
+use PHPUnit\Framework\Attributes\Test;
 use SAML2\DOMDocumentFactory;
 use SAML2\Response;
 use Surfnet\SamlBundle\Entity\IdentityProvider;
@@ -86,7 +87,7 @@ final class ConsumeAssertionServiceTest extends GatewaySamlTestCase
         $this->initGatewayService($idpConfiguration, $spConfiguration, $now);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_should_update_the_state_when_receiving_a_saml_response_when_consuming_assertions_on_login_flow(): void
     {
         $samlResponseXml = '<samlp:Response
@@ -226,7 +227,7 @@ final class ConsumeAssertionServiceTest extends GatewaySamlTestCase
         ], $this->getSessionData('attributes'));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_should_throw_an_exception_when_the_post_binding_could_not_be_processed_when_receiving_a_saml_response_when_consuming_assertions_on_login_flow(): void
     {
         $this->expectException(ResponseFailureException::class);
@@ -335,7 +336,7 @@ final class ConsumeAssertionServiceTest extends GatewaySamlTestCase
         $this->gatewayConsumeAssertionService->consumeAssertion($httpRequest, $this->responseContext);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_should_throw_an_exception_when_the_in_respone_to_is_invalid_when_receiving_a_saml_response_when_consuming_assertions_on_login_flow(): void
     {
         $this->expectException(UnknownInResponseToException::class);

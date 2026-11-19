@@ -20,14 +20,13 @@ namespace Surfnet\StepupGateway\ApiBundle\Sms;
 
 use Surfnet\StepupGateway\ApiBundle\Exception\InvalidArgumentException;
 use function array_key_exists;
-use function get_class;
 use function implode;
 use function in_array;
 use function sprintf;
 
 class SmsAdapterProvider
 {
-    private const SPRYNG = 'spryng';
+    private const string SPRYNG = 'spryng';
     /**
      * @var SmsAdapterInterface[]
      */
@@ -58,7 +57,7 @@ class SmsAdapterProvider
 
     public function addSmsAdapter(SmsAdapterInterface $adapter): void
     {
-        $adapterName = get_class($adapter);
+        $adapterName = $adapter::class;
         if (!array_key_exists($adapterName, self::$allowedServices)) {
             throw new InvalidArgumentException(
                 sprintf(

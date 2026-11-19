@@ -26,19 +26,9 @@ use Surfnet\StepupBundle\Value\Loa;
 final class EnabledSecondFactorRepository implements SecondFactorRepository
 {
     /**
-     * @var \Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactorRepository
-     */
-    private $secondFactorRepository;
-
-    /**
      * @var string[]
      */
     private $enabledTypes;
-
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
 
     /**
      * @param SecondFactorRepository $secondFactorRepository
@@ -46,13 +36,11 @@ final class EnabledSecondFactorRepository implements SecondFactorRepository
      * @param LoggerInterface        $logger
      */
     public function __construct(
-        SecondFactorRepository $secondFactorRepository,
+        private readonly SecondFactorRepository $secondFactorRepository,
         array $enabledTypes,
-        LoggerInterface $logger
+        private readonly LoggerInterface $logger
     ) {
-        $this->secondFactorRepository = $secondFactorRepository;
         $this->enabledTypes = array_combine($enabledTypes, $enabledTypes);
-        $this->logger = $logger;
     }
 
     public function getAllMatchingFor(Loa $highestLoa, $identityNameId, SecondFactorTypeService $service)
@@ -60,7 +48,7 @@ final class EnabledSecondFactorRepository implements SecondFactorRepository
         $enabledSecondFactors = new ArrayCollection();
 
         foreach ($this->secondFactorRepository->getAllMatchingFor($highestLoa, $identityNameId, $service) as $secondFactor) {
-            if (!array_key_exists($secondFactor->secondFactorType, $this->enabledTypes)) {
+            if (!array_key_exists((string) $secondFactor->secondFactorType, $this->enabledTypes)) {
                 $this->logger->info(
                     sprintf(
                         'Discarding second factor; its second factor type "%s" is not enabled',

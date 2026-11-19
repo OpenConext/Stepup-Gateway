@@ -24,6 +24,7 @@ use SAML2\Assertion;
 use SAML2\Constants;
 use SAML2\Response;
 use SAML2\XML\saml\NameID;
+use SAML2\XML\saml\SubjectConfirmation;
 use Surfnet\SamlBundle\Entity\IdentityProvider;
 use Surfnet\StepupGateway\GatewayBundle\Saml\AssertionSigningService;
 use Surfnet\StepupGateway\GatewayBundle\Tests\TestCase\GatewaySamlTestCase;
@@ -98,7 +99,7 @@ class ProxyResponseFactoryTest extends GatewaySamlTestCase
 
         $assertions = $response->getAssertions();
 
-        /** @var \SAML2\Assertion $assertion */
+        /** @var Assertion $assertion */
         $assertion = reset($assertions);
 
         $this->assertInstanceOf(Response::class, $response);
@@ -109,7 +110,7 @@ class ProxyResponseFactoryTest extends GatewaySamlTestCase
 
         $subjects = $assertion->getSubjectConfirmation();
 
-        /** @var \SAML2\XML\saml\SubjectConfirmation $subjectConfirmation */
+        /** @var SubjectConfirmation $subjectConfirmation */
         $subjectConfirmation = reset($subjects);
 
         $this->assertEquals($assertion->getNotOnOrAfter(), $subjectConfirmation->getSubjectConfirmationData()->getNotOnOrAfter());

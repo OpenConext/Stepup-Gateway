@@ -21,7 +21,6 @@ namespace Surfnet\StepupGateway\GatewayBundle\Sso2fa\ValueObject;
 use DateTime;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Exception\InvalidAuthenticationTimeException;
 use function strtolower;
-use function strtotime;
 
 class CookieValue implements CookieValueInterface
 {

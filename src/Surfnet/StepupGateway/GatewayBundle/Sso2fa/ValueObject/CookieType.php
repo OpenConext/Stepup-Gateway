@@ -23,10 +23,10 @@ use Surfnet\StepupGateway\GatewayBundle\Sso2fa\Exception\InvalidCookieTypeExcept
 final class CookieType
 {
     // A session cookie has no set expiration date. Once the browser window closes, the cookie is gone.
-    private const TYPE_SESSION = 'session';
+    private const string TYPE_SESSION = 'session';
     // Persistent cookies have an expiration date, are stored at the client side and are usable until
     // the expiration date is reached.
-    private const TYPE_PERSISTENT = 'persistent';
+    private const string TYPE_PERSISTENT = 'persistent';
 
     private $type;
 

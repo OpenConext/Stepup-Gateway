@@ -22,18 +22,14 @@ use Surfnet\StepupGateway\GatewayBundle\Service\SecondFactor\SecondFactorInterfa
 
 class SecondfactorGsspFallback implements SecondFactorInterface
 {
-    private string $subject;
-    private string $institution;
-    private string $secondFactorType;
-    private string $displayLocale;
     public const SECOND_FACTOR_ID = 'gssp_fallback';
 
-    private function __construct(string $subject, string $institution, string $secondFactorType, string $displayLocale)
-    {
-        $this->secondFactorType = $secondFactorType;
-        $this->displayLocale = $displayLocale;
-        $this->subject = $subject;
-        $this->institution = $institution;
+    private function __construct(
+        private readonly string $subject,
+        private readonly string $institution,
+        private readonly string $secondFactorType,
+        private readonly string $displayLocale,
+    ) {
     }
 
     public static function create(string $subject, string $institution, string $type, string $displayLocale)

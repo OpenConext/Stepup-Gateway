@@ -20,6 +20,7 @@ namespace Surfnet\StepupGateway\GatewayBundle\Tests\Service\Gateway;
 
 use DateTime;
 use Mockery;
+use PHPUnit\Framework\Attributes\Test;
 use SAML2\Response;
 use Surfnet\SamlBundle\Entity\IdentityProvider;
 use Surfnet\SamlBundle\Http\PostBinding;
@@ -119,7 +120,7 @@ final class RespondServiceTest extends GatewaySamlTestCase
         $this->initGatewayService($idpConfiguration, $dictionaryAttributes, $loaLevels, $now);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_should_return_a_valid_saml_response_and_update_state_when_the_verification_is_succeeded_on_login_flow(): void
     {
 

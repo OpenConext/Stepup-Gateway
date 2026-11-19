@@ -19,6 +19,7 @@
 namespace Surfnet\StepupGateway\GatewayBundle\Tests\Service;
 
 use Mockery as m;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Surfnet\SamlBundle\Entity\ServiceProvider;
@@ -149,7 +150,7 @@ final class StepUpAuthenticationServiceTest extends TestCase
     /**
      * The highest LOA is resolved for the authenticating user based on the SP config for it's schacHomeOrganization
      */
-    #[\PHPUnit\Framework\Attributes\DataProvider('configuredLoas')]
+    #[DataProvider('configuredLoas')]
     public function test_resolve_highest_required_loa_special_sp_loa_configuration($loaConfiguration): void
     {
         $this->logger
@@ -192,7 +193,7 @@ final class StepUpAuthenticationServiceTest extends TestCase
      * When the authenticating user has no schacHomeOrganization but the SP is configured with SP/institution specific
      * Loa configuration
      */
-    #[\PHPUnit\Framework\Attributes\DataProvider('configuredLoas')]
+    #[DataProvider('configuredLoas')]
     public function test_resolve_highest_required_loa_no_vetted_tokens_for_user_institution($loaConfiguration): void
     {
         $this->expectException(InstitutionMismatchException::class);
@@ -348,7 +349,7 @@ final class StepUpAuthenticationServiceTest extends TestCase
      * @param $expectedOutcome
      * @param $index
      */
-    #[\PHPUnit\Framework\Attributes\DataProvider('combinationProvider')]
+    #[DataProvider('combinationProvider')]
     public function test_resolve_highest_required_loa_conbinations(
         $configuredLoas,
         $identityOrganisation,

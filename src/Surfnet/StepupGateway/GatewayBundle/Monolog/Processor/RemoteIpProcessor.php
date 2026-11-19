@@ -22,9 +22,9 @@ use Monolog\LogRecord;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-final class RemoteIpProcessor
+final readonly class RemoteIpProcessor
 {
-    public function __construct(private readonly RequestStack $requestStack)
+    public function __construct(private RequestStack $requestStack)
     {
     }
 

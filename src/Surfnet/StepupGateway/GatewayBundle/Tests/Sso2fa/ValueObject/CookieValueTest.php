@@ -20,6 +20,7 @@ namespace Surfnet\StepupGateway\GatewayBundle\Tests\Sso2fa\ValueObject;
 
 use Generator;
 use Mockery;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Surfnet\StepupBundle\Value\Loa;
 use Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor;
@@ -69,7 +70,7 @@ class CookieValueTest extends TestCase
     }
 
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('loaProvider')]
+    #[DataProvider('loaProvider')]
     public function test_loa_can_be_tested_against_required_loa(float $requiredLoa, bool $expectedResult): void
     {
         $secondFactor = Mockery::mock(SecondFactor::class);

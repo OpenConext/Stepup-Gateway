@@ -22,6 +22,7 @@ use RobRichards\XMLSecLibs\XMLSecurityKey;
 use SAML2\Assertion;
 use SAML2\Certificate\KeyLoader;
 use SAML2\Certificate\PrivateKeyLoader;
+use SAML2\Certificate\X509;
 use SAML2\Configuration\PrivateKey;
 use SAML2\Constants;
 use SAML2\Response as SAMLResponse;
@@ -33,7 +34,6 @@ use Surfnet\SamlBundle\Http\ReceivedAuthnRequestQueryString;
 use Surfnet\SamlBundle\SAML2\ReceivedAuthnRequest;
 use Surfnet\StepupGateway\Behat\Command\LoginCommand;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
@@ -158,7 +158,7 @@ class IdentityProviderController extends AbstractController
         }
 
         $requestUri = $request->getRequestUri();
-        if (strpos($requestUri, '?') === false) {
+        if (!str_contains($requestUri, '?')) {
             throw new BadRequestHttpException(
                 'Could not receive AuthnRequest from HTTP Request: expected query parameters, none found'
             );
@@ -236,7 +236,7 @@ class IdentityProviderController extends AbstractController
     {
         $keyLoader = new KeyLoader();
         $keyLoader->loadCertificateFile('/config/ssp/idp.crt');
-        /** @var \SAML2\Certificate\X509 $publicKey */
+        /** @var X509 $publicKey */
         $publicKey = $keyLoader->getKeys()->getOnlyElement();
 
         return $publicKey->getCertificate();

@@ -24,7 +24,7 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
 {
-    public function getConfigTreeBuilder(): \Symfony\Component\Config\Definition\Builder\TreeBuilder
+    public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder('surfnet_stepup_gateway_saml_stepup_provider');
         $rootNode = $treeBuilder->getRootNode();
@@ -56,27 +56,21 @@ class Configuration implements ConfigurationInterface
                     ->scalarNode('sso')
                         ->isRequired()
                         ->validate()
-                            ->ifTrue(function ($v) {
-                                return !is_string($v) || strlen($v) === 0;
-                            })
+                            ->ifTrue(fn($v) => !is_string($v) || strlen($v) === 0)
                             ->thenInvalid('SSO route must be a non-empty string')
                         ->end()
                     ->end()
                     ->scalarNode('consume_assertion')
                         ->isRequired()
                         ->validate()
-                            ->ifTrue(function ($v) {
-                                return !is_string($v) || strlen($v) === 0;
-                            })
+                            ->ifTrue(fn($v) => !is_string($v) || strlen($v) === 0)
                             ->thenInvalid('Consume assertion route must be a non-empty string')
                         ->end()
                     ->end()
                     ->scalarNode('metadata')
                         ->isRequired()
                         ->validate()
-                            ->ifTrue(function ($v) {
-                                return !is_string($v) || strlen($v) === 0;
-                            })
+                            ->ifTrue(fn($v) => !is_string($v) || strlen($v) === 0)
                             ->thenInvalid('Metadata route must be a non-empty string')
                         ->end()
                     ->end()

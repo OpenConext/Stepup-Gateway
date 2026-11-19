@@ -33,24 +33,6 @@ use Symfony\Component\HttpFoundation\Request;
 
 class LoginService
 {
-    /** @var LoggerInterface */
-    private $logger;
-
-    /** @var SamlAuthenticationLogger */
-    private $samlLogger;
-
-    /** @var ProxyStateHandler */
-    private $stateHandler;
-
-    /** @var HttpBindingFactory */
-    private $httpBindingFactory;
-
-    /** @var SecondFactorOnlyNameIdValidationService */
-    private $secondFactorOnlyNameValidatorService;
-
-    /** @var LoaResolutionService */
-    private $loaResolutionService;
-
     /**
      * SecondFactorLoginService constructor.
      * @param LoggerInterface $logger
@@ -61,21 +43,15 @@ class LoginService
      * @param LoaResolutionService $loaResolutionService
      */
     public function __construct(
-        LoggerInterface $logger,
-        SamlAuthenticationLogger $samlLogger,
-        ProxyStateHandler $stateHandler,
-        HttpBindingFactory $httpBindingFactory,
-        SecondFactorOnlyNameIdValidationService $secondFactorOnlyNameValidatorService,
-        LoaResolutionService $loaResolutionService,
+        private readonly LoggerInterface $logger,
+        private readonly SamlAuthenticationLogger $samlLogger,
+        private readonly ProxyStateHandler $stateHandler,
+        private readonly HttpBindingFactory $httpBindingFactory,
+        private readonly SecondFactorOnlyNameIdValidationService $secondFactorOnlyNameValidatorService,
+        private readonly LoaResolutionService $loaResolutionService,
         private readonly FeatureConfiguration $featureConfiguration,
         private readonly UiInfoExtensionMapper $uiInfoMapper
     ) {
-        $this->logger = $logger;
-        $this->samlLogger = $samlLogger;
-        $this->stateHandler = $stateHandler;
-        $this->httpBindingFactory = $httpBindingFactory;
-        $this->secondFactorOnlyNameValidatorService = $secondFactorOnlyNameValidatorService;
-        $this->loaResolutionService = $loaResolutionService;
     }
 
     /**

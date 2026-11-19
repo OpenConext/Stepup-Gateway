@@ -18,13 +18,14 @@
 
 namespace Surfnet\StepupGateway\GatewayBundle\Tests\Entity;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use Surfnet\StepupGateway\GatewayBundle\Entity\SamlEntity;
 
 class SamlEntityTest extends TestCase
 {
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_maps_service_name_locale_map_from_configuration(): void
     {
         $samlEntity = $this->createSamlEntity(SamlEntity::TYPE_SP, [
@@ -42,7 +43,7 @@ class SamlEntityTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_ignores_a_service_name_that_is_not_a_locale_map(): void
     {
         // Middleware's own validator (Stepup-Middleware#606) only enforces "nullable
@@ -59,7 +60,7 @@ class SamlEntityTest extends TestCase
         $this->assertSame([], $serviceProvider->getServiceNames());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function it_defaults_to_an_empty_service_names_map_when_absent(): void
     {
         $samlEntity = $this->createSamlEntity(SamlEntity::TYPE_SP, [

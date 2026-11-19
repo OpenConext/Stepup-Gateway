@@ -26,26 +26,18 @@ use Surfnet\StepupGateway\ApiBundle\Dto\SmsMessage;
 class SpryngService implements SmsAdapterInterface
 {
     /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
      * @var MessageClient
      */
     private $client;
 
-    /**
-     * @var string
-     */
-    private $route = null;
-
-    public function __construct(string $apiKey, ?string $route, LoggerInterface $logger, ?string $baseUrl = null)
-    {
+    public function __construct(
+        string $apiKey,
+        private readonly ?string $route,
+        private readonly LoggerInterface $logger,
+        ?string $baseUrl = null
+    ) {
         $spryng = new SpryngClient($apiKey, $baseUrl);
         $this->client = new MessageClient($spryng);
-        $this->route = $route;
-        $this->logger = $logger;
     }
 
     public function send(SmsMessage $message): SmsMessageResultInterface

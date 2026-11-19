@@ -31,16 +31,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class LoginService
 {
-    private const RESPONSE_CONTEXT_SERVICE_ID = 'gateway.proxy.response_context';
-
-    /** @var SamlAuthenticationLogger */
-    private $samlLogger;
-
-    /** @var RedirectBinding */
-    private $redirectBinding;
-
-    /** @var ConnectedServiceProviders */
-    private $connectedServiceProviders;
+    private const string RESPONSE_CONTEXT_SERVICE_ID = 'gateway.proxy.response_context';
 
     /**
      * LoginService constructor.
@@ -49,15 +40,12 @@ class LoginService
      * @param ConnectedServiceProviders $connectedServiceProviders
      */
     public function __construct(
-        SamlAuthenticationLogger $samlLogger,
-        RedirectBinding $redirectBinding,
-        ConnectedServiceProviders $connectedServiceProviders,
+        private readonly SamlAuthenticationLogger $samlLogger,
+        private readonly RedirectBinding $redirectBinding,
+        private readonly ConnectedServiceProviders $connectedServiceProviders,
         private readonly ServiceDisplayNameResolver $displayNameResolver,
         private readonly UiInfoExtensionMapper $uiInfoMapper
     ) {
-        $this->samlLogger = $samlLogger;
-        $this->redirectBinding = $redirectBinding;
-        $this->connectedServiceProviders = $connectedServiceProviders;
     }
 
     /**

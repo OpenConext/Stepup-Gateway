@@ -21,7 +21,7 @@ use Symfony\Component\Console\Event\ConsoleCommandEvent;
 
 class RemoveDoctrineCommands
 {
-    private const BLOCKED_COMMANDS = [
+    private const array BLOCKED_COMMANDS = [
         'doctrine:schema:create',
         'doctrine:schema:update',
         'doctrine:schema:drop',

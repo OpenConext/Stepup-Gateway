@@ -19,6 +19,7 @@
 namespace Surfnet\StepupGateway\GatewayBundle\Controller;
 
 use Psr\Log\LoggerInterface;
+use Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger;
 use Surfnet\StepupBundle\Command\VerifyPossessionOfPhoneCommand;
 use Surfnet\StepupBundle\Value\PhoneNumber\InternationalPhoneNumber;
 use Surfnet\StepupBundle\Value\SecondFactorType;
@@ -35,9 +36,11 @@ use Surfnet\StepupGateway\GatewayBundle\Form\Type\ChooseSecondFactorType;
 use Surfnet\StepupGateway\GatewayBundle\Form\Type\SendSmsChallengeType;
 use Surfnet\StepupGateway\GatewayBundle\Form\Type\VerifySmsChallengeType;
 use Surfnet\StepupGateway\GatewayBundle\Form\Type\VerifyYubikeyOtpType;
+use Surfnet\StepupGateway\GatewayBundle\Monolog\Logger\AuthenticationLogger;
 use Surfnet\StepupGateway\GatewayBundle\Saml\ResponseContext;
 use Surfnet\StepupGateway\GatewayBundle\Service\SecondFactor\SecondFactorInterface;
 use Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorService;
+use Surfnet\StepupGateway\GatewayBundle\Service\StepUpAuthenticationService;
 use Surfnet\StepupGateway\GatewayBundle\Sso2fa\CookieService;
 use Surfnet\StepupGateway\SamlStepupProviderBundle\Controller\SamlProxyController;
 use Surfnet\StepupGateway\SecondFactorOnlyBundle\Service\Gateway\GsspFallbackService;
@@ -85,7 +88,7 @@ class SecondFactorController extends ContainerController
         $context = $this->getResponseContext($authenticationMode);
         $originalRequestId = $context->getInResponseTo();
         $identityNameId = $context->getIdentityNameId();
-        /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
+        /** @var SamlAuthenticationLogger $logger */
         $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
         $logger->notice(sprintf('Determining which second factor to use for user %s...', $identityNameId));
         try {
@@ -216,7 +219,7 @@ class SecondFactorController extends ContainerController
         $originalRequestId = $context->getInResponseTo();
         $identityNameId = $context->getIdentityNameId();
 
-        /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
+        /** @var SamlAuthenticationLogger $logger */
         $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
         $logger->notice(sprintf('Ask the user which one of his suitable second factor tokens to use for user %s...', $identityNameId));
 
@@ -348,7 +351,7 @@ class SecondFactorController extends ContainerController
 
         $originalRequestId = $context->getInResponseTo();
 
-        /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
+        /** @var SamlAuthenticationLogger $logger */
         $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
         $logger->info(sprintf('Received request to verify GSSF for user %s', $identityNameId));
 
@@ -394,7 +397,7 @@ class SecondFactorController extends ContainerController
 
         $originalRequestId = $context->getInResponseTo();
 
-        /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
+        /** @var SamlAuthenticationLogger $logger */
         $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
         $logger->info(sprintf('Attempting to mark GSSF as verified for user %s', $identityNameId));
 
@@ -441,7 +444,7 @@ class SecondFactorController extends ContainerController
         $originalRequestId = $context->getInResponseTo();
         $identityNameId = $context->getIdentityNameId();
 
-        /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
+        /** @var SamlAuthenticationLogger $logger */
         $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
 
         $selectedSecondFactor = $this->getSelectedSecondFactor($context, $logger);
@@ -517,7 +520,7 @@ class SecondFactorController extends ContainerController
         $originalRequestId = $context->getInResponseTo();
         $identityNameId = $context->getIdentityNameId();
 
-        /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
+        /** @var SamlAuthenticationLogger $logger */
         $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
 
         $selectedSecondFactor = $this->getSelectedSecondFactor($context, $logger);
@@ -573,12 +576,7 @@ class SecondFactorController extends ContainerController
             );
         }
 
-        return $this->redirect(
-            $this->generateUrl(
-                'gateway_verify_second_factor_sms_verify_challenge',
-                ['authenticationMode' => $authenticationMode],
-            ),
-        );
+        return $this->redirectToRoute('gateway_verify_second_factor_sms_verify_challenge', ['authenticationMode' => $authenticationMode]);
     }
 
     #[Route(
@@ -602,7 +600,7 @@ class SecondFactorController extends ContainerController
         $originalRequestId = $context->getInResponseTo();
         $identityNameId = $context->getIdentityNameId();
 
-        /** @var \Surfnet\SamlBundle\Monolog\SamlAuthenticationLogger $logger */
+        /** @var SamlAuthenticationLogger $logger */
         $logger = $this->get('surfnet_saml.logger')->forAuthentication($originalRequestId);
 
         $selectedSecondFactor = $this->getSelectedSecondFactor($context, $logger);
@@ -671,7 +669,7 @@ class SecondFactorController extends ContainerController
     }
 
     /**
-     * @return \Surfnet\StepupGateway\GatewayBundle\Service\StepupAuthenticationService
+     * @return StepUpAuthenticationService
      */
     private function getStepupService()
     {
@@ -700,7 +698,7 @@ class SecondFactorController extends ContainerController
     }
 
     /**
-     * @return \Surfnet\StepupGateway\GatewayBundle\Monolog\Logger\AuthenticationLogger
+     * @return AuthenticationLogger
      */
     private function getAuthenticationLogger()
     {
@@ -754,7 +752,7 @@ class SecondFactorController extends ContainerController
             $route .= strtolower($secondFactor->secondFactorType);
         }
 
-        return $this->redirect($this->generateUrl($route, ['authenticationMode' => $authenticationMode]));
+        return $this->redirectToRoute($route, ['authenticationMode' => $authenticationMode]);
     }
 
     /**

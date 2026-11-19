@@ -28,21 +28,6 @@ use Surfnet\StepupGateway\GatewayBundle\Service\SecondFactorService;
 
 class RespondService
 {
-    /** @var SamlAuthenticationLogger */
-    private $samlLogger;
-
-    /** @var LoaResolutionService */
-    private $loaResolutionService;
-
-    /** @var ProxyResponseService */
-    private $responseProxy;
-
-    /** @var SecondFactorService */
-    private $secondFactorService;
-
-    /** @var SecondFactorTypeService */
-    private $secondFactorTypeService;
-
     /**
      * GatewayServiceProviderService constructor.
      * @param SamlAuthenticationLogger $samlLogger
@@ -52,17 +37,12 @@ class RespondService
      * @param SecondFactorTypeService $secondFactorTypeService
      */
     public function __construct(
-        SamlAuthenticationLogger $samlLogger,
-        LoaResolutionService $loaResolutionService,
-        ProxyResponseService $responseProxy,
-        SecondFactorService $secondFactorService,
-        SecondFactorTypeService $secondFactorTypeService
+        private readonly SamlAuthenticationLogger $samlLogger,
+        private readonly LoaResolutionService $loaResolutionService,
+        private readonly ProxyResponseService $responseProxy,
+        private readonly SecondFactorService $secondFactorService,
+        private readonly SecondFactorTypeService $secondFactorTypeService,
     ) {
-        $this->samlLogger = $samlLogger;
-        $this->loaResolutionService = $loaResolutionService;
-        $this->responseProxy = $responseProxy;
-        $this->secondFactorService = $secondFactorService;
-        $this->secondFactorTypeService = $secondFactorTypeService;
     }
 
     /**
