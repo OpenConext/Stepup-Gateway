@@ -1,0 +1,74 @@
+<?php
+declare(strict_types=1);
+
+namespace Surfnet\StepupGateway\Tests\Functional\Support\Database;
+
+use Doctrine\DBAL\Connection;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Tools\SchemaTool;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
+/**
+ * Recreates the gateway database:
+ * - creates the schema from the Doctrine entity metadata
+ * - loads the data captured from the devconf environment (database.sql).
+ */
+class DevconfFixtureLoader
+{
+    private Connection $connection;
+    private EntityManagerInterface $entityManager;
+    private string $fixturesPath;
+
+    public function __construct(ContainerInterface $container, string $fixturesPath)
+    {
+        $this->connection = $container->get('doctrine.dbal.gateway_connection');
+        $this->entityManager = $container->get('doctrine.orm.gateway_entity_manager');
+        $this->fixturesPath = $fixturesPath;
+    }
+
+    /**
+     * Drop and create the schema, and load the database fixture captured from devconf.
+     */
+    public function load(): void
+    {
+        $sqlFile = $this->fixturesPath . '/devconf/database.sql';
+
+        if (!file_exists($sqlFile)) {
+            throw new \RuntimeException(sprintf(
+                'Devconf database fixture not found: %s. Run: php tests/Functional/bin/capture-devconf-fixture /path/to/OpenConext-devconf database',
+                $sqlFile
+            ));
+        }
+
+        // The dump only contains data, so create the schema from the entity metadata first.
+        $schemaTool = new SchemaTool($this->entityManager);
+        $metadata = $this->entityManager->getMetadataFactory()->getAllMetadata();
+        $schemaTool->dropSchema($metadata);
+        $schemaTool->createSchema($metadata);
+
+        $sql = file_get_contents($sqlFile);
+
+        // Split into individual statements and execute
+        $statements = $this->splitSqlStatements($sql);
+
+        foreach ($statements as $statement) {
+            $this->connection->executeStatement($statement);
+        }
+    }
+
+    /**
+     * Split SQL dump into individual statements.
+     */
+    private function splitSqlStatements(string $sql): array
+    {
+        // Remove comments
+        $sql = preg_replace('/--.*$/m', '', $sql);
+        // Remove MariaDB conditional comments (e.g. /*M!999999\- enable the sandbox mode */)
+        $sql = preg_replace('#/\*.*?\*/#s', '', $sql);
+
+        // Split on semicolons (naive but works for our dump)
+        $statements = explode(';', $sql);
+
+        return array_filter(array_map('trim', $statements));
+    }
+}

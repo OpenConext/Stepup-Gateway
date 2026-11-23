@@ -1,0 +1,16 @@
+# The "functional" environment is used by the PHPUnit functional tests.
+# Unlike the test/smoketest environments, this environment does not import services_test.yaml:
+# everything it needs is defined in the base config, services_functional.yaml and packages/functional/.
+when@functional:
+  framework:
+    test: ~
+    session:
+      handler_id: null
+      storage_factory_id: session.storage.factory.mock_file
+    profiler:
+      only_exceptions: false
+      collect: false
+    php_errors:
+      log: false
+    validation:
+      not_compromised_password: false

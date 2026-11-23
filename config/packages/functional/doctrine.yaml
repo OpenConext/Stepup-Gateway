@@ -1,0 +1,11 @@
+# SQLite database file for the functional tests. It is file-backed (not in-memory), so the database survives
+# the kernel reboot the test client performs before every request: each request runs on a fresh kernel and
+# container, like in production. The file lives in the functional cache dir; ci/qa/phpunit-functional clears that
+# dir before a run.
+doctrine:
+  dbal:
+    default_connection: gateway
+    connections:
+      gateway:
+        driver: pdo_sqlite
+        path: '%kernel.cache_dir%/gateway-functional.db'

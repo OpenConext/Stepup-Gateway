@@ -1,0 +1,3 @@
+when@functional:
+  twig:
+    strict_variables: true
